@@ -1,11 +1,12 @@
-import { useState, useMemo } from "react";
-import { BarChart3, Download, Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign, Users } from "lucide-react";
+import { useState } from "react";
+import { BarChart3, Download, Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format, subDays, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { useReportMetrics } from "@/hooks/useReportData";
 import {
   BarChart,
   Bar,
@@ -24,98 +25,6 @@ import {
 type DateRange = {
   from: Date | undefined;
   to: Date | undefined;
-};
-
-// Full dataset for filtering
-const allRevenueData = [
-  { date: new Date(2024, 6, 15), mes: "Jul", receita: 45000, meta: 50000 },
-  { date: new Date(2024, 7, 15), mes: "Ago", receita: 52000, meta: 55000 },
-  { date: new Date(2024, 8, 15), mes: "Set", receita: 61000, meta: 60000 },
-  { date: new Date(2024, 9, 15), mes: "Out", receita: 58000, meta: 65000 },
-  { date: new Date(2024, 10, 15), mes: "Nov", receita: 72000, meta: 70000 },
-  { date: new Date(2024, 11, 15), mes: "Dez", receita: 85000, meta: 80000 },
-];
-
-const allCategoryData: Record<string, { name: string; value: number; color: string }[]> = {
-  "7d": [
-    { name: "Assinaturas", value: 40, color: "hsl(24, 100%, 55%)" },
-    { name: "Serviços", value: 35, color: "hsl(280, 80%, 60%)" },
-    { name: "Projetos", value: 18, color: "hsl(340, 80%, 55%)" },
-    { name: "Outros", value: 7, color: "hsl(142, 76%, 45%)" },
-  ],
-  "30d": [
-    { name: "Assinaturas", value: 45, color: "hsl(24, 100%, 55%)" },
-    { name: "Serviços", value: 30, color: "hsl(280, 80%, 60%)" },
-    { name: "Projetos", value: 15, color: "hsl(340, 80%, 55%)" },
-    { name: "Outros", value: 10, color: "hsl(142, 76%, 45%)" },
-  ],
-  "90d": [
-    { name: "Assinaturas", value: 48, color: "hsl(24, 100%, 55%)" },
-    { name: "Serviços", value: 28, color: "hsl(280, 80%, 60%)" },
-    { name: "Projetos", value: 14, color: "hsl(340, 80%, 55%)" },
-    { name: "Outros", value: 10, color: "hsl(142, 76%, 45%)" },
-  ],
-  "custom": [
-    { name: "Assinaturas", value: 42, color: "hsl(24, 100%, 55%)" },
-    { name: "Serviços", value: 32, color: "hsl(280, 80%, 60%)" },
-    { name: "Projetos", value: 16, color: "hsl(340, 80%, 55%)" },
-    { name: "Outros", value: 10, color: "hsl(142, 76%, 45%)" },
-  ],
-};
-
-const allWeeklyData: Record<string, { dia: string; vendas: number }[]> = {
-  "7d": [
-    { dia: "Seg", vendas: 12 },
-    { dia: "Ter", vendas: 19 },
-    { dia: "Qua", vendas: 15 },
-    { dia: "Qui", vendas: 22 },
-    { dia: "Sex", vendas: 28 },
-    { dia: "Sáb", vendas: 18 },
-    { dia: "Dom", vendas: 8 },
-  ],
-  "30d": [
-    { dia: "Sem 1", vendas: 85 },
-    { dia: "Sem 2", vendas: 102 },
-    { dia: "Sem 3", vendas: 95 },
-    { dia: "Sem 4", vendas: 118 },
-  ],
-  "90d": [
-    { dia: "Out", vendas: 312 },
-    { dia: "Nov", vendas: 358 },
-    { dia: "Dez", vendas: 402 },
-  ],
-  "custom": [
-    { dia: "Período 1", vendas: 145 },
-    { dia: "Período 2", vendas: 178 },
-    { dia: "Período 3", vendas: 162 },
-  ],
-};
-
-const metricsPerPeriod: Record<string, { title: string; value: string; change: number; icon: any; positive: boolean }[]> = {
-  "7d": [
-    { title: "Receita Total", value: "R$ 127.500", change: 8.2, icon: DollarSign, positive: true },
-    { title: "Novos Clientes", value: "23", change: 5.1, icon: Users, positive: true },
-    { title: "Taxa de Conversão", value: "11.8%", change: -1.5, icon: TrendingDown, positive: false },
-    { title: "Ticket Médio", value: "R$ 2.450", change: 3.2, icon: TrendingUp, positive: true },
-  ],
-  "30d": [
-    { title: "Receita Total", value: "R$ 547.250", change: 12.5, icon: DollarSign, positive: true },
-    { title: "Novos Clientes", value: "89", change: 8.3, icon: Users, positive: true },
-    { title: "Taxa de Conversão", value: "12.6%", change: -2.1, icon: TrendingDown, positive: false },
-    { title: "Ticket Médio", value: "R$ 2.716", change: 15.7, icon: TrendingUp, positive: true },
-  ],
-  "90d": [
-    { title: "Receita Total", value: "R$ 1.847.250", change: 18.3, icon: DollarSign, positive: true },
-    { title: "Novos Clientes", value: "267", change: 12.1, icon: Users, positive: true },
-    { title: "Taxa de Conversão", value: "13.2%", change: 2.4, icon: TrendingUp, positive: true },
-    { title: "Ticket Médio", value: "R$ 2.890", change: 9.8, icon: TrendingUp, positive: true },
-  ],
-  "custom": [
-    { title: "Receita Total", value: "R$ 425.800", change: 6.7, icon: DollarSign, positive: true },
-    { title: "Novos Clientes", value: "52", change: 4.2, icon: Users, positive: true },
-    { title: "Taxa de Conversão", value: "12.1%", change: 0.8, icon: TrendingUp, positive: true },
-    { title: "Ticket Médio", value: "R$ 2.650", change: 5.5, icon: TrendingUp, positive: true },
-  ],
 };
 
 const reportsData = [
@@ -147,26 +56,7 @@ const Relatorios = () => {
     to: new Date(),
   });
 
-  const periodKey = selectedPeriod === "custom" ? "custom" : selectedPeriod;
-
-  const filteredRevenueData = useMemo(() => {
-    if (selectedPeriod === "7d") {
-      return allRevenueData.slice(-2);
-    } else if (selectedPeriod === "30d") {
-      return allRevenueData.slice(-3);
-    } else if (selectedPeriod === "90d") {
-      return allRevenueData.slice(-4);
-    } else if (dateRange.from && dateRange.to) {
-      return allRevenueData.filter(item => 
-        isWithinInterval(item.date, { start: dateRange.from!, end: dateRange.to! })
-      );
-    }
-    return allRevenueData;
-  }, [selectedPeriod, dateRange]);
-
-  const categoryData = allCategoryData[periodKey] || allCategoryData["30d"];
-  const weeklyData = allWeeklyData[periodKey] || allWeeklyData["30d"];
-  const metricsData = metricsPerPeriod[periodKey] || metricsPerPeriod["30d"];
+  const { metrics, revenueData, categoryData, salesData, isLoading } = useReportMetrics(dateRange);
 
   const handlePeriodClick = (period: string) => {
     setSelectedPeriod(period);
@@ -179,6 +69,59 @@ const Relatorios = () => {
     }
   };
 
+  const metricsData = [
+    { 
+      title: "Receita Total", 
+      value: `R$ ${metrics.totalRevenue.toLocaleString("pt-BR")}`, 
+      change: metrics.revenueChange, 
+      icon: DollarSign, 
+      positive: metrics.revenueChange > 0 
+    },
+    { 
+      title: "Novos Clientes", 
+      value: metrics.newClients.toString(), 
+      change: metrics.clientsChange, 
+      icon: Users, 
+      positive: metrics.clientsChange > 0 
+    },
+    { 
+      title: "Taxa de Conversão", 
+      value: `${metrics.conversionRate.toFixed(1)}%`, 
+      change: metrics.conversionChange, 
+      icon: metrics.conversionChange >= 0 ? TrendingUp : TrendingDown, 
+      positive: metrics.conversionChange >= 0 
+    },
+    { 
+      title: "Ticket Médio", 
+      value: `R$ ${metrics.avgTicket.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, 
+      change: metrics.ticketChange, 
+      icon: TrendingUp, 
+      positive: metrics.ticketChange > 0 
+    },
+  ];
+
+  // Fallback data when DB is empty
+  const displayRevenueData = revenueData.length > 0 ? revenueData : [
+    { mes: "Out", receita: 58000, meta: 65000 },
+    { mes: "Nov", receita: 72000, meta: 70000 },
+    { mes: "Dez", receita: 85000, meta: 80000 },
+  ];
+
+  const displayCategoryData = categoryData.length > 0 ? categoryData : [
+    { name: "Assinaturas", value: 45, color: "hsl(24, 100%, 55%)" },
+    { name: "Serviços", value: 30, color: "hsl(280, 80%, 60%)" },
+    { name: "Projetos", value: 15, color: "hsl(340, 80%, 55%)" },
+    { name: "Outros", value: 10, color: "hsl(142, 76%, 45%)" },
+  ];
+
+  const displaySalesData = salesData.length > 0 ? salesData : [
+    { dia: "Seg", vendas: 12 },
+    { dia: "Ter", vendas: 19 },
+    { dia: "Qua", vendas: 15 },
+    { dia: "Qui", vendas: 22 },
+    { dia: "Sex", vendas: 28 },
+  ];
+
   return (
     <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
@@ -190,7 +133,10 @@ const Relatorios = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold gradient-text">Relatórios</h1>
-              <p className="text-sm text-muted-foreground">Análises e métricas do negócio</p>
+              <p className="text-sm text-muted-foreground">
+                Análises e métricas do negócio
+                {isLoading && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}
+              </p>
             </div>
           </div>
         </div>
@@ -304,7 +250,7 @@ const Relatorios = () => {
             <p className="text-sm text-muted-foreground mb-6">Receita vs Meta mensal</p>
             <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={filteredRevenueData}>
+                <AreaChart data={displayRevenueData}>
                   <defs>
                     <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(24, 100%, 55%)" stopOpacity={0.3} />
@@ -349,7 +295,7 @@ const Relatorios = () => {
               <ResponsiveContainer width="60%" height="100%">
                 <PieChart>
                   <Pie
-                    data={categoryData}
+                    data={displayCategoryData}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
@@ -357,7 +303,7 @@ const Relatorios = () => {
                     paddingAngle={4}
                     dataKey="value"
                   >
-                    {categoryData.map((entry, index) => (
+                    {displayCategoryData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -372,7 +318,7 @@ const Relatorios = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="flex-1 space-y-3">
-                {categoryData.map((item, index) => (
+                {displayCategoryData.map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <div 
                       className="w-3 h-3 rounded-full" 
@@ -398,7 +344,7 @@ const Relatorios = () => {
             </p>
             <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={weeklyData}>
+                <BarChart data={displaySalesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 30%, 16%)" />
                   <XAxis dataKey="dia" stroke="hsl(215, 20%, 55%)" fontSize={12} />
                   <YAxis stroke="hsl(215, 20%, 55%)" fontSize={12} />
