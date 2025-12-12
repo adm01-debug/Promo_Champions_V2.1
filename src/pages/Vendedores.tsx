@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2 } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2, Flame, Zap, Star } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,30 +8,55 @@ import { SalespersonForm } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
+import { cn } from "@/lib/utils";
+
 const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
-      return <Crown className="h-5 w-5 text-yellow-500" />;
+      return <Crown className="h-6 w-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />;
     case 2:
-      return <Medal className="h-5 w-5 text-gray-400" />;
+      return <Medal className="h-6 w-6 text-slate-300 drop-shadow-[0_0_6px_rgba(148,163,184,0.5)]" />;
     case 3:
-      return <Award className="h-5 w-5 text-amber-600" />;
+      return <Award className="h-6 w-6 text-amber-500 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />;
     default:
-      return <span className="text-sm font-bold text-muted-foreground">#{rank}</span>;
+      return <span className="text-lg font-black text-muted-foreground/60">#{rank}</span>;
   }
 };
 
-const getRankBadge = (rank: number) => {
+const getRankStyles = (rank: number) => {
   switch (rank) {
     case 1:
-      return "from-yellow-500/20 to-yellow-600/20 border-yellow-500/30";
+      return {
+        card: "bg-gradient-to-r from-yellow-500/15 via-yellow-400/10 to-amber-500/15 border-2 border-yellow-500/40 shadow-[0_0_30px_rgba(250,204,21,0.15)]",
+        avatar: "ring-4 ring-yellow-400/50 shadow-[0_0_20px_rgba(250,204,21,0.4)]",
+        badge: "bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold",
+      };
     case 2:
-      return "from-gray-400/20 to-gray-500/20 border-gray-400/30";
+      return {
+        card: "bg-gradient-to-r from-slate-400/10 via-slate-300/5 to-slate-400/10 border-2 border-slate-400/30",
+        avatar: "ring-4 ring-slate-300/50",
+        badge: "bg-gradient-to-r from-slate-400 to-slate-500 text-white font-bold",
+      };
     case 3:
-      return "from-amber-600/20 to-amber-700/20 border-amber-600/30";
+      return {
+        card: "bg-gradient-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 border-2 border-amber-500/30",
+        avatar: "ring-4 ring-amber-500/50",
+        badge: "bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold",
+      };
     default:
-      return "from-muted/30 to-muted/20 border-border/30";
+      return {
+        card: "hover:bg-muted/30 border border-transparent hover:border-border/50",
+        avatar: "ring-2 ring-border/50",
+        badge: "bg-muted text-muted-foreground",
+      };
   }
+};
+
+const getStreakInfo = (goalProgress: number) => {
+  if (goalProgress >= 120) return { icon: Flame, label: "Em Chamas!", color: "text-orange-500", bg: "bg-orange-500/20" };
+  if (goalProgress >= 100) return { icon: Star, label: "Meta Batida!", color: "text-success", bg: "bg-success/20" };
+  if (goalProgress >= 80) return { icon: Zap, label: "Quase Lá!", color: "text-yellow-500", bg: "bg-yellow-500/20" };
+  return null;
 };
 
 const periodLabels: Record<PeriodFilter, string> = {
@@ -56,6 +81,8 @@ const Vendedores = () => {
     ? salespeople.reduce((sum, sp) => sum + sp.goalProgress, 0) / salespeople.length 
     : 0;
 
+  const topSeller = salespeople?.[0];
+
   return (
     <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
@@ -67,7 +94,7 @@ const Vendedores = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold gradient-text">Ranking de Vendedores</h1>
-              <p className="text-sm text-muted-foreground">Metas e comissões - {periodLabels[period]}</p>
+              <p className="text-sm text-muted-foreground">Competição acirrada - {periodLabels[period]}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -75,6 +102,55 @@ const Vendedores = () => {
             <SalespersonForm />
           </div>
         </div>
+
+        {/* Top Seller Spotlight */}
+        {topSeller && (
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
+            <div className="glass rounded-2xl p-6 border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 via-transparent to-amber-500/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+              
+              <div className="relative flex flex-col md:flex-row items-center gap-6">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full blur-md opacity-50 animate-pulse" />
+                  <Avatar className="h-24 w-24 relative ring-4 ring-yellow-400/60 shadow-2xl">
+                    <AvatarImage src={topSeller.avatar_url || undefined} alt={topSeller.name} />
+                    <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-white text-2xl font-bold">
+                      {topSeller.name.split(" ").map(n => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -top-2 -right-2 p-1.5 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full shadow-lg">
+                    <Crown className="h-5 w-5 text-black" />
+                  </div>
+                </div>
+                
+                <div className="flex-1 text-center md:text-left">
+                  <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                    <span className="text-xs font-bold uppercase tracking-wider text-yellow-500">Líder do Ranking</span>
+                    <Flame className="h-4 w-4 text-orange-500 animate-pulse" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-black">{topSeller.name}</h2>
+                  <p className="text-muted-foreground">{topSeller.completedSales} vendas realizadas</p>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+                  <div className="text-center">
+                    <p className="text-3xl md:text-4xl font-black gradient-text">
+                      R$ {topSeller.totalSales.toLocaleString("pt-BR")}
+                    </p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Faturamento</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-3xl md:text-4xl font-black text-success">
+                      {topSeller.goalProgress.toFixed(0)}%
+                    </p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">da Meta</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -117,20 +193,20 @@ const Vendedores = () => {
         )}
 
         {/* Ranking List */}
-        <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "250ms" }}>
+        <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "300ms" }}>
           <div className="p-5 border-b border-border/50">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Ranking - {periodLabels[period]}</h2>
+              <h2 className="text-lg font-semibold">Ranking Completo</h2>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">Performance individual dos vendedores</p>
+            <p className="text-sm text-muted-foreground mt-1">Quem será o próximo a subir? 🔥</p>
           </div>
 
           {isLoading ? (
             <div className="p-5 space-y-4">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <Skeleton className="h-16 w-16 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-3 w-full" />
@@ -143,80 +219,148 @@ const Vendedores = () => {
               Erro ao carregar vendedores
             </div>
           ) : (
-            <div className="divide-y divide-border/30">
-              {salespeople?.map((sp, index) => (
-                <div 
-                  key={sp.id}
-                  className={`p-5 hover:bg-muted/30 transition-colors ${sp.rank <= 3 ? 'bg-gradient-to-r ' + getRankBadge(sp.rank) : ''}`}
-                >
-                  <div className="flex items-start gap-4">
-                    {/* Rank & Avatar */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 flex justify-center">
+            <div className="divide-y divide-border/20 p-3">
+              {salespeople?.map((sp, index) => {
+                const styles = getRankStyles(sp.rank);
+                const streak = getStreakInfo(sp.goalProgress);
+                
+                return (
+                  <div 
+                    key={sp.id}
+                    className={cn(
+                      "p-4 rounded-xl my-2 transition-all duration-300",
+                      styles.card
+                    )}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Rank Badge */}
+                      <div className={cn(
+                        "w-12 h-12 rounded-xl flex items-center justify-center",
+                        sp.rank <= 3 ? styles.badge : "bg-muted/50"
+                      )}>
                         {getRankIcon(sp.rank)}
                       </div>
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
-                          {sp.name.split(" ").map(n => n[0]).join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      
+                      {/* Avatar */}
+                      <div className="relative">
+                        <Avatar className={cn("h-14 w-14", styles.avatar)}>
+                          <AvatarImage src={sp.avatar_url || undefined} alt={sp.name} />
+                          <AvatarFallback className="bg-gradient-to-br from-primary/30 to-secondary/30 text-foreground font-bold text-lg">
+                            {sp.name.split(" ").map(n => n[0]).join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        {streak && (
+                          <div className={cn("absolute -bottom-1 -right-1 p-1 rounded-full", streak.bg)}>
+                            <streak.icon className={cn("h-3 w-3", streak.color)} />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-bold text-lg">{sp.name}</h3>
+                          {streak && (
+                            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", streak.bg, streak.color)}>
+                              {streak.label}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {sp.completedSales} vendas • {sp.commission_rate}% comissão
+                        </p>
+                        
+                        {/* Progress Bar */}
+                        <div className="mt-2">
+                          <div className="relative h-2.5 bg-muted/30 rounded-full overflow-hidden">
+                            <div 
+                              className={cn(
+                                "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
+                                sp.goalProgress >= 100 
+                                  ? "bg-gradient-to-r from-success to-emerald-400" 
+                                  : "gradient-primary"
+                              )}
+                              style={{ width: `${Math.min(sp.goalProgress, 100)}%` }}
+                            />
+                            {sp.goalProgress > 100 && (
+                              <div 
+                                className="absolute inset-y-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse"
+                                style={{ 
+                                  left: "100%", 
+                                  width: `${Math.min(sp.goalProgress - 100, 50)}%`,
+                                  marginLeft: "-2px"
+                                }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="hidden sm:flex items-center gap-6">
+                        <div className="text-right">
+                          <p className="text-xl font-black">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
+                          <p className="text-xs text-muted-foreground">
+                            de R$ {sp.goalAmount.toLocaleString("pt-BR")}
+                          </p>
+                        </div>
+                        
+                        <div className="text-center min-w-[60px]">
+                          <p className={cn(
+                            "text-xl font-black",
+                            sp.goalProgress >= 100 ? "text-success" : sp.goalProgress >= 80 ? "text-yellow-500" : "text-muted-foreground"
+                          )}>
+                            {sp.goalProgress.toFixed(0)}%
+                          </p>
+                          <p className="text-xs text-muted-foreground">meta</p>
+                        </div>
+                        
+                        <div className="text-right min-w-[90px]">
+                          <p className="text-lg font-bold text-success">
+                            R$ {sp.commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+                          </p>
+                          <p className="text-xs text-muted-foreground">comissão</p>
+                        </div>
+                      </div>
+
+                      {/* Edit Button */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 text-muted-foreground hover:text-primary"
+                        onClick={() => setEditingSalesperson({
+                          id: sp.id,
+                          name: sp.name,
+                          commission_rate: sp.commission_rate,
+                          goalAmount: sp.goalAmount,
+                        })}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
                     </div>
 
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <h3 className="font-semibold">{sp.name}</h3>
-                          <p className="text-xs text-muted-foreground">{sp.completedSales} vendas • {sp.commission_rate}% comissão</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-right">
-                            <p className="font-bold text-lg">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
-                            <p className="text-xs text-muted-foreground">de R$ {sp.goalAmount.toLocaleString("pt-BR")}</p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-primary"
-                            onClick={() => setEditingSalesperson({
-                              id: sp.id,
-                              name: sp.name,
-                              commission_rate: sp.commission_rate,
-                              goalAmount: sp.goalAmount,
-                            })}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                    {/* Mobile Stats */}
+                    <div className="sm:hidden mt-4 grid grid-cols-3 gap-3 text-center">
+                      <div className="p-2 rounded-lg bg-muted/30">
+                        <p className="text-sm font-bold">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
+                        <p className="text-xs text-muted-foreground">vendas</p>
                       </div>
-
-                      {/* Progress Bar */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Progresso da meta</span>
-                          <span className={sp.goalProgress >= 100 ? "text-success font-medium" : "text-muted-foreground"}>
-                            {sp.goalProgress.toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="relative h-2 bg-muted/50 rounded-full overflow-hidden">
-                          <div 
-                            className="absolute inset-y-0 left-0 rounded-full gradient-primary transition-all duration-500"
-                            style={{ width: `${Math.min(sp.goalProgress, 100)}%` }}
-                          />
-                        </div>
+                      <div className="p-2 rounded-lg bg-muted/30">
+                        <p className={cn("text-sm font-bold", sp.goalProgress >= 100 ? "text-success" : "")}>
+                          {sp.goalProgress.toFixed(0)}%
+                        </p>
+                        <p className="text-xs text-muted-foreground">meta</p>
                       </div>
-
-                      {/* Commission */}
-                      <div className="mt-3 flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">Comissão acumulada</span>
-                        <span className="text-sm font-semibold text-success">
+                      <div className="p-2 rounded-lg bg-muted/30">
+                        <p className="text-sm font-bold text-success">
                           R$ {sp.commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
-                        </span>
+                        </p>
+                        <p className="text-xs text-muted-foreground">comissão</p>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
