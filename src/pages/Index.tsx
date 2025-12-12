@@ -6,6 +6,7 @@ import { GoalProgress } from "@/components/dashboard/GoalProgress";
 import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
+import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import {
   DollarSign,
   ShoppingBag,
@@ -73,11 +74,14 @@ const Index = () => {
         </div>
 
         {/* Second Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
             <FunnelChart />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
+            <SalesForecast />
+          </div>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
             <KPIGrid />
           </div>
         </div>
