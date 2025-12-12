@@ -1,9 +1,11 @@
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users } from "lucide-react";
+import { useState } from "react";
+import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { useSalespeopleRanking } from "@/hooks/useSalespeople";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { SalespersonForm } from "@/components/vendedores/SalespersonForm";
+import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
@@ -32,6 +34,12 @@ const getRankBadge = (rank: number) => {
 
 const Vendedores = () => {
   const { data: salespeople, isLoading, error } = useSalespeopleRanking();
+  const [editingSalesperson, setEditingSalesperson] = useState<{
+    id: string;
+    name: string;
+    commission_rate: number;
+    goalAmount: number;
+  } | null>(null);
 
   const totalCommissions = salespeople?.reduce((sum, sp) => sum + sp.commission, 0) || 0;
   const totalSales = salespeople?.reduce((sum, sp) => sum + sp.totalSales, 0) || 0;
@@ -53,6 +61,7 @@ const Vendedores = () => {
               <p className="text-sm text-muted-foreground">Metas e comissões do mês</p>
             </div>
           </div>
+          <SalespersonForm />
         </div>
 
         {/* Summary Cards */}
@@ -141,9 +150,24 @@ const Vendedores = () => {
                           <h3 className="font-semibold">{sp.name}</h3>
                           <p className="text-xs text-muted-foreground">{sp.completedSales} vendas • {sp.commission_rate}% comissão</p>
                         </div>
-                        <div className="text-right">
-                          <p className="font-bold text-lg">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
-                          <p className="text-xs text-muted-foreground">de R$ {sp.goalAmount.toLocaleString("pt-BR")}</p>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className="font-bold text-lg">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
+                            <p className="text-xs text-muted-foreground">de R$ {sp.goalAmount.toLocaleString("pt-BR")}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                            onClick={() => setEditingSalesperson({
+                              id: sp.id,
+                              name: sp.name,
+                              commission_rate: sp.commission_rate,
+                              goalAmount: sp.goalAmount,
+                            })}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
 
@@ -177,6 +201,12 @@ const Vendedores = () => {
             </div>
           )}
         </div>
+
+        <GoalEditDialog
+          open={!!editingSalesperson}
+          onOpenChange={(open) => !open && setEditingSalesperson(null)}
+          salesperson={editingSalesperson}
+        />
       </div>
     </div>
   );
