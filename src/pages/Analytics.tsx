@@ -3,8 +3,11 @@ import { WinLossAnalysis } from '@/components/analytics/WinLossAnalysis';
 import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
 import { ConversionFunnel } from '@/components/analytics/ConversionFunnel';
 import { ObjectionsLibrary } from '@/components/analytics/ObjectionsLibrary';
+import { ABCAnalysis } from '@/components/analytics/ABCAnalysis';
+import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
+import { ChurnPrediction } from '@/components/analytics/ChurnPrediction';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3 } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle } from 'lucide-react';
 
 export default function Analytics() {
   return (
@@ -23,7 +26,7 @@ export default function Analytics() {
 
         {/* Tabs */}
         <Tabs defaultValue="winloss" className="space-y-4">
-          <TabsList className="bg-card/50 border border-border/50">
+          <TabsList className="bg-card/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="winloss" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Trophy className="h-4 w-4" />
               Win/Loss
@@ -39,6 +42,18 @@ export default function Analytics() {
             <TabsTrigger value="objections" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <BookOpen className="h-4 w-4" />
               Objeções
+            </TabsTrigger>
+            <TabsTrigger value="abc" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Layers className="h-4 w-4" />
+              ABC
+            </TabsTrigger>
+            <TabsTrigger value="closing" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Timer className="h-4 w-4" />
+              Fechamento
+            </TabsTrigger>
+            <TabsTrigger value="churn" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <AlertTriangle className="h-4 w-4" />
+              Churn
             </TabsTrigger>
           </TabsList>
 
@@ -56,6 +71,18 @@ export default function Analytics() {
 
           <TabsContent value="objections" className="space-y-4">
             <ObjectionsLibrary />
+          </TabsContent>
+
+          <TabsContent value="abc" className="space-y-4">
+            <ABCAnalysis />
+          </TabsContent>
+
+          <TabsContent value="closing" className="space-y-4">
+            <ClosingTimeChart />
+          </TabsContent>
+
+          <TabsContent value="churn" className="space-y-4">
+            <ChurnPrediction />
           </TabsContent>
         </Tabs>
       </div>
