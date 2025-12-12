@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2, Flame, Zap, Star } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2, Flame, Zap, Star, ExternalLink } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
@@ -257,9 +258,10 @@ const Vendedores = () => {
                       </div>
 
                       {/* Info */}
-                      <div className="flex-1 min-w-0">
+                      <Link to={`/vendedor/${sp.id}`} className="flex-1 min-w-0 group cursor-pointer">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="font-bold text-lg">{sp.name}</h3>
+                          <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{sp.name}</h3>
+                          <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                           {streak && (
                             <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", streak.bg, streak.color)}>
                               {streak.label}
@@ -269,30 +271,30 @@ const Vendedores = () => {
                         <p className="text-sm text-muted-foreground">
                           {sp.completedSales} vendas • {sp.commission_rate}% comissão
                         </p>
+                      </Link>
                         
-                        {/* Progress Bar */}
-                        <div className="mt-2">
-                          <div className="relative h-2.5 bg-muted/30 rounded-full overflow-hidden">
-                            <div 
-                              className={cn(
-                                "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
-                                sp.goalProgress >= 100 
-                                  ? "bg-gradient-to-r from-success to-emerald-400" 
-                                  : "gradient-primary"
-                              )}
-                              style={{ width: `${Math.min(sp.goalProgress, 100)}%` }}
-                            />
-                            {sp.goalProgress > 100 && (
-                              <div 
-                                className="absolute inset-y-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse"
-                                style={{ 
-                                  left: "100%", 
-                                  width: `${Math.min(sp.goalProgress - 100, 50)}%`,
-                                  marginLeft: "-2px"
-                                }}
-                              />
+                      {/* Progress Bar */}
+                      <div className="flex-1 hidden lg:block">
+                        <div className="relative h-2.5 bg-muted/30 rounded-full overflow-hidden">
+                          <div 
+                            className={cn(
+                              "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
+                              sp.goalProgress >= 100 
+                                ? "bg-gradient-to-r from-success to-emerald-400" 
+                                : "gradient-primary"
                             )}
-                          </div>
+                            style={{ width: `${Math.min(sp.goalProgress, 100)}%` }}
+                          />
+                          {sp.goalProgress > 100 && (
+                            <div 
+                              className="absolute inset-y-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse"
+                              style={{ 
+                                left: "100%", 
+                                width: `${Math.min(sp.goalProgress - 100, 50)}%`,
+                                marginLeft: "-2px"
+                              }}
+                            />
+                          )}
                         </div>
                       </div>
 
