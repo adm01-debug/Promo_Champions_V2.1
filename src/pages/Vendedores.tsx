@@ -6,6 +6,7 @@ import { useSalespeopleRanking } from "@/hooks/useSalespeople";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SalespersonForm } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
+import { SalesChart } from "@/components/vendedores/SalesChart";
 const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
@@ -96,6 +97,13 @@ const Vendedores = () => {
             <p className="text-2xl font-bold">R$ {totalCommissions.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}</p>
           </div>
         </div>
+
+        {/* Sales Chart */}
+        {salespeople && salespeople.length > 0 && (
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
+            <SalesChart salespeople={salespeople} />
+          </div>
+        )}
 
         {/* Ranking List */}
         <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "250ms" }}>
