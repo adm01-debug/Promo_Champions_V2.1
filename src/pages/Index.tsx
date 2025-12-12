@@ -7,6 +7,7 @@ import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
+import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import {
   DollarSign,
@@ -84,7 +85,7 @@ const Index = () => {
         </div>
 
         {/* Second Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
             <FunnelChart />
           </div>
@@ -94,14 +95,17 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
             <KPIGrid />
           </div>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
+            <AlertsPanel />
+          </div>
         </div>
 
         {/* Third Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
             <RecentDeals />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
             <TopProducts />
           </div>
         </div>
