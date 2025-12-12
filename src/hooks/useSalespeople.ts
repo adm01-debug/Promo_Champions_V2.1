@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter } from "date-fns";
+
+export type PeriodFilter = "week" | "month" | "quarter";
 
 interface Salesperson {
   id: string;
@@ -17,13 +20,25 @@ interface SalesGoal {
   goal_amount: number;
 }
 
-interface SalespersonWithStats extends Salesperson {
+export interface SalespersonWithStats extends Salesperson {
   totalSales: number;
   completedSales: number;
   goalAmount: number;
   goalProgress: number;
   commission: number;
   rank: number;
+}
+
+export function getDateRange(period: PeriodFilter): { start: Date; end: Date } {
+  const now = new Date();
+  switch (period) {
+    case "week":
+      return { start: startOfWeek(now, { weekStartsOn: 1 }), end: endOfWeek(now, { weekStartsOn: 1 }) };
+    case "month":
+      return { start: startOfMonth(now), end: endOfMonth(now) };
+    case "quarter":
+      return { start: startOfQuarter(now), end: endOfQuarter(now) };
+  }
 }
 
 export function useSalespeople() {
@@ -60,9 +75,11 @@ export function useSalesGoals(month?: Date) {
   });
 }
 
-export function useSalespeopleRanking() {
+export function useSalespeopleRanking(period: PeriodFilter = "month") {
+  const { start, end } = getDateRange(period);
+
   return useQuery({
-    queryKey: ["salespeople_ranking"],
+    queryKey: ["salespeople_ranking", period],
     queryFn: async () => {
       // Fetch salespeople
       const { data: salespeople, error: spError } = await supabase
@@ -72,7 +89,7 @@ export function useSalespeopleRanking() {
 
       if (spError) throw spError;
 
-      // Fetch current month goals
+      // Fetch current month goals (goals are always monthly)
       const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
       const { data: goals, error: goalsError } = await supabase
         .from("sales_goals")
@@ -81,15 +98,12 @@ export function useSalespeopleRanking() {
 
       if (goalsError) throw goalsError;
 
-      // Fetch sales for current month
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
+      // Fetch sales for selected period
       const { data: sales, error: salesError } = await supabase
         .from("sales")
         .select("*")
-        .gte("created_at", startOfMonth.toISOString())
+        .gte("created_at", start.toISOString())
+        .lte("created_at", end.toISOString())
         .eq("status", "completed");
 
       if (salesError) throw salesError;
@@ -100,7 +114,16 @@ export function useSalespeopleRanking() {
         const totalSales = spSales.reduce((sum, s) => sum + Number(s.amount), 0);
         const goal = (goals || []).find(g => g.salesperson_id === sp.id);
         const goalAmount = goal ? Number(goal.goal_amount) : 0;
-        const goalProgress = goalAmount > 0 ? (totalSales / goalAmount) * 100 : 0;
+        
+        // Adjust goal based on period
+        let adjustedGoal = goalAmount;
+        if (period === "week") {
+          adjustedGoal = goalAmount / 4; // ~4 weeks per month
+        } else if (period === "quarter") {
+          adjustedGoal = goalAmount * 3; // 3 months per quarter
+        }
+        
+        const goalProgress = adjustedGoal > 0 ? (totalSales / adjustedGoal) * 100 : 0;
         const commission = totalSales * (Number(sp.commission_rate) / 100);
 
         return {
@@ -108,7 +131,7 @@ export function useSalespeopleRanking() {
           commission_rate: Number(sp.commission_rate),
           totalSales,
           completedSales: spSales.length,
-          goalAmount,
+          goalAmount: adjustedGoal,
           goalProgress,
           commission,
           rank: 0,
