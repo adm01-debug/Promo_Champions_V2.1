@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      category_metrics: {
+        Row: {
+          category: string
+          created_at: string
+          date: string
+          id: string
+          percentage: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          date: string
+          id?: string
+          percentage?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          date?: string
+          id?: string
+          percentage?: number
+        }
+        Relationships: []
+      }
+      daily_metrics: {
+        Row: {
+          avg_ticket: number
+          conversion_rate: number
+          created_at: string
+          date: string
+          id: string
+          new_clients: number
+          revenue: number
+          revenue_goal: number
+          total_sales: number
+        }
+        Insert: {
+          avg_ticket?: number
+          conversion_rate?: number
+          created_at?: string
+          date: string
+          id?: string
+          new_clients?: number
+          revenue?: number
+          revenue_goal?: number
+          total_sales?: number
+        }
+        Update: {
+          avg_ticket?: number
+          conversion_rate?: number
+          created_at?: string
+          date?: string
+          id?: string
+          new_clients?: number
+          revenue?: number
+          revenue_goal?: number
+          total_sales?: number
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          amount: number
+          category: string
+          client_name: string
+          created_at: string
+          id: string
+          product_name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category?: string
+          client_name: string
+          created_at?: string
+          id?: string
+          product_name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          client_name?: string
+          created_at?: string
+          id?: string
+          product_name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
