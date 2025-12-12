@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useSalespeopleRanking } from "@/hooks/useSalespeople";
+import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SalespersonForm } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
+import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
@@ -33,8 +34,15 @@ const getRankBadge = (rank: number) => {
   }
 };
 
+const periodLabels: Record<PeriodFilter, string> = {
+  week: "Semana",
+  month: "Mês",
+  quarter: "Trimestre",
+};
+
 const Vendedores = () => {
-  const { data: salespeople, isLoading, error } = useSalespeopleRanking();
+  const [period, setPeriod] = useState<PeriodFilter>("month");
+  const { data: salespeople, isLoading, error } = useSalespeopleRanking(period);
   const [editingSalesperson, setEditingSalesperson] = useState<{
     id: string;
     name: string;
@@ -59,10 +67,13 @@ const Vendedores = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold gradient-text">Ranking de Vendedores</h1>
-              <p className="text-sm text-muted-foreground">Metas e comissões do mês</p>
+              <p className="text-sm text-muted-foreground">Metas e comissões - {periodLabels[period]}</p>
             </div>
           </div>
-          <SalespersonForm />
+          <div className="flex items-center gap-3">
+            <PeriodFilterButtons value={period} onChange={setPeriod} />
+            <SalespersonForm />
+          </div>
         </div>
 
         {/* Summary Cards */}
@@ -110,7 +121,7 @@ const Vendedores = () => {
           <div className="p-5 border-b border-border/50">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Ranking Mensal</h2>
+              <h2 className="text-lg font-semibold">Ranking - {periodLabels[period]}</h2>
             </div>
             <p className="text-sm text-muted-foreground mt-1">Performance individual dos vendedores</p>
           </div>
