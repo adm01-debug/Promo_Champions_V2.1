@@ -1,96 +1,90 @@
-import { Card } from "@/components/ui/card";
-import { Target } from "lucide-react";
+import { Target, TrendingUp } from "lucide-react";
 
 interface GoalProgressProps {
   current: number;
   goal: number;
-  label?: string;
 }
 
-export function GoalProgress({ current, goal, label = "Meta do Mês" }: GoalProgressProps) {
+export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
   const percentage = Math.min((current / goal) * 100, 100);
   const remaining = goal - current;
-  const isAchieved = current >= goal;
+  const daysLeft = 19;
 
   return (
-    <Card className="p-6 shadow-soft overflow-hidden relative">
-      <div className="absolute top-0 right-0 w-32 h-32 gradient-primary opacity-5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-      
-      <div className="flex items-center justify-between mb-6">
+    <div className="glass rounded-xl p-6 h-full">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2.5 rounded-lg gradient-primary">
+          <Target className="h-5 w-5 text-white" />
+        </div>
         <div>
-          <h3 className="text-lg font-semibold text-foreground">{label}</h3>
+          <h3 className="text-lg font-semibold">Meta Mensal</h3>
           <p className="text-sm text-muted-foreground">Dezembro 2024</p>
         </div>
-        <div className="p-3 rounded-xl bg-primary/10">
-          <Target className="h-5 w-5 text-primary" />
+      </div>
+
+      <div className="relative mb-6">
+        <div className="flex justify-center">
+          <div className="relative w-48 h-48">
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                fill="none"
+                stroke="hsl(222, 30%, 14%)"
+                strokeWidth="8"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                fill="none"
+                stroke="url(#progressGradient)"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeDasharray={`${percentage * 2.64} 264`}
+                className="transition-all duration-1000 ease-out"
+              />
+              <defs>
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="hsl(24, 100%, 55%)" />
+                  <stop offset="100%" stopColor="hsl(280, 80%, 60%)" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-3xl font-bold gradient-text">{percentage.toFixed(1)}%</span>
+              <span className="text-xs text-muted-foreground">atingido</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-4xl font-bold text-foreground">
-              {new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-                minimumFractionDigits: 0,
-              }).format(current)}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              de{" "}
-              {new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-                minimumFractionDigits: 0,
-              }).format(goal)}
-            </p>
-          </div>
-          <div
-            className={`text-right px-4 py-2 rounded-xl ${
-              isAchieved ? "bg-success/10 text-success" : "bg-secondary text-muted-foreground"
-            }`}
-          >
-            <p className="text-2xl font-bold">{percentage.toFixed(0)}%</p>
-          </div>
+        <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
+          <span className="text-sm text-muted-foreground">Atual</span>
+          <span className="text-sm font-semibold">
+            R$ {current.toLocaleString("pt-BR")}
+          </span>
         </div>
-
-        <div className="relative h-4 bg-secondary rounded-full overflow-hidden">
-          <div
-            className={`absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out ${
-              isAchieved ? "gradient-success" : "gradient-primary"
-            }`}
-            style={{ width: `${percentage}%` }}
-          />
-          <div
-            className="absolute inset-y-0 rounded-full opacity-30 animate-pulse"
-            style={{
-              left: `${Math.max(percentage - 5, 0)}%`,
-              width: "10%",
-              background: isAchieved
-                ? "linear-gradient(90deg, transparent, hsl(142 76% 36%), transparent)"
-                : "linear-gradient(90deg, transparent, hsl(252 100% 65%), transparent)",
-            }}
-          />
+        <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
+          <span className="text-sm text-muted-foreground">Meta</span>
+          <span className="text-sm font-semibold">
+            R$ {goal.toLocaleString("pt-BR")}
+          </span>
         </div>
-
-        <div className="flex items-center justify-between text-sm">
-          {isAchieved ? (
-            <p className="text-success font-medium">🎉 Meta alcançada!</p>
-          ) : (
-            <p className="text-muted-foreground">
-              Faltam{" "}
-              <span className="font-semibold text-foreground">
-                {new Intl.NumberFormat("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                  minimumFractionDigits: 0,
-                }).format(remaining)}
-              </span>
-            </p>
-          )}
-          <p className="text-muted-foreground">19 dias restantes</p>
+        <div className="flex justify-between items-center p-3 rounded-lg bg-primary/10 border border-primary/20">
+          <span className="text-sm text-muted-foreground">Faltam</span>
+          <span className="text-sm font-semibold text-primary">
+            R$ {remaining.toLocaleString("pt-BR")}
+          </span>
         </div>
       </div>
-    </Card>
+
+      <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <TrendingUp className="h-4 w-4 text-success" />
+        <span>{daysLeft} dias restantes para bater a meta</span>
+      </div>
+    </div>
   );
-}
+};
