@@ -9,7 +9,8 @@ import {
   TrendingUp,
   Wallet,
   Bell,
-  Trophy
+  Trophy,
+  PieChart
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -37,6 +38,7 @@ const mainItems = [
 
 const teamItems = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy },
+  { title: "Analytics", url: "/analytics", icon: PieChart },
 ];
 
 const financeItems = [

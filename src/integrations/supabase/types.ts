@@ -74,6 +74,127 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_outcomes: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          outcome: string
+          reason: string
+          sale_id: string | null
+          salesperson_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          outcome: string
+          reason: string
+          sale_id?: string | null
+          salesperson_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          outcome?: string
+          reason?: string
+          sale_id?: string | null
+          salesperson_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_outcomes_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_outcomes_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_stage_history: {
+        Row: {
+          entered_at: string
+          exited_at: string | null
+          id: string
+          sale_id: string | null
+          stage: string
+        }
+        Insert: {
+          entered_at?: string
+          exited_at?: string | null
+          id?: string
+          sale_id?: string | null
+          stage: string
+        }
+        Update: {
+          entered_at?: string
+          exited_at?: string | null
+          id?: string
+          sale_id?: string | null
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_stage_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      objections_library: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          effectiveness_score: number | null
+          id: string
+          objection: string
+          response: string
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          effectiveness_score?: number | null
+          id?: string
+          objection: string
+          response: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          effectiveness_score?: number | null
+          id?: string
+          objection?: string
+          response?: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objections_library_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales: {
         Row: {
           amount: number
