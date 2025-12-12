@@ -7,6 +7,7 @@ import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
+import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import {
   DollarSign,
   ShoppingBag,
@@ -15,6 +16,11 @@ import {
 } from "lucide-react";
 
 const Index = () => {
+  const { data: kpis } = useDashboardKPIs();
+
+  const formatCurrency = (value: number) => 
+    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
@@ -28,8 +34,9 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
             <StatCard
               title="Faturamento Total"
-              value="R$ 847.250"
-              change={12.5}
+              value={kpis ? formatCurrency(kpis.current.totalRevenue) : "R$ 847.250"}
+              change={kpis?.changes.revenue ?? 12.5}
+              previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
               icon={DollarSign}
               variant="primary"
             />
@@ -37,24 +44,27 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
             <StatCard
               title="Vendas Realizadas"
-              value="312"
-              change={8.3}
+              value={kpis ? String(kpis.current.totalSales) : "312"}
+              change={kpis?.changes.sales ?? 8.3}
+              previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
               icon={ShoppingBag}
             />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             <StatCard
               title="Novos Clientes"
-              value="89"
-              change={-2.1}
+              value={kpis ? String(kpis.current.newClients) : "89"}
+              change={kpis?.changes.clients ?? -2.1}
+              previousValue={kpis ? String(kpis.previous.newClients) : undefined}
               icon={Users}
             />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
             <StatCard
               title="Taxa de Conversão"
-              value="12.6%"
-              change={15.7}
+              value={kpis ? `${kpis.current.conversionRate.toFixed(1)}%` : "12.6%"}
+              change={kpis?.changes.conversion ?? 15.7}
+              previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
               icon={TrendingUp}
             />
           </div>
@@ -69,7 +79,7 @@ const Index = () => {
 
           {/* Right Column - Goal */}
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-            <GoalProgress current={847250} goal={1000000} />
+            <GoalProgress current={kpis?.current.totalRevenue ?? 847250} goal={1000000} />
           </div>
         </div>
 
