@@ -8,7 +8,8 @@ import {
   HelpCircle,
   TrendingUp,
   Wallet,
-  Bell
+  Bell,
+  Trophy
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -32,6 +33,10 @@ const mainItems = [
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Produtos", url: "/produtos", icon: Package },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
+];
+
+const teamItems = [
+  { title: "Vendedores", url: "/vendedores", icon: Trophy },
 ];
 
 const financeItems = [
@@ -91,6 +96,30 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-wider">
+            Equipe
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {teamItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild tooltip={item.title}>
+                    <NavLink 
+                      to={item.url} 
+                      end 
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all hover:text-foreground hover:bg-muted/50"
+                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
+                    >
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!isCollapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-wider">
             Financeiro

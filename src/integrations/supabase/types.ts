@@ -82,6 +82,7 @@ export type Database = {
           created_at: string
           id: string
           product_name: string
+          salesperson_id: string | null
           status: string
           updated_at: string
         }
@@ -92,6 +93,7 @@ export type Database = {
           created_at?: string
           id?: string
           product_name: string
+          salesperson_id?: string | null
           status?: string
           updated_at?: string
         }
@@ -102,7 +104,81 @@ export type Database = {
           created_at?: string
           id?: string
           product_name?: string
+          salesperson_id?: string | null
           status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_goals: {
+        Row: {
+          created_at: string
+          goal_amount: number
+          id: string
+          month: string
+          salesperson_id: string
+        }
+        Insert: {
+          created_at?: string
+          goal_amount?: number
+          id?: string
+          month: string
+          salesperson_id: string
+        }
+        Update: {
+          created_at?: string
+          goal_amount?: number
+          id?: string
+          month?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_goals_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      salespeople: {
+        Row: {
+          avatar_url: string | null
+          commission_rate: number
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          commission_rate?: number
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          commission_rate?: number
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
           updated_at?: string
         }
         Relationships: []
