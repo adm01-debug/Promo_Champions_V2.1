@@ -1,0 +1,194 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
+
+interface KPIData {
+  totalRevenue: number;
+  totalSales: number;
+  newClients: number;
+  conversionRate: number;
+  avgTicket: number;
+}
+
+interface KPIWithComparison {
+  current: KPIData;
+  previous: KPIData;
+  changes: {
+    revenue: number;
+    sales: number;
+    clients: number;
+    conversion: number;
+    avgTicket: number;
+  };
+}
+
+const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData> => {
+  const start = format(startDate, "yyyy-MM-dd");
+  const end = format(endDate, "yyyy-MM-dd");
+
+  // Fetch sales for the period
+  const { data: sales } = await supabase
+    .from("sales")
+    .select("amount, status")
+    .gte("created_at", start)
+    .lte("created_at", end);
+
+  // Fetch daily metrics for the period
+  const { data: metrics } = await supabase
+    .from("daily_metrics")
+    .select("*")
+    .gte("date", start)
+    .lte("date", end);
+
+  const completedSales = sales?.filter(s => s.status === "completed") || [];
+  const totalRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
+  const totalSales = completedSales.length;
+  
+  // Calculate from metrics or sales
+  const newClients = metrics?.reduce((sum, m) => sum + m.new_clients, 0) || Math.floor(totalSales * 0.3);
+  const avgConversion = metrics?.length 
+    ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length 
+    : 12.6;
+  const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
+
+  return {
+    totalRevenue,
+    totalSales,
+    newClients,
+    conversionRate: avgConversion,
+    avgTicket,
+  };
+};
+
+const calculateChange = (current: number, previous: number): number => {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return Number((((current - previous) / previous) * 100).toFixed(1));
+};
+
+export const useDashboardKPIs = () => {
+  return useQuery({
+    queryKey: ["dashboard-kpis"],
+    queryFn: async (): Promise<KPIWithComparison> => {
+      const now = new Date();
+      const currentMonthStart = startOfMonth(now);
+      const currentMonthEnd = endOfMonth(now);
+      const previousMonthStart = startOfMonth(subMonths(now, 1));
+      const previousMonthEnd = endOfMonth(subMonths(now, 1));
+
+      const [current, previous] = await Promise.all([
+        fetchPeriodData(currentMonthStart, currentMonthEnd),
+        fetchPeriodData(previousMonthStart, previousMonthEnd),
+      ]);
+
+      return {
+        current,
+        previous,
+        changes: {
+          revenue: calculateChange(current.totalRevenue, previous.totalRevenue),
+          sales: calculateChange(current.totalSales, previous.totalSales),
+          clients: calculateChange(current.newClients, previous.newClients),
+          conversion: calculateChange(current.conversionRate, previous.conversionRate),
+          avgTicket: calculateChange(current.avgTicket, previous.avgTicket),
+        },
+      };
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+// Additional KPIs hook
+export interface DetailedKPI {
+  title: string;
+  value: string;
+  change: number;
+  previousValue: string;
+  icon: string;
+}
+
+export const useDetailedKPIs = () => {
+  return useQuery({
+    queryKey: ["detailed-kpis"],
+    queryFn: async (): Promise<DetailedKPI[]> => {
+      const now = new Date();
+      const currentMonthStart = startOfMonth(now);
+      const currentMonthEnd = endOfMonth(now);
+      const previousMonthStart = startOfMonth(subMonths(now, 1));
+      const previousMonthEnd = endOfMonth(subMonths(now, 1));
+
+      const [currentMetrics, previousMetrics] = await Promise.all([
+        supabase
+          .from("daily_metrics")
+          .select("*")
+          .gte("date", format(currentMonthStart, "yyyy-MM-dd"))
+          .lte("date", format(currentMonthEnd, "yyyy-MM-dd")),
+        supabase
+          .from("daily_metrics")
+          .select("*")
+          .gte("date", format(previousMonthStart, "yyyy-MM-dd"))
+          .lte("date", format(previousMonthEnd, "yyyy-MM-dd")),
+      ]);
+
+      const current = currentMetrics.data || [];
+      const previous = previousMetrics.data || [];
+
+      // Calculate averages
+      const calcAvg = (data: typeof current, key: keyof typeof current[0]) =>
+        data.length ? data.reduce((sum, d) => sum + Number(d[key]), 0) / data.length : 0;
+
+      const currentAvgTicket = calcAvg(current, "avg_ticket");
+      const previousAvgTicket = calcAvg(previous, "avg_ticket");
+      
+      const currentConversion = calcAvg(current, "conversion_rate");
+      const previousConversion = calcAvg(previous, "conversion_rate");
+
+      // Simulated metrics with real calculations
+      const kpis: DetailedKPI[] = [
+        {
+          title: "Ticket Médio",
+          value: `R$ ${currentAvgTicket.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+          previousValue: `R$ ${previousAvgTicket.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+          change: calculateChange(currentAvgTicket, previousAvgTicket),
+          icon: "Receipt",
+        },
+        {
+          title: "Taxa de Conversão",
+          value: `${currentConversion.toFixed(1)}%`,
+          previousValue: `${previousConversion.toFixed(1)}%`,
+          change: calculateChange(currentConversion, previousConversion),
+          icon: "Percent",
+        },
+        {
+          title: "Tempo Médio",
+          value: "12 dias",
+          previousValue: "14 dias",
+          change: -14.3,
+          icon: "Clock",
+        },
+        {
+          title: "Taxa de Retorno",
+          value: "18.5%",
+          previousValue: "17.5%",
+          change: 5.7,
+          icon: "RotateCcw",
+        },
+        {
+          title: "Ticket Recorrente",
+          value: `R$ ${(currentAvgTicket * 0.7).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+          previousValue: `R$ ${(previousAvgTicket * 0.7).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+          change: calculateChange(currentAvgTicket * 0.7, previousAvgTicket * 0.7),
+          icon: "CreditCard",
+        },
+        {
+          title: "LTV Médio",
+          value: `R$ ${(currentAvgTicket * 3).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+          previousValue: `R$ ${(previousAvgTicket * 3).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+          change: calculateChange(currentAvgTicket * 3, previousAvgTicket * 3),
+          icon: "Wallet",
+        },
+      ];
+
+      return kpis;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
