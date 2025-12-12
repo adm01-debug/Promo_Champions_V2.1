@@ -1,78 +1,105 @@
-import { Card } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, Package } from "lucide-react";
+import { Package, TrendingUp, TrendingDown } from "lucide-react";
 
 const products = [
-  { name: "CRM Enterprise", sales: 156, revenue: 702000, trend: 12.5 },
-  { name: "ERP Completo", sales: 98, revenue: 490000, trend: 8.3 },
-  { name: "PDV Cloud", sales: 234, revenue: 351000, trend: -2.1 },
-  { name: "Analytics Pro", sales: 87, revenue: 261000, trend: 15.7 },
-  { name: "TMS Complete", sales: 45, revenue: 225000, trend: 5.4 },
+  {
+    name: "Plano Enterprise",
+    revenue: 285000,
+    sales: 12,
+    trend: 15.2,
+    color: "from-primary to-secondary",
+  },
+  {
+    name: "Plano Business",
+    revenue: 198500,
+    sales: 28,
+    trend: 8.7,
+    color: "from-secondary to-chart-3",
+  },
+  {
+    name: "Plano Starter",
+    revenue: 156000,
+    sales: 45,
+    trend: -3.2,
+    color: "from-chart-3 to-chart-5",
+  },
+  {
+    name: "Add-ons Premium",
+    revenue: 98000,
+    sales: 67,
+    trend: 22.1,
+    color: "from-chart-5 to-success",
+  },
+  {
+    name: "Consultoria",
+    revenue: 75000,
+    sales: 8,
+    trend: 5.4,
+    color: "from-success to-warning",
+  },
 ];
 
-export function TopProducts() {
+export const TopProducts = () => {
   const maxRevenue = Math.max(...products.map((p) => p.revenue));
 
   return (
-    <Card className="p-6 shadow-soft">
+    <div className="glass rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Top Produtos</h3>
-          <p className="text-sm text-muted-foreground">Mais vendidos este mês</p>
+          <h3 className="text-lg font-semibold">Top Produtos</h3>
+          <p className="text-sm text-muted-foreground">Por faturamento</p>
         </div>
-        <div className="p-2 rounded-lg bg-secondary">
-          <Package className="h-5 w-5 text-muted-foreground" />
+        <div className="p-2 rounded-lg bg-muted">
+          <Package className="h-4 w-4 text-muted-foreground" />
         </div>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         {products.map((product, index) => {
           const width = (product.revenue / maxRevenue) * 100;
           const isPositive = product.trend > 0;
+          const TrendIcon = isPositive ? TrendingUp : TrendingDown;
 
           return (
             <div key={product.name} className="group">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-muted-foreground w-5">
+                  <span className="text-xs text-muted-foreground font-medium w-5">
                     #{index + 1}
                   </span>
-                  <span className="font-medium text-foreground">{product.name}</span>
+                  <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                    {product.name}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-foreground">
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                      minimumFractionDigits: 0,
-                    }).format(product.revenue)}
+                  <span className="text-sm font-semibold">
+                    R$ {(product.revenue / 1000).toFixed(0)}k
                   </span>
-                  <span
-                    className={`flex items-center gap-0.5 text-xs font-semibold ${
+                  <div
+                    className={`flex items-center gap-1 text-xs ${
                       isPositive ? "text-success" : "text-destructive"
                     }`}
                   >
-                    {isPositive ? (
-                      <TrendingUp className="h-3 w-3" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3" />
-                    )}
-                    {Math.abs(product.trend)}%
-                  </span>
+                    <TrendIcon className="h-3 w-3" />
+                    {isPositive ? "+" : ""}
+                    {product.trend}%
+                  </div>
                 </div>
               </div>
-              <div className="h-2 bg-secondary rounded-full overflow-hidden">
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className="h-full gradient-primary rounded-full transition-all duration-500 ease-out"
+                  className={`h-full rounded-full bg-gradient-to-r ${product.color} transition-all duration-700 ease-out`}
                   style={{ width: `${width}%` }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {product.sales} vendas
-              </p>
+              <div className="flex justify-end mt-1">
+                <span className="text-xs text-muted-foreground">
+                  {product.sales} vendas
+                </span>
+              </div>
             </div>
           );
         })}
       </div>
-    </Card>
+    </div>
   );
-}
+};

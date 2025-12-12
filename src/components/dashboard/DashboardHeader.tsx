@@ -1,3 +1,4 @@
+import { Calendar, RefreshCw, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -6,59 +7,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RefreshCw, Download, Calendar } from "lucide-react";
-import { useState } from "react";
 
-export function DashboardHeader() {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1500);
-  };
-
+export const DashboardHeader = () => {
   return (
-    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">
-          Dashboard de Vendas
+        <h1 className="text-3xl font-bold">
+          Dashboard de <span className="gradient-text">Vendas</span>
         </h1>
         <p className="text-muted-foreground mt-1">
-          Acompanhe suas métricas e desempenho em tempo real
+          Acompanhe suas métricas e resultados em tempo real
         </p>
       </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Select defaultValue="mes">
-          <SelectTrigger className="w-[160px] bg-card border-border shadow-sm">
+      <div className="flex items-center gap-3">
+        <Select defaultValue="30d">
+          <SelectTrigger className="w-[160px] glass border-border/50">
             <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
             <SelectValue placeholder="Período" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hoje">Hoje</SelectItem>
-            <SelectItem value="semana">Esta Semana</SelectItem>
-            <SelectItem value="mes">Este Mês</SelectItem>
-            <SelectItem value="trimestre">Trimestre</SelectItem>
-            <SelectItem value="ano">Este Ano</SelectItem>
+          <SelectContent className="bg-card border-border">
+            <SelectItem value="7d">Últimos 7 dias</SelectItem>
+            <SelectItem value="30d">Últimos 30 dias</SelectItem>
+            <SelectItem value="90d">Últimos 90 dias</SelectItem>
+            <SelectItem value="1y">Este ano</SelectItem>
           </SelectContent>
         </Select>
-
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          onClick={handleRefresh}
-          className="bg-card shadow-sm"
+          className="glass border border-border/50 hover:bg-muted"
         >
-          <RefreshCw
-            className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-          />
+          <RefreshCw className="h-4 w-4" />
         </Button>
-
-        <Button className="gradient-primary shadow-sm gap-2">
-          <Download className="h-4 w-4" />
+        <Button className="gradient-primary text-white hover:opacity-90">
+          <Download className="h-4 w-4 mr-2" />
           Exportar
         </Button>
       </div>
     </div>
   );
-}
+};
