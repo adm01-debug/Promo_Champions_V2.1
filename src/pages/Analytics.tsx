@@ -11,8 +11,20 @@ import { CoachingComparison } from '@/components/analytics/CoachingComparison';
 import { PerformanceComparison } from '@/components/analytics/PerformanceComparison';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare } from 'lucide-react';
+import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
+import { AnalyticsPageLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 
 export default function Analytics() {
+  const { isLoading } = useWinLossAnalysis();
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <AnalyticsPageLoadingSkeleton />
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="space-y-6">

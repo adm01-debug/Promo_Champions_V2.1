@@ -4,12 +4,16 @@ import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { GitBranch, Zap, Clock, CheckCircle } from "lucide-react";
+import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
   const deleteCadence = useDeleteCadence();
+
+  if (isLoading) {
+    return <CadenciasLoadingSkeleton />;
+  }
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 
@@ -94,13 +98,7 @@ export default function Cadencias() {
                 </div>
               </CardHeader>
               <CardContent>
-                {isLoading ? (
-                  <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => (
-                      <Skeleton key={i} className="h-32 w-full" />
-                    ))}
-                  </div>
-                ) : cadences?.length === 0 ? (
+                {cadences?.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                     <GitBranch className="h-12 w-12 mb-3 opacity-50" />
                     <p className="text-sm font-medium">Nenhuma cadência criada</p>

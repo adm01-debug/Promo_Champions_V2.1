@@ -1,8 +1,16 @@
 import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
 import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
 import { Kanban } from "lucide-react";
+import { usePipelineDeals } from "@/hooks/usePipeline";
+import { PipelineLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 
 export default function Pipeline() {
+  const { isLoading } = usePipelineDeals();
+
+  if (isLoading) {
+    return <PipelineLoadingSkeleton />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
