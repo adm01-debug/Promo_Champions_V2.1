@@ -119,16 +119,17 @@ export function useActiveCadencesBySaleIds(saleIds: string[]) {
           cadence:cadences(name)
         `)
         .in("sale_id", saleIds)
-        .eq("status", "active");
+        .in("status", ["active", "paused"]);
 
       if (error) throw error;
       
       // Create a map of sale_id -> cadence info
-      const cadenceMap: Record<string, { cadenceName: string; currentStep: number }> = {};
+      const cadenceMap: Record<string, { cadenceName: string; currentStep: number; status: 'active' | 'paused' }> = {};
       data?.forEach(pc => {
         cadenceMap[pc.sale_id] = {
           cadenceName: (pc.cadence as any)?.name || "Cadência",
           currentStep: pc.current_step,
+          status: pc.status as 'active' | 'paused',
         };
       });
       
