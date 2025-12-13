@@ -66,7 +66,7 @@ export function CreateTaskDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
+        <Button variant="glow" className="gap-2">
           <Plus className="h-4 w-4" />
           Nova Tarefa
         </Button>
@@ -176,7 +176,7 @@ export function CreateTaskDialog() {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={createTask.isPending || !title.trim()}>
+            <Button variant="glow" type="submit" disabled={createTask.isPending || !title.trim()}>
               {createTask.isPending ? 'Criando...' : 'Criar Tarefa'}
             </Button>
           </div>
