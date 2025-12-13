@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface DealTimelineEvent {
   id: string;
-  type: "activity" | "stage_change";
+  type: "activity" | "stage_change" | "task_completed";
   timestamp: string;
   // For activities
   activity_type?: string;
@@ -14,6 +14,10 @@ export interface DealTimelineEvent {
   from_stage?: string;
   to_stage?: string;
   duration_in_stage?: number; // in hours
+  // For tasks
+  task_title?: string;
+  task_type?: string;
+  task_description?: string;
 }
 
 export function useDealTimeline(saleId: string | null) {
@@ -39,6 +43,17 @@ export function useDealTimeline(saleId: string | null) {
         .order("entered_at", { ascending: false });
 
       if (stageError) throw stageError;
+
+      // Fetch completed tasks for this deal
+      const { data: tasks, error: tasksError } = await supabase
+        .from("tasks")
+        .select("id, title, task_type, description, completed_at")
+        .eq("sale_id", saleId)
+        .eq("status", "completed")
+        .not("completed_at", "is", null)
+        .order("completed_at", { ascending: false });
+
+      if (tasksError) throw tasksError;
 
       const events: DealTimelineEvent[] = [];
 
@@ -75,6 +90,18 @@ export function useDealTimeline(saleId: string | null) {
           from_stage: next?.stage,
           to_stage: current.stage,
           duration_in_stage: durationHours,
+        });
+      }
+
+      // Add completed tasks
+      for (const task of tasks || []) {
+        events.push({
+          id: task.id,
+          type: "task_completed",
+          timestamp: task.completed_at!,
+          task_title: task.title,
+          task_type: task.task_type,
+          task_description: task.description || undefined,
         });
       }
 
