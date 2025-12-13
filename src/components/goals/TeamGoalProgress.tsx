@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, Target, Calendar, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Calendar, Zap, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface TeamGoalProgressProps {
@@ -33,19 +33,22 @@ export function TeamGoalProgress({
   const projectionProgress = totalGoal > 0 ? Math.min((projection / totalGoal) * 100, 150) : 0;
 
   return (
-    <Card variant="elevated" className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
-      <div className={`h-1.5 ${onTrack ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50" : "bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50"}`} />
+    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
+      <div className={`h-1.5 ${onTrack 
+        ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50" 
+        : "bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50"
+      }`} />
       <CardHeader className="pb-3 border-b border-border/30">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-display font-bold flex items-center gap-2">
-            <div className="p-2 rounded-xl gradient-primary shadow-md">
-              <Target className="h-5 w-5 text-white" />
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:scale-110 transition-transform">
+              <Target className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text">Meta da Equipe</span>
           </CardTitle>
           <Badge 
             variant="outline" 
-            className={`shadow-sm ${onTrack 
+            className={`shadow-sm animate-fade-in ${onTrack 
               ? "bg-status-success/10 text-status-success border-status-success/30" 
               : "bg-status-warning/10 text-status-warning border-status-warning/30"
             }`}
@@ -60,7 +63,7 @@ export function TeamGoalProgress({
       </CardHeader>
       <CardContent className="space-y-6 pt-4">
         {/* Main Progress */}
-        <div className="space-y-4">
+        <div className="space-y-4 animate-fade-in">
           <div className="flex items-end justify-between">
             <div>
               <p className="text-4xl font-display font-bold gradient-text">{formatCurrency(totalSales)}</p>
@@ -77,18 +80,22 @@ export function TeamGoalProgress({
           <div className="relative">
             <Progress value={progressCapped} className="h-5" />
             {progress >= 100 && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-display font-bold text-primary-foreground animate-pulse">META BATIDA! 🎉</span>
+              <div className="absolute inset-0 flex items-center justify-center gap-1">
+                <Trophy className="h-3.5 w-3.5 text-primary-foreground" />
+                <span className="text-xs font-display font-bold text-primary-foreground animate-pulse">META BATIDA!</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Projection */}
-        <div className="p-4 rounded-xl glass border border-border/30 space-y-3">
+        <div 
+          className="p-4 rounded-xl glass border border-border/30 space-y-3 hover-lift transition-all animate-fade-in"
+          style={{ animationDelay: '50ms' }}
+        >
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-primary/20">
+              <div className="p-1.5 rounded-lg bg-primary/10">
                 <Zap className="h-4 w-4 text-primary" />
               </div>
               <span className="font-medium">Projeção de Fechamento</span>
@@ -99,7 +106,10 @@ export function TeamGoalProgress({
           </div>
           <div className="relative h-2.5 bg-muted/50 rounded-full overflow-hidden border border-border/30">
             <div 
-              className={`absolute h-full transition-all duration-500 ${onTrack ? "bg-gradient-to-r from-status-success to-status-success/70" : "bg-gradient-to-r from-status-warning to-status-warning/70"}`}
+              className={`absolute h-full transition-all duration-500 ${onTrack 
+                ? "bg-gradient-to-r from-status-success to-status-success/70" 
+                : "bg-gradient-to-r from-status-warning to-status-warning/70"
+              }`}
               style={{ width: `${Math.min(projectionProgress, 100)}%` }}
             />
             {/* Goal marker */}
@@ -110,19 +120,33 @@ export function TeamGoalProgress({
           </div>
           <p className="text-xs text-muted-foreground text-center font-medium">
             {onTrack 
-              ? `Projeção ${((projection / totalGoal) * 100 - 100).toFixed(0)}% acima da meta 🚀`
-              : `Faltam ${formatCurrency(totalGoal - projection)} para bater a meta`
+              ? <span className="text-status-success">Projeção {((projection / totalGoal) * 100 - 100).toFixed(0)}% acima da meta 🚀</span>
+              : <span className="text-status-warning">Faltam {formatCurrency(totalGoal - projection)} para bater a meta</span>
             }
           </p>
         </div>
 
         {/* Daily Stats */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all">
+          <div 
+            className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in"
+            style={{ animationDelay: '100ms' }}
+          >
+            <div className="p-2 rounded-lg bg-primary/10 w-fit mx-auto mb-2 group-hover:scale-110 transition-transform">
+              <TrendingUp className="h-4 w-4 text-primary" />
+            </div>
             <p className="text-xl font-display font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mt-1">Média diária atual</p>
           </div>
-          <div className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all">
+          <div 
+            className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in"
+            style={{ animationDelay: '150ms' }}
+          >
+            <div className={`p-2 rounded-lg w-fit mx-auto mb-2 group-hover:scale-110 transition-transform ${
+              requiredDailyAverage > dailyAverage ? "bg-status-warning/10" : "bg-status-success/10"
+            }`}>
+              <Target className={`h-4 w-4 ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`} />
+            </div>
             <p className={`text-xl font-display font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
@@ -131,7 +155,10 @@ export function TeamGoalProgress({
         </div>
 
         {/* Days Progress */}
-        <div className="flex items-center gap-3 text-sm p-3 rounded-xl glass border border-border/30">
+        <div 
+          className="flex items-center gap-3 text-sm p-3 rounded-xl glass border border-border/30 hover-lift transition-all animate-fade-in"
+          style={{ animationDelay: '200ms' }}
+        >
           <div className="p-2 rounded-lg bg-muted/50">
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </div>
