@@ -26,7 +26,7 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   // Trigger celebration when goal is reached
   useEffect(() => {
     if (hasReachedGoal) {
-      celebrate(data.salesperson_id, data.salesperson_name);
+      celebrate(data.salesperson_id, data.salesperson_name, data.salesperson_id);
     }
   }, [hasReachedGoal, data.salesperson_id, data.salesperson_name, celebrate]);
 
