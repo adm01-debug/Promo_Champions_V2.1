@@ -1138,7 +1138,10 @@ export function PlaybooksLoadingSkeleton() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div 
+        className="flex items-center gap-3 opacity-0 animate-fade-in" 
+        style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
+      >
         <Skeleton className="p-3 h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
         <div className="space-y-2">
           <Skeleton className="h-7 w-52" variant="intense" shimmer="glow" />
@@ -1147,7 +1150,10 @@ export function PlaybooksLoadingSkeleton() {
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-4 gap-2 p-1 bg-card/50 rounded-lg border border-border/50">
+      <div 
+        className="grid grid-cols-4 gap-2 p-1 bg-card/50 rounded-lg border border-border/50 opacity-0 animate-fade-in"
+        style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+      >
         {[...Array(4)].map((_, i) => (
           <Skeleton 
             key={i} 
@@ -1163,7 +1169,8 @@ export function PlaybooksLoadingSkeleton() {
         {[...Array(3)].map((_, i) => (
           <div 
             key={i} 
-            className={`glass rounded-xl border overflow-hidden ${i === 0 ? 'border-primary/30' : 'border-border/40'}`}
+            className={`glass rounded-xl border overflow-hidden opacity-0 animate-fade-in ${i === 0 ? 'border-primary/30' : 'border-border/40'}`}
+            style={{ animationDelay: `${160 + i * 100}ms`, animationFillMode: "forwards" }}
           >
             {/* Card Header */}
             <div className="p-4 border-b border-border/30">
