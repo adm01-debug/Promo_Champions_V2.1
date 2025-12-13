@@ -11,6 +11,7 @@ import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { cn } from "@/lib/utils";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
@@ -93,8 +94,13 @@ const Vendedores = () => {
   const topSeller = salespeople?.[0];
 
   return (
-    <div className="min-h-screen bg-background p-6 lg:p-8">
-      <div className="max-w-[1400px] mx-auto space-y-6">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<VendedoresLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background p-6 lg:p-8">
+        <div className="max-w-[1400px] mx-auto space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -385,6 +391,7 @@ const Vendedores = () => {
         />
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
