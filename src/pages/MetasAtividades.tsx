@@ -11,6 +11,7 @@ import { ActivityGoalEditDialog } from "@/components/activities/ActivityGoalEdit
 import { DailyActivityRanking } from "@/components/activities/DailyActivityRanking";
 import { AchievementsHistory } from "@/components/achievements/AchievementsHistory";
 import { StreakRanking } from "@/components/achievements/StreakRanking";
+import { TeamAchievementStats } from "@/components/achievements/TeamAchievementStats";
 import { useCelebration } from "@/hooks/useCelebration";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -134,6 +135,10 @@ export default function MetasAtividades() {
               <Flame className="h-4 w-4" />
               Ranking de Sequências
             </TabsTrigger>
+            <TabsTrigger value="stats" className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Estatísticas
+            </TabsTrigger>
             <TabsTrigger value="history" className="gap-2">
               <Trophy className="h-4 w-4" />
               Histórico
@@ -191,6 +196,10 @@ export default function MetasAtividades() {
 
           <TabsContent value="streaks">
             <StreakRanking />
+          </TabsContent>
+
+          <TabsContent value="stats">
+            <TeamAchievementStats />
           </TabsContent>
 
           <TabsContent value="history">
