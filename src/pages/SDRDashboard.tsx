@@ -9,6 +9,7 @@ import { RecentProspects } from "@/components/sdr/RecentProspects";
 import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { SDRDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { 
   Users, 
   UserCheck, 
@@ -25,11 +26,12 @@ export default function SDRDashboard() {
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
 
-  if (isLoading) {
-    return <SDRDashboardLoadingSkeleton />;
-  }
-
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<SDRDashboardLoadingSkeleton />}
+      duration={400}
+    >
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
         {/* Header */}
@@ -154,5 +156,6 @@ export default function SDRDashboard() {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 }

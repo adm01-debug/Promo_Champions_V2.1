@@ -10,6 +10,7 @@ import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import {
   DollarSign,
   ShoppingBag,
@@ -23,11 +24,12 @@ const Index = () => {
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
-  if (isLoading) {
-    return <DashboardLoadingSkeleton />;
-  }
-
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<DashboardLoadingSkeleton />}
+      duration={400}
+    >
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
         {/* Header */}
@@ -116,6 +118,7 @@ const Index = () => {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
