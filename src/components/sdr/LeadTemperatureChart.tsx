@@ -9,20 +9,20 @@ export function LeadTemperatureChart() {
 
   if (isLoading) {
     return (
-      <Card className="glass border-border/40 dark:border-glow card-elevated">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-streak to-status-error shadow-md animate-pulse">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-streak to-status-error shadow-lg shadow-streak/20 animate-pulse">
               <Thermometer className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Temperatura dos Leads</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-40 w-full rounded-full mx-auto max-w-[160px]" />
+          <Skeleton className="h-40 w-full rounded-full mx-auto max-w-[160px] animate-shimmer" />
           <div className="grid grid-cols-2 gap-2 mt-4">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-5 w-full" />
+              <Skeleton key={i} className="h-5 w-full animate-shimmer" style={{ animationDelay: `${i * 50}ms` }} />
             ))}
           </div>
         </CardContent>
@@ -40,10 +40,10 @@ export function LeadTemperatureChart() {
   };
 
   return (
-    <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300 animate-fade-in">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-streak to-status-error shadow-md">
+        <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
+          <div className="p-1.5 rounded-lg bg-gradient-to-br from-streak to-status-error shadow-lg shadow-streak/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-streak/40">
             <Thermometer className="h-4 w-4 text-white" />
           </div>
           <span className="gradient-text">Temperatura dos Leads</span>
@@ -66,7 +66,7 @@ export function LeadTemperatureChart() {
                   <Cell 
                     key={`cell-${index}`} 
                     fill={entry.color}
-                    style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
+                    style={{ filter: `drop-shadow(0 4px 8px ${entry.color}40)` }}
                   />
                 ))}
               </Pie>
@@ -75,7 +75,7 @@ export function LeadTemperatureChart() {
                   backgroundColor: 'hsl(var(--card))', 
                   border: '1px solid hsl(var(--border) / 0.5)',
                   borderRadius: '12px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                  boxShadow: '0 10px 40px -10px rgba(0,0,0,0.2)'
                 }}
                 formatter={(value: number, name: string) => [`${value} leads`, name]}
               />
@@ -86,18 +86,18 @@ export function LeadTemperatureChart() {
           {distribution?.map((item, index) => (
             <div 
               key={item.name} 
-              className="flex items-center gap-2 text-xs p-1.5 rounded-lg hover:bg-muted/30 transition-all duration-200 group animate-fade-in cursor-default"
+              className="flex items-center gap-2 text-xs p-2 rounded-lg glass border border-border/30 hover:border-primary/40 transition-all duration-300 group animate-fade-in cursor-pointer"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div 
-                className="h-2.5 w-2.5 rounded-full shadow-sm transition-transform duration-200 group-hover:scale-125" 
-                style={{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}60` }}
+                className="h-2.5 w-2.5 rounded-full shadow-md transition-all duration-300 group-hover:scale-150" 
+                style={{ backgroundColor: item.color, boxShadow: `0 0 12px ${item.color}60` }}
               />
-              <span className="flex items-center gap-1 font-medium group-hover:text-primary transition-colors">
+              <span className="flex items-center gap-1 font-display font-medium group-hover:text-primary transition-colors">
                 {getIcon(item.name)}
                 {item.name}
               </span>
-              <span className="text-muted-foreground ml-auto font-semibold">{item.value}</span>
+              <span className="text-muted-foreground ml-auto font-display font-semibold transition-transform duration-300 group-hover:scale-110">{item.value}</span>
             </div>
           ))}
         </div>
