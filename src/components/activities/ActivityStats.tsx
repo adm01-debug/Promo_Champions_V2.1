@@ -46,17 +46,21 @@ export function ActivityStats() {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-      {statItems.map(item => {
+      {statItems.map((item, index) => {
         const Icon = item.icon;
+        const isFirst = index === 0;
         return (
-          <Card key={item.label} className="glass border-border/40">
+          <Card 
+            key={item.label} 
+            className={`glass border-border/40 dark:border-glow card-elevated transition-all duration-300 hover-lift ${isFirst ? 'ring-1 ring-primary/20' : ''}`}
+          >
             <CardContent className="p-3 flex items-center gap-3">
-              <div className={`p-2 rounded-lg bg-muted/50 ${item.color}`}>
-                <Icon className="h-4 w-4" />
+              <div className={`p-2 rounded-lg transition-colors ${isFirst ? 'bg-gradient-to-br from-primary/30 to-accent/20' : 'bg-muted/50 group-hover:bg-muted/70'}`}>
+                <Icon className={`h-4 w-4 ${isFirst ? 'gradient-primary' : item.color}`} />
               </div>
               <div>
-                <p className="text-lg font-bold">{item.value}</p>
-                <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                <p className={`text-lg font-display font-bold ${isFirst ? 'gradient-text' : ''}`}>{item.value}</p>
+                <p className="text-[10px] text-muted-foreground font-medium">{item.label}</p>
               </div>
             </CardContent>
           </Card>

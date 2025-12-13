@@ -67,10 +67,12 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
   };
 
   return (
-    <Card className="glass border-border/40">
+    <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Plus className="h-4 w-4 text-primary" />
+        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+          <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+            <Plus className="h-4 w-4 gradient-primary" />
+          </div>
           Registrar Atividade
         </CardTitle>
       </CardHeader>
@@ -78,7 +80,7 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Activity Type - Visual Buttons */}
           <div className="space-y-2">
-            <Label className="text-xs">Tipo de Atividade</Label>
+            <Label className="text-xs font-medium text-muted-foreground">Tipo de Atividade</Label>
             <div className="grid grid-cols-3 gap-2">
               {activityTypes.map(type => {
                 const Icon = type.icon;
@@ -87,13 +89,13 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
                     key={type.value}
                     type="button"
                     onClick={() => setActivityType(type.value)}
-                    className={`p-2 rounded-lg border text-xs font-medium flex flex-col items-center gap-1 transition-all ${
+                    className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-all duration-200 ${
                       activityType === type.value
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                        ? "border-primary bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-sm shadow-primary/20"
+                        : "border-border/50 hover:border-primary/50 text-muted-foreground hover:text-foreground bg-muted/30 hover:bg-muted/50"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className={`h-4 w-4 ${activityType === type.value ? 'gradient-primary' : ''}`} />
                     {type.label}
                   </button>
                 );
@@ -103,17 +105,17 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
 
           {/* Outcome */}
           <div className="space-y-2">
-            <Label className="text-xs">Resultado</Label>
+            <Label className="text-xs font-medium text-muted-foreground">Resultado</Label>
             <div className="grid grid-cols-4 gap-1.5">
               {outcomes.map(o => (
                 <button
                   key={o.value}
                   type="button"
                   onClick={() => setOutcome(o.value)}
-                  className={`px-2 py-1.5 rounded-md text-[10px] font-medium transition-all ${
+                  className={`px-2 py-1.5 rounded-md text-[10px] font-medium transition-all duration-200 border ${
                     outcome === o.value
-                      ? `${o.color} text-primary-foreground`
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      ? `${o.color} text-primary-foreground border-transparent shadow-sm`
+                      : "bg-muted/40 text-muted-foreground hover:bg-muted/60 border-border/30 hover:border-border/50"
                   }`}
                 >
                   {o.label}
@@ -124,12 +126,12 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
 
           {/* Salesperson */}
           <div className="space-y-2">
-            <Label className="text-xs">Vendedor</Label>
+            <Label className="text-xs font-medium text-muted-foreground">Vendedor</Label>
             <Select value={salespersonId} onValueChange={setSalespersonId}>
-              <SelectTrigger className="h-9 text-xs">
+              <SelectTrigger className="h-9 text-xs bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors">
                 <SelectValue placeholder="Selecione o vendedor" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="glass border-border/50">
                 {salespeople?.map(sp => (
                   <SelectItem key={sp.id} value={sp.id} className="text-xs">
                     {sp.name}
@@ -142,41 +144,41 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
           {/* Contact Name & Duration */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="text-xs">Contato</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Contato</Label>
               <Input
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
                 placeholder="Nome do contato"
-                className="h-9 text-xs"
+                className="h-9 text-xs bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs">Duração (min)</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Duração (min)</Label>
               <Input
                 type="number"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="5"
-                className="h-9 text-xs"
+                className="h-9 text-xs bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
               />
             </div>
           </div>
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label className="text-xs">Observações</Label>
+            <Label className="text-xs font-medium text-muted-foreground">Observações</Label>
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Detalhes da atividade..."
-              className="min-h-[60px] text-xs resize-none"
+              className="min-h-[60px] text-xs resize-none bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
             />
           </div>
 
           <Button 
             variant="glow"
             type="submit" 
-            className="w-full h-9 text-xs"
+            className="w-full h-9 text-xs font-medium"
             disabled={createActivity.isPending}
           >
             {createActivity.isPending ? "Registrando..." : "Registrar Atividade"}
