@@ -20,16 +20,17 @@ export function DashboardLoadingSkeleton() {
         <HeaderSkeleton />
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {[...Array(4)].map((_, i) => (
-            <StatCardSkeleton key={i} />
-          ))}
+          <StatCardSkeleton highlighted />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <ChartSkeleton height="h-[350px]" />
+            <ChartSkeleton height="h-[350px]" highlighted />
           </div>
-          <GoalProgressSkeleton />
+          <GoalProgressSkeleton highlighted />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -52,11 +53,10 @@ export function PipelineLoadingSkeleton() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-3 rounded-xl bg-muted/20">
-          <div className="h-6 w-6" />
-        </div>
+        <Skeleton className="p-3 h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
         <div className="space-y-2">
-          <HeaderSkeleton />
+          <Skeleton className="h-8 w-48" variant="intense" shimmer="intense" />
+          <Skeleton className="h-4 w-64" />
         </div>
       </div>
 
@@ -79,8 +79,8 @@ export function MetasLoadingSkeleton() {
         <HeaderSkeleton />
         <QuickStatsSkeleton />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <GoalProgressSkeleton />
-          <LeaderboardSkeleton rows={4} />
+          <GoalProgressSkeleton highlighted />
+          <LeaderboardSkeleton rows={4} highlighted />
           <LeaderboardSkeleton rows={4} />
         </div>
       </div>
@@ -95,15 +95,16 @@ export function SDRDashboardLoadingSkeleton() {
         <HeaderSkeleton />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {[...Array(4)].map((_, i) => (
-            <StatCardSkeleton key={i} />
-          ))}
+          <StatCardSkeleton highlighted />
+          <StatCardSkeleton highlighted />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-          {[...Array(3)].map((_, i) => (
-            <StatCardSkeleton key={i} />
-          ))}
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -113,7 +114,7 @@ export function SDRDashboardLoadingSkeleton() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <LeaderboardSkeleton rows={4} />
+          <LeaderboardSkeleton rows={4} highlighted />
           <TableSkeleton rows={4} />
           <AlertsPanelSkeleton />
         </div>
@@ -129,20 +130,20 @@ export function CloserDashboardLoadingSkeleton() {
         <HeaderSkeleton />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {[...Array(4)].map((_, i) => (
-            <StatCardSkeleton key={i} />
-          ))}
+          <StatCardSkeleton highlighted />
+          <StatCardSkeleton highlighted />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-          {[...Array(2)].map((_, i) => (
-            <StatCardSkeleton key={i} />
-          ))}
+          <StatCardSkeleton />
+          <StatCardSkeleton />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChartSkeleton height="h-[300px]" />
-          <LeaderboardSkeleton rows={4} />
+          <ChartSkeleton height="h-[300px]" highlighted />
+          <LeaderboardSkeleton rows={4} highlighted />
         </div>
 
         <TableSkeleton rows={5} />
