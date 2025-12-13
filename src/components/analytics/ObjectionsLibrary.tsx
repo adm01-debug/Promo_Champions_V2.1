@@ -196,8 +196,8 @@ export function ObjectionsLibrary() {
                     </Button>
                   </div>
                 </div>
-                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 mt-2">
-                  <p className="text-sm text-green-700 dark:text-green-300 whitespace-pre-wrap">
+                <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-3 mt-2">
+                  <p className="text-sm text-status-success whitespace-pre-wrap">
                     {obj.response}
                   </p>
                 </div>
