@@ -54,6 +54,7 @@ const teamItems = [
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
   { title: "Playbooks", url: "/playbooks", icon: BookOpen },
+  { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
   { title: "Analytics", url: "/analytics", icon: PieChart },
 ];
 

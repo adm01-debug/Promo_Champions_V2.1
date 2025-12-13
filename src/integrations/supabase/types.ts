@@ -632,6 +632,7 @@ export type Database = {
           id: string
           product_name: string
           salesperson_id: string | null
+          source: string | null
           status: string
           updated_at: string
         }
@@ -643,6 +644,7 @@ export type Database = {
           id?: string
           product_name: string
           salesperson_id?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
         }
@@ -654,6 +656,7 @@ export type Database = {
           id?: string
           product_name?: string
           salesperson_id?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
         }
