@@ -1,17 +1,59 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
-import { Trophy, XCircle, TrendingUp, Package, Users } from 'lucide-react';
+import { useWinLossAnalysis, WinLossFilters } from '@/hooks/useWinLossAnalysis';
+import { useSalespeople } from '@/hooks/useSalespeople';
+import { Trophy, XCircle, TrendingUp, Package, Users, Filter, Calendar } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 const COLORS_WON = ['hsl(var(--chart-2))', 'hsl(142 76% 46%)', 'hsl(142 76% 56%)', 'hsl(142 76% 66%)'];
 const COLORS_LOST = ['hsl(var(--destructive))', 'hsl(0 84% 50%)', 'hsl(0 84% 60%)', 'hsl(0 84% 70%)'];
 
-interface WinLossAnalysisProps {
-  salespersonId?: string;
-}
+const PERIOD_PRESETS = [
+  { label: 'Últimos 7 dias', days: 7 },
+  { label: 'Últimos 30 dias', days: 30 },
+  { label: 'Últimos 90 dias', days: 90 },
+  { label: 'Este ano', days: 365 },
+];
 
-export function WinLossAnalysis({ salespersonId }: WinLossAnalysisProps) {
-  const { data, isLoading } = useWinLossAnalysis(salespersonId);
+export function WinLossAnalysis() {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<WinLossFilters>({});
+  
+  const { data: salespeople } = useSalespeople();
+  const { data, isLoading } = useWinLossAnalysis(filters);
+
+  const handlePeriodPreset = (days: number) => {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    
+    setFilters(prev => ({
+      ...prev,
+      startDate: startDate.toISOString().split('T')[0],
+      endDate: endDate.toISOString().split('T')[0],
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({});
+  };
+
+  const hasActiveFilters = filters.salespersonId || filters.productName || filters.startDate || filters.endDate;
 
   if (isLoading) {
     return (
@@ -36,17 +78,141 @@ export function WinLossAnalysis({ salespersonId }: WinLossAnalysisProps) {
   return (
     <Card className="bg-card/50 backdrop-blur border-border/50">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-primary" />
-          Análise Win/Loss
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-primary" />
+            Análise Win/Loss
+          </CardTitle>
+          <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filtros
+                {hasActiveFilters && (
+                  <span className="ml-1 h-2 w-2 rounded-full bg-primary" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+          </Collapsible>
+        </div>
+
+        {/* Filters Panel */}
+        <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
+          <CollapsibleContent className="pt-4">
+            <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-border/50">
+              {/* Period Presets */}
+              <div className="space-y-2">
+                <Label className="text-xs flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Período Rápido
+                </Label>
+                <div className="flex flex-wrap gap-2">
+                  {PERIOD_PRESETS.map(preset => (
+                    <Button
+                      key={preset.days}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handlePeriodPreset(preset.days)}
+                    >
+                      {preset.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {/* Date Range */}
+                <div className="space-y-2">
+                  <Label htmlFor="startDate" className="text-xs">Data Início</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={filters.startDate || ''}
+                    onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value || undefined }))}
+                    className="h-9"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="endDate" className="text-xs">Data Fim</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={filters.endDate || ''}
+                    onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value || undefined }))}
+                    className="h-9"
+                  />
+                </div>
+
+                {/* Salesperson */}
+                <div className="space-y-2">
+                  <Label className="text-xs flex items-center gap-1">
+                    <Users className="h-3 w-3" />
+                    Vendedor
+                  </Label>
+                  <Select 
+                    value={filters.salespersonId || 'all'} 
+                    onValueChange={(v) => setFilters(prev => ({ ...prev, salespersonId: v === 'all' ? undefined : v }))}
+                  >
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Todos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {salespeople?.map(sp => (
+                        <SelectItem key={sp.id} value={sp.id}>{sp.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Product */}
+                <div className="space-y-2">
+                  <Label className="text-xs flex items-center gap-1">
+                    <Package className="h-3 w-3" />
+                    Produto
+                  </Label>
+                  <Select 
+                    value={filters.productName || 'all'} 
+                    onValueChange={(v) => setFilters(prev => ({ ...prev, productName: v === 'all' ? undefined : v }))}
+                  >
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Todos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {data?.availableProducts.map(product => (
+                        <SelectItem key={product} value={product}>{product}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Clear Filters */}
+              {hasActiveFilters && (
+                <div className="flex justify-end">
+                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    Limpar Filtros
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </CardHeader>
+
       <CardContent className="space-y-6">
         {!hasData ? (
           <div className="text-center py-8 text-muted-foreground">
             <Trophy className="h-12 w-12 mx-auto mb-2 opacity-30" />
-            <p>Nenhum resultado registrado ainda</p>
-            <p className="text-sm">Registre wins e losses para ver a análise</p>
+            <p>Nenhum resultado encontrado</p>
+            <p className="text-sm">
+              {hasActiveFilters 
+                ? 'Tente ajustar os filtros' 
+                : 'Registre wins e losses para ver a análise'}
+            </p>
           </div>
         ) : (
           <>
@@ -188,8 +354,8 @@ export function WinLossAnalysis({ salespersonId }: WinLossAnalysisProps) {
               </div>
             )}
 
-            {/* By Salesperson (only if not filtered) */}
-            {!salespersonId && data.bySalesperson.length > 0 && (
+            {/* By Salesperson (only if not filtered by salesperson) */}
+            {!filters.salespersonId && data.bySalesperson.length > 0 && (
               <div>
                 <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
                   <Users className="h-4 w-4 text-primary" />
