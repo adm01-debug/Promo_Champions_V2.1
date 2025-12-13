@@ -1,10 +1,12 @@
-import { AlertTriangle, Clock, UserX, Target, Bell, X } from "lucide-react";
+import { AlertTriangle, Clock, UserX, Target, Bell, X, Mail, Loader2 } from "lucide-react";
 import { useAlerts, Alert, AlertType } from "@/hooks/useAlerts";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const alertIcons: Record<AlertType, typeof AlertTriangle> = {
   stagnant_deal: Clock,
@@ -92,9 +94,35 @@ const AlertItem = ({ alert, onDismiss }: AlertItemProps) => {
 export const AlertsPanel = () => {
   const { data: alerts, isLoading } = useAlerts();
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+  const [isSending, setIsSending] = useState(false);
 
   const handleDismiss = (id: string) => {
     setDismissedIds((prev) => new Set([...prev, id]));
+  };
+
+  const handleSendNotifications = async () => {
+    const email = prompt("Digite o email para receber os alertas críticos:");
+    if (!email) return;
+
+    setIsSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-alert-notifications", {
+        body: { recipientEmail: email },
+      });
+
+      if (error) throw error;
+
+      if (data.alertsSent === 0) {
+        toast.info("Nenhum alerta crítico para enviar");
+      } else {
+        toast.success(`${data.alertsSent} alerta(s) crítico(s) enviado(s) para ${email}`);
+      }
+    } catch (error: any) {
+      console.error("Error sending notifications:", error);
+      toast.error("Erro ao enviar notificações: " + error.message);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const visibleAlerts = alerts?.filter((a) => !dismissedIds.has(a.id)) || [];
@@ -135,7 +163,21 @@ export const AlertsPanel = () => {
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSendNotifications}
+            disabled={isSending || criticalCount === 0}
+            className="h-7 text-xs"
+          >
+            {isSending ? (
+              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+            ) : (
+              <Mail className="h-3 w-3 mr-1" />
+            )}
+            Notificar
+          </Button>
           {criticalCount > 0 && (
             <span className="text-xs font-medium px-2 py-1 rounded-full bg-destructive/20 text-destructive">
               {criticalCount} críticos
