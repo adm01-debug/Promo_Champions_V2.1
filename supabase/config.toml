@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.activity-goal-alerts]
 verify_jwt = false
+
+[functions.check-lead-sla]
+verify_jwt = false
