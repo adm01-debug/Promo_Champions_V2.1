@@ -2,8 +2,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Flame, Target } from "lucide-react";
+import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 
 interface SalespersonGoalCardProps {
+  id?: string;
   name: string;
   avatar_url: string | null;
   role: string;
@@ -15,6 +17,8 @@ interface SalespersonGoalCardProps {
   dailyAverage: number;
   requiredDailyAverage: number;
   rank: number;
+  level?: number;
+  totalXP?: number;
 }
 
 const roleLabels: Record<string, string> = {
@@ -35,6 +39,8 @@ export function SalespersonGoalCard({
   dailyAverage,
   requiredDailyAverage,
   rank,
+  level = 1,
+  totalXP = 0,
 }: SalespersonGoalCardProps) {
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -69,8 +75,9 @@ export function SalespersonGoalCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <span className="font-medium truncate">{name}</span>
+            <SalespersonLevelBadge level={level} totalXP={totalXP} size="xs" />
             {hasExceededGoal && <Flame className="h-4 w-4 text-orange-500 animate-pulse" />}
           </div>
           <div className="flex items-center gap-2 mt-0.5">

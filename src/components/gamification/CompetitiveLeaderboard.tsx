@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
 import { Crown, Swords, Trophy, TrendingUp, Flame } from "lucide-react";
+import { SalespersonLevelBadge } from "./SalespersonLevelBadge";
 
 const RANK_ICONS: Record<number, React.ElementType> = {
   1: Crown,
@@ -22,6 +24,12 @@ const roleLabels: Record<string, { label: string; color: string }> = {
 export function CompetitiveLeaderboard() {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
+  const { data: xpData } = useAllSalespeopleXP();
+
+  const getXPInfo = (salespersonId: string) => {
+    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
+    return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -73,6 +81,7 @@ export function CompetitiveLeaderboard() {
               const isCurrentUser = salesperson?.id === person.id;
               const isTopThree = person.rank <= 3;
               const roleInfo = roleLabels[person.role] || roleLabels.hybrid;
+              const xpInfo = getXPInfo(person.id);
 
               return (
                 <div
@@ -111,10 +120,11 @@ export function CompetitiveLeaderboard() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span className={`font-medium text-sm truncate ${isCurrentUser ? "text-primary" : ""}`}>
                               {person.name}
                             </span>
+                            <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                             {person.title && (
                               <Badge 
                                 variant="outline" 

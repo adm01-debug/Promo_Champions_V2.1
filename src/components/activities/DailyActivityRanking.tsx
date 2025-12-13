@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Crown, Medal, Award, Trophy, Flame } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 
 interface DailyActivityRankingProps {
   data: ActivityGoalProgress[];
@@ -40,6 +42,13 @@ const getStatusBadge = (progress: number, hasGoals: boolean) => {
 };
 
 export function DailyActivityRanking({ data }: DailyActivityRankingProps) {
+  const { data: xpData } = useAllSalespeopleXP();
+
+  const getXPInfo = (salespersonId: string) => {
+    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
+    return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
+  };
+
   // Filter only those with goals and sort by progress
   const rankedData = data
     .filter(d => d.hasGoals)
@@ -74,6 +83,7 @@ export function DailyActivityRanking({ data }: DailyActivityRankingProps) {
             ) : (
               rankedData.map((sp, index) => {
                 const rank = index + 1;
+                const xpInfo = getXPInfo(sp.salesperson_id);
                 return (
                   <div
                     key={sp.salesperson_id}
@@ -96,8 +106,9 @@ export function DailyActivityRanking({ data }: DailyActivityRankingProps) {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="font-medium text-sm truncate">{sp.salesperson_name}</span>
+                        <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                         {getStatusBadge(sp.progress.overall, sp.hasGoals)}
                       </div>
                       <div className="flex items-center gap-3 text-[10px] text-muted-foreground">

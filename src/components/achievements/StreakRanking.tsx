@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStreakRanking } from "@/hooks/useAchievements";
+import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 
 const roleLabels: Record<string, string> = {
   sdr: "SDR",
@@ -43,6 +45,12 @@ const getRankBadge = (rank: number) => {
 
 export function StreakRanking() {
   const { data: ranking, isLoading } = useStreakRanking();
+  const { data: xpData } = useAllSalespeopleXP();
+
+  const getXPInfo = (salespersonId: string) => {
+    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
+    return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
+  };
 
   if (isLoading) {
     return (
@@ -88,6 +96,7 @@ export function StreakRanking() {
           <div className="space-y-3">
             {ranking?.filter(r => r.bestStreak > 0).map((person, index) => {
               const rank = index + 1;
+              const xpInfo = getXPInfo(person.salesperson_id);
               
               return (
                 <div
@@ -109,8 +118,9 @@ export function StreakRanking() {
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="font-medium truncate">{person.name}</span>
+                      <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                       <Badge variant="outline" className="text-[10px]">
                         {roleLabels[person.role] || person.role}
                       </Badge>
