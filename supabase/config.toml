@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.salesperson-coaching]
 verify_jwt = false
+
+[functions.deal-probability]
+verify_jwt = false

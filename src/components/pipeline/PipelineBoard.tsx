@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -16,12 +16,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDealProbabilities } from "@/hooks/useDealProbability";
 
 export const PipelineBoard = () => {
   const { data: dealsByStage, isLoading, refetch, isRefetching } = usePipelineDeals();
   const moveDeal = useMoveDeal();
   const queryClient = useQueryClient();
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
+
+  // Collect all deal IDs for probability calculation
+  const allDealIds = useMemo(() => {
+    if (!dealsByStage) return [];
+    return PIPELINE_STAGES.flatMap(stage => 
+      (dealsByStage[stage.id] || []).map(deal => deal.id)
+    );
+  }, [dealsByStage]);
+
+  const { data: probabilities } = useDealProbabilities(allDealIds);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -151,6 +162,7 @@ export const PipelineBoard = () => {
               key={stage.id}
               stage={stage}
               deals={dealsByStage?.[stage.id] || []}
+              probabilities={probabilities}
             />
           ))}
         </div>
@@ -158,7 +170,10 @@ export const PipelineBoard = () => {
         <DragOverlay>
           {activeDeal && (
             <div className="rotate-3 scale-105">
-              <DealCard deal={activeDeal} />
+              <DealCard 
+                deal={activeDeal} 
+                probability={probabilities?.[activeDeal.id]}
+              />
             </div>
           )}
         </DragOverlay>
