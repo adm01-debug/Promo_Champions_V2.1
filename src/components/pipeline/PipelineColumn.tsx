@@ -54,35 +54,35 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col min-w-[280px] max-w-[320px] rounded-xl transition-all duration-200",
-        isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02]"
+        "flex flex-col min-w-[280px] max-w-[320px] rounded-xl transition-all duration-300",
+        isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02] shadow-lg shadow-primary/10"
       )}
     >
       {/* Column Header */}
-      <div className="glass rounded-t-xl p-4 border-b border-border/30">
+      <div className="glass rounded-t-xl p-4 border-b border-border/30 dark:border-glow card-elevated">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <div className={cn("w-3 h-3 rounded-full shadow-sm", stage.color)} />
-            <h3 className="font-semibold text-sm">{stage.label}</h3>
+            <div className={cn("w-3 h-3 rounded-full shadow-md ring-2 ring-background", stage.color)} />
+            <h3 className="font-display font-semibold text-sm">{stage.label}</h3>
           </div>
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
             {deals.length}
           </span>
         </div>
         <p className="text-xs text-muted-foreground">
-          Total: <span className="font-semibold gradient-text">{formatCurrency(totalValue)}</span>
+          Total: <span className="font-display font-bold gradient-text">{formatCurrency(totalValue)}</span>
         </p>
       </div>
 
       {/* Column Content */}
       <div className={cn(
-        "flex-1 p-2.5 space-y-2.5 min-h-[400px] rounded-b-xl transition-all duration-200",
-        isOver ? "bg-primary/10 border-primary/20" : "bg-muted/20"
+        "flex-1 p-2.5 space-y-2.5 min-h-[400px] rounded-b-xl transition-all duration-300 border-x border-b border-transparent",
+        isOver ? "bg-primary/10 border-primary/30" : "bg-muted/20 dark:bg-muted/10"
       )}>
         <SortableContext items={deals.map(d => d.id)} strategy={verticalListSortingStrategy}>
           {deals.length === 0 ? (
-            <div className="flex items-center justify-center h-24 border-2 border-dashed border-primary/20 rounded-lg bg-primary/5">
-              <p className="text-xs text-muted-foreground">Arraste deals aqui</p>
+            <div className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-primary/30 rounded-lg bg-gradient-to-b from-primary/10 to-primary/5 transition-all hover:border-primary/40 hover:bg-primary/15">
+              <p className="text-xs text-muted-foreground font-medium">Arraste deals aqui</p>
             </div>
           ) : (
             deals.map((deal) => (

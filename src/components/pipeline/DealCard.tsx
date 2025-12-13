@@ -90,8 +90,8 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
       ref={setNodeRef}
       style={style}
       className={cn(
-        "glass rounded-lg p-3 cursor-grab active:cursor-grabbing border border-border/40 shadow-sm",
-        "hover:border-primary/30 hover:shadow-md transition-all duration-200",
+        "glass rounded-lg p-3 cursor-grab active:cursor-grabbing border border-border/40 shadow-sm card-elevated",
+        "hover:border-primary/40 hover:shadow-md hover-lift transition-all duration-200",
         "dark:border-glow",
         isDragging && "opacity-50 scale-105 shadow-2xl z-50 ring-2 ring-primary/50"
       )}
@@ -99,19 +99,20 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
       {...listeners}
     >
       <div className="flex items-start gap-2">
-        <GripVertical className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+        <GripVertical className="h-4 w-4 text-muted-foreground/60 flex-shrink-0 mt-0.5 hover:text-muted-foreground transition-colors" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h4 className="font-medium text-sm truncate">{deal.client_name}</h4>
+            <h4 className="font-display font-semibold text-sm truncate">{deal.client_name}</h4>
             <div className="flex items-center gap-1.5">
               {leadScore && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className={cn(
-                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold",
+                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border transition-transform hover:scale-105",
                         getScoreBgColor(leadScore.score),
-                        getScoreColor(leadScore.score)
+                        getScoreColor(leadScore.score),
+                        leadScore.score >= 75 ? "border-status-success/30" : leadScore.score >= 50 ? "border-status-warning/30" : "border-status-error/30"
                       )}>
                         {leadScore.score >= 60 ? (
                           <Flame className="h-3 w-3" />
@@ -121,8 +122,8 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                         {leadScore.score}
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[220px]">
-                      <p className="font-semibold mb-1">
+                    <TooltipContent side="top" className="max-w-[220px] glass border-border/50">
+                      <p className="font-display font-semibold mb-1">
                         Lead Score: {getScoreLabel(leadScore.score)}
                       </p>
                       <ul className="text-xs space-y-0.5">
@@ -144,15 +145,16 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className={cn(
-                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold",
-                        getProbabilityColor(probability.probability)
+                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border transition-transform hover:scale-105",
+                        getProbabilityColor(probability.probability),
+                        probability.probability >= 70 ? "border-status-success/30" : probability.probability >= 40 ? "border-status-warning/30" : "border-status-error/30"
                       )}>
                         <TrendingUp className="h-3 w-3" />
                         {probability.probability}%
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[200px]">
-                      <p className="font-semibold mb-1">Probabilidade de Fechamento</p>
+                    <TooltipContent side="top" className="max-w-[200px] glass border-border/50">
+                      <p className="font-display font-semibold mb-1">Probabilidade de Fechamento</p>
                       <ul className="text-xs space-y-0.5">
                         {probability.factors.map((factor, i) => (
                           <li key={i} className="text-muted-foreground">• {factor}</li>
@@ -168,7 +170,9 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
             </div>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-            <Package className="h-3 w-3" />
+            <div className="p-1 rounded bg-muted/40">
+              <Package className="h-3 w-3" />
+            </div>
             <span className="truncate">{deal.product_name}</span>
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -185,7 +189,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
               <DealTimeline deal={deal} />
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] uppercase font-medium">
+              <span className="px-1.5 py-0.5 rounded bg-gradient-to-r from-primary/20 to-primary/10 text-primary text-[10px] uppercase font-semibold border border-primary/20">
                 {deal.category}
               </span>
               {activeCadence ? (
@@ -193,10 +197,10 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                   <DropdownMenuTrigger asChild>
                     <button 
                       className={cn(
-                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer",
+                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-all cursor-pointer border",
                         activeCadence.status === 'paused' 
-                          ? "bg-status-warning/20 text-status-warning hover:bg-status-warning/30"
-                          : "bg-accent/20 text-accent hover:bg-accent/30"
+                          ? "bg-gradient-to-r from-status-warning/20 to-status-warning/10 text-status-warning border-status-warning/30 hover:from-status-warning/30 hover:to-status-warning/20"
+                          : "bg-gradient-to-r from-accent/20 to-accent/10 text-accent border-accent/30 hover:from-accent/30 hover:to-accent/20"
                       )}
                       onClick={(e) => e.stopPropagation()}
                       onPointerDown={(e) => e.stopPropagation()}
@@ -212,9 +216,9 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                       <MoreHorizontal className="h-3 w-3 ml-0.5" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-40">
-                    <div className="px-2 py-1.5 border-b border-border">
-                      <p className="text-xs font-medium">{activeCadence.cadenceName}</p>
+                  <DropdownMenuContent align="end" className="w-40 glass border-border/50">
+                    <div className="px-2 py-1.5 border-b border-border/30">
+                      <p className="text-xs font-display font-medium">{activeCadence.cadenceName}</p>
                       <p className="text-[10px] text-muted-foreground">
                         {activeCadence.status === 'paused' ? 'Cadência pausada' : 'Cadência ativa'}
                       </p>
@@ -226,6 +230,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                           resumeCadence.mutate(deal.id);
                         }}
                         disabled={resumeCadence.isPending}
+                        className="text-status-success focus:text-status-success"
                       >
                         <PlayCircle className="h-3.5 w-3.5 mr-2" />
                         Retomar
@@ -237,6 +242,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                           pauseCadence.mutate(deal.id);
                         }}
                         disabled={pauseCadence.isPending}
+                        className="text-status-warning focus:text-status-warning"
                       >
                         <Pause className="h-3.5 w-3.5 mr-2" />
                         Pausar
@@ -266,14 +272,14 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-6 w-6 hover:bg-primary/10 hover:text-primary transition-colors"
                             onClick={(e) => e.stopPropagation()}
                             onPointerDown={(e) => e.stopPropagation()}
                           >
                             <Play className="h-3 w-3" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Iniciar Cadência</TooltipContent>
+                        <TooltipContent className="glass border-border/50">Iniciar Cadência</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   }
