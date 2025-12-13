@@ -218,9 +218,9 @@ export function WinLossAnalysis() {
           <>
             {/* Summary Cards */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-green-500/10 rounded-lg p-4 text-center border border-green-500/20">
-                <Trophy className="h-6 w-6 text-green-500 mx-auto mb-1" />
-                <p className="text-2xl font-bold text-green-500">{data.totalWins}</p>
+              <div className="bg-status-success/10 rounded-lg p-4 text-center border border-status-success/20">
+                <Trophy className="h-6 w-6 text-status-success mx-auto mb-1" />
+                <p className="text-2xl font-bold text-status-success">{data.totalWins}</p>
                 <p className="text-xs text-muted-foreground">Vitórias</p>
               </div>
               <div className="bg-destructive/10 rounded-lg p-4 text-center border border-destructive/20">
@@ -240,7 +240,7 @@ export function WinLossAnalysis() {
               {/* Win Reasons */}
               <div>
                 <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
-                  <Trophy className="h-4 w-4 text-green-500" />
+                  <Trophy className="h-4 w-4 text-status-success" />
                   Motivos de Vitória
                 </h4>
                 {data.reasonsWon.length > 0 ? (
