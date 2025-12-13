@@ -29,7 +29,7 @@ export function SalespersonLevelBadge({
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge 
-            className={`bg-gradient-to-r ${levelInfo.color} text-white border-0 ${sizeClasses[size]} cursor-default flex-shrink-0`}
+            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 ${sizeClasses[size]} cursor-default flex-shrink-0`}
           >
             {levelInfo.emoji} {showTitle ? levelInfo.title : `${level}`}
           </Badge>

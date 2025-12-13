@@ -39,7 +39,7 @@ export const DashboardHeader = () => {
         >
           <RefreshCw className="h-4 w-4" />
         </Button>
-        <Button className="gradient-primary text-white hover:opacity-90">
+        <Button className="gradient-primary text-primary-foreground hover:opacity-90">
           <Download className="h-4 w-4 mr-2" />
           Exportar
         </Button>

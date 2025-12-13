@@ -44,9 +44,9 @@ export function CloserPipeline() {
                   minWidth: stage.count > 0 ? "40px" : "0"
                 }}
               >
-                <span className="text-[10px] font-bold text-white drop-shadow-sm">
-                  {((stage.value / totalValue) * 100).toFixed(0)}%
-                </span>
+              <span className="text-[10px] font-bold text-primary-foreground drop-shadow-sm">
+                {((stage.value / totalValue) * 100).toFixed(0)}%
+              </span>
               </div>
             </div>
           </div>

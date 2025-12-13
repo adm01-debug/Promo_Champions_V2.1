@@ -14,7 +14,7 @@ export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
     <div className="glass rounded-xl p-6 h-full">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2.5 rounded-lg gradient-primary">
-          <Target className="h-5 w-5 text-white" />
+          <Target className="h-5 w-5 text-primary-foreground" />
         </div>
         <div>
           <h3 className="text-lg font-semibold">Meta Mensal</h3>

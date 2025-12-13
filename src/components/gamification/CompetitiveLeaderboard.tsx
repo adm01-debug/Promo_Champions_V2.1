@@ -99,7 +99,7 @@ export function CompetitiveLeaderboard() {
                     <div 
                       className={`flex items-center justify-center w-10 h-10 rounded-xl font-bold ${
                         isTopThree
-                          ? `bg-gradient-to-br ${person.color} text-white shadow-lg`
+                          ? `bg-gradient-to-br ${person.color} text-primary-foreground shadow-lg`
                           : "bg-muted text-muted-foreground"
                       }`}
                     >
@@ -128,7 +128,7 @@ export function CompetitiveLeaderboard() {
                             {person.title && (
                               <Badge 
                                 variant="outline" 
-                                className={`text-[10px] px-1.5 py-0 bg-gradient-to-r ${person.color} text-white border-0`}
+                                className={`text-[10px] px-1.5 py-0 bg-gradient-to-r ${person.color} text-primary-foreground border-0`}
                               >
                                 {person.emoji} {person.title}
                               </Badge>

@@ -12,7 +12,7 @@ export function RecentClosedDeals() {
     <Card className="glass border-border/40">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <CheckCircle className="h-4 w-4 text-green-500" />
+          <CheckCircle className="h-4 w-4 text-status-success" />
           Vendas Recentes
         </CardTitle>
       </CardHeader>
@@ -27,8 +27,8 @@ export function RecentClosedDeals() {
             key={deal.id}
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors"
           >
-            <div className="p-1.5 rounded-lg bg-green-500/10">
-              <DollarSign className="h-3.5 w-3.5 text-green-500" />
+            <div className="p-1.5 rounded-lg bg-status-success/10">
+              <DollarSign className="h-3.5 w-3.5 text-status-success" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{deal.client_name}</p>
@@ -37,7 +37,7 @@ export function RecentClosedDeals() {
               </p>
             </div>
             <div className="text-right space-y-1">
-              <p className="text-sm font-bold text-green-500">
+              <p className="text-sm font-bold text-status-success">
                 R$ {Number(deal.amount).toLocaleString("pt-BR")}
               </p>
               <p className="text-[10px] text-muted-foreground">

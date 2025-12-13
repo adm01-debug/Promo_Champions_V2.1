@@ -83,7 +83,7 @@ export function AppSidebar() {
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="h-5 w-5 text-white" />
+            <TrendingUp className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col">

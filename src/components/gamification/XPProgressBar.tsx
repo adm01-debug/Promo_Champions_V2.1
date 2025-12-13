@@ -29,7 +29,7 @@ export function XPProgressBar({ totalXP, showDetails = true, size = "md" }: XPPr
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5">
                   <Badge 
-                    className={`bg-gradient-to-r ${levelInfo.color} text-white border-0 text-[10px] px-1.5 py-0`}
+                    className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 text-[10px] px-1.5 py-0`}
                   >
                     {levelInfo.emoji} Nv.{level}
                   </Badge>

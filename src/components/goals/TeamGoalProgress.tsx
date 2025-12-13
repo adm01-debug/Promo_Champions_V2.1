@@ -34,7 +34,7 @@ export function TeamGoalProgress({
 
   return (
     <Card className="glass border-border/40 overflow-hidden">
-      <div className={`h-1 ${onTrack ? "bg-green-500" : "bg-orange-500"}`} />
+      <div className={`h-1 ${onTrack ? "bg-status-success" : "bg-status-warning"}`} />
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -44,8 +44,8 @@ export function TeamGoalProgress({
           <Badge 
             variant="outline" 
             className={onTrack 
-              ? "bg-green-500/10 text-green-500 border-green-500/30" 
-              : "bg-orange-500/10 text-orange-500 border-orange-500/30"
+              ? "bg-status-success/10 text-status-success border-status-success/30" 
+              : "bg-status-warning/10 text-status-warning border-status-warning/30"
             }
           >
             {onTrack ? (
@@ -76,7 +76,7 @@ export function TeamGoalProgress({
             <Progress value={progressCapped} className="h-4" />
             {progress >= 100 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-white">META BATIDA! 🎉</span>
+                <span className="text-[10px] font-bold text-primary-foreground">META BATIDA! 🎉</span>
               </div>
             )}
           </div>
@@ -89,13 +89,13 @@ export function TeamGoalProgress({
               <Zap className="h-4 w-4" />
               Projeção de Fechamento
             </span>
-            <span className={`text-lg font-bold ${onTrack ? "text-green-500" : "text-orange-500"}`}>
+            <span className={`text-lg font-bold ${onTrack ? "text-status-success" : "text-status-warning"}`}>
               {formatCurrency(projection)}
             </span>
           </div>
           <div className="relative h-2 bg-muted rounded-full overflow-hidden">
             <div 
-              className={`absolute h-full transition-all ${onTrack ? "bg-green-500" : "bg-orange-500"}`}
+              className={`absolute h-full transition-all ${onTrack ? "bg-status-success" : "bg-status-warning"}`}
               style={{ width: `${Math.min(projectionProgress, 100)}%` }}
             />
             {/* Goal marker */}
@@ -119,7 +119,7 @@ export function TeamGoalProgress({
             <p className="text-[10px] text-muted-foreground">Média diária atual</p>
           </div>
           <div className="p-3 rounded-lg bg-muted/30 text-center">
-            <p className={`text-lg font-bold ${requiredDailyAverage > dailyAverage ? "text-orange-500" : "text-green-500"}`}>
+            <p className={`text-lg font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
             <p className="text-[10px] text-muted-foreground">Necessário/dia</p>
