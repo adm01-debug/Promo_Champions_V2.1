@@ -40,7 +40,7 @@ export function TodaysCadenceTasks() {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md animate-pulse">
@@ -52,17 +52,21 @@ export function TodaysCadenceTasks() {
         <CardContent>
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="p-3 rounded-lg border border-border/30 bg-muted/20 space-y-2">
+              <div 
+                key={i} 
+                className="p-3 rounded-lg border border-border/30 bg-muted/20 space-y-2 animate-fade-in"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
                 <div className="flex items-start gap-3">
-                  <Skeleton className="h-8 w-8 rounded-lg" />
+                  <Skeleton className="h-8 w-8 rounded-lg animate-shimmer" />
                   <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
+                    <Skeleton className="h-4 w-3/4 animate-shimmer" />
+                    <Skeleton className="h-3 w-1/2 animate-shimmer" />
                   </div>
                 </div>
                 <div className="flex gap-2 pt-1">
-                  <Skeleton className="h-7 flex-1" />
-                  <Skeleton className="h-7 w-20" />
+                  <Skeleton className="h-7 flex-1 animate-shimmer" />
+                  <Skeleton className="h-7 w-20 animate-shimmer" />
                 </div>
               </div>
             ))}
@@ -117,32 +121,32 @@ export function TodaysCadenceTasks() {
                     style={{ animationDelay: `${index * 75}ms` }}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`p-2 rounded-lg border transition-all duration-200 group-hover:scale-110 ${actionColors[step?.action_type as ActionType] || "bg-muted"}`}>
-                        <Icon className="h-4 w-4" />
+                      <div className={`p-2 rounded-lg border transition-all duration-200 group-hover:scale-110 group-hover:shadow-md ${actionColors[step?.action_type as ActionType] || "bg-muted"}`}>
+                        <Icon className="h-4 w-4 transition-transform group-hover:animate-pulse" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-display font-medium group-hover:text-primary transition-colors">{step?.title}</span>
-                          <Badge variant="outline" className={`text-[10px] font-medium ${actionColors[step?.action_type as ActionType] || ""}`}>
+                          <span className="text-sm font-display font-medium group-hover:gradient-text transition-colors">{step?.title}</span>
+                          <Badge variant="outline" className={`text-[10px] font-medium shadow-sm ${actionColors[step?.action_type as ActionType] || ""}`}>
                             {actionLabels[step?.action_type as ActionType] || "Ação"}
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          <span className="gradient-text font-medium">{sale?.client_name}</span> • <span className="text-primary/80">{cadence?.name}</span>
+                          <span className="gradient-text font-medium">{sale?.client_name}</span> • <span className="text-primary/80 font-medium">{cadence?.name}</span>
                         </p>
                         {step?.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 bg-muted/30 rounded-md px-2 py-1 border border-border/20">
+                          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1.5 border border-border/20 shadow-inner">
                             {step.description}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-1">
+                    <div className="flex items-center gap-2 pt-2">
                       <Button
                         size="sm"
                         variant="glow"
-                        className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-sm"
+                        className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
                         onClick={() => completeTask.mutate({ taskId: task.id })}
                         disabled={completeTask.isPending}
                       >
@@ -152,7 +156,7 @@ export function TodaysCadenceTasks() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 transition-all"
+                        className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 hover:scale-105 transition-all duration-200"
                         onClick={() => skipTask.mutate({ taskId: task.id })}
                         disabled={skipTask.isPending}
                       >
