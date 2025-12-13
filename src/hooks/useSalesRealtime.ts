@@ -23,39 +23,56 @@ export function useSalesRealtime(currentSalespersonId?: string) {
   const queryClient = useQueryClient();
   const { playSound } = useSoundSettings();
 
-  const triggerConfetti = useCallback(async () => {
+  const triggerConfetti = useCallback(async (saleAmount: number) => {
     const confetti = (await import('canvas-confetti')).default;
     
-    const count = 200;
+    // Calculate intensity based on sale value
+    // Small: < 1000, Medium: 1000-5000, Large: 5000-20000, Epic: > 20000
+    let intensity = 1;
+    if (saleAmount >= 20000) {
+      intensity = 3; // Epic sale - maximum celebration
+    } else if (saleAmount >= 5000) {
+      intensity = 2; // Large sale
+    } else if (saleAmount >= 1000) {
+      intensity = 1.5; // Medium sale
+    }
+    
+    const baseCount = 150;
+    const count = Math.floor(baseCount * intensity);
+    
     const defaults = {
       origin: { y: 0.7 },
       zIndex: 9999,
     };
 
+    // First burst
     confetti({
       ...defaults,
       particleCount: Math.floor(count * 0.25),
-      spread: 26,
+      spread: 26 * intensity,
       startVelocity: 55,
       origin: { x: 0.2, y: 0.7 },
     });
 
+    // Center burst
     confetti({
       ...defaults,
       particleCount: Math.floor(count * 0.2),
-      spread: 60,
+      spread: 60 * intensity,
       origin: { x: 0.5, y: 0.7 },
     });
 
+    // Right burst
     confetti({
       ...defaults,
       particleCount: Math.floor(count * 0.35),
-      spread: 100,
+      spread: 100 * intensity,
       decay: 0.91,
       scalar: 0.8,
       origin: { x: 0.8, y: 0.7 },
     });
 
+    // Top burst
     confetti({
       ...defaults,
       particleCount: Math.floor(count * 0.1),
@@ -65,6 +82,34 @@ export function useSalesRealtime(currentSalespersonId?: string) {
       scalar: 1.2,
       origin: { x: 0.5, y: 0.6 },
     });
+
+    // Extra burst for epic sales (> 20000)
+    if (saleAmount >= 20000) {
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          spread: 180,
+          origin: { x: 0.5, y: 0.5 },
+          colors: ['#FFD700', '#FFA500', '#FF6347'],
+          zIndex: 9999,
+        });
+      }, 300);
+      
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          spread: 160,
+          origin: { x: 0.3, y: 0.6 },
+          zIndex: 9999,
+        });
+        confetti({
+          particleCount: 80,
+          spread: 160,
+          origin: { x: 0.7, y: 0.6 },
+          zIndex: 9999,
+        });
+      }, 600);
+    }
   }, []);
 
   useEffect(() => {
@@ -102,9 +147,9 @@ export function useSalesRealtime(currentSalespersonId?: string) {
                 currency: "BRL",
               }).format(newSale.amount);
 
-              // Play celebration sound and confetti
+              // Play celebration sound and confetti based on sale value
               playSound();
-              triggerConfetti();
+              triggerConfetti(newSale.amount);
 
               // Show toast notification
               toast.success(
