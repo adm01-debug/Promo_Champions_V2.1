@@ -15,6 +15,7 @@ import {
   useDeleteNotificationPreference,
   NotificationPreference
 } from "@/hooks/useNotificationPreferences";
+import { SoundSettings } from "@/components/settings/SoundSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -345,6 +346,8 @@ export default function Notificacoes() {
           ))}
         </div>
       )}
+
+      <SoundSettings />
 
       <Card className="glass">
         <CardHeader>
