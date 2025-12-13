@@ -119,18 +119,18 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   const isNearRecord = currentStreak > 1 && currentStreak === bestStreak - 1;
 
   return (
-    <Card className={`glass border-border/40 hover:border-border/60 hover-lift ${hasReachedGoal ? 'ring-2 ring-status-success/50 shadow-lg shadow-status-success/20 hover-glow-success' : ''} ${isBeatRecord ? 'ring-2 ring-rank-gold/50 shadow-lg shadow-rank-gold/20 hover-glow-gold' : ''}`}>
+    <Card className={`glass border-border/40 dark:border-glow hover:border-border/60 transition-all duration-300 hover-lift card-elevated ${hasReachedGoal ? 'ring-2 ring-status-success/50 shadow-lg shadow-status-success/20 hover-glow-success' : ''} ${isBeatRecord ? 'ring-2 ring-rank-gold/50 shadow-lg shadow-rank-gold/20 hover-glow-gold' : ''}`}>
       <CardContent className="p-4 relative overflow-hidden">
         {/* Celebration overlay */}
         {hasReachedGoal && (
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-2 right-2 animate-bounce">
-              <PartyPopper className="h-5 w-5 text-rank-gold" />
+              <PartyPopper className="h-5 w-5 text-rank-gold drop-shadow-glow" />
             </div>
             <div className="absolute top-2 left-2 animate-bounce" style={{ animationDelay: '0.2s' }}>
               <PartyPopper className="h-4 w-4 text-accent" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-status-success/5 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-status-success/10 to-transparent" />
           </div>
         )}
 
@@ -138,9 +138,9 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
         {isBeatRecord && !hasReachedGoal && (
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-2 right-2 animate-bounce">
-              <Trophy className="h-5 w-5 text-rank-gold" />
+              <Trophy className="h-5 w-5 text-rank-gold drop-shadow-glow" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-rank-gold/5 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-rank-gold/10 to-transparent" />
           </div>
         )}
 
@@ -148,16 +148,16 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Avatar className={`h-10 w-10 border-2 ${hasReachedGoal ? 'border-status-success ring-2 ring-status-success/30' : 'border-border/40'}`}>
+              <Avatar className={`h-10 w-10 border-2 transition-all duration-300 ${hasReachedGoal ? 'border-status-success ring-2 ring-status-success/30' : 'border-border/40 hover:border-primary/50'}`}>
                 <AvatarImage src={data.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/20 text-primary text-sm">
+                <AvatarFallback className="bg-gradient-to-br from-primary/30 to-accent/20 text-primary text-sm font-medium">
                   {data.salesperson_name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               {/* Streak indicator on avatar */}
               {currentStreak >= 3 && (
-                <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
-                  <div className={`rounded-full p-1 ${isBeatRecord ? 'bg-rank-gold/30' : currentStreak >= 7 ? 'bg-status-warning/30' : 'bg-status-info/30'}`}>
+                <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5 shadow-md">
+                  <div className={`rounded-full p-1 ${isBeatRecord ? 'bg-gradient-to-br from-rank-gold/40 to-rank-gold/20' : currentStreak >= 7 ? 'bg-gradient-to-br from-status-warning/40 to-status-warning/20' : 'bg-gradient-to-br from-status-info/40 to-status-info/20'}`}>
                     {isBeatRecord ? (
                       <Trophy className="h-3 w-3 text-rank-gold" />
                     ) : currentStreak >= 7 ? (
@@ -171,28 +171,28 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className={`font-medium text-sm ${hasReachedGoal ? 'text-status-success' : ''}`}>
+                <span className={`font-display font-semibold text-sm transition-colors ${hasReachedGoal ? 'gradient-text' : ''}`}>
                   {data.salesperson_name}
                 </span>
-                <Badge className={`${roleLabels[data.role]?.color || ''} text-[10px] px-1.5`}>
+                <Badge className={`${roleLabels[data.role]?.color || ''} text-[10px] px-1.5 border`}>
                   {roleLabels[data.role]?.label || data.role}
                 </Badge>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mt-1">
                 {data.hasGoals && getStatusBadge()}
                 {/* Streak badge */}
                 {currentStreak > 0 && streakDisplay && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Badge className={`${streakDisplay.color} text-[10px] px-1.5 flex items-center gap-1 cursor-help`}>
+                        <Badge className={`${streakDisplay.color} text-[10px] px-1.5 flex items-center gap-1 cursor-help border transition-all hover:scale-105`}>
                           {streakDisplay.icon}
                           <span>{currentStreak} dias</span>
                           {isBeatRecord && <span>🏆</span>}
                         </Badge>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="font-medium">{streakDisplay.label}</p>
+                      <TooltipContent className="glass border-border/50">
+                        <p className="font-display font-medium">{streakDisplay.label}</p>
                         <p className="text-xs text-muted-foreground">
                           {currentStreak} {currentStreak === 1 ? 'dia' : 'dias'} consecutivos batendo meta
                         </p>
@@ -218,49 +218,54 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 relative z-10" onClick={() => onEdit(data.salesperson_id)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 relative z-10 hover:bg-primary/10 hover:text-primary transition-colors" onClick={() => onEdit(data.salesperson_id)}>
             <Settings className="h-4 w-4" />
           </Button>
         </div>
 
         {!data.hasGoals ? (
-          <div className="text-center py-4 text-muted-foreground text-sm">
+          <div className="text-center py-4 text-muted-foreground text-sm bg-muted/20 rounded-lg border border-dashed border-border/50">
             <p>Nenhuma meta configurada</p>
-            <Button variant="link" size="sm" onClick={() => onEdit(data.salesperson_id)}>
+            <Button variant="link" size="sm" className="text-primary hover:text-primary/80" onClick={() => onEdit(data.salesperson_id)}>
               Configurar metas
             </Button>
           </div>
         ) : (
           <>
             {/* Overall Progress */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-muted-foreground">Progresso Geral</span>
-                <span className={`text-sm font-bold ${hasReachedGoal ? 'text-status-success' : ''}`}>
+            <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-muted-foreground font-medium">Progresso Geral</span>
+                <span className={`text-sm font-bold transition-colors ${hasReachedGoal ? 'gradient-text' : ''}`}>
                   {data.progress.overall.toFixed(0)}%
                 </span>
               </div>
-              <div className="h-2 rounded-full bg-muted overflow-hidden">
+              <div className="h-2.5 rounded-full bg-muted/50 overflow-hidden shadow-inner">
                 <div 
-                  className={`h-full rounded-full transition-all ${getProgressColor(data.progress.overall)} ${hasReachedGoal ? 'animate-pulse' : ''}`}
-                  style={{ width: `${Math.min(data.progress.overall, 100)}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(data.progress.overall)} ${hasReachedGoal ? 'animate-pulse shadow-lg' : ''}`}
+                  style={{ 
+                    width: `${Math.min(data.progress.overall, 100)}%`,
+                    boxShadow: hasReachedGoal ? '0 0 10px hsl(var(--status-success) / 0.5)' : undefined
+                  }}
                 />
               </div>
             </div>
 
             {/* Activity Breakdown */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {activities.filter(a => a.goal > 0).map((activity, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <activity.icon className={`h-3.5 w-3.5 ${activity.color} flex-shrink-0`} />
+                <div key={index} className="flex items-center gap-2.5 group">
+                  <div className={`p-1.5 rounded-md transition-all ${activity.progress >= 100 ? 'bg-status-success/20' : 'bg-muted/40 group-hover:bg-muted/60'}`}>
+                    <activity.icon className={`h-3.5 w-3.5 ${activity.progress >= 100 ? 'text-status-success' : activity.color} flex-shrink-0 transition-colors`} />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-[10px] text-muted-foreground">{activity.label}</span>
-                      <span className="text-[10px] font-medium">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-muted-foreground font-medium">{activity.label}</span>
+                      <span className={`text-[10px] font-semibold ${activity.progress >= 100 ? 'text-status-success' : ''}`}>
                         {activity.current}/{activity.goal}
                       </span>
                     </div>
-                    <Progress value={activity.progress} className="h-1" />
+                    <Progress value={activity.progress} className="h-1.5" />
                   </div>
                 </div>
               ))}

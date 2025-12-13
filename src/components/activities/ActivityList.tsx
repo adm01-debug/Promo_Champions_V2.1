@@ -52,11 +52,13 @@ export function ActivityList({ limit = 10, showHeader = true }: ActivityListProp
 
   if (isLoading) {
     return (
-      <Card className="glass border-border/40">
+      <Card className="glass border-border/40 dark:border-glow card-elevated">
         {showHeader && (
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <ClipboardList className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+                <ClipboardList className="h-4 w-4 gradient-primary" />
+              </div>
               Log de Atividades
             </CardTitle>
           </CardHeader>
@@ -73,11 +75,13 @@ export function ActivityList({ limit = 10, showHeader = true }: ActivityListProp
   }
 
   return (
-    <Card className="glass border-border/40">
+    <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
       {showHeader && (
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <ClipboardList className="h-4 w-4 text-primary" />
+          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+              <ClipboardList className="h-4 w-4 gradient-primary" />
+            </div>
             Log de Atividades
           </CardTitle>
         </CardHeader>
@@ -86,9 +90,12 @@ export function ActivityList({ limit = 10, showHeader = true }: ActivityListProp
         <ScrollArea className="h-[400px]">
           <div className="p-4 space-y-2">
             {activities?.length === 0 && (
-              <p className="text-xs text-muted-foreground text-center py-8">
-                Nenhuma atividade registrada
-              </p>
+              <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border/50">
+                <ClipboardList className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
+                <p className="text-xs text-muted-foreground">
+                  Nenhuma atividade registrada
+                </p>
+              </div>
             )}
             {activities?.map((activity) => {
               const Icon = activityIcons[activity.activity_type];
@@ -98,18 +105,18 @@ export function ActivityList({ limit = 10, showHeader = true }: ActivityListProp
               return (
                 <div 
                   key={activity.id}
-                  className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors space-y-2"
+                  className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border/30 hover:border-border/50 transition-all duration-200 space-y-2 hover-lift"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Icon className="h-4 w-4 text-primary" />
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 shadow-sm">
+                      <Icon className="h-4 w-4 gradient-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-display font-medium">
                           {activityLabels[activity.activity_type]}
                         </span>
-                        <Badge variant="outline" className={`text-[10px] ${outcomeStyle.color}`}>
+                        <Badge variant="outline" className={`text-[10px] border ${outcomeStyle.color}`}>
                           {outcomeStyle.label}
                         </Badge>
                       </div>
@@ -128,7 +135,7 @@ export function ActivityList({ limit = 10, showHeader = true }: ActivityListProp
                         })}
                       </p>
                       {activity.duration_minutes && (
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className="text-[10px] text-muted-foreground font-medium">
                           {activity.duration_minutes} min
                         </p>
                       )}
@@ -136,20 +143,20 @@ export function ActivityList({ limit = 10, showHeader = true }: ActivityListProp
                   </div>
                   
                   {activity.notes && (
-                    <p className="text-xs text-muted-foreground pl-11 line-clamp-2">
+                    <p className="text-xs text-muted-foreground pl-11 line-clamp-2 bg-muted/30 rounded-md px-2 py-1">
                       {activity.notes}
                     </p>
                   )}
 
                   {salesperson && (
                     <div className="flex items-center gap-2 pl-11">
-                      <Avatar className="h-5 w-5">
+                      <Avatar className="h-5 w-5 border border-border/40">
                         <AvatarImage src={salesperson.avatar_url || undefined} />
-                        <AvatarFallback className="text-[8px]">
+                        <AvatarFallback className="text-[8px] bg-gradient-to-br from-primary/20 to-accent/10">
                           {salesperson.name.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] text-muted-foreground font-medium">
                         {salesperson.name}
                       </span>
                     </div>
