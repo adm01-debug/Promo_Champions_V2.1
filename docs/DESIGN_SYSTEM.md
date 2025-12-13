@@ -618,3 +618,283 @@ Os seguintes componentes já utilizam o design system completo:
 8. **Labels** devem usar `uppercase tracking-wider` para consistência
 9. **Icon containers** devem ter `p-2 rounded-lg` com background apropriado
 10. **Interatividade** combine `hover-lift cursor-pointer` para elementos clicáveis
+
+---
+
+## Changelog - Sessão de Melhorias (Dezembro 2024)
+
+### Resumo Executivo
+
+Esta sessão implementou melhorias significativas no design system do SalesPro, focando em:
+- **Profundidade e contraste** no light mode
+- **Refinamento de bordas/glows** no dark mode
+- **Tipografia consistente** com font-display
+- **Transições de tema suaves**
+- **Micro-interações polidas**
+- **Focus states elegantes**
+
+---
+
+### 1. Melhorias no Light Mode
+
+#### Problema Identificado
+Cards muito planos, falta de profundidade e contraste insuficiente.
+
+#### Soluções Implementadas
+
+| Aspecto | Antes | Depois |
+|---------|-------|--------|
+| **Sombras** | Simples, 2 camadas | Multi-camada (3 níveis) com mais profundidade |
+| **Bordas** | `border-border` básico | `border-border/80` com melhor definição |
+| **Texto secundário** | `muted-foreground: 40%` lightness | `muted-foreground: 35%` (mais contraste) |
+| **Cards** | Flat | Inset highlights para efeito 3D |
+
+```css
+/* Novas sombras light mode */
+--card-shadow: 
+  0 1px 2px 0 hsl(220 30% 30% / 0.04),
+  0 2px 4px 0 hsl(220 30% 30% / 0.04),
+  0 4px 8px -2px hsl(220 30% 30% / 0.06);
+
+/* Card depth com inset */
+box-shadow: 
+  0 1px 2px 0 hsl(220 30% 30% / 0.04),
+  0 3px 10px -3px hsl(220 30% 30% / 0.08),
+  inset 0 1px 0 0 hsl(0 0% 100% / 0.7);
+```
+
+---
+
+### 2. Melhorias no Dark Mode
+
+#### Refinamentos
+
+| Aspecto | Mudança |
+|---------|---------|
+| **Bordas** | Glow sutil com gradiente primário/secundário |
+| **Border glow** | Opacity 0.8 → 1.0 no hover (transição suave) |
+| **Card hover** | Toque de `primary/0.1` no box-shadow |
+| **Muted foreground** | Aumentado para 65% lightness (melhor legibilidade) |
+
+```css
+/* Border glow refinado */
+.dark .border-glow::after {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 0.2) 0%,
+    transparent 40%,
+    transparent 60%,
+    hsl(var(--secondary) / 0.15) 100%
+  );
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+.dark .border-glow:hover::after {
+  opacity: 1;
+}
+```
+
+---
+
+### 3. Tipografia Consistente
+
+#### Headers com Font-Display
+
+```css
+/* Aplicação automática */
+h1, h2, h3, h4, .font-display {
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Hierarquia */
+h1: text-3xl/4xl, font-bold, letter-spacing: -0.03em
+h2: text-2xl/3xl, font-semibold, letter-spacing: -0.025em
+h3: text-xl/2xl, font-semibold, letter-spacing: -0.02em
+h4: text-lg/xl, font-medium, letter-spacing: -0.015em
+```
+
+---
+
+### 4. Transições de Tema
+
+#### Melhorias
+
+| Aspecto | Antes | Depois |
+|---------|-------|--------|
+| **Duração** | 250ms | 300ms (mais suave) |
+| **Propriedades** | Básicas | + `filter` para efeitos |
+| **Timing** | ease-out | `cubic-bezier(0.4, 0, 0.2, 1)` |
+| **Acessibilidade** | N/A | `prefers-reduced-motion` respeitado |
+
+```css
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+---
+
+### 5. Focus States Elegantes
+
+#### Melhorias
+
+| Elemento | Focus State |
+|----------|-------------|
+| **Geral** | `ring-2 ring-primary/50` + transição suave |
+| **Botões** | Ring + glow sutil (`box-shadow: 0 0 0 4px primary/0.15`) |
+| **Inputs** | Ring + border-primary/60 + glow externo |
+| **Links** | Ring com `rounded-sm` |
+| **Animado** | Pulse animation mais elegante (2s) |
+
+```css
+/* Focus ring animado */
+@keyframes focus-ring-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.5),
+                0 0 8px 2px hsl(var(--primary) / 0.15); 
+  }
+  50% { 
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.4),
+                0 0 12px 4px hsl(var(--primary) / 0.25); 
+  }
+}
+```
+
+---
+
+### 6. Micro-interações Polidas
+
+#### Novas Classes
+
+| Classe | Descrição |
+|--------|-----------|
+| `card-interactive` | Hover com sombra e borda refinada por modo |
+| `animate-subtle-pulse` | Pulse sutil para chamar atenção (2.5s) |
+| `animate-fade-in-scale` | Fade + scale combinados |
+| `animate-slide-in-right` | Slide da direita |
+| `animate-float` | Flutuação suave (3s) |
+
+#### Click Bounce Refinado
+
+```css
+@keyframes click-bounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.96); }
+  70% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+```
+
+---
+
+### 7. Glass Morphism Aprimorado
+
+#### Diferenças por Modo
+
+| Modo | Background | Border | Shadow |
+|------|------------|--------|--------|
+| **Light** | `card/0.9` | `border/0.8` | Inset branco (50% opacity) |
+| **Dark** | `card/0.75` | Branco 10% | Inset branco (4% opacity) |
+
+```css
+:root .glass {
+  background: hsl(var(--card) / 0.9);
+  border-color: hsl(var(--border) / 0.8);
+  box-shadow: 
+    0 1px 2px 0 hsl(220 30% 30% / 0.03),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
+}
+```
+
+---
+
+### 8. Novas Animações (tailwind.config.ts)
+
+```ts
+keyframes: {
+  "fade-in-scale": {
+    "0%": { opacity: "0", transform: "scale(0.96)" },
+    "100%": { opacity: "1", transform: "scale(1)" },
+  },
+  "slide-in-right": {
+    "0%": { opacity: "0", transform: "translateX(10px)" },
+    "100%": { opacity: "1", transform: "translateX(0)" },
+  },
+  "float": {
+    "0%, 100%": { transform: "translateY(0)" },
+    "50%": { transform: "translateY(-4px)" },
+  },
+}
+
+animation: {
+  "fade-in-scale": "fade-in-scale 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  "slide-in-right": "slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  "float": "float 3s ease-in-out infinite",
+}
+```
+
+---
+
+### 9. Tokens de Cor Ajustados
+
+| Token | Light Mode | Dark Mode | Mudança |
+|-------|------------|-----------|---------|
+| `--foreground` | `225 30% 10%` | `0 0% 98%` | Mais escuro no light |
+| `--muted-foreground` | `220 20% 35%` | `225 15% 65%` | Melhor contraste |
+| `--border` | `220 20% 85%` | `225 25% 20%` | Mais definido |
+| `--success` | `142 70% 35%` | `142 70% 50%` | Mais escuro no light |
+
+---
+
+### Componentes Atualizados (24+)
+
+#### Dashboard Principal
+- `StatCard` - Glass, gradient icons, shadow badges
+- `KPIGrid` - Glass container, gradient-text title
+
+#### Analytics (7 componentes)
+- `WinLossAnalysis`, `ConversionFunnel`, `DealVelocityChart`
+- `ObjectionsLibrary`, `ABCAnalysis`, `ClosingTimeChart`, `ChurnPrediction`
+
+#### Pipeline (3 componentes)
+- `DealCard`, `PipelineColumn`, `AtRiskDealsPanel`
+
+#### Tarefas
+- `TaskCard`
+
+#### Cadências (2 componentes)
+- `CadenceCard`, `TodaysCadenceTasks`
+
+#### Metas (2 componentes)
+- `SalespersonGoalCard`, `TeamGoalProgress`
+
+#### Gamificação (2 componentes)
+- `CompetitiveLeaderboard`, `LevelBadge`
+
+#### SDR/Closer Dashboards (4 componentes)
+- `SDRStatCard`, `TopSDRsRanking`
+- `CloserStatCard`, `TopClosersRanking`
+
+#### Páginas (2 componentes)
+- `Relatorios`, `Analytics`
+
+---
+
+### Resultados Visuais
+
+✅ **Light Mode**: Cards com profundidade real, sombras multicamadas, contraste de texto melhorado  
+✅ **Dark Mode**: Bordas com glow refinado, transições suaves, hover states polidos  
+✅ **Tipografia**: Headers consistentes com Space Grotesk e letter-spacing negativo  
+✅ **Transições**: 300ms com cubic-bezier para fluidez  
+✅ **Focus States**: Rings elegantes com glow sutil  
+✅ **Acessibilidade**: `prefers-reduced-motion` suportado
+
+---
+
+*Última atualização: Dezembro 2024*
