@@ -1133,3 +1133,61 @@ export function NotificacoesLoadingSkeleton() {
     </div>
   );
 }
+
+export function PlaybooksLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <Skeleton className="p-3 h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-52" variant="intense" shimmer="intense" />
+          <Skeleton className="h-4 w-72" />
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="grid grid-cols-4 gap-2 p-1 bg-card/50 rounded-lg border border-border/50">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-9 rounded-md" shimmer={i === 0 ? "intense" : "default"} />
+        ))}
+      </div>
+
+      {/* Playbook Cards */}
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="glass rounded-xl border border-border/40 overflow-hidden">
+            {/* Card Header */}
+            <div className="p-4 border-b border-border/30">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-2 h-10 rounded-full" variant="primary" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-48" shimmer="intense" />
+                  <Skeleton className="h-3 w-64" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+            </div>
+            {/* Card Content */}
+            <div className="p-4 space-y-3">
+              {[...Array(4)].map((_, j) => (
+                <div key={j} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                  <Skeleton className="h-4 flex-1" />
+                  {j === 0 && <Skeleton className="h-4 w-16 rounded" />}
+                </div>
+              ))}
+              {/* Add Item Row */}
+              <div className="flex items-center gap-2 pt-2 border-t border-border/30">
+                <Skeleton className="h-9 flex-1 rounded-md" />
+                <Skeleton className="h-4 w-4 rounded" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-8 w-8 rounded-md" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
