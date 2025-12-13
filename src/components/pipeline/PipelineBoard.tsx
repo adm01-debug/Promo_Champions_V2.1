@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDealProbabilities } from "@/hooks/useDealProbability";
 import { useLeadScores, useCalculateLeadScores } from "@/hooks/useLeadScoring";
+import { useActiveCadencesBySaleIds } from "@/hooks/useCadences";
 
 export const PipelineBoard = () => {
   const { data: dealsByStage, isLoading, refetch, isRefetching } = usePipelineDeals();
@@ -35,6 +36,7 @@ export const PipelineBoard = () => {
 
   const { data: probabilities } = useDealProbabilities(allDealIds);
   const { data: leadScores } = useLeadScores(allDealIds);
+  const { data: activeCadences } = useActiveCadencesBySaleIds(allDealIds);
   const calculateScores = useCalculateLeadScores();
 
   // Calculate lead scores when deals are loaded
@@ -185,6 +187,7 @@ export const PipelineBoard = () => {
               deals={dealsByStage?.[stage.id] || []}
               probabilities={probabilities}
               leadScores={leadScores}
+              activeCadences={activeCadences}
             />
           ))}
         </div>
@@ -196,6 +199,7 @@ export const PipelineBoard = () => {
                 deal={activeDeal} 
                 probability={probabilities?.[activeDeal.id]}
                 leadScore={leadScores?.[activeDeal.id]}
+                activeCadence={activeCadences?.[activeDeal.id]}
               />
             </div>
           )}
