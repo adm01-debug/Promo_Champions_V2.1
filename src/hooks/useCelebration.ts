@@ -100,6 +100,16 @@ export function useCelebration() {
         },
         {
           onSuccess: (result) => {
+            // Check if near personal record
+            if (result?.nearRecord) {
+              setTimeout(() => {
+                sendPushNotification(
+                  '⚡ Quase lá!',
+                  `${salespersonName || 'Vendedor'} está a 1 dia de bater seu recorde de ${result.nearRecord.best} dias seguidos!`
+                );
+              }, 800);
+            }
+
             // Check if a streak milestone was achieved
             if (result?.streakMilestone) {
               // Trigger extra celebration for streak
