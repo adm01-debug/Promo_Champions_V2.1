@@ -52,6 +52,7 @@ const teamItems = [
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Cadências", url: "/cadencias", icon: GitBranch },
   { title: "Atividades", url: "/atividades", icon: Activity },
+  { title: "Relatório Atividades", url: "/relatorio-atividades", icon: BarChart3 },
   { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
   { title: "Playbooks", url: "/playbooks", icon: BookOpen },
   { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
