@@ -120,25 +120,33 @@ export function TaskQueue() {
 
   if (loadingTasks || loadingSalespeople) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         <div className="flex justify-between items-center">
           <div className="flex gap-4">
-            <Skeleton className="h-10 w-52 rounded-lg" />
-            <Skeleton className="h-10 w-28 rounded-lg" />
+            <Skeleton className="h-10 w-52 rounded-lg animate-shimmer" />
+            <Skeleton className="h-10 w-28 rounded-lg animate-shimmer" style={{ animationDelay: '50ms' }} />
           </div>
           <div className="flex gap-2">
-            <Skeleton className="h-10 w-32 rounded-lg" />
-            <Skeleton className="h-10 w-32 rounded-lg" />
+            <Skeleton className="h-10 w-32 rounded-lg animate-shimmer" style={{ animationDelay: '100ms' }} />
+            <Skeleton className="h-10 w-32 rounded-lg animate-shimmer" style={{ animationDelay: '150ms' }} />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+            <Skeleton 
+              key={i} 
+              className="h-24 w-full rounded-xl animate-shimmer" 
+              style={{ animationDelay: `${i * 75}ms` }}
+            />
           ))}
         </div>
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-[400px] w-full rounded-xl" />
+            <Skeleton 
+              key={i} 
+              className="h-[400px] w-full rounded-xl animate-shimmer" 
+              style={{ animationDelay: `${200 + i * 75}ms` }}
+            />
           ))}
         </div>
       </div>
@@ -146,22 +154,22 @@ export function TaskQueue() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 rounded-xl glass border border-border/40 dark:border-glow card-elevated">
         <div className="flex items-center gap-4">
           <Select value={selectedSalesperson} onValueChange={setSelectedSalesperson}>
-            <SelectTrigger className="w-[220px] border-border/50 bg-background/50">
+            <SelectTrigger className="w-[220px] border-border/50 bg-background/50 hover:border-primary/50 transition-colors">
               <SelectValue placeholder="Todos os vendedores" />
             </SelectTrigger>
-            <SelectContent className="bg-popover border-border/50">
+            <SelectContent className="bg-popover/95 backdrop-blur-md border-border/50">
               <SelectItem value="all">Todos os Vendedores</SelectItem>
               {salespeople?.map((sp) => (
                 <SelectItem key={sp.id} value={sp.id}>
                   <div className="flex items-center gap-2">
                     <Avatar className="h-5 w-5 border border-background">
                       <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="text-[9px] gradient-primary text-white">
+                      <AvatarFallback className="text-[9px] bg-gradient-to-br from-primary to-accent text-white">
                         {sp.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
@@ -176,7 +184,7 @@ export function TaskQueue() {
             variant="outline"
             size="sm"
             onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')}
-            className="border-border/50 hover:border-primary/50 hover:bg-primary/10 transition-colors"
+            className="border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:scale-105 transition-all duration-200"
           >
             <Columns3 className="h-4 w-4 mr-2" />
             {viewMode === 'columns' ? 'Lista' : 'Colunas'}
@@ -187,7 +195,7 @@ export function TaskQueue() {
           <Button 
             variant="outline" 
             size="sm"
-            className="border-border/50 hover:border-primary/50 hover:bg-primary/10 transition-colors"
+            className="border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:scale-105 transition-all duration-200"
             onClick={() => {
               if (tasks && tasks.length > 0) {
                 setRescheduleTask(tasks[0]);
@@ -204,10 +212,10 @@ export function TaskQueue() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 glass border border-status-error/30 hover-lift cursor-pointer hover-glow-error transition-all">
+        <Card className="p-4 glass border border-status-error/30 hover-lift cursor-pointer hover-glow-error transition-all duration-300 animate-fade-in group" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-error/30 to-status-error/10 shadow-md">
-              <Flame className="h-5 w-5 text-status-error" />
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-error/30 to-status-error/10 shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg">
+              <Flame className="h-5 w-5 text-status-error group-hover:animate-pulse" />
             </div>
             <div>
               <p className="text-2xl font-display font-bold text-status-error">{highPriorityTasks.length}</p>
@@ -216,9 +224,9 @@ export function TaskQueue() {
           </div>
         </Card>
 
-        <Card className="p-4 glass border border-status-warning/30 hover-lift cursor-pointer hover-glow transition-all">
+        <Card className="p-4 glass border border-status-warning/30 hover-lift cursor-pointer hover-glow transition-all duration-300 animate-fade-in group" style={{ animationDelay: '75ms' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-warning/30 to-status-warning/10 shadow-md">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-warning/30 to-status-warning/10 shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg">
               <ClipboardList className="h-5 w-5 text-status-warning" />
             </div>
             <div>
@@ -228,9 +236,9 @@ export function TaskQueue() {
           </div>
         </Card>
 
-        <Card className="p-4 glass border border-status-success/30 hover-lift cursor-pointer hover-glow-success transition-all">
+        <Card className="p-4 glass border border-status-success/30 hover-lift cursor-pointer hover-glow-success transition-all duration-300 animate-fade-in group" style={{ animationDelay: '150ms' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-success/30 to-status-success/10 shadow-md">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-success/30 to-status-success/10 shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg">
               <CheckCircle className="h-5 w-5 text-status-success" />
             </div>
             <div>
@@ -243,9 +251,9 @@ export function TaskQueue() {
 
       {/* Task Board */}
       {totalTasks === 0 ? (
-        <Card className="p-12 text-center glass border border-border/40 dark:border-glow card-elevated">
-          <div className="p-4 rounded-full bg-status-success/20 w-fit mx-auto mb-4">
-            <CheckCircle className="h-12 w-12 text-status-success" />
+        <Card className="p-12 text-center glass border border-border/40 dark:border-glow card-elevated animate-fade-in">
+          <div className="p-4 rounded-full bg-gradient-to-br from-status-success/30 to-status-success/10 w-fit mx-auto mb-4 shadow-lg shadow-status-success/20">
+            <CheckCircle className="h-12 w-12 text-status-success animate-pulse" />
           </div>
           <h3 className="text-lg font-display font-semibold gradient-text">Nenhuma tarefa para hoje!</h3>
           <p className="text-muted-foreground mt-2">
