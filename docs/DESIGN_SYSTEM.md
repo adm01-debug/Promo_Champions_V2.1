@@ -494,7 +494,9 @@ Os seguintes componentes já utilizam o design system completo:
 
 | Componente | Arquivo | Melhorias |
 |------------|---------|-----------|
-| TaskCard | `tasks/TaskCard.tsx` | Card elevated, hover-lift |
+| TaskCard | `tasks/TaskCard.tsx` | Glass + card-elevated, hover-lift, gradient-text client, font-display, styled type icons, complete button transitions |
+| TaskQueue | `tasks/TaskQueue.tsx` | Glass header com dark:border-glow, gradient icon containers, hover-glow stat cards, styled empty state, drag overlay shadow |
+| NextBestAction | `tasks/NextBestAction.tsx` | Glass + card-elevated, gradient-primary button, hover-lift suggestion cards, styled insight box, AI badge gradient |
 
 ### Cadências
 
@@ -874,8 +876,10 @@ animation: {
 - `AtRiskDealsPanel` - Risk badges, activity tooltips, AI analysis section
 - `DealTimeline` - Gradient timeline, event-type badges, glass dialog
 
-#### Tarefas
-- `TaskCard`
+#### Tarefas (3 componentes)
+- `TaskCard` - Glass, hover-lift, gradient-text
+- `TaskQueue` - Glass header, hover-glow stat cards
+- `NextBestAction` - Glass + gradient, hover-lift suggestions
 
 #### Cadências (2 componentes)
 - `CadenceCard`, `TodaysCadenceTasks`

@@ -120,14 +120,25 @@ export function TaskQueue() {
 
   if (loadingTasks || loadingSalespeople) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-10 w-32" />
+          <div className="flex gap-4">
+            <Skeleton className="h-10 w-52 rounded-lg" />
+            <Skeleton className="h-10 w-28 rounded-lg" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-32 rounded-lg" />
+            <Skeleton className="h-10 w-32 rounded-lg" />
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-[400px] w-full" />
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-[400px] w-full rounded-xl" />
           ))}
         </div>
       </div>
@@ -137,20 +148,20 @@ export function TaskQueue() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 rounded-xl glass border border-border/40 dark:border-glow card-elevated">
         <div className="flex items-center gap-4">
           <Select value={selectedSalesperson} onValueChange={setSelectedSalesperson}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[220px] border-border/50 bg-background/50">
               <SelectValue placeholder="Todos os vendedores" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover border-border/50">
               <SelectItem value="all">Todos os Vendedores</SelectItem>
               {salespeople?.map((sp) => (
                 <SelectItem key={sp.id} value={sp.id}>
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-5 w-5">
+                    <Avatar className="h-5 w-5 border border-background">
                       <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="text-xs">
+                      <AvatarFallback className="text-[9px] gradient-primary text-white">
                         {sp.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
@@ -165,6 +176,7 @@ export function TaskQueue() {
             variant="outline"
             size="sm"
             onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')}
+            className="border-border/50 hover:border-primary/50 hover:bg-primary/10 transition-colors"
           >
             <Columns3 className="h-4 w-4 mr-2" />
             {viewMode === 'columns' ? 'Lista' : 'Colunas'}
@@ -175,6 +187,7 @@ export function TaskQueue() {
           <Button 
             variant="outline" 
             size="sm"
+            className="border-border/50 hover:border-primary/50 hover:bg-primary/10 transition-colors"
             onClick={() => {
               if (tasks && tasks.length > 0) {
                 setRescheduleTask(tasks[0]);
@@ -191,38 +204,38 @@ export function TaskQueue() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 bg-status-error/10 border-status-error/20">
+        <Card className="p-4 glass border border-status-error/30 hover-lift cursor-pointer hover-glow-error transition-all">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-status-error/20">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-error/30 to-status-error/10 shadow-md">
               <Flame className="h-5 w-5 text-status-error" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-status-error">{highPriorityTasks.length}</p>
-              <p className="text-xs text-muted-foreground">Urgentes</p>
+              <p className="text-2xl font-display font-bold text-status-error">{highPriorityTasks.length}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Urgentes</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-status-warning/10 border-status-warning/20">
+        <Card className="p-4 glass border border-status-warning/30 hover-lift cursor-pointer hover-glow transition-all">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-status-warning/20">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-warning/30 to-status-warning/10 shadow-md">
               <ClipboardList className="h-5 w-5 text-status-warning" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-status-warning">{mediumPriorityTasks.length}</p>
-              <p className="text-xs text-muted-foreground">Média</p>
+              <p className="text-2xl font-display font-bold text-status-warning">{mediumPriorityTasks.length}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Média</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-status-success/10 border-status-success/20">
+        <Card className="p-4 glass border border-status-success/30 hover-lift cursor-pointer hover-glow-success transition-all">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-status-success/20">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-success/30 to-status-success/10 shadow-md">
               <CheckCircle className="h-5 w-5 text-status-success" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-status-success">{lowPriorityTasks.length}</p>
-              <p className="text-xs text-muted-foreground">Baixa</p>
+              <p className="text-2xl font-display font-bold text-status-success">{lowPriorityTasks.length}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Baixa</p>
             </div>
           </div>
         </Card>
@@ -230,10 +243,12 @@ export function TaskQueue() {
 
       {/* Task Board */}
       {totalTasks === 0 ? (
-        <Card className="p-12 text-center">
-          <CheckCircle className="h-12 w-12 text-status-success mx-auto mb-4" />
-          <h3 className="text-lg font-semibold">Nenhuma tarefa para hoje!</h3>
-          <p className="text-muted-foreground mt-1">
+        <Card className="p-12 text-center glass border border-border/40 dark:border-glow card-elevated">
+          <div className="p-4 rounded-full bg-status-success/20 w-fit mx-auto mb-4">
+            <CheckCircle className="h-12 w-12 text-status-success" />
+          </div>
+          <h3 className="text-lg font-display font-semibold gradient-text">Nenhuma tarefa para hoje!</h3>
+          <p className="text-muted-foreground mt-2">
             Todas as tarefas foram concluídas ou não há pendências.
           </p>
         </Card>
@@ -275,7 +290,7 @@ export function TaskQueue() {
 
           <DragOverlay>
             {activeTask ? (
-              <div className="opacity-80">
+              <div className="opacity-90 rotate-2 scale-105 shadow-2xl shadow-primary/20">
                 <DraggableTaskCard task={activeTask} isDragging />
               </div>
             ) : null}
