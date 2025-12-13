@@ -57,10 +57,10 @@ export function WinLossAnalysis() {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="border-border/40 dark:border-glow">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow animate-fade-in">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="p-2 rounded-lg gradient-primary">
+          <CardTitle className="text-lg font-display flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
               <Trophy className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Análise Win/Loss</span>
@@ -68,7 +68,7 @@ export function WinLossAnalysis() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-32 bg-muted/50 rounded-lg" />
+            <div className="h-32 bg-muted/50 rounded-lg animate-shimmer" />
           </div>
         </CardContent>
       </Card>
@@ -78,22 +78,22 @@ export function WinLossAnalysis() {
   const hasData = data && (data.totalWins > 0 || data.totalLosses > 0);
 
   return (
-    <Card variant="elevated" className="border-border/40 dark:border-glow hover-lift">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow hover-lift transition-all duration-300 animate-fade-in">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="p-2 rounded-lg gradient-primary">
+          <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40">
               <Trophy className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Análise Win/Loss</span>
           </CardTitle>
           <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 transition-all duration-300 hover:scale-105">
                 <Filter className="h-4 w-4" />
                 Filtros
                 {hasActiveFilters && (
-                  <span className="ml-1 h-2 w-2 rounded-full bg-primary" />
+                  <span className="ml-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
                 )}
               </Button>
             </CollapsibleTrigger>
@@ -102,11 +102,11 @@ export function WinLossAnalysis() {
 
         {/* Filters Panel */}
         <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
-          <CollapsibleContent className="pt-4">
-            <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-border/50">
+          <CollapsibleContent className="pt-4 animate-fade-in">
+            <div className="space-y-4 p-4 glass rounded-lg border border-border/50">
               {/* Period Presets */}
               <div className="space-y-2">
-                <Label className="text-xs flex items-center gap-1">
+                <Label className="text-xs font-display flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   Período Rápido
                 </Label>
@@ -116,7 +116,7 @@ export function WinLossAnalysis() {
                       key={preset.days}
                       variant="outline"
                       size="sm"
-                      className="text-xs"
+                      className="text-xs transition-all duration-300 hover:scale-105"
                       onClick={() => handlePeriodPreset(preset.days)}
                     >
                       {preset.label}
@@ -128,7 +128,7 @@ export function WinLossAnalysis() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {/* Date Range */}
                 <div className="space-y-2">
-                  <Label htmlFor="startDate" className="text-xs">Data Início</Label>
+                  <Label htmlFor="startDate" className="text-xs font-display">Data Início</Label>
                   <Input
                     id="startDate"
                     type="date"
@@ -139,7 +139,7 @@ export function WinLossAnalysis() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="endDate" className="text-xs">Data Fim</Label>
+                  <Label htmlFor="endDate" className="text-xs font-display">Data Fim</Label>
                   <Input
                     id="endDate"
                     type="date"
@@ -151,7 +151,7 @@ export function WinLossAnalysis() {
 
                 {/* Salesperson */}
                 <div className="space-y-2">
-                  <Label className="text-xs flex items-center gap-1">
+                  <Label className="text-xs font-display flex items-center gap-1">
                     <Users className="h-3 w-3" />
                     Vendedor
                   </Label>
@@ -173,7 +173,7 @@ export function WinLossAnalysis() {
 
                 {/* Product */}
                 <div className="space-y-2">
-                  <Label className="text-xs flex items-center gap-1">
+                  <Label className="text-xs font-display flex items-center gap-1">
                     <Package className="h-3 w-3" />
                     Produto
                   </Label>
@@ -197,7 +197,7 @@ export function WinLossAnalysis() {
               {/* Clear Filters */}
               {hasActiveFilters && (
                 <div className="flex justify-end">
-                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  <Button variant="ghost" size="sm" onClick={clearFilters} className="transition-all duration-300 hover:scale-105">
                     Limpar Filtros
                   </Button>
                 </div>
@@ -209,10 +209,12 @@ export function WinLossAnalysis() {
 
       <CardContent className="space-y-6">
         {!hasData ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Trophy className="h-12 w-12 mx-auto mb-2 opacity-30" />
-            <p>Nenhum resultado encontrado</p>
-            <p className="text-sm">
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
+            <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
+              <Trophy className="h-12 w-12 opacity-50" />
+            </div>
+            <p className="font-display font-medium gradient-text">Nenhum resultado encontrado</p>
+            <p className="text-sm text-muted-foreground mt-1">
               {hasActiveFilters 
                 ? 'Tente ajustar os filtros' 
                 : 'Registre wins e losses para ver a análise'}
@@ -222,34 +224,34 @@ export function WinLossAnalysis() {
           <>
             {/* Summary Cards */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer hover-glow-success">
-                <div className="p-2 rounded-lg bg-status-success/20 w-fit mx-auto mb-2">
+              <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer hover-glow-success transition-all duration-300 animate-fade-in group">
+                <div className="p-2 rounded-lg bg-status-success/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-success/20">
                   <Trophy className="h-5 w-5 text-status-success" />
                 </div>
-                <p className="text-2xl font-bold text-status-success">{data.totalWins}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Vitórias</p>
+                <p className="text-2xl font-bold font-display text-status-success transition-transform duration-300 group-hover:scale-110">{data.totalWins}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Vitórias</p>
               </div>
-              <div className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift cursor-pointer hover-glow-error">
-                <div className="p-2 rounded-lg bg-destructive/20 w-fit mx-auto mb-2">
+              <div className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift cursor-pointer hover-glow-error transition-all duration-300 animate-fade-in group" style={{ animationDelay: '50ms' }}>
+                <div className="p-2 rounded-lg bg-destructive/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-destructive/20">
                   <XCircle className="h-5 w-5 text-destructive" />
                 </div>
-                <p className="text-2xl font-bold text-destructive">{data.totalLosses}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Perdas</p>
+                <p className="text-2xl font-bold font-display text-destructive transition-transform duration-300 group-hover:scale-110">{data.totalLosses}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Perdas</p>
               </div>
-              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift cursor-pointer hover-glow-primary">
-                <div className="p-2 rounded-lg gradient-primary w-fit mx-auto mb-2">
+              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift cursor-pointer transition-all duration-300 animate-fade-in group" style={{ animationDelay: '100ms' }}>
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30">
                   <TrendingUp className="h-5 w-5 text-white" />
                 </div>
-                <p className="text-2xl font-bold gradient-text">{data.winRate.toFixed(1)}%</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Win Rate</p>
+                <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-110">{data.winRate.toFixed(1)}%</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Win Rate</p>
               </div>
             </div>
 
             {/* Reasons Charts */}
             <div className="grid grid-cols-2 gap-4">
               {/* Win Reasons */}
-              <div>
-                <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
+              <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
+                <h4 className="text-sm font-display font-medium mb-2 flex items-center gap-1">
                   <Trophy className="h-4 w-4 text-status-success" />
                   Motivos de Vitória
                 </h4>
@@ -272,30 +274,30 @@ export function WinLossAnalysis() {
                         </Pie>
                         <Tooltip 
                           formatter={(value: number, name: string) => [`${value} (${((value / data.totalWins) * 100).toFixed(0)}%)`, name]}
-                          contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                          contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '0.75rem' }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Sem dados</p>
+                  <p className="text-sm text-muted-foreground glass rounded-lg p-4 text-center">Sem dados</p>
                 )}
                 <div className="space-y-1 mt-2">
                   {data.reasonsWon.slice(0, 3).map((r, i) => (
-                    <div key={r.reason} className="flex items-center justify-between text-xs">
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_WON[i] }} />
-                        {r.reason}
+                    <div key={r.reason} className="flex items-center justify-between text-xs group cursor-pointer hover:bg-muted/30 rounded-md px-2 py-1 transition-all">
+                      <span className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full shadow-sm" style={{ backgroundColor: COLORS_WON[i] }} />
+                        <span className="group-hover:text-foreground transition-colors">{r.reason}</span>
                       </span>
-                      <span className="text-muted-foreground">{r.percentage.toFixed(0)}%</span>
+                      <span className="text-muted-foreground font-display font-medium">{r.percentage.toFixed(0)}%</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Loss Reasons */}
-              <div>
-                <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
+              <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+                <h4 className="text-sm font-display font-medium mb-2 flex items-center gap-1">
                   <XCircle className="h-4 w-4 text-destructive" />
                   Motivos de Perda
                 </h4>
@@ -318,22 +320,22 @@ export function WinLossAnalysis() {
                         </Pie>
                         <Tooltip 
                           formatter={(value: number, name: string) => [`${value} (${((value / data.totalLosses) * 100).toFixed(0)}%)`, name]}
-                          contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                          contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '0.75rem' }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Sem dados</p>
+                  <p className="text-sm text-muted-foreground glass rounded-lg p-4 text-center">Sem dados</p>
                 )}
                 <div className="space-y-1 mt-2">
                   {data.reasonsLost.slice(0, 3).map((r, i) => (
-                    <div key={r.reason} className="flex items-center justify-between text-xs">
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_LOST[i] }} />
-                        {r.reason}
+                    <div key={r.reason} className="flex items-center justify-between text-xs group cursor-pointer hover:bg-muted/30 rounded-md px-2 py-1 transition-all">
+                      <span className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full shadow-sm" style={{ backgroundColor: COLORS_LOST[i] }} />
+                        <span className="group-hover:text-foreground transition-colors">{r.reason}</span>
                       </span>
-                      <span className="text-muted-foreground">{r.percentage.toFixed(0)}%</span>
+                      <span className="text-muted-foreground font-display font-medium">{r.percentage.toFixed(0)}%</span>
                     </div>
                   ))}
                 </div>
@@ -342,8 +344,8 @@ export function WinLossAnalysis() {
 
             {/* By Product */}
             {data.byProduct.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
+              <div className="animate-fade-in" style={{ animationDelay: '250ms' }}>
+                <h4 className="text-sm font-display font-medium mb-2 flex items-center gap-1">
                   <Package className="h-4 w-4 text-primary" />
                   Win Rate por Produto
                 </h4>
@@ -355,7 +357,7 @@ export function WinLossAnalysis() {
                       <YAxis type="category" dataKey="product" width={80} stroke="hsl(var(--muted-foreground))" fontSize={10} />
                       <Tooltip 
                         formatter={(value: number) => [`${value.toFixed(1)}%`, 'Win Rate']}
-                        contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                        contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '0.75rem' }}
                       />
                       <Bar dataKey="winRate" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                     </BarChart>
@@ -366,22 +368,22 @@ export function WinLossAnalysis() {
 
             {/* By Salesperson (only if not filtered by salesperson) */}
             {!filters.salespersonId && data.bySalesperson.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
+              <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
+                <h4 className="text-sm font-display font-medium mb-2 flex items-center gap-1">
                   <Users className="h-4 w-4 text-primary" />
                   Win Rate por Vendedor
                 </h4>
                 <div className="space-y-2">
-                  {data.bySalesperson.slice(0, 5).map((sp) => (
-                    <div key={sp.name} className="flex items-center gap-2">
-                      <span className="text-xs w-20 truncate">{sp.name}</span>
-                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                  {data.bySalesperson.slice(0, 5).map((sp, index) => (
+                    <div key={sp.name} className="flex items-center gap-2 group cursor-pointer animate-fade-in" style={{ animationDelay: `${(index + 7) * 50}ms` }}>
+                      <span className="text-xs font-display w-20 truncate group-hover:text-primary transition-colors">{sp.name}</span>
+                      <div className="flex-1 h-2.5 bg-muted rounded-full overflow-hidden shadow-inner">
                         <div 
-                          className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full"
+                          className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full transition-all duration-500 group-hover:brightness-110"
                           style={{ width: `${sp.winRate}%` }}
                         />
                       </div>
-                      <span className="text-xs text-muted-foreground w-12 text-right">{sp.winRate.toFixed(0)}%</span>
+                      <span className="text-xs text-muted-foreground font-display font-medium w-12 text-right group-hover:text-foreground transition-colors">{sp.winRate.toFixed(0)}%</span>
                     </div>
                   ))}
                 </div>

@@ -12,18 +12,18 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
 
   if (isLoading) {
     return (
-      <Card className="glass dark:border-glow card-elevated">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
         <CardHeader>
           <CardTitle className="text-lg font-display flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5">
-              <TrendingUp className="h-4 w-4 text-primary" />
+            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
+              <TrendingUp className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Análise de Conversão</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-48 bg-muted/50 rounded-xl" />
+            <div className="h-48 bg-muted/50 rounded-xl animate-shimmer" />
           </div>
         </CardContent>
       </Card>
@@ -33,54 +33,54 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
   const hasData = data && data.conversions.some(c => c.totalEntered > 0);
 
   return (
-    <Card className="glass dark:border-glow card-elevated">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300 animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-display flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5">
-            <TrendingUp className="h-4 w-4 text-primary" />
+        <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40">
+            <TrendingUp className="h-4 w-4 text-white" />
           </div>
           <span className="gradient-text">Análise de Conversão</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {!hasData ? (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl">
-            <div className="p-4 rounded-full bg-muted/20 mb-3">
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
+            <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
               <TrendingUp className="h-10 w-10 opacity-50" />
             </div>
-            <p className="text-sm font-medium">Nenhum dado de funil disponível</p>
+            <p className="text-sm font-display font-medium gradient-text">Nenhum dado de funil disponível</p>
             <p className="text-xs text-muted-foreground mt-1">Registre movimentações no pipeline para análise</p>
           </div>
         ) : (
           <>
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift transition-all animate-fade-in group">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 w-fit mx-auto mb-2 group-hover:scale-110 transition-transform">
-                  <Target className="h-4 w-4 text-primary" />
+              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
+                  <Target className="h-4 w-4 text-white" />
                 </div>
-                <p className="text-xl font-bold font-display gradient-text">{data.overallConversion.toFixed(1)}%</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Conversão Total</p>
+                <p className="text-xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.overallConversion.toFixed(1)}%</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Conversão Total</p>
               </div>
               <div 
-                className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift transition-all animate-fade-in group"
+                className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer"
                 style={{ animationDelay: '50ms' }}
               >
-                <div className="p-2 rounded-lg bg-destructive/10 w-fit mx-auto mb-2 group-hover:scale-110 transition-transform">
+                <div className="p-2 rounded-lg bg-destructive/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-destructive/20">
                   <AlertTriangle className="h-4 w-4 text-destructive" />
                 </div>
-                <p className="text-sm font-bold text-destructive truncate">{data.biggestBottleneck}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Maior Gargalo</p>
+                <p className="text-sm font-bold text-destructive truncate transition-transform duration-300 group-hover:scale-105">{data.biggestBottleneck}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Maior Gargalo</p>
               </div>
               <div 
-                className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift transition-all animate-fade-in group"
+                className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer"
                 style={{ animationDelay: '100ms' }}
               >
-                <div className="p-2 rounded-lg bg-status-success/10 w-fit mx-auto mb-2 group-hover:scale-110 transition-transform">
+                <div className="p-2 rounded-lg bg-status-success/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-success/20">
                   <TrendingUp className="h-4 w-4 text-status-success" />
                 </div>
-                <p className="text-sm font-bold text-status-success truncate">{data.bestConversion}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Melhor Conversão</p>
+                <p className="text-sm font-bold text-status-success truncate transition-transform duration-300 group-hover:scale-105">{data.bestConversion}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Melhor Conversão</p>
               </div>
             </div>
 
@@ -90,44 +90,44 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
               {data.conversions.map((conv, index) => (
                 <div 
                   key={index} 
-                  className={`p-4 rounded-xl transition-all hover-lift animate-fade-in ${
+                  className={`p-4 rounded-xl transition-all duration-300 hover-lift cursor-pointer animate-fade-in group ${
                     conv.isBottleneck 
-                      ? 'glass border border-destructive/30' 
-                      : 'glass border border-border/30'
+                      ? 'glass border border-destructive/30 hover:border-destructive/50' 
+                      : 'glass border border-border/30 hover:border-primary/40'
                   }`}
                   style={{ animationDelay: `${(index + 3) * 50}ms` }}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{conv.fromStage}</span>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{conv.toStage}</span>
+                      <span className="text-sm font-display font-medium group-hover:text-primary transition-colors">{conv.fromStage}</span>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
+                      <span className="text-sm font-display font-medium group-hover:text-primary transition-colors">{conv.toStage}</span>
                       {conv.isBottleneck && (
-                        <span className="inline-flex items-center gap-1 text-xs text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 text-xs text-destructive bg-destructive/10 px-2 py-0.5 rounded-full border border-destructive/30 animate-pulse">
                           <AlertTriangle className="h-3 w-3" />
                           Gargalo
                         </span>
                       )}
                     </div>
-                    <span className={`text-lg font-bold font-display ${conv.isBottleneck ? 'text-destructive' : 'gradient-text'}`}>
+                    <span className={`text-lg font-bold font-display transition-all duration-300 group-hover:scale-110 ${conv.isBottleneck ? 'text-destructive' : 'gradient-text'}`}>
                       {conv.conversionRate.toFixed(1)}%
                     </span>
                   </div>
                   <Progress 
                     value={conv.conversionRate} 
-                    className={`h-2.5 ${conv.isBottleneck ? '[&>div]:bg-destructive' : '[&>div]:bg-primary'}`}
+                    className={`h-2.5 shadow-inner ${conv.isBottleneck ? '[&>div]:bg-destructive' : '[&>div]:bg-primary'}`}
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span className="flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2 font-medium">
+                    <span className="flex items-center gap-1 transition-colors group-hover:text-foreground/80">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-sm" />
                       {conv.totalEntered} entraram
                     </span>
-                    <span className="flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-status-success" />
+                    <span className="flex items-center gap-1 transition-colors group-hover:text-foreground/80">
+                      <div className="w-1.5 h-1.5 rounded-full bg-status-success shadow-sm" />
                       {conv.totalConverted} converteram
                     </span>
                     <span className="flex items-center gap-1 text-destructive">
-                      <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-destructive shadow-sm" />
                       {(conv.totalEntered - conv.totalConverted)} perdidos ({conv.dropoffRate.toFixed(0)}%)
                     </span>
                   </div>
@@ -144,10 +144,10 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
                   return (
                     <div
                       key={index}
-                      className={`mx-auto h-12 flex items-center justify-center text-xs font-medium rounded-lg transition-all hover:scale-[1.02] animate-fade-in ${
+                      className={`mx-auto h-12 flex items-center justify-center text-xs font-display font-medium rounded-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer animate-fade-in ${
                         conv.isBottleneck 
-                          ? 'bg-gradient-to-r from-destructive/80 to-destructive/60 text-destructive-foreground shadow-lg shadow-destructive/20' 
-                          : 'bg-gradient-to-r from-primary/80 to-primary/60 text-primary-foreground shadow-lg shadow-primary/20'
+                          ? 'bg-gradient-to-r from-destructive/80 to-destructive/60 text-destructive-foreground shadow-lg shadow-destructive/30 hover:shadow-destructive/50' 
+                          : 'bg-gradient-to-r from-primary/80 to-primary/60 text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50'
                       }`}
                       style={{ 
                         width: `${widthPercent}%`,
