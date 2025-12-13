@@ -5,17 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { UserPlus, Loader2, Phone, Target, Users } from "lucide-react";
+import { UserPlus, Loader2, Phone, Target, Users, Mail, Percent, DollarSign } from "lucide-react";
 import { z } from "zod";
 
 export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
 
-const roleLabels: Record<SalespersonRole, { label: string; icon: typeof Phone; color: string }> = {
-  sdr: { label: "SDR", icon: Phone, color: "text-status-info" },
-  closer: { label: "Closer", icon: Target, color: "text-status-success" },
-  hybrid: { label: "Híbrido", icon: Users, color: "text-status-purple" },
+const roleLabels: Record<SalespersonRole, { label: string; icon: typeof Phone; color: string; bgColor: string }> = {
+  sdr: { label: "SDR", icon: Phone, color: "text-status-info", bgColor: "bg-status-info/10" },
+  closer: { label: "Closer", icon: Target, color: "text-status-success", bgColor: "bg-status-success/10" },
+  hybrid: { label: "Híbrido", icon: Users, color: "text-status-purple", bgColor: "bg-status-purple/10" },
 };
 
 const salespersonSchema = z.object({
@@ -131,70 +130,98 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2 gradient-primary border-0">
+        <Button className="gap-2 gradient-primary border-0 hover-glow transition-all">
           <UserPlus className="h-4 w-4" />
           Novo Vendedor
         </Button>
       </DialogTrigger>
-      <DialogContent className="glass border-border/50">
+      <DialogContent className="glass dark:border-glow border-border/50 animate-fade-in">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Cadastrar Vendedor</DialogTitle>
+          <DialogTitle className="flex items-center gap-2 font-display">
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+              <UserPlus className="h-5 w-5 text-primary" />
+            </div>
+            <span className="gradient-text">Cadastrar Vendedor</span>
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome *</Label>
+            <Label htmlFor="name" className="flex items-center gap-1.5 text-sm">
+              <Users className="h-3.5 w-3.5 text-muted-foreground" />
+              Nome *
+            </Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nome do vendedor"
-              className="bg-background/50 border-border/50"
+              className="glass border-border/50 focus:border-primary/50 transition-all"
             />
-            {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-sm text-destructive animate-fade-in">{errors.name}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="flex items-center gap-1.5 text-sm">
+              <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="email@exemplo.com"
-              className="bg-background/50 border-border/50"
+              className="glass border-border/50 focus:border-primary/50 transition-all"
             />
-            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-sm text-destructive animate-fade-in">{errors.email}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label>Função</Label>
+            <Label className="flex items-center gap-1.5 text-sm">
+              <Target className="h-3.5 w-3.5 text-muted-foreground" />
+              Função
+            </Label>
             <div className="grid grid-cols-3 gap-2">
               {(Object.keys(roleLabels) as SalespersonRole[]).map((r) => {
                 const info = roleLabels[r];
                 const Icon = info.icon;
+                const isSelected = role === r;
                 return (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRole(r)}
-                    className={`p-2 rounded-lg border text-xs font-medium flex flex-col items-center gap-1 transition-all ${
-                      role === r
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                    className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
+                      isSelected
+                        ? `border-primary ${info.bgColor} ${info.color} shadow-lg shadow-primary/10`
+                        : "glass border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground"
                     }`}
                   >
-                    <Icon className={`h-4 w-4 ${role === r ? info.color : ""}`} />
+                    <div className={`p-1.5 rounded-lg transition-all ${
+                      isSelected ? info.bgColor : "bg-muted/50"
+                    }`}>
+                      <Icon className={`h-4 w-4 ${isSelected ? info.color : ""}`} />
+                    </div>
                     {info.label}
                   </button>
                 );
               })}
             </div>
-            {errors.role && <p className="text-sm text-destructive">{errors.role}</p>}
+            {errors.role && (
+              <p className="text-sm text-destructive animate-fade-in">{errors.role}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="commission">Comissão (%)</Label>
+              <Label htmlFor="commission" className="flex items-center gap-1.5 text-sm">
+                <Percent className="h-3.5 w-3.5 text-muted-foreground" />
+                Comissão
+              </Label>
               <Input
                 id="commission"
                 type="number"
@@ -203,13 +230,18 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
                 max="100"
                 value={commissionRate}
                 onChange={(e) => setCommissionRate(e.target.value)}
-                className="bg-background/50 border-border/50"
+                className="glass border-border/50 focus:border-primary/50 transition-all"
               />
-              {errors.commission_rate && <p className="text-sm text-destructive">{errors.commission_rate}</p>}
+              {errors.commission_rate && (
+                <p className="text-sm text-destructive animate-fade-in">{errors.commission_rate}</p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="goal">Meta Mensal (R$)</Label>
+              <Label htmlFor="goal" className="flex items-center gap-1.5 text-sm">
+                <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
+                Meta Mensal
+              </Label>
               <Input
                 id="goal"
                 type="number"
@@ -217,24 +249,39 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
                 min="0"
                 value={goalAmount}
                 onChange={(e) => setGoalAmount(e.target.value)}
-                className="bg-background/50 border-border/50"
+                className="glass border-border/50 focus:border-primary/50 transition-all"
               />
-              {errors.goal_amount && <p className="text-sm text-destructive">{errors.goal_amount}</p>}
+              {errors.goal_amount && (
+                <p className="text-sm text-destructive animate-fade-in">{errors.goal_amount}</p>
+              )}
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex justify-end gap-3 pt-4 border-t border-border/40">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setOpen(false)}
+              className="glass border-border/50"
+            >
               Cancelar
             </Button>
-            <Button variant="glow" type="submit" disabled={createMutation.isPending}>
+            <Button 
+              variant="glow" 
+              type="submit" 
+              disabled={createMutation.isPending}
+              className="transition-all"
+            >
               {createMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Salvando...
                 </>
               ) : (
-                "Cadastrar"
+                <>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Cadastrar
+                </>
               )}
             </Button>
           </div>
