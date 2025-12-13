@@ -3,16 +3,18 @@ import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
 import { Kanban } from "lucide-react";
 import { usePipelineDeals } from "@/hooks/usePipeline";
 import { PipelineLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function Pipeline() {
   const { isLoading } = usePipelineDeals();
 
-  if (isLoading) {
-    return <PipelineLoadingSkeleton />;
-  }
-
   return (
-    <div className="space-y-6">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<PipelineLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="space-y-6">
       <div className="flex items-center gap-3">
         <div className="p-3 rounded-xl gradient-primary">
           <Kanban className="h-6 w-6 text-white" />
@@ -34,5 +36,6 @@ export default function Pipeline() {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 }

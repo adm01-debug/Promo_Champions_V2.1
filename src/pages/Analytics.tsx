@@ -13,21 +13,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare } from 'lucide-react';
 import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
 import { AnalyticsPageLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
+import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 
 export default function Analytics() {
   const { isLoading } = useWinLossAnalysis();
 
-  if (isLoading) {
-    return (
-      <MainLayout>
-        <AnalyticsPageLoadingSkeleton />
-      </MainLayout>
-    );
-  }
-
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <SkeletonTransition
+        isLoading={isLoading}
+        skeleton={<AnalyticsPageLoadingSkeleton />}
+        duration={400}
+      >
+        <div className="space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -125,6 +123,7 @@ export default function Analytics() {
           </TabsContent>
         </Tabs>
       </div>
+      </SkeletonTransition>
     </MainLayout>
   );
 }

@@ -4,16 +4,18 @@ import { ActivityStats } from "@/components/activities/ActivityStats";
 import { ClipboardList } from "lucide-react";
 import { useActivities } from "@/hooks/useActivities";
 import { AtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function Atividades() {
   const { isLoading } = useActivities();
 
-  if (isLoading) {
-    return <AtividadesLoadingSkeleton />;
-  }
-
   return (
-    <div className="min-h-screen bg-background">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<AtividadesLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
@@ -47,5 +49,6 @@ export default function Atividades() {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 }
