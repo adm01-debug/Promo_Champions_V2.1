@@ -185,6 +185,19 @@
 }
 
 @layer utilities {
+  /* Interactive hover effects */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105 active:scale-95;
+  }
+  
+  .hover-scale-sm {
+    @apply transition-transform duration-200 hover:scale-102 active:scale-98;
+  }
+  
+  .hover-scale-lg {
+    @apply transition-transform duration-200 hover:scale-110 active:scale-95;
+  }
+  
   .glass {
     @apply bg-card/70 backdrop-blur-xl border border-white/10;
   }
