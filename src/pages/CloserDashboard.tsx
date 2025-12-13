@@ -5,6 +5,7 @@ import { CloserPipeline } from "@/components/closer/CloserPipeline";
 import { TopClosersRanking } from "@/components/closer/TopClosersRanking";
 import { RecentClosedDeals } from "@/components/closer/RecentClosedDeals";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
+import { CloserDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { 
   DollarSign, 
   CheckCircle, 
@@ -16,12 +17,16 @@ import {
 
 export default function CloserDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
-  const { data: metrics } = useCloserMetrics(period);
+  const { data: metrics, isLoading } = useCloserMetrics(period);
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+
+  if (isLoading) {
+    return <CloserDashboardLoadingSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
