@@ -144,7 +144,7 @@ export function CompetitiveLeaderboard() {
                               {roleInfo.label}
                             </Badge>
                             {person.dealsCount >= 5 && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-orange-400">
+                              <span className="flex items-center gap-0.5 text-[10px] text-status-warning">
                                 <Flame className="h-3 w-3" />
                                 {person.dealsCount} deals
                               </span>
