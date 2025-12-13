@@ -1,33 +1,45 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-export function StatCardSkeleton() {
+export function StatCardSkeleton({ highlighted = false }: { highlighted?: boolean }) {
   return (
-    <Card className="glass border-border/40">
+    <Card className={highlighted ? "glass border-primary/30 bg-primary/5" : "glass border-border/40"}>
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <Skeleton className="h-12 w-12 rounded-xl" />
+          <Skeleton 
+            className="h-12 w-12 rounded-xl" 
+            variant={highlighted ? "primary" : "default"}
+            shimmer={highlighted ? "glow" : "default"}
+          />
           <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-4 w-24" shimmer={highlighted ? "intense" : "default"} />
+            <Skeleton 
+              className="h-8 w-32" 
+              variant={highlighted ? "intense" : "default"}
+              shimmer={highlighted ? "intense" : "default"}
+            />
           </div>
-          <Skeleton className="h-6 w-16 rounded-full" />
+          <Skeleton className="h-6 w-16 rounded-full" shimmer={highlighted ? "glow" : "default"} />
         </div>
       </CardContent>
     </Card>
   );
 }
 
-export function ChartSkeleton({ height = "h-[300px]" }: { height?: string }) {
+export function ChartSkeleton({ height = "h-[300px]", highlighted = false }: { height?: string; highlighted?: boolean }) {
   return (
-    <Card className="glass border-border/40">
+    <Card className={highlighted ? "glass border-primary/30" : "glass border-border/40"}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
-            <Skeleton className="h-5 w-32" />
+            <Skeleton 
+              className="h-5 w-32" 
+              variant={highlighted ? "intense" : "default"}
+              shimmer={highlighted ? "intense" : "default"}
+            />
             <Skeleton className="h-3 w-48" />
           </div>
-          <Skeleton className="h-8 w-24 rounded-md" />
+          <Skeleton className="h-8 w-24 rounded-md" shimmer={highlighted ? "glow" : "default"} />
         </div>
       </CardHeader>
       <CardContent>
@@ -37,6 +49,8 @@ export function ChartSkeleton({ height = "h-[300px]" }: { height?: string }) {
               key={i} 
               className="flex-1 rounded-t-md" 
               style={{ height: `${30 + Math.random() * 60}%` }}
+              variant={highlighted ? "primary" : "default"}
+              shimmer={highlighted ? "glow" : "default"}
             />
           ))}
         </div>
@@ -45,25 +59,29 @@ export function ChartSkeleton({ height = "h-[300px]" }: { height?: string }) {
   );
 }
 
-export function GoalProgressSkeleton() {
+export function GoalProgressSkeleton({ highlighted = false }: { highlighted?: boolean }) {
   return (
-    <Card className="glass border-border/40">
+    <Card className={highlighted ? "glass border-primary/30" : "glass border-border/40"}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-5 w-32" shimmer={highlighted ? "intense" : "default"} />
+          <Skeleton className="h-6 w-20 rounded-full" shimmer={highlighted ? "glow" : "default"} />
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex justify-center">
-          <Skeleton className="h-40 w-40 rounded-full" />
+          <Skeleton 
+            className="h-40 w-40 rounded-full" 
+            variant={highlighted ? "primary" : "default"}
+            shimmer={highlighted ? "glow" : "default"}
+          />
         </div>
         <div className="space-y-3">
           <div className="flex justify-between">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-4 w-24" />
           </div>
-          <Skeleton className="h-2 w-full rounded-full" />
+          <Skeleton className="h-2 w-full rounded-full" shimmer={highlighted ? "intense" : "default"} />
         </div>
       </CardContent>
     </Card>
@@ -94,36 +112,51 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   );
 }
 
-export function LeaderboardSkeleton({ rows = 5 }: { rows?: number }) {
+export function LeaderboardSkeleton({ rows = 5, highlighted = false }: { rows?: number; highlighted?: boolean }) {
   return (
-    <Card className="glass border-border/40 h-full">
+    <Card className={highlighted ? "glass border-primary/30" : "glass border-border/40 h-full"}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <Skeleton className="h-5 w-36" />
-          <Skeleton className="h-5 w-12 rounded-full" />
+          <Skeleton className="h-5 w-36" shimmer={highlighted ? "intense" : "default"} />
+          <Skeleton className="h-5 w-12 rounded-full" shimmer={highlighted ? "glow" : "default"} />
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {[...Array(rows)].map((_, i) => (
-            <div key={i} className="p-4 rounded-xl border border-border/40 bg-muted/10">
+            <div 
+              key={i} 
+              className={`p-4 rounded-xl border ${i === 0 && highlighted ? "border-primary/30 bg-primary/5" : "border-border/40 bg-muted/10"}`}
+            >
               <div className="flex items-center gap-3">
-                <Skeleton className="h-5 w-5 rounded-full" />
-                <Skeleton className="h-12 w-12 rounded-full" />
+                <Skeleton 
+                  className="h-5 w-5 rounded-full" 
+                  variant={i === 0 && highlighted ? "primary" : "default"}
+                  shimmer={i === 0 && highlighted ? "glow" : "default"}
+                />
+                <Skeleton 
+                  className="h-12 w-12 rounded-full" 
+                  variant={i === 0 && highlighted ? "primary" : "default"}
+                  shimmer={i === 0 && highlighted ? "glow" : "default"}
+                />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-4 w-28" shimmer={i === 0 && highlighted ? "intense" : "default"} />
                   <div className="flex gap-2">
                     <Skeleton className="h-4 w-12 rounded-full" />
                     <Skeleton className="h-4 w-16 rounded-full" />
                   </div>
                 </div>
                 <div className="text-right space-y-1">
-                  <Skeleton className="h-6 w-12 ml-auto" />
+                  <Skeleton className="h-6 w-12 ml-auto" shimmer={i === 0 && highlighted ? "intense" : "default"} />
                   <Skeleton className="h-3 w-16" />
                 </div>
               </div>
               <div className="mt-3 space-y-2">
-                <Skeleton className="h-2 w-full rounded-full" />
+                <Skeleton 
+                  className="h-2 w-full rounded-full" 
+                  variant={i === 0 && highlighted ? "primary" : "default"}
+                  shimmer={i === 0 && highlighted ? "glow" : "default"}
+                />
                 <div className="flex justify-between">
                   <Skeleton className="h-3 w-20" />
                   <Skeleton className="h-3 w-24" />
