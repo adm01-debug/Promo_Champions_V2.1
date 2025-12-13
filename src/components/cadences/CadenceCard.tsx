@@ -45,7 +45,7 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected }: 
 
   return (
     <Card 
-      className={`glass border-border/40 transition-all cursor-pointer hover:border-primary/40 ${
+      className={`glass border-border/40 hover-lift cursor-pointer hover:border-primary/40 ${
         isSelected ? "border-primary ring-1 ring-primary/30" : ""
       }`}
       onClick={onSelect}
