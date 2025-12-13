@@ -461,20 +461,80 @@ As transições entre light/dark mode são suaves (250ms) para todos os elemento
 
 Os seguintes componentes já utilizam o design system completo:
 
+### Dashboard Principal
+
 | Componente | Arquivo | Melhorias |
 |------------|---------|-----------|
-| StatCard | `dashboard/StatCard.tsx` | Gradient primary, hover-lift, dark:border-glow |
-| SDRStatCard | `sdr/SDRStatCard.tsx` | Card elevated, variant styles |
-| CloserStatCard | `closer/CloserStatCard.tsx` | Card elevated, variant styles |
-| WinLossAnalysis | `analytics/WinLossAnalysis.tsx` | Summary cards com glass, gradient headers |
-| ConversionFunnel | `analytics/ConversionFunnel.tsx` | Summary cards, gradient-text |
-| DealVelocityChart | `analytics/DealVelocityChart.tsx` | Stats com glass, gradient icons |
+| StatCard | `dashboard/StatCard.tsx` | Glass, gradient-primary icons, gradient-text values, shadow badges |
+| KPIGrid | `dashboard/KPIGrid.tsx` | Glass container, gradient-text title, icon containers com bg-primary/10 |
+
+### Analytics
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| WinLossAnalysis | `analytics/WinLossAnalysis.tsx` | Summary cards com glass, gradient headers, hover-glow |
+| ConversionFunnel | `analytics/ConversionFunnel.tsx` | Summary cards, gradient-text, elevated variant |
+| DealVelocityChart | `analytics/DealVelocityChart.tsx` | Stats cards com glass, gradient icons |
+| ObjectionsLibrary | `analytics/ObjectionsLibrary.tsx` | Card elevated, gradient header, glass items |
+| ABCAnalysis | `analytics/ABCAnalysis.tsx` | Summary cards elevated, hover-lift, gradient icons |
+| ClosingTimeChart | `analytics/ClosingTimeChart.tsx` | Glass summary, gradient-primary icon, tab cards elevated |
+| ChurnPrediction | `analytics/ChurnPrediction.tsx` | Summary cards com hover-glow, glass client cards |
+
+### Pipeline
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| DealCard | `pipeline/DealCard.tsx` | Glass effect, gradient-text values, primary badges |
+| PipelineColumn | `pipeline/PipelineColumn.tsx` | Glass headers, gradient-text totals, primary badges |
 | AtRiskDealsPanel | `pipeline/AtRiskDealsPanel.tsx` | Card elevated, icon containers |
+
+### Tarefas
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
 | TaskCard | `tasks/TaskCard.tsx` | Card elevated, hover-lift |
-| ActivityGoalCard | `activities/ActivityGoalCard.tsx` | Glass, streak badges |
-| SalespersonGoalCard | `goals/SalespersonGoalCard.tsx` | Progress bars, rank styles |
-| CompetitiveLeaderboard | `gamification/CompetitiveLeaderboard.tsx` | Rank gradients, glow effects |
-| Relatorios | `pages/Relatorios.tsx` | Metric cards com glass, gradient |
+
+### Cadências
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| CadenceCard | `cadences/CadenceCard.tsx` | Card elevated, gradient-text name, primary badges |
+| TodaysCadenceTasks | `cadences/TodaysCadenceTasks.tsx` | Gradient-primary icon, gradient-text title, glow button |
+
+### Metas
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| SalespersonGoalCard | `goals/SalespersonGoalCard.tsx` | Glass effect, gradient-text name, gradient badges |
+| TeamGoalProgress | `goals/TeamGoalProgress.tsx` | Card elevated, gradient header, gradient-text values |
+
+### Gamificação
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| CompetitiveLeaderboard | `gamification/CompetitiveLeaderboard.tsx` | Glass cards, gradient headers, avatar fallbacks |
+| LevelBadge | `gamification/LevelBadge.tsx` | Shadow badges, glass tooltips, gradient-text |
+
+### SDR Dashboard
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| SDRStatCard | `sdr/SDRStatCard.tsx` | Glass, gradient-text values, gradient-primary icons |
+| TopSDRsRanking | `sdr/TopSDRsRanking.tsx` | Card elevated, gradient headers, avatar fallbacks |
+
+### Closer Dashboard
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| CloserStatCard | `closer/CloserStatCard.tsx` | Glass, gradient-text values, gradient-primary icons |
+| TopClosersRanking | `closer/TopClosersRanking.tsx` | Card elevated, gradient headers, avatar fallbacks |
+
+### Páginas
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| Relatorios | `pages/Relatorios.tsx` | Metric cards com glass, gradient icons |
+| Analytics | `pages/Analytics.tsx` | Header com gradient-primary icon, gradient-text |
 
 ---
 
