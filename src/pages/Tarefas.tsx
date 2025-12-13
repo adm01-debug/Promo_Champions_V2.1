@@ -3,10 +3,21 @@ import { TaskQueue } from '@/components/tasks/TaskQueue';
 import { NextBestAction } from '@/components/tasks/NextBestAction';
 import { Button } from '@/components/ui/button';
 import { useCreateStagnantTasks } from '@/hooks/useStagnantTasks';
+import { useTodayTasks } from '@/hooks/useTasks';
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { TarefasLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 
 export default function Tarefas() {
   const createStagnantTasks = useCreateStagnantTasks();
+  const { isLoading } = useTodayTasks();
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <TarefasLoadingSkeleton />
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
