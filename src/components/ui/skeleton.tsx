@@ -1,3 +1,4 @@
+import * as React from "react";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -28,26 +29,30 @@ interface SkeletonProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof skeletonVariants> {}
 
-function Skeleton({ className, variant, shimmer, ...props }: SkeletonProps) {
-  const shimmerClass = shimmer === "intense" 
-    ? "via-muted-foreground/20" 
-    : shimmer === "glow" 
-    ? "via-primary/15" 
-    : "via-muted-foreground/10";
+const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
+  ({ className, variant, shimmer, ...props }, ref) => {
+    const shimmerClass = shimmer === "intense" 
+      ? "via-muted-foreground/20" 
+      : shimmer === "glow" 
+      ? "via-primary/15" 
+      : "via-muted-foreground/10";
 
-  return (
-    <div
-      className={cn(skeletonVariants({ variant }), className)}
-      {...props}
-    >
-      <div 
-        className={cn(
-          "absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent to-transparent animate-shimmer",
-          shimmerClass
-        )} 
-      />
-    </div>
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={cn(skeletonVariants({ variant }), className)}
+        {...props}
+      >
+        <div 
+          className={cn(
+            "absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent to-transparent animate-shimmer",
+            shimmerClass
+          )} 
+        />
+      </div>
+    );
+  }
+);
+Skeleton.displayName = "Skeleton";
 
 export { Skeleton, skeletonVariants };
