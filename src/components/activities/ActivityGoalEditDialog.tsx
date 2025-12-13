@@ -111,7 +111,7 @@ export function ActivityGoalEditDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={upsertGoal.isPending}>
+          <Button variant="glow-success" onClick={handleSave} disabled={upsertGoal.isPending}>
             {upsertGoal.isPending ? "Salvando..." : "Salvar Metas"}
           </Button>
         </div>

@@ -174,6 +174,7 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
           </div>
 
           <Button 
+            variant="glow"
             type="submit" 
             className="w-full h-9 text-xs"
             disabled={createActivity.isPending}

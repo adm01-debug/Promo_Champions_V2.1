@@ -136,7 +136,7 @@ export function GoalEditDialog({ open, onOpenChange, salesperson }: GoalEditDial
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={updateMutation.isPending} className="gradient-primary border-0">
+            <Button variant="glow-success" type="submit" disabled={updateMutation.isPending}>
               {updateMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
