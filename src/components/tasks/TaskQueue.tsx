@@ -203,25 +203,25 @@ export function TaskQueue() {
           </div>
         </Card>
 
-        <Card className="p-4 bg-yellow-500/10 border-yellow-500/20">
+        <Card className="p-4 bg-status-warning/10 border-status-warning/20">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-yellow-500/20">
-              <ClipboardList className="h-5 w-5 text-yellow-400" />
+            <div className="p-2 rounded-lg bg-status-warning/20">
+              <ClipboardList className="h-5 w-5 text-status-warning" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-yellow-400">{mediumPriorityTasks.length}</p>
+              <p className="text-2xl font-bold text-status-warning">{mediumPriorityTasks.length}</p>
               <p className="text-xs text-muted-foreground">Média</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-green-500/10 border-green-500/20">
+        <Card className="p-4 bg-status-success/10 border-status-success/20">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-500/20">
-              <CheckCircle className="h-5 w-5 text-green-400" />
+            <div className="p-2 rounded-lg bg-status-success/20">
+              <CheckCircle className="h-5 w-5 text-status-success" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-green-400">{lowPriorityTasks.length}</p>
+              <p className="text-2xl font-bold text-status-success">{lowPriorityTasks.length}</p>
               <p className="text-xs text-muted-foreground">Baixa</p>
             </div>
           </div>
@@ -231,7 +231,7 @@ export function TaskQueue() {
       {/* Task Board */}
       {totalTasks === 0 ? (
         <Card className="p-12 text-center">
-          <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
+          <CheckCircle className="h-12 w-12 text-status-success mx-auto mb-4" />
           <h3 className="text-lg font-semibold">Nenhuma tarefa para hoje!</h3>
           <p className="text-muted-foreground mt-1">
             Todas as tarefas foram concluídas ou não há pendências.

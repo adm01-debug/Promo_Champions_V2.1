@@ -76,16 +76,16 @@ const RankingCompetitivo = () => {
   };
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Trophy className="h-6 w-6 text-yellow-400" />;
-    if (rank === 2) return <Medal className="h-6 w-6 text-gray-300" />;
-    if (rank === 3) return <Medal className="h-6 w-6 text-amber-600" />;
+    if (rank === 1) return <Trophy className="h-6 w-6 text-rank-gold" />;
+    if (rank === 2) return <Medal className="h-6 w-6 text-rank-silver" />;
+    if (rank === 3) return <Medal className="h-6 w-6 text-rank-bronze" />;
     return <span className="text-lg font-bold text-muted-foreground">#{rank}</span>;
   };
 
   const getRankGradient = (rank: number) => {
-    if (rank === 1) return "from-yellow-500/20 via-amber-500/10 to-transparent border-yellow-500/30";
-    if (rank === 2) return "from-gray-400/20 via-gray-300/10 to-transparent border-gray-400/30";
-    if (rank === 3) return "from-amber-600/20 via-orange-500/10 to-transparent border-amber-600/30";
+    if (rank === 1) return "from-rank-gold/20 via-rank-gold/10 to-transparent border-rank-gold/30";
+    if (rank === 2) return "from-rank-silver/20 via-rank-silver/10 to-transparent border-rank-silver/30";
+    if (rank === 3) return "from-rank-bronze/20 via-rank-bronze/10 to-transparent border-rank-bronze/30";
     return "from-muted/20 to-transparent border-border/50";
   };
 
@@ -114,7 +114,7 @@ const RankingCompetitivo = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">
-            <Trophy className="h-8 w-8 text-yellow-400" />
+            <Trophy className="h-8 w-8 text-rank-gold" />
             Ranking <span className="gradient-text">Competitivo</span>
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -135,10 +135,10 @@ const RankingCompetitivo = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Líder do Mês</p>
                 <p className="text-2xl font-bold">{leader?.name || "-"}</p>
-                <p className="text-sm text-yellow-400">{leader?.emoji} {leader?.title}</p>
+                <p className="text-sm text-rank-gold">{leader?.emoji} {leader?.title}</p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-500/20 to-amber-500/20 flex items-center justify-center">
-                <Trophy className="h-6 w-6 text-yellow-400" />
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rank-gold/20 to-rank-gold/20 flex items-center justify-center">
+                <Trophy className="h-6 w-6 text-rank-gold" />
               </div>
             </div>
           </CardContent>
@@ -167,8 +167,8 @@ const RankingCompetitivo = () => {
                 <p className="text-2xl font-bold">{ranking?.length || 0}</p>
                 <p className="text-sm text-muted-foreground">vendedores ativos</p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500/20 to-violet-500/20 flex items-center justify-center">
-                <Star className="h-6 w-6 text-purple-400" />
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-accent/20 to-accent/20 flex items-center justify-center">
+                <Star className="h-6 w-6 text-accent" />
               </div>
             </div>
           </CardContent>
@@ -184,8 +184,8 @@ const RankingCompetitivo = () => {
                 </p>
                 <p className="text-sm text-muted-foreground">por venda</p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
-                <Target className="h-6 w-6 text-green-400" />
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-status-success/20 to-status-success/20 flex items-center justify-center">
+                <Target className="h-6 w-6 text-status-success" />
               </div>
             </div>
           </CardContent>
@@ -256,7 +256,7 @@ const RankingCompetitivo = () => {
                       </p>
                     )}
                     {person.gapToNext > 0 && person.rank > 1 && (
-                      <p className="text-xs text-orange-400">
+                      <p className="text-xs text-primary">
                         {formatCurrency(person.gapToNext)} para subir
                       </p>
                     )}
@@ -293,8 +293,8 @@ const RankingCompetitivo = () => {
                     </p>
                     <p className="text-sm text-muted-foreground">pontos de experiência</p>
                   </div>
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                    <Sparkles className="h-6 w-6 text-purple-400" />
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-accent/20 to-accent/20 flex items-center justify-center">
+                    <Sparkles className="h-6 w-6 text-accent" />
                   </div>
                 </div>
               </CardContent>
@@ -312,8 +312,8 @@ const RankingCompetitivo = () => {
                     </p>
                     <p className="text-sm text-muted-foreground">do time</p>
                   </div>
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                    <Star className="h-6 w-6 text-amber-400" />
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rank-gold/20 to-primary/20 flex items-center justify-center">
+                    <Star className="h-6 w-6 text-rank-gold" />
                   </div>
                 </div>
               </CardContent>
@@ -335,8 +335,8 @@ const RankingCompetitivo = () => {
                         : "Iniciante"}
                     </p>
                   </div>
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-500/20 to-amber-500/20 flex items-center justify-center">
-                    <Trophy className="h-6 w-6 text-yellow-400" />
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rank-gold/20 to-rank-gold/20 flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-rank-gold" />
                   </div>
                 </div>
               </CardContent>
@@ -527,14 +527,14 @@ const RankingCompetitivo = () => {
                       <div
                         className={`h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                           isStreak
-                            ? "bg-gradient-to-br from-orange-500/20 to-red-500/20"
-                            : "bg-gradient-to-br from-green-500/20 to-emerald-500/20"
+                            ? "bg-gradient-to-br from-streak/20 to-primary/20"
+                            : "bg-gradient-to-br from-status-success/20 to-status-success/20"
                         }`}
                       >
                         {isStreak ? (
-                          <Flame className="h-6 w-6 text-orange-400" />
+                          <Flame className="h-6 w-6 text-streak" />
                         ) : (
-                          <Trophy className="h-6 w-6 text-green-400" />
+                          <Trophy className="h-6 w-6 text-status-success" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
