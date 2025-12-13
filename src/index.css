@@ -185,17 +185,27 @@
 }
 
 @layer utilities {
-  /* Interactive hover effects */
+  /* Interactive hover effects with elevation */
   .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105 active:scale-95;
+    @apply transition-all duration-200 hover:scale-105 active:scale-95;
+    @apply hover:shadow-lg hover:shadow-primary/5;
   }
   
   .hover-scale-sm {
-    @apply transition-transform duration-200 hover:scale-102 active:scale-98;
+    @apply transition-all duration-200 hover:scale-102 active:scale-98;
+    @apply hover:shadow-md hover:shadow-primary/5;
   }
   
   .hover-scale-lg {
-    @apply transition-transform duration-200 hover:scale-110 active:scale-95;
+    @apply transition-all duration-200 hover:scale-110 active:scale-95;
+    @apply hover:shadow-xl hover:shadow-primary/10;
+  }
+  
+  /* Hover lift effect (scale + shadow + translate) */
+  .hover-lift {
+    @apply transition-all duration-200;
+    @apply hover:scale-102 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10;
+    @apply active:scale-98 active:translate-y-0;
   }
   
   .glass {
