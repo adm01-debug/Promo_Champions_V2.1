@@ -18,6 +18,8 @@ import {
 import { SoundSettings } from "@/components/settings/SoundSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 const frequencyLabels = {
   realtime: "Tempo real",
@@ -108,7 +110,12 @@ export default function Notificacoes() {
   };
 
   return (
-    <div className="space-y-6">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<NotificacoesLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold gradient-text">Notificações</h1>
@@ -372,5 +379,6 @@ export default function Notificacoes() {
         </CardContent>
       </Card>
     </div>
+    </SkeletonTransition>
   );
 }

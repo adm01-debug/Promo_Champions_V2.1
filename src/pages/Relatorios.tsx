@@ -7,6 +7,8 @@ import { format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useReportMetrics } from "@/hooks/useReportData";
+import { RelatoriosLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import {
   BarChart,
   Bar,
@@ -123,7 +125,12 @@ const Relatorios = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-6 lg:p-8">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<RelatoriosLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -405,6 +412,7 @@ const Relatorios = () => {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
