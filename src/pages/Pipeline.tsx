@@ -1,4 +1,5 @@
 import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
+import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
 import { Kanban } from "lucide-react";
 
 export default function Pipeline() {
@@ -16,7 +17,14 @@ export default function Pipeline() {
         </div>
       </div>
 
-      <PipelineBoard />
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="xl:col-span-3">
+          <PipelineBoard />
+        </div>
+        <div className="xl:col-span-1">
+          <AtRiskDealsPanel />
+        </div>
+      </div>
     </div>
   );
 }
