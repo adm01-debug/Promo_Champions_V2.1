@@ -53,7 +53,7 @@ export const StatCard = ({
   return (
     <div
       className={cn(
-        "glass rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] group",
+        "glass rounded-xl p-5 hover-scale-sm cursor-pointer group",
         variant === "primary" && "gradient-border glow-primary",
         variant === "secondary" && "gradient-border glow-secondary"
       )}
