@@ -45,32 +45,37 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2 border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-colors">
             <Play className="h-3.5 w-3.5" />
             Iniciar Cadência
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl glass border-border/50 dark:border-glow">
         <DialogHeader>
-          <DialogTitle>Inscrever em Cadência</DialogTitle>
+          <DialogTitle className="font-display text-lg flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+              <Play className="h-4 w-4 gradient-primary" />
+            </div>
+            Inscrever em Cadência
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="p-3 rounded-lg bg-muted/50">
+          <div className="p-3 rounded-lg bg-gradient-to-r from-muted/50 to-muted/30 border border-border/30">
             <p className="text-sm">
               <span className="text-muted-foreground">Prospect:</span>{" "}
-              <span className="font-medium">{clientName}</span>
+              <span className="font-display font-semibold gradient-text">{clientName}</span>
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label>Responsável</Label>
+            <Label className="text-sm font-medium">Responsável</Label>
             <Select value={salespersonId} onValueChange={setSalespersonId}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-muted/30 border-border/50 focus:border-primary transition-colors">
                 <SelectValue placeholder="Selecione o vendedor responsável" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="glass border-border/50">
                 {salespeople?.map(sp => (
                   <SelectItem key={sp.id} value={sp.id}>
                     {sp.name}
@@ -81,11 +86,13 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
           </div>
 
           <div className="space-y-2">
-            <Label>Selecione uma Cadência</Label>
+            <Label className="text-sm font-medium">Selecione uma Cadência</Label>
             {activeCadences.length === 0 ? (
-              <p className="text-sm text-muted-foreground p-4 text-center">
-                Nenhuma cadência disponível. Crie uma primeiro.
-              </p>
+              <div className="text-sm text-muted-foreground p-6 text-center bg-muted/20 rounded-lg border border-dashed border-border/50">
+                <Play className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="font-medium">Nenhuma cadência disponível</p>
+                <p className="text-xs mt-1">Crie uma cadência primeiro</p>
+              </div>
             ) : (
               <ScrollArea className="h-[300px] pr-3">
                 <div className="space-y-3">
@@ -103,7 +110,8 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
           </div>
 
           <Button
-            className="w-full"
+            variant="glow"
+            className="w-full font-medium"
             onClick={handleEnroll}
             disabled={!selectedCadenceId || enrollInCadence.isPending}
           >
