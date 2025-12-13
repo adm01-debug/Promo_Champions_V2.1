@@ -29,7 +29,7 @@ export function CloserStatCard({
   };
 
   return (
-    <Card variant="elevated" className="border-border/40 dark:border-glow overflow-hidden hover-lift cursor-pointer">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow overflow-hidden transition-all duration-200 hover:shadow-md hover:border-primary/30 cursor-pointer">
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
@@ -37,11 +37,11 @@ export function CloserStatCard({
               {title}
             </p>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">{value}</span>
+              <span className="text-2xl font-bold gradient-text">{value}</span>
               {change !== undefined && (
                 <span className={cn(
-                  "flex items-center text-xs font-medium",
-                  isPositive ? "text-status-success" : "text-status-error"
+                  "flex items-center text-xs font-medium px-1.5 py-0.5 rounded",
+                  isPositive ? "text-status-success bg-status-success/10" : "text-status-error bg-status-error/10"
                 )}>
                   {isPositive ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
                   {Math.abs(change).toFixed(1)}%
@@ -53,10 +53,15 @@ export function CloserStatCard({
             )}
           </div>
           <div className={cn(
-            "h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center",
-            variantStyles[variant]
+            "h-11 w-11 rounded-xl flex items-center justify-center shadow-sm",
+            variant === "primary" ? "gradient-primary" : 
+            variant === "success" ? "bg-status-success/20" :
+            variant === "warning" ? "bg-streak/20" : "bg-muted/50"
           )}>
-            <Icon className="h-5 w-5 text-primary" />
+            <Icon className={cn(
+              "h-5 w-5",
+              variant === "primary" ? "text-white" : "text-primary"
+            )} />
           </div>
         </div>
       </CardContent>
