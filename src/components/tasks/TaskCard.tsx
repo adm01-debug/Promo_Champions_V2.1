@@ -44,62 +44,62 @@ export function TaskCard({ task }: TaskCardProps) {
   };
 
   return (
-    <Card variant="elevated" className="p-4 glass border border-border/40 dark:border-glow hover-lift group cursor-pointer card-elevated transition-all duration-300">
+    <Card variant="elevated" className="p-4 glass border border-border/40 dark:border-glow hover-lift group cursor-pointer card-elevated transition-all duration-300 animate-fade-in">
       <div className="flex items-start gap-3">
         <Button
           variant="outline"
           size="icon"
-          className="h-9 w-9 rounded-full shrink-0 border-2 border-border/50 hover:bg-status-success hover:border-status-success hover:text-white transition-all duration-200 shadow-sm"
+          className="h-9 w-9 rounded-full shrink-0 border-2 border-border/50 hover:bg-status-success hover:border-status-success hover:text-white hover:scale-110 hover:shadow-lg hover:shadow-status-success/30 transition-all duration-200 shadow-sm"
           onClick={handleComplete}
           disabled={completeTask.isPending}
         >
-          <Check className={`h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity ${completeTask.isPending ? 'animate-spin opacity-100' : ''}`} />
+          <Check className={`h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 ${completeTask.isPending ? 'animate-spin opacity-100' : ''}`} />
         </Button>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className={cn("p-1 rounded-md", `${type.color}/10`)}>
-              <TypeIcon className={cn("h-3.5 w-3.5", type.color)} />
+            <div className={cn("p-1.5 rounded-md transition-all duration-200 group-hover:scale-110", `bg-${type.color.replace('text-', '')}/15`)}>
+              <TypeIcon className={cn("h-3.5 w-3.5 transition-colors", type.color)} />
             </div>
-            <span className={cn("text-xs font-medium", type.color)}>{type.label}</span>
-            <Badge variant="outline" className={cn("text-[10px] px-1.5 shadow-sm", priority.className)}>
+            <span className={cn("text-xs font-medium transition-colors", type.color)}>{type.label}</span>
+            <Badge variant="outline" className={cn("text-[10px] px-1.5 shadow-sm transition-all duration-200 group-hover:scale-105", priority.className)}>
               {priority.label}
             </Badge>
           </div>
 
-          <h4 className="font-display font-medium text-foreground truncate">{task.title}</h4>
+          <h4 className="font-display font-medium text-foreground truncate group-hover:text-primary transition-colors duration-200">{task.title}</h4>
           
           {task.description && (
-            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+            <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1 border border-border/20">
               {task.description}
             </p>
           )}
 
           {task.sale && (
-            <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
+            <div className="mt-2.5 text-xs text-muted-foreground flex items-center gap-1.5">
               <span className="font-medium gradient-text">{task.sale.client_name}</span>
               <span className="text-border">•</span>
-              <span>{task.sale.product_name}</span>
+              <span className="text-muted-foreground/80">{task.sale.product_name}</span>
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/30">
+          <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/30">
             {task.due_time && (
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground px-2 py-1 rounded-md bg-muted/50">
-                <Clock className="h-3 w-3" />
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground px-2.5 py-1 rounded-md bg-muted/40 border border-border/30 shadow-inner group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-200">
+                <Clock className="h-3 w-3 text-primary" />
                 <span className="font-medium">{task.due_time.slice(0, 5)}</span>
               </div>
             )}
 
             {task.salesperson && (
-              <div className="flex items-center gap-2">
-                <Avatar className="h-6 w-6 border-2 border-background shadow-sm">
+              <div className="flex items-center gap-2 group/avatar">
+                <Avatar className="h-6 w-6 border-2 border-background shadow-sm transition-all duration-200 group-hover/avatar:scale-110 group-hover/avatar:shadow-md">
                   <AvatarImage src={task.salesperson.avatar_url || undefined} />
-                  <AvatarFallback className="text-[10px] font-display gradient-primary text-white">
+                  <AvatarFallback className="text-[10px] font-display bg-gradient-to-br from-primary to-accent text-white">
                     {task.salesperson.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-xs text-muted-foreground font-medium">
+                <span className="text-xs text-muted-foreground font-medium group-hover/avatar:text-foreground transition-colors">
                   {task.salesperson.name}
                 </span>
               </div>
