@@ -33,22 +33,22 @@ export function TeamGoalProgress({
   const projectionProgress = totalGoal > 0 ? Math.min((projection / totalGoal) * 100, 150) : 0;
 
   return (
-    <Card variant="elevated" className="glass border-border/40 overflow-hidden">
-      <div className={`h-1.5 ${onTrack ? "bg-gradient-to-r from-status-success to-status-success/70" : "bg-gradient-to-r from-status-warning to-status-warning/70"}`} />
-      <CardHeader className="pb-2">
+    <Card variant="elevated" className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
+      <div className={`h-1.5 ${onTrack ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50" : "bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50"}`} />
+      <CardHeader className="pb-3 border-b border-border/30">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <div className="p-1.5 rounded-lg gradient-primary">
-              <Target className="h-4 w-4 text-white" />
+          <CardTitle className="text-lg font-display font-bold flex items-center gap-2">
+            <div className="p-2 rounded-xl gradient-primary shadow-md">
+              <Target className="h-5 w-5 text-white" />
             </div>
             <span className="gradient-text">Meta da Equipe</span>
           </CardTitle>
           <Badge 
             variant="outline" 
-            className={onTrack 
-              ? "bg-status-success/10 text-status-success border-status-success/30 shadow-sm" 
-              : "bg-status-warning/10 text-status-warning border-status-warning/30 shadow-sm"
-            }
+            className={`shadow-sm ${onTrack 
+              ? "bg-status-success/10 text-status-success border-status-success/30" 
+              : "bg-status-warning/10 text-status-warning border-status-warning/30"
+            }`}
           >
             {onTrack ? (
               <><TrendingUp className="h-3 w-3 mr-1" /> No caminho</>
@@ -58,59 +58,59 @@ export function TeamGoalProgress({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-4">
         {/* Main Progress */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-3xl font-bold gradient-text">{formatCurrency(totalSales)}</p>
-              <p className="text-sm text-muted-foreground">
-                de <span className="font-medium text-foreground">{formatCurrency(totalGoal)}</span>
+              <p className="text-4xl font-display font-bold gradient-text">{formatCurrency(totalSales)}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                de <span className="font-display font-medium text-foreground">{formatCurrency(totalGoal)}</span>
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold gradient-text">{progress.toFixed(1)}%</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">atingido</p>
+              <p className="text-3xl font-display font-bold gradient-text">{progress.toFixed(1)}%</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">atingido</p>
             </div>
           </div>
           
           <div className="relative">
-            <Progress value={progressCapped} className="h-4" />
+            <Progress value={progressCapped} className="h-5" />
             {progress >= 100 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-primary-foreground">META BATIDA! 🎉</span>
+                <span className="text-xs font-display font-bold text-primary-foreground animate-pulse">META BATIDA! 🎉</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Projection */}
-        <div className="p-4 rounded-xl bg-muted/30 border border-border/30 space-y-3">
+        <div className="p-4 rounded-xl glass border border-border/30 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground flex items-center gap-2">
-              <div className="p-1 rounded-md bg-primary/10">
-                <Zap className="h-3.5 w-3.5 text-primary" />
+              <div className="p-1.5 rounded-lg bg-primary/20">
+                <Zap className="h-4 w-4 text-primary" />
               </div>
-              Projeção de Fechamento
+              <span className="font-medium">Projeção de Fechamento</span>
             </span>
-            <span className={`text-lg font-bold ${onTrack ? "text-status-success" : "text-status-warning"}`}>
+            <span className={`text-xl font-display font-bold ${onTrack ? "text-status-success" : "text-status-warning"}`}>
               {formatCurrency(projection)}
             </span>
           </div>
-          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+          <div className="relative h-2.5 bg-muted/50 rounded-full overflow-hidden border border-border/30">
             <div 
-              className={`absolute h-full transition-all ${onTrack ? "bg-status-success" : "bg-status-warning"}`}
+              className={`absolute h-full transition-all duration-500 ${onTrack ? "bg-gradient-to-r from-status-success to-status-success/70" : "bg-gradient-to-r from-status-warning to-status-warning/70"}`}
               style={{ width: `${Math.min(projectionProgress, 100)}%` }}
             />
             {/* Goal marker */}
             <div 
-              className="absolute top-0 bottom-0 w-0.5 bg-foreground/50"
+              className="absolute top-0 bottom-0 w-0.5 bg-foreground/60"
               style={{ left: `${Math.min((100 / (projectionProgress || 1)) * 100, 100)}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center font-medium">
             {onTrack 
-              ? `Projeção ${((projection / totalGoal) * 100 - 100).toFixed(0)}% acima da meta`
+              ? `Projeção ${((projection / totalGoal) * 100 - 100).toFixed(0)}% acima da meta 🚀`
               : `Faltam ${formatCurrency(totalGoal - projection)} para bater a meta`
             }
           </p>
@@ -118,29 +118,29 @@ export function TeamGoalProgress({
 
         {/* Daily Stats */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-3 rounded-lg bg-muted/20 border border-border/30 text-center hover:bg-muted/30 transition-colors">
-            <p className="text-lg font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Média diária atual</p>
+          <div className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all">
+            <p className="text-xl font-display font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mt-1">Média diária atual</p>
           </div>
-          <div className="p-3 rounded-lg bg-muted/20 border border-border/30 text-center hover:bg-muted/30 transition-colors">
-            <p className={`text-lg font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
+          <div className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all">
+            <p className={`text-xl font-display font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Necessário/dia</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mt-1">Necessário/dia</p>
           </div>
         </div>
 
         {/* Days Progress */}
-        <div className="flex items-center gap-3 text-sm">
-          <div className="p-1 rounded-md bg-muted/50">
+        <div className="flex items-center gap-3 text-sm p-3 rounded-xl glass border border-border/30">
+          <div className="p-2 rounded-lg bg-muted/50">
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="flex-1">
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span className="font-medium">{daysElapsed} dias</span>
+            <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+              <span className="font-medium">{daysElapsed} dias passados</span>
               <span className="font-medium">{daysRemaining} restantes</span>
             </div>
-            <Progress value={(daysElapsed / (daysElapsed + daysRemaining)) * 100} className="h-1.5" />
+            <Progress value={(daysElapsed / (daysElapsed + daysRemaining)) * 100} className="h-2" />
           </div>
         </div>
       </CardContent>

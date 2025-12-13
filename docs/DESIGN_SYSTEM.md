@@ -509,8 +509,10 @@ Os seguintes componentes já utilizam o design system completo:
 
 | Componente | Arquivo | Melhorias |
 |------------|---------|-----------|
-| SalespersonGoalCard | `goals/SalespersonGoalCard.tsx` | Glass effect, gradient-text name, gradient badges |
-| TeamGoalProgress | `goals/TeamGoalProgress.tsx` | Card elevated, gradient header, gradient-text values |
+| GoalsLeaderboard | `goals/GoalsLeaderboard.tsx` | Glass + card-elevated, gradient icon header, styled empty state, border-b header separator |
+| CommissionCalculator | `goals/CommissionCalculator.tsx` | Glass + dark:border-glow, hover-lift stat cards com hover-glow, animate-float crown, font-display, styled empty state |
+| SalespersonGoalCard | `goals/SalespersonGoalCard.tsx` | Glass + hover-lift, gradient-text, animate-fire-pulse, xp-shimmer progress, font-display, shadow badges |
+| TeamGoalProgress | `goals/TeamGoalProgress.tsx` | Glass + dark:border-glow, gradient status bar, font-display 4xl values, hover-lift stat cards, styled projection bar |
 
 ### Gamificação
 
@@ -884,8 +886,11 @@ animation: {
 #### Cadências (2 componentes)
 - `CadenceCard`, `TodaysCadenceTasks`
 
-#### Metas (2 componentes)
-- `SalespersonGoalCard`, `TeamGoalProgress`
+#### Metas (4 componentes)
+- `GoalsLeaderboard` - Glass, gradient icon header
+- `CommissionCalculator` - Hover-lift cards, animate-float crown
+- `SalespersonGoalCard` - Fire-pulse, xp-shimmer progress
+- `TeamGoalProgress` - Gradient status bar, hover-lift stats
 
 #### Gamificação (5 componentes)
 - `CompetitiveLeaderboard` - Hover-lift, animate-float/subtle-pulse
