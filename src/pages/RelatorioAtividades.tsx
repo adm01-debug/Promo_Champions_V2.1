@@ -6,14 +6,11 @@ import { ActivityVolumeChart } from "@/components/analytics/ActivityVolumeChart"
 import { ActivityOutcomesChart } from "@/components/analytics/ActivityOutcomesChart";
 import { ActivityTrendChart } from "@/components/analytics/ActivityTrendChart";
 import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function RelatorioAtividades() {
   const { data, isLoading, error } = useSalespersonActivityReport(1);
   const { data: trendData, isLoading: trendLoading } = useActivityTrend(undefined, 30);
-
-  if (isLoading || trendLoading) {
-    return <RelatorioAtividadesLoadingSkeleton />;
-  }
 
   if (error) {
     return (
@@ -69,7 +66,12 @@ export default function RelatorioAtividades() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <SkeletonTransition
+      isLoading={isLoading || trendLoading}
+      skeleton={<RelatorioAtividadesLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
@@ -131,5 +133,6 @@ export default function RelatorioAtividades() {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 }
