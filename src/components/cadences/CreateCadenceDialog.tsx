@@ -99,14 +99,17 @@ export function CreateCadenceDialog() {
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
       <DialogTrigger asChild>
-        <Button variant="glow" className="gap-2">
+        <Button variant="glow" className="gap-2 font-medium">
           <Plus className="h-4 w-4" />
           Nova Cadência
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto glass border-border/50 dark:border-glow">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="font-display text-lg flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+              <Plus className="h-4 w-4 gradient-primary" />
+            </div>
             {step === "info" ? "Criar Nova Cadência" : "Configurar Etapas"}
           </DialogTitle>
         </DialogHeader>
@@ -114,25 +117,26 @@ export function CreateCadenceDialog() {
         {step === "info" ? (
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Nome da Cadência</Label>
+              <Label className="text-sm font-medium">Nome da Cadência</Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Ex: Cadência de Prospecção Inicial"
+                className="bg-muted/30 border-border/50 focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
-              <Label>Descrição (opcional)</Label>
+              <Label className="text-sm font-medium">Descrição (opcional)</Label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Descreva o objetivo desta cadência..."
-                className="resize-none"
+                className="resize-none bg-muted/30 border-border/50 focus:border-primary transition-colors"
               />
             </div>
             <Button
               variant="glow"
-              className="w-full"
+              className="w-full font-medium"
               onClick={handleCreateCadence}
               disabled={!name.trim() || createCadence.isPending}
             >
@@ -141,28 +145,28 @@ export function CreateCadenceDialog() {
           </div>
         ) : (
           <div className="space-y-4 py-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/30">
               <p className="text-sm text-muted-foreground">
-                Configure as etapas de contato da cadência "{name}"
+                Configure as etapas de contato da cadência "<span className="text-foreground font-medium">{name}</span>"
               </p>
-              <Badge variant="outline">{steps.length} etapas</Badge>
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">{steps.length} etapas</Badge>
             </div>
 
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
               {steps.map((s, index) => (
                 <div
                   key={index}
-                  className="p-3 rounded-lg border border-border/60 bg-muted/30 space-y-3"
+                  className="p-4 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/40 space-y-3 transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-accent/10 text-primary border border-primary/20">
                       Etapa {index + 1}
                     </Badge>
                     {steps.length > 1 && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 text-destructive"
+                        className="h-6 w-6 text-destructive hover:bg-destructive/10 transition-colors"
                         onClick={() => removeStep(index)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -172,25 +176,25 @@ export function CreateCadenceDialog() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Dia</Label>
+                      <Label className="text-xs font-medium text-muted-foreground">Dia</Label>
                       <Input
                         type="number"
                         min={1}
                         value={s.day_number}
                         onChange={(e) => updateStep(index, "day_number", parseInt(e.target.value) || 1)}
-                        className="h-8 text-sm"
+                        className="h-8 text-sm bg-background/50 border-border/50 focus:border-primary transition-colors"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Tipo de Ação</Label>
+                      <Label className="text-xs font-medium text-muted-foreground">Tipo de Ação</Label>
                       <Select
                         value={s.action_type}
                         onValueChange={(v) => updateStep(index, "action_type", v)}
                       >
-                        <SelectTrigger className="h-8 text-sm">
+                        <SelectTrigger className="h-8 text-sm bg-background/50 border-border/50 focus:border-primary transition-colors">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="glass border-border/50">
                           {actionTypes.map(type => {
                             const Icon = type.icon;
                             return (
@@ -208,36 +212,36 @@ export function CreateCadenceDialog() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Título da Ação</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">Título da Ação</Label>
                     <Input
                       value={s.title}
                       onChange={(e) => updateStep(index, "title", e.target.value)}
                       placeholder="Ex: Primeiro contato por email"
-                      className="h-8 text-sm"
+                      className="h-8 text-sm bg-background/50 border-border/50 focus:border-primary transition-colors"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Descrição (opcional)</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">Descrição (opcional)</Label>
                     <Textarea
                       value={s.description}
                       onChange={(e) => updateStep(index, "description", e.target.value)}
                       placeholder="Instruções ou template..."
-                      className="min-h-[60px] text-sm resize-none"
+                      className="min-h-[60px] text-sm resize-none bg-background/50 border-border/50 focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
               ))}
             </div>
 
-            <Button variant="outline" className="w-full gap-2" onClick={addStep}>
+            <Button variant="outline" className="w-full gap-2 border-dashed border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-colors" onClick={addStep}>
               <Plus className="h-4 w-4" />
               Adicionar Etapa
             </Button>
 
             <Button
               variant="glow-success"
-              className="w-full"
+              className="w-full font-medium"
               onClick={handleSaveSteps}
               disabled={createStep.isPending || steps.every(s => !s.title.trim())}
             >
