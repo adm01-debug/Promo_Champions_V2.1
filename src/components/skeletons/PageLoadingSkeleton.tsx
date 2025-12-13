@@ -488,3 +488,182 @@ export function RelatorioAtividadesLoadingSkeleton() {
     </div>
   );
 }
+
+export function TarefasLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="space-y-2">
+          <Skeleton className="h-9 w-48" variant="intense" shimmer="intense" />
+          <Skeleton className="h-4 w-72" />
+        </div>
+        <Skeleton className="h-10 w-48 rounded-md" />
+      </div>
+
+      {/* Next Best Action Skeleton */}
+      <div className="glass rounded-xl border border-primary/30 p-6">
+        <div className="flex items-start gap-4">
+          <Skeleton className="h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
+          <div className="flex-1 space-y-3">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-32" shimmer="intense" />
+              <Skeleton className="h-5 w-16 rounded-full" variant="primary" shimmer="glow" />
+            </div>
+            <Skeleton className="h-4 w-full max-w-md" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="flex gap-2 mt-4">
+              <Skeleton className="h-9 w-28 rounded-md" variant="primary" shimmer="glow" />
+              <Skeleton className="h-9 w-20 rounded-md" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-10 w-[200px] rounded-md" />
+          <Skeleton className="h-9 w-24 rounded-md" />
+        </div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-9 w-28 rounded-md" />
+          <Skeleton className="h-9 w-32 rounded-md" variant="primary" shimmer="glow" />
+        </div>
+      </div>
+
+      {/* Priority Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-lg" variant="intense" shimmer="intense" />
+            <div className="space-y-1">
+              <Skeleton className="h-7 w-8" shimmer="intense" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+          </div>
+        </div>
+        <div className="p-4 rounded-xl bg-warning/10 border border-warning/20">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div className="space-y-1">
+              <Skeleton className="h-7 w-8" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+          </div>
+        </div>
+        <div className="p-4 rounded-xl bg-success/10 border border-success/20">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div className="space-y-1">
+              <Skeleton className="h-7 w-8" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Priority Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* High Priority Column */}
+        <div className="rounded-xl border-2 border-destructive/30 bg-destructive/5 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-5 rounded-full" variant="intense" shimmer="intense" />
+              <Skeleton className="h-5 w-20" shimmer="intense" />
+            </div>
+            <Skeleton className="h-5 w-6 rounded-full" />
+          </div>
+          <div className="space-y-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="p-4 rounded-lg bg-card border border-border/50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-5 w-32" shimmer={i === 0 ? "intense" : "default"} />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+                <Skeleton className="h-3 w-full" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-6 rounded-full" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                  <Skeleton className="h-4 w-16" />
+                  <div className="flex gap-1">
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Medium Priority Column */}
+        <div className="rounded-xl border-2 border-warning/30 bg-warning/5 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-5 rounded-full" />
+              <Skeleton className="h-5 w-20" />
+            </div>
+            <Skeleton className="h-5 w-6 rounded-full" />
+          </div>
+          <div className="space-y-3">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="p-4 rounded-lg bg-card border border-border/50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+                <Skeleton className="h-3 w-3/4" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-6 rounded-full" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                  <Skeleton className="h-4 w-16" />
+                  <div className="flex gap-1">
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Low Priority Column */}
+        <div className="rounded-xl border-2 border-success/30 bg-success/5 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-5 rounded-full" />
+              <Skeleton className="h-5 w-16" />
+            </div>
+            <Skeleton className="h-5 w-6 rounded-full" />
+          </div>
+          <div className="space-y-3">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="p-4 rounded-lg bg-card border border-border/50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+                <Skeleton className="h-3 w-2/3" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-6 rounded-full" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                  <Skeleton className="h-4 w-16" />
+                  <div className="flex gap-1">
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
