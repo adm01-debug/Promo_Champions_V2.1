@@ -30,9 +30,9 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const ROLE_COLORS: Record<string, string> = {
-  sdr: "hsl(200, 95%, 50%)",
-  closer: "hsl(150, 80%, 45%)",
-  hybrid: "hsl(280, 80%, 55%)",
+  sdr: "hsl(var(--status-info))",
+  closer: "hsl(var(--status-success))",
+  hybrid: "hsl(var(--status-purple))",
 };
 
 function formatCurrency(value: number): string {
@@ -52,7 +52,7 @@ function ComparisonIndicator({ value, avg }: { value: number; avg: number }) {
   
   if (diff > 0) {
     return (
-      <span className="flex items-center gap-1 text-emerald-400 text-xs">
+      <span className="flex items-center gap-1 text-status-success text-xs">
         <ArrowUp className="h-3 w-3" />
         +{diff.toFixed(0)}%
       </span>
@@ -60,7 +60,7 @@ function ComparisonIndicator({ value, avg }: { value: number; avg: number }) {
   }
   
   return (
-    <span className="flex items-center gap-1 text-red-400 text-xs">
+    <span className="flex items-center gap-1 text-status-error text-xs">
       <ArrowDown className="h-3 w-3" />
       {diff.toFixed(0)}%
     </span>
@@ -144,7 +144,7 @@ function SalespersonCard({
             <div className="mt-3">
               <div className="flex items-center justify-between text-xs mb-1">
                 <span className="text-muted-foreground">Meta</span>
-                <span className={person.goalProgress >= 100 ? "text-emerald-400" : "text-foreground"}>
+                <span className={person.goalProgress >= 100 ? "text-status-success" : "text-foreground"}>
                   {person.goalProgress.toFixed(0)}%
                 </span>
               </div>
@@ -268,7 +268,7 @@ export function PerformanceComparison() {
                       <p className="text-xs text-muted-foreground">Top Performer</p>
                       <p className="text-sm font-medium">{benchmark.topPerformer.name}</p>
                     </div>
-                    <Trophy className="h-4 w-4 text-amber-400 ml-auto" />
+                    <Trophy className="h-4 w-4 text-rank-gold ml-auto" />
                   </div>
                 </div>
               )}
