@@ -2,6 +2,9 @@ import { Package, Plus, Filter, Search, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ProdutosLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { useState, useEffect } from "react";
 
 const produtosData = [
   { id: 1, nome: "Plano Básico", categoria: "Assinatura", preco: 499, vendas: 156, rating: 4.2, status: "ativo" },
@@ -18,8 +21,21 @@ const statusColors: Record<string, string> = {
 };
 
 const Produtos = () => {
+  // Simula loading para demonstrar skeleton
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background p-6 lg:p-8">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<ProdutosLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -95,6 +111,7 @@ const Produtos = () => {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
