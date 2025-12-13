@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SalesTestButton } from "@/components/gamification/SalesTestButton";
 
 export const DashboardHeader = () => {
   return (
@@ -21,7 +20,6 @@ export const DashboardHeader = () => {
         </p>
       </div>
       <div className="flex items-center gap-3 flex-wrap">
-        <SalesTestButton />
         <Select defaultValue="30d">
           <SelectTrigger className="w-[160px] glass border-border/50">
             <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
