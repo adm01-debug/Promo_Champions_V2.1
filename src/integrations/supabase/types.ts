@@ -65,6 +65,50 @@ export type Database = {
           },
         ]
       }
+      activity_goals: {
+        Row: {
+          calls_goal: number
+          created_at: string
+          emails_goal: number
+          id: string
+          linkedin_goal: number
+          meetings_goal: number
+          salesperson_id: string
+          updated_at: string
+          whatsapp_goal: number
+        }
+        Insert: {
+          calls_goal?: number
+          created_at?: string
+          emails_goal?: number
+          id?: string
+          linkedin_goal?: number
+          meetings_goal?: number
+          salesperson_id: string
+          updated_at?: string
+          whatsapp_goal?: number
+        }
+        Update: {
+          calls_goal?: number
+          created_at?: string
+          emails_goal?: number
+          id?: string
+          linkedin_goal?: number
+          meetings_goal?: number
+          salesperson_id?: string
+          updated_at?: string
+          whatsapp_goal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_goals_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_steps: {
         Row: {
           action_type: string

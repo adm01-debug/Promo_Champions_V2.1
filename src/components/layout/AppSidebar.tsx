@@ -18,7 +18,8 @@ import {
   Activity,
   Handshake,
   GitBranch,
-  Target
+  Target,
+  Crosshair
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -52,6 +53,7 @@ const teamItems = [
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Cadências", url: "/cadencias", icon: GitBranch },
   { title: "Atividades", url: "/atividades", icon: Activity },
+  { title: "Metas Atividades", url: "/metas-atividades", icon: Crosshair },
   { title: "Relatório Atividades", url: "/relatorio-atividades", icon: BarChart3 },
   { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
   { title: "Playbooks", url: "/playbooks", icon: BookOpen },
