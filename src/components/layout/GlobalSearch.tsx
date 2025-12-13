@@ -204,7 +204,7 @@ export function SearchTrigger({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground rounded-lg border border-border/50 bg-muted/50 hover:bg-muted transition-colors"
+      className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground rounded-lg border border-border/50 bg-muted/50 hover:bg-muted transition-all duration-200 hover:scale-105 active:scale-95"
     >
       <Search className="h-4 w-4" />
       <span className="hidden sm:inline">Buscar...</span>
