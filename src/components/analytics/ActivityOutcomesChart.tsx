@@ -38,20 +38,25 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <Card className="glass border-border/40">
+    <Card className="glass dark:border-glow card-elevated">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Target className="h-4 w-4 text-primary" />
-          Distribuição de Resultados
+        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+          <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+            <Target className="h-4 w-4 text-primary" />
+          </div>
+          <span className="gradient-text">Distribuição de Resultados</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {total === 0 ? (
-          <div className="flex items-center justify-center h-[250px] text-muted-foreground text-sm">
-            Nenhum resultado registrado
+          <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground">
+            <div className="p-4 rounded-full bg-muted/20 mb-3">
+              <Target className="h-8 w-8 opacity-50" />
+            </div>
+            <p className="text-sm">Nenhum resultado registrado</p>
           </div>
         ) : (
-          <div className="h-[250px]">
+          <div className="h-[250px] animate-fade-in">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -66,7 +71,13 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
                   labelLine={false}
                 >
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.color}
+                      style={{
+                        filter: "drop-shadow(0 4px 8px hsl(var(--primary) / 0.15))",
+                      }}
+                    />
                   ))}
                 </Pie>
                 <Tooltip
@@ -74,8 +85,9 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
                   contentStyle={{
                     backgroundColor: "hsl(var(--card))",
                     border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
+                    borderRadius: "12px",
                     fontSize: "12px",
+                    boxShadow: "0 10px 40px -10px hsl(var(--primary) / 0.2)",
                   }}
                 />
                 <Legend 
