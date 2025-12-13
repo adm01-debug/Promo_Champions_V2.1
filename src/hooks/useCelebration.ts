@@ -1,10 +1,11 @@
 import { useCallback, useRef, useEffect } from 'react';
 import { useSoundSettings } from './useSoundSettings';
+import { useRecordAchievement } from './useAchievements';
 
 export function useCelebration() {
   const hasPlayedRef = useRef<Set<string>>(new Set());
   const { playSound } = useSoundSettings();
-
+  const recordAchievement = useRecordAchievement();
   // Request notification permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -76,7 +77,7 @@ export function useCelebration() {
     });
   }, []);
 
-  const celebrate = useCallback((id: string, salespersonName?: string) => {
+  const celebrate = useCallback((id: string, salespersonName?: string, salespersonId?: string) => {
     if (hasPlayedRef.current.has(id)) return;
     
     hasPlayedRef.current.add(id);
@@ -88,7 +89,16 @@ export function useCelebration() {
         ? `${salespersonName} atingiu 100% da meta de atividades!` 
         : 'Meta de atividades atingida!'
     );
-  }, [playSound, triggerConfetti, sendPushNotification]);
+
+    // Record achievement in database
+    if (salespersonId) {
+      recordAchievement.mutate({
+        salespersonId,
+        achievementType: 'daily_goal',
+        details: { name: salespersonName },
+      });
+    }
+  }, [playSound, triggerConfetti, sendPushNotification, recordAchievement]);
 
   const resetCelebration = useCallback((id: string) => {
     hasPlayedRef.current.delete(id);

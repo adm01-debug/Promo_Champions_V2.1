@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          achievement_date: string
+          achievement_type: string
+          created_at: string
+          details: Json | null
+          id: string
+          salesperson_id: string
+        }
+        Insert: {
+          achievement_date?: string
+          achievement_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          salesperson_id: string
+        }
+        Update: {
+          achievement_date?: string
+          achievement_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievements_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activities: {
         Row: {
           activity_type: Database["public"]["Enums"]["activity_type"]
