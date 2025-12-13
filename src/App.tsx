@@ -12,6 +12,7 @@ import Relatorios from "./pages/Relatorios";
 import Vendedores from "./pages/Vendedores";
 import VendedorDashboard from "./pages/VendedorDashboard";
 import Analytics from "./pages/Analytics";
+import Notificacoes from "./pages/Notificacoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/vendedores" element={<Vendedores />} />
             <Route path="/vendedor/:id" element={<VendedorDashboard />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/notificacoes" element={<Notificacoes />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
