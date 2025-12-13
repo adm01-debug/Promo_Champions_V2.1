@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTeamAchievementStats } from "@/hooks/useTeamAchievementStats";
 import { AchievementTrendChart } from "./AchievementTrendChart";
+import { AchievementComparisonChart } from "./AchievementComparisonChart";
 
 export function TeamAchievementStats() {
   const { data: stats, isLoading } = useTeamAchievementStats();
@@ -166,8 +167,11 @@ export function TeamAchievementStats() {
         </CardContent>
       </Card>
 
-      {/* Trend Chart */}
-      <AchievementTrendChart />
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AchievementTrendChart />
+        <AchievementComparisonChart />
+      </div>
     </div>
   );
 }
