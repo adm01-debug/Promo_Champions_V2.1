@@ -92,11 +92,29 @@ export function useCelebration() {
 
     // Record achievement in database
     if (salespersonId) {
-      recordAchievement.mutate({
-        salespersonId,
-        achievementType: 'daily_goal',
-        details: { name: salespersonName },
-      });
+      recordAchievement.mutate(
+        {
+          salespersonId,
+          achievementType: 'daily_goal',
+          details: { name: salespersonName },
+        },
+        {
+          onSuccess: (result) => {
+            // Check if a streak milestone was achieved
+            if (result?.streakMilestone) {
+              // Trigger extra celebration for streak
+              setTimeout(() => {
+                playSound();
+                triggerConfetti();
+                sendPushNotification(
+                  '🔥 Sequência Incrível!',
+                  `${salespersonName || 'Vendedor'} completou ${result.streakMilestone} dias seguidos batendo meta!`
+                );
+              }, 1500);
+            }
+          },
+        }
+      );
     }
   }, [playSound, triggerConfetti, sendPushNotification, recordAchievement]);
 
