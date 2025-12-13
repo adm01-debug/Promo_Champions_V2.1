@@ -26,11 +26,12 @@ const data = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="glass rounded-lg p-3 border border-border/50">
-        <p className="text-sm font-medium text-foreground mb-2">{label}</p>
+      <div className="glass rounded-xl p-4 border border-border/50 shadow-lg">
+        <p className="text-sm font-semibold font-display text-foreground mb-2">{label}</p>
         {payload.map((entry: any, index: number) => (
-          <p key={index} className="text-xs" style={{ color: entry.color }}>
-            {entry.name}: R$ {entry.value.toLocaleString("pt-BR")}
+          <p key={index} className="text-xs flex items-center gap-2" style={{ color: entry.color }}>
+            <span className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
+            {entry.name}: <span className="font-semibold">R$ {entry.value.toLocaleString("pt-BR")}</span>
           </p>
         ))}
       </div>
@@ -41,19 +42,19 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export const SalesChart = () => {
   return (
-    <div className="glass rounded-xl p-6">
+    <div className="glass rounded-xl p-6 border border-border/40 dark:border-glow card-elevated">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold">Performance de Vendas</h3>
+          <h3 className="text-lg font-semibold font-display gradient-text">Performance de Vendas</h3>
           <p className="text-sm text-muted-foreground">Vendas vs Meta mensal</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-primary" />
+            <div className="w-3 h-3 rounded-full gradient-primary" />
             <span className="text-xs text-muted-foreground">Vendas</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-secondary" />
+            <div className="w-3 h-3 rounded-full bg-accent" />
             <span className="text-xs text-muted-foreground">Meta</span>
           </div>
         </div>
@@ -63,24 +64,29 @@ export const SalesChart = () => {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorVendas" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(24, 100%, 55%)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(24, 100%, 55%)" stopOpacity={0} />
+                <stop offset="5%" stopColor="hsl(24, 95%, 55%)" stopOpacity={0.4} />
+                <stop offset="50%" stopColor="hsl(340, 80%, 55%)" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="hsl(24, 95%, 55%)" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorMeta" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(280, 80%, 60%)" stopOpacity={0.3} />
+                <stop offset="5%" stopColor="hsl(280, 80%, 60%)" stopOpacity={0.35} />
                 <stop offset="95%" stopColor="hsl(280, 80%, 60%)" stopOpacity={0} />
               </linearGradient>
+              <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="hsl(24, 95%, 55%)" />
+                <stop offset="100%" stopColor="hsl(340, 80%, 55%)" />
+              </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 30%, 16%)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
             <XAxis
               dataKey="month"
-              tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }}
-              axisLine={{ stroke: "hsl(222, 30%, 16%)" }}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+              axisLine={{ stroke: "hsl(var(--border))" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }}
-              axisLine={{ stroke: "hsl(222, 30%, 16%)" }}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+              axisLine={{ stroke: "hsl(var(--border))" }}
               tickLine={false}
               tickFormatter={(value) => `${value / 1000}k`}
             />
@@ -88,8 +94,8 @@ export const SalesChart = () => {
             <Area
               type="monotone"
               dataKey="vendas"
-              stroke="hsl(24, 100%, 55%)"
-              strokeWidth={2}
+              stroke="url(#strokeGradient)"
+              strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorVendas)"
               name="Vendas"
