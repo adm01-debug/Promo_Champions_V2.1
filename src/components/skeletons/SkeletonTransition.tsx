@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, Children, cloneElement, isValidElement } from "react";
 import { cn } from "@/lib/utils";
 
 interface SkeletonTransitionProps {
@@ -8,6 +8,10 @@ interface SkeletonTransitionProps {
   className?: string;
   /** Duration of the transition in milliseconds */
   duration?: number;
+  /** Enable staggered animation for child sections */
+  staggered?: boolean;
+  /** Delay between each child animation in milliseconds */
+  staggerDelay?: number;
 }
 
 export function SkeletonTransition({
@@ -16,9 +20,12 @@ export function SkeletonTransition({
   children,
   className,
   duration = 300,
+  staggered = true,
+  staggerDelay = 80,
 }: SkeletonTransitionProps) {
   const [showSkeleton, setShowSkeleton] = useState(isLoading);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     if (!isLoading && showSkeleton) {
@@ -28,6 +35,8 @@ export function SkeletonTransition({
       // After fade out, switch content
       const fadeOutTimer = setTimeout(() => {
         setShowSkeleton(false);
+        // Small delay before showing content to ensure smooth transition
+        setTimeout(() => setShowContent(true), 50);
       }, duration / 2);
 
       // End transition after full duration
@@ -41,6 +50,7 @@ export function SkeletonTransition({
       };
     } else if (isLoading && !showSkeleton) {
       setShowSkeleton(true);
+      setShowContent(false);
     }
   }, [isLoading, showSkeleton, duration]);
 
@@ -62,6 +72,28 @@ export function SkeletonTransition({
     );
   }
 
+  // If staggered animation is enabled, wrap children with staggered delays
+  if (staggered && showContent) {
+    return (
+      <div className={cn(className)}>
+        {Children.map(children, (child, index) => {
+          if (isValidElement(child)) {
+            return (
+              <StaggeredSection 
+                key={index} 
+                delay={index * staggerDelay}
+                show={showContent}
+              >
+                {child}
+              </StaggeredSection>
+            );
+          }
+          return child;
+        })}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -69,6 +101,43 @@ export function SkeletonTransition({
         isTransitioning ? "opacity-0 scale-[0.99]" : "opacity-100 scale-100"
       )}
       style={transitionStyle}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** 
+ * Wrapper for staggered section animation
+ */
+function StaggeredSection({ 
+  children, 
+  delay,
+  show,
+}: { 
+  children: ReactNode; 
+  delay: number;
+  show: boolean;
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(() => setIsVisible(true), delay);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [show, delay]);
+
+  return (
+    <div
+      className={cn(
+        "transition-all duration-500 ease-out",
+        isVisible 
+          ? "opacity-100 translate-y-0" 
+          : "opacity-0 translate-y-4"
+      )}
     >
       {children}
     </div>
@@ -110,6 +179,43 @@ export function FadeIn({
       }}
     >
       {children}
+    </div>
+  );
+}
+
+/**
+ * Staggered container that animates direct children with delays
+ * Use this for grids or lists where each item should animate in sequence
+ */
+export function StaggeredContainer({
+  children,
+  className,
+  baseDelay = 0,
+  staggerDelay = 60,
+  show = true,
+}: {
+  children: ReactNode;
+  className?: string;
+  baseDelay?: number;
+  staggerDelay?: number;
+  show?: boolean;
+}) {
+  return (
+    <div className={className}>
+      {Children.map(children, (child, index) => {
+        if (isValidElement(child)) {
+          return (
+            <StaggeredSection 
+              key={index} 
+              delay={baseDelay + index * staggerDelay}
+              show={show}
+            >
+              {child}
+            </StaggeredSection>
+          );
+        }
+        return child;
+      })}
     </div>
   );
 }
