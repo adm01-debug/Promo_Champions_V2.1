@@ -1,7 +1,26 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 export function useCelebration() {
   const hasPlayedRef = useRef<Set<string>>(new Set());
+
+  // Request notification permission on mount
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  const sendPushNotification = useCallback((title: string, body: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        body,
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: 'goal-celebration',
+        requireInteraction: false,
+      });
+    }
+  }, []);
 
   const playCelebrationSound = useCallback(() => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -85,17 +104,23 @@ export function useCelebration() {
     });
   }, []);
 
-  const celebrate = useCallback((id: string) => {
+  const celebrate = useCallback((id: string, salespersonName?: string) => {
     if (hasPlayedRef.current.has(id)) return;
     
     hasPlayedRef.current.add(id);
     playCelebrationSound();
     triggerConfetti();
-  }, [playCelebrationSound, triggerConfetti]);
+    sendPushNotification(
+      '🎉 Meta Batida!',
+      salespersonName 
+        ? `${salespersonName} atingiu 100% da meta de atividades!` 
+        : 'Meta de atividades atingida!'
+    );
+  }, [playCelebrationSound, triggerConfetti, sendPushNotification]);
 
   const resetCelebration = useCallback((id: string) => {
     hasPlayedRef.current.delete(id);
   }, []);
 
-  return { celebrate, resetCelebration };
+  return { celebrate, resetCelebration, sendPushNotification };
 }
