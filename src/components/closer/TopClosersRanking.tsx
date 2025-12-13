@@ -40,7 +40,7 @@ export function TopClosersRanking() {
           return (
             <div 
               key={closer.id}
-              className={`flex items-center gap-3 p-2 rounded-lg border border-transparent ${getRankStyle(index)}`}
+              className={`flex items-center gap-3 p-2 rounded-lg border border-transparent hover-lift cursor-pointer ${getRankStyle(index)}`}
             >
               <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold">
                 {index === 0 ? <Crown className="h-3.5 w-3.5 text-rank-gold" /> : index + 1}

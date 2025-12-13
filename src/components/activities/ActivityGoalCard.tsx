@@ -119,7 +119,7 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   const isNearRecord = currentStreak > 1 && currentStreak === bestStreak - 1;
 
   return (
-    <Card className={`glass border-border/40 hover:border-border/60 transition-all ${hasReachedGoal ? 'ring-2 ring-status-success/50 shadow-lg shadow-status-success/20' : ''} ${isBeatRecord ? 'ring-2 ring-rank-gold/50 shadow-lg shadow-rank-gold/20' : ''}`}>
+    <Card className={`glass border-border/40 hover:border-border/60 hover-lift ${hasReachedGoal ? 'ring-2 ring-status-success/50 shadow-lg shadow-status-success/20' : ''} ${isBeatRecord ? 'ring-2 ring-rank-gold/50 shadow-lg shadow-rank-gold/20' : ''}`}>
       <CardContent className="p-4 relative overflow-hidden">
         {/* Celebration overlay */}
         {hasReachedGoal && (

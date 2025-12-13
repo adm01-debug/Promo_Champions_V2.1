@@ -86,7 +86,7 @@ export function CompetitiveLeaderboard() {
               return (
                 <div
                   key={person.id}
-                  className={`relative p-3 rounded-xl transition-all ${
+                  className={`relative p-3 rounded-xl hover-lift cursor-pointer ${
                     isCurrentUser 
                       ? "bg-primary/10 border border-primary/30 ring-1 ring-primary/20" 
                       : isTopThree 
