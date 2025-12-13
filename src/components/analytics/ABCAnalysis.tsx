@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useABCAnalysis } from '@/hooks/useABCAnalysis';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, ComposedChart, Area } from 'recharts';
-import { Package, Users, TrendingUp } from 'lucide-react';
+import { Package, Users, TrendingUp, Layers } from 'lucide-react';
 
 const COLORS = {
   A: 'hsl(var(--status-success))',
@@ -16,11 +16,11 @@ export function ABCAnalysis() {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/3" />
-            <div className="h-64 bg-muted rounded" />
+            <div className="h-8 bg-muted/50 rounded-lg w-1/3" />
+            <div className="h-64 bg-muted/50 rounded-lg" />
           </div>
         </CardContent>
       </Card>
@@ -136,17 +136,27 @@ export function ABCAnalysis() {
 
   return (
     <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2">
+        <div className="p-2 rounded-lg gradient-primary">
+          <Layers className="h-4 w-4 text-white" />
+        </div>
+        <span className="text-lg font-semibold gradient-text">Análise ABC</span>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         {(['A', 'B', 'C'] as const).map(cls => (
-          <Card key={`prod-${cls}`} className="bg-card/50 border-border/50">
+          <Card key={`prod-${cls}`} variant="elevated" className="border-border/40 dark:border-glow hover-lift cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Package className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Produtos</span>
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${COLORS[cls]}20` }}>
+                  <Package className="h-3.5 w-3.5" style={{ color: COLORS[cls] }} />
+                </div>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Produtos</span>
                 <Badge 
                   variant="outline" 
-                  className="ml-auto"
+                  className="ml-auto font-bold"
                   style={{ borderColor: COLORS[cls], color: COLORS[cls] }}
                 >
                   {cls}
@@ -157,14 +167,16 @@ export function ABCAnalysis() {
           </Card>
         ))}
         {(['A', 'B', 'C'] as const).map(cls => (
-          <Card key={`client-${cls}`} className="bg-card/50 border-border/50">
+          <Card key={`client-${cls}`} variant="elevated" className="border-border/40 dark:border-glow hover-lift cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Clientes</span>
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${COLORS[cls]}20` }}>
+                  <Users className="h-3.5 w-3.5" style={{ color: COLORS[cls] }} />
+                </div>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Clientes</span>
                 <Badge 
                   variant="outline" 
-                  className="ml-auto"
+                  className="ml-auto font-bold"
                   style={{ borderColor: COLORS[cls], color: COLORS[cls] }}
                 >
                   {cls}
@@ -191,10 +203,12 @@ export function ABCAnalysis() {
 
         <TabsContent value="products">
           <div className="grid lg:grid-cols-2 gap-4">
-            <Card className="bg-card/50 border-border/50">
+            <Card variant="elevated" className="border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
+                  <div className="p-1.5 rounded-lg gradient-primary">
+                    <TrendingUp className="h-3.5 w-3.5 text-white" />
+                  </div>
                   Curva ABC - Produtos
                 </CardTitle>
               </CardHeader>
@@ -206,7 +220,7 @@ export function ABCAnalysis() {
                 )}
               </CardContent>
             </Card>
-            <Card className="bg-card/50 border-border/50">
+            <Card variant="elevated" className="border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Ranking de Produtos</CardTitle>
               </CardHeader>
@@ -223,10 +237,12 @@ export function ABCAnalysis() {
 
         <TabsContent value="clients">
           <div className="grid lg:grid-cols-2 gap-4">
-            <Card className="bg-card/50 border-border/50">
+            <Card variant="elevated" className="border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
+                  <div className="p-1.5 rounded-lg gradient-primary">
+                    <TrendingUp className="h-3.5 w-3.5 text-white" />
+                  </div>
                   Curva ABC - Clientes
                 </CardTitle>
               </CardHeader>
@@ -238,7 +254,7 @@ export function ABCAnalysis() {
                 )}
               </CardContent>
             </Card>
-            <Card className="bg-card/50 border-border/50">
+            <Card variant="elevated" className="border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Ranking de Clientes</CardTitle>
               </CardHeader>
