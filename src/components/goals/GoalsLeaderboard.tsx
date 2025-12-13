@@ -4,6 +4,7 @@ import { SalespersonGoalCard } from "./SalespersonGoalCard";
 import { Trophy, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
 
 interface SalespersonData {
   id: string;
@@ -25,6 +26,13 @@ interface GoalsLeaderboardProps {
 }
 
 export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
+  const { data: xpData } = useAllSalespeopleXP();
+
+  const getXPInfo = (salespersonId: string) => {
+    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
+    return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
+  };
+
   // Filter only those with goals set
   const withGoals = salespeople.filter(sp => sp.goalAmount > 0);
   const withoutGoals = salespeople.filter(sp => sp.goalAmount === 0);
@@ -72,13 +80,18 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
                 <p className="text-xs mt-1">Configure metas para os vendedores</p>
               </div>
             ) : (
-              withGoals.map((sp, index) => (
-                <SalespersonGoalCard
-                  key={sp.id}
-                  {...sp}
-                  rank={index + 1}
-                />
-              ))
+              withGoals.map((sp, index) => {
+                const xpInfo = getXPInfo(sp.id);
+                return (
+                  <SalespersonGoalCard
+                    key={sp.id}
+                    {...sp}
+                    rank={index + 1}
+                    level={xpInfo.level}
+                    totalXP={xpInfo.totalXP}
+                  />
+                );
+              })
             )}
 
             {withoutGoals.length > 0 && withGoals.length > 0 && (
@@ -86,13 +99,18 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
                 <p className="text-xs text-muted-foreground mb-3">
                   Sem meta definida ({withoutGoals.length})
                 </p>
-                {withoutGoals.map((sp, index) => (
-                  <SalespersonGoalCard
-                    key={sp.id}
-                    {...sp}
-                    rank={withGoals.length + index + 1}
-                  />
-                ))}
+                {withoutGoals.map((sp, index) => {
+                  const xpInfo = getXPInfo(sp.id);
+                  return (
+                    <SalespersonGoalCard
+                      key={sp.id}
+                      {...sp}
+                      rank={withGoals.length + index + 1}
+                      level={xpInfo.level}
+                      totalXP={xpInfo.totalXP}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>

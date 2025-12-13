@@ -3,8 +3,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 
 export function TopSDRsRanking() {
+  const { data: xpData } = useAllSalespeopleXP();
+
+  const getXPInfo = (salespersonId: string) => {
+    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
+    return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
+  };
+
   const { data: ranking } = useQuery({
     queryKey: ["sdr-ranking-filtered"],
     queryFn: async () => {
@@ -80,38 +89,44 @@ export function TopSDRsRanking() {
             Nenhum dado de SDR disponível
           </p>
         )}
-        {ranking?.map((sdr, index) => (
-          <div 
-            key={sdr.id}
-            className={`flex items-center gap-3 p-2 rounded-lg border border-transparent ${getRankStyle(index)}`}
-          >
-            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold">
-              {index + 1}
-            </div>
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={sdr.avatar_url || undefined} />
-              <AvatarFallback className="text-xs">
-                {sdr.name.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{sdr.name}</p>
-              <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                <span>{sdr.meetings} reuniões</span>
-                <span>•</span>
-                <span>{sdr.qualified} qualificados</span>
+        {ranking?.map((sdr, index) => {
+          const xpInfo = getXPInfo(sdr.id);
+          return (
+            <div 
+              key={sdr.id}
+              className={`flex items-center gap-3 p-2 rounded-lg border border-transparent ${getRankStyle(index)}`}
+            >
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold">
+                {index + 1}
+              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={sdr.avatar_url || undefined} />
+                <AvatarFallback className="text-xs">
+                  {sdr.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-medium truncate">{sdr.name}</p>
+                  <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                  <span>{sdr.meetings} reuniões</span>
+                  <span>•</span>
+                  <span>{sdr.qualified} qualificados</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center gap-1">
+                  {sdr.schedulingRate >= 15 && <Flame className="h-3 w-3 text-orange-500" />}
+                  <span className="text-sm font-bold text-primary">
+                    {sdr.schedulingRate.toFixed(1)}%
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-1">
-                {sdr.schedulingRate >= 15 && <Flame className="h-3 w-3 text-orange-500" />}
-                <span className="text-sm font-bold text-primary">
-                  {sdr.schedulingRate.toFixed(1)}%
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </CardContent>
     </Card>
   );
