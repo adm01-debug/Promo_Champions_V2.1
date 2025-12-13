@@ -45,8 +45,9 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected }: 
 
   return (
     <Card 
-      className={`glass border-border/40 hover-lift cursor-pointer hover:border-primary/40 ${
-        isSelected ? "border-primary ring-1 ring-primary/30" : ""
+      variant="elevated"
+      className={`glass border-border/40 hover-lift cursor-pointer transition-all duration-200 ${
+        isSelected ? "border-primary ring-2 ring-primary/20 shadow-lg" : "hover:border-primary/40"
       }`}
       onClick={onSelect}
     >
@@ -54,8 +55,8 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected }: 
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              {cadence.name}
-              <Badge variant="outline" className="text-[10px]">
+              <span className="gradient-text">{cadence.name}</span>
+              <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20">
                 {steps.length} etapas
               </Badge>
             </CardTitle>
@@ -67,7 +68,7 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected }: 
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7"
+              className="h-7 w-7 hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsExpanded(!isExpanded);
@@ -79,7 +80,7 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected }: 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-destructive hover:text-destructive"
+                className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete();
@@ -115,13 +116,13 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected }: 
 
         {/* Expanded view */}
         {isExpanded && steps.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-border/40 space-y-2">
+          <div className="mt-3 pt-3 border-t border-border/30 space-y-2">
             {steps.map((step, index) => {
               const Icon = actionIcons[step.action_type];
               return (
                 <div
                   key={step.id}
-                  className="flex items-start gap-3 p-2 rounded-lg bg-muted/30"
+                  className="flex items-start gap-3 p-2.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors"
                 >
                   <div className="flex flex-col items-center">
                     <div className={`p-1.5 rounded-md ${actionColors[step.action_type]}`}>

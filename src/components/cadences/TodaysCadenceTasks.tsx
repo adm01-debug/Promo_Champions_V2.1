@@ -40,11 +40,13 @@ export function TodaysCadenceTasks() {
 
   if (isLoading) {
     return (
-      <Card className="glass border-border/40">
+      <Card variant="elevated" className="glass border-border/40">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <ListTodo className="h-4 w-4 text-primary" />
-            Tarefas de Cadência - Hoje
+            <div className="p-1.5 rounded-lg gradient-primary">
+              <ListTodo className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Tarefas de Cadência - Hoje</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -59,14 +61,16 @@ export function TodaysCadenceTasks() {
   }
 
   return (
-    <Card className="glass border-border/40">
+    <Card variant="elevated" className="glass border-border/40">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <ListTodo className="h-4 w-4 text-primary" />
-            Tarefas de Cadência - Hoje
+            <div className="p-1.5 rounded-lg gradient-primary">
+              <ListTodo className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Tarefas de Cadência - Hoje</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
             {tasks?.length || 0} pendentes
           </Badge>
         </div>
@@ -76,7 +80,9 @@ export function TodaysCadenceTasks() {
           <div className="p-4 space-y-3">
             {(!tasks || tasks.length === 0) ? (
               <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                <Clock className="h-10 w-10 mb-2 opacity-50" />
+                <div className="p-3 rounded-full bg-muted/50 mb-3">
+                  <Clock className="h-8 w-8 opacity-50" />
+                </div>
                 <p className="text-sm">Nenhuma tarefa de cadência para hoje</p>
               </div>
             ) : (
@@ -87,14 +93,14 @@ export function TodaysCadenceTasks() {
                 const cadence = prospectCadence?.cadence;
                 const Icon = actionIcons[step?.action_type as ActionType] || MoreHorizontal;
 
-                return (
-                  <div
-                    key={task.id}
-                    className="p-3 rounded-lg border border-border/40 bg-muted/30 space-y-2"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2 rounded-lg ${actionColors[step?.action_type as ActionType] || "bg-muted"}`}>
-                        <Icon className="h-4 w-4" />
+                  return (
+                    <div
+                      key={task.id}
+                      className="p-3 rounded-lg border border-border/30 bg-card/50 hover:bg-card/80 transition-colors space-y-2 hover:shadow-sm"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg shadow-sm ${actionColors[step?.action_type as ActionType] || "bg-muted"}`}>
+                          <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -114,27 +120,28 @@ export function TodaysCadenceTasks() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-1">
-                      <Button
-                        size="sm"
-                        className="h-7 text-xs gap-1.5 flex-1"
-                        onClick={() => completeTask.mutate({ taskId: task.id })}
-                        disabled={completeTask.isPending}
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                        Concluir
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-xs gap-1.5"
-                        onClick={() => skipTask.mutate({ taskId: task.id })}
-                        disabled={skipTask.isPending}
-                      >
-                        <SkipForward className="h-3.5 w-3.5" />
-                        Pular
-                      </Button>
-                    </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <Button
+                          size="sm"
+                          variant="glow"
+                          className="h-7 text-xs gap-1.5 flex-1"
+                          onClick={() => completeTask.mutate({ taskId: task.id })}
+                          disabled={completeTask.isPending}
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                          Concluir
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs gap-1.5 hover:bg-muted/50"
+                          onClick={() => skipTask.mutate({ taskId: task.id })}
+                          disabled={skipTask.isPending}
+                        >
+                          <SkipForward className="h-3.5 w-3.5" />
+                          Pular
+                        </Button>
+                      </div>
                   </div>
                 );
               })
