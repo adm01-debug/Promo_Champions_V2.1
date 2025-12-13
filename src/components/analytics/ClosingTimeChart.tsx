@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useClosingTime } from '@/hooks/useClosingTime';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Clock, User, Package, Tag } from 'lucide-react';
+import { Clock, User, Package, Tag, Timer } from 'lucide-react';
 
 const COLORS = [
   'hsl(var(--status-success))',
@@ -17,11 +17,11 @@ export function ClosingTimeChart() {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/3" />
-            <div className="h-64 bg-muted rounded" />
+            <div className="h-8 bg-muted/50 rounded-lg w-1/3" />
+            <div className="h-64 bg-muted/50 rounded-lg" />
           </div>
         </CardContent>
       </Card>
@@ -73,20 +73,24 @@ export function ClosingTimeChart() {
   return (
     <div className="space-y-4">
       {/* Summary Card */}
-      <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+      <Card variant="elevated" className="glass border-primary/30 hover-glow-primary">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Tempo Médio de Fechamento</p>
-              <p className="text-4xl font-bold text-foreground mt-1">
-                {data?.overall.avgDays || 0} <span className="text-lg font-normal text-muted-foreground">dias</span>
-              </p>
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl gradient-primary">
+                <Timer className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Tempo Médio de Fechamento</p>
+                <p className="text-4xl font-bold gradient-text mt-1">
+                  {data?.overall.avgDays || 0} <span className="text-lg font-normal text-muted-foreground">dias</span>
+                </p>
+              </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Total de Deals</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Total de Deals</p>
               <p className="text-2xl font-bold text-foreground">{data?.overall.totalDeals || 0}</p>
             </div>
-            <Clock className="h-16 w-16 text-primary/30" />
           </div>
         </CardContent>
       </Card>
@@ -109,10 +113,12 @@ export function ClosingTimeChart() {
         </TabsList>
 
         <TabsContent value="salesperson">
-          <Card className="bg-card/50 border-border/50">
+          <Card variant="elevated" className="border-border/40 dark:border-glow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <User className="h-4 w-4 text-primary" />
+                <div className="p-1.5 rounded-lg bg-status-info/20">
+                  <User className="h-3.5 w-3.5 text-status-info" />
+                </div>
                 Tempo de Fechamento por Vendedor
               </CardTitle>
             </CardHeader>
@@ -129,10 +135,12 @@ export function ClosingTimeChart() {
         </TabsContent>
 
         <TabsContent value="product">
-          <Card className="bg-card/50 border-border/50">
+          <Card variant="elevated" className="border-border/40 dark:border-glow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Package className="h-4 w-4 text-primary" />
+                <div className="p-1.5 rounded-lg bg-status-purple/20">
+                  <Package className="h-3.5 w-3.5 text-status-purple" />
+                </div>
                 Tempo de Fechamento por Produto
               </CardTitle>
             </CardHeader>
@@ -149,10 +157,12 @@ export function ClosingTimeChart() {
         </TabsContent>
 
         <TabsContent value="category">
-          <Card className="bg-card/50 border-border/50">
+          <Card variant="elevated" className="border-border/40 dark:border-glow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Tag className="h-4 w-4 text-primary" />
+                <div className="p-1.5 rounded-lg bg-status-warning/20">
+                  <Tag className="h-3.5 w-3.5 text-status-warning" />
+                </div>
                 Tempo de Fechamento por Categoria
               </CardTitle>
             </CardHeader>

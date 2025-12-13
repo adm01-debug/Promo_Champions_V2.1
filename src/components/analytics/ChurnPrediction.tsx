@@ -25,11 +25,11 @@ export function ChurnPrediction() {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/3" />
-            <div className="h-64 bg-muted rounded" />
+            <div className="h-8 bg-muted/50 rounded-lg w-1/3" />
+            <div className="h-64 bg-muted/50 rounded-lg" />
           </div>
         </CardContent>
       </Card>
@@ -41,55 +41,73 @@ export function ChurnPrediction() {
 
   return (
     <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2">
+        <div className="p-2 rounded-lg bg-destructive/20">
+          <AlertTriangle className="h-4 w-4 text-destructive" />
+        </div>
+        <span className="text-lg font-semibold">Previsão de Churn</span>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card className="bg-destructive/10 border-destructive/30">
+        <Card variant="elevated" className="border-destructive/30 hover-lift cursor-pointer hover-glow-error">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="h-4 w-4 text-destructive" />
-              <span className="text-xs text-muted-foreground">Crítico</span>
+              <div className="p-1.5 rounded-lg bg-destructive/20">
+                <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+              </div>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Crítico</span>
             </div>
             <p className="text-2xl font-bold text-destructive">{data?.summary.critical || 0}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-primary/10 border-primary/30">
+        <Card variant="elevated" className="border-primary/30 hover-lift cursor-pointer hover-glow-primary">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingDown className="h-4 w-4 text-primary" />
-              <span className="text-xs text-muted-foreground">Alto</span>
+              <div className="p-1.5 rounded-lg gradient-primary">
+                <TrendingDown className="h-3.5 w-3.5 text-white" />
+              </div>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Alto</span>
             </div>
-            <p className="text-2xl font-bold text-primary">{data?.summary.high || 0}</p>
+            <p className="text-2xl font-bold gradient-text">{data?.summary.high || 0}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-status-warning/10 border-status-warning/30">
+        <Card variant="elevated" className="border-status-warning/30 hover-lift cursor-pointer">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-status-warning" />
-              <span className="text-xs text-muted-foreground">Médio</span>
+              <div className="p-1.5 rounded-lg bg-status-warning/20">
+                <Users className="h-3.5 w-3.5 text-status-warning" />
+              </div>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Médio</span>
             </div>
             <p className="text-2xl font-bold text-status-warning">{data?.summary.medium || 0}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-status-success/10 border-status-success/30">
+        <Card variant="elevated" className="border-status-success/30 hover-lift cursor-pointer hover-glow-success">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-status-success" />
-              <span className="text-xs text-muted-foreground">Baixo</span>
+              <div className="p-1.5 rounded-lg bg-status-success/20">
+                <Users className="h-3.5 w-3.5 text-status-success" />
+              </div>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Baixo</span>
             </div>
             <p className="text-2xl font-bold text-status-success">{data?.summary.low || 0}</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-primary/10 border-primary/30">
+        <Card variant="elevated" className="border-primary/30 hover-lift cursor-pointer">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="h-4 w-4 text-primary" />
-              <span className="text-xs text-muted-foreground">Receita em Risco</span>
+              <div className="p-1.5 rounded-lg gradient-primary">
+                <DollarSign className="h-3.5 w-3.5 text-white" />
+              </div>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Receita em Risco</span>
             </div>
-            <p className="text-lg font-bold text-primary">
+            <p className="text-lg font-bold gradient-text">
               {formatCurrency(data?.summary.potentialRevenueLoss || 0)}
             </p>
           </CardContent>
@@ -97,10 +115,12 @@ export function ChurnPrediction() {
       </div>
 
       {/* At-Risk Clients List */}
-      <Card className="bg-card/50 border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <div className="p-1.5 rounded-lg bg-destructive/20">
+              <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+            </div>
             Clientes em Risco de Churn
           </CardTitle>
         </CardHeader>
@@ -110,7 +130,7 @@ export function ChurnPrediction() {
               {data.atRisk.map((client, index) => (
                 <div 
                   key={index}
-                  className="flex items-center gap-4 p-3 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors"
+                  className="glass rounded-xl p-4 border border-border/40 hover:border-primary/40 transition-colors hover-lift cursor-pointer flex items-center gap-4"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -125,7 +145,7 @@ export function ChurnPrediction() {
                         {RISK_LABELS[client.riskLevel]}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       <span>Última compra: {format(new Date(client.lastPurchase), 'dd/MM/yyyy', { locale: ptBR })}</span>
                       <span>•</span>
                       <span>{client.daysSinceLastPurchase} dias atrás</span>

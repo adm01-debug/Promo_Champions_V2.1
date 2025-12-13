@@ -60,16 +60,18 @@ export function ObjectionsLibrary() {
   };
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="elevated" className="border-border/40 dark:border-glow hover-lift">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            Biblioteca de Objeções
+            <div className="p-2 rounded-lg gradient-primary">
+              <BookOpen className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Biblioteca de Objeções</span>
           </CardTitle>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-1">
+              <Button size="sm" variant="glow" className="gap-1">
                 <Plus className="h-4 w-4" />
                 Adicionar
               </Button>
@@ -160,7 +162,7 @@ export function ObjectionsLibrary() {
         ) : filteredObjections && filteredObjections.length > 0 ? (
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
             {filteredObjections.map((obj) => (
-              <div key={obj.id} className="bg-muted/30 rounded-lg p-4 border border-border/50 hover:border-primary/30 transition-colors">
+              <div key={obj.id} className="glass rounded-xl p-4 border border-border/40 hover:border-primary/40 transition-colors hover-lift cursor-pointer">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
