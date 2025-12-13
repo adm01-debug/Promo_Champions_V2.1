@@ -5,12 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SalespersonForm, SalespersonRole } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { cn } from "@/lib/utils";
+import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
   sdr: { label: "SDR", color: "bg-blue-500/10 text-blue-500 border-blue-500/20" },

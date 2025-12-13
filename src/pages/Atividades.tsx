@@ -2,8 +2,16 @@ import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { ActivityList } from "@/components/activities/ActivityList";
 import { ActivityStats } from "@/components/activities/ActivityStats";
 import { ClipboardList } from "lucide-react";
+import { useActivities } from "@/hooks/useActivities";
+import { AtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 
 export default function Atividades() {
+  const { isLoading } = useActivities();
+
+  if (isLoading) {
+    return <AtividadesLoadingSkeleton />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
