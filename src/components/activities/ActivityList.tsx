@@ -28,14 +28,14 @@ const activityLabels: Record<ActivityType, string> = {
 };
 
 const outcomeLabels: Record<ActivityOutcome, { label: string; color: string }> = {
-  connected: { label: "Conectou", color: "bg-green-500/10 text-green-500 border-green-500/20" },
-  no_answer: { label: "Não Atendeu", color: "bg-red-500/10 text-red-500 border-red-500/20" },
-  scheduled: { label: "Agendou", color: "bg-blue-500/10 text-blue-500 border-blue-500/20" },
-  voicemail: { label: "Caixa Postal", color: "bg-orange-500/10 text-orange-500 border-orange-500/20" },
-  busy: { label: "Ocupado", color: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" },
-  callback: { label: "Retornar", color: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
-  not_interested: { label: "Sem Interesse", color: "bg-gray-500/10 text-gray-500 border-gray-500/20" },
-  qualified: { label: "Qualificado", color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" },
+  connected: { label: "Conectou", color: "bg-status-success/10 text-status-success border-status-success/20" },
+  no_answer: { label: "Não Atendeu", color: "bg-status-error/10 text-status-error border-status-error/20" },
+  scheduled: { label: "Agendou", color: "bg-status-info/10 text-status-info border-status-info/20" },
+  voicemail: { label: "Caixa Postal", color: "bg-status-warning/10 text-status-warning border-status-warning/20" },
+  busy: { label: "Ocupado", color: "bg-rank-gold/10 text-rank-gold border-rank-gold/20" },
+  callback: { label: "Retornar", color: "bg-status-purple/10 text-status-purple border-status-purple/20" },
+  not_interested: { label: "Sem Interesse", color: "bg-muted text-muted-foreground border-border" },
+  qualified: { label: "Qualificado", color: "bg-primary/10 text-primary border-primary/20" },
 };
 
 interface ActivityListProps {

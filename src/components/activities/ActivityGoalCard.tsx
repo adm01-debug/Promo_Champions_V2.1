@@ -16,9 +16,9 @@ interface ActivityGoalCardProps {
 }
 
 const roleLabels: Record<string, { label: string; color: string }> = {
-  sdr: { label: "SDR", color: "bg-blue-500/20 text-blue-400" },
-  closer: { label: "Closer", color: "bg-purple-500/20 text-purple-400" },
-  hybrid: { label: "Híbrido", color: "bg-emerald-500/20 text-emerald-400" },
+  sdr: { label: "SDR", color: "bg-status-info/20 text-status-info" },
+  closer: { label: "Closer", color: "bg-status-purple/20 text-status-purple" },
+  hybrid: { label: "Híbrido", color: "bg-status-success/20 text-status-success" },
 };
 
 const getStreakDisplay = (current: number, best: number) => {
@@ -30,7 +30,7 @@ const getStreakDisplay = (current: number, best: number) => {
   if (isBeatRecord) {
     return {
       icon: <Trophy className="h-3.5 w-3.5" />,
-      color: "bg-gradient-to-r from-yellow-500/30 to-amber-500/30 text-yellow-300 border-yellow-500/50",
+      color: "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50",
       label: "Novo Recorde!",
       showRecordBadge: true,
     };
@@ -38,7 +38,7 @@ const getStreakDisplay = (current: number, best: number) => {
   if (isNearRecord) {
     return {
       icon: <TrendingUp className="h-3.5 w-3.5" />,
-      color: "bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-purple-300 border-purple-500/50 animate-pulse",
+      color: "bg-gradient-to-r from-status-purple/30 to-accent/30 text-status-purple border-status-purple/50 animate-pulse",
       label: "Quase lá!",
       showRecordBadge: false,
       nearRecordMessage: `A 1 dia do recorde de ${best} dias!`,
@@ -47,7 +47,7 @@ const getStreakDisplay = (current: number, best: number) => {
   if (current >= 7) {
     return {
       icon: <Flame className="h-3.5 w-3.5" />,
-      color: "bg-gradient-to-r from-orange-500/30 to-red-500/30 text-orange-300 border-orange-500/50",
+      color: "bg-gradient-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50",
       label: "Em Chamas!",
       showRecordBadge: false,
     };
@@ -55,14 +55,14 @@ const getStreakDisplay = (current: number, best: number) => {
   if (current >= 3) {
     return {
       icon: <Zap className="h-3.5 w-3.5" />,
-      color: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+      color: "bg-status-info/20 text-status-info border-status-info/40",
       label: "Sequência",
       showRecordBadge: false,
     };
   }
   return {
     icon: <Target className="h-3.5 w-3.5" />,
-    color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+    color: "bg-status-success/20 text-status-success border-status-success/40",
     label: "Iniciando",
     showRecordBadge: false,
   };
@@ -83,35 +83,35 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   }, [hasReachedGoal, data.salesperson_id, data.salesperson_name, celebrate]);
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 100) return "bg-green-500";
-    if (progress >= 70) return "bg-blue-500";
-    if (progress >= 40) return "bg-yellow-500";
-    return "bg-red-500";
+    if (progress >= 100) return "bg-status-success";
+    if (progress >= 70) return "bg-status-info";
+    if (progress >= 40) return "bg-status-warning";
+    return "bg-status-error";
   };
 
   const getStatusBadge = () => {
     if (data.progress.overall >= 100) {
       return (
-        <Badge className="bg-green-500/20 text-green-400 text-[10px] animate-pulse">
+        <Badge className="bg-status-success/20 text-status-success text-[10px] animate-pulse">
           🎉 Meta Batida!
         </Badge>
       );
     }
     if (data.progress.overall >= 70) {
-      return <Badge className="bg-blue-500/20 text-blue-400 text-[10px]">📈 No Caminho</Badge>;
+      return <Badge className="bg-status-info/20 text-status-info text-[10px]">📈 No Caminho</Badge>;
     }
     if (data.progress.overall >= 40) {
-      return <Badge className="bg-yellow-500/20 text-yellow-400 text-[10px]">⚡ Acelerar</Badge>;
+      return <Badge className="bg-status-warning/20 text-status-warning text-[10px]">⚡ Acelerar</Badge>;
     }
-    return <Badge className="bg-red-500/20 text-red-400 text-[10px]">🚨 Atenção</Badge>;
+    return <Badge className="bg-status-error/20 text-status-error text-[10px]">🚨 Atenção</Badge>;
   };
 
   const activities = [
-    { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-green-400" },
-    { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-blue-400" },
-    { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-purple-400" },
-    { icon: Linkedin, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-sky-400" },
-    { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-emerald-400" },
+    { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-status-success" },
+    { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-status-info" },
+    { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-status-purple" },
+    { icon: Linkedin, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary" },
+    { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-accent" },
   ];
 
   const streakDisplay = currentStreak > 0 ? getStreakDisplay(currentStreak, bestStreak) : null;
@@ -119,18 +119,18 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   const isNearRecord = currentStreak > 1 && currentStreak === bestStreak - 1;
 
   return (
-    <Card className={`glass border-border/40 hover:border-border/60 transition-all ${hasReachedGoal ? 'ring-2 ring-green-500/50 shadow-lg shadow-green-500/20' : ''} ${isBeatRecord ? 'ring-2 ring-yellow-500/50 shadow-lg shadow-yellow-500/20' : ''}`}>
+    <Card className={`glass border-border/40 hover:border-border/60 transition-all ${hasReachedGoal ? 'ring-2 ring-status-success/50 shadow-lg shadow-status-success/20' : ''} ${isBeatRecord ? 'ring-2 ring-rank-gold/50 shadow-lg shadow-rank-gold/20' : ''}`}>
       <CardContent className="p-4 relative overflow-hidden">
         {/* Celebration overlay */}
         {hasReachedGoal && (
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-2 right-2 animate-bounce">
-              <PartyPopper className="h-5 w-5 text-yellow-400" />
+              <PartyPopper className="h-5 w-5 text-rank-gold" />
             </div>
             <div className="absolute top-2 left-2 animate-bounce" style={{ animationDelay: '0.2s' }}>
-              <PartyPopper className="h-4 w-4 text-pink-400" />
+              <PartyPopper className="h-4 w-4 text-accent" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-status-success/5 to-transparent" />
           </div>
         )}
 
@@ -138,9 +138,9 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
         {isBeatRecord && !hasReachedGoal && (
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-2 right-2 animate-bounce">
-              <Trophy className="h-5 w-5 text-yellow-400" />
+              <Trophy className="h-5 w-5 text-rank-gold" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/5 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-rank-gold/5 to-transparent" />
           </div>
         )}
 
@@ -148,7 +148,7 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Avatar className={`h-10 w-10 border-2 ${hasReachedGoal ? 'border-green-500 ring-2 ring-green-500/30' : 'border-border/40'}`}>
+              <Avatar className={`h-10 w-10 border-2 ${hasReachedGoal ? 'border-status-success ring-2 ring-status-success/30' : 'border-border/40'}`}>
                 <AvatarImage src={data.avatar_url || undefined} />
                 <AvatarFallback className="bg-primary/20 text-primary text-sm">
                   {data.salesperson_name.substring(0, 2).toUpperCase()}
@@ -157,13 +157,13 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
               {/* Streak indicator on avatar */}
               {currentStreak >= 3 && (
                 <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
-                  <div className={`rounded-full p-1 ${isBeatRecord ? 'bg-yellow-500/30' : currentStreak >= 7 ? 'bg-orange-500/30' : 'bg-blue-500/30'}`}>
+                  <div className={`rounded-full p-1 ${isBeatRecord ? 'bg-rank-gold/30' : currentStreak >= 7 ? 'bg-status-warning/30' : 'bg-status-info/30'}`}>
                     {isBeatRecord ? (
-                      <Trophy className="h-3 w-3 text-yellow-400" />
+                      <Trophy className="h-3 w-3 text-rank-gold" />
                     ) : currentStreak >= 7 ? (
-                      <Flame className="h-3 w-3 text-orange-400" />
+                      <Flame className="h-3 w-3 text-status-warning" />
                     ) : (
-                      <Zap className="h-3 w-3 text-blue-400" />
+                      <Zap className="h-3 w-3 text-status-info" />
                     )}
                   </div>
                 </div>
@@ -171,7 +171,7 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className={`font-medium text-sm ${hasReachedGoal ? 'text-green-400' : ''}`}>
+                <span className={`font-medium text-sm ${hasReachedGoal ? 'text-status-success' : ''}`}>
                   {data.salesperson_name}
                 </span>
                 <Badge className={`${roleLabels[data.role]?.color || ''} text-[10px] px-1.5`}>
@@ -197,12 +197,12 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
                           {currentStreak} {currentStreak === 1 ? 'dia' : 'dias'} consecutivos batendo meta
                         </p>
                         {isNearRecord && (
-                          <p className="text-xs text-purple-400 mt-1">
+                          <p className="text-xs text-status-purple mt-1">
                             ⚡ A 1 dia do recorde de {bestStreak} dias!
                           </p>
                         )}
                         {isBeatRecord && (
-                          <p className="text-xs text-yellow-400 mt-1">
+                          <p className="text-xs text-rank-gold mt-1">
                             🏆 Novo recorde pessoal!
                           </p>
                         )}
@@ -236,7 +236,7 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
             <div className="mb-4">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-muted-foreground">Progresso Geral</span>
-                <span className={`text-sm font-bold ${hasReachedGoal ? 'text-green-400' : ''}`}>
+                <span className={`text-sm font-bold ${hasReachedGoal ? 'text-status-success' : ''}`}>
                   {data.progress.overall.toFixed(0)}%
                 </span>
               </div>

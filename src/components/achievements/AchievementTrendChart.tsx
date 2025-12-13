@@ -82,13 +82,13 @@ export function AchievementTrendChart() {
             </CardTitle>
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-amber-400" />
+                <div className="w-3 h-3 rounded-full bg-rank-gold" />
                 <span className="text-muted-foreground">
                   Metas: <span className="font-bold text-foreground">{totalGoals}</span>
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-orange-500" />
+                <div className="w-3 h-3 rounded-full bg-status-warning" />
                 <span className="text-muted-foreground">
                   Marcos: <span className="font-bold text-foreground">{totalMilestones}</span>
                 </span>
@@ -120,12 +120,12 @@ export function AchievementTrendChart() {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorGoals" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(45, 93%, 47%)" stopOpacity={0.5} />
-                  <stop offset="95%" stopColor="hsl(45, 93%, 47%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="hsl(var(--rank-gold))" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="hsl(var(--rank-gold))" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorMilestones" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(25, 95%, 53%)" stopOpacity={0.5} />
-                  <stop offset="95%" stopColor="hsl(25, 95%, 53%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="hsl(var(--status-warning))" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="hsl(var(--status-warning))" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
@@ -166,7 +166,7 @@ export function AchievementTrendChart() {
               <Area
                 type="monotone"
                 dataKey="dailyGoals"
-                stroke="hsl(45, 93%, 47%)"
+                stroke="hsl(var(--rank-gold))"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorGoals)"
@@ -174,7 +174,7 @@ export function AchievementTrendChart() {
               <Area
                 type="monotone"
                 dataKey="streakMilestones"
-                stroke="hsl(25, 95%, 53%)"
+                stroke="hsl(var(--status-warning))"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorMilestones)"
