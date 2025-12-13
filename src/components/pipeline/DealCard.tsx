@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getScoreColor, getScoreBgColor, getScoreLabel } from "@/hooks/useLeadScoring";
+import { DealTimeline } from "./DealTimeline";
 
 interface DealProbability {
   probability: number;
@@ -156,14 +157,17 @@ export const DealCard = ({ deal, probability, leadScore }: DealCardProps) => {
             <span className="truncate">{deal.product_name}</span>
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              <span>
-                {formatDistanceToNow(new Date(deal.updated_at), {
-                  addSuffix: true,
-                  locale: ptBR,
-                })}
-              </span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                <span>
+                  {formatDistanceToNow(new Date(deal.updated_at), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
+                </span>
+              </div>
+              <DealTimeline deal={deal} />
             </div>
             <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] uppercase">
               {deal.category}
