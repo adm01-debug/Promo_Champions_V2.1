@@ -99,7 +99,7 @@ export function CreateCadenceDialog() {
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
+        <Button variant="glow" className="gap-2">
           <Plus className="h-4 w-4" />
           Nova Cadência
         </Button>
@@ -131,6 +131,7 @@ export function CreateCadenceDialog() {
               />
             </div>
             <Button
+              variant="glow"
               className="w-full"
               onClick={handleCreateCadence}
               disabled={!name.trim() || createCadence.isPending}
@@ -235,6 +236,7 @@ export function CreateCadenceDialog() {
             </Button>
 
             <Button
+              variant="glow-success"
               className="w-full"
               onClick={handleSaveSteps}
               disabled={createStep.isPending || steps.every(s => !s.title.trim())}
