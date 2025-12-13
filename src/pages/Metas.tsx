@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { MetasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function Metas() {
   const { data, isLoading, dataUpdatedAt } = useGoalsDashboard();
@@ -29,11 +30,12 @@ export default function Metas() {
   const totalWithGoals = data?.salespeople.filter(sp => sp.goalAmount > 0).length || 0;
   const exceededCount = data?.salespeople.filter(sp => sp.progress >= 100).length || 0;
 
-  if (isLoading) {
-    return <MetasLoadingSkeleton />;
-  }
-
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<MetasLoadingSkeleton />}
+      duration={400}
+    >
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
         {/* Header */}
@@ -148,5 +150,6 @@ export default function Metas() {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 }

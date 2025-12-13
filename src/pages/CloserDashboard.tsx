@@ -6,6 +6,7 @@ import { TopClosersRanking } from "@/components/closer/TopClosersRanking";
 import { RecentClosedDeals } from "@/components/closer/RecentClosedDeals";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { CloserDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { 
   DollarSign, 
   CheckCircle, 
@@ -24,11 +25,12 @@ export default function CloserDashboard() {
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
-  if (isLoading) {
-    return <CloserDashboardLoadingSkeleton />;
-  }
-
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<CloserDashboardLoadingSkeleton />}
+      duration={400}
+    >
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
         {/* Header */}
@@ -129,5 +131,6 @@ export default function CloserDashboard() {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 }
