@@ -37,63 +37,63 @@ export function TeamAchievementStats() {
       value: stats.totalGoalsAchieved,
       sublabel: "Total histórico",
       icon: <Trophy className="h-5 w-5" />,
-      color: "text-amber-400",
-      bgColor: "bg-amber-500/10",
-      borderColor: "border-amber-500/30",
+      color: "text-rank-gold",
+      bgColor: "bg-rank-gold/10",
+      borderColor: "border-rank-gold/30",
     },
     {
       label: "Esta Semana",
       value: stats.goalsThisWeek,
       sublabel: "Metas batidas",
       icon: <Calendar className="h-5 w-5" />,
-      color: "text-blue-400",
-      bgColor: "bg-blue-500/10",
-      borderColor: "border-blue-500/30",
+      color: "text-status-info",
+      bgColor: "bg-status-info/10",
+      borderColor: "border-status-info/30",
     },
     {
       label: "Este Mês",
       value: stats.goalsThisMonth,
       sublabel: "Metas batidas",
       icon: <Target className="h-5 w-5" />,
-      color: "text-emerald-400",
-      bgColor: "bg-emerald-500/10",
-      borderColor: "border-emerald-500/30",
+      color: "text-status-success",
+      bgColor: "bg-status-success/10",
+      borderColor: "border-status-success/30",
     },
     {
       label: "Marcos de Sequência",
       value: stats.totalStreakMilestones,
       sublabel: "Conquistas especiais",
       icon: <Flame className="h-5 w-5" />,
-      color: "text-orange-400",
-      bgColor: "bg-orange-500/10",
-      borderColor: "border-orange-500/30",
+      color: "text-streak",
+      bgColor: "bg-streak/10",
+      borderColor: "border-streak/30",
     },
     {
       label: "Sequências Ativas",
       value: stats.currentActiveStreaks,
       sublabel: "Vendedores em sequência",
       icon: <Zap className="h-5 w-5" />,
-      color: "text-purple-400",
-      bgColor: "bg-purple-500/10",
-      borderColor: "border-purple-500/30",
+      color: "text-accent",
+      bgColor: "bg-accent/10",
+      borderColor: "border-accent/30",
     },
     {
       label: "Média por Vendedor",
       value: stats.avgGoalsPerSalesperson,
       sublabel: "Metas batidas",
       icon: <Users className="h-5 w-5" />,
-      color: "text-cyan-400",
-      bgColor: "bg-cyan-500/10",
-      borderColor: "border-cyan-500/30",
+      color: "text-secondary",
+      bgColor: "bg-secondary/10",
+      borderColor: "border-secondary/30",
     },
     {
       label: "Vendedores Ativos",
       value: stats.uniqueSalespeopleWithGoals,
       sublabel: "Com metas batidas",
       icon: <Users className="h-5 w-5" />,
-      color: "text-pink-400",
-      bgColor: "bg-pink-500/10",
-      borderColor: "border-pink-500/30",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
+      borderColor: "border-primary/30",
     },
   ];
 
@@ -109,36 +109,36 @@ export function TeamAchievementStats() {
         <CardContent className="space-y-6">
           {/* Record Holder Highlight */}
           {stats.teamBestStreak > 0 && stats.teamBestStreakHolder && (
-            <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-orange-500/20 border border-amber-500/30">
+            <div className="p-4 rounded-xl bg-gradient-to-r from-rank-gold/20 via-rank-gold/10 to-primary/20 border border-rank-gold/30">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <Avatar className="h-14 w-14 border-2 border-amber-400 shadow-lg shadow-amber-500/30">
+                  <Avatar className="h-14 w-14 border-2 border-rank-gold shadow-lg shadow-rank-gold/30">
                     <AvatarImage src={stats.teamBestStreakHolder.avatar_url || ""} />
-                    <AvatarFallback className="bg-amber-500/30 text-amber-300 text-lg font-bold">
+                    <AvatarFallback className="bg-rank-gold/30 text-rank-gold text-lg font-bold">
                       {stats.teamBestStreakHolder.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="absolute -top-1 -right-1 bg-amber-400 rounded-full p-1">
-                    <Crown className="h-3 w-3 text-amber-900" />
+                  <div className="absolute -top-1 -right-1 bg-rank-gold rounded-full p-1">
+                    <Crown className="h-3 w-3 text-background" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-amber-300/80 uppercase tracking-wider font-medium">
+                  <p className="text-xs text-rank-gold/80 uppercase tracking-wider font-medium">
                     Recorde da Equipe
                   </p>
-                  <p className="text-lg font-bold text-amber-100">
+                  <p className="text-lg font-bold text-foreground">
                     {stats.teamBestStreakHolder.name}
                   </p>
-                  <p className="text-sm text-amber-200/70">
-                    Maior sequência: <span className="font-bold text-amber-300">{stats.teamBestStreak} dias</span>
+                  <p className="text-sm text-muted-foreground">
+                    Maior sequência: <span className="font-bold text-rank-gold">{stats.teamBestStreak} dias</span>
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center gap-1 text-amber-400">
+                  <div className="flex items-center gap-1 text-rank-gold">
                     <Flame className="h-6 w-6" />
                     <span className="text-3xl font-bold">{stats.teamBestStreak}</span>
                   </div>
-                  <p className="text-xs text-amber-300/60">dias seguidos</p>
+                  <p className="text-xs text-muted-foreground">dias seguidos</p>
                 </div>
               </div>
             </div>

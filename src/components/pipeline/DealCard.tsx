@@ -80,9 +80,9 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
   };
 
   const getProbabilityColor = (prob: number) => {
-    if (prob >= 70) return "text-green-500 bg-green-500/10";
-    if (prob >= 40) return "text-yellow-500 bg-yellow-500/10";
-    return "text-red-500 bg-red-500/10";
+    if (prob >= 70) return "text-status-success bg-status-success/10";
+    if (prob >= 40) return "text-status-warning bg-status-warning/10";
+    return "text-status-error bg-status-error/10";
   };
 
   return (
@@ -194,8 +194,8 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                       className={cn(
                         "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer",
                         activeCadence.status === 'paused' 
-                          ? "bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30"
-                          : "bg-purple-500/20 text-purple-400 hover:bg-purple-500/30"
+                          ? "bg-status-warning/20 text-status-warning hover:bg-status-warning/30"
+                          : "bg-accent/20 text-accent hover:bg-accent/30"
                       )}
                       onClick={(e) => e.stopPropagation()}
                       onPointerDown={(e) => e.stopPropagation()}

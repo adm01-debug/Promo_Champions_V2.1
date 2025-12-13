@@ -52,10 +52,10 @@ export function SalespersonGoalCard({
   return (
     <div className={`p-4 rounded-xl border transition-all ${
       hasExceededGoal 
-        ? "bg-green-500/5 border-green-500/30" 
+        ? "bg-status-success/5 border-status-success/30" 
         : onTrack 
           ? "bg-muted/30 border-border/40" 
-          : "bg-orange-500/5 border-orange-500/20"
+          : "bg-streak/5 border-streak/20"
     }`}>
       <div className="flex items-start gap-3">
         {/* Rank & Avatar */}
@@ -78,7 +78,7 @@ export function SalespersonGoalCard({
           <div className="flex items-center gap-1.5">
             <span className="font-medium truncate">{name}</span>
             <SalespersonLevelBadge level={level} totalXP={totalXP} size="xs" />
-            {hasExceededGoal && <Flame className="h-4 w-4 text-orange-500 animate-pulse" />}
+            {hasExceededGoal && <Flame className="h-4 w-4 text-streak animate-pulse" />}
           </div>
           <div className="flex items-center gap-2 mt-0.5">
             <Badge variant="outline" className="text-[9px] px-1.5 py-0">
@@ -88,8 +88,8 @@ export function SalespersonGoalCard({
               variant="outline" 
               className={`text-[9px] px-1.5 py-0 ${
                 onTrack 
-                  ? "bg-green-500/10 text-green-500 border-green-500/20" 
-                  : "bg-orange-500/10 text-orange-500 border-orange-500/20"
+                  ? "bg-status-success/10 text-status-success border-status-success/20" 
+                  : "bg-streak/10 text-streak border-streak/20"
               }`}
             >
               {onTrack ? <TrendingUp className="h-2.5 w-2.5 mr-0.5" /> : <TrendingDown className="h-2.5 w-2.5 mr-0.5" />}
@@ -100,7 +100,7 @@ export function SalespersonGoalCard({
 
         {/* Progress % */}
         <div className="text-right">
-          <p className={`text-lg font-bold ${hasExceededGoal ? "text-green-500" : ""}`}>
+          <p className={`text-lg font-bold ${hasExceededGoal ? "text-status-success" : ""}`}>
             {progress.toFixed(0)}%
           </p>
           <p className="text-[10px] text-muted-foreground">da meta</p>
@@ -112,7 +112,7 @@ export function SalespersonGoalCard({
         <div className="relative">
           <Progress 
             value={progressCapped} 
-            className={`h-2 ${hasExceededGoal ? "[&>div]:bg-green-500" : ""}`} 
+            className={`h-2 ${hasExceededGoal ? "[&>div]:bg-status-success" : ""}`} 
           />
         </div>
         <div className="flex justify-between text-[10px] text-muted-foreground">
@@ -129,7 +129,7 @@ export function SalespersonGoalCard({
             <p className="text-[9px] text-muted-foreground">Média/dia</p>
           </div>
           <div className="p-2 rounded-lg bg-background/50 text-center">
-            <p className={`text-xs font-medium ${requiredDailyAverage > dailyAverage ? "text-orange-500" : "text-green-500"}`}>
+            <p className={`text-xs font-medium ${requiredDailyAverage > dailyAverage ? "text-streak" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
             <p className="text-[9px] text-muted-foreground">Precisa/dia</p>

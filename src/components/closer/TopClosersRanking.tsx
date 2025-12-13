@@ -15,9 +15,9 @@ export function TopClosersRanking() {
   };
 
   const getRankStyle = (index: number) => {
-    if (index === 0) return "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/50";
-    if (index === 1) return "bg-gradient-to-r from-gray-400/20 to-gray-300/20 border-gray-400/50";
-    if (index === 2) return "bg-gradient-to-r from-amber-700/20 to-amber-600/20 border-amber-700/50";
+    if (index === 0) return "bg-gradient-to-r from-rank-gold/20 to-primary/20 border-rank-gold/50";
+    if (index === 1) return "bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/50";
+    if (index === 2) return "bg-gradient-to-r from-rank-bronze/20 to-rank-bronze/20 border-rank-bronze/50";
     return "";
   };
 
@@ -25,7 +25,7 @@ export function TopClosersRanking() {
     <Card className="glass border-border/40">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Trophy className="h-4 w-4 text-yellow-500" />
+          <Trophy className="h-4 w-4 text-rank-gold" />
           Top Closers - Faturamento
         </CardTitle>
       </CardHeader>
@@ -43,7 +43,7 @@ export function TopClosersRanking() {
               className={`flex items-center gap-3 p-2 rounded-lg border border-transparent ${getRankStyle(index)}`}
             >
               <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold">
-                {index === 0 ? <Crown className="h-3.5 w-3.5 text-yellow-500" /> : index + 1}
+                {index === 0 ? <Crown className="h-3.5 w-3.5 text-rank-gold" /> : index + 1}
               </div>
               <Avatar className="h-8 w-8">
                 <AvatarImage src={closer.avatar_url || undefined} />
@@ -62,8 +62,8 @@ export function TopClosersRanking() {
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-1">
-                  <DollarSign className="h-3 w-3 text-green-500" />
-                  <span className="text-sm font-bold text-green-500">
+                  <DollarSign className="h-3 w-3 text-status-success" />
+                  <span className="text-sm font-bold text-status-success">
                     R$ {closer.closedValue.toLocaleString("pt-BR")}
                   </span>
                 </div>

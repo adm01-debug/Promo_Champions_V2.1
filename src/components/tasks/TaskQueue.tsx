@@ -191,13 +191,13 @@ export function TaskQueue() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 bg-red-500/10 border-red-500/20">
+        <Card className="p-4 bg-status-error/10 border-status-error/20">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-red-500/20">
-              <Flame className="h-5 w-5 text-red-400" />
+            <div className="p-2 rounded-lg bg-status-error/20">
+              <Flame className="h-5 w-5 text-status-error" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-red-400">{highPriorityTasks.length}</p>
+              <p className="text-2xl font-bold text-status-error">{highPriorityTasks.length}</p>
               <p className="text-xs text-muted-foreground">Urgentes</p>
             </div>
           </div>
