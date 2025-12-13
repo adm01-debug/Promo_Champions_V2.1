@@ -11,7 +11,8 @@ import {
   Bell,
   Trophy,
   PieChart,
-  Kanban
+  Kanban,
+  ClipboardList
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -40,6 +41,7 @@ const mainItems = [
 
 const teamItems = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy },
+  { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
   { title: "Analytics", url: "/analytics", icon: PieChart },
 ];
 
