@@ -29,7 +29,7 @@ export function SDRStatCard({
   };
 
   return (
-    <Card className="glass border-border/40 overflow-hidden hover-scale-sm cursor-pointer">
+    <Card className="glass border-border/40 overflow-hidden hover-lift cursor-pointer">
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="space-y-2">

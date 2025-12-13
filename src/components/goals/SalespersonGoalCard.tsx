@@ -50,7 +50,7 @@ export function SalespersonGoalCard({
   const hasExceededGoal = progress >= 100;
 
   return (
-    <div className={`p-4 rounded-xl border hover-scale-sm cursor-pointer ${
+    <div className={`p-4 rounded-xl border hover-lift cursor-pointer ${
       hasExceededGoal 
         ? "bg-status-success/5 border-status-success/30" 
         : onTrack 
