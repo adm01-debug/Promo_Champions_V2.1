@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer } from "lucide-react";
+import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer, Play } from "lucide-react";
 import { Deal } from "@/hooks/usePipeline";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/tooltip";
 import { getScoreColor, getScoreBgColor, getScoreLabel } from "@/hooks/useLeadScoring";
 import { DealTimeline } from "./DealTimeline";
+import { EnrollCadenceDialog } from "@/components/cadences/EnrollCadenceDialog";
+import { Button } from "@/components/ui/button";
 
 interface DealProbability {
   probability: number;
@@ -63,12 +65,6 @@ export const DealCard = ({ deal, probability, leadScore }: DealCardProps) => {
     if (prob >= 70) return "text-green-500 bg-green-500/10";
     if (prob >= 40) return "text-yellow-500 bg-yellow-500/10";
     return "text-red-500 bg-red-500/10";
-  };
-
-  const getProbabilityRingColor = (prob: number) => {
-    if (prob >= 70) return "stroke-green-500";
-    if (prob >= 40) return "stroke-yellow-500";
-    return "stroke-red-500";
   };
 
   return (
@@ -169,9 +165,33 @@ export const DealCard = ({ deal, probability, leadScore }: DealCardProps) => {
               </div>
               <DealTimeline deal={deal} />
             </div>
-            <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] uppercase">
-              {deal.category}
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] uppercase">
+                {deal.category}
+              </span>
+              <EnrollCadenceDialog
+                saleId={deal.id}
+                clientName={deal.client_name}
+                trigger={
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        >
+                          <Play className="h-3 w-3" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Iniciar Cadência</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                }
+              />
+            </div>
           </div>
         </div>
       </div>
