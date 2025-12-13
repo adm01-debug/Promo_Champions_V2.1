@@ -2,6 +2,9 @@ import { ShoppingCart, Plus, Filter, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { useState, useEffect } from "react";
 
 const salesData = [
   { id: "V001", cliente: "João Silva", produto: "Plano Premium", valor: 1299, status: "concluída", data: "12/12/2024" },
@@ -18,8 +21,20 @@ const statusColors: Record<string, string> = {
 };
 
 const Vendas = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background p-6 lg:p-8">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<VendasLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -91,6 +106,7 @@ const Vendas = () => {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
