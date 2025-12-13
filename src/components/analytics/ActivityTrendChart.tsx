@@ -29,16 +29,16 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(142, 76%, 36%)" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(142, 76%, 36%)" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="hsl(var(--status-success))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--status-success))" stopOpacity={0}/>
                 </linearGradient>
                 <linearGradient id="colorEmails" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="hsl(var(--status-info))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--status-info))" stopOpacity={0}/>
                 </linearGradient>
                 <linearGradient id="colorMeetings" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(280, 87%, 63%)" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(280, 87%, 63%)" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="hsl(var(--status-purple))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--status-purple))" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
@@ -68,7 +68,7 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
                 type="monotone" 
                 dataKey="calls" 
                 name="Calls"
-                stroke="hsl(142, 76%, 36%)" 
+                stroke="hsl(var(--status-success))" 
                 fillOpacity={1} 
                 fill="url(#colorCalls)" 
               />
@@ -76,7 +76,7 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
                 type="monotone" 
                 dataKey="emails" 
                 name="Emails"
-                stroke="hsl(217, 91%, 60%)" 
+                stroke="hsl(var(--status-info))" 
                 fillOpacity={1} 
                 fill="url(#colorEmails)" 
               />
@@ -84,7 +84,7 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
                 type="monotone" 
                 dataKey="meetings" 
                 name="Reuniões"
-                stroke="hsl(280, 87%, 63%)" 
+                stroke="hsl(var(--status-purple))" 
                 fillOpacity={1} 
                 fill="url(#colorMeetings)" 
               />

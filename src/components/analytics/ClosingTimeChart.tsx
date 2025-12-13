@@ -5,11 +5,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { Clock, User, Package, Tag } from 'lucide-react';
 
 const COLORS = [
-  'hsl(142, 76%, 36%)',
-  'hsl(160, 84%, 39%)',
-  'hsl(38, 92%, 50%)',
-  'hsl(25, 95%, 53%)',
-  'hsl(0, 84%, 60%)',
+  'hsl(var(--status-success))',
+  'hsl(var(--primary))',
+  'hsl(var(--status-warning))',
+  'hsl(var(--status-info))',
+  'hsl(var(--status-purple))',
 ];
 
 export function ClosingTimeChart() {
