@@ -10,9 +10,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const STAGNANT_CRITICAL_DAYS = 14;
-const INACTIVE_CLIENT_CRITICAL_DAYS = 60;
-
 interface Alert {
   type: string;
   severity: string;
@@ -21,37 +18,74 @@ interface Alert {
   amount?: number;
 }
 
-const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+interface NotificationPreference {
+  id: string;
+  email: string;
+  is_active: boolean;
+  frequency: string;
+  notify_stagnant_deals: boolean;
+  notify_inactive_clients: boolean;
+  notify_at_risk_goals: boolean;
+  stagnant_threshold_days: number;
+  inactive_threshold_days: number;
+  preferred_time: string;
+}
 
-  try {
-    const { recipientEmail } = await req.json();
+const buildEmailHtml = (alerts: Alert[]) => {
+  const alertsHtml = alerts
+    .map(
+      (alert) => `
+      <div style="background: #1a1a2e; border-left: 4px solid #ef4444; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
+        <h3 style="color: #f97316; margin: 0 0 8px 0;">${alert.title}</h3>
+        <p style="color: #e2e8f0; margin: 0;">${alert.description}</p>
+        ${alert.amount ? `<p style="color: #94a3b8; margin: 8px 0 0 0;">Valor: R$ ${alert.amount.toLocaleString("pt-BR")}</p>` : ""}
+      </div>
+    `
+    )
+    .join("");
 
-    if (!recipientEmail) {
-      throw new Error("recipientEmail is required");
-    }
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Alertas Críticos - Sistema de Vendas</title>
+      </head>
+      <body style="background: #0f0f23; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 32px;">
+        <div style="max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #f97316, #ec4899); padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">🚨 Alertas Críticos</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0;">${alerts.length} alerta(s) requerem atenção imediata</p>
+          </div>
+          <div style="background: #16162a; padding: 24px; border-radius: 0 0 12px 12px;">
+            ${alertsHtml}
+            <p style="color: #64748b; font-size: 12px; margin-top: 24px; text-align: center;">
+              Enviado automaticamente pelo Sistema de Vendas • ${new Date().toLocaleDateString("pt-BR")}
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+};
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const generateAlerts = async (supabase: any, pref: NotificationPreference): Promise<Alert[]> => {
+  const alerts: Alert[] = [];
+  const now = new Date();
 
-    const criticalAlerts: Alert[] = [];
-    const now = new Date();
-
-    // Check for critical stagnant deals (14+ days)
+  // Check for stagnant deals
+  if (pref.notify_stagnant_deals) {
     const { data: pendingDeals } = await supabase
       .from("sales")
       .select("*")
       .in("status", ["pending", "in_progress", "negotiation", "proposal"]);
 
-    pendingDeals?.forEach((deal) => {
+    pendingDeals?.forEach((deal: any) => {
       const updatedAt = new Date(deal.updated_at);
       const daysSinceUpdate = differenceInDays(now, updatedAt);
 
-      if (daysSinceUpdate >= STAGNANT_CRITICAL_DAYS) {
-        criticalAlerts.push({
+      if (daysSinceUpdate >= pref.stagnant_threshold_days) {
+        alerts.push({
           type: "stagnant_deal",
           severity: "critical",
           title: "🚨 Deal Crítico Parado",
@@ -60,8 +94,10 @@ const handler = async (req: Request): Promise<Response> => {
         });
       }
     });
+  }
 
-    // Check for critical inactive clients (60+ days)
+  // Check for inactive clients
+  if (pref.notify_inactive_clients) {
     const { data: allSales } = await supabase
       .from("sales")
       .select("client_name, created_at")
@@ -69,7 +105,7 @@ const handler = async (req: Request): Promise<Response> => {
       .order("created_at", { ascending: false });
 
     const clientLastSale: Record<string, Date> = {};
-    allSales?.forEach((sale) => {
+    allSales?.forEach((sale: any) => {
       if (!clientLastSale[sale.client_name]) {
         clientLastSale[sale.client_name] = new Date(sale.created_at);
       }
@@ -77,8 +113,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     Object.entries(clientLastSale).forEach(([clientName, lastSaleDate]) => {
       const daysSinceLastSale = differenceInDays(now, lastSaleDate);
-      if (daysSinceLastSale >= INACTIVE_CLIENT_CRITICAL_DAYS) {
-        criticalAlerts.push({
+      if (daysSinceLastSale >= pref.inactive_threshold_days) {
+        alerts.push({
           type: "inactive_client",
           severity: "critical",
           title: "⚠️ Cliente Inativo Crítico",
@@ -86,8 +122,10 @@ const handler = async (req: Request): Promise<Response> => {
         });
       }
     });
+  }
 
-    // Check for critical at-risk goals (40%+ behind expected)
+  // Check for at-risk goals
+  if (pref.notify_at_risk_goals) {
     const { data: salespeople } = await supabase
       .from("salespeople")
       .select("id, name")
@@ -104,7 +142,7 @@ const handler = async (req: Request): Promise<Response> => {
     const expectedProgress = (dayOfMonth / daysInMonth) * 100;
 
     for (const person of salespeople || []) {
-      const goal = goals?.find((g) => g.salesperson_id === person.id);
+      const goal = goals?.find((g: any) => g.salesperson_id === person.id);
       if (!goal) continue;
 
       const { data: sales } = await supabase
@@ -114,11 +152,11 @@ const handler = async (req: Request): Promise<Response> => {
         .eq("status", "completed")
         .gte("created_at", currentMonth);
 
-      const totalSales = sales?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
+      const totalSales = sales?.reduce((sum: number, s: any) => sum + Number(s.amount), 0) || 0;
       const actualProgress = (totalSales / Number(goal.goal_amount)) * 100;
 
       if (actualProgress < expectedProgress - 40) {
-        criticalAlerts.push({
+        alerts.push({
           type: "at_risk_goal",
           severity: "critical",
           title: "📉 Meta em Risco Crítico",
@@ -126,69 +164,140 @@ const handler = async (req: Request): Promise<Response> => {
         });
       }
     }
+  }
 
-    if (criticalAlerts.length === 0) {
-      console.log("No critical alerts to send");
+  return alerts;
+};
+
+const handler = async (req: Request): Promise<Response> => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    let recipientEmail: string | null = null;
+    let isCronJob = false;
+
+    // Check if this is a CRON job (empty body) or manual trigger
+    try {
+      const body = await req.json();
+      recipientEmail = body.recipientEmail;
+    } catch {
+      // Empty body means CRON job trigger
+      isCronJob = true;
+    }
+
+    const results: { email: string; alertsSent: number; success: boolean; error?: string }[] = [];
+
+    if (isCronJob) {
+      // Fetch all active notification preferences
+      const { data: preferences, error: prefError } = await supabase
+        .from("notification_preferences")
+        .select("*")
+        .eq("is_active", true);
+
+      if (prefError) {
+        throw new Error(`Failed to fetch preferences: ${prefError.message}`);
+      }
+
+      if (!preferences || preferences.length === 0) {
+        console.log("No active notification preferences found");
+        return new Response(
+          JSON.stringify({ message: "No active notification preferences", emailsSent: 0 }),
+          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      console.log(`Processing ${preferences.length} notification preferences`);
+
+      for (const pref of preferences as NotificationPreference[]) {
+        try {
+          const alerts = await generateAlerts(supabase, pref);
+
+          if (alerts.length === 0) {
+            results.push({ email: pref.email, alertsSent: 0, success: true });
+            continue;
+          }
+
+          const emailHtml = buildEmailHtml(alerts);
+
+          const emailResponse = await resend.emails.send({
+            from: "Alertas <onboarding@resend.dev>",
+            to: [pref.email],
+            subject: `🚨 ${alerts.length} Alerta(s) Crítico(s) - Ação Necessária`,
+            html: emailHtml,
+          });
+
+          console.log(`Email sent to ${pref.email}:`, emailResponse);
+          results.push({ email: pref.email, alertsSent: alerts.length, success: true });
+        } catch (error: any) {
+          console.error(`Error sending to ${pref.email}:`, error);
+          results.push({ email: pref.email, alertsSent: 0, success: false, error: error.message });
+        }
+      }
+
+      const totalSent = results.filter(r => r.success && r.alertsSent > 0).length;
       return new Response(
-        JSON.stringify({ message: "No critical alerts found", alertsSent: 0 }),
+        JSON.stringify({
+          message: `CRON job completed. Sent to ${totalSent}/${preferences.length} recipients`,
+          results,
+        }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    } else {
+      // Manual trigger with specific email
+      if (!recipientEmail) {
+        throw new Error("recipientEmail is required for manual trigger");
+      }
+
+      // Use default thresholds for manual trigger
+      const defaultPref: NotificationPreference = {
+        id: "manual",
+        email: recipientEmail,
+        is_active: true,
+        frequency: "daily",
+        notify_stagnant_deals: true,
+        notify_inactive_clients: true,
+        notify_at_risk_goals: true,
+        stagnant_threshold_days: 14,
+        inactive_threshold_days: 60,
+        preferred_time: "08:00",
+      };
+
+      const alerts = await generateAlerts(supabase, defaultPref);
+
+      if (alerts.length === 0) {
+        console.log("No critical alerts to send");
+        return new Response(
+          JSON.stringify({ message: "No critical alerts found", alertsSent: 0 }),
+          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      const emailHtml = buildEmailHtml(alerts);
+
+      const emailResponse = await resend.emails.send({
+        from: "Alertas <onboarding@resend.dev>",
+        to: [recipientEmail],
+        subject: `🚨 ${alerts.length} Alerta(s) Crítico(s) - Ação Necessária`,
+        html: emailHtml,
+      });
+
+      console.log("Email sent successfully:", emailResponse);
+
+      return new Response(
+        JSON.stringify({
+          message: "Critical alerts sent successfully",
+          alertsSent: alerts.length,
+          emailResponse,
+        }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
-
-    // Build email HTML
-    const alertsHtml = criticalAlerts
-      .map(
-        (alert) => `
-        <div style="background: #1a1a2e; border-left: 4px solid #ef4444; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
-          <h3 style="color: #f97316; margin: 0 0 8px 0;">${alert.title}</h3>
-          <p style="color: #e2e8f0; margin: 0;">${alert.description}</p>
-          ${alert.amount ? `<p style="color: #94a3b8; margin: 8px 0 0 0;">Valor: R$ ${alert.amount.toLocaleString("pt-BR")}</p>` : ""}
-        </div>
-      `
-      )
-      .join("");
-
-    const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Alertas Críticos - Sistema de Vendas</title>
-        </head>
-        <body style="background: #0f0f23; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 32px;">
-          <div style="max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #f97316, #ec4899); padding: 24px; border-radius: 12px 12px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">🚨 Alertas Críticos</h1>
-              <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0;">${criticalAlerts.length} alerta(s) requerem atenção imediata</p>
-            </div>
-            <div style="background: #16162a; padding: 24px; border-radius: 0 0 12px 12px;">
-              ${alertsHtml}
-              <p style="color: #64748b; font-size: 12px; margin-top: 24px; text-align: center;">
-                Enviado automaticamente pelo Sistema de Vendas • ${new Date().toLocaleDateString("pt-BR")}
-              </p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const emailResponse = await resend.emails.send({
-      from: "Alertas <onboarding@resend.dev>",
-      to: [recipientEmail],
-      subject: `🚨 ${criticalAlerts.length} Alerta(s) Crítico(s) - Ação Necessária`,
-      html: emailHtml,
-    });
-
-    console.log("Email sent successfully:", emailResponse);
-
-    return new Response(
-      JSON.stringify({ 
-        message: "Critical alerts sent successfully", 
-        alertsSent: criticalAlerts.length,
-        emailResponse 
-      }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
   } catch (error: any) {
     console.error("Error in send-alert-notifications:", error);
     return new Response(
