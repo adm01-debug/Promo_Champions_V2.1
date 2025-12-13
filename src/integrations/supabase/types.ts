@@ -65,6 +65,125 @@ export type Database = {
           },
         ]
       }
+      cadence_steps: {
+        Row: {
+          action_type: string
+          cadence_id: string
+          created_at: string
+          day_number: number
+          description: string | null
+          id: string
+          step_order: number
+          template_content: string | null
+          title: string
+        }
+        Insert: {
+          action_type: string
+          cadence_id: string
+          created_at?: string
+          day_number?: number
+          description?: string | null
+          id?: string
+          step_order?: number
+          template_content?: string | null
+          title: string
+        }
+        Update: {
+          action_type?: string
+          cadence_id?: string
+          created_at?: string
+          day_number?: number
+          description?: string | null
+          id?: string
+          step_order?: number
+          template_content?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_steps_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cadence_tasks: {
+        Row: {
+          cadence_step_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          prospect_cadence_id: string
+          scheduled_date: string
+          status: string
+        }
+        Insert: {
+          cadence_step_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          prospect_cadence_id: string
+          scheduled_date: string
+          status?: string
+        }
+        Update: {
+          cadence_step_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          prospect_cadence_id?: string
+          scheduled_date?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_tasks_cadence_step_id_fkey"
+            columns: ["cadence_step_id"]
+            isOneToOne: false
+            referencedRelation: "cadence_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cadence_tasks_prospect_cadence_id_fkey"
+            columns: ["prospect_cadence_id"]
+            isOneToOne: false
+            referencedRelation: "prospect_cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cadences: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       category_metrics: {
         Row: {
           category: string
@@ -439,6 +558,70 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      prospect_cadences: {
+        Row: {
+          cadence_id: string
+          completed_at: string | null
+          created_at: string
+          current_step: number
+          id: string
+          next_action_date: string | null
+          sale_id: string
+          salesperson_id: string | null
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          cadence_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          next_action_date?: string | null
+          sale_id: string
+          salesperson_id?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          cadence_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          next_action_date?: string | null
+          sale_id?: string
+          salesperson_id?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prospect_cadences_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospect_cadences_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospect_cadences_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sales: {
         Row: {
