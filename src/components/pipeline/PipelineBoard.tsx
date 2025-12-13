@@ -105,16 +105,31 @@ export const PipelineBoard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {PIPELINE_STAGES.map((stage) => (
-          <div key={stage.id} className="min-w-[280px]">
-            <Skeleton className="h-20 rounded-t-xl" />
-            <div className="space-y-2 p-2">
-              <Skeleton className="h-24 rounded-lg" />
-              <Skeleton className="h-24 rounded-lg" />
-            </div>
+      <div className="space-y-4">
+        {/* Stats Bar Skeleton */}
+        <div className="flex items-center justify-between p-4 rounded-xl glass border border-border/40">
+          <div className="flex gap-6">
+            <Skeleton className="h-12 w-28" />
+            <Skeleton className="h-12 w-36" />
           </div>
-        ))}
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-32" />
+            <Skeleton className="h-9 w-28" />
+          </div>
+        </div>
+        
+        {/* Columns Skeleton */}
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          {PIPELINE_STAGES.map((stage) => (
+            <div key={stage.id} className="min-w-[280px]">
+              <Skeleton className="h-20 rounded-t-xl" />
+              <div className="space-y-2 p-2 bg-muted/20 rounded-b-xl">
+                <Skeleton className="h-24 rounded-lg" />
+                <Skeleton className="h-24 rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -134,15 +149,16 @@ export const PipelineBoard = () => {
   return (
     <div className="space-y-4">
       {/* Stats Bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-6">
-          <div>
-            <p className="text-xs text-muted-foreground">Total de Deals</p>
-            <p className="text-2xl font-bold">{totalDeals}</p>
+      <div className="flex items-center justify-between p-4 rounded-xl glass border border-border/40 dark:border-glow card-elevated">
+        <div className="flex gap-8">
+          <div className="relative">
+            <p className="text-xs text-muted-foreground font-medium mb-1">Total de Deals</p>
+            <p className="text-2xl font-display font-bold">{totalDeals}</p>
+            <div className="absolute -right-4 top-1/2 -translate-y-1/2 h-8 w-px bg-border/50" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Valor Total</p>
-            <p className="text-2xl font-bold gradient-text">
+            <p className="text-xs text-muted-foreground font-medium mb-1">Valor Total no Pipeline</p>
+            <p className="text-2xl font-display font-bold gradient-text">
               {new Intl.NumberFormat("pt-BR", {
                 style: "currency",
                 currency: "BRL",
@@ -154,15 +170,17 @@ export const PipelineBoard = () => {
           <Button
             variant="outline"
             size="sm"
+            className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
             onClick={() => calculateScores.mutate(allDealIds)}
             disabled={calculateScores.isPending}
           >
-            <Zap className={`h-4 w-4 mr-2 ${calculateScores.isPending ? "animate-pulse" : ""}`} />
+            <Zap className={`h-4 w-4 mr-2 ${calculateScores.isPending ? "animate-pulse text-primary" : ""}`} />
             Calcular Scores
           </Button>
           <Button
             variant="outline"
             size="sm"
+            className="border-border/50 hover:border-border hover:bg-muted/50 transition-colors"
             onClick={() => refetch()}
             disabled={isRefetching}
           >
@@ -179,7 +197,7 @@ export const PipelineBoard = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth">
           {PIPELINE_STAGES.map((stage) => (
             <PipelineColumn
               key={stage.id}
@@ -194,7 +212,7 @@ export const PipelineBoard = () => {
 
         <DragOverlay>
           {activeDeal && (
-            <div className="rotate-3 scale-105">
+            <div className="rotate-3 scale-105 shadow-2xl shadow-primary/20">
               <DealCard 
                 deal={activeDeal} 
                 probability={probabilities?.[activeDeal.id]}
