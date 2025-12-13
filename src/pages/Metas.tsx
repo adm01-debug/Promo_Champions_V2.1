@@ -80,8 +80,8 @@ export default function Metas() {
           </Card>
           <Card className="glass border-border/40">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-500/10">
-                <TrendingUp className="h-5 w-5 text-green-500" />
+              <div className="p-3 rounded-xl bg-status-success/10">
+                <TrendingUp className="h-5 w-5 text-status-success" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{formatCurrency(data?.totalSales || 0)}</p>
@@ -91,8 +91,8 @@ export default function Metas() {
           </Card>
           <Card className="glass border-border/40">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-500/10">
-                <Users className="h-5 w-5 text-blue-500" />
+              <div className="p-3 rounded-xl bg-status-info/10">
+                <Users className="h-5 w-5 text-status-info" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{onTrackCount}/{totalWithGoals}</p>

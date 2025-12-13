@@ -29,7 +29,7 @@ export const FunnelChart = () => {
             <div key={item.stage} className="relative">
               <div className="flex items-center gap-4">
                 <div className={`p-2 rounded-lg bg-gradient-to-r ${item.color}`}>
-                  <item.icon className="h-4 w-4 text-white" />
+                  <item.icon className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-2">

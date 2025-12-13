@@ -67,6 +67,18 @@
     --gold: 45 100% 50%;
     --silver: 220 10% 65%;
     --bronze: 25 60% 45%;
+    
+    /* Semantic Status Colors */
+    --status-success: 142 70% 45%;
+    --status-warning: 45 100% 50%;
+    --status-error: 0 80% 50%;
+    --status-info: 210 100% 55%;
+    --status-purple: 280 80% 55%;
+    
+    /* Rank Colors */
+    --rank-gold: 45 100% 50%;
+    --rank-silver: 220 10% 65%;
+    --rank-bronze: 25 60% 45%;
   }
 
   .dark {
@@ -129,6 +141,18 @@
     --gold: 45 100% 55%;
     --silver: 220 10% 70%;
     --bronze: 25 60% 50%;
+    
+    /* Semantic Status Colors */
+    --status-success: 142 70% 50%;
+    --status-warning: 45 100% 55%;
+    --status-error: 0 80% 55%;
+    --status-info: 210 100% 60%;
+    --status-purple: 280 80% 60%;
+    
+    /* Rank Colors */
+    --rank-gold: 45 100% 55%;
+    --rank-silver: 220 10% 70%;
+    --rank-bronze: 25 60% 50%;
   }
 }
 

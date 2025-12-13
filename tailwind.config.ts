@@ -91,6 +91,16 @@ export default {
         gold: "hsl(var(--gold))",
         silver: "hsl(var(--silver))",
         bronze: "hsl(var(--bronze))",
+        // Semantic Status Colors
+        "status-success": "hsl(var(--status-success))",
+        "status-warning": "hsl(var(--status-warning))",
+        "status-error": "hsl(var(--status-error))",
+        "status-info": "hsl(var(--status-info))",
+        "status-purple": "hsl(var(--status-purple))",
+        // Rank Colors
+        "rank-gold": "hsl(var(--rank-gold))",
+        "rank-silver": "hsl(var(--rank-silver))",
+        "rank-bronze": "hsl(var(--rank-bronze))",
       },
       borderRadius: {
         lg: "var(--radius)",

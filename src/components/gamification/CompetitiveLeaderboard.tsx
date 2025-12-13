@@ -16,9 +16,9 @@ const RANK_ICONS: Record<number, React.ElementType> = {
 };
 
 const roleLabels: Record<string, { label: string; color: string }> = {
-  sdr: { label: "SDR", color: "bg-blue-500/20 text-blue-400" },
-  closer: { label: "Closer", color: "bg-purple-500/20 text-purple-400" },
-  hybrid: { label: "Híbrido", color: "bg-amber-500/20 text-amber-400" },
+  sdr: { label: "SDR", color: "bg-status-info/20 text-status-info" },
+  closer: { label: "Closer", color: "bg-accent/20 text-accent" },
+  hybrid: { label: "Híbrido", color: "bg-rank-gold/20 text-rank-gold" },
 };
 
 export function CompetitiveLeaderboard() {

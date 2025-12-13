@@ -35,14 +35,14 @@ const Clientes = () => {
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl gradient-primary">
-              <Users className="h-6 w-6 text-white" />
+              <Users className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold gradient-text">Clientes</h1>
               <p className="text-sm text-muted-foreground">Gerencie sua base de clientes</p>
             </div>
           </div>
-          <Button className="gradient-primary text-white">
+          <Button className="gradient-primary text-primary-foreground">
             <Plus className="h-4 w-4 mr-2" />
             Novo Cliente
           </Button>
