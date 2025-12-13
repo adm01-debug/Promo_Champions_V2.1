@@ -75,7 +75,7 @@ export const RecentDeals = () => {
           return (
             <div
               key={deal.id}
-              className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/30 transition-colors group"
+              className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/30 hover-scale-sm cursor-pointer group"
             >
               <Avatar className="h-10 w-10 border border-border">
                 <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-foreground text-xs font-medium">
