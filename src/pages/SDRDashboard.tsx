@@ -6,6 +6,7 @@ import { LeadTemperatureChart } from "@/components/sdr/LeadTemperatureChart";
 import { SchedulingRateGauge } from "@/components/sdr/SchedulingRateGauge";
 import { TopSDRsRanking } from "@/components/sdr/TopSDRsRanking";
 import { RecentProspects } from "@/components/sdr/RecentProspects";
+import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { 
   Users, 
@@ -135,12 +136,15 @@ export default function SDRDashboard() {
         </div>
 
         {/* Bottom Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
             <TopSDRsRanking />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
             <RecentProspects />
+          </div>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
+            <LeadSLAMonitor />
           </div>
         </div>
       </div>
