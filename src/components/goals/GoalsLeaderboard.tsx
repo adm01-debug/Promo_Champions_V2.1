@@ -42,8 +42,8 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
       <Card className="glass border border-border/40 dark:border-glow card-elevated">
         <CardHeader className="pb-2 border-b border-border/30">
           <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
-            <div className="p-2 rounded-xl gradient-primary shadow-md">
-              <Trophy className="h-4 w-4 text-white" />
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md">
+              <Trophy className="h-4 w-4 text-primary" />
             </div>
             <span className="gradient-text">Ranking de Metas</span>
           </CardTitle>
@@ -51,7 +51,11 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
         <CardContent>
           <div className="space-y-3 pt-2">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full rounded-xl" />
+              <Skeleton 
+                key={i} 
+                className="h-28 w-full rounded-xl animate-pulse" 
+                style={{ animationDelay: `${i * 100}ms` }}
+              />
             ))}
           </div>
         </CardContent>
@@ -64,12 +68,12 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
       <CardHeader className="pb-2 border-b border-border/30">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
-            <div className="p-2 rounded-xl gradient-primary shadow-md">
-              <Trophy className="h-4 w-4 text-white" />
+            <div className="p-2 rounded-xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/10 shadow-md shadow-rank-gold/10">
+              <Trophy className="h-4 w-4 text-rank-gold" />
             </div>
             <span className="gradient-text">Ranking de Metas</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
+          <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm animate-fade-in">
             {withGoals.length} vendedores
           </Badge>
         </div>
@@ -78,8 +82,8 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
         <ScrollArea className="h-[500px]">
           <div className="p-4 space-y-3">
             {withGoals.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <div className="p-4 rounded-full bg-muted/30 mb-4">
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl animate-fade-in">
+                <div className="p-4 rounded-full bg-muted/20 mb-4">
                   <Users className="h-12 w-12 opacity-50" />
                 </div>
                 <p className="font-display font-medium">Nenhuma meta definida</p>
@@ -89,32 +93,43 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
               withGoals.map((sp, index) => {
                 const xpInfo = getXPInfo(sp.id);
                 return (
-                  <SalespersonGoalCard
-                    key={sp.id}
-                    {...sp}
-                    rank={index + 1}
-                    level={xpInfo.level}
-                    totalXP={xpInfo.totalXP}
-                  />
+                  <div 
+                    key={sp.id} 
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <SalespersonGoalCard
+                      {...sp}
+                      rank={index + 1}
+                      level={xpInfo.level}
+                      totalXP={xpInfo.totalXP}
+                    />
+                  </div>
                 );
               })
             )}
 
             {withoutGoals.length > 0 && withGoals.length > 0 && (
-              <div className="pt-4 border-t border-border/40">
-                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
+              <div className="pt-4 border-t border-border/40 animate-fade-in" style={{ animationDelay: `${withGoals.length * 50 + 100}ms` }}>
+                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
                   Sem meta definida ({withoutGoals.length})
                 </p>
                 {withoutGoals.map((sp, index) => {
                   const xpInfo = getXPInfo(sp.id);
                   return (
-                    <SalespersonGoalCard
+                    <div 
                       key={sp.id}
-                      {...sp}
-                      rank={withGoals.length + index + 1}
-                      level={xpInfo.level}
-                      totalXP={xpInfo.totalXP}
-                    />
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${(withGoals.length + index) * 50 + 150}ms` }}
+                    >
+                      <SalespersonGoalCard
+                        {...sp}
+                        rank={withGoals.length + index + 1}
+                        level={xpInfo.level}
+                        totalXP={xpInfo.totalXP}
+                      />
+                    </div>
                   );
                 })}
               </div>
