@@ -90,9 +90,10 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
       ref={setNodeRef}
       style={style}
       className={cn(
-        "bg-card rounded-lg p-3 cursor-grab active:cursor-grabbing border border-border/60 card-elevated hover-lift",
-        "dark:border-border/40 dark:border-glow",
-        isDragging && "opacity-50 scale-105 shadow-2xl z-50"
+        "glass rounded-lg p-3 cursor-grab active:cursor-grabbing border border-border/40 shadow-sm",
+        "hover:border-primary/30 hover:shadow-md transition-all duration-200",
+        "dark:border-glow",
+        isDragging && "opacity-50 scale-105 shadow-2xl z-50 ring-2 ring-primary/50"
       )}
       {...attributes}
       {...listeners}
@@ -161,7 +162,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                   </Tooltip>
                 </TooltipProvider>
               )}
-              <span className="text-xs font-semibold text-primary whitespace-nowrap">
+              <span className="text-xs font-bold gradient-text whitespace-nowrap">
                 {formatCurrency(deal.amount)}
               </span>
             </div>
@@ -184,7 +185,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
               <DealTimeline deal={deal} />
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] uppercase">
+              <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] uppercase font-medium">
                 {deal.category}
               </span>
               {activeCadence ? (
