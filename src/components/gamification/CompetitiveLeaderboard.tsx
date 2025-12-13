@@ -90,7 +90,7 @@ export function CompetitiveLeaderboard() {
                     isCurrentUser 
                       ? "bg-primary/10 border border-primary/30 ring-1 ring-primary/20" 
                       : isTopThree 
-                        ? `bg-gradient-to-r ${person.color}/10 border border-border/30`
+                        ? `bg-gradient-to-r ${person.color}/10 border border-border/30 ${person.rank === 1 ? 'hover-glow-gold' : ''}`
                         : "bg-muted/30 border border-border/20 hover:bg-muted/50"
                   }`}
                 >
