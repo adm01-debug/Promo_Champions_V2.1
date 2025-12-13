@@ -23,9 +23,12 @@ import {
   MoreHorizontal,
   ArrowRight,
   Clock,
-  CheckCircle,
-  XCircle,
+  CheckCircle2,
   User,
+  FileText,
+  PhoneCall,
+  Users,
+  Reply,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -79,12 +82,44 @@ const STAGE_LABELS: Record<string, string> = {
   lost: "Perdido",
 };
 
+const TASK_TYPE_ICONS: Record<string, React.ReactNode> = {
+  call: <PhoneCall className="h-3.5 w-3.5" />,
+  meeting: <Users className="h-3.5 w-3.5" />,
+  follow_up: <Reply className="h-3.5 w-3.5" />,
+  email: <Mail className="h-3.5 w-3.5" />,
+  proposal: <FileText className="h-3.5 w-3.5" />,
+  other: <CheckCircle2 className="h-3.5 w-3.5" />,
+};
+
+const TASK_TYPE_LABELS: Record<string, string> = {
+  call: "Ligação",
+  meeting: "Reunião",
+  follow_up: "Follow-up",
+  email: "Email",
+  proposal: "Proposta",
+  other: "Outro",
+};
+
 interface DealTimelineProps {
   deal: Deal;
 }
 
 function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
   const isActivity = event.type === "activity";
+  const isStageChange = event.type === "stage_change";
+  const isTask = event.type === "task_completed";
+  
+  const getEventStyle = () => {
+    if (isActivity) return "bg-primary/20 text-primary";
+    if (isStageChange) return "bg-amber-500/20 text-amber-400";
+    return "bg-green-500/20 text-green-400";
+  };
+
+  const getEventIcon = () => {
+    if (isActivity) return ACTIVITY_ICONS[event.activity_type || "other"];
+    if (isStageChange) return <ArrowRight className="h-3 w-3" />;
+    return TASK_TYPE_ICONS[event.task_type || "other"];
+  };
   
   return (
     <div className="relative pl-6 pb-4 last:pb-0">
@@ -94,19 +129,15 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
       {/* Timeline dot */}
       <div className={cn(
         "absolute left-0 top-1 w-[18px] h-[18px] rounded-full flex items-center justify-center",
-        isActivity ? "bg-primary/20 text-primary" : "bg-amber-500/20 text-amber-400"
+        getEventStyle()
       )}>
-        {isActivity ? (
-          ACTIVITY_ICONS[event.activity_type || "other"]
-        ) : (
-          <ArrowRight className="h-3 w-3" />
-        )}
+        {getEventIcon()}
       </div>
       
       {/* Content */}
       <div className="ml-2">
         <div className="flex items-center gap-2 flex-wrap">
-          {isActivity ? (
+          {isActivity && (
             <>
               <span className="font-medium text-sm">
                 {ACTIVITY_LABELS[event.activity_type || "other"]}
@@ -117,7 +148,9 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
                 </span>
               )}
             </>
-          ) : (
+          )}
+          
+          {isStageChange && (
             <>
               <span className="font-medium text-sm text-amber-400">
                 Mudança de Stage
@@ -137,7 +170,24 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
               </div>
             </>
           )}
+
+          {isTask && (
+            <>
+              <span className="font-medium text-sm text-green-400">
+                Tarefa Concluída
+              </span>
+              <span className="text-xs text-muted-foreground">
+                • {TASK_TYPE_LABELS[event.task_type || "other"]}
+              </span>
+            </>
+          )}
         </div>
+
+        {isTask && event.task_title && (
+          <p className="text-sm mt-0.5 text-foreground">
+            {event.task_title}
+          </p>
+        )}
         
         <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
           <Clock className="h-3 w-3" />
@@ -162,9 +212,9 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
           </div>
         )}
         
-        {event.notes && (
+        {(event.notes || event.task_description) && (
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2 bg-muted/30 rounded p-2">
-            {event.notes}
+            {event.notes || event.task_description}
           </p>
         )}
       </div>
