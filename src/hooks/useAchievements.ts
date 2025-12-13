@@ -80,6 +80,37 @@ async function calculateStreak(salespersonId: string): Promise<number> {
   return streak;
 }
 
+// Calculate best streak ever for a salesperson
+async function calculateBestStreak(salespersonId: string): Promise<number> {
+  const { data: achievements, error } = await supabase
+    .from("achievements")
+    .select("achievement_date")
+    .eq("salesperson_id", salespersonId)
+    .eq("achievement_type", "daily_goal")
+    .order("achievement_date", { ascending: false });
+
+  if (error || !achievements || achievements.length === 0) return 0;
+
+  const uniqueDates = [...new Set(achievements.map(a => a.achievement_date))].sort().reverse();
+  
+  let bestStreak = 0;
+  let tempStreak = 1;
+  for (let i = 1; i < uniqueDates.length; i++) {
+    const currentDate = parseISO(uniqueDates[i - 1]);
+    const prevDate = parseISO(uniqueDates[i]);
+    const diff = differenceInDays(currentDate, prevDate);
+    if (diff === 1) {
+      tempStreak++;
+    } else {
+      bestStreak = Math.max(bestStreak, tempStreak);
+      tempStreak = 1;
+    }
+  }
+  bestStreak = Math.max(bestStreak, tempStreak);
+  
+  return bestStreak;
+}
+
 export function useRecordAchievement() {
   const queryClient = useQueryClient();
 
@@ -105,7 +136,7 @@ export function useRecordAchievement() {
         .maybeSingle();
 
       if (existing) {
-        return { achievement: existing, streakMilestone: null };
+        return { achievement: existing, streakMilestone: null, nearRecord: null };
       }
 
       // Record the daily goal achievement
@@ -124,7 +155,14 @@ export function useRecordAchievement() {
 
       // Calculate streak after recording
       const currentStreak = await calculateStreak(salespersonId);
+      const bestStreak = await calculateBestStreak(salespersonId);
       let streakMilestone: number | null = null;
+      let nearRecord: { current: number; best: number } | null = null;
+
+      // Check if near personal record (current streak = best streak - 1)
+      if (currentStreak > 1 && currentStreak === bestStreak - 1) {
+        nearRecord = { current: currentStreak, best: bestStreak };
+      }
 
       // Check if we hit a streak milestone
       if (STREAK_MILESTONES.includes(currentStreak)) {
@@ -154,7 +192,7 @@ export function useRecordAchievement() {
         }
       }
 
-      return { achievement: data, streakMilestone };
+      return { achievement: data, streakMilestone, nearRecord };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["achievements"] });
