@@ -42,11 +42,13 @@ export function CompetitiveLeaderboard() {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="border-border/40 dark:border-glow">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Crown className="h-4 w-4 text-primary" />
-            Arena de Vendas
+            <div className="p-1.5 rounded-lg gradient-primary">
+              <Crown className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Arena de Vendas</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -61,21 +63,23 @@ export function CompetitiveLeaderboard() {
   }
 
   return (
-    <Card variant="elevated" className="border-border/40 dark:border-glow">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Crown className="h-4 w-4 text-primary" />
-            Arena de Vendas
+            <div className="p-1.5 rounded-lg gradient-primary">
+              <Crown className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Arena de Vendas</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
             {ranking?.length || 0} competidores
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="p-0">
         <ScrollArea className="h-[400px]">
-          <div className="p-4 space-y-2">
+          <div className="p-4 space-y-2.5">
             {ranking?.map((person, index) => {
               const RankIcon = RANK_ICONS[person.rank] || TrendingUp;
               const isCurrentUser = salesperson?.id === person.id;
@@ -86,12 +90,12 @@ export function CompetitiveLeaderboard() {
               return (
                 <div
                   key={person.id}
-                  className={`relative p-3 rounded-xl hover-lift cursor-pointer ${
+                  className={`relative p-3 rounded-xl transition-all duration-200 cursor-pointer ${
                     isCurrentUser 
-                      ? "bg-primary/10 border border-primary/30 ring-1 ring-primary/20" 
+                      ? "glass bg-primary/10 border border-primary/40 ring-2 ring-primary/20 shadow-sm" 
                       : isTopThree 
-                        ? `bg-gradient-to-r ${person.color}/10 border border-border/30 ${person.rank === 1 ? 'hover-glow-gold' : ''}`
-                        : "bg-muted/30 border border-border/20 hover:bg-muted/50"
+                        ? `glass bg-gradient-to-r ${person.color}/10 border border-border/30 hover:border-primary/30 ${person.rank === 1 ? 'hover-glow-gold shadow-sm' : ''}`
+                        : "glass bg-muted/20 border border-border/20 hover:bg-muted/40 hover:border-border/40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -113,15 +117,15 @@ export function CompetitiveLeaderboard() {
                     {/* Avatar e info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8 border-2 border-background">
+                        <Avatar className="h-8 w-8 border-2 border-background shadow-sm">
                           <AvatarImage src={person.avatar_url || undefined} alt={person.name} />
-                          <AvatarFallback className="text-xs font-medium">
+                          <AvatarFallback className="text-xs font-medium gradient-primary text-white">
                             {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className={`font-medium text-sm truncate ${isCurrentUser ? "text-primary" : ""}`}>
+                            <span className={`font-medium text-sm truncate ${isCurrentUser ? "text-primary" : isTopThree ? "gradient-text" : ""}`}>
                               {person.name}
                             </span>
                             <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
