@@ -20,7 +20,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           {/* Top Bar */}
           <div className="absolute top-4 left-4 right-4 z-50 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="glass h-9 w-9 hover:bg-muted/50 transition-colors" />
+              <SidebarTrigger className="glass h-9 w-9 hover:bg-muted/50 transition-all duration-200 hover:scale-110 active:scale-95" />
             </div>
             <div className="flex items-center gap-2">
               <SearchTrigger onClick={() => setSearchOpen(true)} />
