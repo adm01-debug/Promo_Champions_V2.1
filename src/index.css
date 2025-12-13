@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 225 25% 10%;
+    --background: 220 20% 97%;
+    --foreground: 225 30% 12%;
     
-    --card: 0 0% 99%;
-    --card-foreground: 225 25% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 225 30% 12%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 225 25% 10%;
+    --popover-foreground: 225 30% 12%;
     
     --primary: 24 95% 50%;
     --primary-foreground: 0 0% 100%;
@@ -21,8 +21,8 @@
     --secondary: 210 100% 55%;
     --secondary-foreground: 0 0% 100%;
     
-    --muted: 220 15% 95%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 220 20% 92%;
+    --muted-foreground: 220 15% 40%;
     
     --accent: 280 80% 55%;
     --accent-foreground: 0 0% 100%;
@@ -30,65 +30,70 @@
     --destructive: 0 80% 50%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 70% 45%;
+    --success: 142 70% 40%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 45 100% 50%;
-    --warning-foreground: 225 25% 10%;
+    --warning: 45 100% 45%;
+    --warning-foreground: 225 30% 12%;
     
-    --info: 210 100% 55%;
+    --info: 210 100% 50%;
     --info-foreground: 0 0% 100%;
     
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
+    --border: 220 20% 88%;
+    --input: 220 20% 92%;
     --ring: 24 95% 50%;
     
     --radius: 0.75rem;
     
-    --sidebar-background: 220 15% 97%;
-    --sidebar-foreground: 225 25% 15%;
+    --sidebar-background: 220 20% 98%;
+    --sidebar-foreground: 225 30% 15%;
     --sidebar-primary: 24 95% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 93%;
-    --sidebar-accent-foreground: 225 25% 15%;
-    --sidebar-border: 220 15% 90%;
+    --sidebar-accent: 220 20% 94%;
+    --sidebar-accent-foreground: 225 30% 15%;
+    --sidebar-border: 220 20% 90%;
     --sidebar-ring: 24 95% 50%;
 
     --chart-1: 24 95% 50%;
     --chart-2: 210 100% 55%;
-    --chart-3: 142 70% 45%;
+    --chart-3: 142 70% 40%;
     --chart-4: 280 80% 55%;
-    --chart-5: 45 100% 50%;
+    --chart-5: 45 100% 45%;
     
     /* Gamification Colors */
-    --xp: 142 70% 45%;
-    --coins: 45 100% 50%;
+    --xp: 142 70% 40%;
+    --coins: 45 100% 45%;
     --streak: 24 95% 50%;
-    --gold: 45 100% 50%;
-    --silver: 220 10% 65%;
-    --bronze: 25 60% 45%;
+    --gold: 45 100% 45%;
+    --silver: 220 10% 55%;
+    --bronze: 25 60% 40%;
     
     /* Semantic Status Colors */
-    --status-success: 142 70% 45%;
-    --status-warning: 45 100% 50%;
+    --status-success: 142 70% 40%;
+    --status-warning: 45 100% 45%;
     --status-error: 0 80% 50%;
-    --status-info: 210 100% 55%;
+    --status-info: 210 100% 50%;
     --status-purple: 280 80% 55%;
     
     /* Rank Colors */
-    --rank-gold: 45 100% 50%;
-    --rank-silver: 220 10% 65%;
-    --rank-bronze: 25 60% 45%;
+    --rank-gold: 45 100% 45%;
+    --rank-silver: 220 10% 55%;
+    --rank-bronze: 25 60% 40%;
+    
+    /* Card elevation shadows for light mode */
+    --card-shadow: 0 1px 3px 0 hsl(220 20% 50% / 0.1), 0 1px 2px -1px hsl(220 20% 50% / 0.1);
+    --card-shadow-hover: 0 4px 12px -2px hsl(220 20% 50% / 0.15), 0 2px 6px -2px hsl(220 20% 50% / 0.1);
+    --card-shadow-elevated: 0 10px 30px -5px hsl(220 20% 50% / 0.2), 0 4px 12px -4px hsl(220 20% 50% / 0.15);
   }
 
   .dark {
-    --background: 225 25% 6%;
+    --background: 225 30% 6%;
     --foreground: 0 0% 98%;
     
-    --card: 225 25% 9%;
+    --card: 225 28% 10%;
     --card-foreground: 0 0% 98%;
     
-    --popover: 225 25% 9%;
+    --popover: 225 28% 10%;
     --popover-foreground: 0 0% 98%;
     
     --primary: 24 95% 55%;
@@ -97,8 +102,8 @@
     --secondary: 210 100% 60%;
     --secondary-foreground: 0 0% 100%;
     
-    --muted: 225 20% 14%;
-    --muted-foreground: 225 10% 55%;
+    --muted: 225 25% 15%;
+    --muted-foreground: 225 15% 60%;
     
     --accent: 280 80% 60%;
     --accent-foreground: 0 0% 100%;
@@ -110,22 +115,22 @@
     --success-foreground: 0 0% 100%;
     
     --warning: 45 100% 55%;
-    --warning-foreground: 225 25% 10%;
+    --warning-foreground: 225 30% 10%;
     
     --info: 210 100% 60%;
     --info-foreground: 0 0% 100%;
     
-    --border: 225 20% 15%;
-    --input: 225 20% 15%;
+    --border: 225 25% 18%;
+    --input: 225 25% 15%;
     --ring: 24 95% 55%;
     
-    --sidebar-background: 225 25% 7%;
+    --sidebar-background: 225 30% 7%;
     --sidebar-foreground: 0 0% 90%;
     --sidebar-primary: 24 95% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 225 20% 12%;
+    --sidebar-accent: 225 25% 13%;
     --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 225 20% 12%;
+    --sidebar-border: 225 25% 14%;
     --sidebar-ring: 24 95% 55%;
 
     --chart-1: 24 95% 55%;
@@ -153,6 +158,11 @@
     --rank-gold: 45 100% 55%;
     --rank-silver: 220 10% 70%;
     --rank-bronze: 25 60% 50%;
+    
+    /* Card elevation shadows for dark mode */
+    --card-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.3);
+    --card-shadow-hover: 0 4px 12px -2px hsl(0 0% 0% / 0.4), 0 2px 6px -2px hsl(0 0% 0% / 0.3);
+    --card-shadow-elevated: 0 10px 30px -5px hsl(0 0% 0% / 0.5), 0 4px 12px -4px hsl(0 0% 0% / 0.4);
   }
 }
 
@@ -161,13 +171,27 @@
     @apply border-border;
   }
   
-  /* Smooth theme transitions */
+  /* Smooth theme transitions - enhanced */
+  html {
+    transition: color-scheme 0.3s ease;
+  }
+  
   *,
   *::before,
   *::after {
-    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
-    transition-duration: 200ms;
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity, transform;
+    transition-duration: 250ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Faster transitions for interactive elements */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    transition-duration: 150ms;
   }
   
   /* Disable transitions for specific elements that shouldn't animate */
@@ -181,6 +205,30 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  
+  /* Display font for headers */
+  h1, h2, h3, .font-display {
+    font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  
+  /* Enhanced focus states */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
+    transition: box-shadow 0.15s ease-out, outline 0.15s ease-out;
+  }
+  
+  /* Button focus states */
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    @apply ring-primary ring-offset-2;
+  }
+  
+  /* Input focus states */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-2 ring-primary/40 ring-offset-0 border-primary/50;
   }
 }
 
@@ -253,12 +301,80 @@
     box-shadow: 0 0 10px hsl(var(--primary) / 0.15);
   }
   
+  /* Glass morphism - enhanced for both modes */
   .glass {
-    @apply bg-card/70 backdrop-blur-xl border border-white/10;
+    @apply backdrop-blur-xl border;
+    background: hsl(var(--card) / 0.8);
+    border-color: hsl(var(--border) / 0.6);
+  }
+  
+  .dark .glass {
+    background: hsl(var(--card) / 0.7);
+    border-color: hsl(0 0% 100% / 0.08);
   }
   
   .glass-hover {
-    @apply hover:bg-card/80 hover:border-white/20 transition-all duration-300;
+    @apply transition-all duration-300;
+  }
+  .glass-hover:hover {
+    background: hsl(var(--card) / 0.9);
+    border-color: hsl(var(--border) / 0.8);
+  }
+  .dark .glass-hover:hover {
+    background: hsl(var(--card) / 0.85);
+    border-color: hsl(0 0% 100% / 0.12);
+  }
+  
+  /* Card variants with proper shadows */
+  .card-elevated {
+    box-shadow: var(--card-shadow);
+  }
+  
+  .card-elevated:hover {
+    box-shadow: var(--card-shadow-hover);
+  }
+  
+  .card-floating {
+    box-shadow: var(--card-shadow-elevated);
+  }
+  
+  /* Light mode card enhancements */
+  :root .card-depth {
+    @apply bg-card border border-border/60;
+    box-shadow: 
+      0 1px 2px 0 hsl(220 20% 50% / 0.05),
+      0 2px 8px -2px hsl(220 20% 50% / 0.1),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.6);
+  }
+  
+  .dark .card-depth {
+    @apply bg-card border border-border/40;
+    box-shadow: 
+      0 1px 2px 0 hsl(0 0% 0% / 0.2),
+      0 2px 8px -2px hsl(0 0% 0% / 0.3),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.05);
+  }
+  
+  /* Dark mode border glow effect */
+  .dark .border-glow {
+    position: relative;
+  }
+  .dark .border-glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.15) 0%,
+      transparent 50%,
+      hsl(var(--secondary) / 0.1) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
   
   .gradient-primary {
@@ -314,7 +430,42 @@
   }
   
   .shadow-soft {
-    box-shadow: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
+    box-shadow: 0 4px 24px -4px hsl(0 0% 0% / 0.15);
+  }
+  
+  .dark .shadow-soft {
+    box-shadow: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
+  }
+  
+  /* Improved text contrast for light mode */
+  .text-secondary-enhanced {
+    @apply text-muted-foreground;
+  }
+  
+  :root .text-secondary-enhanced {
+    color: hsl(220 15% 35%);
+  }
+  
+  /* Micro-interaction: smooth press effect */
+  .press-effect {
+    @apply transition-transform duration-100;
+  }
+  .press-effect:active {
+    transform: scale(0.97);
+  }
+  
+  /* Micro-interaction: subtle bounce on click */
+  .click-bounce {
+    @apply transition-transform;
+  }
+  .click-bounce:active {
+    animation: click-bounce 0.15s ease-out;
+  }
+  
+  @keyframes click-bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
   }
   
   /* Gamification Animations */
@@ -374,5 +525,15 @@
   
   .rank-bronze {
     background: linear-gradient(135deg, hsl(25 70% 55%), hsl(15 60% 40%));
+  }
+  
+  /* Focus ring animation */
+  @keyframes focus-ring-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px hsl(var(--primary) / 0.5); }
+    50% { box-shadow: 0 0 0 4px hsl(var(--primary) / 0.3); }
+  }
+  
+  .focus-ring-animated:focus-visible {
+    animation: focus-ring-pulse 1.5s ease-in-out infinite;
   }
 }
