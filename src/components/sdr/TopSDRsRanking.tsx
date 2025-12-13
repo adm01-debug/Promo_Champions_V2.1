@@ -94,7 +94,7 @@ export function TopSDRsRanking() {
           return (
             <div 
               key={sdr.id}
-              className={`flex items-center gap-3 p-2 rounded-lg border border-transparent ${getRankStyle(index)}`}
+              className={`flex items-center gap-3 p-2 rounded-lg border border-transparent hover-lift cursor-pointer ${getRankStyle(index)}`}
             >
               <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold">
                 {index + 1}
