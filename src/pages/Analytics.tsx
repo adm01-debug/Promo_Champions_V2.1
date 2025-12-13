@@ -27,14 +27,16 @@ export default function Analytics() {
       >
         <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-primary" />
-            Analytics de Vendas
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Análises avançadas para otimizar sua performance de vendas
-          </p>
+        <div className="opacity-0 animate-fade-in-up flex items-center gap-3">
+          <div className="p-2.5 rounded-xl gradient-primary">
+            <BarChart3 className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold gradient-text">Analytics de Vendas</h1>
+            <p className="text-sm text-muted-foreground">
+              Análises avançadas para otimizar sua performance de vendas
+            </p>
+          </div>
         </div>
 
         {/* Tabs */}
