@@ -14,6 +14,9 @@ interface SalespersonGoalData {
   onTrack: boolean;
   dailyAverage: number;
   requiredDailyAverage: number;
+  commissionRate: number;
+  currentCommission: number;
+  projectedCommission: number;
 }
 
 interface TeamGoalData {
@@ -26,6 +29,8 @@ interface TeamGoalData {
   daysRemaining: number;
   dailyAverage: number;
   requiredDailyAverage: number;
+  totalCurrentCommission: number;
+  totalProjectedCommission: number;
   salespeople: SalespersonGoalData[];
 }
 
@@ -78,6 +83,11 @@ export function useGoalsDashboard() {
         const projection = dailyAverage * totalDays;
         const requiredDailyAverage = daysRemaining > 0 ? (goalAmount - currentSales) / daysRemaining : 0;
         const onTrack = projection >= goalAmount;
+        
+        // Commission calculations
+        const commissionRate = Number(sp.commission_rate) || 10;
+        const currentCommission = currentSales * (commissionRate / 100);
+        const projectedCommission = projection * (commissionRate / 100);
 
         return {
           id: sp.id,
@@ -91,6 +101,9 @@ export function useGoalsDashboard() {
           onTrack,
           dailyAverage,
           requiredDailyAverage: Math.max(0, requiredDailyAverage),
+          commissionRate,
+          currentCommission,
+          projectedCommission,
         };
       });
 
@@ -102,6 +115,10 @@ export function useGoalsDashboard() {
       const teamProjection = teamDailyAverage * totalDays;
       const teamRequiredDaily = daysRemaining > 0 ? (totalGoal - totalSales) / daysRemaining : 0;
 
+      // Team commission totals
+      const totalCurrentCommission = salespeopleData.reduce((sum, sp) => sum + sp.currentCommission, 0);
+      const totalProjectedCommission = salespeopleData.reduce((sum, sp) => sum + sp.projectedCommission, 0);
+
       return {
         totalGoal,
         totalSales,
@@ -112,6 +129,8 @@ export function useGoalsDashboard() {
         daysRemaining,
         dailyAverage: teamDailyAverage,
         requiredDailyAverage: Math.max(0, teamRequiredDaily),
+        totalCurrentCommission,
+        totalProjectedCommission,
         salespeople: salespeopleData.sort((a, b) => b.progress - a.progress),
       };
     },

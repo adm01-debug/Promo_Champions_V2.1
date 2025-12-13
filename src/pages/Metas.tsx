@@ -1,9 +1,10 @@
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { TeamGoalProgress } from "@/components/goals/TeamGoalProgress";
 import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
+import { CommissionCalculator } from "@/components/goals/CommissionCalculator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Target, TrendingUp, Users, Zap, RefreshCw } from "lucide-react";
+import { Target, TrendingUp, Users, Zap, RefreshCw, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -122,8 +123,18 @@ export default function Metas() {
             />
           </div>
 
+          {/* Commission Calculator */}
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
+            <CommissionCalculator
+              salespeople={data?.salespeople || []}
+              totalCurrentCommission={data?.totalCurrentCommission || 0}
+              totalProjectedCommission={data?.totalProjectedCommission || 0}
+              isLoading={isLoading}
+            />
+          </div>
+
           {/* Leaderboard */}
-          <div className="lg:col-span-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
             <GoalsLeaderboard
               salespeople={data?.salespeople || []}
               isLoading={isLoading}
