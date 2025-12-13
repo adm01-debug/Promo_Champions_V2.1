@@ -53,7 +53,8 @@ export const StatCard = ({
   return (
     <div
       className={cn(
-        "glass rounded-xl p-5 hover-lift cursor-pointer group",
+        "bg-card rounded-xl p-5 hover-lift cursor-pointer group border border-border/60 card-elevated",
+        "dark:border-border/40 dark:border-glow",
         variant === "primary" && "gradient-border glow-primary",
         variant === "secondary" && "gradient-border glow-secondary"
       )}

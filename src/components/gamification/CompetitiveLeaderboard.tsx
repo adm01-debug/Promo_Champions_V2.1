@@ -42,7 +42,7 @@ export function CompetitiveLeaderboard() {
 
   if (isLoading) {
     return (
-      <Card className="glass border-border/40">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Crown className="h-4 w-4 text-primary" />
@@ -61,7 +61,7 @@ export function CompetitiveLeaderboard() {
   }
 
   return (
-    <Card className="glass border-border/40">
+    <Card variant="elevated" className="border-border/40 dark:border-glow">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">

@@ -50,11 +50,11 @@ export function SalespersonGoalCard({
   const hasExceededGoal = progress >= 100;
 
   return (
-    <div className={`p-4 rounded-xl border hover-lift cursor-pointer ${
+    <div className={`p-4 rounded-xl border hover-lift cursor-pointer card-elevated ${
       hasExceededGoal 
         ? "bg-status-success/5 border-status-success/30" 
         : onTrack 
-          ? "bg-muted/30 border-border/40" 
+          ? "bg-card border-border/50 dark:border-glow" 
           : "bg-streak/5 border-streak/20"
     }`}>
       <div className="flex items-start gap-3">
