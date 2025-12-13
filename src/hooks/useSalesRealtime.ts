@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useSoundSettings } from "./useSoundSettings";
 
 interface SalePayload {
   id: string;
@@ -20,6 +21,7 @@ const RANK_TITLES = {
 
 export function useSalesRealtime(currentSalespersonId?: string) {
   const queryClient = useQueryClient();
+  const { playSound } = useSoundSettings();
 
   useEffect(() => {
     // Request notification permission
@@ -55,6 +57,9 @@ export function useSalesRealtime(currentSalespersonId?: string) {
                 style: "currency",
                 currency: "BRL",
               }).format(newSale.amount);
+
+              // Play celebration sound
+              playSound();
 
               // Show toast notification
               toast.success(
