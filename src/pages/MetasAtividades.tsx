@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy } from "lucide-react";
+import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame } from "lucide-react";
 import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
 import { ActivityGoalEditDialog } from "@/components/activities/ActivityGoalEditDialog";
 import { DailyActivityRanking } from "@/components/activities/DailyActivityRanking";
 import { AchievementsHistory } from "@/components/achievements/AchievementsHistory";
+import { StreakRanking } from "@/components/achievements/StreakRanking";
 import { useCelebration } from "@/hooks/useCelebration";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -129,9 +130,13 @@ export default function MetasAtividades() {
               <Target className="h-4 w-4" />
               Progresso Diário
             </TabsTrigger>
+            <TabsTrigger value="streaks" className="gap-2">
+              <Flame className="h-4 w-4" />
+              Ranking de Sequências
+            </TabsTrigger>
             <TabsTrigger value="history" className="gap-2">
               <Trophy className="h-4 w-4" />
-              Histórico de Conquistas
+              Histórico
             </TabsTrigger>
           </TabsList>
 
@@ -182,6 +187,10 @@ export default function MetasAtividades() {
                 </Card>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="streaks">
+            <StreakRanking />
           </TabsContent>
 
           <TabsContent value="history">
