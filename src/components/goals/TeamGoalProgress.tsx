@@ -33,19 +33,21 @@ export function TeamGoalProgress({
   const projectionProgress = totalGoal > 0 ? Math.min((projection / totalGoal) * 100, 150) : 0;
 
   return (
-    <Card className="glass border-border/40 overflow-hidden">
-      <div className={`h-1 ${onTrack ? "bg-status-success" : "bg-status-warning"}`} />
+    <Card variant="elevated" className="glass border-border/40 overflow-hidden">
+      <div className={`h-1.5 ${onTrack ? "bg-gradient-to-r from-status-success to-status-success/70" : "bg-gradient-to-r from-status-warning to-status-warning/70"}`} />
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Meta da Equipe
+            <div className="p-1.5 rounded-lg gradient-primary">
+              <Target className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Meta da Equipe</span>
           </CardTitle>
           <Badge 
             variant="outline" 
             className={onTrack 
-              ? "bg-status-success/10 text-status-success border-status-success/30" 
-              : "bg-status-warning/10 text-status-warning border-status-warning/30"
+              ? "bg-status-success/10 text-status-success border-status-success/30 shadow-sm" 
+              : "bg-status-warning/10 text-status-warning border-status-warning/30 shadow-sm"
             }
           >
             {onTrack ? (
@@ -63,12 +65,12 @@ export function TeamGoalProgress({
             <div>
               <p className="text-3xl font-bold gradient-text">{formatCurrency(totalSales)}</p>
               <p className="text-sm text-muted-foreground">
-                de {formatCurrency(totalGoal)}
+                de <span className="font-medium text-foreground">{formatCurrency(totalGoal)}</span>
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold">{progress.toFixed(1)}%</p>
-              <p className="text-xs text-muted-foreground">atingido</p>
+              <p className="text-2xl font-bold gradient-text">{progress.toFixed(1)}%</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">atingido</p>
             </div>
           </div>
           
@@ -83,10 +85,12 @@ export function TeamGoalProgress({
         </div>
 
         {/* Projection */}
-        <div className="p-4 rounded-xl bg-muted/50 space-y-3">
+        <div className="p-4 rounded-xl bg-muted/30 border border-border/30 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground flex items-center gap-2">
-              <Zap className="h-4 w-4" />
+              <div className="p-1 rounded-md bg-primary/10">
+                <Zap className="h-3.5 w-3.5 text-primary" />
+              </div>
               Projeção de Fechamento
             </span>
             <span className={`text-lg font-bold ${onTrack ? "text-status-success" : "text-status-warning"}`}>
@@ -114,25 +118,27 @@ export function TeamGoalProgress({
 
         {/* Daily Stats */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-3 rounded-lg bg-muted/30 text-center">
-            <p className="text-lg font-bold">{formatCurrency(dailyAverage)}</p>
-            <p className="text-[10px] text-muted-foreground">Média diária atual</p>
+          <div className="p-3 rounded-lg bg-muted/20 border border-border/30 text-center hover:bg-muted/30 transition-colors">
+            <p className="text-lg font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Média diária atual</p>
           </div>
-          <div className="p-3 rounded-lg bg-muted/30 text-center">
+          <div className="p-3 rounded-lg bg-muted/20 border border-border/30 text-center hover:bg-muted/30 transition-colors">
             <p className={`text-lg font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
-            <p className="text-[10px] text-muted-foreground">Necessário/dia</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Necessário/dia</p>
           </div>
         </div>
 
         {/* Days Progress */}
         <div className="flex items-center gap-3 text-sm">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <div className="p-1 rounded-md bg-muted/50">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </div>
           <div className="flex-1">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span>{daysElapsed} dias</span>
-              <span>{daysRemaining} restantes</span>
+              <span className="font-medium">{daysElapsed} dias</span>
+              <span className="font-medium">{daysRemaining} restantes</span>
             </div>
             <Progress value={(daysElapsed / (daysElapsed + daysRemaining)) * 100} className="h-1.5" />
           </div>
