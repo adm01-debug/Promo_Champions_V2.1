@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, subWeeks, subMonths, subQuarters } from "date-fns";
+
+export type PeriodFilter = "week" | "month" | "quarter";
 
 interface SDRMetrics {
   totalLeads: number;
@@ -25,15 +27,28 @@ interface SDRComparison {
   };
 }
 
-export function useSDRMetrics() {
+function getPeriodRange(period: PeriodFilter, offset: number = 0) {
+  const now = new Date();
+  
+  switch (period) {
+    case "week":
+      const weekRef = offset === 0 ? now : subWeeks(now, offset);
+      return { start: startOfWeek(weekRef, { weekStartsOn: 1 }), end: endOfWeek(weekRef, { weekStartsOn: 1 }) };
+    case "month":
+      const monthRef = offset === 0 ? now : subMonths(now, offset);
+      return { start: startOfMonth(monthRef), end: endOfMonth(monthRef) };
+    case "quarter":
+      const quarterRef = offset === 0 ? now : subQuarters(now, offset);
+      return { start: startOfQuarter(quarterRef), end: endOfQuarter(quarterRef) };
+  }
+}
+
+export function useSDRMetrics(period: PeriodFilter = "month") {
   return useQuery({
-    queryKey: ["sdr-metrics"],
+    queryKey: ["sdr-metrics", period],
     queryFn: async (): Promise<SDRComparison> => {
-      const now = new Date();
-      const currentMonthStart = startOfMonth(now);
-      const currentMonthEnd = endOfMonth(now);
-      const previousMonthStart = startOfMonth(subMonths(now, 1));
-      const previousMonthEnd = endOfMonth(subMonths(now, 1));
+      const currentRange = getPeriodRange(period, 0);
+      const previousRange = getPeriodRange(period, 1);
 
       // Fetch SDRs (role = sdr or hybrid)
       const { data: sdrs } = await supabase
@@ -43,21 +58,21 @@ export function useSDRMetrics() {
 
       const sdrIds = sdrs?.map(s => s.id) || [];
 
-      // Fetch current month sales for SDRs
+      // Fetch current period sales for SDRs
       const { data: currentSales } = await supabase
         .from("sales")
         .select("*")
         .in("salesperson_id", sdrIds)
-        .gte("created_at", currentMonthStart.toISOString())
-        .lte("created_at", currentMonthEnd.toISOString());
+        .gte("created_at", currentRange.start.toISOString())
+        .lte("created_at", currentRange.end.toISOString());
 
-      // Fetch previous month sales
+      // Fetch previous period sales
       const { data: previousSales } = await supabase
         .from("sales")
         .select("*")
         .in("salesperson_id", sdrIds)
-        .gte("created_at", previousMonthStart.toISOString())
-        .lte("created_at", previousMonthEnd.toISOString());
+        .gte("created_at", previousRange.start.toISOString())
+        .lte("created_at", previousRange.end.toISOString());
 
       // Fetch lead scores for temperature classification
       const { data: leadScores } = await supabase
@@ -70,16 +85,16 @@ export function useSDRMetrics() {
         .select("*")
         .eq("task_type", "meeting")
         .in("salesperson_id", sdrIds)
-        .gte("created_at", currentMonthStart.toISOString())
-        .lte("created_at", currentMonthEnd.toISOString());
+        .gte("created_at", currentRange.start.toISOString())
+        .lte("created_at", currentRange.end.toISOString());
 
       const { data: previousTasks } = await supabase
         .from("tasks")
         .select("*")
         .eq("task_type", "meeting")
         .in("salesperson_id", sdrIds)
-        .gte("created_at", previousMonthStart.toISOString())
-        .lte("created_at", previousMonthEnd.toISOString());
+        .gte("created_at", previousRange.start.toISOString())
+        .lte("created_at", previousRange.end.toISOString());
 
       const scoreMap = new Map(leadScores?.map(s => [s.sale_id, s.score]) || []);
 
@@ -109,7 +124,7 @@ export function useSDRMetrics() {
           qualifiedLeads,
           meetingsScheduled,
           schedulingRate,
-          avgResponseTime: 2.4, // Placeholder - would need activity tracking
+          avgResponseTime: 2.4,
           activeProspects,
           coldLeads,
           warmLeads,

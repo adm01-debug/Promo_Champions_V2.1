@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, subWeeks, subMonths, subQuarters } from "date-fns";
 
 export type SalesRole = 'sdr' | 'closer' | 'hybrid';
+export type PeriodFilter = "week" | "month" | "quarter";
 
 interface RoleMetrics {
   totalDeals: number;
@@ -25,15 +26,28 @@ interface RoleComparison {
   };
 }
 
-export function useCloserMetrics() {
+function getPeriodRange(period: PeriodFilter, offset: number = 0) {
+  const now = new Date();
+  
+  switch (period) {
+    case "week":
+      const weekRef = offset === 0 ? now : subWeeks(now, offset);
+      return { start: startOfWeek(weekRef, { weekStartsOn: 1 }), end: endOfWeek(weekRef, { weekStartsOn: 1 }) };
+    case "month":
+      const monthRef = offset === 0 ? now : subMonths(now, offset);
+      return { start: startOfMonth(monthRef), end: endOfMonth(monthRef) };
+    case "quarter":
+      const quarterRef = offset === 0 ? now : subQuarters(now, offset);
+      return { start: startOfQuarter(quarterRef), end: endOfQuarter(quarterRef) };
+  }
+}
+
+export function useCloserMetrics(period: PeriodFilter = "month") {
   return useQuery({
-    queryKey: ["closer-metrics"],
+    queryKey: ["closer-metrics", period],
     queryFn: async (): Promise<RoleComparison> => {
-      const now = new Date();
-      const currentMonthStart = startOfMonth(now);
-      const currentMonthEnd = endOfMonth(now);
-      const previousMonthStart = startOfMonth(subMonths(now, 1));
-      const previousMonthEnd = endOfMonth(subMonths(now, 1));
+      const currentRange = getPeriodRange(period, 0);
+      const previousRange = getPeriodRange(period, 1);
 
       // Fetch closers
       const { data: closers } = await supabase
@@ -43,21 +57,21 @@ export function useCloserMetrics() {
 
       const closerIds = closers?.map(c => c.id) || [];
 
-      // Fetch current month sales for closers
+      // Fetch current period sales for closers
       const { data: currentSales } = await supabase
         .from("sales")
         .select("*")
         .in("salesperson_id", closerIds)
-        .gte("created_at", currentMonthStart.toISOString())
-        .lte("created_at", currentMonthEnd.toISOString());
+        .gte("created_at", currentRange.start.toISOString())
+        .lte("created_at", currentRange.end.toISOString());
 
-      // Fetch previous month sales
+      // Fetch previous period sales
       const { data: previousSales } = await supabase
         .from("sales")
         .select("*")
         .in("salesperson_id", closerIds)
-        .gte("created_at", previousMonthStart.toISOString())
-        .lte("created_at", previousMonthEnd.toISOString());
+        .gte("created_at", previousRange.start.toISOString())
+        .lte("created_at", previousRange.end.toISOString());
 
       const calculateMetrics = (sales: any[]): RoleMetrics => {
         const totalDeals = sales?.length || 0;

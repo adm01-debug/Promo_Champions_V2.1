@@ -1,8 +1,10 @@
-import { useCloserMetrics } from "@/hooks/useCloserMetrics";
+import { useState } from "react";
+import { useCloserMetrics, PeriodFilter } from "@/hooks/useCloserMetrics";
 import { CloserStatCard } from "@/components/closer/CloserStatCard";
 import { CloserPipeline } from "@/components/closer/CloserPipeline";
 import { TopClosersRanking } from "@/components/closer/TopClosersRanking";
 import { RecentClosedDeals } from "@/components/closer/RecentClosedDeals";
+import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { 
   DollarSign, 
   CheckCircle, 
@@ -13,7 +15,10 @@ import {
 } from "lucide-react";
 
 export default function CloserDashboard() {
-  const { data: metrics } = useCloserMetrics();
+  const [period, setPeriod] = useState<PeriodFilter>("month");
+  const { data: metrics } = useCloserMetrics(period);
+
+  const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -30,9 +35,12 @@ export default function CloserDashboard() {
                 Métricas de fechamento e conversão
               </p>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20">
-              <Handshake className="h-4 w-4 text-green-500" />
-              <span className="text-xs font-medium text-green-500">Modo Fechamento</span>
+            <div className="flex items-center gap-3">
+              <PeriodFilterButtons value={period} onChange={setPeriod} />
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20">
+                <Handshake className="h-4 w-4 text-green-500" />
+                <span className="text-xs font-medium text-green-500">Modo Fechamento</span>
+              </div>
             </div>
           </div>
         </div>
@@ -46,7 +54,7 @@ export default function CloserDashboard() {
               change={metrics?.changes.deals}
               icon={CheckCircle}
               variant="success"
-              subtitle="Este mês"
+              subtitle={periodLabel}
             />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
