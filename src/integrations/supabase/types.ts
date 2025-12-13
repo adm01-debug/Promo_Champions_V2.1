@@ -783,6 +783,7 @@ export type Database = {
       }
       salespeople: {
         Row: {
+          auth_user_id: string | null
           avatar_url: string | null
           commission_rate: number
           created_at: string
@@ -794,6 +795,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auth_user_id?: string | null
           avatar_url?: string | null
           commission_rate?: number
           created_at?: string
@@ -805,6 +807,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auth_user_id?: string | null
           avatar_url?: string | null
           commission_rate?: number
           created_at?: string

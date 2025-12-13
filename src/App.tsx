@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Vendas from "./pages/Vendas";
 import Clientes from "./pages/Clientes";
@@ -24,6 +25,7 @@ import Metas from "./pages/Metas";
 import FonteLeads from "./pages/FonteLeads";
 import RelatorioAtividades from "./pages/RelatorioAtividades";
 import MetasAtividades from "./pages/MetasAtividades";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,32 +36,42 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <MainLayout>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/vendas" element={<Vendas />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/produtos" element={<Produtos />} />
-            <Route path="/relatorios" element={<Relatorios />} />
-            <Route path="/vendedores" element={<Vendedores />} />
-            <Route path="/vendedor/:id" element={<VendedorDashboard />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/notificacoes" element={<Notificacoes />} />
-            <Route path="/pipeline" element={<Pipeline />} />
-            <Route path="/tarefas" element={<Tarefas />} />
-            <Route path="/playbooks" element={<Playbooks />} />
-            <Route path="/sdr" element={<SDRDashboard />} />
-            <Route path="/closer" element={<CloserDashboard />} />
-            <Route path="/atividades" element={<Atividades />} />
-            <Route path="/cadencias" element={<Cadencias />} />
-            <Route path="/metas" element={<Metas />} />
-            <Route path="/fonte-leads" element={<FonteLeads />} />
-            <Route path="/relatorio-atividades" element={<RelatorioAtividades />} />
-            <Route path="/metas-atividades" element={<MetasAtividades />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/*"
+              element={
+                <MainLayout>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/vendas" element={<Vendas />} />
+                    <Route path="/clientes" element={<Clientes />} />
+                    <Route path="/produtos" element={<Produtos />} />
+                    <Route path="/relatorios" element={<Relatorios />} />
+                    <Route path="/vendedores" element={<Vendedores />} />
+                    <Route path="/vendedor/:id" element={<VendedorDashboard />} />
+                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/notificacoes" element={<Notificacoes />} />
+                    <Route path="/pipeline" element={<Pipeline />} />
+                    <Route path="/tarefas" element={<Tarefas />} />
+                    <Route path="/playbooks" element={<Playbooks />} />
+                    <Route path="/sdr" element={<SDRDashboard />} />
+                    <Route path="/closer" element={<CloserDashboard />} />
+                    <Route path="/atividades" element={<Atividades />} />
+                    <Route path="/cadencias" element={<Cadencias />} />
+                    <Route path="/metas" element={<Metas />} />
+                    <Route path="/fonte-leads" element={<FonteLeads />} />
+                    <Route path="/relatorio-atividades" element={<RelatorioAtividades />} />
+                    <Route path="/metas-atividades" element={<MetasAtividades />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </MainLayout>
+              }
+            />
           </Routes>
-        </MainLayout>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -8,7 +8,11 @@ import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
+import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
+import { CompetitiveLeaderboard } from "@/components/gamification/CompetitiveLeaderboard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { useSalesRealtime } from "@/hooks/useSalesRealtime";
+import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import {
@@ -20,6 +24,10 @@ import {
 
 const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
+  const { salesperson } = useAuth();
+  
+  // Subscribe to real-time sales notifications
+  useSalesRealtime(salesperson?.id);
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -35,6 +43,11 @@ const Index = () => {
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
           <DashboardHeader />
+        </div>
+
+        {/* Competitive Status Bar */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "50ms" }}>
+          <CompetitiveStatusBar />
         </div>
 
         {/* Stats Row */}
@@ -108,12 +121,15 @@ const Index = () => {
         </div>
 
         {/* Third Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
             <RecentDeals />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
             <TopProducts />
+          </div>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
+            <CompetitiveLeaderboard />
           </div>
         </div>
       </div>
