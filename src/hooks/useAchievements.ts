@@ -173,3 +173,92 @@ export function useSalespersonStreak(salespersonId: string | null) {
     enabled: !!salespersonId,
   });
 }
+
+// Hook to get streak ranking for all salespeople
+export function useStreakRanking() {
+  return useQuery({
+    queryKey: ["streak-ranking"],
+    queryFn: async () => {
+      // Fetch all active salespeople
+      const { data: salespeople, error: spError } = await supabase
+        .from("salespeople")
+        .select("id, name, avatar_url, role")
+        .eq("is_active", true);
+
+      if (spError) throw spError;
+      if (!salespeople) return [];
+
+      // Fetch all daily_goal achievements
+      const { data: achievements, error: achError } = await supabase
+        .from("achievements")
+        .select("salesperson_id, achievement_date")
+        .eq("achievement_type", "daily_goal")
+        .order("achievement_date", { ascending: false });
+
+      if (achError) throw achError;
+
+      // Calculate streaks for each salesperson
+      const streakData = salespeople.map(sp => {
+        const spAchievements = (achievements || [])
+          .filter(a => a.salesperson_id === sp.id)
+          .map(a => a.achievement_date);
+
+        const uniqueDates = [...new Set(spAchievements)].sort().reverse();
+        
+        // Calculate current streak
+        let currentStreak = 0;
+        if (uniqueDates.length > 0) {
+          const today = format(new Date(), "yyyy-MM-dd");
+          const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd");
+          
+          if (uniqueDates[0] === today || uniqueDates[0] === yesterday) {
+            currentStreak = 1;
+            for (let i = 1; i < uniqueDates.length; i++) {
+              const currentDate = parseISO(uniqueDates[i - 1]);
+              const prevDate = parseISO(uniqueDates[i]);
+              const diff = differenceInDays(currentDate, prevDate);
+              if (diff === 1) {
+                currentStreak++;
+              } else {
+                break;
+              }
+            }
+          }
+        }
+
+        // Calculate best streak ever
+        let bestStreak = 0;
+        let tempStreak = 1;
+        for (let i = 1; i < uniqueDates.length; i++) {
+          const currentDate = parseISO(uniqueDates[i - 1]);
+          const prevDate = parseISO(uniqueDates[i]);
+          const diff = differenceInDays(currentDate, prevDate);
+          if (diff === 1) {
+            tempStreak++;
+          } else {
+            bestStreak = Math.max(bestStreak, tempStreak);
+            tempStreak = 1;
+          }
+        }
+        bestStreak = Math.max(bestStreak, tempStreak, currentStreak);
+
+        return {
+          salesperson_id: sp.id,
+          name: sp.name,
+          avatar_url: sp.avatar_url,
+          role: sp.role,
+          currentStreak,
+          bestStreak,
+          totalGoalsAchieved: uniqueDates.length,
+        };
+      });
+
+      // Sort by best streak, then current streak
+      return streakData.sort((a, b) => {
+        if (b.bestStreak !== a.bestStreak) return b.bestStreak - a.bestStreak;
+        return b.currentStreak - a.currentStreak;
+      });
+    },
+    refetchInterval: 60000,
+  });
+}
