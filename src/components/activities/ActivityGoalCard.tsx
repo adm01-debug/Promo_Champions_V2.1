@@ -4,9 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper, Flame, Zap, Target } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useCelebration } from "@/hooks/useCelebration";
+import { useSalespersonStreak } from "@/hooks/useAchievements";
 
 interface ActivityGoalCardProps {
   data: ActivityGoalProgress;
@@ -19,8 +21,31 @@ const roleLabels: Record<string, { label: string; color: string }> = {
   hybrid: { label: "Híbrido", color: "bg-emerald-500/20 text-emerald-400" },
 };
 
+const getStreakDisplay = (streak: number) => {
+  if (streak >= 7) {
+    return {
+      icon: <Flame className="h-3.5 w-3.5" />,
+      color: "bg-gradient-to-r from-orange-500/30 to-red-500/30 text-orange-300 border-orange-500/50",
+      label: "Em Chamas!",
+    };
+  }
+  if (streak >= 3) {
+    return {
+      icon: <Zap className="h-3.5 w-3.5" />,
+      color: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+      label: "Sequência",
+    };
+  }
+  return {
+    icon: <Target className="h-3.5 w-3.5" />,
+    color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+    label: "Iniciando",
+  };
+};
+
 export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   const { celebrate } = useCelebration();
+  const { data: currentStreak } = useSalespersonStreak(data.salesperson_id);
   const hasReachedGoal = data.hasGoals && data.progress.overall >= 100;
 
   // Trigger celebration when goal is reached
@@ -62,6 +87,8 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
     { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-emerald-400" },
   ];
 
+  const streakDisplay = currentStreak ? getStreakDisplay(currentStreak) : null;
+
   return (
     <Card className={`glass border-border/40 hover:border-border/60 transition-all ${hasReachedGoal ? 'ring-2 ring-green-500/50 shadow-lg shadow-green-500/20' : ''}`}>
       <CardContent className="p-4 relative overflow-hidden">
@@ -81,12 +108,26 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Avatar className={`h-10 w-10 border-2 ${hasReachedGoal ? 'border-green-500 ring-2 ring-green-500/30' : 'border-border/40'}`}>
-              <AvatarImage src={data.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary/20 text-primary text-sm">
-                {data.salesperson_name.substring(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className={`h-10 w-10 border-2 ${hasReachedGoal ? 'border-green-500 ring-2 ring-green-500/30' : 'border-border/40'}`}>
+                <AvatarImage src={data.avatar_url || undefined} />
+                <AvatarFallback className="bg-primary/20 text-primary text-sm">
+                  {data.salesperson_name.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              {/* Streak indicator on avatar */}
+              {currentStreak && currentStreak >= 3 && (
+                <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
+                  <div className={`rounded-full p-1 ${currentStreak >= 7 ? 'bg-orange-500/30' : 'bg-blue-500/30'}`}>
+                    {currentStreak >= 7 ? (
+                      <Flame className="h-3 w-3 text-orange-400" />
+                    ) : (
+                      <Zap className="h-3 w-3 text-blue-400" />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className={`font-medium text-sm ${hasReachedGoal ? 'text-green-400' : ''}`}>
@@ -96,7 +137,28 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
                   {roleLabels[data.role]?.label || data.role}
                 </Badge>
               </div>
-              {data.hasGoals && getStatusBadge()}
+              <div className="flex items-center gap-2">
+                {data.hasGoals && getStatusBadge()}
+                {/* Streak badge */}
+                {currentStreak && currentStreak > 0 && streakDisplay && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge className={`${streakDisplay.color} text-[10px] px-1.5 flex items-center gap-1 cursor-help`}>
+                          {streakDisplay.icon}
+                          <span>{currentStreak} dias</span>
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-medium">{streakDisplay.label}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {currentStreak} {currentStreak === 1 ? 'dia' : 'dias'} consecutivos batendo meta
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
             </div>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8 relative z-10" onClick={() => onEdit(data.salesperson_id)}>
