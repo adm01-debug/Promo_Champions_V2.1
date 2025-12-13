@@ -233,19 +233,19 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
         ) : (
           <>
             {/* Overall Progress */}
-            <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/30">
+            <div className="mb-4 p-3 rounded-lg glass border border-border/30 shadow-inner">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-muted-foreground font-medium">Progresso Geral</span>
-                <span className={`text-sm font-bold transition-colors ${hasReachedGoal ? 'gradient-text' : ''}`}>
+                <span className={`text-sm font-bold font-display transition-all duration-300 ${hasReachedGoal ? 'gradient-text scale-110' : ''}`}>
                   {data.progress.overall.toFixed(0)}%
                 </span>
               </div>
               <div className="h-2.5 rounded-full bg-muted/50 overflow-hidden shadow-inner">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(data.progress.overall)} ${hasReachedGoal ? 'animate-pulse shadow-lg' : ''}`}
+                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(data.progress.overall)} ${hasReachedGoal ? 'animate-pulse' : ''}`}
                   style={{ 
                     width: `${Math.min(data.progress.overall, 100)}%`,
-                    boxShadow: hasReachedGoal ? '0 0 10px hsl(var(--status-success) / 0.5)' : undefined
+                    boxShadow: hasReachedGoal ? '0 0 12px hsl(var(--status-success) / 0.6)' : undefined
                   }}
                 />
               </div>
@@ -254,14 +254,26 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
             {/* Activity Breakdown */}
             <div className="space-y-2.5">
               {activities.filter(a => a.goal > 0).map((activity, index) => (
-                <div key={index} className="flex items-center gap-2.5 group">
-                  <div className={`p-1.5 rounded-md transition-all ${activity.progress >= 100 ? 'bg-status-success/20' : 'bg-muted/40 group-hover:bg-muted/60'}`}>
-                    <activity.icon className={`h-3.5 w-3.5 ${activity.progress >= 100 ? 'text-status-success' : activity.color} flex-shrink-0 transition-colors`} />
+                <div 
+                  key={index} 
+                  className="flex items-center gap-2.5 group animate-fade-in"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className={`p-1.5 rounded-lg transition-all duration-300 border ${
+                    activity.progress >= 100 
+                      ? 'bg-status-success/20 border-status-success/30 shadow-sm shadow-status-success/20' 
+                      : 'bg-muted/40 border-border/30 group-hover:bg-muted/60 group-hover:border-primary/30'
+                  }`}>
+                    <activity.icon className={`h-3.5 w-3.5 flex-shrink-0 transition-all duration-300 group-hover:scale-110 ${
+                      activity.progress >= 100 ? 'text-status-success' : activity.color
+                    }`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[10px] text-muted-foreground font-medium">{activity.label}</span>
-                      <span className={`text-[10px] font-semibold ${activity.progress >= 100 ? 'text-status-success' : ''}`}>
+                      <span className={`text-[10px] font-semibold transition-colors ${
+                        activity.progress >= 100 ? 'text-status-success' : 'group-hover:text-primary'
+                      }`}>
                         {activity.current}/{activity.goal}
                       </span>
                     </div>

@@ -52,14 +52,23 @@ export function ActivityStats() {
         return (
           <Card 
             key={item.label} 
-            className={`glass border-border/40 dark:border-glow card-elevated transition-all duration-300 hover-lift ${isFirst ? 'ring-1 ring-primary/20' : ''}`}
+            className={`glass border-border/40 dark:border-glow card-elevated transition-all duration-300 group ${
+              isFirst 
+                ? 'ring-1 ring-primary/30 hover-glow shadow-md shadow-primary/10' 
+                : 'hover-lift'
+            }`}
+            style={{ animationDelay: `${index * 50}ms` }}
           >
             <CardContent className="p-3 flex items-center gap-3">
-              <div className={`p-2 rounded-lg transition-colors ${isFirst ? 'bg-gradient-to-br from-primary/30 to-accent/20' : 'bg-muted/50 group-hover:bg-muted/70'}`}>
-                <Icon className={`h-4 w-4 ${isFirst ? 'gradient-primary' : item.color}`} />
+              <div className={`p-2 rounded-lg transition-all duration-300 ${
+                isFirst 
+                  ? 'bg-gradient-to-br from-primary/30 to-accent/20 shadow-sm group-hover:shadow-md group-hover:shadow-primary/20' 
+                  : 'bg-muted/50 group-hover:bg-muted/70'
+              }`}>
+                <Icon className={`h-4 w-4 transition-transform duration-300 group-hover:scale-110 ${isFirst ? 'text-primary' : item.color}`} />
               </div>
               <div>
-                <p className={`text-lg font-display font-bold ${isFirst ? 'gradient-text' : ''}`}>{item.value}</p>
+                <p className={`text-lg font-display font-bold transition-colors ${isFirst ? 'gradient-text' : 'group-hover:text-primary'}`}>{item.value}</p>
                 <p className="text-[10px] text-muted-foreground font-medium">{item.label}</p>
               </div>
             </CardContent>
