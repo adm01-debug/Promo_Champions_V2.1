@@ -20,6 +20,7 @@ import SDRDashboard from "./pages/SDRDashboard";
 import CloserDashboard from "./pages/CloserDashboard";
 import Atividades from "./pages/Atividades";
 import Cadencias from "./pages/Cadencias";
+import Metas from "./pages/Metas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/closer" element={<CloserDashboard />} />
             <Route path="/atividades" element={<Atividades />} />
             <Route path="/cadencias" element={<Cadencias />} />
+            <Route path="/metas" element={<Metas />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -17,7 +17,8 @@ import {
   Phone,
   Activity,
   Handshake,
-  GitBranch
+  GitBranch,
+  Target
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -38,6 +39,7 @@ import {
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
+  { title: "Metas", url: "/metas", icon: Target },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Produtos", url: "/produtos", icon: Package },
