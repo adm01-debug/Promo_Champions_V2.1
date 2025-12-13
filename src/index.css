@@ -161,6 +161,23 @@
     @apply border-border;
   }
   
+  /* Smooth theme transitions */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Disable transitions for specific elements that shouldn't animate */
+  .no-transition,
+  .no-transition *,
+  [data-no-transition],
+  [data-no-transition] * {
+    transition: none !important;
+  }
+  
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
