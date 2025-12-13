@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useSoundSettings } from "./useSoundSettings";
+import { XP_REWARDS, calculateLevelFromXP } from "./useSalespersonXP";
 
 interface SalePayload {
   id: string;
@@ -151,11 +152,17 @@ export function useSalesRealtime(currentSalespersonId?: string) {
               playSound();
               triggerConfetti(newSale.amount);
 
+              // Award XP for the sale
+              const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
+              if (xpFromSale > 0) {
+                await awardSaleXP(newSale.salesperson_id, xpFromSale, newSale.id, newSale.amount);
+              }
+
               // Show toast notification
               toast.success(
                 `🔥 ${salesperson.name} fechou uma venda!`,
                 {
-                  description: `${newSale.client_name} - ${formattedAmount}. O clima de vendas está bom! 🚀`,
+                  description: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
                   duration: 8000,
                 }
               );
@@ -167,7 +174,7 @@ export function useSalesRealtime(currentSalespersonId?: string) {
                 Notification.permission === "granted"
               ) {
                 new Notification(`🔥 ${salesperson.name} fechou uma venda!`, {
-                  body: `${newSale.client_name} - ${formattedAmount}. O clima de vendas está bom! Não perca a oportunidade! 🚀`,
+                  body: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
                   icon: salesperson.avatar_url || "/placeholder.svg",
                   tag: `sale-${newSale.id}`,
                 });
@@ -179,6 +186,8 @@ export function useSalesRealtime(currentSalespersonId?: string) {
           queryClient.invalidateQueries({ queryKey: ["sales"] });
           queryClient.invalidateQueries({ queryKey: ["goals-dashboard"] });
           queryClient.invalidateQueries({ queryKey: ["salespeople-ranking"] });
+          queryClient.invalidateQueries({ queryKey: ["salesperson-xp"] });
+          queryClient.invalidateQueries({ queryKey: ["all-salespeople-xp"] });
         }
       )
       .subscribe();
@@ -187,6 +196,56 @@ export function useSalesRealtime(currentSalespersonId?: string) {
       supabase.removeChannel(channel);
     };
   }, [currentSalespersonId, queryClient, playSound, triggerConfetti]);
+}
+
+// Helper function to award XP for sales
+async function awardSaleXP(salespersonId: string, xpAmount: number, saleId: string, saleAmount: number) {
+  // Get or create XP record
+  let { data: xpRecord } = await supabase
+    .from("salesperson_xp")
+    .select("*")
+    .eq("salesperson_id", salespersonId)
+    .maybeSingle();
+
+  const newTotalXP = (xpRecord?.total_xp || 0) + xpAmount;
+  const levelInfo = calculateLevelFromXP(newTotalXP);
+
+  if (!xpRecord) {
+    await supabase
+      .from("salesperson_xp")
+      .insert({
+        salesperson_id: salespersonId,
+        total_xp: newTotalXP,
+        current_level: levelInfo.level,
+        xp_to_next_level: levelInfo.xpToNext - levelInfo.xpInLevel,
+      });
+  } else {
+    await supabase
+      .from("salesperson_xp")
+      .update({
+        total_xp: newTotalXP,
+        current_level: levelInfo.level,
+        xp_to_next_level: levelInfo.xpToNext - levelInfo.xpInLevel,
+      })
+      .eq("id", xpRecord.id);
+  }
+
+  // Log XP history
+  const formattedAmount = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 0,
+  }).format(saleAmount);
+
+  await supabase
+    .from("xp_history")
+    .insert({
+      salesperson_id: salespersonId,
+      xp_amount: xpAmount,
+      source_type: "sale",
+      source_id: saleId,
+      description: `Venda de ${formattedAmount}`,
+    });
 }
 
 export function getRankTitle(rank: number) {
