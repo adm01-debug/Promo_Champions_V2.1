@@ -25,12 +25,12 @@ const actionLabels: Record<ActionType, string> = {
 };
 
 const actionColors: Record<ActionType, string> = {
-  call: "bg-blue-500/10 text-blue-500",
-  email: "bg-orange-500/10 text-orange-500",
-  linkedin: "bg-sky-500/10 text-sky-500",
-  whatsapp: "bg-green-500/10 text-green-500",
-  meeting: "bg-purple-500/10 text-purple-500",
-  other: "bg-gray-500/10 text-gray-500",
+  call: "bg-status-info/10 text-status-info",
+  email: "bg-status-warning/10 text-status-warning",
+  linkedin: "bg-primary/10 text-primary",
+  whatsapp: "bg-status-success/10 text-status-success",
+  meeting: "bg-status-purple/10 text-status-purple",
+  other: "bg-muted text-muted-foreground",
 };
 
 export function TodaysCadenceTasks() {

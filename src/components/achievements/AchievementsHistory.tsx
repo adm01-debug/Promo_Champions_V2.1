@@ -19,34 +19,34 @@ const getAchievementConfig = (type: string): AchievementConfig => {
       return {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Crown className="h-4 w-4" />,
-        color: "bg-gradient-to-r from-amber-500/30 to-yellow-500/30 text-yellow-300 border-yellow-500/50 animate-pulse"
+        color: "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-pulse"
       };
     }
     if (streakNum >= 15) {
       return {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Star className="h-4 w-4" />,
-        color: "bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-pink-300 border-pink-500/50"
+        color: "bg-gradient-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50"
       };
     }
     if (streakNum >= 7) {
       return {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Flame className="h-4 w-4" />,
-        color: "bg-gradient-to-r from-orange-500/30 to-red-500/30 text-orange-300 border-orange-500/50"
+        color: "bg-gradient-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50"
       };
     }
     if (streakNum >= 5) {
       return {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Zap className="h-4 w-4" />,
-        color: "bg-blue-500/20 text-blue-300 border-blue-500/40"
+        color: "bg-status-info/20 text-status-info border-status-info/40"
       };
     }
     return {
       label: `${streakNum} Dias Seguidos!`,
       icon: <Target className="h-4 w-4" />,
-      color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+      color: "bg-status-success/20 text-status-success border-status-success/40"
     };
   }
 
@@ -54,17 +54,17 @@ const getAchievementConfig = (type: string): AchievementConfig => {
     daily_goal: { 
       label: "Meta Diária Batida", 
       icon: <Trophy className="h-4 w-4" />,
-      color: "bg-amber-500/20 text-amber-400 border-amber-500/30"
+      color: "bg-rank-gold/20 text-rank-gold border-rank-gold/30"
     },
     weekly_goal: { 
       label: "Meta Semanal Batida", 
       icon: <Medal className="h-4 w-4" />,
-      color: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+      color: "bg-status-purple/20 text-status-purple border-status-purple/30"
     },
     monthly_goal: { 
       label: "Meta Mensal Batida", 
       icon: <PartyPopper className="h-4 w-4" />,
-      color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+      color: "bg-status-success/20 text-status-success border-status-success/30"
     },
   };
 
@@ -85,7 +85,7 @@ export function AchievementsHistory() {
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-amber-400" />
+            <Trophy className="h-5 w-5 text-rank-gold" />
             Histórico de Conquistas
           </CardTitle>
         </CardHeader>
@@ -112,7 +112,7 @@ export function AchievementsHistory() {
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-amber-400" />
+            <Trophy className="h-5 w-5 text-rank-gold" />
             Histórico de Conquistas
           </CardTitle>
         </CardHeader>
@@ -135,7 +135,7 @@ export function AchievementsHistory() {
     <Card className="bg-card/50 backdrop-blur border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-amber-400" />
+          <Trophy className="h-5 w-5 text-rank-gold" />
           Histórico de Conquistas
           <Badge variant="secondary" className="ml-2">
             {achievements.length}
@@ -147,7 +147,7 @@ export function AchievementsHistory() {
         {streakAchievements.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-              <Flame className="h-4 w-4 text-orange-400" />
+              <Flame className="h-4 w-4 text-status-warning" />
               Conquistas de Sequência
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -192,7 +192,7 @@ export function AchievementsHistory() {
         {/* Regular Achievements */}
         <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-amber-400" />
+            <Trophy className="h-4 w-4 text-rank-gold" />
             Metas Diárias Batidas
           </h3>
           <ScrollArea className="h-[350px] pr-4">
@@ -206,7 +206,7 @@ export function AchievementsHistory() {
                     key={achievement.id}
                     className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                   >
-                    <Avatar className="h-10 w-10 border-2 border-amber-500/30">
+                    <Avatar className="h-10 w-10 border-2 border-rank-gold/30">
                       <AvatarImage src={salesperson?.avatar_url || ""} />
                       <AvatarFallback className="bg-primary/20 text-primary">
                         {salesperson?.name?.charAt(0) || "?"}

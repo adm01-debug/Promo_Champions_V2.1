@@ -24,12 +24,12 @@ const actionLabels: Record<ActionType, string> = {
 };
 
 const actionColors: Record<ActionType, string> = {
-  call: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  email: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  linkedin: "bg-sky-500/10 text-sky-500 border-sky-500/20",
-  whatsapp: "bg-green-500/10 text-green-500 border-green-500/20",
-  meeting: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  other: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  call: "bg-status-info/10 text-status-info border-status-info/20",
+  email: "bg-status-warning/10 text-status-warning border-status-warning/20",
+  linkedin: "bg-primary/10 text-primary border-primary/20",
+  whatsapp: "bg-status-success/10 text-status-success border-status-success/20",
+  meeting: "bg-status-purple/10 text-status-purple border-status-purple/20",
+  other: "bg-muted text-muted-foreground border-border",
 };
 
 interface CadenceCardProps {
