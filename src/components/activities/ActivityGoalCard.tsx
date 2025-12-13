@@ -26,9 +26,9 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   // Trigger celebration when goal is reached
   useEffect(() => {
     if (hasReachedGoal) {
-      celebrate(data.salesperson_id);
+      celebrate(data.salesperson_id, data.salesperson_name);
     }
-  }, [hasReachedGoal, data.salesperson_id, celebrate]);
+  }, [hasReachedGoal, data.salesperson_id, data.salesperson_name, celebrate]);
 
   const getProgressColor = (progress: number) => {
     if (progress >= 100) return "bg-green-500";
