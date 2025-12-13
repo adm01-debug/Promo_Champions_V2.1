@@ -25,6 +25,7 @@ import Metas from "./pages/Metas";
 import FonteLeads from "./pages/FonteLeads";
 import RelatorioAtividades from "./pages/RelatorioAtividades";
 import MetasAtividades from "./pages/MetasAtividades";
+import RankingCompetitivo from "./pages/RankingCompetitivo";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -64,6 +65,7 @@ const App = () => (
                     <Route path="/fonte-leads" element={<FonteLeads />} />
                     <Route path="/relatorio-atividades" element={<RelatorioAtividades />} />
                     <Route path="/metas-atividades" element={<MetasAtividades />} />
+                    <Route path="/ranking" element={<RankingCompetitivo />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
