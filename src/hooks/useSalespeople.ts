@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter } from "date-fns";
+import { PeriodFilter } from "@/components/vendedores/PeriodFilter";
 
-export type PeriodFilter = "week" | "month" | "quarter";
+export type { PeriodFilter };
 export type SalespersonRole = "sdr" | "closer" | "hybrid";
 
 interface Salesperson {

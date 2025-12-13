@@ -1,10 +1,12 @@
-import { useSDRMetrics } from "@/hooks/useSDRMetrics";
+import { useState } from "react";
+import { useSDRMetrics, PeriodFilter } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "@/components/sdr/SDRStatCard";
 import { ProspectingFunnel } from "@/components/sdr/ProspectingFunnel";
 import { LeadTemperatureChart } from "@/components/sdr/LeadTemperatureChart";
 import { SchedulingRateGauge } from "@/components/sdr/SchedulingRateGauge";
 import { TopSDRsRanking } from "@/components/sdr/TopSDRsRanking";
 import { RecentProspects } from "@/components/sdr/RecentProspects";
+import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { 
   Users, 
   UserCheck, 
@@ -16,7 +18,10 @@ import {
 } from "lucide-react";
 
 export default function SDRDashboard() {
-  const { data: metrics } = useSDRMetrics();
+  const [period, setPeriod] = useState<PeriodFilter>("month");
+  const { data: metrics } = useSDRMetrics(period);
+
+  const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
 
   return (
     <div className="min-h-screen bg-background">
@@ -30,9 +35,12 @@ export default function SDRDashboard() {
                 Métricas de prospecção e taxa de agendamento
               </p>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-              <Phone className="h-4 w-4 text-primary" />
-              <span className="text-xs font-medium text-primary">Modo Prospecção</span>
+            <div className="flex items-center gap-3">
+              <PeriodFilterButtons value={period} onChange={setPeriod} />
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+                <Phone className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-primary">Modo Prospecção</span>
+              </div>
             </div>
           </div>
         </div>
@@ -65,7 +73,7 @@ export default function SDRDashboard() {
               value={metrics?.current.meetingsScheduled ?? 0}
               change={metrics?.changes.meetings}
               icon={CalendarCheck}
-              subtitle="Este mês"
+              subtitle={periodLabel}
             />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>

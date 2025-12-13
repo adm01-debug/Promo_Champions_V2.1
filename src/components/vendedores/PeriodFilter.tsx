@@ -1,6 +1,7 @@
 import { Calendar, CalendarDays, CalendarRange } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PeriodFilter } from "@/hooks/useSalespeople";
+
+export type PeriodFilter = "week" | "month" | "quarter";
 
 interface PeriodFilterProps {
   value: PeriodFilter;
