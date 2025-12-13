@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          contact_name: string | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          notes: string | null
+          outcome: Database["public"]["Enums"]["activity_outcome"]
+          sale_id: string | null
+          salesperson_id: string | null
+        }
+        Insert: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          contact_name?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          outcome: Database["public"]["Enums"]["activity_outcome"]
+          sale_id?: string | null
+          salesperson_id?: string | null
+        }
+        Update: {
+          activity_type?: Database["public"]["Enums"]["activity_type"]
+          contact_name?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          outcome?: Database["public"]["Enums"]["activity_outcome"]
+          sale_id?: string | null
+          salesperson_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       category_metrics: {
         Row: {
           category: string
@@ -569,6 +620,22 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      activity_outcome:
+        | "connected"
+        | "no_answer"
+        | "scheduled"
+        | "voicemail"
+        | "busy"
+        | "callback"
+        | "not_interested"
+        | "qualified"
+      activity_type:
+        | "call"
+        | "email"
+        | "meeting"
+        | "linkedin"
+        | "whatsapp"
+        | "other"
       task_priority: "high" | "medium" | "low"
       task_status: "pending" | "in_progress" | "completed" | "cancelled"
       task_type:
@@ -705,6 +772,24 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      activity_outcome: [
+        "connected",
+        "no_answer",
+        "scheduled",
+        "voicemail",
+        "busy",
+        "callback",
+        "not_interested",
+        "qualified",
+      ],
+      activity_type: [
+        "call",
+        "email",
+        "meeting",
+        "linkedin",
+        "whatsapp",
+        "other",
+      ],
       task_priority: ["high", "medium", "low"],
       task_status: ["pending", "in_progress", "completed", "cancelled"],
       task_type: ["call", "meeting", "follow_up", "email", "proposal", "other"],

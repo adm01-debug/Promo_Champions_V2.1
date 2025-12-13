@@ -17,6 +17,7 @@ import Pipeline from "./pages/Pipeline";
 import Tarefas from "./pages/Tarefas";
 import Playbooks from "./pages/Playbooks";
 import SDRDashboard from "./pages/SDRDashboard";
+import Atividades from "./pages/Atividades";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/tarefas" element={<Tarefas />} />
             <Route path="/playbooks" element={<Playbooks />} />
             <Route path="/sdr" element={<SDRDashboard />} />
+            <Route path="/atividades" element={<Atividades />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
