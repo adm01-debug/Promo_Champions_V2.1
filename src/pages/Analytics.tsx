@@ -8,8 +8,9 @@ import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
 import { ChurnPrediction } from '@/components/analytics/ChurnPrediction';
 import { SalespersonCoaching } from '@/components/analytics/SalespersonCoaching';
 import { CoachingComparison } from '@/components/analytics/CoachingComparison';
+import { PerformanceComparison } from '@/components/analytics/PerformanceComparison';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare } from 'lucide-react';
 
 export default function Analytics() {
   return (
@@ -63,7 +64,11 @@ export default function Analytics() {
             </TabsTrigger>
             <TabsTrigger value="comparison" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
-              Comparativo
+              Coaching
+            </TabsTrigger>
+            <TabsTrigger value="benchmark" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <GitCompare className="h-4 w-4" />
+              Benchmark
             </TabsTrigger>
           </TabsList>
 
@@ -101,6 +106,10 @@ export default function Analytics() {
 
           <TabsContent value="comparison" className="space-y-4">
             <CoachingComparison />
+          </TabsContent>
+
+          <TabsContent value="benchmark" className="space-y-4">
+            <PerformanceComparison />
           </TabsContent>
         </Tabs>
       </div>
