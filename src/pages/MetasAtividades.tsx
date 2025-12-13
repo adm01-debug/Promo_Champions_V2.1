@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Target, TrendingUp, Users, AlertTriangle, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper } from "lucide-react";
 import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
 import { ActivityGoalEditDialog } from "@/components/activities/ActivityGoalEditDialog";
 import { DailyActivityRanking } from "@/components/activities/DailyActivityRanking";
+import { useCelebration } from "@/hooks/useCelebration";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -15,8 +17,14 @@ export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
   const { data: salespeople } = useSalespeople();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const { celebrate, resetCelebration } = useCelebration();
 
   const editingSalesperson = salespeople?.find(sp => sp.id === editingId);
+
+  const handleTestCelebration = () => {
+    resetCelebration('test-celebration');
+    celebrate('test-celebration');
+  };
 
   // Calculate summary stats
   const withGoals = progressData?.filter(p => p.hasGoals) || [];
@@ -70,9 +78,20 @@ export default function MetasAtividades() {
                 Acompanhe o progresso diário de cada vendedor • {format(new Date(), "dd 'de' MMMM", { locale: ptBR })}
               </p>
             </div>
-            <Badge variant="secondary" className="text-xs">
-              Progresso médio: {avgProgress.toFixed(0)}%
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleTestCelebration}
+                className="gap-2"
+              >
+                <PartyPopper className="h-4 w-4" />
+                Testar Celebração
+              </Button>
+              <Badge variant="secondary" className="text-xs">
+                Progresso médio: {avgProgress.toFixed(0)}%
+              </Badge>
+            </div>
           </div>
         </div>
 
