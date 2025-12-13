@@ -227,7 +227,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={createMutation.isPending} className="gradient-primary border-0">
+            <Button variant="glow" type="submit" disabled={createMutation.isPending}>
               {createMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
