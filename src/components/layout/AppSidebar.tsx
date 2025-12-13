@@ -15,7 +15,8 @@ import {
   ClipboardList,
   BookOpen,
   Phone,
-  Activity
+  Activity,
+  Handshake
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -45,6 +46,7 @@ const mainItems = [
 const teamItems = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
+  { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
   { title: "Playbooks", url: "/playbooks", icon: BookOpen },

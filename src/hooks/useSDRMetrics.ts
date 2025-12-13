@@ -35,10 +35,19 @@ export function useSDRMetrics() {
       const previousMonthStart = startOfMonth(subMonths(now, 1));
       const previousMonthEnd = endOfMonth(subMonths(now, 1));
 
-      // Fetch current month sales (leads in SDR stages)
+      // Fetch SDRs (role = sdr or hybrid)
+      const { data: sdrs } = await supabase
+        .from("salespeople")
+        .select("id")
+        .in("role", ["sdr", "hybrid"]);
+
+      const sdrIds = sdrs?.map(s => s.id) || [];
+
+      // Fetch current month sales for SDRs
       const { data: currentSales } = await supabase
         .from("sales")
         .select("*")
+        .in("salesperson_id", sdrIds)
         .gte("created_at", currentMonthStart.toISOString())
         .lte("created_at", currentMonthEnd.toISOString());
 
@@ -46,6 +55,7 @@ export function useSDRMetrics() {
       const { data: previousSales } = await supabase
         .from("sales")
         .select("*")
+        .in("salesperson_id", sdrIds)
         .gte("created_at", previousMonthStart.toISOString())
         .lte("created_at", previousMonthEnd.toISOString());
 
@@ -54,11 +64,12 @@ export function useSDRMetrics() {
         .from("lead_scores")
         .select("sale_id, score");
 
-      // Fetch tasks to count meetings scheduled
+      // Fetch tasks to count meetings scheduled (only for SDRs)
       const { data: currentTasks } = await supabase
         .from("tasks")
         .select("*")
         .eq("task_type", "meeting")
+        .in("salesperson_id", sdrIds)
         .gte("created_at", currentMonthStart.toISOString())
         .lte("created_at", currentMonthEnd.toISOString());
 
@@ -66,6 +77,7 @@ export function useSDRMetrics() {
         .from("tasks")
         .select("*")
         .eq("task_type", "meeting")
+        .in("salesperson_id", sdrIds)
         .gte("created_at", previousMonthStart.toISOString())
         .lte("created_at", previousMonthEnd.toISOString());
 

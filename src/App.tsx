@@ -17,6 +17,7 @@ import Pipeline from "./pages/Pipeline";
 import Tarefas from "./pages/Tarefas";
 import Playbooks from "./pages/Playbooks";
 import SDRDashboard from "./pages/SDRDashboard";
+import CloserDashboard from "./pages/CloserDashboard";
 import Atividades from "./pages/Atividades";
 import NotFound from "./pages/NotFound";
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/tarefas" element={<Tarefas />} />
             <Route path="/playbooks" element={<Playbooks />} />
             <Route path="/sdr" element={<SDRDashboard />} />
+            <Route path="/closer" element={<CloserDashboard />} />
             <Route path="/atividades" element={<Atividades />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
