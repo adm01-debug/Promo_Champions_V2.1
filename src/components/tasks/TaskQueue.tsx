@@ -1,25 +1,61 @@
-import { useTodayTasks, Task } from '@/hooks/useTasks';
+import { useState } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragStartEvent,
+  DragEndEvent,
+  DragOverEvent,
+} from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { useTodayTasks, Task, TaskPriority, useUpdateTask } from '@/hooks/useTasks';
 import { useSalespeople } from '@/hooks/useSalespeople';
-import { TaskCard } from './TaskCard';
+import { PriorityColumn } from './PriorityColumn';
+import { DraggableTaskCard } from './DraggableTaskCard';
 import { CreateTaskDialog } from './CreateTaskDialog';
+import { RescheduleDialog } from './RescheduleDialog';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { 
+import { Button } from '@/components/ui/button';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ClipboardList, Flame, CheckCircle } from 'lucide-react';
-import { useState } from 'react';
+import { ClipboardList, Flame, CheckCircle, Calendar, Columns3 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+const PRIORITIES: TaskPriority[] = ['high', 'medium', 'low'];
 
 export function TaskQueue() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>('all');
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [rescheduleTask, setRescheduleTask] = useState<Task | null>(null);
+  const [viewMode, setViewMode] = useState<'columns' | 'list'>('columns');
+
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
   const { data: tasks, isLoading: loadingTasks } = useTodayTasks(
     selectedSalesperson === 'all' ? undefined : selectedSalesperson
+  );
+  const updateTask = useUpdateTask();
+  const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
   // Group tasks by priority
@@ -27,13 +63,60 @@ export function TaskQueue() {
     acc[task.priority] = acc[task.priority] || [];
     acc[task.priority].push(task);
     return acc;
-  }, {} as Record<string, Task[]>) || {};
+  }, {} as Record<TaskPriority, Task[]>) || {} as Record<TaskPriority, Task[]>;
 
   const highPriorityTasks = groupedTasks.high || [];
   const mediumPriorityTasks = groupedTasks.medium || [];
   const lowPriorityTasks = groupedTasks.low || [];
-
   const totalTasks = tasks?.length || 0;
+
+  const findTaskById = (id: string): Task | undefined => {
+    return tasks?.find(task => task.id === id);
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const task = findTaskById(event.active.id as string);
+    if (task) {
+      setActiveTask(task);
+    }
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    // Handle drag over logic if needed
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveTask(null);
+
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    // Check if dropped on a priority column
+    if (PRIORITIES.includes(overId as TaskPriority)) {
+      const task = findTaskById(activeId);
+      if (task && task.priority !== overId) {
+        updateTask.mutate(
+          { id: activeId, priority: overId as TaskPriority },
+          {
+            onSuccess: () => {
+              toast({
+                title: 'Prioridade atualizada!',
+                description: `Tarefa movida para prioridade ${getPriorityLabel(overId as TaskPriority)}`,
+              });
+            },
+          }
+        );
+      }
+    }
+  };
+
+  const getPriorityLabel = (priority: TaskPriority): string => {
+    const labels = { high: 'alta', medium: 'média', low: 'baixa' };
+    return labels[priority];
+  };
 
   if (loadingTasks || loadingSalespeople) {
     return (
@@ -42,9 +125,11 @@ export function TaskQueue() {
           <Skeleton className="h-10 w-48" />
           <Skeleton className="h-10 w-32" />
         </div>
-        {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-24 w-full" />
-        ))}
+        <div className="grid grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-[400px] w-full" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -75,9 +160,33 @@ export function TaskQueue() {
               ))}
             </SelectContent>
           </Select>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')}
+          >
+            <Columns3 className="h-4 w-4 mr-2" />
+            {viewMode === 'columns' ? 'Lista' : 'Colunas'}
+          </Button>
         </div>
 
-        <CreateTaskDialog />
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => {
+              if (tasks && tasks.length > 0) {
+                setRescheduleTask(tasks[0]);
+              }
+            }}
+            disabled={!tasks || tasks.length === 0}
+          >
+            <Calendar className="h-4 w-4 mr-2" />
+            Reagendar
+          </Button>
+          <CreateTaskDialog />
+        </div>
       </div>
 
       {/* Stats */}
@@ -119,7 +228,7 @@ export function TaskQueue() {
         </Card>
       </div>
 
-      {/* Task Lists */}
+      {/* Task Board */}
       {totalTasks === 0 ? (
         <Card className="p-12 text-center">
           <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
@@ -129,62 +238,57 @@ export function TaskQueue() {
           </p>
         </Card>
       ) : (
-        <div className="space-y-6">
-          {/* High Priority */}
-          {highPriorityTasks.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Flame className="h-5 w-5 text-red-400" />
-                <h3 className="font-semibold text-red-400">Prioridade Alta</h3>
-                <span className="text-xs text-muted-foreground">
-                  ({highPriorityTasks.length})
-                </span>
-              </div>
-              <div className="space-y-2">
-                {highPriorityTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
-                ))}
-              </div>
-            </div>
-          )}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div className={viewMode === 'columns' 
+            ? "grid grid-cols-1 md:grid-cols-3 gap-4" 
+            : "space-y-4"
+          }>
+            {viewMode === 'columns' ? (
+              PRIORITIES.map((priority) => (
+                <PriorityColumn
+                  key={priority}
+                  priority={priority}
+                  tasks={groupedTasks[priority] || []}
+                  activeId={activeTask?.id || null}
+                />
+              ))
+            ) : (
+              <>
+                {highPriorityTasks.length > 0 && (
+                  <PriorityColumn priority="high" tasks={highPriorityTasks} activeId={activeTask?.id || null} />
+                )}
+                {mediumPriorityTasks.length > 0 && (
+                  <PriorityColumn priority="medium" tasks={mediumPriorityTasks} activeId={activeTask?.id || null} />
+                )}
+                {lowPriorityTasks.length > 0 && (
+                  <PriorityColumn priority="low" tasks={lowPriorityTasks} activeId={activeTask?.id || null} />
+                )}
+              </>
+            )}
+          </div>
 
-          {/* Medium Priority */}
-          {mediumPriorityTasks.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-yellow-400" />
-                <h3 className="font-semibold text-yellow-400">Prioridade Média</h3>
-                <span className="text-xs text-muted-foreground">
-                  ({mediumPriorityTasks.length})
-                </span>
+          <DragOverlay>
+            {activeTask ? (
+              <div className="opacity-80">
+                <DraggableTaskCard task={activeTask} isDragging />
               </div>
-              <div className="space-y-2">
-                {mediumPriorityTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Low Priority */}
-          {lowPriorityTasks.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-400" />
-                <h3 className="font-semibold text-green-400">Prioridade Baixa</h3>
-                <span className="text-xs text-muted-foreground">
-                  ({lowPriorityTasks.length})
-                </span>
-              </div>
-              <div className="space-y-2">
-                {lowPriorityTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       )}
+
+      {/* Reschedule Dialog */}
+      <RescheduleDialog
+        task={rescheduleTask}
+        onClose={() => setRescheduleTask(null)}
+        allTasks={tasks || []}
+      />
     </div>
   );
 }
