@@ -2,6 +2,9 @@ import { Users, Plus, Filter, Search, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ClientesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { useState, useEffect } from "react";
 
 const clientesData = [
   { id: 1, nome: "João Silva", email: "joao@email.com", telefone: "(11) 99999-1234", empresa: "Tech Solutions", valor: 15000 },
@@ -13,8 +16,20 @@ const clientesData = [
 ];
 
 const Clientes = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background p-6 lg:p-8">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<ClientesLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -93,6 +108,7 @@ const Clientes = () => {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
