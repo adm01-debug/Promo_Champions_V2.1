@@ -23,6 +23,7 @@ import Cadencias from "./pages/Cadencias";
 import Metas from "./pages/Metas";
 import FonteLeads from "./pages/FonteLeads";
 import RelatorioAtividades from "./pages/RelatorioAtividades";
+import MetasAtividades from "./pages/MetasAtividades";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/metas" element={<Metas />} />
             <Route path="/fonte-leads" element={<FonteLeads />} />
             <Route path="/relatorio-atividades" element={<RelatorioAtividades />} />
+            <Route path="/metas-atividades" element={<MetasAtividades />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
