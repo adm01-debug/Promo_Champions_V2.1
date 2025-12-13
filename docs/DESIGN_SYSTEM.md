@@ -903,11 +903,15 @@ animation: {
 - `SalespersonLevelBadge` - Star icons, shadow transitions
 - `CompetitiveStatusBar` - Styled stat boxes, gradient icons
 
-#### SDR/Closer Dashboards (4 componentes)
+#### SDR/Closer Dashboards (8 componentes)
 - `SDRStatCard` - Group hover scale, gradient icon variants, font-display titles
 - `ProspectingFunnel` - Gradient header, staggered bar animations, glow effects on bars
 - `LeadTemperatureChart` - Gradient header, legend hover states, pie cell shadows
 - `TopSDRsRanking` - Staggered entry, group hover states, gradient rank badges
+- `CloserStatCard` - Group hover scale, gradient icon variants, font-display titles
+- `CloserPipeline` - Gradient header, staggered bar animations, glow effects
+- `RecentClosedDeals` - Glass cards, staggered entry, success hover borders
+- `TopClosersRanking` - Staggered entry, group hover states, gradient rank badges
 
 #### Páginas (2 componentes)
 - `Relatorios`, `Analytics`
