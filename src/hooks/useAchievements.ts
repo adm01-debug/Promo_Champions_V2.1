@@ -207,13 +207,15 @@ export function useRecordAchievement() {
   });
 }
 
-// Hook to get current streak for a salesperson
+// Hook to get current and best streak for a salesperson
 export function useSalespersonStreak(salespersonId: string | null) {
   return useQuery({
     queryKey: ["streak", salespersonId],
     queryFn: async () => {
-      if (!salespersonId) return 0;
-      return calculateStreak(salespersonId);
+      if (!salespersonId) return { current: 0, best: 0 };
+      const current = await calculateStreak(salespersonId);
+      const best = await calculateBestStreak(salespersonId);
+      return { current, best };
     },
     enabled: !!salespersonId,
   });

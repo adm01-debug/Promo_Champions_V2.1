@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper, Flame, Zap, Target } from "lucide-react";
+import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper, Flame, Zap, Target, Trophy, TrendingUp } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useCelebration } from "@/hooks/useCelebration";
 import { useSalespersonStreak } from "@/hooks/useAchievements";
@@ -21,31 +21,58 @@ const roleLabels: Record<string, { label: string; color: string }> = {
   hybrid: { label: "Híbrido", color: "bg-emerald-500/20 text-emerald-400" },
 };
 
-const getStreakDisplay = (streak: number) => {
-  if (streak >= 7) {
+const getStreakDisplay = (current: number, best: number) => {
+  // Check if beat record (current equals or exceeds previous best)
+  const isBeatRecord = current > 1 && current >= best && best > 1;
+  // Check if near record (1 day away)
+  const isNearRecord = current > 1 && current === best - 1;
+
+  if (isBeatRecord) {
+    return {
+      icon: <Trophy className="h-3.5 w-3.5" />,
+      color: "bg-gradient-to-r from-yellow-500/30 to-amber-500/30 text-yellow-300 border-yellow-500/50",
+      label: "Novo Recorde!",
+      showRecordBadge: true,
+    };
+  }
+  if (isNearRecord) {
+    return {
+      icon: <TrendingUp className="h-3.5 w-3.5" />,
+      color: "bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-purple-300 border-purple-500/50 animate-pulse",
+      label: "Quase lá!",
+      showRecordBadge: false,
+      nearRecordMessage: `A 1 dia do recorde de ${best} dias!`,
+    };
+  }
+  if (current >= 7) {
     return {
       icon: <Flame className="h-3.5 w-3.5" />,
       color: "bg-gradient-to-r from-orange-500/30 to-red-500/30 text-orange-300 border-orange-500/50",
       label: "Em Chamas!",
+      showRecordBadge: false,
     };
   }
-  if (streak >= 3) {
+  if (current >= 3) {
     return {
       icon: <Zap className="h-3.5 w-3.5" />,
       color: "bg-blue-500/20 text-blue-300 border-blue-500/40",
       label: "Sequência",
+      showRecordBadge: false,
     };
   }
   return {
     icon: <Target className="h-3.5 w-3.5" />,
     color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
     label: "Iniciando",
+    showRecordBadge: false,
   };
 };
 
 export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   const { celebrate } = useCelebration();
-  const { data: currentStreak } = useSalespersonStreak(data.salesperson_id);
+  const { data: streakData } = useSalespersonStreak(data.salesperson_id);
+  const currentStreak = streakData?.current ?? 0;
+  const bestStreak = streakData?.best ?? 0;
   const hasReachedGoal = data.hasGoals && data.progress.overall >= 100;
 
   // Trigger celebration when goal is reached
@@ -87,10 +114,12 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
     { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-emerald-400" },
   ];
 
-  const streakDisplay = currentStreak ? getStreakDisplay(currentStreak) : null;
+  const streakDisplay = currentStreak > 0 ? getStreakDisplay(currentStreak, bestStreak) : null;
+  const isBeatRecord = currentStreak > 1 && currentStreak >= bestStreak && bestStreak > 1;
+  const isNearRecord = currentStreak > 1 && currentStreak === bestStreak - 1;
 
   return (
-    <Card className={`glass border-border/40 hover:border-border/60 transition-all ${hasReachedGoal ? 'ring-2 ring-green-500/50 shadow-lg shadow-green-500/20' : ''}`}>
+    <Card className={`glass border-border/40 hover:border-border/60 transition-all ${hasReachedGoal ? 'ring-2 ring-green-500/50 shadow-lg shadow-green-500/20' : ''} ${isBeatRecord ? 'ring-2 ring-yellow-500/50 shadow-lg shadow-yellow-500/20' : ''}`}>
       <CardContent className="p-4 relative overflow-hidden">
         {/* Celebration overlay */}
         {hasReachedGoal && (
@@ -105,6 +134,16 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
           </div>
         )}
 
+        {/* Record overlay */}
+        {isBeatRecord && !hasReachedGoal && (
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-2 right-2 animate-bounce">
+              <Trophy className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/5 to-transparent" />
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -116,10 +155,12 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
                 </AvatarFallback>
               </Avatar>
               {/* Streak indicator on avatar */}
-              {currentStreak && currentStreak >= 3 && (
+              {currentStreak >= 3 && (
                 <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
-                  <div className={`rounded-full p-1 ${currentStreak >= 7 ? 'bg-orange-500/30' : 'bg-blue-500/30'}`}>
-                    {currentStreak >= 7 ? (
+                  <div className={`rounded-full p-1 ${isBeatRecord ? 'bg-yellow-500/30' : currentStreak >= 7 ? 'bg-orange-500/30' : 'bg-blue-500/30'}`}>
+                    {isBeatRecord ? (
+                      <Trophy className="h-3 w-3 text-yellow-400" />
+                    ) : currentStreak >= 7 ? (
                       <Flame className="h-3 w-3 text-orange-400" />
                     ) : (
                       <Zap className="h-3 w-3 text-blue-400" />
@@ -140,13 +181,14 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
               <div className="flex items-center gap-2">
                 {data.hasGoals && getStatusBadge()}
                 {/* Streak badge */}
-                {currentStreak && currentStreak > 0 && streakDisplay && (
+                {currentStreak > 0 && streakDisplay && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Badge className={`${streakDisplay.color} text-[10px] px-1.5 flex items-center gap-1 cursor-help`}>
                           {streakDisplay.icon}
                           <span>{currentStreak} dias</span>
+                          {isBeatRecord && <span>🏆</span>}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -154,6 +196,21 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
                         <p className="text-xs text-muted-foreground">
                           {currentStreak} {currentStreak === 1 ? 'dia' : 'dias'} consecutivos batendo meta
                         </p>
+                        {isNearRecord && (
+                          <p className="text-xs text-purple-400 mt-1">
+                            ⚡ A 1 dia do recorde de {bestStreak} dias!
+                          </p>
+                        )}
+                        {isBeatRecord && (
+                          <p className="text-xs text-yellow-400 mt-1">
+                            🏆 Novo recorde pessoal!
+                          </p>
+                        )}
+                        {bestStreak > 0 && !isBeatRecord && !isNearRecord && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Recorde: {bestStreak} dias
+                          </p>
+                        )}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
