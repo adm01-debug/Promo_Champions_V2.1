@@ -1,5 +1,6 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { TaskQueue } from '@/components/tasks/TaskQueue';
+import { NextBestAction } from '@/components/tasks/NextBestAction';
 import { Button } from '@/components/ui/button';
 import { useCreateStagnantTasks } from '@/hooks/useStagnantTasks';
 import { AlertTriangle, Loader2 } from 'lucide-react';
@@ -33,6 +34,10 @@ export default function Tarefas() {
           </Button>
         </div>
 
+        {/* Next Best Action with AI */}
+        <NextBestAction />
+
+        {/* Task Queue */}
         <TaskQueue />
       </div>
     </MainLayout>

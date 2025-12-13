@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.create-stagnant-tasks]
 verify_jwt = false
+
+[functions.next-best-action]
+verify_jwt = false
