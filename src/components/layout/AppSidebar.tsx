@@ -19,7 +19,8 @@ import {
   Handshake,
   GitBranch,
   Target,
-  Crosshair
+  Crosshair,
+  Swords
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -49,6 +50,7 @@ const mainItems = [
 
 const teamItems = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy },
+  { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Cadências", url: "/cadencias", icon: GitBranch },
