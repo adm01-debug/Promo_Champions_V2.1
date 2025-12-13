@@ -6,22 +6,20 @@ import { useCreateStagnantTasks } from '@/hooks/useStagnantTasks';
 import { useTodayTasks } from '@/hooks/useTasks';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { TarefasLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
+import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 
 export default function Tarefas() {
   const createStagnantTasks = useCreateStagnantTasks();
   const { isLoading } = useTodayTasks();
 
-  if (isLoading) {
-    return (
-      <MainLayout>
-        <TarefasLoadingSkeleton />
-      </MainLayout>
-    );
-  }
-
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <SkeletonTransition
+        isLoading={isLoading}
+        skeleton={<TarefasLoadingSkeleton />}
+        duration={400}
+      >
+        <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold">Fila de Tarefas</h1>
@@ -51,6 +49,7 @@ export default function Tarefas() {
         {/* Task Queue */}
         <TaskQueue />
       </div>
+      </SkeletonTransition>
     </MainLayout>
   );
 }
