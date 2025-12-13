@@ -18,10 +18,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { toast } from "sonner";
 
 const RISK_COLORS = {
-  critical: "bg-red-500/20 text-red-400 border-red-500/30",
-  high: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  low: "bg-green-500/20 text-green-400 border-green-500/30",
+  critical: "bg-status-error/20 text-status-error border-status-error/30",
+  high: "bg-status-warning/20 text-status-warning border-status-warning/30",
+  medium: "bg-rank-gold/20 text-rank-gold border-rank-gold/30",
+  low: "bg-status-success/20 text-status-success border-status-success/30",
 };
 
 const RISK_LABELS = {
@@ -213,7 +213,7 @@ export function AtRiskDealsPanel() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <AlertTriangle className="h-5 w-5 text-status-warning" />
             Deals em Risco
           </CardTitle>
         </CardHeader>
@@ -233,7 +233,7 @@ export function AtRiskDealsPanel() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <AlertTriangle className="h-5 w-5 text-status-warning" />
             Deals em Risco
           </CardTitle>
           <Button 
@@ -250,7 +250,7 @@ export function AtRiskDealsPanel() {
         <div className="flex gap-4 mt-3">
           {data.summary.critical > 0 && (
             <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-red-500" />
+              <div className="h-2 w-2 rounded-full bg-status-error" />
               <span className="text-xs">
                 <span className="font-bold">{data.summary.critical}</span> críticos
               </span>
@@ -258,7 +258,7 @@ export function AtRiskDealsPanel() {
           )}
           {data.summary.high > 0 && (
             <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-orange-500" />
+              <div className="h-2 w-2 rounded-full bg-status-warning" />
               <span className="text-xs">
                 <span className="font-bold">{data.summary.high}</span> altos
               </span>
@@ -266,7 +266,7 @@ export function AtRiskDealsPanel() {
           )}
           {data.summary.medium > 0 && (
             <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-yellow-500" />
+              <div className="h-2 w-2 rounded-full bg-rank-gold" />
               <span className="text-xs">
                 <span className="font-bold">{data.summary.medium}</span> médios
               </span>
@@ -274,7 +274,7 @@ export function AtRiskDealsPanel() {
           )}
           {data.summary.totalValueAtRisk > 0 && (
             <div className="ml-auto text-xs text-muted-foreground">
-              Valor em risco: <span className="font-bold text-red-400">{formatCurrency(data.summary.totalValueAtRisk)}</span>
+              Valor em risco: <span className="font-bold text-status-error">{formatCurrency(data.summary.totalValueAtRisk)}</span>
             </div>
           )}
         </div>

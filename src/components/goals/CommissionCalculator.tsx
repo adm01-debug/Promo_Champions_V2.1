@@ -57,7 +57,7 @@ export function CommissionCalculator({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-green-500" />
+            <DollarSign className="h-5 w-5 text-status-success" />
             Calculadora de Comissão
           </CardTitle>
           <Badge variant="outline" className="text-xs">
@@ -68,12 +68,12 @@ export function CommissionCalculator({
       <CardContent className="space-y-4">
         {/* Team Totals */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+          <div className="p-3 rounded-lg bg-status-success/10 border border-status-success/20">
             <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="h-4 w-4 text-green-500" />
+              <DollarSign className="h-4 w-4 text-status-success" />
               <span className="text-xs text-muted-foreground">Comissão Atual</span>
             </div>
-            <p className="text-lg font-bold text-green-500">
+            <p className="text-lg font-bold text-status-success">
               {formatCurrency(totalCurrentCommission)}
             </p>
           </div>
@@ -105,7 +105,7 @@ export function CommissionCalculator({
                       </AvatarFallback>
                     </Avatar>
                     {index === 0 && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-rank-gold rounded-full flex items-center justify-center">
                         <span className="text-[10px]">👑</span>
                       </div>
                     )}
@@ -123,7 +123,7 @@ export function CommissionCalculator({
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="font-semibold text-green-500 text-sm">
+                    <p className="font-semibold text-status-success text-sm">
                       {formatCurrency(sp.currentCommission)}
                     </p>
                     <div className="flex items-center gap-1 justify-end">

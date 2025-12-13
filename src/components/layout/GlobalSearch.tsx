@@ -119,12 +119,12 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const statusColors: Record<string, string> = {
-    pending: "bg-yellow-500/10 text-yellow-500",
-    qualified: "bg-blue-500/10 text-blue-500",
-    proposal: "bg-purple-500/10 text-purple-500",
-    negotiation: "bg-orange-500/10 text-orange-500",
-    completed: "bg-green-500/10 text-green-500",
-    lost: "bg-red-500/10 text-red-500",
+    pending: "bg-rank-gold/10 text-rank-gold",
+    qualified: "bg-status-info/10 text-status-info",
+    proposal: "bg-status-purple/10 text-status-purple",
+    negotiation: "bg-status-warning/10 text-status-warning",
+    completed: "bg-status-success/10 text-status-success",
+    lost: "bg-status-error/10 text-status-error",
   };
 
   const clients = results.filter((r) => r.type === "client");

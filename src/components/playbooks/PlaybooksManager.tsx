@@ -21,10 +21,10 @@ import {
 import { cn } from "@/lib/utils";
 
 const stageConfig = {
-  lead: { label: "Lead", icon: Users, color: "bg-slate-500" },
-  qualified: { label: "Qualificado", icon: Star, color: "bg-blue-500" },
-  proposal: { label: "Proposta", icon: FileText, color: "bg-purple-500" },
-  negotiation: { label: "Negociação", icon: Handshake, color: "bg-amber-500" },
+  lead: { label: "Lead", icon: Users, color: "bg-muted-foreground" },
+  qualified: { label: "Qualificado", icon: Star, color: "bg-status-info" },
+  proposal: { label: "Proposta", icon: FileText, color: "bg-status-purple" },
+  negotiation: { label: "Negociação", icon: Handshake, color: "bg-status-warning" },
 };
 
 export const PlaybooksManager = () => {

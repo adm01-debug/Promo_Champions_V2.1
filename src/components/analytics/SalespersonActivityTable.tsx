@@ -10,9 +10,9 @@ interface SalespersonActivityTableProps {
 }
 
 const roleLabels: Record<string, { label: string; color: string }> = {
-  sdr: { label: "SDR", color: "bg-blue-500/20 text-blue-400" },
-  closer: { label: "Closer", color: "bg-purple-500/20 text-purple-400" },
-  hybrid: { label: "Híbrido", color: "bg-emerald-500/20 text-emerald-400" },
+  sdr: { label: "SDR", color: "bg-status-info/20 text-status-info" },
+  closer: { label: "Closer", color: "bg-status-purple/20 text-status-purple" },
+  hybrid: { label: "Híbrido", color: "bg-status-success/20 text-status-success" },
 };
 
 export function SalespersonActivityTable({ data }: SalespersonActivityTableProps) {
@@ -80,23 +80,23 @@ export function SalespersonActivityTable({ data }: SalespersonActivityTableProps
                 {/* Activity Types */}
                 <div className="grid grid-cols-5 gap-2 mb-3">
                   <div className="flex items-center gap-1 text-xs">
-                    <Phone className="h-3 w-3 text-green-400" />
+                    <Phone className="h-3 w-3 text-status-success" />
                     <span className="text-muted-foreground">{sp.calls}</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs">
-                    <Mail className="h-3 w-3 text-blue-400" />
+                    <Mail className="h-3 w-3 text-status-info" />
                     <span className="text-muted-foreground">{sp.emails}</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs">
-                    <Calendar className="h-3 w-3 text-purple-400" />
+                    <Calendar className="h-3 w-3 text-status-purple" />
                     <span className="text-muted-foreground">{sp.meetings}</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs">
-                    <Linkedin className="h-3 w-3 text-sky-400" />
+                    <Linkedin className="h-3 w-3 text-primary" />
                     <span className="text-muted-foreground">{sp.linkedin}</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs">
-                    <MessageCircle className="h-3 w-3 text-emerald-400" />
+                    <MessageCircle className="h-3 w-3 text-accent" />
                     <span className="text-muted-foreground">{sp.whatsapp}</span>
                   </div>
                 </div>
@@ -104,19 +104,19 @@ export function SalespersonActivityTable({ data }: SalespersonActivityTableProps
                 {/* Results Metrics */}
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/30">
                   <div className="text-center">
-                    <div className="text-xs font-medium text-green-400">
+                    <div className="text-xs font-medium text-status-success">
                       {sp.connection_rate.toFixed(0)}%
                     </div>
                     <div className="text-[10px] text-muted-foreground">Conexão</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xs font-medium text-blue-400">
+                    <div className="text-xs font-medium text-status-info">
                       {sp.scheduling_rate.toFixed(0)}%
                     </div>
                     <div className="text-[10px] text-muted-foreground">Agendamento</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xs font-medium text-purple-400">
+                    <div className="text-xs font-medium text-status-purple">
                       {sp.qualification_rate.toFixed(0)}%
                     </div>
                     <div className="text-[10px] text-muted-foreground">Qualificação</div>

@@ -13,9 +13,9 @@ import { z } from "zod";
 export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
 
 const roleLabels: Record<SalespersonRole, { label: string; icon: typeof Phone; color: string }> = {
-  sdr: { label: "SDR", icon: Phone, color: "text-blue-500" },
-  closer: { label: "Closer", icon: Target, color: "text-green-500" },
-  hybrid: { label: "Híbrido", icon: Users, color: "text-purple-500" },
+  sdr: { label: "SDR", icon: Phone, color: "text-status-info" },
+  closer: { label: "Closer", icon: Target, color: "text-status-success" },
+  hybrid: { label: "Híbrido", icon: Users, color: "text-status-purple" },
 };
 
 const salespersonSchema = z.object({

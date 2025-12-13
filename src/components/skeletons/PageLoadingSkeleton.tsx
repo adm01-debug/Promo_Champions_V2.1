@@ -88,11 +88,11 @@ export function PipelineLoadingSkeleton() {
           <div className="glass rounded-xl border border-border/40 p-4">
             <div className="flex gap-4 overflow-x-auto pb-2">
               {[
-                { name: "Lead", color: "bg-slate-500" },
-                { name: "Qualificado", color: "bg-blue-500" },
-                { name: "Proposta", color: "bg-purple-500" },
-                { name: "Negociação", color: "bg-amber-500" },
-                { name: "Fechado", color: "bg-green-500" },
+                { name: "Lead", color: "bg-muted-foreground" },
+                { name: "Qualificado", color: "bg-status-info" },
+                { name: "Proposta", color: "bg-status-purple" },
+                { name: "Negociação", color: "bg-status-warning" },
+                { name: "Fechado", color: "bg-status-success" },
               ].map((stage, stageIndex) => (
                 <div 
                   key={stage.name} 

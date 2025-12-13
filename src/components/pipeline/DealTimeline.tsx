@@ -62,14 +62,14 @@ const OUTCOME_LABELS: Record<string, string> = {
 };
 
 const OUTCOME_COLORS: Record<string, string> = {
-  connected: "text-emerald-400",
-  scheduled: "text-blue-400",
-  qualified: "text-purple-400",
+  connected: "text-status-success",
+  scheduled: "text-status-info",
+  qualified: "text-status-purple",
   no_answer: "text-muted-foreground",
   voicemail: "text-muted-foreground",
   busy: "text-muted-foreground",
-  callback: "text-amber-400",
-  not_interested: "text-red-400",
+  callback: "text-status-warning",
+  not_interested: "text-status-error",
 };
 
 const STAGE_LABELS: Record<string, string> = {
@@ -111,8 +111,8 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
   
   const getEventStyle = () => {
     if (isActivity) return "bg-primary/20 text-primary";
-    if (isStageChange) return "bg-amber-500/20 text-amber-400";
-    return "bg-green-500/20 text-green-400";
+    if (isStageChange) return "bg-status-warning/20 text-status-warning";
+    return "bg-status-success/20 text-status-success";
   };
 
   const getEventIcon = () => {
@@ -173,7 +173,7 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
 
           {isTask && (
             <>
-              <span className="font-medium text-sm text-green-400">
+              <span className="font-medium text-sm text-status-success">
                 Tarefa Concluída
               </span>
               <span className="text-xs text-muted-foreground">
