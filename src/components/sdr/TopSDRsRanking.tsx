@@ -76,10 +76,10 @@ export function TopSDRsRanking() {
   };
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300 animate-fade-in">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-rank-gold to-streak shadow-md">
+        <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
+          <div className="p-1.5 rounded-lg bg-gradient-to-br from-rank-gold to-streak shadow-lg shadow-rank-gold/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-rank-gold/40">
             <Trophy className="h-4 w-4 text-white" />
           </div>
           <span className="gradient-text">Top SDRs - Taxa de Agendamento</span>
@@ -87,8 +87,8 @@ export function TopSDRsRanking() {
       </CardHeader>
       <CardContent className="space-y-2.5">
         {ranking?.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-6 text-muted-foreground glass rounded-lg border border-dashed border-border/50">
-            <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-2 shadow-inner">
+          <div className="flex flex-col items-center justify-center py-6 text-muted-foreground glass rounded-lg border border-dashed border-border/50 animate-fade-in">
+            <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-2 shadow-inner animate-pulse">
               <Trophy className="h-8 w-8 opacity-50" />
             </div>
             <p className="text-xs font-display font-medium gradient-text">Nenhum dado de SDR disponível</p>
@@ -100,38 +100,38 @@ export function TopSDRsRanking() {
           return (
             <div 
               key={sdr.id}
-              className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-300 cursor-pointer group animate-fade-in ${getRankStyle(index)} ${isTopThree ? 'hover-lift' : ''}`}
+              className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-300 cursor-pointer group animate-fade-in ${getRankStyle(index)} ${isTopThree ? 'hover-lift' : 'hover:scale-[1.01]'}`}
               style={{ animationDelay: `${index * 75}ms` }}
             >
-              <div className={`flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shadow-sm transition-transform duration-300 group-hover:scale-110 ${
-                index === 0 ? "bg-gradient-to-br from-rank-gold to-streak text-white shadow-rank-gold/30" : 
-                index === 1 ? "bg-gradient-to-br from-rank-silver to-rank-silver/70 text-white" : 
-                index === 2 ? "bg-gradient-to-br from-rank-bronze to-rank-bronze/70 text-white" : 
+              <div className={`flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg ${
+                index === 0 ? "bg-gradient-to-br from-rank-gold to-streak text-white shadow-rank-gold/40" : 
+                index === 1 ? "bg-gradient-to-br from-rank-silver to-rank-silver/70 text-white shadow-rank-silver/30" : 
+                index === 2 ? "bg-gradient-to-br from-rank-bronze to-rank-bronze/70 text-white shadow-rank-bronze/30" : 
                 "bg-muted text-muted-foreground"
               }`}>
                 {index + 1}
               </div>
-              <Avatar className={`h-8 w-8 shadow-md transition-all duration-300 group-hover:scale-105 ${isTopThree ? 'ring-2 ring-primary/30' : ''}`}>
+              <Avatar className={`h-8 w-8 shadow-md transition-all duration-300 group-hover:scale-110 ${isTopThree ? 'ring-2 ring-primary/30 group-hover:ring-primary/50' : ''}`}>
                 <AvatarImage src={sdr.avatar_url || undefined} />
-                <AvatarFallback className="text-xs bg-gradient-to-br from-primary to-accent text-white">
+                <AvatarFallback className="text-xs bg-gradient-to-br from-primary to-accent text-white font-display font-bold">
                   {sdr.name.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className={`text-sm font-display font-medium truncate transition-colors ${index === 0 ? "gradient-text" : "group-hover:text-primary"}`}>{sdr.name}</p>
+                  <p className={`text-sm font-display font-medium truncate transition-colors duration-300 ${index === 0 ? "gradient-text" : "group-hover:text-primary"}`}>{sdr.name}</p>
                   <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                 </div>
                 <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
-                  <span>{sdr.meetings} reuniões</span>
+                  <span className="transition-colors group-hover:text-foreground/70">{sdr.meetings} reuniões</span>
                   <span className="text-border">•</span>
-                  <span>{sdr.qualified} qualificados</span>
+                  <span className="transition-colors group-hover:text-foreground/70">{sdr.qualified} qualificados</span>
                 </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-1">
-                  {sdr.schedulingRate >= 15 && <Flame className="h-3 w-3 text-streak animate-pulse" />}
-                  <span className={`text-sm font-display font-bold transition-all duration-300 ${index === 0 ? "gradient-text scale-105" : "text-primary group-hover:scale-105"}`}>
+                  {sdr.schedulingRate >= 15 && <Flame className="h-3.5 w-3.5 text-streak animate-fire-pulse" />}
+                  <span className={`text-sm font-display font-bold transition-all duration-300 ${index === 0 ? "gradient-text" : "text-primary"} group-hover:scale-110`}>
                     {sdr.schedulingRate.toFixed(1)}%
                   </span>
                 </div>
