@@ -443,10 +443,15 @@ export function RelatorioAtividadesLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
         
         {/* Stats Grid - 6 columns */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div 
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           {[...Array(6)].map((_, i) => (
             <div key={i} className="glass rounded-xl border border-border/40 p-4">
               <div className="flex items-center gap-3">
@@ -461,7 +466,10 @@ export function RelatorioAtividadesLoadingSkeleton() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           {/* Volume Chart Skeleton */}
           <div className="glass rounded-xl border border-border/40 p-6">
             <div className="space-y-4">
@@ -518,7 +526,10 @@ export function RelatorioAtividadesLoadingSkeleton() {
         </div>
 
         {/* Trend Chart Skeleton */}
-        <div className="glass rounded-xl border border-border/40 p-6">
+        <div 
+          className="glass rounded-xl border border-border/40 p-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
@@ -541,7 +552,10 @@ export function RelatorioAtividadesLoadingSkeleton() {
         </div>
 
         {/* Table Skeleton */}
-        <div className="glass rounded-xl border border-border/40 p-6">
+        <div 
+          className="glass rounded-xl border border-border/40 p-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Skeleton className="h-5 w-52" shimmer="intense" />
@@ -560,9 +574,9 @@ export function RelatorioAtividadesLoadingSkeleton() {
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="grid grid-cols-8 gap-4 p-4 rounded-lg border border-border/30 items-center">
                   <div className="flex items-center gap-3 col-span-2">
-                    <Skeleton className="h-10 w-10 rounded-full" shimmer={i === 0 ? "glow" : "default"} />
+                    <Skeleton className="h-10 w-10 rounded-full" variant={i === 0 ? "primary" : "default"} shimmer={i === 0 ? "glow" : "default"} />
                     <div className="space-y-1.5">
-                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-4 w-28" shimmer={i < 2 ? "intense" : "default"} />
                       <Skeleton className="h-3 w-16" />
                     </div>
                   </div>
