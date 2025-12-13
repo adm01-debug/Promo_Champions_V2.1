@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.next-best-action]
 verify_jwt = false
+
+[functions.salesperson-coaching]
+verify_jwt = false
