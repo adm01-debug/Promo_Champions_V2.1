@@ -9,13 +9,26 @@ interface DealProbability {
   factors: string[];
 }
 
+interface LeadScoreData {
+  score: number;
+  factors: {
+    dealValue: number;
+    stageProgress: number;
+    timeInPipeline: number;
+    category: number;
+    recentActivity: number;
+    labels?: Record<string, string>;
+  };
+}
+
 interface PipelineColumnProps {
   stage: typeof PIPELINE_STAGES[number];
   deals: Deal[];
   probabilities?: Record<string, DealProbability>;
+  leadScores?: Record<string, LeadScoreData>;
 }
 
-export const PipelineColumn = ({ stage, deals, probabilities }: PipelineColumnProps) => {
+export const PipelineColumn = ({ stage, deals, probabilities, leadScores }: PipelineColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: stage.id,
   });
@@ -70,6 +83,7 @@ export const PipelineColumn = ({ stage, deals, probabilities }: PipelineColumnPr
                 key={deal.id} 
                 deal={deal} 
                 probability={probabilities?.[deal.id]}
+                leadScore={leadScores?.[deal.id]}
               />
             ))
           )}

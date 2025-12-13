@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Package, Calendar, TrendingUp } from "lucide-react";
+import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer } from "lucide-react";
 import { Deal } from "@/hooks/usePipeline";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -11,18 +11,32 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getScoreColor, getScoreBgColor, getScoreLabel } from "@/hooks/useLeadScoring";
 
 interface DealProbability {
   probability: number;
   factors: string[];
 }
 
+interface LeadScoreData {
+  score: number;
+  factors: {
+    dealValue: number;
+    stageProgress: number;
+    timeInPipeline: number;
+    category: number;
+    recentActivity: number;
+    labels?: Record<string, string>;
+  };
+}
+
 interface DealCardProps {
   deal: Deal;
   probability?: DealProbability;
+  leadScore?: LeadScoreData;
 }
 
-export const DealCard = ({ deal, probability }: DealCardProps) => {
+export const DealCard = ({ deal, probability, leadScore }: DealCardProps) => {
   const {
     attributes,
     listeners,
@@ -74,6 +88,41 @@ export const DealCard = ({ deal, probability }: DealCardProps) => {
           <div className="flex items-center justify-between gap-2 mb-1">
             <h4 className="font-medium text-sm truncate">{deal.client_name}</h4>
             <div className="flex items-center gap-1.5">
+              {leadScore && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className={cn(
+                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold",
+                        getScoreBgColor(leadScore.score),
+                        getScoreColor(leadScore.score)
+                      )}>
+                        {leadScore.score >= 60 ? (
+                          <Flame className="h-3 w-3" />
+                        ) : (
+                          <Thermometer className="h-3 w-3" />
+                        )}
+                        {leadScore.score}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px]">
+                      <p className="font-semibold mb-1">
+                        Lead Score: {getScoreLabel(leadScore.score)}
+                      </p>
+                      <ul className="text-xs space-y-0.5">
+                        {leadScore.factors.labels && Object.entries(leadScore.factors.labels).map(([key, label]) => {
+                          const factorValue = leadScore.factors[key as keyof Omit<typeof leadScore.factors, 'labels'>];
+                          return (
+                            <li key={key} className="text-muted-foreground">
+                              • {label} {typeof factorValue === 'number' ? `(+${factorValue})` : ''}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               {probability && (
                 <TooltipProvider>
                   <Tooltip>

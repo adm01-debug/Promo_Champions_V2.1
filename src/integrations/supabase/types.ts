@@ -151,6 +151,44 @@ export type Database = {
           },
         ]
       }
+      lead_scores: {
+        Row: {
+          calculated_at: string
+          created_at: string
+          factors: Json
+          id: string
+          sale_id: string
+          score: number
+          updated_at: string
+        }
+        Insert: {
+          calculated_at?: string
+          created_at?: string
+          factors?: Json
+          id?: string
+          sale_id: string
+          score?: number
+          updated_at?: string
+        }
+        Update: {
+          calculated_at?: string
+          created_at?: string
+          factors?: Json
+          id?: string
+          sale_id?: string
+          score?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           created_at: string
