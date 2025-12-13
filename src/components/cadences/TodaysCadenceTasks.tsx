@@ -25,12 +25,12 @@ const actionLabels: Record<ActionType, string> = {
 };
 
 const actionColors: Record<ActionType, string> = {
-  call: "bg-status-info/10 text-status-info",
-  email: "bg-status-warning/10 text-status-warning",
-  linkedin: "bg-primary/10 text-primary",
-  whatsapp: "bg-status-success/10 text-status-success",
-  meeting: "bg-status-purple/10 text-status-purple",
-  other: "bg-muted text-muted-foreground",
+  call: "bg-status-info/15 text-status-info shadow-sm shadow-status-info/10",
+  email: "bg-status-warning/15 text-status-warning shadow-sm shadow-status-warning/10",
+  linkedin: "bg-primary/15 text-primary shadow-sm shadow-primary/10",
+  whatsapp: "bg-status-success/15 text-status-success shadow-sm shadow-status-success/10",
+  meeting: "bg-status-purple/15 text-status-purple shadow-sm shadow-status-purple/10",
+  other: "bg-muted/50 text-muted-foreground",
 };
 
 export function TodaysCadenceTasks() {
@@ -43,7 +43,7 @@ export function TodaysCadenceTasks() {
       <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-sm">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md animate-pulse">
               <ListTodo className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Tarefas de Cadência - Hoje</span>
@@ -52,7 +52,19 @@ export function TodaysCadenceTasks() {
         <CardContent>
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-20 w-full" />
+              <div key={i} className="p-3 rounded-lg border border-border/30 bg-muted/20 space-y-2">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <Skeleton className="h-7 flex-1" />
+                  <Skeleton className="h-7 w-20" />
+                </div>
+              </div>
             ))}
           </div>
         </CardContent>
@@ -65,12 +77,16 @@ export function TodaysCadenceTasks() {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-sm">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
               <ListTodo className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Tarefas de Cadência - Hoje</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/30">
+          <Badge variant="secondary" className={`text-xs font-medium border transition-all duration-300 ${
+            tasks && tasks.length > 0 
+              ? "bg-gradient-to-r from-primary/20 to-accent/20 text-primary border-primary/30 animate-pulse" 
+              : "bg-muted/50 text-muted-foreground border-border/50"
+          }`}>
             {tasks?.length || 0} pendentes
           </Badge>
         </div>
@@ -79,15 +95,15 @@ export function TodaysCadenceTasks() {
         <ScrollArea className="h-[350px]">
           <div className="p-4 space-y-3">
             {(!tasks || tasks.length === 0) ? (
-              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground bg-muted/20 rounded-lg border border-dashed border-border/50">
-                <div className="p-3 rounded-full bg-muted/50 mb-3">
+              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-lg border border-dashed border-border/50">
+                <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner">
                   <Clock className="h-8 w-8 opacity-50" />
                 </div>
-                <p className="text-sm font-display font-medium">Nenhuma tarefa de cadência para hoje</p>
+                <p className="text-sm font-display font-medium gradient-text">Nenhuma tarefa de cadência para hoje</p>
                 <p className="text-xs text-muted-foreground mt-1">As próximas tarefas aparecerão aqui</p>
               </div>
             ) : (
-              tasks.map((task: any) => {
+              tasks.map((task: any, index: number) => {
                 const step = task.cadence_step;
                 const prospectCadence = task.prospect_cadence;
                 const sale = prospectCadence?.sale;
@@ -97,24 +113,25 @@ export function TodaysCadenceTasks() {
                 return (
                   <div
                     key={task.id}
-                    className="p-3 rounded-lg border border-border/30 bg-muted/30 hover:bg-muted/50 transition-all duration-200 space-y-2 hover-lift"
+                    className="p-3 rounded-lg glass border border-border/30 hover:border-primary/40 transition-all duration-200 space-y-2 hover-lift group animate-fade-in"
+                    style={{ animationDelay: `${index * 75}ms` }}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`p-2 rounded-lg shadow-sm border ${actionColors[step?.action_type as ActionType] || "bg-muted"} border-current/20`}>
+                      <div className={`p-2 rounded-lg border transition-all duration-200 group-hover:scale-110 ${actionColors[step?.action_type as ActionType] || "bg-muted"}`}>
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-display font-medium">{step?.title}</span>
-                          <Badge variant="outline" className={`text-[10px] ${actionColors[step?.action_type as ActionType] || ""}`}>
+                          <span className="text-sm font-display font-medium group-hover:text-primary transition-colors">{step?.title}</span>
+                          <Badge variant="outline" className={`text-[10px] font-medium ${actionColors[step?.action_type as ActionType] || ""}`}>
                             {actionLabels[step?.action_type as ActionType] || "Ação"}
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {sale?.client_name} • <span className="text-primary/80">{cadence?.name}</span>
+                          <span className="gradient-text font-medium">{sale?.client_name}</span> • <span className="text-primary/80">{cadence?.name}</span>
                         </p>
                         {step?.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 bg-muted/30 rounded-md px-2 py-1">
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 bg-muted/30 rounded-md px-2 py-1 border border-border/20">
                             {step.description}
                           </p>
                         )}
@@ -125,7 +142,7 @@ export function TodaysCadenceTasks() {
                       <Button
                         size="sm"
                         variant="glow"
-                        className="h-7 text-xs gap-1.5 flex-1 font-medium"
+                        className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-sm"
                         onClick={() => completeTask.mutate({ taskId: task.id })}
                         disabled={completeTask.isPending}
                       >
@@ -135,7 +152,7 @@ export function TodaysCadenceTasks() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 transition-colors"
+                        className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 transition-all"
                         onClick={() => skipTask.mutate({ taskId: task.id })}
                         disabled={skipTask.isPending}
                       >

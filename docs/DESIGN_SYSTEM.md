@@ -884,7 +884,8 @@ animation: {
 - `NextBestAction` - Glass + gradient, hover-lift suggestions
 
 #### Cadências (2 componentes)
-- `CadenceCard`, `TodaysCadenceTasks`
+- `CadenceCard` - Glass + hover-lift/hover-glow, gradient icon header, staggered step animations, group hover states
+- `TodaysCadenceTasks` - Animated loading skeletons, conditional pulse badge, staggered task entry, gradient client names
 
 #### Metas (4 componentes)
 - `GoalsLeaderboard` - Glass, gradient icon header
