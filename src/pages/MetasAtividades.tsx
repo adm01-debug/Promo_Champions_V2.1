@@ -16,6 +16,8 @@ import { useCelebration } from "@/hooks/useCelebration";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MetasAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
@@ -71,7 +73,12 @@ export default function MetasAtividades() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<MetasAtividadesLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
@@ -218,5 +225,6 @@ export default function MetasAtividades() {
         />
       )}
     </div>
+    </SkeletonTransition>
   );
 }
