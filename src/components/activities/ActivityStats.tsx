@@ -16,31 +16,31 @@ export function ActivityStats() {
       label: "Ligações", 
       value: stats?.callsToday ?? 0, 
       icon: Phone,
-      color: "text-blue-500"
+      color: "text-status-info"
     },
     { 
       label: "E-mails", 
       value: stats?.emailsToday ?? 0, 
       icon: Mail,
-      color: "text-orange-500"
+      color: "text-streak"
     },
     { 
       label: "Reuniões", 
       value: stats?.meetingsToday ?? 0, 
       icon: Users,
-      color: "text-purple-500"
+      color: "text-accent"
     },
     { 
       label: "Conectou", 
       value: stats?.connectedToday ?? 0, 
       icon: CheckCircle,
-      color: "text-green-500"
+      color: "text-status-success"
     },
     { 
       label: "Agendou", 
       value: stats?.scheduledToday ?? 0, 
       icon: CalendarCheck,
-      color: "text-emerald-500"
+      color: "text-status-success"
     },
   ];
 

@@ -15,17 +15,17 @@ import {
 import { cn } from '@/lib/utils';
 
 const priorityConfig = {
-  high: { label: 'Alta', className: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  medium: { label: 'Média', className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  low: { label: 'Baixa', className: 'bg-green-500/20 text-green-400 border-green-500/30' },
+  high: { label: 'Alta', className: 'bg-status-error/20 text-status-error border-status-error/30' },
+  medium: { label: 'Média', className: 'bg-status-warning/20 text-status-warning border-status-warning/30' },
+  low: { label: 'Baixa', className: 'bg-status-success/20 text-status-success border-status-success/30' },
 };
 
 const typeConfig = {
-  call: { label: 'Ligação', icon: Phone, color: 'text-blue-400' },
-  meeting: { label: 'Reunião', icon: Users, color: 'text-purple-400' },
-  follow_up: { label: 'Follow-up', icon: Clock, color: 'text-orange-400' },
-  email: { label: 'E-mail', icon: Mail, color: 'text-cyan-400' },
-  proposal: { label: 'Proposta', icon: FileText, color: 'text-pink-400' },
+  call: { label: 'Ligação', icon: Phone, color: 'text-status-info' },
+  meeting: { label: 'Reunião', icon: Users, color: 'text-accent' },
+  follow_up: { label: 'Follow-up', icon: Clock, color: 'text-streak' },
+  email: { label: 'E-mail', icon: Mail, color: 'text-secondary' },
+  proposal: { label: 'Proposta', icon: FileText, color: 'text-primary' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
 };
 

@@ -50,28 +50,28 @@ export function LeadSourceMetrics() {
         {/* Best performers */}
         <div className="grid grid-cols-3 gap-3">
           {data?.highestValueSource && (
-            <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+            <div className="p-3 rounded-lg bg-status-success/10 border border-status-success/20">
               <div className="flex items-center gap-2 mb-1">
-                <DollarSign className="h-4 w-4 text-green-500" />
-                <span className="text-[10px] text-green-500 font-medium">Maior Valor</span>
+                <DollarSign className="h-4 w-4 text-status-success" />
+                <span className="text-[10px] text-status-success font-medium">Maior Valor</span>
               </div>
               <p className="text-sm font-bold">{sourceLabels[data.highestValueSource]}</p>
             </div>
           )}
           {data?.bestConversionSource && (
-            <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+            <div className="p-3 rounded-lg bg-status-info/10 border border-status-info/20">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-4 w-4 text-blue-500" />
-                <span className="text-[10px] text-blue-500 font-medium">Melhor Conversão</span>
+                <TrendingUp className="h-4 w-4 text-status-info" />
+                <span className="text-[10px] text-status-info font-medium">Melhor Conversão</span>
               </div>
               <p className="text-sm font-bold">{sourceLabels[data.bestConversionSource]}</p>
             </div>
           )}
           {data?.highestVolumeSource && (
-            <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+            <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
               <div className="flex items-center gap-2 mb-1">
-                <Users className="h-4 w-4 text-purple-500" />
-                <span className="text-[10px] text-purple-500 font-medium">Maior Volume</span>
+                <Users className="h-4 w-4 text-accent" />
+                <span className="text-[10px] text-accent font-medium">Maior Volume</span>
               </div>
               <p className="text-sm font-bold">{sourceLabels[data.highestVolumeSource]}</p>
             </div>
@@ -113,7 +113,7 @@ export function LeadSourceMetrics() {
                   <p className="text-[9px] text-muted-foreground">Fechados</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-green-500">{source.conversionRate.toFixed(1)}%</p>
+                  <p className="text-lg font-bold text-status-success">{source.conversionRate.toFixed(1)}%</p>
                   <p className="text-[9px] text-muted-foreground">Conversão</p>
                 </div>
                 <div>

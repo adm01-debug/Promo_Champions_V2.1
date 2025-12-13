@@ -85,7 +85,7 @@ export function LeadSourceDistribution() {
             <p className="text-[10px] text-muted-foreground">Total Leads</p>
           </div>
           <div className="text-center">
-            <p className="text-xl font-bold text-green-500">{data?.totalClosed || 0}</p>
+            <p className="text-xl font-bold text-status-success">{data?.totalClosed || 0}</p>
             <p className="text-[10px] text-muted-foreground">Fechados</p>
           </div>
           <div className="text-center">

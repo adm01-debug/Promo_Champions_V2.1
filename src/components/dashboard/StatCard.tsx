@@ -73,7 +73,7 @@ export const StatCard = ({
             className={cn(
               "h-5 w-5",
               variant === "primary" || variant === "secondary"
-                ? "text-white"
+                ? "text-primary-foreground"
                 : "text-muted-foreground"
             )}
           />

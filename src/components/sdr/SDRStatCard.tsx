@@ -24,8 +24,8 @@ export function SDRStatCard({
   const variantStyles = {
     default: "from-muted/50 to-muted/30",
     primary: "from-primary/20 to-primary/5",
-    success: "from-green-500/20 to-green-500/5",
-    warning: "from-orange-500/20 to-orange-500/5",
+    success: "from-status-success/20 to-status-success/5",
+    warning: "from-streak/20 to-streak/5",
   };
 
   return (
@@ -41,7 +41,7 @@ export function SDRStatCard({
               {change !== undefined && (
                 <span className={cn(
                   "flex items-center text-xs font-medium",
-                  isPositive ? "text-green-500" : "text-red-500"
+                  isPositive ? "text-status-success" : "text-status-error"
                 )}>
                   {isPositive ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
                   {Math.abs(change).toFixed(1)}%
