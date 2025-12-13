@@ -667,3 +667,115 @@ export function TarefasLoadingSkeleton() {
     </div>
   );
 }
+
+export function FonteLeadsLoadingSkeleton() {
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <Skeleton className="h-8 w-64 mb-2" />
+            <Skeleton className="h-4 w-80" />
+          </div>
+          <Skeleton className="h-8 w-32 rounded-lg" />
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="glass rounded-xl border-border/40 p-4">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-11 w-11 rounded-xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-7 w-16" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <ChartSkeleton height="h-[400px]" highlighted />
+          </div>
+          <ChartSkeleton height="h-[400px]" />
+        </div>
+
+        {/* Trend Chart */}
+        <ChartSkeleton height="h-[300px]" />
+
+        {/* Insights */}
+        <div className="glass rounded-xl border-border/40 p-6">
+          <Skeleton className="h-5 w-40 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="p-4 rounded-lg border border-border/20">
+                <Skeleton className="h-4 w-20 mb-2" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-3/4 mt-1" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ProdutosLoadingSkeleton() {
+  return (
+    <div className="min-h-screen bg-background p-6 lg:p-8">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-11 w-11 rounded-xl" />
+            <div>
+              <Skeleton className="h-7 w-32 mb-1" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-36 rounded-md" />
+        </div>
+
+        {/* Filters */}
+        <div className="glass rounded-xl p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Skeleton className="h-10 flex-1 rounded-md" />
+            <Skeleton className="h-10 w-28 rounded-md" />
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="glass rounded-xl p-5 space-y-4">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+              </div>
+              <Skeleton className="h-6 w-3/4" />
+              
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-4 rounded-full" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+
+              <div className="pt-4 border-t border-border/30">
+                <div className="flex justify-between items-center">
+                  <Skeleton className="h-3 w-10" />
+                  <Skeleton className="h-7 w-24" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

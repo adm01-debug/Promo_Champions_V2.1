@@ -4,9 +4,11 @@ import { LeadSourceDistribution } from "@/components/analytics/LeadSourceDistrib
 import { Card, CardContent } from "@/components/ui/card";
 import { useLeadSourceAnalysis, sourceLabels } from "@/hooks/useLeadSourceAnalysis";
 import { Target, TrendingUp, DollarSign, Percent } from "lucide-react";
+import { FonteLeadsLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function FonteLeads() {
-  const { data } = useLeadSourceAnalysis(3);
+  const { data, isLoading } = useLeadSourceAnalysis(3);
 
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -20,7 +22,12 @@ export default function FonteLeads() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<FonteLeadsLoadingSkeleton />}
+      duration={400}
+    >
+      <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
         {/* Header */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
@@ -145,5 +152,6 @@ export default function FonteLeads() {
         )}
       </div>
     </div>
+    </SkeletonTransition>
   );
 }
