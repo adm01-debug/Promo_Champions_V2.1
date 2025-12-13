@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.deal-probability]
 verify_jwt = false
+
+[functions.lead-scoring]
+verify_jwt = false

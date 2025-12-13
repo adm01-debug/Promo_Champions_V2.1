@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -13,10 +13,11 @@ import { usePipelineDeals, useMoveDeal, PIPELINE_STAGES, Deal, PipelineStage } f
 import { PipelineColumn } from "./PipelineColumn";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDealProbabilities } from "@/hooks/useDealProbability";
+import { useLeadScores, useCalculateLeadScores } from "@/hooks/useLeadScoring";
 
 export const PipelineBoard = () => {
   const { data: dealsByStage, isLoading, refetch, isRefetching } = usePipelineDeals();
@@ -33,6 +34,15 @@ export const PipelineBoard = () => {
   }, [dealsByStage]);
 
   const { data: probabilities } = useDealProbabilities(allDealIds);
+  const { data: leadScores } = useLeadScores(allDealIds);
+  const calculateScores = useCalculateLeadScores();
+
+  // Calculate lead scores when deals are loaded
+  useEffect(() => {
+    if (allDealIds.length > 0 && !leadScores) {
+      calculateScores.mutate(allDealIds);
+    }
+  }, [allDealIds]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -138,15 +148,26 @@ export const PipelineBoard = () => {
             </p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          disabled={isRefetching}
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? "animate-spin" : ""}`} />
-          Atualizar
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => calculateScores.mutate(allDealIds)}
+            disabled={calculateScores.isPending}
+          >
+            <Zap className={`h-4 w-4 mr-2 ${calculateScores.isPending ? "animate-pulse" : ""}`} />
+            Calcular Scores
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isRefetching}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? "animate-spin" : ""}`} />
+            Atualizar
+          </Button>
+        </div>
       </div>
 
       {/* Kanban Board */}
@@ -163,6 +184,7 @@ export const PipelineBoard = () => {
               stage={stage}
               deals={dealsByStage?.[stage.id] || []}
               probabilities={probabilities}
+              leadScores={leadScores}
             />
           ))}
         </div>
@@ -173,6 +195,7 @@ export const PipelineBoard = () => {
               <DealCard 
                 deal={activeDeal} 
                 probability={probabilities?.[activeDeal.id]}
+                leadScore={leadScores?.[activeDeal.id]}
               />
             </div>
           )}
