@@ -50,25 +50,25 @@ export function SalespersonGoalCard({
   const hasExceededGoal = progress >= 100;
 
   return (
-    <div className={`p-4 rounded-xl border transition-all duration-200 hover:shadow-md cursor-pointer ${
+    <div className={`p-4 rounded-xl border transition-all duration-300 hover-lift cursor-pointer ${
       hasExceededGoal 
-        ? "glass bg-status-success/5 border-status-success/40 hover:border-status-success/60 shadow-sm shadow-status-success/10" 
+        ? "glass bg-status-success/5 border-status-success/40 hover:border-status-success/60 shadow-md shadow-status-success/10 hover-glow-success" 
         : onTrack 
           ? "glass bg-card border-border/40 hover:border-primary/40 dark:border-glow" 
-          : "glass bg-streak/5 border-streak/30 hover:border-streak/50"
+          : "glass bg-status-warning/5 border-status-warning/30 hover:border-status-warning/50"
     }`}>
       <div className="flex items-start gap-3">
         {/* Rank & Avatar */}
         <div className="relative">
-          <Avatar className={`h-12 w-12 ${isTopPerformer ? "ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" : ""}`}>
+          <Avatar className={`h-12 w-12 shadow-md ${isTopPerformer ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-2 border-background"}`}>
             <AvatarImage src={avatar_url || undefined} />
-            <AvatarFallback className="text-sm font-medium gradient-primary text-white">
+            <AvatarFallback className="text-sm font-display font-medium gradient-primary text-white">
               {name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           {isTopPerformer && (
-            <div className="absolute -top-1 -left-1 h-5 w-5 rounded-full gradient-primary flex items-center justify-center shadow-sm">
-              <span className="text-[10px] font-bold text-white">{rank}</span>
+            <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full gradient-primary flex items-center justify-center shadow-md">
+              <span className="text-[11px] font-display font-bold text-white">{rank}</span>
             </div>
           )}
         </div>
@@ -76,20 +76,20 @@ export function SalespersonGoalCard({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="font-medium truncate gradient-text">{name}</span>
+            <span className="font-display font-medium truncate gradient-text">{name}</span>
             <SalespersonLevelBadge level={level} totalXP={totalXP} size="xs" />
-            {hasExceededGoal && <Flame className="h-4 w-4 text-streak animate-pulse" />}
+            {hasExceededGoal && <Flame className="h-4 w-4 text-streak animate-fire-pulse" />}
           </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
+          <div className="flex items-center gap-2 mt-1">
+            <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 shadow-sm">
               {roleLabels[role] || role}
             </Badge>
             <Badge 
               variant="outline" 
-              className={`text-[9px] px-1.5 py-0 ${
+              className={`text-[9px] px-1.5 py-0 shadow-sm ${
                 onTrack 
                   ? "bg-status-success/10 text-status-success border-status-success/20" 
-                  : "bg-streak/10 text-streak border-streak/20"
+                  : "bg-status-warning/10 text-status-warning border-status-warning/20"
               }`}
             >
               {onTrack ? <TrendingUp className="h-2.5 w-2.5 mr-0.5" /> : <TrendingDown className="h-2.5 w-2.5 mr-0.5" />}
@@ -100,39 +100,45 @@ export function SalespersonGoalCard({
 
         {/* Progress % */}
         <div className="text-right">
-          <p className={`text-lg font-bold ${hasExceededGoal ? "text-status-success" : "gradient-text"}`}>
+          <p className={`text-xl font-display font-bold ${hasExceededGoal ? "text-status-success" : "gradient-text"}`}>
             {progress.toFixed(0)}%
           </p>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">da meta</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">da meta</p>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="mt-3 space-y-1.5">
+      <div className="mt-4 space-y-2">
         <div className="relative">
           <Progress 
             value={progressCapped} 
-            className={`h-2 ${hasExceededGoal ? "[&>div]:bg-status-success" : ""}`} 
+            className={`h-2.5 ${hasExceededGoal ? "[&>div]:bg-gradient-to-r [&>div]:from-status-success [&>div]:to-status-success/70" : ""}`} 
           />
+          {progress >= 100 && (
+            <div className="absolute inset-0 animate-xp-shimmer opacity-50 rounded-full" />
+          )}
         </div>
         <div className="flex justify-between text-[10px] text-muted-foreground">
-          <span>{formatCurrency(currentSales)}</span>
-          <span>Meta: {formatCurrency(goalAmount)}</span>
+          <span className="font-medium">{formatCurrency(currentSales)}</span>
+          <span className="flex items-center gap-1">
+            <Target className="h-3 w-3" />
+            Meta: <span className="font-medium text-foreground">{formatCurrency(goalAmount)}</span>
+          </span>
         </div>
       </div>
 
       {/* Stats Row */}
       {goalAmount > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="p-2 rounded-lg bg-muted/30 border border-border/30 text-center">
-            <p className="text-xs font-bold">{formatCurrency(dailyAverage)}</p>
-            <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Média/dia</p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="p-2.5 rounded-xl glass border border-border/30 text-center hover:bg-muted/30 transition-colors">
+            <p className="text-sm font-display font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Média/dia</p>
           </div>
-          <div className="p-2 rounded-lg bg-muted/30 border border-border/30 text-center">
-            <p className={`text-xs font-bold ${requiredDailyAverage > dailyAverage ? "text-streak" : "text-status-success"}`}>
+          <div className="p-2.5 rounded-xl glass border border-border/30 text-center hover:bg-muted/30 transition-colors">
+            <p className={`text-sm font-display font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
-            <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Precisa/dia</p>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Precisa/dia</p>
           </div>
         </div>
       )}

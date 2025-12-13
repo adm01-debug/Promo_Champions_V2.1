@@ -39,17 +39,19 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
 
   if (isLoading) {
     return (
-      <Card className="glass border-border/40">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-primary" />
-            Ranking de Metas
+      <Card className="glass border border-border/40 dark:border-glow card-elevated">
+        <CardHeader className="pb-2 border-b border-border/30">
+          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+            <div className="p-2 rounded-xl gradient-primary shadow-md">
+              <Trophy className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Ranking de Metas</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-3 pt-2">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full" />
+              <Skeleton key={i} className="h-28 w-full rounded-xl" />
             ))}
           </div>
         </CardContent>
@@ -58,14 +60,16 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
   }
 
   return (
-    <Card className="glass border-border/40">
-      <CardHeader className="pb-2">
+    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
+      <CardHeader className="pb-2 border-b border-border/30">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-primary" />
-            Ranking de Metas
+          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+            <div className="p-2 rounded-xl gradient-primary shadow-md">
+              <Trophy className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Ranking de Metas</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
             {withGoals.length} vendedores
           </Badge>
         </div>
@@ -75,9 +79,11 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
           <div className="p-4 space-y-3">
             {withGoals.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <Users className="h-12 w-12 mb-3 opacity-50" />
-                <p className="text-sm font-medium">Nenhuma meta definida</p>
-                <p className="text-xs mt-1">Configure metas para os vendedores</p>
+                <div className="p-4 rounded-full bg-muted/30 mb-4">
+                  <Users className="h-12 w-12 opacity-50" />
+                </div>
+                <p className="font-display font-medium">Nenhuma meta definida</p>
+                <p className="text-xs mt-1 text-muted-foreground/70">Configure metas para os vendedores</p>
               </div>
             ) : (
               withGoals.map((sp, index) => {
@@ -96,7 +102,7 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
 
             {withoutGoals.length > 0 && withGoals.length > 0 && (
               <div className="pt-4 border-t border-border/40">
-                <p className="text-xs text-muted-foreground mb-3">
+                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
                   Sem meta definida ({withoutGoals.length})
                 </p>
                 {withoutGoals.map((sp, index) => {
