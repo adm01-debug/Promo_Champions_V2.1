@@ -102,8 +102,8 @@ export function AchievementComparisonChart() {
                   return value;
                 }}
               />
-              <Bar dataKey="dailyGoals" stackId="a" fill="hsl(45, 93%, 47%)" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="streakMilestones" stackId="a" fill="hsl(25, 95%, 53%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="dailyGoals" stackId="a" fill="hsl(var(--rank-gold))" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="streakMilestones" stackId="a" fill="hsl(var(--status-warning))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

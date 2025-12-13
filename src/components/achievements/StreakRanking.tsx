@@ -14,25 +14,25 @@ const roleLabels: Record<string, string> = {
 };
 
 const getStreakIcon = (streak: number) => {
-  if (streak >= 30) return <Crown className="h-4 w-4 text-yellow-400" />;
-  if (streak >= 15) return <Trophy className="h-4 w-4 text-purple-400" />;
-  if (streak >= 7) return <Flame className="h-4 w-4 text-orange-400" />;
-  if (streak >= 3) return <Zap className="h-4 w-4 text-blue-400" />;
+  if (streak >= 30) return <Crown className="h-4 w-4 text-rank-gold" />;
+  if (streak >= 15) return <Trophy className="h-4 w-4 text-status-purple" />;
+  if (streak >= 7) return <Flame className="h-4 w-4 text-status-warning" />;
+  if (streak >= 3) return <Zap className="h-4 w-4 text-status-info" />;
   return <Target className="h-4 w-4 text-muted-foreground" />;
 };
 
 const getStreakBadgeColor = (streak: number) => {
-  if (streak >= 30) return "bg-gradient-to-r from-amber-500/30 to-yellow-500/30 text-yellow-300 border-yellow-500/50";
-  if (streak >= 15) return "bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-pink-300 border-pink-500/50";
-  if (streak >= 7) return "bg-gradient-to-r from-orange-500/30 to-red-500/30 text-orange-300 border-orange-500/50";
-  if (streak >= 3) return "bg-blue-500/20 text-blue-300 border-blue-500/40";
+  if (streak >= 30) return "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50";
+  if (streak >= 15) return "bg-gradient-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50";
+  if (streak >= 7) return "bg-gradient-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50";
+  if (streak >= 3) return "bg-status-info/20 text-status-info border-status-info/40";
   return "bg-muted text-muted-foreground border-border";
 };
 
 const getRankStyle = (rank: number) => {
-  if (rank === 1) return "bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border-yellow-500/40";
-  if (rank === 2) return "bg-gradient-to-r from-slate-400/20 to-slate-300/20 border-slate-400/40";
-  if (rank === 3) return "bg-gradient-to-r from-amber-700/20 to-orange-600/20 border-amber-600/40";
+  if (rank === 1) return "bg-gradient-to-r from-rank-gold/20 to-rank-gold/10 border-rank-gold/40";
+  if (rank === 2) return "bg-gradient-to-r from-rank-silver/20 to-rank-silver/10 border-rank-silver/40";
+  if (rank === 3) return "bg-gradient-to-r from-rank-bronze/20 to-rank-bronze/10 border-rank-bronze/40";
   return "bg-muted/30 border-border/40";
 };
 
@@ -57,7 +57,7 @@ export function StreakRanking() {
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Flame className="h-5 w-5 text-orange-400" />
+            <Flame className="h-5 w-5 text-status-warning" />
             Ranking de Sequências
           </CardTitle>
         </CardHeader>
@@ -78,7 +78,7 @@ export function StreakRanking() {
     <Card className="bg-card/50 backdrop-blur border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Flame className="h-5 w-5 text-orange-400" />
+          <Flame className="h-5 w-5 text-status-warning" />
           Ranking de Sequências
           <Badge variant="secondary" className="ml-2">
             Top Performers

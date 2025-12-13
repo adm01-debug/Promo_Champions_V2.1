@@ -85,20 +85,20 @@ function SalespersonCard({
   return (
     <div className={`p-4 rounded-lg border transition-all ${
       isTop 
-        ? "bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-orange-500/20 border-amber-500/30" 
+        ? "bg-gradient-to-r from-rank-gold/20 via-rank-gold/10 to-status-warning/20 border-rank-gold/30" 
         : "bg-card/50 border-border/50 hover:border-border"
     }`}>
       <div className="flex items-start gap-3">
         <div className="relative">
-          <Avatar className={`h-12 w-12 ${isTop ? "border-2 border-amber-400" : ""}`}>
+          <Avatar className={`h-12 w-12 ${isTop ? "border-2 border-rank-gold" : ""}`}>
             <AvatarImage src={person.avatar_url || ""} />
             <AvatarFallback className="bg-primary/20 text-primary font-bold">
               {person.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           {isTop && (
-            <div className="absolute -top-1 -right-1 bg-amber-400 rounded-full p-1">
-              <Crown className="h-3 w-3 text-amber-900" />
+            <div className="absolute -top-1 -right-1 bg-rank-gold rounded-full p-1">
+              <Crown className="h-3 w-3 text-background" />
             </div>
           )}
         </div>
@@ -106,7 +106,7 @@ function SalespersonCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-semibold truncate">{person.name}</span>
-            {isTop && <Badge variant="secondary" className="bg-amber-500/20 text-amber-300 text-[10px]">Top</Badge>}
+            {isTop && <Badge variant="secondary" className="bg-rank-gold/20 text-rank-gold text-[10px]">Top</Badge>}
           </div>
           
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 text-sm">
