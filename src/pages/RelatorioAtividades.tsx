@@ -1,15 +1,19 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Phone, Mail, Calendar, TrendingUp, Users, Percent } from "lucide-react";
 import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/useSalespersonActivityReport";
 import { SalespersonActivityTable } from "@/components/analytics/SalespersonActivityTable";
 import { ActivityVolumeChart } from "@/components/analytics/ActivityVolumeChart";
 import { ActivityOutcomesChart } from "@/components/analytics/ActivityOutcomesChart";
 import { ActivityTrendChart } from "@/components/analytics/ActivityTrendChart";
+import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 
 export default function RelatorioAtividades() {
   const { data, isLoading, error } = useSalespersonActivityReport(1);
   const { data: trendData, isLoading: trendLoading } = useActivityTrend(undefined, 30);
+
+  if (isLoading || trendLoading) {
+    return <RelatorioAtividadesLoadingSkeleton />;
+  }
 
   if (error) {
     return (
@@ -89,63 +93,41 @@ export default function RelatorioAtividades() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-          {isLoading ? (
-            [...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-24 w-full" />
-            ))
-          ) : (
-            stats.map((stat, index) => (
-              <Card key={index} className="glass border-border/40">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold">{stat.value}</p>
-                      <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-                    </div>
+          {stats.map((stat, index) => (
+            <Card key={index} className="glass border-border/40">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
                   </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
+                  <div>
+                    <p className="text-lg font-bold">{stat.value}</p>
+                    <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            {isLoading ? (
-              <Skeleton className="h-[350px] w-full" />
-            ) : (
-              <ActivityVolumeChart data={data?.salespeople || []} />
-            )}
+            <ActivityVolumeChart data={data?.salespeople || []} />
           </div>
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
-            {isLoading ? (
-              <Skeleton className="h-[350px] w-full" />
-            ) : (
-              <ActivityOutcomesChart data={data?.salespeople || []} />
-            )}
+            <ActivityOutcomesChart data={data?.salespeople || []} />
           </div>
         </div>
 
         {/* Trend Chart */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-          {trendLoading ? (
-            <Skeleton className="h-[300px] w-full" />
-          ) : (
-            <ActivityTrendChart data={trendData || []} />
-          )}
+          <ActivityTrendChart data={trendData || []} />
         </div>
 
         {/* Salesperson Table */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-          {isLoading ? (
-            <Skeleton className="h-[500px] w-full" />
-          ) : (
-            <SalespersonActivityTable data={data?.salespeople || []} />
-          )}
+          <SalespersonActivityTable data={data?.salespeople || []} />
         </div>
       </div>
     </div>

@@ -347,3 +347,143 @@ export function CadenciasLoadingSkeleton() {
     </div>
   );
 }
+
+export function RelatorioAtividadesLoadingSkeleton() {
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+        <HeaderSkeleton />
+        
+        {/* Stats Grid - 6 columns */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="glass rounded-xl border border-border/40 p-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-9 w-9 rounded-lg" variant="primary" shimmer="glow" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-5 w-12" shimmer="intense" />
+                  <Skeleton className="h-2.5 w-16" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Volume Chart Skeleton */}
+          <div className="glass rounded-xl border border-border/40 p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-40" shimmer="intense" />
+                  <Skeleton className="h-3 w-56" />
+                </div>
+              </div>
+              <div className="h-[280px] flex items-end gap-3 pt-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="flex-1 flex flex-col gap-1">
+                    <Skeleton 
+                      className="w-full rounded-t-md" 
+                      style={{ height: `${20 + Math.random() * 70}%` }}
+                      variant="primary"
+                      shimmer="glow"
+                    />
+                    <Skeleton className="h-3 w-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Outcomes Chart Skeleton */}
+          <div className="glass rounded-xl border border-border/40 p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-44" shimmer="intense" />
+                  <Skeleton className="h-3 w-48" />
+                </div>
+              </div>
+              <div className="flex items-center justify-center h-[280px]">
+                <div className="relative">
+                  <Skeleton className="h-48 w-48 rounded-full" variant="primary" shimmer="glow" />
+                  <div className="absolute inset-8">
+                    <Skeleton className="h-full w-full rounded-full bg-background" />
+                  </div>
+                </div>
+                <div className="ml-6 space-y-3">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Skeleton className="h-3 w-3 rounded-full" />
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-3 w-8" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Trend Chart Skeleton */}
+        <div className="glass rounded-xl border border-border/40 p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-48" shimmer="intense" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <Skeleton className="h-8 w-28 rounded-md" />
+            </div>
+            <div className="h-[220px] flex items-end gap-1 pt-4">
+              {[...Array(30)].map((_, i) => (
+                <Skeleton 
+                  key={i} 
+                  className="flex-1 rounded-t-sm" 
+                  style={{ height: `${15 + Math.sin(i * 0.5) * 30 + Math.random() * 40}%` }}
+                  shimmer="glow"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="glass rounded-xl border border-border/40 p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-52" shimmer="intense" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
+            
+            {/* Table Header */}
+            <div className="grid grid-cols-8 gap-4 p-3 bg-muted/20 rounded-lg">
+              {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-4 w-full" />
+              ))}
+            </div>
+
+            {/* Table Rows */}
+            <div className="space-y-2">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="grid grid-cols-8 gap-4 p-4 rounded-lg border border-border/30 items-center">
+                  <div className="flex items-center gap-3 col-span-2">
+                    <Skeleton className="h-10 w-10 rounded-full" shimmer={i === 0 ? "glow" : "default"} />
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                  </div>
+                  {[...Array(6)].map((_, j) => (
+                    <Skeleton key={j} className="h-5 w-full" />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
