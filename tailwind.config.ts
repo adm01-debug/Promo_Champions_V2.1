@@ -109,6 +109,10 @@ export default {
         xl: "calc(var(--radius) + 4px)",
         "2xl": "calc(var(--radius) + 8px)",
       },
+      scale: {
+        "98": "0.98",
+        "102": "1.02",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
