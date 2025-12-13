@@ -45,16 +45,16 @@ export function CoachingComparison() {
   const clearSelection = () => setSelectedIds([]);
 
   const getComparisonColor = (value: number) => {
-    if (value > 5) return 'text-green-400';
-    if (value < -5) return 'text-red-400';
-    return 'text-yellow-400';
+    if (value > 5) return 'text-status-success';
+    if (value < -5) return 'text-status-error';
+    return 'text-status-warning';
   };
 
   const getRankBadge = (index: number) => {
     const colors = [
-      'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      'bg-slate-400/20 text-slate-300 border-slate-400/30',
-      'bg-orange-600/20 text-orange-400 border-orange-600/30',
+      'bg-rank-gold/20 text-rank-gold border-rank-gold/30',
+      'bg-rank-silver/20 text-rank-silver border-rank-silver/30',
+      'bg-rank-bronze/20 text-rank-bronze border-rank-bronze/30',
       'bg-muted text-muted-foreground'
     ];
     return colors[index] || colors[3];
@@ -66,11 +66,11 @@ export function CoachingComparison() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-br from-blue-900/30 to-cyan-900/20 border-blue-500/20">
+      <Card className="bg-gradient-to-br from-secondary/30 to-info/20 border-secondary/20">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/20">
-              <Users className="h-6 w-6 text-blue-400" />
+            <div className="p-2 rounded-lg bg-secondary/20">
+              <Users className="h-6 w-6 text-secondary" />
             </div>
             <div>
               <CardTitle className="text-xl">Comparativo de Coaching</CardTitle>
@@ -87,7 +87,7 @@ export function CoachingComparison() {
                 key={sp.id}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all ${
                   selectedIds.includes(sp.id)
-                    ? 'bg-blue-500/20 border border-blue-500/50'
+                    ? 'bg-secondary/20 border border-secondary/50'
                     : 'bg-background/30 border border-border/50 hover:border-border'
                 }`}
               >
@@ -121,8 +121,8 @@ export function CoachingComparison() {
           <CardContent className="py-12">
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
-                <Loader2 className="h-12 w-12 animate-spin text-blue-400" />
-                <Sparkles className="h-5 w-5 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
+                <Loader2 className="h-12 w-12 animate-spin text-secondary" />
+                <Sparkles className="h-5 w-5 text-status-warning absolute -top-1 -right-1 animate-pulse" />
               </div>
               <p className="text-muted-foreground">Carregando dados de coaching...</p>
             </div>
@@ -137,7 +137,7 @@ export function CoachingComparison() {
           <Card className="bg-card/50 border-border/50">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-blue-400" />
+                <BarChart3 className="h-5 w-5 text-secondary" />
                 Comparativo de Métricas
               </CardTitle>
             </CardHeader>
@@ -174,8 +174,8 @@ export function CoachingComparison() {
                           </Badge>
                         </td>
                         <td className="text-center py-3 px-2 font-mono">{coaching.metrics.totalDeals}</td>
-                        <td className="text-center py-3 px-2 font-mono text-green-400">{coaching.metrics.wins}</td>
-                        <td className="text-center py-3 px-2 font-mono text-red-400">{coaching.metrics.losses}</td>
+                        <td className="text-center py-3 px-2 font-mono text-status-success">{coaching.metrics.wins}</td>
+                        <td className="text-center py-3 px-2 font-mono text-status-error">{coaching.metrics.losses}</td>
                         <td className="text-center py-3 px-2">
                           <span className="font-bold text-lg">{coaching.metrics.winRate.toFixed(1)}%</span>
                         </td>
@@ -225,12 +225,12 @@ export function CoachingComparison() {
                   {/* Strengths */}
                   {coaching.coaching.strengths.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium text-green-400 mb-2 flex items-center gap-1">
+                      <h4 className="text-sm font-medium text-status-success mb-2 flex items-center gap-1">
                         <Target className="h-3 w-3" /> Pontos Fortes
                       </h4>
                       <div className="space-y-1">
                         {coaching.coaching.strengths.slice(0, 2).map((s, i) => (
-                          <p key={i} className="text-xs text-muted-foreground bg-green-500/10 rounded px-2 py-1">
+                          <p key={i} className="text-xs text-muted-foreground bg-status-success/10 rounded px-2 py-1">
                             {s.title}
                           </p>
                         ))}
@@ -241,12 +241,12 @@ export function CoachingComparison() {
                   {/* Improvements */}
                   {coaching.coaching.improvements.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium text-yellow-400 mb-2 flex items-center gap-1">
+                      <h4 className="text-sm font-medium text-status-warning mb-2 flex items-center gap-1">
                         <TrendingUp className="h-3 w-3" /> Áreas de Melhoria
                       </h4>
                       <div className="space-y-1">
                         {coaching.coaching.improvements.slice(0, 2).map((im, i) => (
-                          <div key={i} className="flex items-center gap-2 text-xs bg-yellow-500/10 rounded px-2 py-1">
+                          <div key={i} className="flex items-center gap-2 text-xs bg-status-warning/10 rounded px-2 py-1">
                             <span className="text-muted-foreground flex-1">{im.title}</span>
                             <Badge variant="outline" className="text-[10px] px-1">
                               {im.priority}
@@ -260,12 +260,12 @@ export function CoachingComparison() {
                   {/* Top Loss Reasons */}
                   {coaching.metrics.topLossReasons.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium text-red-400 mb-2">Top Motivos de Perda</h4>
+                      <h4 className="text-sm font-medium text-status-error mb-2">Top Motivos de Perda</h4>
                       <div className="space-y-1">
                         {coaching.metrics.topLossReasons.slice(0, 2).map((r, i) => (
-                          <div key={i} className="flex items-center justify-between text-xs bg-red-500/10 rounded px-2 py-1">
+                          <div key={i} className="flex items-center justify-between text-xs bg-status-error/10 rounded px-2 py-1">
                             <span className="text-muted-foreground">{r.reason}</span>
-                            <span className="text-red-400 font-mono">{r.percentage}%</span>
+                            <span className="text-status-error font-mono">{r.percentage}%</span>
                           </div>
                         ))}
                       </div>
@@ -277,9 +277,9 @@ export function CoachingComparison() {
           </div>
 
           {/* Insights Summary */}
-          <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/10 border-purple-500/20">
+          <Card className="bg-gradient-to-br from-status-purple/20 to-accent/10 border-status-purple/20">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2 text-purple-400">
+              <CardTitle className="text-lg flex items-center gap-2 text-status-purple">
                 <Sparkles className="h-5 w-5" />
                 Insights do Comparativo
               </CardTitle>
@@ -296,7 +296,7 @@ export function CoachingComparison() {
                     </Avatar>
                     <div>
                       <p className="font-medium">{rankedData[0]?.salesperson.name}</p>
-                      <p className="text-xs text-green-400">{rankedData[0]?.metrics.winRate.toFixed(1)}% win rate</p>
+                      <p className="text-xs text-status-success">{rankedData[0]?.metrics.winRate.toFixed(1)}% win rate</p>
                     </div>
                   </div>
                 </div>
@@ -305,7 +305,7 @@ export function CoachingComparison() {
                 {rankedData.length >= 2 && (
                   <div className="bg-background/30 rounded-lg p-4">
                     <p className="text-xs text-muted-foreground mb-1">Gap entre 1º e último</p>
-                    <p className="text-2xl font-bold text-yellow-400">
+                    <p className="text-2xl font-bold text-status-warning">
                       {(rankedData[0]?.metrics.winRate - rankedData[rankedData.length - 1]?.metrics.winRate).toFixed(1)}%
                     </p>
                     <p className="text-xs text-muted-foreground">diferença de win rate</p>
@@ -315,7 +315,7 @@ export function CoachingComparison() {
                 {/* Team Average */}
                 <div className="bg-background/30 rounded-lg p-4">
                   <p className="text-xs text-muted-foreground mb-1">Média do Grupo</p>
-                  <p className="text-2xl font-bold text-blue-400">
+                  <p className="text-2xl font-bold text-secondary">
                     {(rankedData.reduce((sum, c) => sum + c.metrics.winRate, 0) / rankedData.length).toFixed(1)}%
                   </p>
                   <p className="text-xs text-muted-foreground">win rate médio</p>
@@ -331,8 +331,8 @@ export function CoachingComparison() {
         <Card className="bg-card/30 border-dashed">
           <CardContent className="py-12">
             <div className="flex flex-col items-center gap-4 text-center">
-              <div className="p-4 rounded-full bg-blue-500/10">
-                <Users className="h-8 w-8 text-blue-400" />
+              <div className="p-4 rounded-full bg-secondary/10">
+                <Users className="h-8 w-8 text-secondary" />
               </div>
               <div>
                 <h3 className="font-medium">Selecione pelo menos 2 vendedores</h3>

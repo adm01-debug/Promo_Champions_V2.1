@@ -54,14 +54,14 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                 <p className="text-xl font-bold text-primary">{data.totalAvgDays.toFixed(1)}d</p>
                 <p className="text-xs text-muted-foreground">Ciclo Total</p>
               </div>
-              <div className="bg-green-500/10 rounded-lg p-3 text-center border border-green-500/20">
-                <Zap className="h-5 w-5 text-green-500 mx-auto mb-1" />
-                <p className="text-sm font-bold text-green-500">{data.fastestStage}</p>
+              <div className="bg-status-success/10 rounded-lg p-3 text-center border border-status-success/20">
+                <Zap className="h-5 w-5 text-status-success mx-auto mb-1" />
+                <p className="text-sm font-bold text-status-success">{data.fastestStage}</p>
                 <p className="text-xs text-muted-foreground">Mais Rápida</p>
               </div>
-              <div className="bg-amber-500/10 rounded-lg p-3 text-center border border-amber-500/20">
-                <AlertTriangle className="h-5 w-5 text-amber-500 mx-auto mb-1" />
-                <p className="text-sm font-bold text-amber-500">{data.slowestStage}</p>
+              <div className="bg-status-warning/10 rounded-lg p-3 text-center border border-status-warning/20">
+                <AlertTriangle className="h-5 w-5 text-status-warning mx-auto mb-1" />
+                <p className="text-sm font-bold text-status-warning">{data.slowestStage}</p>
                 <p className="text-xs text-muted-foreground">Gargalo</p>
               </div>
             </div>

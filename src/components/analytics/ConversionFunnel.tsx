@@ -59,9 +59,9 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
                 <p className="text-sm font-bold text-destructive truncate">{data.biggestBottleneck}</p>
                 <p className="text-xs text-muted-foreground">Maior Gargalo</p>
               </div>
-              <div className="bg-green-500/10 rounded-lg p-3 text-center border border-green-500/20">
-                <TrendingUp className="h-5 w-5 text-green-500 mx-auto mb-1" />
-                <p className="text-sm font-bold text-green-500 truncate">{data.bestConversion}</p>
+              <div className="bg-status-success/10 rounded-lg p-3 text-center border border-status-success/20">
+                <TrendingUp className="h-5 w-5 text-status-success mx-auto mb-1" />
+                <p className="text-sm font-bold text-status-success truncate">{data.bestConversion}</p>
                 <p className="text-xs text-muted-foreground">Melhor Conversão</p>
               </div>
             </div>

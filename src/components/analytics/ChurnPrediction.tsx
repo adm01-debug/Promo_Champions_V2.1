@@ -7,10 +7,10 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const RISK_COLORS = {
-  critical: 'hsl(0, 84%, 60%)',
-  high: 'hsl(25, 95%, 53%)',
-  medium: 'hsl(38, 92%, 50%)',
-  low: 'hsl(142, 76%, 36%)',
+  critical: 'hsl(var(--status-error))',
+  high: 'hsl(var(--primary))',
+  medium: 'hsl(var(--status-warning))',
+  low: 'hsl(var(--status-success))',
 };
 
 const RISK_LABELS = {
@@ -53,33 +53,33 @@ export function ChurnPrediction() {
           </CardContent>
         </Card>
         
-        <Card className="bg-orange-500/10 border-orange-500/30">
+        <Card className="bg-primary/10 border-primary/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingDown className="h-4 w-4 text-orange-500" />
+              <TrendingDown className="h-4 w-4 text-primary" />
               <span className="text-xs text-muted-foreground">Alto</span>
             </div>
-            <p className="text-2xl font-bold text-orange-500">{data?.summary.high || 0}</p>
+            <p className="text-2xl font-bold text-primary">{data?.summary.high || 0}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-yellow-500/10 border-yellow-500/30">
+        <Card className="bg-status-warning/10 border-status-warning/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-yellow-500" />
+              <Users className="h-4 w-4 text-status-warning" />
               <span className="text-xs text-muted-foreground">Médio</span>
             </div>
-            <p className="text-2xl font-bold text-yellow-500">{data?.summary.medium || 0}</p>
+            <p className="text-2xl font-bold text-status-warning">{data?.summary.medium || 0}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-green-500/10 border-green-500/30">
+        <Card className="bg-status-success/10 border-status-success/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-green-500" />
+              <Users className="h-4 w-4 text-status-success" />
               <span className="text-xs text-muted-foreground">Baixo</span>
             </div>
-            <p className="text-2xl font-bold text-green-500">{data?.summary.low || 0}</p>
+            <p className="text-2xl font-bold text-status-success">{data?.summary.low || 0}</p>
           </CardContent>
         </Card>
 
