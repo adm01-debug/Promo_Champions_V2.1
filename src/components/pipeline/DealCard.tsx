@@ -90,7 +90,8 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
       ref={setNodeRef}
       style={style}
       className={cn(
-        "glass rounded-lg p-3 cursor-grab active:cursor-grabbing hover-lift",
+        "bg-card rounded-lg p-3 cursor-grab active:cursor-grabbing border border-border/60 card-elevated hover-lift",
+        "dark:border-border/40 dark:border-glow",
         isDragging && "opacity-50 scale-105 shadow-2xl z-50"
       )}
       {...attributes}
