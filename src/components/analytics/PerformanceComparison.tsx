@@ -72,32 +72,39 @@ function SalespersonCard({
   rank, 
   avgRevenue, 
   avgActivities, 
-  avgWinRate 
+  avgWinRate,
+  index 
 }: { 
   person: SalespersonPerformance; 
   rank: number;
   avgRevenue: number;
   avgActivities: number;
   avgWinRate: number;
+  index: number;
 }) {
   const isTop = rank === 1;
   
   return (
-    <div className={`p-4 rounded-lg border transition-all ${
-      isTop 
-        ? "bg-gradient-to-r from-rank-gold/20 via-rank-gold/10 to-status-warning/20 border-rank-gold/30" 
-        : "bg-card/50 border-border/50 hover:border-border"
-    }`}>
+    <div 
+      className={`p-4 rounded-xl glass hover-lift transition-all animate-fade-in ${
+        isTop 
+          ? "ring-1 ring-rank-gold/30 hover-glow-gold" 
+          : ""
+      }`}
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
       <div className="flex items-start gap-3">
         <div className="relative">
-          <Avatar className={`h-12 w-12 ${isTop ? "border-2 border-rank-gold" : ""}`}>
+          <Avatar className={`h-12 w-12 transition-all ${
+            isTop ? "border-2 border-rank-gold shadow-lg shadow-rank-gold/20" : ""
+          }`}>
             <AvatarImage src={person.avatar_url || ""} />
-            <AvatarFallback className="bg-primary/20 text-primary font-bold">
+            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-bold">
               {person.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           {isTop && (
-            <div className="absolute -top-1 -right-1 bg-rank-gold rounded-full p-1">
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg">
               <Crown className="h-3 w-3 text-background" />
             </div>
           )}
@@ -105,8 +112,14 @@ function SalespersonCard({
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-semibold truncate">{person.name}</span>
-            {isTop && <Badge variant="secondary" className="bg-rank-gold/20 text-rank-gold text-[10px]">Top</Badge>}
+            <span className={`font-semibold truncate ${isTop ? "gradient-text" : ""}`}>
+              {person.name}
+            </span>
+            {isTop && (
+              <Badge variant="secondary" className="bg-rank-gold/20 text-rank-gold text-[10px]">
+                Top
+              </Badge>
+            )}
           </div>
           
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 text-sm">
@@ -144,7 +157,7 @@ function SalespersonCard({
             <div className="mt-3">
               <div className="flex items-center justify-between text-xs mb-1">
                 <span className="text-muted-foreground">Meta</span>
-                <span className={person.goalProgress >= 100 ? "text-status-success" : "text-foreground"}>
+                <span className={person.goalProgress >= 100 ? "text-status-success font-medium" : "text-foreground"}>
                   {person.goalProgress.toFixed(0)}%
                 </span>
               </div>
@@ -166,15 +179,17 @@ export function PerformanceComparison() {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
-            Comparativo de Performance
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
+            <span className="gradient-text font-display">Comparativo de Performance</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-[400px] w-full" />
+          <Skeleton className="h-[400px] w-full rounded-xl animate-pulse" />
         </CardContent>
       </Card>
     );
@@ -182,16 +197,20 @@ export function PerformanceComparison() {
 
   if (!benchmarks || benchmarks.length === 0) {
     return (
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
-            Comparativo de Performance
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
+            <span className="gradient-text font-display">Comparativo de Performance</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
-            <Users className="h-12 w-12 mb-3 opacity-50" />
+          <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground glass rounded-xl">
+            <div className="p-4 rounded-full bg-muted/20 mb-3">
+              <Users className="h-10 w-10 opacity-50" />
+            </div>
             <p className="text-sm">Nenhum dado disponível para comparação</p>
           </div>
         </CardContent>
@@ -225,13 +244,18 @@ export function PerformanceComparison() {
     <div className="space-y-6">
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {benchmarks.map((benchmark) => (
-          <Card key={benchmark.role} className="bg-card/50 backdrop-blur border-border/50">
+        {benchmarks.map((benchmark, index) => (
+          <Card 
+            key={benchmark.role} 
+            className="glass dark:border-glow card-elevated hover-lift animate-fade-in"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-4">
                 <Badge 
                   variant="secondary" 
                   style={{ backgroundColor: `${ROLE_COLORS[benchmark.role]}20`, color: ROLE_COLORS[benchmark.role] }}
+                  className="font-medium"
                 >
                   {ROLE_LABELS[benchmark.role]}
                 </Badge>
@@ -243,7 +267,7 @@ export function PerformanceComparison() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Receita Média</span>
-                  <span className="font-bold">{formatCurrency(benchmark.avgRevenue)}</span>
+                  <span className="font-bold font-display gradient-text">{formatCurrency(benchmark.avgRevenue)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Win Rate Médio</span>
@@ -258,9 +282,9 @@ export function PerformanceComparison() {
               {benchmark.topPerformer && (
                 <div className="mt-4 pt-4 border-t border-border/50">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="h-8 w-8 border border-rank-gold/50">
                       <AvatarImage src={benchmark.topPerformer.avatar_url || ""} />
-                      <AvatarFallback className="text-xs">
+                      <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5">
                         {benchmark.topPerformer.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
@@ -268,7 +292,9 @@ export function PerformanceComparison() {
                       <p className="text-xs text-muted-foreground">Top Performer</p>
                       <p className="text-sm font-medium">{benchmark.topPerformer.name}</p>
                     </div>
-                    <Trophy className="h-4 w-4 text-rank-gold ml-auto" />
+                    <div className="ml-auto p-1.5 rounded-full bg-rank-gold/20">
+                      <Trophy className="h-4 w-4 text-rank-gold" />
+                    </div>
                   </div>
                 </div>
               )}
@@ -280,15 +306,17 @@ export function PerformanceComparison() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue Bar Chart */}
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="glass dark:border-glow card-elevated">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-primary" />
-              Ranking de Receita
+              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <span className="gradient-text font-display">Ranking de Receita</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[300px] animate-fade-in">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueChartData} layout="vertical" margin={{ left: 60, right: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
@@ -306,7 +334,8 @@ export function PerformanceComparison() {
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
+                      borderRadius: "12px",
+                      boxShadow: "0 10px 40px -10px hsl(var(--primary) / 0.2)",
                     }}
                     formatter={(value: number) => [formatCurrency(value), "Receita"]}
                   />
@@ -322,15 +351,17 @@ export function PerformanceComparison() {
         </Card>
 
         {/* Radar Chart */}
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="glass dark:border-glow card-elevated">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" />
-              Perfil por Função
+              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+                <Target className="h-4 w-4 text-primary" />
+              </div>
+              <span className="gradient-text font-display">Perfil por Função</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[300px] animate-fade-in">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="hsl(var(--border))" />
@@ -349,7 +380,9 @@ export function PerformanceComparison() {
                       fillOpacity={0.2}
                     />
                   ))}
-                  <Legend />
+                  <Legend 
+                    formatter={(value) => <span className="text-muted-foreground text-sm">{value}</span>}
+                  />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -358,15 +391,17 @@ export function PerformanceComparison() {
       </div>
 
       {/* Detailed Comparison by Role */}
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              Detalhamento por Vendedor
+              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <span className="gradient-text font-display">Detalhamento por Vendedor</span>
             </CardTitle>
             <Tabs value={selectedRole} onValueChange={setSelectedRole}>
-              <TabsList className="bg-background/50">
+              <TabsList className="glass">
                 <TabsTrigger value="all">Todos</TabsTrigger>
                 {benchmarks.map((b) => (
                   <TabsTrigger key={b.role} value={b.role}>
@@ -379,15 +414,16 @@ export function PerformanceComparison() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredBenchmarks.flatMap((benchmark) =>
-              benchmark.salespeople.map((person, index) => (
+            {filteredBenchmarks.flatMap((benchmark, benchmarkIndex) =>
+              benchmark.salespeople.map((person, personIndex) => (
                 <SalespersonCard
                   key={person.id}
                   person={person}
-                  rank={index + 1}
+                  rank={personIndex + 1}
                   avgRevenue={benchmark.avgRevenue}
                   avgActivities={benchmark.avgActivities}
                   avgWinRate={benchmark.avgWinRate}
+                  index={benchmarkIndex * benchmark.salespeople.length + personIndex}
                 />
               ))
             )}
