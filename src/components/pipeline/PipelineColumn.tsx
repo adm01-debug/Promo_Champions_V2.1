@@ -24,6 +24,7 @@ interface LeadScoreData {
 interface ActiveCadenceInfo {
   cadenceName: string;
   currentStep: number;
+  status: 'active' | 'paused';
 }
 
 interface PipelineColumnProps {

@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer, Play, Zap, Pause, X, MoreHorizontal } from "lucide-react";
+import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer, Play, Zap, Pause, X, MoreHorizontal, PlayCircle } from "lucide-react";
 import { Deal } from "@/hooks/usePipeline";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -21,7 +21,7 @@ import { getScoreColor, getScoreBgColor, getScoreLabel } from "@/hooks/useLeadSc
 import { DealTimeline } from "./DealTimeline";
 import { EnrollCadenceDialog } from "@/components/cadences/EnrollCadenceDialog";
 import { Button } from "@/components/ui/button";
-import { usePauseCadence, useCancelCadence } from "@/hooks/useCadences";
+import { usePauseCadence, useCancelCadence, useResumeCadence } from "@/hooks/useCadences";
 
 interface DealProbability {
   probability: number;
@@ -43,6 +43,7 @@ interface LeadScoreData {
 interface ActiveCadenceInfo {
   cadenceName: string;
   currentStep: number;
+  status: 'active' | 'paused';
 }
 
 interface DealCardProps {
@@ -55,6 +56,7 @@ interface DealCardProps {
 export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCardProps) => {
   const pauseCadence = usePauseCadence();
   const cancelCadence = useCancelCadence();
+  const resumeCadence = useResumeCadence();
   
   const {
     attributes,
@@ -189,30 +191,56 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button 
-                      className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-medium hover:bg-purple-500/30 transition-colors cursor-pointer"
+                      className={cn(
+                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer",
+                        activeCadence.status === 'paused' 
+                          ? "bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30"
+                          : "bg-purple-500/20 text-purple-400 hover:bg-purple-500/30"
+                      )}
                       onClick={(e) => e.stopPropagation()}
                       onPointerDown={(e) => e.stopPropagation()}
                     >
-                      <Zap className="h-3 w-3" />
-                      <span>Etapa {activeCadence.currentStep + 1}</span>
+                      {activeCadence.status === 'paused' ? (
+                        <Pause className="h-3 w-3" />
+                      ) : (
+                        <Zap className="h-3 w-3" />
+                      )}
+                      <span>
+                        {activeCadence.status === 'paused' ? 'Pausada' : `Etapa ${activeCadence.currentStep + 1}`}
+                      </span>
                       <MoreHorizontal className="h-3 w-3 ml-0.5" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-40">
                     <div className="px-2 py-1.5 border-b border-border">
                       <p className="text-xs font-medium">{activeCadence.cadenceName}</p>
-                      <p className="text-[10px] text-muted-foreground">Cadência ativa</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {activeCadence.status === 'paused' ? 'Cadência pausada' : 'Cadência ativa'}
+                      </p>
                     </div>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        pauseCadence.mutate(deal.id);
-                      }}
-                      disabled={pauseCadence.isPending}
-                    >
-                      <Pause className="h-3.5 w-3.5 mr-2" />
-                      Pausar
-                    </DropdownMenuItem>
+                    {activeCadence.status === 'paused' ? (
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resumeCadence.mutate(deal.id);
+                        }}
+                        disabled={resumeCadence.isPending}
+                      >
+                        <PlayCircle className="h-3.5 w-3.5 mr-2" />
+                        Retomar
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          pauseCadence.mutate(deal.id);
+                        }}
+                        disabled={pauseCadence.isPending}
+                      >
+                        <Pause className="h-3.5 w-3.5 mr-2" />
+                        Pausar
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
