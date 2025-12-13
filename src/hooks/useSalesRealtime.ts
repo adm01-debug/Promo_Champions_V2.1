@@ -1,9 +1,10 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useSoundSettings } from "./useSoundSettings";
-import { XP_REWARDS, calculateLevelFromXP } from "./useSalespersonXP";
+import { XP_REWARDS, calculateLevelFromXP, getLevelInfo } from "./useSalespersonXP";
+import { useCelebration } from "./useCelebration";
 
 interface SalePayload {
   id: string;
@@ -23,6 +24,13 @@ const RANK_TITLES = {
 export function useSalesRealtime(currentSalespersonId?: string) {
   const queryClient = useQueryClient();
   const { playSound } = useSoundSettings();
+  const { celebrateLevelUp, triggerLevelUpConfetti } = useCelebration();
+  const celebrationRef = useRef({ celebrateLevelUp, triggerLevelUpConfetti });
+
+  // Keep refs updated
+  useEffect(() => {
+    celebrationRef.current = { celebrateLevelUp, triggerLevelUpConfetti };
+  }, [celebrateLevelUp, triggerLevelUpConfetti]);
 
   const triggerConfetti = useCallback(async (saleAmount: number) => {
     const confetti = (await import('canvas-confetti')).default;
@@ -152,10 +160,31 @@ export function useSalesRealtime(currentSalespersonId?: string) {
               playSound();
               triggerConfetti(newSale.amount);
 
-              // Award XP for the sale
+              // Award XP for the sale and check for level up
               const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
               if (xpFromSale > 0) {
-                await awardSaleXP(newSale.salesperson_id, xpFromSale, newSale.id, newSale.amount);
+                const levelUpResult = await awardSaleXP(
+                  newSale.salesperson_id, 
+                  xpFromSale, 
+                  newSale.id, 
+                  newSale.amount,
+                  salesperson.name
+                );
+
+                // Trigger level up celebration if leveled up
+                if (levelUpResult?.leveledUp) {
+                  const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
+                  
+                  // Delay level up celebration to not overlap with sale celebration
+                  setTimeout(() => {
+                    celebrationRef.current.celebrateLevelUp(
+                      salesperson.name,
+                      levelUpResult.newLevel,
+                      newLevelInfo.title,
+                      newLevelInfo.emoji
+                    );
+                  }, 1500);
+                }
               }
 
               // Show toast notification
@@ -199,7 +228,13 @@ export function useSalesRealtime(currentSalespersonId?: string) {
 }
 
 // Helper function to award XP for sales
-async function awardSaleXP(salespersonId: string, xpAmount: number, saleId: string, saleAmount: number) {
+async function awardSaleXP(
+  salespersonId: string, 
+  xpAmount: number, 
+  saleId: string, 
+  saleAmount: number,
+  salespersonName: string
+): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
   // Get or create XP record
   let { data: xpRecord } = await supabase
     .from("salesperson_xp")
@@ -207,6 +242,7 @@ async function awardSaleXP(salespersonId: string, xpAmount: number, saleId: stri
     .eq("salesperson_id", salespersonId)
     .maybeSingle();
 
+  const previousLevel = xpRecord?.current_level || 1;
   const newTotalXP = (xpRecord?.total_xp || 0) + xpAmount;
   const levelInfo = calculateLevelFromXP(newTotalXP);
 
@@ -246,6 +282,25 @@ async function awardSaleXP(salespersonId: string, xpAmount: number, saleId: stri
       source_id: saleId,
       description: `Venda de ${formattedAmount}`,
     });
+
+  // Check if leveled up and show special toast
+  const leveledUp = levelInfo.level > previousLevel;
+  if (leveledUp) {
+    const newLevelInfo = getLevelInfo(levelInfo.level);
+    toast.success(
+      `${newLevelInfo.emoji} ${salespersonName} subiu para o nível ${levelInfo.level}!`,
+      {
+        description: `Novo título: ${newLevelInfo.title}`,
+        duration: 6000,
+      }
+    );
+  }
+
+  return {
+    leveledUp,
+    newLevel: levelInfo.level,
+    previousLevel,
+  };
 }
 
 export function getRankTitle(rank: number) {
