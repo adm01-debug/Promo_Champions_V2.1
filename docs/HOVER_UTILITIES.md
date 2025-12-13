@@ -23,6 +23,17 @@ Este documento descreve todas as classes utilitárias de hover disponíveis no d
 | `hover-glow-accent` | Accent (roxo) | Média | Elementos especiais |
 | `hover-glow-gold` | Gold (dourado) | Alta | Rankings, conquistas, prêmios |
 | `hover-border-glow` | Primary | Sutil | Borda com glow suave |
+
+### Button Glow Variants
+
+O componente Button inclui variantes com glow integrado:
+
+| Variant | Cor | Descrição |
+|---------|-----|-----------|
+| `glow` | Primary (laranja) | CTA principal com glow |
+| `glow-secondary` | Secondary (azul) | CTA secundário com glow |
+| `glow-success` | Success (verde) | Ações de confirmação |
+| `glow-accent` | Accent (roxo) | Elementos especiais |
 | `hover-scale-sm` | 102% | `shadow-md` | - | Cards pequenos, itens de lista |
 | `hover-scale` | 105% | `shadow-lg` | - | Botões, badges, elementos médios |
 | `hover-scale-lg` | 110% | `shadow-xl` | - | Cards destacados, CTAs |
