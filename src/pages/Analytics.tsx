@@ -7,8 +7,9 @@ import { ABCAnalysis } from '@/components/analytics/ABCAnalysis';
 import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
 import { ChurnPrediction } from '@/components/analytics/ChurnPrediction';
 import { SalespersonCoaching } from '@/components/analytics/SalespersonCoaching';
+import { CoachingComparison } from '@/components/analytics/CoachingComparison';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users } from 'lucide-react';
 
 export default function Analytics() {
   return (
@@ -60,6 +61,10 @@ export default function Analytics() {
               <Brain className="h-4 w-4" />
               Coaching IA
             </TabsTrigger>
+            <TabsTrigger value="comparison" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Users className="h-4 w-4" />
+              Comparativo
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="winloss" className="space-y-4">
@@ -92,6 +97,10 @@ export default function Analytics() {
 
           <TabsContent value="coaching" className="space-y-4">
             <SalespersonCoaching />
+          </TabsContent>
+
+          <TabsContent value="comparison" className="space-y-4">
+            <CoachingComparison />
           </TabsContent>
         </Tabs>
       </div>
