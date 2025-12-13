@@ -4,10 +4,25 @@ Este documento descreve todas as classes utilitárias de hover disponíveis no d
 
 ## Visão Geral
 
-O sistema inclui 4 classes principais de hover que podem ser aplicadas a qualquer elemento interativo (cards, botões, links, etc.):
+### Classes de Escala e Elevação
 
 | Classe | Escala | Shadow | Translate | Uso Recomendado |
 |--------|--------|--------|-----------|-----------------|
+| `hover-scale-sm` | 102% | `shadow-md` | - | Cards pequenos, itens de lista |
+| `hover-scale` | 105% | `shadow-lg` | - | Botões, badges, elementos médios |
+| `hover-scale-lg` | 110% | `shadow-xl` | - | Cards destacados, CTAs |
+| `hover-lift` | 102% | `shadow-lg` | `-0.5` | Cards principais, destaque com elevação |
+
+### Classes de Glow (Brilho)
+
+| Classe | Cor | Intensidade | Uso Recomendado |
+|--------|-----|-------------|-----------------|
+| `hover-glow` | Primary (laranja) | Média | CTAs principais, destaques |
+| `hover-glow-secondary` | Secondary (azul) | Média | Elementos secundários |
+| `hover-glow-success` | Success (verde) | Média | Ações de sucesso, confirmação |
+| `hover-glow-accent` | Accent (roxo) | Média | Elementos especiais |
+| `hover-glow-gold` | Gold (dourado) | Alta | Rankings, conquistas, prêmios |
+| `hover-border-glow` | Primary | Sutil | Borda com glow suave |
 | `hover-scale-sm` | 102% | `shadow-md` | - | Cards pequenos, itens de lista |
 | `hover-scale` | 105% | `shadow-lg` | - | Botões, badges, elementos médios |
 | `hover-scale-lg` | 110% | `shadow-xl` | - | Cards destacados, CTAs |

@@ -208,6 +208,51 @@
     @apply active:scale-98 active:translate-y-0;
   }
   
+  /* Hover glow effects */
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.2);
+  }
+  
+  .hover-glow-secondary {
+    @apply transition-all duration-300;
+  }
+  .hover-glow-secondary:hover {
+    box-shadow: 0 0 20px hsl(var(--secondary) / 0.4), 0 0 40px hsl(var(--secondary) / 0.2);
+  }
+  
+  .hover-glow-success {
+    @apply transition-all duration-300;
+  }
+  .hover-glow-success:hover {
+    box-shadow: 0 0 20px hsl(var(--success) / 0.4), 0 0 40px hsl(var(--success) / 0.2);
+  }
+  
+  .hover-glow-accent {
+    @apply transition-all duration-300;
+  }
+  .hover-glow-accent:hover {
+    box-shadow: 0 0 20px hsl(var(--accent) / 0.4), 0 0 40px hsl(var(--accent) / 0.2);
+  }
+  
+  .hover-glow-gold {
+    @apply transition-all duration-300;
+  }
+  .hover-glow-gold:hover {
+    box-shadow: 0 0 20px hsl(var(--rank-gold) / 0.5), 0 0 40px hsl(var(--rank-gold) / 0.25);
+  }
+  
+  /* Hover border glow (subtle border color change) */
+  .hover-border-glow {
+    @apply transition-all duration-200 border;
+  }
+  .hover-border-glow:hover {
+    @apply border-primary/50;
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.15);
+  }
+  
   .glass {
     @apply bg-card/70 backdrop-blur-xl border border-white/10;
   }
