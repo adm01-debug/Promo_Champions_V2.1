@@ -136,8 +136,11 @@ export function useRecordAchievement() {
         .maybeSingle();
 
       if (existing) {
-        return { achievement: existing, streakMilestone: null, nearRecord: null };
+        return { achievement: existing, streakMilestone: null, nearRecord: null, newRecord: null };
       }
+
+      // Get best streak BEFORE recording new achievement
+      const previousBestStreak = await calculateBestStreak(salespersonId);
 
       // Record the daily goal achievement
       const { data, error } = await supabase
@@ -155,13 +158,17 @@ export function useRecordAchievement() {
 
       // Calculate streak after recording
       const currentStreak = await calculateStreak(salespersonId);
-      const bestStreak = await calculateBestStreak(salespersonId);
       let streakMilestone: number | null = null;
       let nearRecord: { current: number; best: number } | null = null;
+      let newRecord: number | null = null;
 
-      // Check if near personal record (current streak = best streak - 1)
-      if (currentStreak > 1 && currentStreak === bestStreak - 1) {
-        nearRecord = { current: currentStreak, best: bestStreak };
+      // Check if new personal record (current streak > previous best)
+      if (currentStreak > 1 && currentStreak > previousBestStreak) {
+        newRecord = currentStreak;
+      }
+      // Check if near personal record (current streak = previous best - 1)
+      else if (currentStreak > 1 && currentStreak === previousBestStreak - 1) {
+        nearRecord = { current: currentStreak, best: previousBestStreak };
       }
 
       // Check if we hit a streak milestone
@@ -192,7 +199,7 @@ export function useRecordAchievement() {
         }
       }
 
-      return { achievement: data, streakMilestone, nearRecord };
+      return { achievement: data, streakMilestone, nearRecord, newRecord };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["achievements"] });

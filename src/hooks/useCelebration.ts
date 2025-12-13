@@ -100,8 +100,19 @@ export function useCelebration() {
         },
         {
           onSuccess: (result) => {
+            // Check if new personal record
+            if (result?.newRecord) {
+              setTimeout(() => {
+                playSound();
+                triggerConfetti();
+                sendPushNotification(
+                  '🏆 Novo Recorde Pessoal!',
+                  `${salespersonName || 'Vendedor'} bateu seu recorde com ${result.newRecord} dias seguidos!`
+                );
+              }, 800);
+            }
             // Check if near personal record
-            if (result?.nearRecord) {
+            else if (result?.nearRecord) {
               setTimeout(() => {
                 sendPushNotification(
                   '⚡ Quase lá!',
