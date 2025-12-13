@@ -99,28 +99,42 @@ export function SDRDashboardLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 opacity-0 animate-fade-in" 
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           <StatCardSkeleton highlighted />
           <StatCardSkeleton highlighted />
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           <StatCardSkeleton />
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+        >
           <GaugeSkeleton />
           <FunnelSkeleton />
           <ChartSkeleton height="h-[200px]" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+        >
           <LeaderboardSkeleton rows={4} highlighted />
           <TableSkeleton rows={4} />
           <AlertsPanelSkeleton />
@@ -134,26 +148,39 @@ export function CloserDashboardLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           <StatCardSkeleton highlighted />
           <StatCardSkeleton highlighted />
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+        >
           <ChartSkeleton height="h-[300px]" highlighted />
           <LeaderboardSkeleton rows={4} highlighted />
         </div>
 
-        <TableSkeleton rows={5} />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "320ms", animationFillMode: "forwards" }}>
+          <TableSkeleton rows={5} />
+        </div>
       </div>
     </div>
   );
