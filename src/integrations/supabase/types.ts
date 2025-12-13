@@ -151,6 +151,51 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          email: string
+          frequency: string
+          id: string
+          inactive_threshold_days: number
+          is_active: boolean
+          notify_at_risk_goals: boolean
+          notify_inactive_clients: boolean
+          notify_stagnant_deals: boolean
+          preferred_time: string
+          stagnant_threshold_days: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          frequency?: string
+          id?: string
+          inactive_threshold_days?: number
+          is_active?: boolean
+          notify_at_risk_goals?: boolean
+          notify_inactive_clients?: boolean
+          notify_stagnant_deals?: boolean
+          preferred_time?: string
+          stagnant_threshold_days?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          frequency?: string
+          id?: string
+          inactive_threshold_days?: number
+          is_active?: boolean
+          notify_at_risk_goals?: boolean
+          notify_inactive_clients?: boolean
+          notify_stagnant_deals?: boolean
+          preferred_time?: string
+          stagnant_threshold_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       objections_library: {
         Row: {
           category: string
