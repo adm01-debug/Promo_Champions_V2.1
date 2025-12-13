@@ -45,14 +45,14 @@ function SLABadge({ status }: { status: "ok" | "warning" | "critical" }) {
   }
   if (status === "warning") {
     return (
-      <Badge variant="secondary" className="gap-1 bg-amber-500/20 text-amber-400 border-amber-500/30">
+      <Badge variant="secondary" className="gap-1 bg-status-warning/20 text-status-warning border-status-warning/30">
         <AlertTriangle className="h-3 w-3" />
         Atenção
       </Badge>
     );
   }
   return (
-    <Badge variant="secondary" className="gap-1 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+    <Badge variant="secondary" className="gap-1 bg-status-success/20 text-status-success border-status-success/30">
       <CheckCircle className="h-3 w-3" />
       OK
     </Badge>
@@ -61,14 +61,14 @@ function SLABadge({ status }: { status: "ok" | "warning" | "critical" }) {
 
 function LeadCard({ lead }: { lead: LeadSLAStatus }) {
   const borderColor = {
-    critical: "border-red-500/50",
-    warning: "border-amber-500/50",
+    critical: "border-status-error/50",
+    warning: "border-status-warning/50",
     ok: "border-border/50",
   }[lead.sla_status];
 
   const bgColor = {
-    critical: "bg-red-500/5",
-    warning: "bg-amber-500/5",
+    critical: "bg-status-error/5",
+    warning: "bg-status-warning/5",
     ok: "bg-card/50",
   }[lead.sla_status];
 
@@ -195,24 +195,24 @@ export function LeadSLAMonitor() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 text-center">
-            <p className="text-2xl font-bold text-emerald-400">{stats.ok}</p>
-            <p className="text-[10px] text-emerald-400/80">Dentro do SLA</p>
+          <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-status-success">{stats.ok}</p>
+            <p className="text-[10px] text-status-success/80">Dentro do SLA</p>
           </div>
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-center">
-            <p className="text-2xl font-bold text-amber-400">{stats.warning}</p>
-            <p className="text-[10px] text-amber-400/80">Atenção</p>
+          <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-status-warning">{stats.warning}</p>
+            <p className="text-[10px] text-status-warning/80">Atenção</p>
           </div>
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-center">
-            <p className="text-2xl font-bold text-red-400">{stats.critical}</p>
-            <p className="text-[10px] text-red-400/80">Críticos</p>
+          <div className="bg-status-error/10 border border-status-error/20 rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-status-error">{stats.critical}</p>
+            <p className="text-[10px] text-status-error/80">Críticos</p>
           </div>
         </div>
 
         {/* Critical Leads */}
         {criticalLeads.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-red-400 flex items-center gap-1">
+            <h4 className="text-xs font-medium text-status-error flex items-center gap-1">
               <AlertCircle className="h-3.5 w-3.5" />
               Leads Críticos ({criticalLeads.length})
             </h4>
@@ -229,7 +229,7 @@ export function LeadSLAMonitor() {
         {/* Warning Leads */}
         {warningLeads.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-amber-400 flex items-center gap-1">
+            <h4 className="text-xs font-medium text-status-warning flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
               Leads em Atenção ({warningLeads.length})
             </h4>
@@ -245,7 +245,7 @@ export function LeadSLAMonitor() {
 
         {/* All OK message */}
         {criticalLeads.length === 0 && warningLeads.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-8 text-emerald-400">
+          <div className="flex flex-col items-center justify-center py-8 text-status-success">
             <CheckCircle className="h-10 w-10 mb-2" />
             <p className="text-sm font-medium">Todos os leads dentro do SLA!</p>
             <p className="text-xs text-muted-foreground mt-1">

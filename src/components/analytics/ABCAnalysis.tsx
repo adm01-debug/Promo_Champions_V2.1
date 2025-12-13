@@ -6,9 +6,9 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineCh
 import { Package, Users, TrendingUp } from 'lucide-react';
 
 const COLORS = {
-  A: 'hsl(142, 76%, 36%)',
-  B: 'hsl(38, 92%, 50%)',
-  C: 'hsl(0, 84%, 60%)',
+  A: 'hsl(var(--status-success))',
+  B: 'hsl(var(--status-warning))',
+  C: 'hsl(var(--status-error))',
 };
 
 export function ABCAnalysis() {
