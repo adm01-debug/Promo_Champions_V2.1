@@ -66,19 +66,91 @@ export function DashboardLoadingSkeleton() {
 export function PipelineLoadingSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      {/* Header */}
+      <div 
+        className="flex items-center gap-3 opacity-0 animate-fade-in"
+        style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
+      >
         <Skeleton className="p-3 h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
         <div className="space-y-2">
-          <Skeleton className="h-8 w-48" variant="intense" shimmer="intense" />
-          <Skeleton className="h-4 w-64" />
+          <Skeleton className="h-8 w-48" variant="intense" shimmer="glow" />
+          <Skeleton className="h-4 w-64" shimmer="intense" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+      {/* Pipeline Board and Alerts */}
+      <div 
+        className="grid grid-cols-1 xl:grid-cols-4 gap-6 opacity-0 animate-fade-in"
+        style={{ animationDelay: "100ms", animationFillMode: "forwards" }}
+      >
         <div className="xl:col-span-3">
-          <PipelineBoardSkeleton />
+          {/* Pipeline Columns */}
+          <div className="glass rounded-xl border border-border/40 p-4">
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {[
+                { name: "Lead", color: "bg-slate-500" },
+                { name: "Qualificado", color: "bg-blue-500" },
+                { name: "Proposta", color: "bg-purple-500" },
+                { name: "Negociação", color: "bg-amber-500" },
+                { name: "Fechado", color: "bg-green-500" },
+              ].map((stage, stageIndex) => (
+                <div 
+                  key={stage.name} 
+                  className="flex-shrink-0 w-[280px] rounded-xl border border-border/30 bg-muted/20 p-3 opacity-0 animate-fade-in"
+                  style={{ animationDelay: `${200 + stageIndex * 80}ms`, animationFillMode: "forwards" }}
+                >
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${stage.color}`} />
+                      <Skeleton className="h-5 w-24" shimmer={stageIndex === 0 ? "intense" : "default"} />
+                    </div>
+                    <Skeleton className="h-5 w-8 rounded-full" />
+                  </div>
+                  
+                  {/* Deal Cards */}
+                  <div className="space-y-3">
+                    {[...Array(stageIndex === 0 ? 3 : stageIndex === 4 ? 2 : 2)].map((_, cardIndex) => (
+                      <div 
+                        key={cardIndex} 
+                        className="p-3 rounded-lg bg-card border border-border/50 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <Skeleton 
+                            className="h-4 w-28" 
+                            shimmer={stageIndex === 0 && cardIndex === 0 ? "intense" : "default"} 
+                          />
+                          <Skeleton className="h-4 w-4 rounded" />
+                        </div>
+                        <Skeleton className="h-3 w-20" />
+                        <div className="flex items-center justify-between pt-2">
+                          <Skeleton 
+                            className="h-5 w-20" 
+                            variant={stageIndex === 0 && cardIndex === 0 ? "primary" : "default"}
+                            shimmer={stageIndex === 0 && cardIndex === 0 ? "glow" : "default"} 
+                          />
+                          <Skeleton className="h-6 w-6 rounded-full" />
+                        </div>
+                        {stageIndex < 2 && cardIndex === 0 && (
+                          <div className="flex gap-1 pt-1">
+                            <Skeleton className="h-5 w-12 rounded" />
+                            <Skeleton className="h-5 w-14 rounded" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="xl:col-span-1">
+        
+        {/* Alerts Panel */}
+        <div 
+          className="xl:col-span-1 opacity-0 animate-fade-in"
+          style={{ animationDelay: "600ms", animationFillMode: "forwards" }}
+        >
           <AlertsPanelSkeleton />
         </div>
       </div>
