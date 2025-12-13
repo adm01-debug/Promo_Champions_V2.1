@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subDays, parseISO, differenceInDays } from "date-fns";
 import type { Json } from "@/integrations/supabase/types";
+import { XP_REWARDS, calculateLevelFromXP } from "./useSalespersonXP";
 
 export interface Achievement {
   id: string;
@@ -136,7 +137,7 @@ export function useRecordAchievement() {
         .maybeSingle();
 
       if (existing) {
-        return { achievement: existing, streakMilestone: null, nearRecord: null, newRecord: null };
+        return { achievement: existing, streakMilestone: null, nearRecord: null, newRecord: null, xpGained: 0 };
       }
 
       // Get best streak BEFORE recording new achievement
@@ -161,10 +162,18 @@ export function useRecordAchievement() {
       let streakMilestone: number | null = null;
       let nearRecord: { current: number; best: number } | null = null;
       let newRecord: number | null = null;
+      let totalXPGained = 0;
+
+      // Award XP for daily goal
+      totalXPGained += XP_REWARDS.DAILY_GOAL;
+      await addXPToSalesperson(salespersonId, XP_REWARDS.DAILY_GOAL, "achievement", data.id, "Meta diária batida");
 
       // Check if new personal record (current streak > previous best)
       if (currentStreak > 1 && currentStreak > previousBestStreak) {
         newRecord = currentStreak;
+        // Award XP for new record
+        totalXPGained += XP_REWARDS.NEW_RECORD;
+        await addXPToSalesperson(salespersonId, XP_REWARDS.NEW_RECORD, "bonus", null, `Novo recorde pessoal: ${currentStreak} dias`);
       }
       // Check if near personal record (current streak = previous best - 1)
       else if (currentStreak > 1 && currentStreak === previousBestStreak - 1) {
@@ -196,15 +205,85 @@ export function useRecordAchievement() {
             }]);
           
           streakMilestone = currentStreak;
+
+          // Award XP for streak milestone
+          const streakXP = getStreakXP(currentStreak);
+          if (streakXP > 0) {
+            totalXPGained += streakXP;
+            await addXPToSalesperson(salespersonId, streakXP, "streak", null, `Sequência de ${currentStreak} dias`);
+          }
         }
       }
 
-      return { achievement: data, streakMilestone, nearRecord, newRecord };
+      return { achievement: data, streakMilestone, nearRecord, newRecord, xpGained: totalXPGained };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["achievements"] });
+      queryClient.invalidateQueries({ queryKey: ["salesperson-xp"] });
+      queryClient.invalidateQueries({ queryKey: ["all-salespeople-xp"] });
+      queryClient.invalidateQueries({ queryKey: ["xp-history"] });
     },
   });
+}
+
+// Helper function to get streak XP reward
+function getStreakXP(streak: number): number {
+  if (streak >= 15) return XP_REWARDS.STREAK_15_DAYS;
+  if (streak >= 10) return XP_REWARDS.STREAK_10_DAYS;
+  if (streak >= 7) return XP_REWARDS.STREAK_7_DAYS;
+  if (streak >= 5) return XP_REWARDS.STREAK_5_DAYS;
+  if (streak >= 3) return XP_REWARDS.STREAK_3_DAYS;
+  return 0;
+}
+
+// Helper function to add XP to salesperson
+async function addXPToSalesperson(
+  salespersonId: string,
+  xpAmount: number,
+  sourceType: string,
+  sourceId: string | null,
+  description: string
+) {
+  // Get or create XP record
+  let { data: xpRecord } = await supabase
+    .from("salesperson_xp")
+    .select("*")
+    .eq("salesperson_id", salespersonId)
+    .maybeSingle();
+
+  const newTotalXP = (xpRecord?.total_xp || 0) + xpAmount;
+  const levelInfo = calculateLevelFromXP(newTotalXP);
+
+  if (!xpRecord) {
+    await supabase
+      .from("salesperson_xp")
+      .insert({
+        salesperson_id: salespersonId,
+        total_xp: newTotalXP,
+        current_level: levelInfo.level,
+        xp_to_next_level: levelInfo.xpToNext - levelInfo.xpInLevel,
+      });
+  } else {
+    await supabase
+      .from("salesperson_xp")
+      .update({
+        total_xp: newTotalXP,
+        current_level: levelInfo.level,
+        xp_to_next_level: levelInfo.xpToNext - levelInfo.xpInLevel,
+      })
+      .eq("id", xpRecord.id);
+  }
+
+  // Log XP history
+  await supabase
+    .from("xp_history")
+    .insert({
+      salesperson_id: salespersonId,
+      xp_amount: xpAmount,
+      source_type: sourceType,
+      source_id: sourceId,
+      description: description,
+    });
 }
 
 // Hook to get current and best streak for a salesperson

@@ -820,6 +820,44 @@ export type Database = {
         }
         Relationships: []
       }
+      salesperson_xp: {
+        Row: {
+          created_at: string
+          current_level: number
+          id: string
+          salesperson_id: string
+          total_xp: number
+          updated_at: string
+          xp_to_next_level: number
+        }
+        Insert: {
+          created_at?: string
+          current_level?: number
+          id?: string
+          salesperson_id: string
+          total_xp?: number
+          updated_at?: string
+          xp_to_next_level?: number
+        }
+        Update: {
+          created_at?: string
+          current_level?: number
+          id?: string
+          salesperson_id?: string
+          total_xp?: number
+          updated_at?: string
+          xp_to_next_level?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_xp_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           completed_at: string | null
@@ -876,6 +914,44 @@ export type Database = {
           },
           {
             foreignKeyName: "tasks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xp_history: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          salesperson_id: string
+          source_id: string | null
+          source_type: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          salesperson_id: string
+          source_id?: string | null
+          source_type: string
+          xp_amount: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          salesperson_id?: string
+          source_id?: string | null
+          source_type?: string
+          xp_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xp_history_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople"

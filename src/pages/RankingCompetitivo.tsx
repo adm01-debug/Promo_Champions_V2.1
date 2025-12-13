@@ -1,4 +1,4 @@
-import { Trophy, Medal, TrendingUp, Star, Flame, Target, Calendar } from "lucide-react";
+import { Trophy, Medal, TrendingUp, Star, Flame, Target, Calendar, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,9 +10,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from "recharts";
+import { useAllSalespeopleXP, getLevelInfo, calculateLevelFromXP } from "@/hooks/useSalespersonXP";
+import { XPProgressBar } from "@/components/gamification/XPProgressBar";
+import { LevelBadge } from "@/components/gamification/LevelBadge";
 
 const RankingCompetitivo = () => {
   const { data: ranking, isLoading } = useCompetitiveRanking();
+  const { data: xpData } = useAllSalespeopleXP();
 
   // Fetch monthly history
   const { data: monthlyHistory } = useQuery({
@@ -191,6 +195,7 @@ const RankingCompetitivo = () => {
       <Tabs defaultValue="ranking" className="space-y-6">
         <TabsList className="glass">
           <TabsTrigger value="ranking">Ranking Atual</TabsTrigger>
+          <TabsTrigger value="xp">Níveis & XP</TabsTrigger>
           <TabsTrigger value="history">Histórico Mensal</TabsTrigger>
           <TabsTrigger value="achievements">Conquistas</TabsTrigger>
         </TabsList>
@@ -273,6 +278,134 @@ const RankingCompetitivo = () => {
               </CardContent>
             </Card>
           ))}
+        </TabsContent>
+
+        {/* XP & Levels Tab */}
+        <TabsContent value="xp" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <Card className="glass border-border/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total XP do Time</p>
+                    <p className="text-2xl font-bold">
+                      {(xpData || []).reduce((sum, xp) => sum + (xp.total_xp || 0), 0).toLocaleString()}
+                    </p>
+                    <p className="text-sm text-muted-foreground">pontos de experiência</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                    <Sparkles className="h-6 w-6 text-purple-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass border-border/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Nível Médio</p>
+                    <p className="text-2xl font-bold">
+                      {xpData && xpData.length > 0
+                        ? Math.round(xpData.reduce((sum, xp) => sum + (xp.current_level || 1), 0) / xpData.length)
+                        : 1}
+                    </p>
+                    <p className="text-sm text-muted-foreground">do time</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+                    <Star className="h-6 w-6 text-amber-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass border-border/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Maior Nível</p>
+                    <p className="text-2xl font-bold">
+                      {xpData && xpData.length > 0
+                        ? Math.max(...xpData.map(xp => xp.current_level || 1))
+                        : 1}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {xpData && xpData.length > 0 
+                        ? getLevelInfo(Math.max(...xpData.map(xp => xp.current_level || 1))).title
+                        : "Iniciante"}
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-500/20 to-amber-500/20 flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-yellow-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {(xpData || []).map((xpRecord, index) => {
+            const salesperson = xpRecord.salespeople as { id: string; name: string; avatar_url: string | null; role: string } | null;
+            const levelInfo = getLevelInfo(xpRecord.current_level || 1);
+            const { progress, xpInLevel, xpToNext } = calculateLevelFromXP(xpRecord.total_xp || 0);
+
+            return (
+              <Card
+                key={xpRecord.id}
+                className="glass border-border/50 overflow-hidden transition-all hover:scale-[1.005]"
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    {/* Rank */}
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-background/50 flex items-center justify-center">
+                      <span className="text-lg font-bold text-muted-foreground">#{index + 1}</span>
+                    </div>
+
+                    {/* Avatar */}
+                    <Avatar className="h-12 w-12 border-2 border-border/50">
+                      <AvatarImage src={salesperson?.avatar_url || ""} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20">
+                        {(salesperson?.name || "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold truncate">{salesperson?.name || "Vendedor"}</h3>
+                        <LevelBadge totalXP={xpRecord.total_xp || 0} />
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <span>{levelInfo.emoji} {levelInfo.title}</span>
+                        <span>•</span>
+                        <span>{(xpRecord.total_xp || 0).toLocaleString()} XP</span>
+                      </div>
+                      <XPProgressBar totalXP={xpRecord.total_xp || 0} showDetails={false} size="sm" />
+                    </div>
+
+                    {/* XP Details */}
+                    <div className="text-right hidden md:block">
+                      <p className="text-lg font-bold gradient-text">Nv. {xpRecord.current_level || 1}</p>
+                      {(xpRecord.current_level || 1) < 20 && (
+                        <p className="text-xs text-muted-foreground">
+                          {(xpToNext - xpInLevel).toLocaleString()} XP para Nv.{(xpRecord.current_level || 1) + 1}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+
+          {(!xpData || xpData.length === 0) && (
+            <Card className="glass border-border/50">
+              <CardContent className="py-12 text-center">
+                <Sparkles className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+                <p className="text-muted-foreground">Nenhum vendedor com XP registrado ainda</p>
+                <p className="text-sm text-muted-foreground mt-1">XP é ganho através de vendas e conquistas</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* History Tab */}
