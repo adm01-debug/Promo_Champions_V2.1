@@ -42,10 +42,10 @@ export function CompetitiveLeaderboard() {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="glass border-border/40 dark:border-glow">
+      <Card variant="elevated" className="glass border border-border/40 dark:border-glow card-elevated">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg gradient-primary">
+          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+            <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Arena de Vendas</span>
@@ -54,7 +54,7 @@ export function CompetitiveLeaderboard() {
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full" />
+              <Skeleton key={i} className="h-16 w-full rounded-xl" />
             ))}
           </div>
         </CardContent>
@@ -63,16 +63,16 @@ export function CompetitiveLeaderboard() {
   }
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow">
-      <CardHeader className="pb-2">
+    <Card variant="elevated" className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
+      <CardHeader className="pb-2 border-b border-border/30">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg gradient-primary">
+          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+            <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-white" />
             </div>
             <span className="gradient-text">Arena de Vendas</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+          <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
             {ranking?.length || 0} competidores
           </Badge>
         </div>
@@ -90,25 +90,25 @@ export function CompetitiveLeaderboard() {
               return (
                 <div
                   key={person.id}
-                  className={`relative p-3 rounded-xl transition-all duration-200 cursor-pointer ${
+                  className={`relative p-3 rounded-xl transition-all duration-300 cursor-pointer hover-lift ${
                     isCurrentUser 
-                      ? "glass bg-primary/10 border border-primary/40 ring-2 ring-primary/20 shadow-sm" 
+                      ? "glass bg-primary/10 border-2 border-primary/40 ring-2 ring-primary/20 shadow-md" 
                       : isTopThree 
-                        ? `glass bg-gradient-to-r ${person.color}/10 border border-border/30 hover:border-primary/30 ${person.rank === 1 ? 'hover-glow-gold shadow-sm' : ''}`
+                        ? `glass bg-gradient-to-r ${person.color}/10 border border-border/30 hover:border-primary/30 ${person.rank === 1 ? 'hover-glow-gold shadow-md animate-subtle-pulse' : 'shadow-sm'}`
                         : "glass bg-muted/20 border border-border/20 hover:bg-muted/40 hover:border-border/40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     {/* Rank */}
                     <div 
-                      className={`flex items-center justify-center w-10 h-10 rounded-xl font-bold ${
+                      className={`flex items-center justify-center w-11 h-11 rounded-xl font-display font-bold transition-transform hover:scale-105 ${
                         isTopThree
                           ? `bg-gradient-to-br ${person.color} text-primary-foreground shadow-lg`
-                          : "bg-muted text-muted-foreground"
+                          : "bg-muted/50 text-muted-foreground border border-border/30"
                       }`}
                     >
                       {isTopThree ? (
-                        <RankIcon className="h-5 w-5" />
+                        <RankIcon className={`h-5 w-5 ${person.rank === 1 ? 'animate-float' : ''}`} />
                       ) : (
                         <span className="text-sm">#{person.rank}</span>
                       )}
@@ -117,39 +117,39 @@ export function CompetitiveLeaderboard() {
                     {/* Avatar e info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8 border-2 border-background shadow-sm">
+                        <Avatar className={`h-9 w-9 border-2 shadow-md ${isTopThree ? 'border-primary/30' : 'border-background'}`}>
                           <AvatarImage src={person.avatar_url || undefined} alt={person.name} />
-                          <AvatarFallback className="text-xs font-medium gradient-primary text-white">
+                          <AvatarFallback className="text-xs font-display font-medium gradient-primary text-white">
                             {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className={`font-medium text-sm truncate ${isCurrentUser ? "text-primary" : isTopThree ? "gradient-text" : ""}`}>
+                            <span className={`font-display font-medium text-sm truncate ${isCurrentUser ? "text-primary" : isTopThree ? "gradient-text" : ""}`}>
                               {person.name}
                             </span>
                             <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                             {person.title && (
                               <Badge 
                                 variant="outline" 
-                                className={`text-[10px] px-1.5 py-0 bg-gradient-to-r ${person.color} text-primary-foreground border-0`}
+                                className={`text-[10px] px-1.5 py-0 bg-gradient-to-r ${person.color} text-primary-foreground border-0 shadow-sm`}
                               >
                                 {person.emoji} {person.title}
                               </Badge>
                             )}
                             {isCurrentUser && (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30 shadow-sm">
                                 Você
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 ${roleInfo.color}`}>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 ${roleInfo.color} border border-current/20`}>
                               {roleInfo.label}
                             </Badge>
                             {person.dealsCount >= 5 && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-status-warning">
-                                <Flame className="h-3 w-3" />
+                              <span className="flex items-center gap-0.5 text-[10px] text-status-warning font-medium">
+                                <Flame className="h-3 w-3 animate-fire-pulse" />
                                 {person.dealsCount} deals
                               </span>
                             )}
@@ -160,11 +160,12 @@ export function CompetitiveLeaderboard() {
 
                     {/* Stats */}
                     <div className="text-right">
-                      <p className={`font-bold ${isTopThree ? "text-lg" : "text-sm"} ${person.rank === 1 ? "gradient-text" : ""}`}>
+                      <p className={`font-display font-bold ${isTopThree ? "text-lg" : "text-sm"} ${person.rank === 1 ? "gradient-text" : ""}`}>
                         {formatCurrency(person.totalSales)}
                       </p>
                       {person.rank > 1 && (
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className="text-[10px] text-muted-foreground flex items-center justify-end gap-0.5">
+                          <TrendingUp className="h-2.5 w-2.5" />
                           -{formatCurrency(person.gapToFirst)} do líder
                         </p>
                       )}

@@ -514,8 +514,11 @@ Os seguintes componentes já utilizam o design system completo:
 
 | Componente | Arquivo | Melhorias |
 |------------|---------|-----------|
-| CompetitiveLeaderboard | `gamification/CompetitiveLeaderboard.tsx` | Glass cards, gradient headers, avatar fallbacks |
-| LevelBadge | `gamification/LevelBadge.tsx` | Shadow badges, glass tooltips, gradient-text |
+| CompetitiveLeaderboard | `gamification/CompetitiveLeaderboard.tsx` | Glass cards com hover-lift, gradient rank icons com animate-float (1º lugar), fire-pulse animation para deals, font-display, avatar borders, subtle-pulse para líder |
+| LevelBadge | `gamification/LevelBadge.tsx` | Gradient badges com hover:scale, shadow transitions, glass tooltips com dark:border-glow, Star icon fill |
+| XPProgressBar | `gamification/XPProgressBar.tsx` | Gradient progress bar com animate-xp-shimmer, Zap/Sparkles icons, hover indicator dot, glass tooltips, font-display |
+| SalespersonLevelBadge | `gamification/SalespersonLevelBadge.tsx` | Gradient badges, shadow transitions, Star icons, glass tooltips com dark:border-glow |
+| CompetitiveStatusBar | `gamification/CompetitiveStatusBar.tsx` | Glass + card-elevated, gradient rank icons, styled stat boxes, hover-lift, dark:border-glow, button transitions |
 
 ### SDR Dashboard
 
@@ -880,8 +883,12 @@ animation: {
 #### Metas (2 componentes)
 - `SalespersonGoalCard`, `TeamGoalProgress`
 
-#### Gamificação (2 componentes)
-- `CompetitiveLeaderboard`, `LevelBadge`
+#### Gamificação (5 componentes)
+- `CompetitiveLeaderboard` - Hover-lift, animate-float/subtle-pulse
+- `LevelBadge` - Gradient badges, hover:scale, glass tooltips
+- `XPProgressBar` - Shimmer progress, icon indicators
+- `SalespersonLevelBadge` - Star icons, shadow transitions
+- `CompetitiveStatusBar` - Styled stat boxes, gradient icons
 
 #### SDR/Closer Dashboards (4 componentes)
 - `SDRStatCard`, `TopSDRsRanking`

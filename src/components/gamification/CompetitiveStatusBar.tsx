@@ -20,20 +20,20 @@ export function CompetitiveStatusBar() {
   if (!salesperson) {
     return (
       <div 
-        className="glass rounded-xl p-4 border-border/40 cursor-pointer hover:border-primary/50 transition-all"
+        className="glass rounded-xl p-4 border border-border/40 dark:border-glow cursor-pointer hover:border-primary/50 hover-lift transition-all card-elevated"
         onClick={() => navigate("/auth")}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-muted">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/30">
               <Users className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-sm font-medium">Faça login para competir</p>
+              <p className="text-sm font-display font-semibold">Faça login para competir</p>
               <p className="text-xs text-muted-foreground">Entre na arena e conquiste seu lugar</p>
             </div>
           </div>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors">
             Entrar
           </Button>
         </div>
@@ -43,16 +43,19 @@ export function CompetitiveStatusBar() {
 
   if (isLoading) {
     return (
-      <div className="glass rounded-xl p-4 border-border/40">
+      <div className="glass rounded-xl p-4 border border-border/40">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-lg" />
+            <Skeleton className="h-11 w-11 rounded-xl" />
             <div className="space-y-2">
               <Skeleton className="h-4 w-32" />
               <Skeleton className="h-3 w-48" />
             </div>
           </div>
-          <Skeleton className="h-8 w-24" />
+          <div className="flex gap-4">
+            <Skeleton className="h-10 w-20" />
+            <Skeleton className="h-10 w-20" />
+          </div>
         </div>
       </div>
     );
@@ -76,31 +79,33 @@ export function CompetitiveStatusBar() {
 
   return (
     <div 
-      className={`glass rounded-xl p-4 border-border/40 transition-all ${
-        isTopThree ? "glow-primary" : ""
+      className={`glass rounded-xl p-4 border transition-all card-elevated ${
+        isTopThree 
+          ? "border-primary/40 dark:border-glow glow-primary" 
+          : "border-border/40 dark:border-glow"
       }`}
     >
       <div className="flex items-center justify-between flex-wrap gap-4">
         {/* Rank e título */}
         <div className="flex items-center gap-3">
           <div 
-            className={`p-2.5 rounded-xl ${
+            className={`p-2.5 rounded-xl shadow-lg ${
               myRanking.color 
                 ? `bg-gradient-to-br ${myRanking.color}` 
-                : "bg-muted"
+                : "bg-gradient-to-br from-muted to-muted/50"
             }`}
           >
             <RankIcon className={`h-5 w-5 ${isTopThree ? "text-primary-foreground" : "text-muted-foreground"}`} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg">
+              <span className="font-display font-bold text-lg">
                 {myRanking.emoji} #{myRanking.rank}
               </span>
               {myRanking.title && (
                 <Badge 
                   variant="outline" 
-                  className={`bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0`}
+                  className={`bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0 shadow-sm`}
                 >
                   {myRanking.title}
                 </Badge>
@@ -118,28 +123,28 @@ export function CompetitiveStatusBar() {
 
         {/* Stats rápidas */}
         <div className="flex items-center gap-4">
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">Vendas</p>
-            <p className="font-bold text-primary">{formatCurrency(myRanking.totalSales)}</p>
+          <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vendas</p>
+            <p className="font-display font-bold gradient-text">{formatCurrency(myRanking.totalSales)}</p>
           </div>
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">Deals</p>
-            <p className="font-bold">{myRanking.dealsCount}</p>
+          <div className="text-center px-3 py-1.5 rounded-lg bg-muted/50 border border-border/30">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Deals</p>
+            <p className="font-display font-bold">{myRanking.dealsCount}</p>
           </div>
           {myRanking.leadsCount > 0 && (
-            <div className="text-center">
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <div className="text-center px-3 py-1.5 rounded-lg bg-status-info/10 border border-status-info/20">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium flex items-center justify-center gap-1">
                 <Target className="h-3 w-3" />
                 Leads
               </p>
-              <p className="font-bold text-info">{myRanking.leadsCount}</p>
+              <p className="font-display font-bold text-status-info">{myRanking.leadsCount}</p>
             </div>
           )}
           
           {myRanking.rank > 1 && (
             <div className="hidden md:block pl-4 border-l border-border/50">
-              <p className="text-xs text-muted-foreground">Para subir</p>
-              <p className="font-medium text-sm text-warning">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Para subir</p>
+              <p className="font-display font-medium text-sm text-status-warning">
                 +{formatCurrency(myRanking.gapToNext)}
               </p>
             </div>
@@ -151,7 +156,7 @@ export function CompetitiveStatusBar() {
           <Button 
             variant="outline" 
             size="sm"
-            className="hidden lg:flex gap-2"
+            className="hidden lg:flex gap-2 border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
             onClick={() => navigate("/pipeline")}
           >
             <Target className="h-4 w-4" />
