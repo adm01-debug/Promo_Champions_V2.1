@@ -393,3 +393,93 @@ export function useDeleteCadence() {
     },
   });
 }
+
+export function usePauseCadence() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (saleId: string) => {
+      const { data, error } = await supabase
+        .from("prospect_cadences")
+        .update({ status: "paused" })
+        .eq("sale_id", saleId)
+        .eq("status", "active")
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+      queryClient.invalidateQueries({ queryKey: ["active-cadences-by-sales"] });
+      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
+      toast.success("Cadência pausada!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao pausar cadência");
+      console.error(error);
+    },
+  });
+}
+
+export function useResumeCadence() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (saleId: string) => {
+      const { data, error } = await supabase
+        .from("prospect_cadences")
+        .update({ status: "active" })
+        .eq("sale_id", saleId)
+        .eq("status", "paused")
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+      queryClient.invalidateQueries({ queryKey: ["active-cadences-by-sales"] });
+      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
+      toast.success("Cadência retomada!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao retomar cadência");
+      console.error(error);
+    },
+  });
+}
+
+export function useCancelCadence() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (saleId: string) => {
+      const { data, error } = await supabase
+        .from("prospect_cadences")
+        .update({ 
+          status: "cancelled",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("sale_id", saleId)
+        .in("status", ["active", "paused"])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+      queryClient.invalidateQueries({ queryKey: ["active-cadences-by-sales"] });
+      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
+      toast.success("Cadência cancelada!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao cancelar cadência");
+      console.error(error);
+    },
+  });
+}
