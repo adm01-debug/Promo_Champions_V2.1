@@ -904,8 +904,10 @@ animation: {
 - `CompetitiveStatusBar` - Styled stat boxes, gradient icons
 
 #### SDR/Closer Dashboards (4 componentes)
-- `SDRStatCard`, `TopSDRsRanking`
-- `CloserStatCard`, `TopClosersRanking`
+- `SDRStatCard` - Group hover scale, gradient icon variants, font-display titles
+- `ProspectingFunnel` - Gradient header, staggered bar animations, glow effects on bars
+- `LeadTemperatureChart` - Gradient header, legend hover states, pie cell shadows
+- `TopSDRsRanking` - Staggered entry, group hover states, gradient rank badges
 
 #### Páginas (2 componentes)
 - `Relatorios`, `Analytics`
