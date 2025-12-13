@@ -17,11 +17,11 @@ export function ClosingTimeChart() {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="border-border/40 dark:border-glow">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow animate-fade-in">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted/50 rounded-lg w-1/3" />
-            <div className="h-64 bg-muted/50 rounded-lg" />
+            <div className="h-8 bg-muted/50 rounded-lg w-1/3 animate-shimmer" />
+            <div className="h-64 bg-muted/50 rounded-lg animate-shimmer" />
           </div>
         </CardContent>
       </Card>
@@ -32,8 +32,8 @@ export function ClosingTimeChart() {
     if (active && payload && payload.length) {
       const item = payload[0].payload;
       return (
-        <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-          <p className="font-medium text-foreground">{item.name}</p>
+        <div className="glass border border-border/50 rounded-xl p-3 shadow-lg">
+          <p className="font-display font-medium text-foreground">{item.name}</p>
           <p className="text-sm text-muted-foreground">
             Tempo médio: <span className="text-foreground font-medium">{item.avgDays} dias</span>
           </p>
@@ -71,25 +71,25 @@ export function ClosingTimeChart() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       {/* Summary Card */}
-      <Card variant="elevated" className="glass border-primary/30 hover-glow-primary">
+      <Card variant="elevated" className="glass border-primary/30 hover-lift transition-all duration-300 group">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl gradient-primary">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-primary/50">
                 <Timer className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Tempo Médio de Fechamento</p>
-                <p className="text-4xl font-bold gradient-text mt-1">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Tempo Médio de Fechamento</p>
+                <p className="text-4xl font-bold font-display gradient-text mt-1 transition-transform duration-300 group-hover:scale-105">
                   {data?.overall.avgDays || 0} <span className="text-lg font-normal text-muted-foreground">dias</span>
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Total de Deals</p>
-              <p className="text-2xl font-bold text-foreground">{data?.overall.totalDeals || 0}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Total de Deals</p>
+              <p className="text-2xl font-bold font-display text-foreground">{data?.overall.totalDeals || 0}</p>
             </div>
           </div>
         </CardContent>
@@ -97,26 +97,26 @@ export function ClosingTimeChart() {
 
       {/* Charts by Category */}
       <Tabs defaultValue="salesperson" className="space-y-4">
-        <TabsList className="bg-card/50 border border-border/50">
-          <TabsTrigger value="salesperson" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsList className="glass border border-border/50">
+          <TabsTrigger value="salesperson" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">
             <User className="h-4 w-4" />
             Por Vendedor
           </TabsTrigger>
-          <TabsTrigger value="product" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="product" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">
             <Package className="h-4 w-4" />
             Por Produto
           </TabsTrigger>
-          <TabsTrigger value="category" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="category" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">
             <Tag className="h-4 w-4" />
             Por Categoria
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="salesperson">
-          <Card variant="elevated" className="border-border/40 dark:border-glow">
+        <TabsContent value="salesperson" className="animate-fade-in">
+          <Card variant="elevated" className="glass border-border/40 dark:border-glow transition-all duration-300">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-status-info/20">
+              <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
+                <div className="p-1.5 rounded-lg bg-status-info/20 shadow-md transition-all duration-300 group-hover/title:scale-110">
                   <User className="h-3.5 w-3.5 text-status-info" />
                 </div>
                 Tempo de Fechamento por Vendedor
@@ -126,19 +126,19 @@ export function ClosingTimeChart() {
               {data?.bySalesperson && data.bySalesperson.length > 0 ? (
                 renderChart(data.bySalesperson)
               ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  Sem dados de histórico de estágios disponíveis
-                </p>
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50">
+                  <p className="font-display">Sem dados de histórico de estágios disponíveis</p>
+                </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="product">
-          <Card variant="elevated" className="border-border/40 dark:border-glow">
+        <TabsContent value="product" className="animate-fade-in">
+          <Card variant="elevated" className="glass border-border/40 dark:border-glow transition-all duration-300">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-status-purple/20">
+              <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
+                <div className="p-1.5 rounded-lg bg-status-purple/20 shadow-md transition-all duration-300 group-hover/title:scale-110">
                   <Package className="h-3.5 w-3.5 text-status-purple" />
                 </div>
                 Tempo de Fechamento por Produto
@@ -148,19 +148,19 @@ export function ClosingTimeChart() {
               {data?.byProduct && data.byProduct.length > 0 ? (
                 renderChart(data.byProduct)
               ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  Sem dados de histórico de estágios disponíveis
-                </p>
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50">
+                  <p className="font-display">Sem dados de histórico de estágios disponíveis</p>
+                </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="category">
-          <Card variant="elevated" className="border-border/40 dark:border-glow">
+        <TabsContent value="category" className="animate-fade-in">
+          <Card variant="elevated" className="glass border-border/40 dark:border-glow transition-all duration-300">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-status-warning/20">
+              <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
+                <div className="p-1.5 rounded-lg bg-status-warning/20 shadow-md transition-all duration-300 group-hover/title:scale-110">
                   <Tag className="h-3.5 w-3.5 text-status-warning" />
                 </div>
                 Tempo de Fechamento por Categoria
@@ -170,9 +170,9 @@ export function ClosingTimeChart() {
               {data?.byCategory && data.byCategory.length > 0 ? (
                 renderChart(data.byCategory)
               ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  Sem dados de histórico de estágios disponíveis
-                </p>
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50">
+                  <p className="font-display">Sem dados de histórico de estágios disponíveis</p>
+                </div>
               )}
             </CardContent>
           </Card>
