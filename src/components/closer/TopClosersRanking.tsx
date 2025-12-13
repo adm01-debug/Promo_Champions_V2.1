@@ -15,7 +15,7 @@ export function TopClosersRanking() {
   };
 
   const getRankStyle = (index: number) => {
-    if (index === 0) return "bg-gradient-to-r from-rank-gold/20 to-primary/20 border-rank-gold/50";
+    if (index === 0) return "bg-gradient-to-r from-rank-gold/20 to-primary/20 border-rank-gold/50 hover-glow-gold";
     if (index === 1) return "bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/50";
     if (index === 2) return "bg-gradient-to-r from-rank-bronze/20 to-rank-bronze/20 border-rank-bronze/50";
     return "";
