@@ -240,6 +240,117 @@ export type Database = {
           },
         ]
       }
+      playbook_items: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_required: boolean
+          item_order: number
+          item_type: string
+          playbook_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          item_order?: number
+          item_type?: string
+          playbook_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          item_order?: number
+          item_type?: string
+          playbook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "playbook_items_playbook_id_fkey"
+            columns: ["playbook_id"]
+            isOneToOne: false
+            referencedRelation: "playbooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      playbook_progress: {
+        Row: {
+          completed_at: string
+          completed_by: string | null
+          id: string
+          playbook_item_id: string
+          sale_id: string
+        }
+        Insert: {
+          completed_at?: string
+          completed_by?: string | null
+          id?: string
+          playbook_item_id: string
+          sale_id: string
+        }
+        Update: {
+          completed_at?: string
+          completed_by?: string | null
+          id?: string
+          playbook_item_id?: string
+          sale_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "playbook_progress_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "playbook_progress_playbook_item_id_fkey"
+            columns: ["playbook_item_id"]
+            isOneToOne: false
+            referencedRelation: "playbook_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "playbook_progress_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      playbooks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          stage: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          stage: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          stage?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sales: {
         Row: {
           amount: number
