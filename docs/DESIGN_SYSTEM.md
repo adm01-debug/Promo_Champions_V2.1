@@ -457,6 +457,95 @@ As transições entre light/dark mode são suaves (250ms) para todos os elemento
 
 ---
 
+## Componentes Atualizados
+
+Os seguintes componentes já utilizam o design system completo:
+
+| Componente | Arquivo | Melhorias |
+|------------|---------|-----------|
+| StatCard | `dashboard/StatCard.tsx` | Gradient primary, hover-lift, dark:border-glow |
+| SDRStatCard | `sdr/SDRStatCard.tsx` | Card elevated, variant styles |
+| CloserStatCard | `closer/CloserStatCard.tsx` | Card elevated, variant styles |
+| WinLossAnalysis | `analytics/WinLossAnalysis.tsx` | Summary cards com glass, gradient headers |
+| ConversionFunnel | `analytics/ConversionFunnel.tsx` | Summary cards, gradient-text |
+| DealVelocityChart | `analytics/DealVelocityChart.tsx` | Stats com glass, gradient icons |
+| AtRiskDealsPanel | `pipeline/AtRiskDealsPanel.tsx` | Card elevated, icon containers |
+| TaskCard | `tasks/TaskCard.tsx` | Card elevated, hover-lift |
+| ActivityGoalCard | `activities/ActivityGoalCard.tsx` | Glass, streak badges |
+| SalespersonGoalCard | `goals/SalespersonGoalCard.tsx` | Progress bars, rank styles |
+| CompetitiveLeaderboard | `gamification/CompetitiveLeaderboard.tsx` | Rank gradients, glow effects |
+| Relatorios | `pages/Relatorios.tsx` | Metric cards com glass, gradient |
+
+---
+
+## Padrões de Componentes
+
+### Summary Cards (3 colunas)
+
+```tsx
+<div className="grid grid-cols-3 gap-4">
+  {/* Card Primário */}
+  <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift cursor-pointer hover-glow-primary">
+    <div className="p-2 rounded-lg gradient-primary w-fit mx-auto mb-2">
+      <Icon className="h-4 w-4 text-white" />
+    </div>
+    <p className="text-xl font-bold gradient-text">Valor</p>
+    <p className="text-xs text-muted-foreground uppercase tracking-wider">Label</p>
+  </div>
+  
+  {/* Card Success */}
+  <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer hover-glow-success">
+    <div className="p-2 rounded-lg bg-status-success/20 w-fit mx-auto mb-2">
+      <Icon className="h-4 w-4 text-status-success" />
+    </div>
+    <p className="text-xl font-bold text-status-success">Valor</p>
+    <p className="text-xs text-muted-foreground uppercase tracking-wider">Label</p>
+  </div>
+  
+  {/* Card Error */}
+  <div className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift cursor-pointer hover-glow-error">
+    <div className="p-2 rounded-lg bg-destructive/20 w-fit mx-auto mb-2">
+      <Icon className="h-4 w-4 text-destructive" />
+    </div>
+    <p className="text-xl font-bold text-destructive">Valor</p>
+    <p className="text-xs text-muted-foreground uppercase tracking-wider">Label</p>
+  </div>
+</div>
+```
+
+### Card Header com Ícone
+
+```tsx
+<CardHeader>
+  <CardTitle className="text-lg flex items-center gap-2">
+    <div className="p-2 rounded-lg gradient-primary">
+      <Icon className="h-4 w-4 text-white" />
+    </div>
+    <span className="gradient-text">Título do Card</span>
+  </CardTitle>
+</CardHeader>
+```
+
+### Metric Card
+
+```tsx
+<div className="glass rounded-xl p-5 border border-border/40 dark:border-glow hover-lift cursor-pointer group">
+  <div className="flex items-center justify-between mb-3">
+    <div className="p-2.5 rounded-xl gradient-primary group-hover:scale-110 transition-transform">
+      <Icon className="h-4 w-4 text-white" />
+    </div>
+    <span className="text-sm font-medium flex items-center gap-1 px-2 py-1 rounded-full bg-status-success/20 text-status-success">
+      <TrendingUp className="h-3 w-3" />
+      +12.5%
+    </span>
+  </div>
+  <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Label</p>
+  <p className="text-2xl font-bold gradient-text">R$ 107.895</p>
+</div>
+```
+
+---
+
 ## Regras Importantes
 
 1. **NUNCA use cores diretas** como `text-white`, `bg-black`, `text-gray-500`
@@ -466,3 +555,6 @@ As transições entre light/dark mode são suaves (250ms) para todos os elemento
 5. **Botões de salvar/confirmar** devem usar `variant="glow-success"`
 6. **Headers** automaticamente usam `font-display` (Space Grotesk)
 7. **Dark mode** adicione `dark:border-glow` em cards importantes para efeito sutil
+8. **Labels** devem usar `uppercase tracking-wider` para consistência
+9. **Icon containers** devem ter `p-2 rounded-lg` com background apropriado
+10. **Interatividade** combine `hover-lift cursor-pointer` para elementos clicáveis

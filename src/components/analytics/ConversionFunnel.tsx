@@ -12,16 +12,18 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Análise de Conversão
+            <div className="p-2 rounded-lg gradient-primary">
+              <TrendingUp className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Análise de Conversão</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-48 bg-muted rounded" />
+            <div className="h-48 bg-muted/50 rounded-lg" />
           </div>
         </CardContent>
       </Card>
@@ -31,11 +33,13 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
   const hasData = data && data.conversions.some(c => c.totalEntered > 0);
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="elevated" className="border-border/40 dark:border-glow hover-lift">
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
-          Análise de Conversão
+          <div className="p-2 rounded-lg gradient-primary">
+            <TrendingUp className="h-4 w-4 text-white" />
+          </div>
+          <span className="gradient-text">Análise de Conversão</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,20 +53,26 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
           <>
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-primary/10 rounded-lg p-3 text-center border border-primary/20">
-                <Target className="h-5 w-5 text-primary mx-auto mb-1" />
-                <p className="text-xl font-bold text-primary">{data.overallConversion.toFixed(1)}%</p>
-                <p className="text-xs text-muted-foreground">Conversão Total</p>
+              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift cursor-pointer hover-glow-primary">
+                <div className="p-2 rounded-lg gradient-primary w-fit mx-auto mb-2">
+                  <Target className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-xl font-bold gradient-text">{data.overallConversion.toFixed(1)}%</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Conversão Total</p>
               </div>
-              <div className="bg-destructive/10 rounded-lg p-3 text-center border border-destructive/20">
-                <AlertTriangle className="h-5 w-5 text-destructive mx-auto mb-1" />
+              <div className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift cursor-pointer hover-glow-error">
+                <div className="p-2 rounded-lg bg-destructive/20 w-fit mx-auto mb-2">
+                  <AlertTriangle className="h-4 w-4 text-destructive" />
+                </div>
                 <p className="text-sm font-bold text-destructive truncate">{data.biggestBottleneck}</p>
-                <p className="text-xs text-muted-foreground">Maior Gargalo</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Maior Gargalo</p>
               </div>
-              <div className="bg-status-success/10 rounded-lg p-3 text-center border border-status-success/20">
-                <TrendingUp className="h-5 w-5 text-status-success mx-auto mb-1" />
+              <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer hover-glow-success">
+                <div className="p-2 rounded-lg bg-status-success/20 w-fit mx-auto mb-2">
+                  <TrendingUp className="h-4 w-4 text-status-success" />
+                </div>
                 <p className="text-sm font-bold text-status-success truncate">{data.bestConversion}</p>
-                <p className="text-xs text-muted-foreground">Melhor Conversão</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Melhor Conversão</p>
               </div>
             </div>
 

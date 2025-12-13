@@ -196,7 +196,7 @@ export function AtRiskDealsPanel() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader>
           <Skeleton className="h-6 w-48" />
         </CardHeader>
@@ -210,11 +210,13 @@ export function AtRiskDealsPanel() {
 
   if (!data || data.deals.length === 0) {
     return (
-      <Card>
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <AlertTriangle className="h-5 w-5 text-status-warning" />
-            Deals em Risco
+            <div className="p-2 rounded-lg bg-status-warning/20">
+              <AlertTriangle className="h-4 w-4 text-status-warning" />
+            </div>
+            <span>Deals em Risco</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -229,12 +231,14 @@ export function AtRiskDealsPanel() {
   }
 
   return (
-    <Card>
+    <Card variant="elevated" className="border-border/40 dark:border-glow">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <AlertTriangle className="h-5 w-5 text-status-warning" />
-            Deals em Risco
+            <div className="p-2 rounded-lg bg-status-warning/20">
+              <AlertTriangle className="h-4 w-4 text-status-warning" />
+            </div>
+            <span>Deals em Risco</span>
           </CardTitle>
           <Button 
             variant="ghost" 

@@ -231,20 +231,20 @@ const Relatorios = () => {
           {metricsData.map((metric, index) => (
             <div 
               key={metric.title}
-              className="opacity-0 animate-fade-in-up glass rounded-xl p-5"
+              className="opacity-0 animate-fade-in-up glass rounded-xl p-5 border border-border/40 dark:border-glow hover-lift cursor-pointer group"
               style={{ animationDelay: `${100 + index * 50}ms` }}
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 rounded-lg bg-muted/50">
-                  <metric.icon className="h-4 w-4 text-muted-foreground" />
+                <div className={`p-2.5 rounded-xl ${index === 0 ? 'gradient-primary' : 'bg-muted/50 group-hover:bg-muted/80'} transition-colors`}>
+                  <metric.icon className={`h-4 w-4 ${index === 0 ? 'text-white' : 'text-muted-foreground group-hover:text-primary'} transition-colors`} />
                 </div>
-                <span className={`text-sm font-medium flex items-center gap-1 ${metric.positive ? 'text-success' : 'text-destructive'}`}>
+                <span className={`text-sm font-medium flex items-center gap-1 px-2 py-1 rounded-full ${metric.positive ? 'bg-status-success/20 text-status-success' : 'bg-status-error/20 text-status-error'}`}>
                   {metric.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                   {Math.abs(metric.change)}%
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground mb-1">{metric.title}</p>
-              <p className="text-2xl font-bold">{metric.value}</p>
+              <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">{metric.title}</p>
+              <p className={`text-2xl font-bold ${index === 0 ? 'gradient-text' : ''}`}>{metric.value}</p>
             </div>
           ))}
         </div>
