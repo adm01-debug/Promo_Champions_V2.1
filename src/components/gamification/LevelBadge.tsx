@@ -23,7 +23,7 @@ export function LevelBadge({ totalXP, showTitle = false, size = "md" }: LevelBad
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge 
-            className={`bg-gradient-to-r ${levelInfo.color} text-white border-0 ${sizeClasses[size]} cursor-default`}
+            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 ${sizeClasses[size]} cursor-default`}
           >
             {levelInfo.emoji} {showTitle ? levelInfo.title : `Nv.${level}`}
           </Badge>

@@ -34,9 +34,9 @@ export function RecentProspects() {
   });
 
   const getTemperature = (score: number) => {
-    if (score >= 75) return { label: "Quente", color: "text-red-500", icon: Flame };
-    if (score >= 50) return { label: "Morno", color: "text-orange-500", icon: Thermometer };
-    return { label: "Frio", color: "text-blue-500", icon: Snowflake };
+    if (score >= 75) return { label: "Quente", color: "text-status-error", icon: Flame };
+    if (score >= 50) return { label: "Morno", color: "text-status-warning", icon: Thermometer };
+    return { label: "Frio", color: "text-status-info", icon: Snowflake };
   };
 
   const getStatusLabel = (status: string) => {

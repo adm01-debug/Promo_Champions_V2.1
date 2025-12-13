@@ -43,7 +43,7 @@ export function ProspectingFunnel() {
                   minWidth: stage.count > 0 ? "20px" : "0"
                 }}
               >
-                <span className="text-[10px] font-bold text-white drop-shadow-sm">
+                <span className="text-[10px] font-bold text-primary-foreground drop-shadow-sm">
                   {stage.count}
                 </span>
               </div>

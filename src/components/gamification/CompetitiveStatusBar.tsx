@@ -90,7 +90,7 @@ export function CompetitiveStatusBar() {
                 : "bg-muted"
             }`}
           >
-            <RankIcon className={`h-5 w-5 ${isTopThree ? "text-white" : "text-muted-foreground"}`} />
+            <RankIcon className={`h-5 w-5 ${isTopThree ? "text-primary-foreground" : "text-muted-foreground"}`} />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export function CompetitiveStatusBar() {
               {myRanking.title && (
                 <Badge 
                   variant="outline" 
-                  className={`bg-gradient-to-r ${myRanking.color} text-white border-0`}
+                  className={`bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0`}
                 >
                   {myRanking.title}
                 </Badge>

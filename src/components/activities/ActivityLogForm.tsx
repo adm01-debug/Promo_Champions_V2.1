@@ -19,14 +19,14 @@ const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[
 ];
 
 const outcomes: { value: ActivityOutcome; label: string; color: string }[] = [
-  { value: "connected", label: "Conectou", color: "bg-green-500" },
-  { value: "no_answer", label: "Não Atendeu", color: "bg-red-500" },
-  { value: "scheduled", label: "Agendou", color: "bg-blue-500" },
-  { value: "voicemail", label: "Caixa Postal", color: "bg-orange-500" },
-  { value: "busy", label: "Ocupado", color: "bg-yellow-500" },
-  { value: "callback", label: "Retornar", color: "bg-purple-500" },
-  { value: "not_interested", label: "Sem Interesse", color: "bg-gray-500" },
-  { value: "qualified", label: "Qualificado", color: "bg-emerald-500" },
+  { value: "connected", label: "Conectou", color: "bg-status-success" },
+  { value: "no_answer", label: "Não Atendeu", color: "bg-status-error" },
+  { value: "scheduled", label: "Agendou", color: "bg-status-info" },
+  { value: "voicemail", label: "Caixa Postal", color: "bg-status-warning" },
+  { value: "busy", label: "Ocupado", color: "bg-rank-gold" },
+  { value: "callback", label: "Retornar", color: "bg-status-purple" },
+  { value: "not_interested", label: "Sem Interesse", color: "bg-muted-foreground" },
+  { value: "qualified", label: "Qualificado", color: "bg-primary" },
 ];
 
 interface ActivityLogFormProps {
@@ -112,7 +112,7 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
                   onClick={() => setOutcome(o.value)}
                   className={`px-2 py-1.5 rounded-md text-[10px] font-medium transition-all ${
                     outcome === o.value
-                      ? `${o.color} text-white`
+                      ? `${o.color} text-primary-foreground`
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
                   }`}
                 >
