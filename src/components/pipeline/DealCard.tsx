@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer, Play } from "lucide-react";
+import { GripVertical, Package, Calendar, TrendingUp, Flame, Thermometer, Play, Zap } from "lucide-react";
 import { Deal } from "@/hooks/usePipeline";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -33,13 +33,19 @@ interface LeadScoreData {
   };
 }
 
+interface ActiveCadenceInfo {
+  cadenceName: string;
+  currentStep: number;
+}
+
 interface DealCardProps {
   deal: Deal;
   probability?: DealProbability;
   leadScore?: LeadScoreData;
+  activeCadence?: ActiveCadenceInfo;
 }
 
-export const DealCard = ({ deal, probability, leadScore }: DealCardProps) => {
+export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCardProps) => {
   const {
     attributes,
     listeners,
@@ -169,28 +175,45 @@ export const DealCard = ({ deal, probability, leadScore }: DealCardProps) => {
               <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] uppercase">
                 {deal.category}
               </span>
-              <EnrollCadenceDialog
-                saleId={deal.id}
-                clientName={deal.client_name}
-                trigger={
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={(e) => e.stopPropagation()}
-                          onPointerDown={(e) => e.stopPropagation()}
-                        >
-                          <Play className="h-3 w-3" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Iniciar Cadência</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                }
-              />
+              {activeCadence ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-medium">
+                        <Zap className="h-3 w-3" />
+                        <span>Etapa {activeCadence.currentStep + 1}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="font-medium">{activeCadence.cadenceName}</p>
+                      <p className="text-xs text-muted-foreground">Cadência ativa</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <EnrollCadenceDialog
+                  saleId={deal.id}
+                  clientName={deal.client_name}
+                  trigger={
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            onClick={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
+                            <Play className="h-3 w-3" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Iniciar Cadência</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  }
+                />
+              )}
             </div>
           </div>
         </div>

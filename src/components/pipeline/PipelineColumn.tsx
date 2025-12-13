@@ -21,14 +21,20 @@ interface LeadScoreData {
   };
 }
 
+interface ActiveCadenceInfo {
+  cadenceName: string;
+  currentStep: number;
+}
+
 interface PipelineColumnProps {
   stage: typeof PIPELINE_STAGES[number];
   deals: Deal[];
   probabilities?: Record<string, DealProbability>;
   leadScores?: Record<string, LeadScoreData>;
+  activeCadences?: Record<string, ActiveCadenceInfo>;
 }
 
-export const PipelineColumn = ({ stage, deals, probabilities, leadScores }: PipelineColumnProps) => {
+export const PipelineColumn = ({ stage, deals, probabilities, leadScores, activeCadences }: PipelineColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: stage.id,
   });
@@ -84,6 +90,7 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores }: Pipe
                 deal={deal} 
                 probability={probabilities?.[deal.id]}
                 leadScore={leadScores?.[deal.id]}
+                activeCadence={activeCadences?.[deal.id]}
               />
             ))
           )}

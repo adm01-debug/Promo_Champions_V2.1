@@ -105,6 +105,38 @@ export function useProspectCadences(saleId?: string) {
   });
 }
 
+export function useActiveCadencesBySaleIds(saleIds: string[]) {
+  return useQuery({
+    queryKey: ["active-cadences-by-sales", saleIds],
+    enabled: saleIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("prospect_cadences")
+        .select(`
+          sale_id,
+          status,
+          current_step,
+          cadence:cadences(name)
+        `)
+        .in("sale_id", saleIds)
+        .eq("status", "active");
+
+      if (error) throw error;
+      
+      // Create a map of sale_id -> cadence info
+      const cadenceMap: Record<string, { cadenceName: string; currentStep: number }> = {};
+      data?.forEach(pc => {
+        cadenceMap[pc.sale_id] = {
+          cadenceName: (pc.cadence as any)?.name || "Cadência",
+          currentStep: pc.current_step,
+        };
+      });
+      
+      return cadenceMap;
+    },
+  });
+}
+
 export function useTodaysCadenceTasks() {
   return useQuery({
     queryKey: ["todays-cadence-tasks"],
