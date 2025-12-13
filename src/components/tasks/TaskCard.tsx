@@ -44,7 +44,7 @@ export function TaskCard({ task }: TaskCardProps) {
   };
 
   return (
-    <Card className="p-4 bg-card/50 border-border/50 hover-lift group">
+    <Card variant="elevated" className="p-4 border-border/40 dark:border-glow hover-lift group cursor-pointer">
       <div className="flex items-start gap-3">
         <Button
           variant="outline"

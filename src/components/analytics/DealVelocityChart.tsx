@@ -12,16 +12,18 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary" />
-            Velocidade do Deal
+            <div className="p-2 rounded-lg gradient-primary">
+              <Clock className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Velocidade do Deal</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-48 bg-muted rounded" />
+            <div className="h-48 bg-muted/50 rounded-lg" />
           </div>
         </CardContent>
       </Card>
@@ -31,11 +33,13 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
   const hasData = data && data.stages.some(s => s.totalDeals > 0);
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="elevated" className="border-border/40 dark:border-glow hover-lift">
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          <Clock className="h-5 w-5 text-primary" />
-          Velocidade do Deal
+          <div className="p-2 rounded-lg gradient-primary">
+            <Clock className="h-4 w-4 text-white" />
+          </div>
+          <span className="gradient-text">Velocidade do Deal</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,20 +53,26 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
           <>
             {/* Summary Stats */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-primary/10 rounded-lg p-3 text-center border border-primary/20">
-                <Timer className="h-5 w-5 text-primary mx-auto mb-1" />
-                <p className="text-xl font-bold text-primary">{data.totalAvgDays.toFixed(1)}d</p>
-                <p className="text-xs text-muted-foreground">Ciclo Total</p>
+              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift cursor-pointer">
+                <div className="p-2 rounded-lg gradient-primary w-fit mx-auto mb-2">
+                  <Timer className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-xl font-bold gradient-text">{data.totalAvgDays.toFixed(1)}d</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Ciclo Total</p>
               </div>
-              <div className="bg-status-success/10 rounded-lg p-3 text-center border border-status-success/20">
-                <Zap className="h-5 w-5 text-status-success mx-auto mb-1" />
+              <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer">
+                <div className="p-2 rounded-lg bg-status-success/20 w-fit mx-auto mb-2">
+                  <Zap className="h-4 w-4 text-status-success" />
+                </div>
                 <p className="text-sm font-bold text-status-success">{data.fastestStage}</p>
-                <p className="text-xs text-muted-foreground">Mais Rápida</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Mais Rápida</p>
               </div>
-              <div className="bg-status-warning/10 rounded-lg p-3 text-center border border-status-warning/20">
-                <AlertTriangle className="h-5 w-5 text-status-warning mx-auto mb-1" />
+              <div className="glass rounded-xl p-4 text-center border border-status-warning/30 hover-lift cursor-pointer">
+                <div className="p-2 rounded-lg bg-status-warning/20 w-fit mx-auto mb-2">
+                  <AlertTriangle className="h-4 w-4 text-status-warning" />
+                </div>
                 <p className="text-sm font-bold text-status-warning">{data.slowestStage}</p>
-                <p className="text-xs text-muted-foreground">Gargalo</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Gargalo</p>
               </div>
             </div>
 

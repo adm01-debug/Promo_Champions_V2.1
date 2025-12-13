@@ -57,16 +57,18 @@ export function WinLossAnalysis() {
 
   if (isLoading) {
     return (
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card variant="elevated" className="border-border/40 dark:border-glow">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-primary" />
-            Análise Win/Loss
+            <div className="p-2 rounded-lg gradient-primary">
+              <Trophy className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Análise Win/Loss</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-32 bg-muted rounded" />
+            <div className="h-32 bg-muted/50 rounded-lg" />
           </div>
         </CardContent>
       </Card>
@@ -76,12 +78,14 @@ export function WinLossAnalysis() {
   const hasData = data && (data.totalWins > 0 || data.totalLosses > 0);
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="elevated" className="border-border/40 dark:border-glow hover-lift">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-primary" />
-            Análise Win/Loss
+            <div className="p-2 rounded-lg gradient-primary">
+              <Trophy className="h-4 w-4 text-white" />
+            </div>
+            <span className="gradient-text">Análise Win/Loss</span>
           </CardTitle>
           <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
             <CollapsibleTrigger asChild>
@@ -218,20 +222,26 @@ export function WinLossAnalysis() {
           <>
             {/* Summary Cards */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-status-success/10 rounded-lg p-4 text-center border border-status-success/20">
-                <Trophy className="h-6 w-6 text-status-success mx-auto mb-1" />
+              <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer hover-glow-success">
+                <div className="p-2 rounded-lg bg-status-success/20 w-fit mx-auto mb-2">
+                  <Trophy className="h-5 w-5 text-status-success" />
+                </div>
                 <p className="text-2xl font-bold text-status-success">{data.totalWins}</p>
-                <p className="text-xs text-muted-foreground">Vitórias</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Vitórias</p>
               </div>
-              <div className="bg-destructive/10 rounded-lg p-4 text-center border border-destructive/20">
-                <XCircle className="h-6 w-6 text-destructive mx-auto mb-1" />
+              <div className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift cursor-pointer hover-glow-error">
+                <div className="p-2 rounded-lg bg-destructive/20 w-fit mx-auto mb-2">
+                  <XCircle className="h-5 w-5 text-destructive" />
+                </div>
                 <p className="text-2xl font-bold text-destructive">{data.totalLosses}</p>
-                <p className="text-xs text-muted-foreground">Perdas</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Perdas</p>
               </div>
-              <div className="bg-primary/10 rounded-lg p-4 text-center border border-primary/20">
-                <TrendingUp className="h-6 w-6 text-primary mx-auto mb-1" />
-                <p className="text-2xl font-bold text-primary">{data.winRate.toFixed(1)}%</p>
-                <p className="text-xs text-muted-foreground">Win Rate</p>
+              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift cursor-pointer hover-glow-primary">
+                <div className="p-2 rounded-lg gradient-primary w-fit mx-auto mb-2">
+                  <TrendingUp className="h-5 w-5 text-white" />
+                </div>
+                <p className="text-2xl font-bold gradient-text">{data.winRate.toFixed(1)}%</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Win Rate</p>
               </div>
             </div>
 
