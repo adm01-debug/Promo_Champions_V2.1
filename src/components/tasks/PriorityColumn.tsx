@@ -21,23 +21,23 @@ const priorityConfig: Record<TaskPriority, {
   high: { 
     label: 'Prioridade Alta', 
     icon: Flame, 
-    color: 'text-red-400',
-    bgColor: 'bg-red-500/5',
-    borderColor: 'border-red-500/20'
+    color: 'text-status-error',
+    bgColor: 'bg-status-error/5',
+    borderColor: 'border-status-error/20'
   },
   medium: { 
     label: 'Prioridade Média', 
     icon: ClipboardList, 
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-500/5',
-    borderColor: 'border-yellow-500/20'
+    color: 'text-status-warning',
+    bgColor: 'bg-status-warning/5',
+    borderColor: 'border-status-warning/20'
   },
   low: { 
     label: 'Prioridade Baixa', 
     icon: CheckCircle, 
-    color: 'text-green-400',
-    bgColor: 'bg-green-500/5',
-    borderColor: 'border-green-500/20'
+    color: 'text-status-success',
+    bgColor: 'bg-status-success/5',
+    borderColor: 'border-status-success/20'
   },
 };
 

@@ -14,9 +14,9 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
   const isPositive = (change ?? 0) >= 0;
   
   const getRateColor = (rate: number) => {
-    if (rate >= 20) return "text-green-500";
-    if (rate >= 10) return "text-orange-500";
-    return "text-red-500";
+    if (rate >= 20) return "text-status-success";
+    if (rate >= 10) return "text-status-warning";
+    return "text-status-error";
   };
 
   const getRateLabel = (rate: number) => {
@@ -37,7 +37,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
           {change !== undefined && (
             <span className={cn(
               "flex items-center text-xs font-medium",
-              isPositive ? "text-green-500" : "text-red-500"
+              isPositive ? "text-status-success" : "text-status-error"
             )}>
               {isPositive ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
               {Math.abs(change).toFixed(1)}%

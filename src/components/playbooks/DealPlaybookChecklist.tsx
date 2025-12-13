@@ -128,7 +128,7 @@ export const DealPlaybookChecklist = ({ saleId, stage }: DealPlaybookChecklistPr
                     </Badge>
                   )}
                   {isCompleted && (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <CheckCircle2 className="h-4 w-4 text-status-success" />
                   )}
                 </div>
               );

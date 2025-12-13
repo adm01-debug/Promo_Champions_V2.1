@@ -66,11 +66,11 @@ export function ActivityGoalEditDialog({
   };
 
   const goalFields = [
-    { label: "Calls por dia", icon: Phone, value: callsGoal, setValue: setCallsGoal, color: "text-green-400" },
-    { label: "Emails por dia", icon: Mail, value: emailsGoal, setValue: setEmailsGoal, color: "text-blue-400" },
-    { label: "Reuniões por dia", icon: Calendar, value: meetingsGoal, setValue: setMeetingsGoal, color: "text-purple-400" },
-    { label: "LinkedIn por dia", icon: Linkedin, value: linkedinGoal, setValue: setLinkedinGoal, color: "text-sky-400" },
-    { label: "WhatsApp por dia", icon: MessageCircle, value: whatsappGoal, setValue: setWhatsappGoal, color: "text-emerald-400" },
+    { label: "Calls por dia", icon: Phone, value: callsGoal, setValue: setCallsGoal, color: "text-status-success" },
+    { label: "Emails por dia", icon: Mail, value: emailsGoal, setValue: setEmailsGoal, color: "text-status-info" },
+    { label: "Reuniões por dia", icon: Calendar, value: meetingsGoal, setValue: setMeetingsGoal, color: "text-status-purple" },
+    { label: "LinkedIn por dia", icon: Linkedin, value: linkedinGoal, setValue: setLinkedinGoal, color: "text-primary" },
+    { label: "WhatsApp por dia", icon: MessageCircle, value: whatsappGoal, setValue: setWhatsappGoal, color: "text-accent" },
   ];
 
   return (

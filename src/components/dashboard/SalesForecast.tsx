@@ -48,7 +48,7 @@ export function SalesForecast() {
   const isOnTrack = goalProgress >= 100;
 
   const TrendIcon = data.trend === "up" ? TrendingUp : data.trend === "down" ? TrendingDown : Minus;
-  const trendColor = data.trend === "up" ? "text-emerald-400" : data.trend === "down" ? "text-red-400" : "text-muted-foreground";
+  const trendColor = data.trend === "up" ? "text-status-success" : data.trend === "down" ? "text-status-error" : "text-muted-foreground";
 
   return (
     <Card className="bg-card/50 backdrop-blur-sm border-border/50 overflow-hidden">
@@ -104,12 +104,12 @@ export function SalesForecast() {
 
         {/* Revenue Breakdown */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 space-y-1">
-            <div className="flex items-center gap-1.5 text-emerald-400">
+          <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-3 space-y-1">
+            <div className="flex items-center gap-1.5 text-status-success">
               <DollarSign className="h-3.5 w-3.5" />
               <span className="text-xs">Fechado</span>
             </div>
-            <p className="text-sm font-semibold text-emerald-400">{formatCurrency(data.currentRevenue)}</p>
+            <p className="text-sm font-semibold text-status-success">{formatCurrency(data.currentRevenue)}</p>
           </div>
           
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 space-y-1">
