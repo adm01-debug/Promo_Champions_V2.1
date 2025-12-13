@@ -597,16 +597,22 @@ export function TarefasLoadingSkeleton() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div 
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
+      >
         <div className="space-y-2">
-          <Skeleton className="h-9 w-48" variant="intense" shimmer="intense" />
-          <Skeleton className="h-4 w-72" />
+          <Skeleton className="h-9 w-48" variant="intense" shimmer="glow" />
+          <Skeleton className="h-4 w-72" shimmer="intense" />
         </div>
-        <Skeleton className="h-10 w-48 rounded-md" />
+        <Skeleton className="h-10 w-48 rounded-md" variant="primary" shimmer="glow" />
       </div>
 
       {/* Next Best Action Skeleton */}
-      <div className="glass rounded-xl border border-primary/30 p-6">
+      <div 
+        className="glass rounded-xl border border-primary/30 p-6 opacity-0 animate-fade-in"
+        style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+      >
         <div className="flex items-start gap-4">
           <Skeleton className="h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
           <div className="flex-1 space-y-3">
@@ -614,7 +620,7 @@ export function TarefasLoadingSkeleton() {
               <Skeleton className="h-5 w-32" shimmer="intense" />
               <Skeleton className="h-5 w-16 rounded-full" variant="primary" shimmer="glow" />
             </div>
-            <Skeleton className="h-4 w-full max-w-md" />
+            <Skeleton className="h-4 w-full max-w-md" shimmer="intense" />
             <Skeleton className="h-4 w-3/4" />
             <div className="flex gap-2 mt-4">
               <Skeleton className="h-9 w-28 rounded-md" variant="primary" shimmer="glow" />
@@ -625,7 +631,10 @@ export function TarefasLoadingSkeleton() {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div 
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+      >
         <div className="flex items-center gap-4">
           <Skeleton className="h-10 w-[200px] rounded-md" />
           <Skeleton className="h-9 w-24 rounded-md" />
@@ -637,10 +646,13 @@ export function TarefasLoadingSkeleton() {
       </div>
 
       {/* Priority Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div 
+        className="grid grid-cols-3 gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+      >
         <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-lg" variant="intense" shimmer="intense" />
+            <Skeleton className="h-10 w-10 rounded-lg" variant="intense" shimmer="glow" />
             <div className="space-y-1">
               <Skeleton className="h-7 w-8" shimmer="intense" />
               <Skeleton className="h-3 w-16" />
@@ -649,9 +661,9 @@ export function TarefasLoadingSkeleton() {
         </div>
         <div className="p-4 rounded-xl bg-warning/10 border border-warning/20">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-lg" />
+            <Skeleton className="h-10 w-10 rounded-lg" shimmer="intense" />
             <div className="space-y-1">
-              <Skeleton className="h-7 w-8" />
+              <Skeleton className="h-7 w-8" shimmer="intense" />
               <Skeleton className="h-3 w-12" />
             </div>
           </div>
@@ -668,12 +680,15 @@ export function TarefasLoadingSkeleton() {
       </div>
 
       {/* Priority Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div 
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+      >
         {/* High Priority Column */}
         <div className="rounded-xl border-2 border-destructive/30 bg-destructive/5 p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-5 rounded-full" variant="intense" shimmer="intense" />
+              <Skeleton className="h-5 w-5 rounded-full" variant="intense" shimmer="glow" />
               <Skeleton className="h-5 w-20" shimmer="intense" />
             </div>
             <Skeleton className="h-5 w-6 rounded-full" />
@@ -687,7 +702,7 @@ export function TarefasLoadingSkeleton() {
                 </div>
                 <Skeleton className="h-3 w-full" />
                 <div className="flex items-center gap-2">
-                  <Skeleton className="h-6 w-6 rounded-full" />
+                  <Skeleton className="h-6 w-6 rounded-full" variant={i === 0 ? "primary" : "default"} shimmer={i === 0 ? "glow" : "default"} />
                   <Skeleton className="h-3 w-20" />
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-border/30">
@@ -706,8 +721,8 @@ export function TarefasLoadingSkeleton() {
         <div className="rounded-xl border-2 border-warning/30 bg-warning/5 p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-5 rounded-full" />
-              <Skeleton className="h-5 w-20" />
+              <Skeleton className="h-5 w-5 rounded-full" shimmer="intense" />
+              <Skeleton className="h-5 w-20" shimmer="intense" />
             </div>
             <Skeleton className="h-5 w-6 rounded-full" />
           </div>
@@ -715,7 +730,7 @@ export function TarefasLoadingSkeleton() {
             {[...Array(2)].map((_, i) => (
               <div key={i} className="p-4 rounded-lg bg-card border border-border/50 space-y-3">
                 <div className="flex items-center justify-between">
-                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-5 w-28" shimmer={i === 0 ? "intense" : "default"} />
                   <Skeleton className="h-5 w-14 rounded-full" />
                 </div>
                 <Skeleton className="h-3 w-3/4" />
