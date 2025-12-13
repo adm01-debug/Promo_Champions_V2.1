@@ -861,9 +861,12 @@ animation: {
 
 ---
 
-### Componentes Atualizados (24+)
+### Componentes Atualizados (27+)
 
-#### Dashboard Principal
+#### Atividades (3 componentes)
+- `ActivityGoalCard` - Glass progress section, staggered activity animations, group hover states
+- `ActivityStats` - Staggered card entry, hover-glow primary, group icon scale
+- `DailyActivityRanking` - Gradient icon header, staggered ranking entry, group hover states
 - `StatCard` - Glass, gradient icons, shadow badges
 - `KPIGrid` - Glass container, gradient-text title
 
