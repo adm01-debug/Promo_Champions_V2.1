@@ -66,7 +66,7 @@ export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) 
       ref={setNodeRef}
       style={style}
       className={cn(
-        "p-4 bg-card/50 border-border/50 hover:border-primary/30 transition-all group cursor-grab active:cursor-grabbing",
+        "p-4 bg-card/50 border-border/50 hover-lift group cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-lg ring-2 ring-primary/50"
       )}
     >
