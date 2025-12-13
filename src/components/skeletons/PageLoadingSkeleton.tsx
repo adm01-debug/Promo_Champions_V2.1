@@ -76,9 +76,16 @@ export function MetasLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        <HeaderSkeleton />
-        <QuickStatsSkeleton />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "80ms", animationFillMode: "forwards" }}>
+          <QuickStatsSkeleton />
+        </div>
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in" 
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           <GoalProgressSkeleton highlighted />
           <LeaderboardSkeleton rows={4} highlighted />
           <LeaderboardSkeleton rows={4} />
@@ -177,33 +184,44 @@ export function VendedoresLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
         
         {/* Top Seller Spotlight Skeleton */}
-        <div className="glass rounded-2xl p-6 border-2 border-border/30">
+        <div 
+          className="glass rounded-2xl p-6 border-2 border-border/30 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <Skeleton className="h-24 w-24 rounded-full" />
+            <Skeleton className="h-24 w-24 rounded-full" variant="primary" shimmer="glow" />
             <div className="flex-1 space-y-2 text-center md:text-left">
               <Skeleton className="h-3 w-24 mx-auto md:mx-0" />
-              <Skeleton className="h-8 w-48 mx-auto md:mx-0" />
+              <Skeleton className="h-8 w-48 mx-auto md:mx-0" variant="intense" shimmer="intense" />
               <Skeleton className="h-4 w-32 mx-auto md:mx-0" />
             </div>
             <div className="flex gap-8">
               <div className="text-center space-y-1">
-                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" variant="intense" shimmer="glow" />
                 <Skeleton className="h-3 w-20 mx-auto" />
               </div>
               <div className="text-center space-y-1">
-                <Skeleton className="h-10 w-16" />
+                <Skeleton className="h-10 w-16" shimmer="intense" />
                 <Skeleton className="h-3 w-12 mx-auto" />
               </div>
             </div>
           </div>
         </div>
 
-        <QuickStatsSkeleton />
-        <ChartSkeleton height="h-[250px]" />
-        <TableSkeleton rows={6} />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "160ms", animationFillMode: "forwards" }}>
+          <QuickStatsSkeleton />
+        </div>
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "240ms", animationFillMode: "forwards" }}>
+          <ChartSkeleton height="h-[250px]" />
+        </div>
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "320ms", animationFillMode: "forwards" }}>
+          <TableSkeleton rows={6} />
+        </div>
       </div>
     </div>
   );
