@@ -17,30 +17,44 @@ export function DashboardLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           <StatCardSkeleton highlighted />
           <StatCardSkeleton />
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           <div className="lg:col-span-2">
             <ChartSkeleton height="h-[350px]" highlighted />
           </div>
           <GoalProgressSkeleton highlighted />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-4 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+        >
           <FunnelSkeleton />
           <ChartSkeleton height="h-[200px]" />
           <ChartSkeleton height="h-[200px]" />
           <AlertsPanelSkeleton />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+        >
           <TableSkeleton rows={5} />
           <TableSkeleton rows={5} />
         </div>
@@ -190,14 +204,22 @@ export function AnalyticsLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           <ChartSkeleton height="h-[350px]" />
           <ChartSkeleton height="h-[350px]" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           <FunnelSkeleton />
           <ChartSkeleton height="h-[250px]" />
           <TableSkeleton rows={4} />
@@ -257,17 +279,25 @@ export function VendedoresLoadingSkeleton() {
 export function AnalyticsPageLoadingSkeleton() {
   return (
     <div className="space-y-6">
-      <HeaderSkeleton />
+      <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+        <HeaderSkeleton />
+      </div>
       
       {/* Tabs Skeleton */}
-      <div className="flex flex-wrap gap-2 p-1 bg-card/50 rounded-lg border border-border/50">
+      <div 
+        className="flex flex-wrap gap-2 p-1 bg-card/50 rounded-lg border border-border/50 opacity-0 animate-fade-in"
+        style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+      >
         {[...Array(10)].map((_, i) => (
-          <Skeleton key={i} className="h-9 w-24 rounded-md" />
+          <Skeleton key={i} className="h-9 w-24 rounded-md" shimmer={i === 0 ? "intense" : "default"} />
         ))}
       </div>
       
       {/* Content Skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+        style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+      >
         <ChartSkeleton height="h-[350px]" />
         <ChartSkeleton height="h-[350px]" />
       </div>
@@ -279,20 +309,28 @@ export function AtividadesLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
         
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div 
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
           {[...Array(4)].map((_, i) => (
-            <StatCardSkeleton key={i} />
+            <StatCardSkeleton key={i} highlighted={i === 0} />
           ))}
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           {/* Form Skeleton */}
           <div className="glass rounded-xl p-6 space-y-4">
-            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-6 w-40" shimmer="intense" />
             <div className="space-y-4">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-20" />
@@ -310,19 +348,19 @@ export function AtividadesLoadingSkeleton() {
                 <Skeleton className="h-4 w-16" />
                 <Skeleton className="h-20 w-full" />
               </div>
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" variant="primary" shimmer="glow" />
             </div>
           </div>
           
           {/* Activity List Skeleton */}
           <div className="lg:col-span-2 glass rounded-xl p-6 space-y-4">
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-48" shimmer="intense" />
             <div className="space-y-3">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex items-start gap-4 p-4 rounded-lg border border-border/30">
-                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <Skeleton className="h-10 w-10 rounded-full" variant={i === 0 ? "primary" : "default"} shimmer={i === 0 ? "glow" : "default"} />
                   <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-32" shimmer={i < 2 ? "intense" : "default"} />
                     <Skeleton className="h-3 w-48" />
                     <Skeleton className="h-3 w-24" />
                   </div>
@@ -341,22 +379,29 @@ export function CadenciasLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        <HeaderSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <HeaderSkeleton />
+        </div>
         
         {/* Stats */}
-        <QuickStatsSkeleton />
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "80ms", animationFillMode: "forwards" }}>
+          <QuickStatsSkeleton />
+        </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
           {/* Today's Tasks Skeleton */}
           <div className="glass rounded-xl p-6 space-y-4">
-            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-6 w-40" shimmer="intense" />
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border/30">
-                  <Skeleton className="h-8 w-8 rounded-lg" />
+                  <Skeleton className="h-8 w-8 rounded-lg" variant={i === 0 ? "primary" : "default"} shimmer={i === 0 ? "glow" : "default"} />
                   <div className="flex-1 space-y-1">
-                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-32" shimmer={i < 2 ? "intense" : "default"} />
                     <Skeleton className="h-3 w-24" />
                   </div>
                   <Skeleton className="h-8 w-8 rounded-md" />
@@ -368,15 +413,15 @@ export function CadenciasLoadingSkeleton() {
           {/* Cadences List Skeleton */}
           <div className="lg:col-span-2 glass rounded-xl p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-6 w-32" shimmer="intense" />
               <Skeleton className="h-5 w-16 rounded-full" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="p-4 rounded-xl border border-border/30 space-y-3">
                   <div className="flex items-center justify-between">
-                    <Skeleton className="h-5 w-36" />
-                    <Skeleton className="h-5 w-14 rounded-full" />
+                    <Skeleton className="h-5 w-36" shimmer={i === 0 ? "intense" : "default"} />
+                    <Skeleton className="h-5 w-14 rounded-full" variant={i === 0 ? "primary" : "default"} />
                   </div>
                   <Skeleton className="h-3 w-full" />
                   <div className="flex gap-2">
