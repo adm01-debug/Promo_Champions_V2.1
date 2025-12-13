@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -22,6 +22,50 @@ const RANK_TITLES = {
 export function useSalesRealtime(currentSalespersonId?: string) {
   const queryClient = useQueryClient();
   const { playSound } = useSoundSettings();
+
+  const triggerConfetti = useCallback(async () => {
+    const confetti = (await import('canvas-confetti')).default;
+    
+    const count = 200;
+    const defaults = {
+      origin: { y: 0.7 },
+      zIndex: 9999,
+    };
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.25),
+      spread: 26,
+      startVelocity: 55,
+      origin: { x: 0.2, y: 0.7 },
+    });
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.2),
+      spread: 60,
+      origin: { x: 0.5, y: 0.7 },
+    });
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.35),
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8,
+      origin: { x: 0.8, y: 0.7 },
+    });
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.1),
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2,
+      origin: { x: 0.5, y: 0.6 },
+    });
+  }, []);
 
   useEffect(() => {
     // Request notification permission
@@ -58,8 +102,9 @@ export function useSalesRealtime(currentSalespersonId?: string) {
                 currency: "BRL",
               }).format(newSale.amount);
 
-              // Play celebration sound
+              // Play celebration sound and confetti
               playSound();
+              triggerConfetti();
 
               // Show toast notification
               toast.success(
@@ -96,7 +141,7 @@ export function useSalesRealtime(currentSalespersonId?: string) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentSalespersonId, queryClient]);
+  }, [currentSalespersonId, queryClient, playSound, triggerConfetti]);
 }
 
 export function getRankTitle(rank: number) {
