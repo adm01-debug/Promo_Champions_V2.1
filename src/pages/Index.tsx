@@ -9,6 +9,7 @@ import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import {
   DollarSign,
   ShoppingBag,
@@ -17,10 +18,14 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const { data: kpis } = useDashboardKPIs();
+  const { data: kpis, isLoading } = useDashboardKPIs();
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+
+  if (isLoading) {
+    return <DashboardLoadingSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-background">

@@ -8,6 +8,7 @@ import { TopSDRsRanking } from "@/components/sdr/TopSDRsRanking";
 import { RecentProspects } from "@/components/sdr/RecentProspects";
 import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
+import { SDRDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { 
   Users, 
   UserCheck, 
@@ -20,9 +21,13 @@ import {
 
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
-  const { data: metrics } = useSDRMetrics(period);
+  const { data: metrics, isLoading } = useSDRMetrics(period);
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
+
+  if (isLoading) {
+    return <SDRDashboardLoadingSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-background">

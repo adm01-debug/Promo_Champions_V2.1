@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { MetasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 
 export default function Metas() {
   const { data, isLoading, dataUpdatedAt } = useGoalsDashboard();
@@ -27,6 +28,10 @@ export default function Metas() {
   const onTrackCount = data?.salespeople.filter(sp => sp.onTrack && sp.goalAmount > 0).length || 0;
   const totalWithGoals = data?.salespeople.filter(sp => sp.goalAmount > 0).length || 0;
   const exceededCount = data?.salespeople.filter(sp => sp.progress >= 100).length || 0;
+
+  if (isLoading) {
+    return <MetasLoadingSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
