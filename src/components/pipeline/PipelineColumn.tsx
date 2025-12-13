@@ -4,12 +4,18 @@ import { Deal, PIPELINE_STAGES, PipelineStage } from "@/hooks/usePipeline";
 import { DealCard } from "./DealCard";
 import { cn } from "@/lib/utils";
 
+interface DealProbability {
+  probability: number;
+  factors: string[];
+}
+
 interface PipelineColumnProps {
   stage: typeof PIPELINE_STAGES[number];
   deals: Deal[];
+  probabilities?: Record<string, DealProbability>;
 }
 
-export const PipelineColumn = ({ stage, deals }: PipelineColumnProps) => {
+export const PipelineColumn = ({ stage, deals, probabilities }: PipelineColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: stage.id,
   });
@@ -60,7 +66,11 @@ export const PipelineColumn = ({ stage, deals }: PipelineColumnProps) => {
             </div>
           ) : (
             deals.map((deal) => (
-              <DealCard key={deal.id} deal={deal} />
+              <DealCard 
+                key={deal.id} 
+                deal={deal} 
+                probability={probabilities?.[deal.id]}
+              />
             ))
           )}
         </SortableContext>

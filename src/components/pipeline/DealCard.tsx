@@ -1,15 +1,28 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, User, Package, Calendar } from "lucide-react";
+import { GripVertical, Package, Calendar, TrendingUp } from "lucide-react";
 import { Deal } from "@/hooks/usePipeline";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface DealProbability {
+  probability: number;
+  factors: string[];
+}
 
 interface DealCardProps {
   deal: Deal;
+  probability?: DealProbability;
 }
 
-export const DealCard = ({ deal }: DealCardProps) => {
+export const DealCard = ({ deal, probability }: DealCardProps) => {
   const {
     attributes,
     listeners,
@@ -31,6 +44,18 @@ export const DealCard = ({ deal }: DealCardProps) => {
     }).format(value);
   };
 
+  const getProbabilityColor = (prob: number) => {
+    if (prob >= 70) return "text-green-500 bg-green-500/10";
+    if (prob >= 40) return "text-yellow-500 bg-yellow-500/10";
+    return "text-red-500 bg-red-500/10";
+  };
+
+  const getProbabilityRingColor = (prob: number) => {
+    if (prob >= 70) return "stroke-green-500";
+    if (prob >= 40) return "stroke-yellow-500";
+    return "stroke-red-500";
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -48,9 +73,34 @@ export const DealCard = ({ deal }: DealCardProps) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
             <h4 className="font-medium text-sm truncate">{deal.client_name}</h4>
-            <span className="text-xs font-semibold text-primary whitespace-nowrap">
-              {formatCurrency(deal.amount)}
-            </span>
+            <div className="flex items-center gap-1.5">
+              {probability && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className={cn(
+                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold",
+                        getProbabilityColor(probability.probability)
+                      )}>
+                        <TrendingUp className="h-3 w-3" />
+                        {probability.probability}%
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[200px]">
+                      <p className="font-semibold mb-1">Probabilidade de Fechamento</p>
+                      <ul className="text-xs space-y-0.5">
+                        {probability.factors.map((factor, i) => (
+                          <li key={i} className="text-muted-foreground">• {factor}</li>
+                        ))}
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              <span className="text-xs font-semibold text-primary whitespace-nowrap">
+                {formatCurrency(deal.amount)}
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
             <Package className="h-3 w-3" />
