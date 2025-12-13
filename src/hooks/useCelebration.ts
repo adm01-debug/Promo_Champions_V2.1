@@ -77,6 +77,51 @@ export function useCelebration() {
     });
   }, []);
 
+  const triggerLevelUpConfetti = useCallback(async () => {
+    const confetti = (await import('canvas-confetti')).default;
+    
+    // Epic celebration for level up - golden stars and more particles
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const colors = ['#FFD700', '#FFA500', '#FF6347', '#9400D3', '#00CED1'];
+
+    const frame = () => {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors,
+        zIndex: 9999,
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors,
+        zIndex: 9999,
+      });
+
+      if (Date.now() < animationEnd) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+
+    // Big burst in center
+    setTimeout(() => {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: colors,
+        zIndex: 9999,
+        scalar: 1.5,
+      });
+    }, 500);
+  }, []);
+
   const celebrate = useCallback((id: string, salespersonName?: string, salespersonId?: string) => {
     if (hasPlayedRef.current.has(id)) return;
     
@@ -100,6 +145,19 @@ export function useCelebration() {
         },
         {
           onSuccess: (result) => {
+            // Check if leveled up - trigger special celebration
+            if (result?.levelUpInfo?.leveledUp && salespersonName) {
+              setTimeout(() => {
+                triggerLevelUpConfetti();
+                playSound();
+                setTimeout(() => playSound(), 300);
+                sendPushNotification(
+                  '🎖️ Level Up!',
+                  `${salespersonName} subiu para o nível ${result.levelUpInfo.newLevel}!`
+                );
+              }, 600);
+            }
+            
             // Check if new personal record
             if (result?.newRecord) {
               setTimeout(() => {
@@ -109,7 +167,7 @@ export function useCelebration() {
                   '🏆 Novo Recorde Pessoal!',
                   `${salespersonName || 'Vendedor'} bateu seu recorde com ${result.newRecord} dias seguidos!`
                 );
-              }, 800);
+              }, result?.levelUpInfo?.leveledUp ? 2000 : 800);
             }
             // Check if near personal record
             else if (result?.nearRecord) {
@@ -131,17 +189,43 @@ export function useCelebration() {
                   '🔥 Sequência Incrível!',
                   `${salespersonName || 'Vendedor'} completou ${result.streakMilestone} dias seguidos batendo meta!`
                 );
-              }, 1500);
+              }, result?.levelUpInfo?.leveledUp ? 3000 : 1500);
             }
           },
         }
       );
     }
-  }, [playSound, triggerConfetti, sendPushNotification, recordAchievement]);
+  }, [playSound, triggerConfetti, triggerLevelUpConfetti, sendPushNotification, recordAchievement]);
+
+  const celebrateLevelUp = useCallback((
+    salespersonName: string,
+    newLevel: number,
+    levelTitle: string,
+    levelEmoji: string
+  ) => {
+    const id = `levelup-${salespersonName}-${newLevel}`;
+    if (hasPlayedRef.current.has(id)) return;
+    
+    hasPlayedRef.current.add(id);
+    
+    // Play sound twice for extra impact
+    playSound();
+    triggerLevelUpConfetti();
+    
+    // Second sound after short delay
+    setTimeout(() => {
+      playSound();
+    }, 300);
+
+    sendPushNotification(
+      `${levelEmoji} Level Up!`,
+      `${salespersonName} subiu para o nível ${newLevel} - ${levelTitle}!`
+    );
+  }, [playSound, triggerLevelUpConfetti, sendPushNotification]);
 
   const resetCelebration = useCallback((id: string) => {
     hasPlayedRef.current.delete(id);
   }, []);
 
-  return { celebrate, resetCelebration, sendPushNotification };
+  return { celebrate, celebrateLevelUp, resetCelebration, sendPushNotification, triggerLevelUpConfetti };
 }

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface SalespersonXP {
   id: string;
@@ -171,12 +172,14 @@ export function useAddXP() {
       sourceType,
       sourceId,
       description,
+      salespersonName,
     }: {
       salespersonId: string;
       xpAmount: number;
       sourceType: string;
       sourceId?: string;
       description?: string;
+      salespersonName?: string;
     }) => {
       // Get or create XP record
       let { data: xpRecord, error: fetchError } = await supabase
@@ -233,17 +236,65 @@ export function useAddXP() {
 
       if (historyError) throw historyError;
 
+      const leveledUp = levelInfo.level > previousLevel;
+      const levelsGained = levelInfo.level - previousLevel;
+
       return {
         newTotalXP,
         newLevel: levelInfo.level,
-        leveledUp: levelInfo.level > previousLevel,
-        levelsGained: levelInfo.level - previousLevel,
+        previousLevel,
+        leveledUp,
+        levelsGained,
+        salespersonName,
       };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["salesperson-xp"] });
       queryClient.invalidateQueries({ queryKey: ["all-salespeople-xp"] });
       queryClient.invalidateQueries({ queryKey: ["xp-history"] });
+
+      // Show level up toast if leveled up (celebration will be triggered separately)
+      if (result.leveledUp && result.salespersonName) {
+        const newLevelInfo = getLevelInfo(result.newLevel);
+        toast.success(
+          `${newLevelInfo.emoji} ${result.salespersonName} subiu para o nível ${result.newLevel}!`,
+          {
+            description: `Novo título: ${newLevelInfo.title}`,
+            duration: 5000,
+          }
+        );
+      }
     },
   });
+}
+
+// Hook to handle level up celebration
+export function useLevelUpCelebration() {
+  const addXPMutation = useAddXP();
+
+  const addXPWithCelebration = async (
+    params: {
+      salespersonId: string;
+      xpAmount: number;
+      sourceType: string;
+      sourceId?: string;
+      description?: string;
+      salespersonName?: string;
+    },
+    onLevelUp?: (newLevel: number, levelTitle: string, levelEmoji: string) => void
+  ) => {
+    const result = await addXPMutation.mutateAsync(params);
+
+    if (result.leveledUp && onLevelUp) {
+      const newLevelInfo = getLevelInfo(result.newLevel);
+      onLevelUp(result.newLevel, newLevelInfo.title, newLevelInfo.emoji);
+    }
+
+    return result;
+  };
+
+  return {
+    addXPWithCelebration,
+    isLoading: addXPMutation.isPending,
+  };
 }

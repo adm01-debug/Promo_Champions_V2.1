@@ -2,7 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subDays, parseISO, differenceInDays } from "date-fns";
 import type { Json } from "@/integrations/supabase/types";
-import { XP_REWARDS, calculateLevelFromXP } from "./useSalespersonXP";
+import { XP_REWARDS, calculateLevelFromXP, getLevelInfo } from "./useSalespersonXP";
+import { toast } from "sonner";
 
 export interface Achievement {
   id: string;
@@ -126,6 +127,8 @@ export function useRecordAchievement() {
       details?: Json;
     }) => {
       const today = format(new Date(), "yyyy-MM-dd");
+      const detailsObj = details as Record<string, unknown> | null;
+      const salespersonName = detailsObj?.name as string | undefined;
       
       // Check if achievement already recorded today
       const { data: existing } = await supabase
@@ -137,7 +140,7 @@ export function useRecordAchievement() {
         .maybeSingle();
 
       if (existing) {
-        return { achievement: existing, streakMilestone: null, nearRecord: null, newRecord: null, xpGained: 0 };
+        return { achievement: existing, streakMilestone: null, nearRecord: null, newRecord: null, xpGained: 0, levelUpInfo: null };
       }
 
       // Get best streak BEFORE recording new achievement
@@ -163,17 +166,39 @@ export function useRecordAchievement() {
       let nearRecord: { current: number; best: number } | null = null;
       let newRecord: number | null = null;
       let totalXPGained = 0;
+      let levelUpInfo: { leveledUp: boolean; newLevel: number; previousLevel: number } | null = null;
 
       // Award XP for daily goal
       totalXPGained += XP_REWARDS.DAILY_GOAL;
-      await addXPToSalesperson(salespersonId, XP_REWARDS.DAILY_GOAL, "achievement", data.id, "Meta diária batida");
+      const xpResult = await addXPToSalesperson(
+        salespersonId, 
+        XP_REWARDS.DAILY_GOAL, 
+        "achievement", 
+        data.id, 
+        "Meta diária batida",
+        salespersonName
+      );
+      
+      if (xpResult.leveledUp) {
+        levelUpInfo = xpResult;
+      }
 
       // Check if new personal record (current streak > previous best)
       if (currentStreak > 1 && currentStreak > previousBestStreak) {
         newRecord = currentStreak;
         // Award XP for new record
         totalXPGained += XP_REWARDS.NEW_RECORD;
-        await addXPToSalesperson(salespersonId, XP_REWARDS.NEW_RECORD, "bonus", null, `Novo recorde pessoal: ${currentStreak} dias`);
+        const recordXpResult = await addXPToSalesperson(
+          salespersonId, 
+          XP_REWARDS.NEW_RECORD, 
+          "bonus", 
+          null, 
+          `Novo recorde pessoal: ${currentStreak} dias`,
+          salespersonName
+        );
+        if (recordXpResult.leveledUp) {
+          levelUpInfo = recordXpResult;
+        }
       }
       // Check if near personal record (current streak = previous best - 1)
       else if (currentStreak > 1 && currentStreak === previousBestStreak - 1) {
@@ -193,7 +218,6 @@ export function useRecordAchievement() {
           .maybeSingle();
 
         if (!existingStreak) {
-          const detailsObj = details as Record<string, unknown> | null;
           // Record streak achievement
           await supabase
             .from("achievements")
@@ -201,7 +225,7 @@ export function useRecordAchievement() {
               salesperson_id: salespersonId,
               achievement_type: streakType,
               achievement_date: today,
-              details: { streak: currentStreak, name: detailsObj?.name || null } as Json,
+              details: { streak: currentStreak, name: salespersonName || null } as Json,
             }]);
           
           streakMilestone = currentStreak;
@@ -210,12 +234,22 @@ export function useRecordAchievement() {
           const streakXP = getStreakXP(currentStreak);
           if (streakXP > 0) {
             totalXPGained += streakXP;
-            await addXPToSalesperson(salespersonId, streakXP, "streak", null, `Sequência de ${currentStreak} dias`);
+            const streakXpResult = await addXPToSalesperson(
+              salespersonId, 
+              streakXP, 
+              "streak", 
+              null, 
+              `Sequência de ${currentStreak} dias`,
+              salespersonName
+            );
+            if (streakXpResult.leveledUp) {
+              levelUpInfo = streakXpResult;
+            }
           }
         }
       }
 
-      return { achievement: data, streakMilestone, nearRecord, newRecord, xpGained: totalXPGained };
+      return { achievement: data, streakMilestone, nearRecord, newRecord, xpGained: totalXPGained, levelUpInfo };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["achievements"] });
@@ -242,8 +276,9 @@ async function addXPToSalesperson(
   xpAmount: number,
   sourceType: string,
   sourceId: string | null,
-  description: string
-) {
+  description: string,
+  salespersonName?: string
+): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number }> {
   // Get or create XP record
   let { data: xpRecord } = await supabase
     .from("salesperson_xp")
@@ -251,6 +286,7 @@ async function addXPToSalesperson(
     .eq("salesperson_id", salespersonId)
     .maybeSingle();
 
+  const previousLevel = xpRecord?.current_level || 1;
   const newTotalXP = (xpRecord?.total_xp || 0) + xpAmount;
   const levelInfo = calculateLevelFromXP(newTotalXP);
 
@@ -284,6 +320,25 @@ async function addXPToSalesperson(
       source_id: sourceId,
       description: description,
     });
+
+  // Check if leveled up
+  const leveledUp = levelInfo.level > previousLevel;
+  if (leveledUp && salespersonName) {
+    const newLevelInfo = getLevelInfo(levelInfo.level);
+    toast.success(
+      `${newLevelInfo.emoji} ${salespersonName} subiu para o nível ${levelInfo.level}!`,
+      {
+        description: `Novo título: ${newLevelInfo.title}`,
+        duration: 5000,
+      }
+    );
+  }
+
+  return {
+    leveledUp,
+    newLevel: levelInfo.level,
+    previousLevel,
+  };
 }
 
 // Hook to get current and best streak for a salesperson
