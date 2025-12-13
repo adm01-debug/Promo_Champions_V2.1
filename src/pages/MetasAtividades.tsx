@@ -7,6 +7,7 @@ import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
 import { ActivityGoalEditDialog } from "@/components/activities/ActivityGoalEditDialog";
+import { DailyActivityRanking } from "@/components/activities/DailyActivityRanking";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -100,39 +101,53 @@ export default function MetasAtividades() {
           )}
         </div>
 
-        {/* Progress Cards Grid */}
-        <Card className="glass border-border/40 opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" />
-              Progresso por Vendedor
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        {/* Main Grid: Ranking + Progress Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Ranking */}
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <Skeleton key={i} className="h-64 w-full" />
-                ))}
-              </div>
-            ) : progressData && progressData.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {progressData.map((sp) => (
-                  <ActivityGoalCard
-                    key={sp.salesperson_id}
-                    data={sp}
-                    onEdit={setEditingId}
-                  />
-                ))}
-              </div>
+              <Skeleton className="h-[450px] w-full" />
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <Users className="h-12 w-12 mb-3 opacity-50" />
-                <p className="text-sm font-medium">Nenhum vendedor encontrado</p>
-              </div>
+              <DailyActivityRanking data={progressData || []} />
             )}
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Progress Cards Grid */}
+          <div className="lg:col-span-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
+            <Card className="glass border-border/40">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Target className="h-4 w-4 text-primary" />
+                  Progresso por Vendedor
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[...Array(4)].map((_, i) => (
+                      <Skeleton key={i} className="h-64 w-full" />
+                    ))}
+                  </div>
+                ) : progressData && progressData.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {progressData.map((sp) => (
+                      <ActivityGoalCard
+                        key={sp.salesperson_id}
+                        data={sp}
+                        onEdit={setEditingId}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                    <Users className="h-12 w-12 mb-3 opacity-50" />
+                    <p className="text-sm font-medium">Nenhum vendedor encontrado</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
 
       {/* Edit Dialog */}
