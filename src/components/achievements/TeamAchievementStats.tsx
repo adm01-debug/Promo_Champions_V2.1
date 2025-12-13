@@ -167,7 +167,7 @@ export function TeamAchievementStats() {
       </Card>
 
       {/* Trend Chart */}
-      <AchievementTrendChart days={30} />
+      <AchievementTrendChart />
     </div>
   );
 }

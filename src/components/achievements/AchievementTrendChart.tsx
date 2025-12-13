@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useAchievementTrends } from "@/hooks/useAchievementTrends";
-import { TrendingUp, Trophy, Flame } from "lucide-react";
+import { TrendingUp, Trophy } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -15,11 +17,15 @@ import {
   Legend,
 } from "recharts";
 
-interface AchievementTrendChartProps {
-  days?: number;
-}
+const PERIOD_OPTIONS = [
+  { value: "7", label: "7 dias" },
+  { value: "14", label: "14 dias" },
+  { value: "30", label: "30 dias" },
+  { value: "90", label: "90 dias" },
+];
 
-export function AchievementTrendChart({ days = 30 }: AchievementTrendChartProps) {
+export function AchievementTrendChart() {
+  const [days, setDays] = useState(30);
   const { data: trends, isLoading } = useAchievementTrends(days);
 
   if (isLoading) {
@@ -68,25 +74,44 @@ export function AchievementTrendChart({ days = 30 }: AchievementTrendChartProps)
   return (
     <Card className="bg-card/50 backdrop-blur border-border/50">
       <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Evolução de Conquistas
-          </CardTitle>
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-amber-400" />
-              <span className="text-muted-foreground">
-                Metas: <span className="font-bold text-foreground">{totalGoals}</span>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-orange-500" />
-              <span className="text-muted-foreground">
-                Marcos: <span className="font-bold text-foreground">{totalMilestones}</span>
-              </span>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Evolução de Conquistas
+            </CardTitle>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-amber-400" />
+                <span className="text-muted-foreground">
+                  Metas: <span className="font-bold text-foreground">{totalGoals}</span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-orange-500" />
+                <span className="text-muted-foreground">
+                  Marcos: <span className="font-bold text-foreground">{totalMilestones}</span>
+                </span>
+              </div>
             </div>
           </div>
+          <ToggleGroup
+            type="single"
+            value={String(days)}
+            onValueChange={(value) => value && setDays(Number(value))}
+            className="justify-start"
+          >
+            {PERIOD_OPTIONS.map((option) => (
+              <ToggleGroupItem
+                key={option.value}
+                value={option.value}
+                size="sm"
+                className="text-xs px-3"
+              >
+                {option.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </div>
       </CardHeader>
       <CardContent>
