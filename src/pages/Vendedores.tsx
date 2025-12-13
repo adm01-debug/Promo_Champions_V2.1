@@ -1,15 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2, Flame, Zap, Star, ExternalLink } from "lucide-react";
+import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2, Flame, Zap, Star, ExternalLink, Phone } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SalespersonForm } from "@/components/vendedores/SalespersonForm";
+import { SalespersonForm, SalespersonRole } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { cn } from "@/lib/utils";
+
+const roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
+  sdr: { label: "SDR", color: "bg-blue-500/10 text-blue-500 border-blue-500/20" },
+  closer: { label: "Closer", color: "bg-green-500/10 text-green-500 border-green-500/20" },
+  hybrid: { label: "Híbrido", color: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
+};
 
 const getRankIcon = (rank: number) => {
   switch (rank) {
@@ -262,6 +269,9 @@ const Vendedores = () => {
                         <div className="flex items-center gap-2 mb-0.5">
                           <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{sp.name}</h3>
                           <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Badge variant="outline" className={cn("text-[10px]", roleLabels[sp.role || 'hybrid'].color)}>
+                            {roleLabels[sp.role || 'hybrid'].label}
+                          </Badge>
                           {streak && (
                             <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", streak.bg, streak.color)}>
                               {streak.label}

@@ -525,6 +525,7 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          role: Database["public"]["Enums"]["salesperson_role"]
           updated_at: string
         }
         Insert: {
@@ -535,6 +536,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           name: string
+          role?: Database["public"]["Enums"]["salesperson_role"]
           updated_at?: string
         }
         Update: {
@@ -545,6 +547,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          role?: Database["public"]["Enums"]["salesperson_role"]
           updated_at?: string
         }
         Relationships: []
@@ -636,6 +639,7 @@ export type Database = {
         | "linkedin"
         | "whatsapp"
         | "other"
+      salesperson_role: "sdr" | "closer" | "hybrid"
       task_priority: "high" | "medium" | "low"
       task_status: "pending" | "in_progress" | "completed" | "cancelled"
       task_type:
@@ -790,6 +794,7 @@ export const Constants = {
         "whatsapp",
         "other",
       ],
+      salesperson_role: ["sdr", "closer", "hybrid"],
       task_priority: ["high", "medium", "low"],
       task_status: ["pending", "in_progress", "completed", "cancelled"],
       task_type: ["call", "meeting", "follow_up", "email", "proposal", "other"],

@@ -5,15 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { UserPlus, Loader2 } from "lucide-react";
+import { UserPlus, Loader2, Phone, Target, Users } from "lucide-react";
 import { z } from "zod";
+
+export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
+
+const roleLabels: Record<SalespersonRole, { label: string; icon: typeof Phone; color: string }> = {
+  sdr: { label: "SDR", icon: Phone, color: "text-blue-500" },
+  closer: { label: "Closer", icon: Target, color: "text-green-500" },
+  hybrid: { label: "Híbrido", icon: Users, color: "text-purple-500" },
+};
 
 const salespersonSchema = z.object({
   name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
   email: z.string().trim().email("Email inválido").max(255, "Email muito longo").or(z.literal("")),
   commission_rate: z.number().min(0, "Taxa mínima é 0").max(100, "Taxa máxima é 100"),
   goal_amount: z.number().min(0, "Meta deve ser positiva"),
+  role: z.enum(['sdr', 'closer', 'hybrid']),
 });
 
 interface SalespersonFormProps {
@@ -24,6 +34,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState<SalespersonRole>("hybrid");
   const [commissionRate, setCommissionRate] = useState("10");
   const [goalAmount, setGoalAmount] = useState("100000");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -31,7 +42,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: async (data: { name: string; email: string; commission_rate: number; goal_amount: number }) => {
+    mutationFn: async (data: { name: string; email: string; commission_rate: number; goal_amount: number; role: SalespersonRole }) => {
       // Insert salesperson
       const { data: salesperson, error: spError } = await supabase
         .from("salespeople")
@@ -39,6 +50,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
           name: data.name,
           email: data.email || null,
           commission_rate: data.commission_rate,
+          role: data.role,
         })
         .select()
         .single();
@@ -83,6 +95,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
   const resetForm = () => {
     setName("");
     setEmail("");
+    setRole("hybrid");
     setCommissionRate("10");
     setGoalAmount("100000");
     setErrors({});
@@ -95,6 +108,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
     const data = {
       name,
       email,
+      role,
       commission_rate: parseFloat(commissionRate) || 0,
       goal_amount: parseFloat(goalAmount) || 0,
     };
@@ -150,6 +164,32 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
               className="bg-background/50 border-border/50"
             />
             {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Função</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {(Object.keys(roleLabels) as SalespersonRole[]).map((r) => {
+                const info = roleLabels[r];
+                const Icon = info.icon;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
+                    className={`p-2 rounded-lg border text-xs font-medium flex flex-col items-center gap-1 transition-all ${
+                      role === r
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Icon className={`h-4 w-4 ${role === r ? info.color : ""}`} />
+                    {info.label}
+                  </button>
+                );
+              })}
+            </div>
+            {errors.role && <p className="text-sm text-destructive">{errors.role}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter } from "date-fns";
 
 export type PeriodFilter = "week" | "month" | "quarter";
+export type SalespersonRole = "sdr" | "closer" | "hybrid";
 
 interface Salesperson {
   id: string;
@@ -11,6 +12,7 @@ interface Salesperson {
   avatar_url: string | null;
   commission_rate: number;
   is_active: boolean;
+  role: SalespersonRole;
 }
 
 interface SalesGoal {
