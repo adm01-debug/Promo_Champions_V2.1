@@ -6,8 +6,9 @@ import { ObjectionsLibrary } from '@/components/analytics/ObjectionsLibrary';
 import { ABCAnalysis } from '@/components/analytics/ABCAnalysis';
 import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
 import { ChurnPrediction } from '@/components/analytics/ChurnPrediction';
+import { SalespersonCoaching } from '@/components/analytics/SalespersonCoaching';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain } from 'lucide-react';
 
 export default function Analytics() {
   return (
@@ -55,6 +56,10 @@ export default function Analytics() {
               <AlertTriangle className="h-4 w-4" />
               Churn
             </TabsTrigger>
+            <TabsTrigger value="coaching" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Brain className="h-4 w-4" />
+              Coaching IA
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="winloss" className="space-y-4">
@@ -83,6 +88,10 @@ export default function Analytics() {
 
           <TabsContent value="churn" className="space-y-4">
             <ChurnPrediction />
+          </TabsContent>
+
+          <TabsContent value="coaching" className="space-y-4">
+            <SalespersonCoaching />
           </TabsContent>
         </Tabs>
       </div>
