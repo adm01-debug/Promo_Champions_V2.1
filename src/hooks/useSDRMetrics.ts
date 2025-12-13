@@ -1,0 +1,189 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
+
+interface SDRMetrics {
+  totalLeads: number;
+  qualifiedLeads: number;
+  meetingsScheduled: number;
+  schedulingRate: number;
+  avgResponseTime: number;
+  activeProspects: number;
+  coldLeads: number;
+  warmLeads: number;
+  hotLeads: number;
+}
+
+interface SDRComparison {
+  current: SDRMetrics;
+  previous: SDRMetrics;
+  changes: {
+    leads: number;
+    qualified: number;
+    meetings: number;
+    schedulingRate: number;
+  };
+}
+
+export function useSDRMetrics() {
+  return useQuery({
+    queryKey: ["sdr-metrics"],
+    queryFn: async (): Promise<SDRComparison> => {
+      const now = new Date();
+      const currentMonthStart = startOfMonth(now);
+      const currentMonthEnd = endOfMonth(now);
+      const previousMonthStart = startOfMonth(subMonths(now, 1));
+      const previousMonthEnd = endOfMonth(subMonths(now, 1));
+
+      // Fetch current month sales (leads in SDR stages)
+      const { data: currentSales } = await supabase
+        .from("sales")
+        .select("*")
+        .gte("created_at", currentMonthStart.toISOString())
+        .lte("created_at", currentMonthEnd.toISOString());
+
+      // Fetch previous month sales
+      const { data: previousSales } = await supabase
+        .from("sales")
+        .select("*")
+        .gte("created_at", previousMonthStart.toISOString())
+        .lte("created_at", previousMonthEnd.toISOString());
+
+      // Fetch lead scores for temperature classification
+      const { data: leadScores } = await supabase
+        .from("lead_scores")
+        .select("sale_id, score");
+
+      // Fetch tasks to count meetings scheduled
+      const { data: currentTasks } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("task_type", "meeting")
+        .gte("created_at", currentMonthStart.toISOString())
+        .lte("created_at", currentMonthEnd.toISOString());
+
+      const { data: previousTasks } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("task_type", "meeting")
+        .gte("created_at", previousMonthStart.toISOString())
+        .lte("created_at", previousMonthEnd.toISOString());
+
+      const scoreMap = new Map(leadScores?.map(s => [s.sale_id, s.score]) || []);
+
+      const calculateMetrics = (sales: any[], tasks: any[]): SDRMetrics => {
+        const totalLeads = sales?.length || 0;
+        const qualifiedLeads = sales?.filter(s => 
+          s.status === "qualified" || s.status === "proposal" || s.status === "negotiation" || s.status === "completed"
+        ).length || 0;
+        const meetingsScheduled = tasks?.length || 0;
+        const schedulingRate = totalLeads > 0 ? (meetingsScheduled / totalLeads) * 100 : 0;
+        
+        // Temperature classification based on lead scores
+        let coldLeads = 0, warmLeads = 0, hotLeads = 0;
+        sales?.forEach(sale => {
+          const score = scoreMap.get(sale.id) || 0;
+          if (score >= 75) hotLeads++;
+          else if (score >= 50) warmLeads++;
+          else coldLeads++;
+        });
+
+        const activeProspects = sales?.filter(s => 
+          s.status === "lead" || s.status === "qualified"
+        ).length || 0;
+
+        return {
+          totalLeads,
+          qualifiedLeads,
+          meetingsScheduled,
+          schedulingRate,
+          avgResponseTime: 2.4, // Placeholder - would need activity tracking
+          activeProspects,
+          coldLeads,
+          warmLeads,
+          hotLeads,
+        };
+      };
+
+      const current = calculateMetrics(currentSales || [], currentTasks || []);
+      const previous = calculateMetrics(previousSales || [], previousTasks || []);
+
+      const calcChange = (curr: number, prev: number) => 
+        prev > 0 ? ((curr - prev) / prev) * 100 : curr > 0 ? 100 : 0;
+
+      return {
+        current,
+        previous,
+        changes: {
+          leads: calcChange(current.totalLeads, previous.totalLeads),
+          qualified: calcChange(current.qualifiedLeads, previous.qualifiedLeads),
+          meetings: calcChange(current.meetingsScheduled, previous.meetingsScheduled),
+          schedulingRate: calcChange(current.schedulingRate, previous.schedulingRate),
+        },
+      };
+    },
+  });
+}
+
+export function useProspectingFunnel() {
+  return useQuery({
+    queryKey: ["prospecting-funnel"],
+    queryFn: async () => {
+      const { data: sales } = await supabase.from("sales").select("status");
+      
+      const statusCounts = {
+        lead: 0,
+        qualified: 0,
+        proposal: 0,
+        negotiation: 0,
+        completed: 0,
+      };
+
+      sales?.forEach(sale => {
+        const status = sale.status as keyof typeof statusCounts;
+        if (status in statusCounts) {
+          statusCounts[status]++;
+        }
+      });
+
+      const total = sales?.length || 1;
+
+      return [
+        { stage: "Leads", count: statusCounts.lead, percentage: (statusCounts.lead / total) * 100, color: "#6366f1" },
+        { stage: "Qualificados", count: statusCounts.qualified, percentage: (statusCounts.qualified / total) * 100, color: "#8b5cf6" },
+        { stage: "Proposta", count: statusCounts.proposal, percentage: (statusCounts.proposal / total) * 100, color: "#a855f7" },
+        { stage: "Negociação", count: statusCounts.negotiation, percentage: (statusCounts.negotiation / total) * 100, color: "#d946ef" },
+        { stage: "Fechados", count: statusCounts.completed, percentage: (statusCounts.completed / total) * 100, color: "#22c55e" },
+      ];
+    },
+  });
+}
+
+export function useLeadTemperatureDistribution() {
+  return useQuery({
+    queryKey: ["lead-temperature-distribution"],
+    queryFn: async () => {
+      const { data: leadScores } = await supabase
+        .from("lead_scores")
+        .select("score");
+
+      let hot = 0, warm = 0, cold = 0, frozen = 0;
+
+      leadScores?.forEach(({ score }) => {
+        if (score >= 75) hot++;
+        else if (score >= 50) warm++;
+        else if (score >= 25) cold++;
+        else frozen++;
+      });
+
+      const total = leadScores?.length || 1;
+
+      return [
+        { name: "Quentes", value: hot, percentage: (hot / total) * 100, color: "#ef4444" },
+        { name: "Mornos", value: warm, percentage: (warm / total) * 100, color: "#f97316" },
+        { name: "Frios", value: cold, percentage: (cold / total) * 100, color: "#3b82f6" },
+        { name: "Gelados", value: frozen, percentage: (frozen / total) * 100, color: "#6b7280" },
+      ];
+    },
+  });
+}
