@@ -110,9 +110,9 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
   const isTask = event.type === "task_completed";
   
   const getEventStyle = () => {
-    if (isActivity) return "bg-primary/20 text-primary";
-    if (isStageChange) return "bg-status-warning/20 text-status-warning";
-    return "bg-status-success/20 text-status-success";
+    if (isActivity) return "bg-gradient-to-br from-primary/30 to-primary/10 text-primary border border-primary/30";
+    if (isStageChange) return "bg-gradient-to-br from-status-warning/30 to-status-warning/10 text-status-warning border border-status-warning/30";
+    return "bg-gradient-to-br from-status-success/30 to-status-success/10 text-status-success border border-status-success/30";
   };
 
   const getEventIcon = () => {
@@ -124,11 +124,11 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
   return (
     <div className="relative pl-6 pb-4 last:pb-0">
       {/* Timeline line */}
-      <div className="absolute left-[9px] top-5 bottom-0 w-px bg-border last:hidden" />
+      <div className="absolute left-[9px] top-5 bottom-0 w-px bg-gradient-to-b from-border to-transparent last:hidden" />
       
       {/* Timeline dot */}
       <div className={cn(
-        "absolute left-0 top-1 w-[18px] h-[18px] rounded-full flex items-center justify-center",
+        "absolute left-0 top-1 w-[18px] h-[18px] rounded-full flex items-center justify-center shadow-sm",
         getEventStyle()
       )}>
         {getEventIcon()}
@@ -139,11 +139,11 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
         <div className="flex items-center gap-2 flex-wrap">
           {isActivity && (
             <>
-              <span className="font-medium text-sm">
+              <span className="font-display font-medium text-sm">
                 {ACTIVITY_LABELS[event.activity_type || "other"]}
               </span>
               {event.outcome && (
-                <span className={cn("text-xs", OUTCOME_COLORS[event.outcome] || "text-muted-foreground")}>
+                <span className={cn("text-xs font-medium", OUTCOME_COLORS[event.outcome] || "text-muted-foreground")}>
                   • {OUTCOME_LABELS[event.outcome] || event.outcome}
                 </span>
               )}
@@ -152,19 +152,19 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
           
           {isStageChange && (
             <>
-              <span className="font-medium text-sm text-amber-400">
+              <span className="font-display font-medium text-sm text-status-warning">
                 Mudança de Stage
               </span>
               <div className="flex items-center gap-1 text-xs">
                 {event.from_stage && (
                   <>
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground px-1.5 py-0.5 rounded bg-muted/30">
                       {STAGE_LABELS[event.from_stage] || event.from_stage}
                     </span>
                     <ArrowRight className="h-3 w-3 text-muted-foreground" />
                   </>
                 )}
-                <span className="text-foreground font-medium">
+                <span className="text-foreground font-medium px-1.5 py-0.5 rounded bg-primary/10">
                   {STAGE_LABELS[event.to_stage || ""] || event.to_stage}
                 </span>
               </div>
@@ -173,7 +173,7 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
 
           {isTask && (
             <>
-              <span className="font-medium text-sm text-status-success">
+              <span className="font-display font-medium text-sm text-status-success">
                 Tarefa Concluída
               </span>
               <span className="text-xs text-muted-foreground">
@@ -184,12 +184,12 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
         </div>
 
         {isTask && event.task_title && (
-          <p className="text-sm mt-0.5 text-foreground">
+          <p className="text-sm mt-0.5 text-foreground font-medium">
             {event.task_title}
           </p>
         )}
         
-        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground">
           <Clock className="h-3 w-3" />
           <span>
             {formatDistanceToNow(new Date(event.timestamp), { addSuffix: true, locale: ptBR })}
@@ -200,7 +200,7 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
           {event.duration_in_stage !== undefined && (
             <>
               <span className="text-muted-foreground/50">•</span>
-              <span>{event.duration_in_stage}h no stage</span>
+              <span className="font-medium">{event.duration_in_stage}h no stage</span>
             </>
           )}
         </div>
@@ -208,12 +208,12 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
         {event.contact_name && (
           <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
             <User className="h-3 w-3" />
-            <span>{event.contact_name}</span>
+            <span className="font-medium">{event.contact_name}</span>
           </div>
         )}
         
         {(event.notes || event.task_description) && (
-          <p className="mt-1 text-xs text-muted-foreground line-clamp-2 bg-muted/30 rounded p-2">
+          <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2 bg-muted/40 rounded-md p-2 border border-border/30">
             {event.notes || event.task_description}
           </p>
         )}
@@ -234,18 +234,20 @@ export function DealTimeline({ deal }: DealTimelineProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 px-2 text-[10px] gap-1 text-muted-foreground hover:text-foreground"
+          className="h-6 px-2 text-[10px] gap-1 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
           onClick={(e) => e.stopPropagation()}
         >
           <History className="h-3 w-3" />
           Timeline
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md" onClick={(e) => e.stopPropagation()}>
+      <DialogContent className="max-w-md glass border-border/50 dark:border-glow" onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <History className="h-5 w-5 text-primary" />
-            Timeline: {deal.client_name}
+          <DialogTitle className="flex items-center gap-2 font-display">
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+              <History className="h-4 w-4 gradient-primary" />
+            </div>
+            Timeline: <span className="gradient-text">{deal.client_name}</span>
           </DialogTitle>
         </DialogHeader>
         
@@ -269,9 +271,9 @@ export function DealTimeline({ deal }: DealTimelineProps) {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground bg-muted/20 rounded-lg border border-dashed border-border/50">
               <History className="h-10 w-10 mb-3 opacity-50" />
-              <p className="text-sm font-medium">Nenhuma interação registrada</p>
+              <p className="text-sm font-display font-medium">Nenhuma interação registrada</p>
               <p className="text-xs mt-1">Atividades e mudanças de stage aparecerão aqui</p>
             </div>
           )}
