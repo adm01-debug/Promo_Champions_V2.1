@@ -484,9 +484,11 @@ Os seguintes componentes já utilizam o design system completo:
 
 | Componente | Arquivo | Melhorias |
 |------------|---------|-----------|
-| DealCard | `pipeline/DealCard.tsx` | Glass effect, gradient-text values, primary badges |
-| PipelineColumn | `pipeline/PipelineColumn.tsx` | Glass headers, gradient-text totals, primary badges |
-| AtRiskDealsPanel | `pipeline/AtRiskDealsPanel.tsx` | Card elevated, icon containers |
+| DealCard | `pipeline/DealCard.tsx` | Glass + hover-lift, gradient-text values, conditional badges (lead score/probability), cadence status dropdown, dark:border-glow |
+| PipelineColumn | `pipeline/PipelineColumn.tsx` | Glass headers com card-elevated, gradient-primary deal count badge, gradient-text totals, empty state melhorado |
+| PipelineBoard | `pipeline/PipelineBoard.tsx` | Stats bar com glass + dark:border-glow, font-display values, gradient-text total, button transitions, drag overlay shadow |
+| AtRiskDealsPanel | `pipeline/AtRiskDealsPanel.tsx` | Glass panel com dark:border-glow, gradient icon container, risk badges coloridos, activity icons com tooltips, AI analysis section com gradient bg |
+| DealTimeline | `pipeline/DealTimeline.tsx` | Gradient timeline dots/line, event-type badges coloridos, glass dialog, gradient icon header, empty state melhorado |
 
 ### Tarefas
 
@@ -862,8 +864,12 @@ animation: {
 - `WinLossAnalysis`, `ConversionFunnel`, `DealVelocityChart`
 - `ObjectionsLibrary`, `ABCAnalysis`, `ClosingTimeChart`, `ChurnPrediction`
 
-#### Pipeline (3 componentes)
-- `DealCard`, `PipelineColumn`, `AtRiskDealsPanel`
+#### Pipeline (5 componentes)
+- `DealCard` - Glass + hover-lift, conditional badges, cadence dropdown
+- `PipelineColumn` - Glass headers, gradient deal count badge
+- `PipelineBoard` - Stats bar glass, drag overlay shadow
+- `AtRiskDealsPanel` - Risk badges, activity tooltips, AI analysis section
+- `DealTimeline` - Gradient timeline, event-type badges, glass dialog
 
 #### Tarefas
 - `TaskCard`
