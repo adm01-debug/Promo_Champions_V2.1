@@ -15,6 +15,7 @@ import Analytics from "./pages/Analytics";
 import Notificacoes from "./pages/Notificacoes";
 import Pipeline from "./pages/Pipeline";
 import Tarefas from "./pages/Tarefas";
+import Playbooks from "./pages/Playbooks";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/notificacoes" element={<Notificacoes />} />
             <Route path="/pipeline" element={<Pipeline />} />
             <Route path="/tarefas" element={<Tarefas />} />
+            <Route path="/playbooks" element={<Playbooks />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
