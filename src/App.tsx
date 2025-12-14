@@ -34,7 +34,18 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import AccessDenied from "./pages/AccessDenied";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 2, // 2 minutes - data considered fresh
+      gcTime: 1000 * 60 * 10, // 10 minutes - cache retention
+      refetchOnWindowFocus: false, // Don't refetch on tab focus
+      refetchOnReconnect: true, // Refetch on network reconnect
+      retry: 1, // Single retry on failure
+      refetchInterval: false, // Disable automatic refetching by default
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
