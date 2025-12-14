@@ -1,12 +1,14 @@
-import { Package, Filter, Search, Star, Loader2 } from "lucide-react";
+import { Package, Filter, Search, Star, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProdutosLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState } from "react";
-import { useProducts } from "@/hooks/useProducts";
+import { useProducts, useDeleteProduct, Product } from "@/hooks/useProducts";
 import { CreateProductDialog } from "@/components/products/CreateProductDialog";
+import { EditProductDialog } from "@/components/products/EditProductDialog";
+import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 
 const statusColors: Record<string, string> = {
   ativo: "bg-status-success/20 text-status-success border-status-success/30",
@@ -15,7 +17,18 @@ const statusColors: Record<string, string> = {
 
 const Produtos = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+  
   const { data: products, isLoading } = useProducts(searchTerm);
+  const deleteProduct = useDeleteProduct();
+
+  const handleDelete = () => {
+    if (!deletingProduct) return;
+    deleteProduct.mutate(deletingProduct.id, {
+      onSuccess: () => setDeletingProduct(null),
+    });
+  };
 
   return (
     <SkeletonTransition
@@ -67,12 +80,32 @@ const Produtos = () => {
               {products.map((product, index) => (
                 <div 
                   key={product.id}
-                  className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all cursor-pointer group"
+                  className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all group relative"
                   style={{ animationDelay: `${200 + index * 50}ms` }}
                 >
-                  <div className="flex items-start justify-between">
+                  {/* Action Buttons */}
+                  <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
+                      onClick={() => setEditingProduct(product)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive"
+                      onClick={() => setDeletingProduct(product)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="flex items-start justify-between pr-16">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <Badge variant="outline" className="text-xs bg-muted/50">
                           {product.category}
                         </Badge>
@@ -114,6 +147,23 @@ const Produtos = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <EditProductDialog
+        product={editingProduct}
+        open={!!editingProduct}
+        onOpenChange={(open) => !open && setEditingProduct(null)}
+      />
+
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={!!deletingProduct}
+        onOpenChange={(open) => !open && setDeletingProduct(null)}
+        onConfirm={handleDelete}
+        title="Excluir Produto"
+        description={`Tem certeza que deseja excluir o produto "${deletingProduct?.name}"? Esta ação não pode ser desfeita.`}
+        isDeleting={deleteProduct.isPending}
+      />
     </SkeletonTransition>
   );
 };
