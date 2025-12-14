@@ -25,7 +25,7 @@ export function SkeletonTransition({
 }: SkeletonTransitionProps) {
   const [showSkeleton, setShowSkeleton] = useState(isLoading);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState(!isLoading);
 
   useEffect(() => {
     if (!isLoading && showSkeleton) {
