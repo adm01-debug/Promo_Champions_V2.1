@@ -94,6 +94,7 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Cliente</TableHead>
+              <TableHead>ICP</TableHead>
               <TableHead>Contato</TableHead>
               <TableHead>Responsável</TableHead>
               <TableHead>Status</TableHead>
@@ -103,22 +104,23 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((item) => (
+            {data.map((item) => {
+              const icpData = item.client_id ? icpMap.get(item.client_id) : null;
+              
+              return (
               <TableRow key={item.id} className="group">
                 <TableCell>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">{item.client?.name || "—"}</p>
-                      {item.client_id && (
-                        <ICPBadge icpData={icpMap.get(item.client_id)} size="sm" />
-                      )}
-                    </div>
+                    <p className="font-medium">{item.client?.name || "—"}</p>
                     {item.client?.company && (
                       <p className="text-sm text-muted-foreground">
                         {item.client.company}
                       </p>
                     )}
                   </div>
+                </TableCell>
+                <TableCell>
+                  <ICPBadge icpData={icpData} size="md" showTooltip={true} />
                 </TableCell>
                 <TableCell>
                   <div className="space-y-1">
@@ -214,7 +216,8 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
       </div>
