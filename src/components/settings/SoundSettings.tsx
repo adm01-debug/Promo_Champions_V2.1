@@ -1,4 +1,4 @@
-import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -54,11 +54,9 @@ export function SoundSettings() {
   const handleTestLevelUp = async () => {
     const confetti = (await import('canvas-confetti')).default;
     
-    // Play sound twice for level up
     playSound();
     setTimeout(() => playSound(), 300);
     
-    // Golden confetti animation
     const duration = 3000;
     const animationEnd = Date.now() + duration;
     const colors = ['#FFD700', '#FFA500', '#FF6347', '#9400D3', '#00CED1'];
@@ -87,7 +85,6 @@ export function SoundSettings() {
     };
     frame();
 
-    // Big burst in center
     setTimeout(() => {
       confetti({
         particleCount: 150,
@@ -101,6 +98,50 @@ export function SoundSettings() {
 
     toast.success("🎖️ Level Up de teste!", {
       description: "Celebração especial com confetti dourado!",
+    });
+  };
+
+  const handleTestStreakRecord = async () => {
+    const confetti = (await import('canvas-confetti')).default;
+    
+    playSound();
+    
+    // Yellow/gold themed confetti for streak record
+    const colors = ['#FFD700', '#FFEC8B', '#FFC125', '#DAA520', '#F0E68C'];
+    
+    // Multiple bursts simulating streak achievement
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { x: 0.3, y: 0.6 },
+      colors: colors,
+      zIndex: 9999,
+    });
+
+    setTimeout(() => {
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { x: 0.7, y: 0.6 },
+        colors: colors,
+        zIndex: 9999,
+      });
+    }, 200);
+
+    setTimeout(() => {
+      playSound();
+      confetti({
+        particleCount: 120,
+        spread: 100,
+        origin: { x: 0.5, y: 0.5 },
+        colors: colors,
+        zIndex: 9999,
+        scalar: 1.3,
+      });
+    }, 400);
+
+    toast.success("🏆 Novo Recorde Pessoal!", {
+      description: "Celebração de recorde de sequência!",
     });
   };
 
@@ -182,23 +223,34 @@ export function SoundSettings() {
 
         {/* Test Celebration Buttons */}
         <div className="pt-4 border-t border-border/40 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             <Button
               onClick={handleTestCelebration}
               variant="outline"
-              className="gap-2"
+              size="sm"
+              className="gap-1.5"
               disabled={selectedSound === 'none' && volume === 0}
             >
-              <Sparkles className="h-4 w-4" />
-              Celebração
+              <Sparkles className="h-3.5 w-3.5" />
+              Meta
             </Button>
             <Button
               onClick={handleTestLevelUp}
-              className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+              size="sm"
+              className="gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
               disabled={selectedSound === 'none' && volume === 0}
             >
-              <Crown className="h-4 w-4" />
+              <Crown className="h-3.5 w-3.5" />
               Level Up
+            </Button>
+            <Button
+              onClick={handleTestStreakRecord}
+              size="sm"
+              className="gap-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white"
+              disabled={selectedSound === 'none' && volume === 0}
+            >
+              <Trophy className="h-3.5 w-3.5" />
+              Recorde
             </Button>
           </div>
           <p className="text-xs text-muted-foreground text-center">
