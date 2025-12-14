@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Vendas from "./pages/Vendas";
 import Clientes from "./pages/Clientes";
@@ -53,21 +54,49 @@ const App = () => (
                     <Route path="/vendas" element={<Vendas />} />
                     <Route path="/clientes" element={<Clientes />} />
                     <Route path="/produtos" element={<Produtos />} />
-                    <Route path="/relatorios" element={<Relatorios />} />
-                    <Route path="/vendedores" element={<Vendedores />} />
+                    <Route path="/relatorios" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Relatorios />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/vendedores" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Vendedores />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/vendedor/:id" element={<VendedorDashboard />} />
-                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/analytics" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Analytics />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/notificacoes" element={<Notificacoes />} />
                     <Route path="/pipeline" element={<Pipeline />} />
                     <Route path="/tarefas" element={<Tarefas />} />
-                    <Route path="/playbooks" element={<Playbooks />} />
+                    <Route path="/playbooks" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Playbooks />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/sdr" element={<SDRDashboard />} />
                     <Route path="/closer" element={<CloserDashboard />} />
                     <Route path="/atividades" element={<Atividades />} />
                     <Route path="/cadencias" element={<Cadencias />} />
-                    <Route path="/metas" element={<Metas />} />
-                    <Route path="/fonte-leads" element={<FonteLeads />} />
-                    <Route path="/relatorio-atividades" element={<RelatorioAtividades />} />
+                    <Route path="/metas" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Metas />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/fonte-leads" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <FonteLeads />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/relatorio-atividades" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <RelatorioAtividades />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/metas-atividades" element={<MetasAtividades />} />
                     <Route path="/ranking" element={<RankingCompetitivo />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
