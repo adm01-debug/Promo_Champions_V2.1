@@ -1,5 +1,6 @@
 import { RoleManagement } from "@/components/settings/RoleManagement";
 import { SoundSettings } from "@/components/settings/SoundSettings";
+import { SecurityAlertSoundSettings } from "@/components/settings/SecurityAlertSoundSettings";
 import { AccessDeniedLogs } from "@/components/settings/AccessDeniedLogs";
 import { SecurityAlertSettings } from "@/components/settings/SecurityAlertSettings";
 import { SecurityAlertHistory } from "@/components/settings/SecurityAlertHistory";
@@ -44,8 +45,9 @@ export default function Configuracoes() {
           <RoleManagement />
         </TabsContent>
 
-        <TabsContent value="sounds" className="mt-6">
+        <TabsContent value="sounds" className="mt-6 space-y-6">
           <SoundSettings />
+          <SecurityAlertSoundSettings />
         </TabsContent>
 
         {isAdmin && (
