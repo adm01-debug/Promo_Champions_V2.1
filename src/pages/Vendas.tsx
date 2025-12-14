@@ -1,12 +1,12 @@
-import { ShoppingCart, Filter, Search, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ShoppingCart, Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSalesData } from "@/hooks/useSalesData";
 import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
+import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 
 const statusColors: Record<string, string> = {
   concluída: "bg-status-success/20 text-status-success border-status-success/30",
@@ -17,9 +17,56 @@ const statusColors: Record<string, string> = {
   negociação: "bg-accent/20 text-accent border-accent/30",
 };
 
+const sortOptions: SortOption[] = [
+  { label: "Mais recente", value: "date_desc", direction: "desc" },
+  { label: "Mais antigo", value: "date_asc", direction: "asc" },
+  { label: "Maior valor", value: "value_desc", direction: "desc" },
+  { label: "Menor valor", value: "value_asc", direction: "asc" },
+  { label: "Cliente (A-Z)", value: "client_asc", direction: "asc" },
+];
+
+const statusOptions = [
+  { label: "Concluída", value: "concluída" },
+  { label: "Pendente", value: "pendente" },
+  { label: "Cancelada", value: "cancelada" },
+];
+
 const Vendas = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("date_desc");
+  const [statusFilter, setStatusFilter] = useState("");
   const { data: sales, isLoading } = useSalesData(searchTerm);
+
+  const filteredAndSortedSales = useMemo(() => {
+    if (!sales) return [];
+    
+    let filtered = [...sales];
+    
+    // Apply status filter
+    if (statusFilter) {
+      filtered = filtered.filter(s => s.status === statusFilter);
+    }
+    
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "date_desc":
+          return new Date(b.data.split("/").reverse().join("-")).getTime() - 
+                 new Date(a.data.split("/").reverse().join("-")).getTime();
+        case "date_asc":
+          return new Date(a.data.split("/").reverse().join("-")).getTime() - 
+                 new Date(b.data.split("/").reverse().join("-")).getTime();
+        case "value_desc":
+          return b.valor - a.valor;
+        case "value_asc":
+          return a.valor - b.valor;
+        case "client_asc":
+          return a.cliente.localeCompare(b.cliente);
+        default:
+          return 0;
+      }
+    });
+  }, [sales, sortBy, statusFilter]);
 
   return (
     <SkeletonTransition
@@ -58,15 +105,24 @@ const Vendas = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button variant="outline" className="glass">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
-              </Button>
+              <FilterPopover
+                sortOptions={sortOptions}
+                currentSort={sortBy}
+                onSortChange={setSortBy}
+                filterOptions={[
+                  {
+                    label: "Status",
+                    options: statusOptions,
+                    value: statusFilter,
+                    onChange: setStatusFilter,
+                  },
+                ]}
+              />
             </div>
           </div>
 
           {/* Table */}
-          {sales && sales.length > 0 ? (
+          {filteredAndSortedSales.length > 0 ? (
             <div className="opacity-0 animate-fade-in-up glass rounded-xl overflow-hidden" style={{ animationDelay: "200ms" }}>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -81,7 +137,7 @@ const Vendas = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {sales.map((sale, index) => (
+                    {filteredAndSortedSales.map((sale, index) => (
                       <tr 
                         key={sale.id} 
                         className="border-b border-border/30 hover:bg-muted/30 transition-colors"
@@ -108,7 +164,9 @@ const Vendas = () => {
               <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <h3 className="text-lg font-semibold mb-2">Nenhuma venda encontrada</h3>
               <p className="text-muted-foreground mb-4">
-                {searchTerm ? "Tente uma busca diferente" : "Adicione sua primeira venda para começar"}
+                {searchTerm || statusFilter 
+                  ? "Tente ajustar os filtros" 
+                  : "Adicione sua primeira venda para começar"}
               </p>
             </div>
           )}

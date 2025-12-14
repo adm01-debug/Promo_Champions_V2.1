@@ -1,22 +1,56 @@
-import { Users, Filter, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ClientesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useClients, useDeleteClient, Client } from "@/hooks/useClients";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
+import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
+
+const sortOptions: SortOption[] = [
+  { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
+  { label: "Nome (Z-A)", value: "name_desc", direction: "desc" },
+  { label: "Maior valor", value: "value_desc", direction: "desc" },
+  { label: "Menor valor", value: "value_asc", direction: "asc" },
+  { label: "Mais recente", value: "date_desc", direction: "desc" },
+  { label: "Mais antigo", value: "date_asc", direction: "asc" },
+];
 
 const Clientes = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name_asc");
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   
   const { data: clients, isLoading } = useClients(searchTerm);
   const deleteClient = useDeleteClient();
+
+  const sortedClients = useMemo(() => {
+    if (!clients) return [];
+    
+    return [...clients].sort((a, b) => {
+      switch (sortBy) {
+        case "name_asc":
+          return a.name.localeCompare(b.name);
+        case "name_desc":
+          return b.name.localeCompare(a.name);
+        case "value_desc":
+          return Number(b.total_value) - Number(a.total_value);
+        case "value_asc":
+          return Number(a.total_value) - Number(b.total_value);
+        case "date_desc":
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case "date_asc":
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        default:
+          return 0;
+      }
+    });
+  }, [clients, sortBy]);
 
   const handleDelete = () => {
     if (!deletingClient) return;
@@ -62,17 +96,18 @@ const Clientes = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button variant="outline" className="glass">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
-              </Button>
+              <FilterPopover
+                sortOptions={sortOptions}
+                currentSort={sortBy}
+                onSortChange={setSortBy}
+              />
             </div>
           </div>
 
           {/* Cards Grid */}
-          {clients && clients.length > 0 ? (
+          {sortedClients.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {clients.map((client, index) => (
+              {sortedClients.map((client, index) => (
                 <div 
                   key={client.id}
                   className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all group relative"
