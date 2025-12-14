@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useSystemSoundSettings } from '@/hooks/useSystemSoundSettings';
 
 export type TaskPriority = 'high' | 'medium' | 'low';
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
@@ -92,6 +93,7 @@ export function useTodayTasks(salespersonId?: string) {
 export function useCreateTask() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { playSoundForCategory } = useSystemSoundSettings();
 
   return useMutation({
     mutationFn: async (task: {
@@ -116,6 +118,7 @@ export function useCreateTask() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       toast({ title: 'Tarefa criada com sucesso!' });
+      playSoundForCategory('newTask');
     },
     onError: () => {
       toast({ title: 'Erro ao criar tarefa', variant: 'destructive' });

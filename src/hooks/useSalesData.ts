@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
 
 export interface Sale {
   id: string;
@@ -68,6 +69,7 @@ export const useSalesData = (searchTerm?: string) => {
 
 export const useCreateSale = () => {
   const queryClient = useQueryClient();
+  const { playSoundForCategory } = useSystemSoundSettings();
 
   return useMutation({
     mutationFn: async (input: CreateSaleInput) => {
@@ -85,6 +87,7 @@ export const useCreateSale = () => {
       queryClient.invalidateQueries({ queryKey: ["sales"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
       toast.success("Venda criada com sucesso!");
+      playSoundForCategory('newSale');
     },
     onError: (error) => {
       console.error("Error creating sale:", error);
