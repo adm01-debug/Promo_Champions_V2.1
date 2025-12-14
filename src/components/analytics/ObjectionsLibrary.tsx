@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useObjectionsLibrary, useAddObjection, useIncrementObjectionUsage, useDeleteObjection } from '@/hooks/useObjectionsLibrary';
-import { BookOpen, Plus, Copy, Trash2, Search, ThumbsUp, MessageSquare } from 'lucide-react';
+import { BookOpen, Plus, Copy, Trash2, Search, ThumbsUp, MessageSquare, CheckCircle2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 const CATEGORIES = [
@@ -19,6 +21,16 @@ const CATEGORIES = [
   { value: 'necessidade', label: 'Necessidade' },
   { value: 'general', label: 'Geral' },
 ];
+
+const CATEGORY_COLORS: Record<string, string> = {
+  preco: 'bg-status-error/20 text-status-error border-status-error/30',
+  tempo: 'bg-status-warning/20 text-status-warning border-status-warning/30',
+  concorrencia: 'bg-status-info/20 text-status-info border-status-info/30',
+  autoridade: 'bg-status-purple/20 text-status-purple border-status-purple/30',
+  confianca: 'bg-status-success/20 text-status-success border-status-success/30',
+  necessidade: 'bg-primary/20 text-primary border-primary/30',
+  general: 'bg-muted text-muted-foreground border-border',
+};
 
 export function ObjectionsLibrary() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -59,57 +71,69 @@ export function ObjectionsLibrary() {
     return CATEGORIES.find(c => c.value === value)?.label || value;
   };
 
+  const getCategoryColor = (value: string) => {
+    return CATEGORY_COLORS[value] || CATEGORY_COLORS.general;
+  };
+
   return (
-    <Card variant="elevated" className="border-border/40 dark:border-glow hover-lift">
+    <Card className="glass dark:border-glow card-elevated hover-lift animate-fade-in">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <CardTitle className="text-lg flex items-center gap-2">
-            <div className="p-2 rounded-lg gradient-primary">
-              <BookOpen className="h-4 w-4 text-white" />
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
+              <BookOpen className="h-5 w-5 text-primary" />
             </div>
-            <span className="gradient-text">Biblioteca de Objeções</span>
+            <span className="gradient-text font-display">Biblioteca de Objeções</span>
+            {filteredObjections && filteredObjections.length > 0 && (
+              <Badge variant="secondary" className="ml-2 bg-primary/20 text-primary">
+                {filteredObjections.length}
+              </Badge>
+            )}
           </CardTitle>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" variant="glow" className="gap-1">
+              <Button size="sm" variant="glow" className="gap-1.5 hover-lift">
                 <Plus className="h-4 w-4" />
                 Adicionar
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="glass border-border/50">
               <DialogHeader>
-                <DialogTitle>Nova Objeção</DialogTitle>
+                <DialogTitle className="font-display flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Nova Objeção
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
-                  <label className="text-sm font-medium">Objeção do Cliente</label>
+                  <label className="text-sm font-medium font-display">Objeção do Cliente</label>
                   <Textarea
                     placeholder="Ex: Está muito caro..."
                     value={newObjection.objection}
                     onChange={(e) => setNewObjection({ ...newObjection, objection: e.target.value })}
-                    className="mt-1"
+                    className="mt-1.5 glass border-border/50 focus:border-primary/50"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Resposta Recomendada</label>
+                  <label className="text-sm font-medium font-display">Resposta Recomendada</label>
                   <Textarea
                     placeholder="Ex: Entendo sua preocupação com o investimento..."
                     value={newObjection.response}
                     onChange={(e) => setNewObjection({ ...newObjection, response: e.target.value })}
-                    className="mt-1"
+                    className="mt-1.5 glass border-border/50 focus:border-primary/50"
                     rows={4}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Categoria</label>
+                  <label className="text-sm font-medium font-display">Categoria</label>
                   <Select
                     value={newObjection.category}
                     onValueChange={(value) => setNewObjection({ ...newObjection, category: value })}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1.5 glass border-border/50">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="glass border-border/50">
                       {CATEGORIES.filter(c => c.value !== 'all').map((cat) => (
                         <SelectItem key={cat.value} value={cat.value}>
                           {cat.label}
@@ -118,7 +142,7 @@ export function ObjectionsLibrary() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleAddObjection} className="w-full" disabled={addObjection.isPending}>
+                <Button onClick={handleAddObjection} className="w-full hover-lift" variant="glow" disabled={addObjection.isPending}>
                   {addObjection.isPending ? 'Salvando...' : 'Salvar Objeção'}
                 </Button>
               </div>
@@ -135,14 +159,14 @@ export function ObjectionsLibrary() {
               placeholder="Buscar objeção..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
+              className="pl-9 glass border-border/50 focus:border-primary/50"
             />
           </div>
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 glass border-border/50">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="glass border-border/50">
               {CATEGORIES.map((cat) => (
                 <SelectItem key={cat.value} value={cat.value}>
                   {cat.label}
@@ -154,63 +178,78 @@ export function ObjectionsLibrary() {
 
         {/* Objections List */}
         {isLoading ? (
-          <div className="animate-pulse space-y-3">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-muted rounded-lg" />
+              <div 
+                key={i} 
+                className="h-28 glass rounded-xl animate-pulse border border-border/30"
+                style={{ animationDelay: `${i * 100}ms` }}
+              />
             ))}
           </div>
         ) : filteredObjections && filteredObjections.length > 0 ? (
-          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-            {filteredObjections.map((obj) => (
-              <div key={obj.id} className="glass rounded-xl p-4 border border-border/40 hover:border-primary/40 transition-colors hover-lift cursor-pointer">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">
-                        {getCategoryLabel(obj.category)}
-                      </span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <ThumbsUp className="h-3 w-3" />
-                        {obj.usage_count} usos
-                      </span>
+          <ScrollArea className="h-[500px] pr-3">
+            <div className="space-y-3">
+              {filteredObjections.map((obj, index) => (
+                <div 
+                  key={obj.id} 
+                  className="glass rounded-xl p-4 border border-border/40 dark:border-glow hover:border-primary/40 transition-all duration-300 hover-lift animate-fade-in"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className={`${getCategoryColor(obj.category)} text-xs border`}>
+                          {getCategoryLabel(obj.category)}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground flex items-center gap-1 bg-muted/30 px-2 py-0.5 rounded-full">
+                          <ThumbsUp className="h-3 w-3" />
+                          {obj.usage_count} usos
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium flex items-start gap-2">
+                        <MessageSquare className="h-4 w-4 text-status-error mt-0.5 shrink-0" />
+                        <span className="italic text-muted-foreground leading-relaxed">"{obj.objection}"</span>
+                      </p>
                     </div>
-                    <p className="text-sm font-medium flex items-start gap-2">
-                      <MessageSquare className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                      <span className="italic text-muted-foreground">"{obj.objection}"</span>
-                    </p>
+                    <div className="flex gap-1 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-status-success/20 hover:text-status-success transition-colors"
+                        onClick={() => handleCopyResponse(obj.id, obj.response)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-status-error/20 text-muted-foreground hover:text-status-error transition-colors"
+                        onClick={() => deleteObjection.mutate(obj.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-1 shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleCopyResponse(obj.id, obj.response)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive"
-                      onClick={() => deleteObjection.mutate(obj.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <div className="glass rounded-lg p-3 border border-status-success/30 bg-gradient-to-br from-status-success/10 to-transparent">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-status-success mt-0.5 shrink-0" />
+                      <p className="text-sm text-status-success whitespace-pre-wrap leading-relaxed">
+                        {obj.response}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-3 mt-2">
-                  <p className="text-sm text-status-success whitespace-pre-wrap">
-                    {obj.response}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollArea>
         ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            <BookOpen className="h-12 w-12 mx-auto mb-2 opacity-30" />
-            <p>Nenhuma objeção encontrada</p>
-            <p className="text-sm">Adicione respostas para objeções comuns</p>
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl border border-dashed border-border/50">
+            <div className="p-4 rounded-2xl bg-muted/20 mb-3 animate-pulse">
+              <BookOpen className="h-10 w-10 opacity-50" />
+            </div>
+            <p className="font-medium font-display">Nenhuma objeção encontrada</p>
+            <p className="text-sm mt-1">Adicione respostas para objeções comuns</p>
           </div>
         )}
       </CardContent>
