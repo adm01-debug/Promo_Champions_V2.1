@@ -18,11 +18,36 @@ export function SoundSettings() {
   const [isConfettiReady, setIsConfettiReady] = useState(false);
   const confettiRef = useRef<ConfettiFunction | null>(null);
 
+  // Play subtle ding sound
+  const playReadyDing = () => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = 1200;
+      oscillator.type = 'sine';
+      
+      const now = audioContext.currentTime;
+      gainNode.gain.setValueAtTime(0.15, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      
+      oscillator.start(now);
+      oscillator.stop(now + 0.2);
+    } catch (e) {
+      // Silently fail if audio context not available
+    }
+  };
+
   // Preload confetti on mount
   useEffect(() => {
     import('canvas-confetti').then((module) => {
       confettiRef.current = module.default;
       setIsConfettiReady(true);
+      playReadyDing();
     });
   }, []);
 
