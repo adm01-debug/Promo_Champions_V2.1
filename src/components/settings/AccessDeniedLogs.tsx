@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -10,8 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { ShieldX, AlertTriangle, Clock, User, Globe, FileWarning, Search, CalendarIcon, X } from "lucide-react";
-import { format, startOfDay, endOfDay, subDays } from "date-fns";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
+import { ShieldX, AlertTriangle, Clock, User, Globe, FileWarning, Search, CalendarIcon, X, TrendingUp } from "lucide-react";
+import { format, startOfDay, endOfDay, subDays, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +59,33 @@ export function AccessDeniedLogs() {
     },
     enabled: isAdmin,
   });
+
+  // Aggregate data by day for chart
+  const chartData = useMemo(() => {
+    if (!logs || logs.length === 0) return [];
+    
+    const countsByDay: Record<string, number> = {};
+    
+    logs.forEach(log => {
+      const day = format(parseISO(log.created_at), "yyyy-MM-dd");
+      countsByDay[day] = (countsByDay[day] || 0) + 1;
+    });
+
+    return Object.entries(countsByDay)
+      .map(([date, count]) => ({
+        date,
+        displayDate: format(parseISO(date), "dd/MM", { locale: ptBR }),
+        count,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }, [logs]);
+
+  const chartConfig = {
+    count: {
+      label: "Tentativas",
+      color: "hsl(var(--warning))",
+    },
+  };
 
   if (isLoadingCurrentRole) {
     return (
@@ -196,6 +225,47 @@ export function AccessDeniedLogs() {
             </Button>
           )}
         </div>
+
+        {/* Trend Chart */}
+        {chartData.length > 0 && (
+          <Card className="border-border/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-warning" />
+                Tentativas por Dia
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted/30" />
+                  <XAxis 
+                    dataKey="displayDate" 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
+                  <ChartTooltip 
+                    content={<ChartTooltipContent />}
+                    cursor={{ fill: "hsl(var(--muted))", opacity: 0.3 }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="hsl(var(--warning))" 
+                    radius={[4, 4, 0, 0]}
+                    name="Tentativas"
+                  />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Results count */}
         <div className="text-sm text-muted-foreground">
