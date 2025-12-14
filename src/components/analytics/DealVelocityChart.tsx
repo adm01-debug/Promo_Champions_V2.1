@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useDealVelocity } from '@/hooks/useDealVelocity';
-import { Clock, AlertTriangle, Zap, Timer } from 'lucide-react';
+import { Clock, AlertTriangle, Zap, Timer, TrendingUp, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface DealVelocityChartProps {
@@ -12,17 +13,22 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
+      <Card variant="elevated" className="glass border-border/40 dark:border-glow animate-fade-in">
         <CardHeader>
           <CardTitle className="text-lg font-display flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
-              <Clock className="h-4 w-4 text-white" />
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
+              <Clock className="h-5 w-5 text-white" />
             </div>
             <span className="gradient-text">Velocidade do Deal</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-24 bg-muted/50 rounded-xl animate-shimmer" style={{ animationDelay: `${i * 100}ms` }} />
+              ))}
+            </div>
             <div className="h-48 bg-muted/50 rounded-xl animate-shimmer" />
           </div>
         </CardContent>
@@ -31,20 +37,28 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
   }
 
   const hasData = data && data.stages.some(s => s.totalDeals > 0);
+  const totalDeals = data?.stages.reduce((acc, s) => acc + s.totalDeals, 0) || 0;
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300 animate-fade-in">
+    <Card variant="elevated" className="glass border-border/40 dark:border-glow hover-lift transition-all duration-300 animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40">
-            <Clock className="h-4 w-4 text-white" />
-          </div>
-          <span className="gradient-text">Velocidade do Deal</span>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40 group-hover/title:rotate-3">
+              <Activity className="h-5 w-5 text-white" />
+            </div>
+            <span className="gradient-text">Velocidade do Deal</span>
+          </CardTitle>
+          {hasData && (
+            <Badge variant="secondary" className="text-xs">
+              {totalDeals} deals analisados
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {!hasData ? (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
             <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
               <Clock className="h-10 w-10 opacity-50" />
             </div>
@@ -55,43 +69,43 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
           <>
             {/* Summary Stats */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30">
+              <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-primary/50">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30 group-hover:rotate-3">
                   <Timer className="h-4 w-4 text-white" />
                 </div>
-                <p className="text-xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.totalAvgDays.toFixed(1)}d</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Ciclo Total</p>
+                <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.totalAvgDays.toFixed(1)}d</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Ciclo Total</p>
               </div>
               <div 
-                className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer"
+                className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-status-success/50 hover-glow-success"
                 style={{ animationDelay: '50ms' }}
               >
-                <div className="p-2 rounded-lg bg-status-success/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-success/20">
+                <div className="p-2.5 rounded-xl bg-status-success/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-success/20">
                   <Zap className="h-4 w-4 text-status-success" />
                 </div>
-                <p className="text-sm font-bold text-status-success transition-transform duration-300 group-hover:scale-105">{data.fastestStage}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Mais Rápida</p>
+                <p className="text-sm font-bold text-status-success transition-transform duration-300 group-hover:scale-105 truncate px-1">{data.fastestStage}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Mais Rápida</p>
               </div>
               <div 
-                className="glass rounded-xl p-4 text-center border border-status-warning/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer"
+                className="glass rounded-xl p-4 text-center border border-status-warning/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-status-warning/50"
                 style={{ animationDelay: '100ms' }}
               >
-                <div className="p-2 rounded-lg bg-status-warning/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-warning/20">
+                <div className="p-2.5 rounded-xl bg-status-warning/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-warning/20">
                   <AlertTriangle className="h-4 w-4 text-status-warning" />
                 </div>
-                <p className="text-sm font-bold text-status-warning transition-transform duration-300 group-hover:scale-105">{data.slowestStage}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Gargalo</p>
+                <p className="text-sm font-bold text-status-warning transition-transform duration-300 group-hover:scale-105 truncate px-1">{data.slowestStage}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Gargalo</p>
               </div>
             </div>
 
             {/* Bar Chart */}
-            <div className="h-48 animate-fade-in" style={{ animationDelay: '150ms' }}>
+            <div className="h-52 animate-fade-in glass rounded-xl p-4 border border-border/30" style={{ animationDelay: '150ms' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.stages} layout="vertical">
                   <defs>
                     <linearGradient id="velocityBarGradient" x1="0" y1="0" x2="1" y2="0">
                       <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1}/>
-                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
                     </linearGradient>
                     <linearGradient id="bottleneckBarGradient" x1="0" y1="0" x2="1" y2="0">
                       <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={1}/>
@@ -120,9 +134,10 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                       borderRadius: '12px',
                       boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
                     }}
-                    labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600 }}
+                    cursor={{ fill: 'hsl(var(--primary) / 0.1)' }}
                   />
-                  <Bar dataKey="avgDays" radius={[0, 6, 6, 0]}>
+                  <Bar dataKey="avgDays" radius={[0, 8, 8, 0]}>
                     {data.stages.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
@@ -140,15 +155,18 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
             </div>
 
             {/* Stage Details */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-display font-medium gradient-text">Detalhes por Etapa</h4>
+            <div className="space-y-3">
+              <h4 className="text-sm font-display font-semibold gradient-text flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Detalhes por Etapa
+              </h4>
               <div className="grid grid-cols-5 gap-2">
                 {data.stages.map((stage, index) => (
                   <div 
                     key={stage.stage}
                     className={`p-3 rounded-xl text-center transition-all duration-300 hover-lift cursor-pointer animate-fade-in group ${
                       stage.bottleneck 
-                        ? 'glass border border-destructive/30 hover:border-destructive/50' 
+                        ? 'glass border border-destructive/30 hover:border-destructive/50 hover:shadow-destructive/20' 
                         : 'glass border border-border/30 hover:border-primary/40'
                     }`}
                     style={{ animationDelay: `${(index + 4) * 50}ms` }}
@@ -159,10 +177,10 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                     </p>
                     <p className="text-xs text-muted-foreground transition-colors group-hover:text-foreground/70">{stage.totalDeals} deals</p>
                     {stage.bottleneck && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] text-destructive mt-1 bg-destructive/10 px-1.5 py-0.5 rounded-full border border-destructive/30 animate-pulse">
-                        <AlertTriangle className="h-2.5 w-2.5" />
+                      <Badge variant="destructive" className="text-[10px] mt-1.5 px-1.5 py-0 h-5 animate-pulse">
+                        <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
                         Gargalo
-                      </span>
+                      </Badge>
                     )}
                   </div>
                 ))}
