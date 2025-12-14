@@ -320,8 +320,8 @@ export function SoundSettings() {
           </div>
           <div className="flex items-center justify-center gap-2">
             {isConfettiReady ? (
-              <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
-                <Check className="h-3 w-3" />
+              <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in">
+                <Check className="h-3 w-3 animate-scale-in" />
                 Pronto
               </span>
             ) : (
@@ -330,7 +330,7 @@ export function SoundSettings() {
                 Carregando...
               </span>
             )}
-            <span className="text-xs text-muted-foreground">•</span>
+            <span className={`text-xs text-muted-foreground transition-opacity duration-300 ${isConfettiReady ? 'opacity-100' : 'opacity-50'}`}>•</span>
             <span className="text-xs text-muted-foreground">
               Teste os diferentes tipos de celebração
             </span>
