@@ -1,4 +1,6 @@
 import { Target, TrendingUp } from "lucide-react";
+import { differenceInDays, endOfMonth, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface GoalProgressProps {
   current: number;
@@ -6,9 +8,13 @@ interface GoalProgressProps {
 }
 
 export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
-  const percentage = Math.min((current / goal) * 100, 100);
-  const remaining = goal - current;
-  const daysLeft = 19;
+  const now = new Date();
+  const monthEnd = endOfMonth(now);
+  const daysLeft = Math.max(0, differenceInDays(monthEnd, now));
+  const currentMonth = format(now, "MMMM yyyy", { locale: ptBR });
+  
+  const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
+  const remaining = Math.max(0, goal - current);
 
   return (
     <div className="glass rounded-xl p-6 h-full border border-border/40 dark:border-glow card-elevated">
@@ -18,7 +24,7 @@ export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
         </div>
         <div>
           <h3 className="text-lg font-semibold font-display gradient-text">Meta Mensal</h3>
-          <p className="text-sm text-muted-foreground">Dezembro 2024</p>
+          <p className="text-sm text-muted-foreground capitalize">{currentMonth}</p>
         </div>
       </div>
 
@@ -85,7 +91,7 @@ export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
 
       <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-status-success/10 border border-status-success/20">
         <TrendingUp className="h-4 w-4 text-status-success animate-heartbeat" />
-        <span><span className="font-semibold text-status-success">{daysLeft} dias</span> restantes para bater a meta</span>
+        <span><span className="font-semibold text-status-success">{daysLeft} {daysLeft === 1 ? 'dia' : 'dias'}</span> restantes para bater a meta</span>
       </div>
     </div>
   );
