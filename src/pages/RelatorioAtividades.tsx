@@ -1,3 +1,4 @@
+import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, Mail, Calendar, TrendingUp, Users, Percent } from "lucide-react";
 import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/useSalespersonActivityReport";
@@ -66,73 +67,73 @@ export default function RelatorioAtividades() {
   ];
 
   return (
-    <SkeletonTransition
-      isLoading={isLoading || trendLoading}
-      skeleton={<RelatorioAtividadesLoadingSkeleton />}
-      duration={400}
-    >
-      <div className="min-h-screen bg-background">
-      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        {/* Header */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold gradient-text">Relatório de Atividades</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Volume de atividades vs resultados por vendedor
-              </p>
-            </div>
-            {data?.teamSummary.top_performer_name && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-                <span className="text-lg">🏆</span>
-                <span className="text-xs font-medium text-primary">
-                  Top: {data.teamSummary.top_performer_name}
-                </span>
+    <MainLayout>
+      <SkeletonTransition
+        isLoading={isLoading || trendLoading}
+        skeleton={<RelatorioAtividadesLoadingSkeleton />}
+        duration={400}
+      >
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="animate-fade-in" style={{ animationDelay: "0ms" }}>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold gradient-text">Relatório de Atividades</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Volume de atividades vs resultados por vendedor
+                </p>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-          {stats.map((stat, index) => (
-            <Card key={index} className="glass border-border/40">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold">{stat.value}</p>
-                    <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-                  </div>
+              {data?.teamSummary.top_performer_name && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+                  <span className="text-lg">🏆</span>
+                  <span className="text-xs font-medium text-primary">
+                    Top: {data.teamSummary.top_performer_name}
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            <ActivityVolumeChart data={data?.salespeople || []} />
+              )}
+            </div>
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
-            <ActivityOutcomesChart data={data?.salespeople || []} />
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in" style={{ animationDelay: "100ms" }}>
+            {stats.map((stat, index) => (
+              <Card key={index} className="glass border-border/40">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold">{stat.value}</p>
+                      <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+              <ActivityVolumeChart data={data?.salespeople || []} />
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: "250ms" }}>
+              <ActivityOutcomesChart data={data?.salespeople || []} />
+            </div>
+          </div>
+
+          {/* Trend Chart */}
+          <div className="animate-fade-in" style={{ animationDelay: "300ms" }}>
+            <ActivityTrendChart data={trendData || []} />
+          </div>
+
+          {/* Salesperson Table */}
+          <div className="animate-fade-in" style={{ animationDelay: "350ms" }}>
+            <SalespersonActivityTable data={data?.salespeople || []} />
           </div>
         </div>
-
-        {/* Trend Chart */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-          <ActivityTrendChart data={trendData || []} />
-        </div>
-
-        {/* Salesperson Table */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-          <SalespersonActivityTable data={data?.salespeople || []} />
-        </div>
-      </div>
-    </div>
-    </SkeletonTransition>
+      </SkeletonTransition>
+    </MainLayout>
   );
 }

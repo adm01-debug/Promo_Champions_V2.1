@@ -27,7 +27,7 @@ export default function Analytics() {
       >
         <div className="space-y-6">
         {/* Header */}
-        <div className="opacity-0 animate-fade-in-up flex items-center gap-3">
+        <div className="animate-fade-in flex items-center gap-3">
           <div className="p-2.5 rounded-xl gradient-primary">
             <BarChart3 className="h-6 w-6 text-white" />
           </div>
