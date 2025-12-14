@@ -38,14 +38,14 @@ export const KPIGrid = () => {
         <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Comparativo com mês anterior</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        {kpis?.map((kpi) => {
-          const isPositive = kpi.change > 0;
-          const Icon = iconMap[kpi.icon] || Receipt;
+      <TooltipProvider>
+        <div className="grid grid-cols-2 gap-3">
+          {kpis?.map((kpi) => {
+            const isPositive = kpi.change > 0;
+            const Icon = iconMap[kpi.icon] || Receipt;
 
-          return (
-            <TooltipProvider key={kpi.title}>
-              <Tooltip>
+            return (
+              <Tooltip key={kpi.title}>
                 <TooltipTrigger asChild>
                   <div className="p-4 rounded-xl bg-muted/20 border border-border/30 hover:bg-muted/40 hover:border-primary/30 transition-all duration-200 group cursor-help">
                     <div className="flex items-center gap-2 mb-2">
@@ -74,10 +74,10 @@ export const KPIGrid = () => {
                   </div>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </TooltipProvider>
     </div>
   );
 };
