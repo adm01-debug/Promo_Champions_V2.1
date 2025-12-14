@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2, Check, ShieldAlert, Bell, ListTodo, DollarSign, RefreshCw } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2, Check, ShieldAlert, Bell, ListTodo, DollarSign, RefreshCw, TrendingDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSettings";
 import { useSecurityAlertSoundSettings, SecurityAlertSoundType } from "@/hooks/useSecurityAlertSoundSettings";
+import { useSDRAlertSoundSettings, SDRAlertSoundType } from "@/hooks/useSDRAlertSoundSettings";
 import { useSystemSoundSettings, SystemSoundType } from "@/hooks/useSystemSoundSettings";
 import { toast } from "sonner";
 
@@ -33,6 +34,16 @@ export function SoundSettingsTabs() {
     previewSound: previewSecuritySound, 
     soundOptions: securitySoundOptions 
   } = useSecurityAlertSoundSettings();
+
+  // SDR alert sound settings
+  const { 
+    selectedSound: sdrSound, 
+    setSelectedSound: setSDRSound, 
+    volume: sdrVolume, 
+    setVolume: setSDRVolume, 
+    previewSound: previewSDRSound, 
+    soundOptions: sdrSoundOptions 
+  } = useSDRAlertSoundSettings();
 
   // System sound settings
   const {
@@ -245,14 +256,18 @@ export function SoundSettingsTabs() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="celebration" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="celebration" className="flex items-center gap-2">
               <PartyPopper className="h-4 w-4" />
               <span className="hidden sm:inline">Celebração</span>
             </TabsTrigger>
-            <TabsTrigger value="alerts" className="flex items-center gap-2">
+            <TabsTrigger value="sdr" className="flex items-center gap-2">
+              <TrendingDown className="h-4 w-4" />
+              <span className="hidden sm:inline">SDR</span>
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4" />
-              <span className="hidden sm:inline">Alertas</span>
+              <span className="hidden sm:inline">Segurança</span>
             </TabsTrigger>
             <TabsTrigger value="system" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
@@ -385,8 +400,82 @@ export function SoundSettingsTabs() {
             </div>
           </TabsContent>
 
-          {/* Alerts Tab */}
-          <TabsContent value="alerts" className="space-y-6 mt-0">
+          {/* SDR Alerts Tab */}
+          <TabsContent value="sdr" className="space-y-6 mt-0">
+            <div className="p-3 rounded-lg bg-accent/30 border border-border/40">
+              <p className="text-sm text-muted-foreground">
+                <TrendingDown className="h-4 w-4 inline mr-2 text-amber-500" />
+                Sons para alertas de SDRs abaixo da meta por dias consecutivos
+              </p>
+            </div>
+
+            {/* Volume Control */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Volume</Label>
+              <div className="flex items-center gap-4">
+                <VolumeX className="h-4 w-4 text-muted-foreground" />
+                <Slider
+                  value={[sdrVolume * 100]}
+                  onValueChange={([value]) => setSDRVolume(value / 100)}
+                  max={100}
+                  step={5}
+                  className="flex-1"
+                />
+                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground w-12 text-right">
+                  {Math.round(sdrVolume * 100)}%
+                </span>
+              </div>
+            </div>
+
+            {/* Sound Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Tipo de Som</Label>
+              <RadioGroup
+                value={sdrSound}
+                onValueChange={(value) => setSDRSound(value as SDRAlertSoundType)}
+                className="space-y-3"
+              >
+                {sdrSoundOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className="flex items-center justify-between p-3 rounded-lg border border-border/40 hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <RadioGroupItem value={option.id} id={`sdr-${option.id}`} />
+                      <Label htmlFor={`sdr-${option.id}`} className="cursor-pointer">
+                        <span className="font-medium">{option.label}</span>
+                        <span className="block text-sm text-muted-foreground">
+                          {option.description}
+                        </span>
+                      </Label>
+                    </div>
+                    {option.id !== 'none' && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => previewSDRSound(option.id)}
+                        className="hover-scale-sm"
+                        disabled={sdrVolume === 0}
+                      >
+                        <Play className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          </TabsContent>
+
+          {/* Security Alerts Tab */}
+          <TabsContent value="security" className="space-y-6 mt-0">
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+              <p className="text-sm text-muted-foreground">
+                <ShieldAlert className="h-4 w-4 inline mr-2 text-destructive" />
+                Sons para alertas de segurança e tentativas de acesso negado
+              </p>
+            </div>
+
             {/* Volume Control */}
             <div className="space-y-3">
               <Label className="text-sm font-medium">Volume</Label>

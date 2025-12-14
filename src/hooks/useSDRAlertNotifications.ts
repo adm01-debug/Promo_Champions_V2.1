@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRoles } from "@/hooks/useUserRoles";
-import { useSecurityAlertSoundSettings } from "@/hooks/useSecurityAlertSoundSettings";
+import { useSDRAlertSoundSettings } from "@/hooks/useSDRAlertSoundSettings";
 
 interface SDRDetail {
   id: string;
@@ -20,7 +20,7 @@ interface SDRAlertPayload {
 export function useSDRAlertNotifications() {
   const { toast } = useToast();
   const { isAdmin, isManager } = useUserRoles();
-  const { playSound } = useSecurityAlertSoundSettings();
+  const { playSound } = useSDRAlertSoundSettings();
 
   useEffect(() => {
     // Only subscribe if user is admin or manager
