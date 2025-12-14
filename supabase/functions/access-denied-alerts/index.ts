@@ -278,6 +278,23 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Spike alert email sent:", emailResponse);
 
+    // Log alert to history
+    const { error: historyError } = await supabase
+      .from("security_alert_history")
+      .insert({
+        alert_type: "access_denied_spike",
+        recipients: allEmails,
+        access_count: logs.length,
+        time_window_hours: settings.time_window_hours,
+        threshold_used: settings.spike_threshold,
+      });
+
+    if (historyError) {
+      console.error("Failed to log alert history:", historyError);
+    } else {
+      console.log("Alert logged to history");
+    }
+
     return new Response(
       JSON.stringify({
         message: "Spike alert sent successfully",

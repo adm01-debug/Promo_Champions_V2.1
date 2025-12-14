@@ -2,6 +2,7 @@ import { RoleManagement } from "@/components/settings/RoleManagement";
 import { SoundSettings } from "@/components/settings/SoundSettings";
 import { AccessDeniedLogs } from "@/components/settings/AccessDeniedLogs";
 import { SecurityAlertSettings } from "@/components/settings/SecurityAlertSettings";
+import { SecurityAlertHistory } from "@/components/settings/SecurityAlertHistory";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Shield, Volume2, FileWarning } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -50,6 +51,7 @@ export default function Configuracoes() {
         {isAdmin && (
           <TabsContent value="audit" className="mt-6 space-y-6">
             <SecurityAlertSettings />
+            <SecurityAlertHistory />
             <AccessDeniedLogs />
           </TabsContent>
         )}
