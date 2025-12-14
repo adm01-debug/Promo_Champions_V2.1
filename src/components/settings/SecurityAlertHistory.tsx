@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { History, Mail, AlertTriangle, Clock } from "lucide-react";
+import { History, Mail, AlertTriangle, Clock, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { useMemo } from "react";
 
 interface AlertHistory {
   id: string;
@@ -25,12 +27,36 @@ export function SecurityAlertHistory() {
         .from('security_alert_history')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(50);
       
       if (error) throw error;
       return data as AlertHistory[];
     }
   });
+
+  const chartData = useMemo(() => {
+    if (!alerts || alerts.length === 0) return [];
+
+    const today = new Date();
+    const thirtyDaysAgo = subDays(today, 29);
+    
+    const days = eachDayOfInterval({ start: thirtyDaysAgo, end: today });
+    
+    const alertsByDay = alerts.reduce((acc, alert) => {
+      const day = format(new Date(alert.created_at), 'yyyy-MM-dd');
+      acc[day] = (acc[day] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return days.map(day => {
+      const key = format(day, 'yyyy-MM-dd');
+      return {
+        date: format(day, 'dd/MM', { locale: ptBR }),
+        fullDate: format(day, 'dd/MM/yyyy', { locale: ptBR }),
+        alertas: alertsByDay[key] || 0,
+      };
+    });
+  }, [alerts]);
 
   if (isLoading) {
     return (
@@ -44,6 +70,7 @@ export function SecurityAlertHistory() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <Skeleton className="h-48 w-full mb-4" />
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <Skeleton key={i} className="h-16 w-full" />
@@ -54,17 +81,86 @@ export function SecurityAlertHistory() {
     );
   }
 
+  const totalAlerts = alerts?.length || 0;
+  const totalAccessCount = alerts?.reduce((sum, a) => sum + a.access_count, 0) || 0;
+
   return (
     <Card className="card-elevated border-border/40 dark:border-glow">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-display">
-          <div className="p-1.5 rounded-lg bg-gradient-primary">
-            <History className="h-4 w-4 text-primary-foreground" />
-          </div>
-          Histórico de Alertas
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 font-display">
+            <div className="p-1.5 rounded-lg bg-gradient-primary">
+              <History className="h-4 w-4 text-primary-foreground" />
+            </div>
+            Histórico de Alertas
+          </CardTitle>
+          {totalAlerts > 0 && (
+            <div className="flex gap-3">
+              <Badge variant="outline" className="bg-status-error/10 text-status-error border-status-error/30">
+                {totalAlerts} alertas
+              </Badge>
+              <Badge variant="outline" className="bg-status-warning/10 text-status-warning border-status-warning/30">
+                {totalAccessCount} acessos negados
+              </Badge>
+            </div>
+          )}
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        {/* Trend Chart */}
+        {chartData.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <TrendingUp className="h-4 w-4" />
+              Tendência de alertas (últimos 30 dias)
+            </div>
+            <div className="h-48 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="alertGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--status-error))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--status-error))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis 
+                    dataKey="date" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                    interval="preserveStartEnd"
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                    allowDecimals={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    }}
+                    labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    formatter={(value: number) => [`${value} alerta(s)`, 'Alertas']}
+                    labelFormatter={(label, payload) => payload?.[0]?.payload?.fullDate || label}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="alertas"
+                    stroke="hsl(var(--status-error))"
+                    strokeWidth={2}
+                    fill="url(#alertGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* Alert List */}
         {!alerts || alerts.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <History className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -72,7 +168,8 @@ export function SecurityAlertHistory() {
           </div>
         ) : (
           <div className="space-y-3">
-            {alerts.map((alert, index) => (
+            <p className="text-sm text-muted-foreground">Alertas recentes</p>
+            {alerts.slice(0, 10).map((alert, index) => (
               <div 
                 key={alert.id} 
                 className="p-4 rounded-lg border border-border/40 bg-card/50 hover-lift animate-fade-in"
