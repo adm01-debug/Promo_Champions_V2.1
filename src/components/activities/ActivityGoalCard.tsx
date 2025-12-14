@@ -30,7 +30,7 @@ const getStreakDisplay = (current: number, best: number) => {
   if (isBeatRecord) {
     return {
       icon: <Trophy className="h-3.5 w-3.5" />,
-      color: "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50",
+      color: "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada",
       label: "Novo Recorde!",
       showRecordBadge: true,
     };
