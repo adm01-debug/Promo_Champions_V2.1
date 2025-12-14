@@ -116,7 +116,7 @@ export function useSDRMetrics(period: PeriodFilter = "month") {
         });
 
         const activeProspects = sales?.filter(s => 
-          s.status === "lead" || s.status === "qualified"
+          s.status === "lead" || s.status === "qualified" || s.status === "pending"
         ).length || 0;
 
         return {
@@ -124,7 +124,7 @@ export function useSDRMetrics(period: PeriodFilter = "month") {
           qualifiedLeads,
           meetingsScheduled,
           schedulingRate,
-          avgResponseTime: 2.4,
+          avgResponseTime: 0, // Calculated from activities when available
           activeProspects,
           coldLeads,
           warmLeads,

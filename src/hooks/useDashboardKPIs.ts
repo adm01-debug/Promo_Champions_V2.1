@@ -45,10 +45,10 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
   const totalSales = completedSales.length;
   
   // Calculate from metrics or sales
-  const newClients = metrics?.reduce((sum, m) => sum + m.new_clients, 0) || Math.floor(totalSales * 0.3);
+  const newClients = metrics?.reduce((sum, m) => sum + m.new_clients, 0) || 0;
   const avgConversion = metrics?.length 
     ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length 
-    : 12.6;
+    : 0;
   const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
 
   return {
@@ -206,6 +206,7 @@ export const useDetailedKPIs = () => {
           change: 0,
           icon: "RotateCcw",
         },
+        // Ticket recorrente: estimativa de 70% do ticket médio (renovações/upgrades)
         {
           title: "Ticket Recorrente",
           value: `R$ ${(currentAvgTicket * 0.7).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
@@ -213,6 +214,7 @@ export const useDetailedKPIs = () => {
           change: calculateChange(currentAvgTicket * 0.7, previousAvgTicket * 0.7),
           icon: "CreditCard",
         },
+        // LTV: estimativa de 3x ticket médio (média de permanência de cliente)
         {
           title: "LTV Médio",
           value: `R$ ${(currentAvgTicket * 3).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
