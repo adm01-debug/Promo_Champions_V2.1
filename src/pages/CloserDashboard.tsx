@@ -5,6 +5,7 @@ import { CloserPipeline } from "@/components/closer/CloserPipeline";
 import { TopClosersRanking } from "@/components/closer/TopClosersRanking";
 import { RecentClosedDeals } from "@/components/closer/RecentClosedDeals";
 import { CloserRevenueComparison } from "@/components/closer/CloserRevenueComparison";
+import { CloserRevenueEvolution } from "@/components/closer/CloserRevenueEvolution";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { CloserDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -126,13 +127,18 @@ export default function CloserDashboard() {
           </div>
         </div>
 
-        {/* Pipeline Row */}
+        {/* Revenue Evolution Chart */}
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+          <CloserRevenueEvolution period={period} />
+        </div>
+
+        {/* Pipeline Row */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
           <CloserPipeline />
         </div>
 
         {/* Bottom Row */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
           <RecentClosedDeals />
         </div>
       </div>
