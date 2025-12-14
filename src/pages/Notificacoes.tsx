@@ -18,6 +18,7 @@ import {
 import { SoundSettings } from "@/components/settings/SoundSettings";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
+import { BrowserPushSettings } from "@/components/settings/BrowserPushSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -474,7 +475,8 @@ export default function Notificacoes() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <BrowserPushSettings />
         <SoundSettings />
         <SDRAlertHistory />
       </div>
