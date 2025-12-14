@@ -92,8 +92,8 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
       className={cn(
         "glass rounded-lg p-3 cursor-grab active:cursor-grabbing border border-border/40 shadow-sm card-elevated",
         "hover:border-primary/40 hover:shadow-md hover-lift transition-all duration-200",
-        "dark:border-glow",
-        isDragging && "opacity-50 scale-105 shadow-2xl z-50 ring-2 ring-primary/50"
+        "dark:border-glow animate-flip-in",
+        isDragging && "opacity-50 scale-105 shadow-2xl z-50 ring-2 ring-primary/50 !animate-none"
       )}
       {...attributes}
       {...listeners}
