@@ -10,6 +10,8 @@ import { CreateProductDialog } from "@/components/products/CreateProductDialog";
 import { EditProductDialog } from "@/components/products/EditProductDialog";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
+import { usePagination } from "@/hooks/usePagination";
+import { TablePagination } from "@/components/shared/TablePagination";
 
 const statusColors: Record<string, string> = {
   ativo: "bg-status-success/20 text-status-success border-status-success/30",
@@ -83,6 +85,16 @@ const Produtos = () => {
     });
   }, [products, sortBy, categoryFilter, statusFilter]);
 
+  const {
+    paginatedItems,
+    currentPage,
+    totalPages,
+    goToPage,
+    startIndex,
+    endIndex,
+    totalItems,
+  } = usePagination(filteredAndSortedProducts, { itemsPerPage: 12 });
+
   const handleDelete = () => {
     if (!deletingProduct) return;
     deleteProduct.mutate(deletingProduct.id, {
@@ -151,8 +163,9 @@ const Produtos = () => {
 
           {/* Products Grid */}
           {filteredAndSortedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredAndSortedProducts.map((product, index) => (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {paginatedItems.map((product, index) => (
                 <div 
                   key={product.id}
                   className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all group relative"
@@ -208,8 +221,17 @@ const Produtos = () => {
                       </span>
                     </div>
                   </div>
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
+              <TablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+                startIndex={startIndex}
+                endIndex={endIndex}
+                totalItems={totalItems}
+              />
             </div>
           ) : (
             <div className="glass rounded-xl p-12 text-center">
