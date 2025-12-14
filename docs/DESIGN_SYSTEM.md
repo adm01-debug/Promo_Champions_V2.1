@@ -332,40 +332,266 @@ Os focus states são aplicados automaticamente com:
 
 ## Animações
 
+O sistema de design inclui animações otimizadas para performance e acessibilidade. Todas respeitam `prefers-reduced-motion`.
+
 ### Animações de Entrada
 
 ```tsx
-// Fade in com movimento para cima
+// Fade in com movimento sutil para cima (8px)
 <div className="animate-fade-in">...</div>
 
-// Fade in mais pronunciado
+// Fade in mais pronunciado (20px)
 <div className="animate-fade-in-up">...</div>
+
+// Fade in com scale (0.96 → 1)
+<div className="animate-fade-in-scale">...</div>
 
 // Slide da esquerda
 <div className="animate-slide-in">...</div>
 
+// Slide da direita
+<div className="animate-slide-in-right">...</div>
+
+// Slide para cima
+<div className="animate-slide-up">...</div>
+
+// Slide para baixo
+<div className="animate-slide-down">...</div>
+
 // Scale in
 <div className="animate-scale-in">...</div>
+
+// Bounce in (com overshoot)
+<div className="animate-bounce-in">...</div>
+```
+
+**Uso com delay stagger:**
+
+```tsx
+{items.map((item, index) => (
+  <div 
+    key={item.id}
+    className="animate-fade-in"
+    style={{ animationDelay: `${index * 75}ms` }}
+  >
+    {item.content}
+  </div>
+))}
+```
+
+### Animações de Modais e Dialogs
+
+```tsx
+// Zoom in para entrada de modais
+<DialogContent className="animate-zoom-in data-[state=closed]:animate-zoom-out">
+
+// Aplicado automaticamente em:
+// - Dialog
+// - AlertDialog  
+// - Popover
+// - DropdownMenu
+```
+
+### Animações de Cards
+
+```tsx
+// Flip in para cards (ex: deal cards no pipeline)
+<Card className="animate-flip-in">...</Card>
+
+// Shake para erros de validação
+<Input className="animate-shake" />
+```
+
+### Animações de Atenção
+
+```tsx
+// Bounce padrão (contínuo)
+<Bell className="animate-bounce" />
+
+// Bounce de atenção (uma vez, mais suave)
+<div className="animate-bounce-attention">...</div>
+
+// Wiggle único (rotação ±3°)
+<Icon className="animate-wiggle" />
+
+// Wiggle contínuo (rotação ±8°) - para indicadores
+<Settings className="animate-wiggle-loop" />
+
+// Pop (scale 1 → 1.1 → 1)
+<Badge className="animate-pop">Novo!</Badge>
+```
+
+### Animações de Loading
+
+```tsx
+// Shimmer (para skeletons)
+<Skeleton className="animate-shimmer" />
+
+// Pulse glow
+<div className="animate-pulse-glow">...</div>
+
+// Spin lento (3s)
+<Loader className="animate-spin-slow" />
+
+// Ping lento (2s)
+<span className="animate-ping-slow" />
+
+// Pulse ring (anel expandindo)
+<div className="animate-pulse-ring" />
+```
+
+### Animações de Feedback
+
+```tsx
+// Flash verde (sucesso)
+<div className="animate-flash-success">...</div>
+
+// Flash vermelho (erro)
+<div className="animate-flash-error">...</div>
+
+// Count up (números)
+<span className="animate-count-up">1.234</span>
+
+// Float (levitação suave)
+<div className="animate-float">...</div>
+```
+
+### Animações de Glow
+
+```tsx
+// Glow pulsante (para CTAs)
+<Button className="animate-glow-pulse">CTA Importante</Button>
+
+// Variantes de button com glow animado:
+<Button variant="glow-pulse">Destaque</Button>
+<Button variant="glow-pulse-success">Confirmar</Button>
+<Button variant="glow-pulse-accent">Especial</Button>
 ```
 
 ### Micro-interações
 
 ```tsx
-// Efeito de pressionar
+// Efeito de pressionar (scale 0.98)
 <button className="press-effect">...</button>
+
+// Press scale alternativo
+<button className="press-scale">...</button>
 
 // Bounce no clique
 <button className="click-bounce">...</button>
 ```
 
-### Shimmer (Loading)
+### Accordion
 
 ```tsx
-// Shimmer para skeletons
-<div className="animate-shimmer">...</div>
+// Animações automáticas via Radix
+<AccordionContent className="animate-accordion-down" />
+// Fechando: animate-accordion-up
+```
 
-// Pulse glow
-<div className="animate-pulse-glow">...</div>
+### Tabela de Referência Rápida
+
+| Classe | Duração | Descrição |
+|--------|---------|-----------|
+| `animate-fade-in` | 350ms | Entrada suave com movimento |
+| `animate-fade-in-up` | 500ms | Entrada mais dramática |
+| `animate-fade-in-scale` | 300ms | Entrada com scale |
+| `animate-slide-in` | 300ms | Slide da esquerda |
+| `animate-slide-in-right` | 300ms | Slide da direita |
+| `animate-slide-up` | 300ms | Slide de baixo |
+| `animate-slide-down` | 300ms | Slide de cima |
+| `animate-scale-in` | 350ms | Scale suave |
+| `animate-bounce-in` | 500ms | Entrada com overshoot |
+| `animate-zoom-in` | 200ms | Zoom para modais |
+| `animate-zoom-out` | 200ms | Saída de modais |
+| `animate-flip-in` | 400ms | Flip 3D para cards |
+| `animate-shake` | 500ms | Shake para erros |
+| `animate-wiggle` | 500ms | Rotação única |
+| `animate-wiggle-loop` | 800ms | Rotação contínua |
+| `animate-bounce` | ∞ | Bounce contínuo |
+| `animate-bounce-attention` | 1s | Bounce suave único |
+| `animate-pop` | 300ms | Pop de destaque |
+| `animate-shimmer` | 1.8s | Shimmer loading |
+| `animate-pulse-glow` | 2.5s | Glow pulsante |
+| `animate-glow-pulse` | 2s | Glow de botão |
+| `animate-float` | 3s | Levitação suave |
+| `animate-spin-slow` | 3s | Rotação lenta |
+| `animate-ping-slow` | 2s | Ping lento |
+| `animate-pulse-ring` | 1.5s | Anel expandindo |
+| `animate-flash-success` | 500ms | Flash verde |
+| `animate-flash-error` | 500ms | Flash vermelho |
+| `animate-count-up` | 400ms | Entrada de número |
+
+### Keyframes Disponíveis
+
+Todos os keyframes estão definidos em `tailwind.config.ts`:
+
+```ts
+keyframes: {
+  "fade-in": { ... },
+  "fade-in-up": { ... },
+  "fade-in-scale": { ... },
+  "slide-in": { ... },
+  "slide-in-right": { ... },
+  "slide-up": { ... },
+  "slide-down": { ... },
+  "scale-in": { ... },
+  "bounce-in": { ... },
+  "wiggle": { ... },
+  "wiggle-loop": { ... },
+  "pop": { ... },
+  "float": { ... },
+  "shimmer": { ... },
+  "pulse-glow": { ... },
+  "glow-pulse": { ... },
+  "pulse-ring": { ... },
+  "bounce-attention": { ... },
+  "flash-success": { ... },
+  "flash-error": { ... },
+  "count-up": { ... },
+  "spin-slow": { ... },
+  "ping-slow": { ... },
+  // ... e mais
+}
+```
+
+### Animações em Componentes UI
+
+Os seguintes componentes têm animações integradas automaticamente:
+
+| Componente | Animação |
+|------------|----------|
+| Dialog | `animate-zoom-in` / `animate-zoom-out` |
+| AlertDialog | `animate-zoom-in` / `animate-zoom-out` |
+| Popover | `animate-zoom-in` + `animate-slide-down/up` |
+| DropdownMenu | `animate-zoom-in` / `animate-zoom-out` |
+| Accordion | `animate-accordion-down/up` |
+| Input (com error) | `animate-shake` |
+| FormMessage | `animate-fade-in` |
+| DealCard | `animate-flip-in` |
+| Skeleton | `animate-shimmer` |
+
+### Uso em Notificações
+
+```tsx
+// Ícone de sino com alertas pendentes
+<Bell className={cn(
+  "h-5 w-5",
+  hasAlerts && "animate-bounce text-warning"
+)} />
+
+// Badge de contagem
+{hasAlerts && (
+  <span className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-destructive animate-pulse">
+    {count}
+  </span>
+)}
+
+// Ícone de configurações pendentes
+<Settings className={cn(
+  "h-4 w-4",
+  hasPendingConfig && "animate-wiggle-loop text-primary"
+)} />
 ```
 
 ---
