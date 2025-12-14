@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useInvalidateCache } from "@/hooks/useInvalidateCache";
@@ -45,6 +45,8 @@ const stageToStatus: Record<PipelineStage, string> = {
   completed: "completed",
 };
 
+type DealsByStage = Record<PipelineStage, Deal[]>;
+
 export const usePipelineDeals = () => {
   return useQuery({
     queryKey: ["pipeline-deals"],
@@ -57,7 +59,7 @@ export const usePipelineDeals = () => {
       if (error) throw error;
 
       // Group deals by stage
-      const dealsByStage: Record<PipelineStage, Deal[]> = {
+      const dealsByStage: DealsByStage = {
         lead: [],
         qualified: [],
         proposal: [],
@@ -76,6 +78,7 @@ export const usePipelineDeals = () => {
 };
 
 export const useMoveDeal = () => {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
@@ -92,14 +95,53 @@ export const useMoveDeal = () => {
       if (error) throw error;
       return data;
     },
+    onMutate: async ({ dealId, newStage }) => {
+      await queryClient.cancelQueries({ queryKey: ["pipeline-deals"] });
+      const previousDeals = queryClient.getQueryData<DealsByStage>(["pipeline-deals"]);
+      
+      if (previousDeals) {
+        const newDeals: DealsByStage = {
+          lead: [...previousDeals.lead],
+          qualified: [...previousDeals.qualified],
+          proposal: [...previousDeals.proposal],
+          negotiation: [...previousDeals.negotiation],
+          completed: [...previousDeals.completed],
+        };
+        
+        // Find and move the deal
+        let movedDeal: Deal | undefined;
+        for (const stage of Object.keys(newDeals) as PipelineStage[]) {
+          const dealIndex = newDeals[stage].findIndex(d => d.id === dealId);
+          if (dealIndex !== -1) {
+            [movedDeal] = newDeals[stage].splice(dealIndex, 1);
+            break;
+          }
+        }
+        
+        if (movedDeal) {
+          movedDeal.status = stageToStatus[newStage];
+          movedDeal.updated_at = new Date().toISOString();
+          newDeals[newStage].unshift(movedDeal);
+        }
+        
+        queryClient.setQueryData(["pipeline-deals"], newDeals);
+      }
+      
+      return { previousDeals };
+    },
+    onError: (error: any, _variables, context) => {
+      if (context?.previousDeals) {
+        queryClient.setQueryData(["pipeline-deals"], context.previousDeals);
+      }
+      toast.error("Erro ao mover deal: " + error.message);
+    },
     onSuccess: (_, { newStage }) => {
-      invalidateDomain("pipeline");
-      invalidateDomain("sales");
       const stageLabel = PIPELINE_STAGES.find(s => s.id === newStage)?.label;
       toast.success(`Deal movido para ${stageLabel}`);
     },
-    onError: (error: any) => {
-      toast.error("Erro ao mover deal: " + error.message);
+    onSettled: () => {
+      invalidateDomain("pipeline");
+      invalidateDomain("sales");
     },
   });
 };

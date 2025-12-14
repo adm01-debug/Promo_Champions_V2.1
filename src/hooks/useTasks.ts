@@ -1,8 +1,9 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSystemSoundSettings } from '@/hooks/useSystemSoundSettings';
 import { useInvalidateCache } from '@/hooks/useInvalidateCache';
+import { updateItemInArray, removeItemFromArray } from '@/hooks/useOptimisticUpdate';
 
 export type TaskPriority = 'high' | 'medium' | 'low';
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
@@ -92,6 +93,7 @@ export function useTodayTasks(salespersonId?: string) {
 }
 
 export function useCreateTask() {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
   const { playSoundForCategory } = useSystemSoundSettings();
@@ -116,18 +118,51 @@ export function useCreateTask() {
       if (error) throw error;
       return data;
     },
+    onMutate: async (newTask) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
+      
+      // Optimistically add task
+      const optimisticTask: Task = {
+        id: `temp-${Date.now()}`,
+        title: newTask.title,
+        description: newTask.description || null,
+        salesperson_id: newTask.salesperson_id || null,
+        sale_id: newTask.sale_id || null,
+        priority: newTask.priority || 'medium',
+        status: 'pending',
+        task_type: newTask.task_type || 'other',
+        due_date: newTask.due_date || new Date().toISOString().split('T')[0],
+        due_time: newTask.due_time || null,
+        completed_at: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      queryClient.setQueryData<Task[]>(['tasks'], (old) => 
+        old ? [optimisticTask, ...old] : [optimisticTask]
+      );
+      
+      return { previousTasks };
+    },
+    onError: (_err, _newTask, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+      toast({ title: 'Erro ao criar tarefa', variant: 'destructive' });
+    },
     onSuccess: () => {
-      invalidateDomain('tasks');
       toast({ title: 'Tarefa criada com sucesso!' });
       playSoundForCategory('newTask');
     },
-    onError: () => {
-      toast({ title: 'Erro ao criar tarefa', variant: 'destructive' });
+    onSettled: () => {
+      invalidateDomain('tasks');
     },
   });
 }
 
 export function useUpdateTask() {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
 
@@ -143,16 +178,30 @@ export function useUpdateTask() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      invalidateDomain('tasks');
+    onMutate: async ({ id, ...updates }) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
+      
+      queryClient.setQueryData<Task[]>(['tasks'], (old) =>
+        updateItemInArray(old, id, updates)
+      );
+      
+      return { previousTasks };
     },
-    onError: () => {
+    onError: (_err, _variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
       toast({ title: 'Erro ao atualizar tarefa', variant: 'destructive' });
+    },
+    onSettled: () => {
+      invalidateDomain('tasks');
     },
   });
 }
 
 export function useCompleteTask() {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
 
@@ -171,17 +220,36 @@ export function useCompleteTask() {
       if (error) throw error;
       return data;
     },
+    onMutate: async (taskId) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
+      
+      queryClient.setQueryData<Task[]>(['tasks'], (old) =>
+        updateItemInArray(old, taskId, { 
+          status: 'completed' as TaskStatus, 
+          completed_at: new Date().toISOString() 
+        })
+      );
+      
+      return { previousTasks };
+    },
+    onError: (_err, _taskId, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+      toast({ title: 'Erro ao concluir tarefa', variant: 'destructive' });
+    },
     onSuccess: () => {
-      invalidateDomain('tasks');
       toast({ title: 'Tarefa concluída!' });
     },
-    onError: () => {
-      toast({ title: 'Erro ao concluir tarefa', variant: 'destructive' });
+    onSettled: () => {
+      invalidateDomain('tasks');
     },
   });
 }
 
 export function useDeleteTask() {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
 
@@ -194,12 +262,27 @@ export function useDeleteTask() {
 
       if (error) throw error;
     },
+    onMutate: async (taskId) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
+      
+      queryClient.setQueryData<Task[]>(['tasks'], (old) =>
+        removeItemFromArray(old, taskId)
+      );
+      
+      return { previousTasks };
+    },
+    onError: (_err, _taskId, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+      toast({ title: 'Erro ao remover tarefa', variant: 'destructive' });
+    },
     onSuccess: () => {
-      invalidateDomain('tasks');
       toast({ title: 'Tarefa removida!' });
     },
-    onError: () => {
-      toast({ title: 'Erro ao remover tarefa', variant: 'destructive' });
+    onSettled: () => {
+      invalidateDomain('tasks');
     },
   });
 }
