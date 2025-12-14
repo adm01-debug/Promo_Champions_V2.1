@@ -16,7 +16,7 @@ import { useState, useMemo } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 const activityIcons: Record<ActivityType, typeof Phone> = {
@@ -376,7 +376,7 @@ export function ActivityList({
         {/* Statistics Summary */}
         {filteredAndSortedActivities.length > 0 && (
           <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/30">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Bar Chart */}
               <div className="lg:col-span-1">
                 <p className="text-xs font-medium text-muted-foreground mb-2">Distribuição por Tipo</p>
@@ -448,6 +448,56 @@ export function ActivityList({
                       </Badge>
                     );
                   })}
+                </div>
+              </div>
+              {/* Pie Chart for Outcomes */}
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Resultados</p>
+                <div className="h-[120px]">
+                  <ChartContainer
+                    config={{
+                      count: { label: "Quantidade", color: "hsl(var(--primary))" }
+                    }}
+                    className="h-full w-full"
+                  >
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={Object.entries(stats.outcomeStats).map(([outcome, count]) => ({
+                            name: outcomeLabels[outcome as ActivityOutcome].label,
+                            value: count,
+                            outcome
+                          }))}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={25}
+                          outerRadius={45}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {Object.entries(stats.outcomeStats).map(([outcome], index) => {
+                            const colors = [
+                              'hsl(var(--status-success))',
+                              'hsl(var(--status-error))',
+                              'hsl(var(--status-info))',
+                              'hsl(var(--status-warning))',
+                              'hsl(var(--primary))',
+                              'hsl(var(--accent))',
+                              'hsl(var(--muted-foreground))',
+                              'hsl(var(--secondary))',
+                            ];
+                            return (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={colors[index % colors.length]}
+                              />
+                            );
+                          })}
+                        </Pie>
+                        <Tooltip content={<ChartTooltipContent />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
                 </div>
               </div>
             </div>
