@@ -323,6 +323,39 @@ export type Database = {
         }
         Relationships: []
       }
+      circuit_breaker_events: {
+        Row: {
+          circuit_name: string
+          created_at: string
+          details: Json | null
+          event_type: string
+          failure_count: number | null
+          id: string
+          new_state: string | null
+          previous_state: string | null
+        }
+        Insert: {
+          circuit_name: string
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          failure_count?: number | null
+          id?: string
+          new_state?: string | null
+          previous_state?: string | null
+        }
+        Update: {
+          circuit_name?: string
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          failure_count?: number | null
+          id?: string
+          new_state?: string | null
+          previous_state?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           company: string | null
