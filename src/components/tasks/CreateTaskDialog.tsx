@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useCreateTask, TaskPriority, TaskType } from '@/hooks/useTasks';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import {
@@ -11,7 +14,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -19,52 +21,79 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Plus } from 'lucide-react';
+
+const taskSchema = z.object({
+  title: z.string()
+    .trim()
+    .min(1, "Título é obrigatório")
+    .max(200, "Título deve ter no máximo 200 caracteres"),
+  description: z.string()
+    .max(1000, "Descrição deve ter no máximo 1000 caracteres")
+    .optional(),
+  salesperson_id: z.string().optional(),
+  priority: z.enum(["high", "medium", "low"]),
+  task_type: z.enum(["call", "meeting", "follow_up", "email", "proposal", "other"]),
+  due_date: z.string().min(1, "Data é obrigatória"),
+  due_time: z.string().optional(),
+});
+
+type TaskFormData = z.infer<typeof taskSchema>;
 
 export function CreateTaskDialog() {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [salespersonId, setSalespersonId] = useState<string>('');
-  const [priority, setPriority] = useState<TaskPriority>('medium');
-  const [taskType, setTaskType] = useState<TaskType>('other');
-  const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);
-  const [dueTime, setDueTime] = useState('');
 
   const createTask = useCreateTask();
   const { data: salespeople } = useSalespeople();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const form = useForm<TaskFormData>({
+    resolver: zodResolver(taskSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      salesperson_id: '',
+      priority: 'medium',
+      task_type: 'other',
+      due_date: new Date().toISOString().split('T')[0],
+      due_time: '',
+    },
+  });
+
+  const handleSubmit = (data: TaskFormData) => {
     createTask.mutate({
-      title: title.trim(),
-      description: description.trim() || undefined,
-      salesperson_id: salespersonId || undefined,
-      priority,
-      task_type: taskType,
-      due_date: dueDate,
-      due_time: dueTime || undefined,
+      title: data.title,
+      description: data.description || undefined,
+      salesperson_id: data.salesperson_id || undefined,
+      priority: data.priority as TaskPriority,
+      task_type: data.task_type as TaskType,
+      due_date: data.due_date,
+      due_time: data.due_time || undefined,
     }, {
       onSuccess: () => {
         setOpen(false);
-        resetForm();
+        form.reset();
       },
     });
   };
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setSalespersonId('');
-    setPriority('medium');
-    setTaskType('other');
-    setDueDate(new Date().toISOString().split('T')[0]);
-    setDueTime('');
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      form.reset({
+        title: '',
+        description: '',
+        salesperson_id: '',
+        priority: 'medium',
+        task_type: 'other',
+        due_date: new Date().toISOString().split('T')[0],
+        due_time: '',
+      });
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="glow" className="gap-2">
           <Plus className="h-4 w-4" />
@@ -75,112 +104,167 @@ export function CreateTaskDialog() {
         <DialogHeader>
           <DialogTitle>Criar Nova Tarefa</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Título *</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Ligar para cliente"
-              required
-              maxLength={200}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Título *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Ex: Ligar para cliente"
+                      maxLength={200}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detalhes da tarefa..."
-              rows={3}
-              maxLength={1000}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Detalhes da tarefa..."
+                      rows={3}
+                      maxLength={1000}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Tipo</Label>
-              <Select value={taskType} onValueChange={(v) => setTaskType(v as TaskType)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="call">Ligação</SelectItem>
-                  <SelectItem value="meeting">Reunião</SelectItem>
-                  <SelectItem value="follow_up">Follow-up</SelectItem>
-                  <SelectItem value="email">E-mail</SelectItem>
-                  <SelectItem value="proposal">Proposta</SelectItem>
-                  <SelectItem value="other">Outro</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="task_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="call">Ligação</SelectItem>
+                        <SelectItem value="meeting">Reunião</SelectItem>
+                        <SelectItem value="follow_up">Follow-up</SelectItem>
+                        <SelectItem value="email">E-mail</SelectItem>
+                        <SelectItem value="proposal">Proposta</SelectItem>
+                        <SelectItem value="other">Outro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="space-y-2">
-              <Label>Prioridade</Label>
-              <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="medium">Média</SelectItem>
-                  <SelectItem value="low">Baixa</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="dueDate">Data *</Label>
-              <Input
-                id="dueDate"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                required
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prioridade</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="high">Alta</SelectItem>
+                        <SelectItem value="medium">Média</SelectItem>
+                        <SelectItem value="low">Baixa</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="dueTime">Horário</Label>
-              <Input
-                id="dueTime"
-                type="time"
-                value={dueTime}
-                onChange={(e) => setDueTime(e.target.value)}
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="due_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Data *</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="due_time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Horário</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="time"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label>Vendedor</Label>
-            <Select value={salespersonId} onValueChange={setSalespersonId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione um vendedor" />
-              </SelectTrigger>
-              <SelectContent>
-                {salespeople?.map((sp) => (
-                  <SelectItem key={sp.id} value={sp.id}>
-                    {sp.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <FormField
+              control={form.control}
+              name="salesperson_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vendedor</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um vendedor" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {salespeople?.map((sp) => (
+                        <SelectItem key={sp.id} value={sp.id}>
+                          {sp.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="glow-pulse" type="submit" disabled={createTask.isPending || !title.trim()}>
-              {createTask.isPending ? 'Criando...' : 'Criar Tarefa'}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+              <Button variant="glow-pulse" type="submit" disabled={createTask.isPending}>
+                {createTask.isPending ? 'Criando...' : 'Criar Tarefa'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
