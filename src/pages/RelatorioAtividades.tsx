@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download, Filter } from "lucide-react";
 import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/useSalespersonActivityReport";
 import { SalespersonActivityTable } from "@/components/analytics/SalespersonActivityTable";
 import { ActivityVolumeChart } from "@/components/analytics/ActivityVolumeChart";
@@ -12,7 +14,19 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { exportToCSV, formatPercentForExport } from "@/utils/csvExport";
 import { toast } from "sonner";
 
+type OutcomeFilter = 'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';
+
+const outcomeLabels: Record<OutcomeFilter, string> = {
+  all: "Todos os outcomes",
+  connected: "Conectou",
+  scheduled: "Agendou",
+  qualified: "Qualificado",
+  no_answer: "Não atendeu",
+  not_interested: "Não interessado",
+};
+
 export default function RelatorioAtividades() {
+  const [outcomeFilter, setOutcomeFilter] = useState<OutcomeFilter>('all');
   const { data, isLoading, error } = useSalespersonActivityReport(1);
   const { data: trendData, isLoading: trendLoading } = useActivityTrend(undefined, 30);
 
@@ -24,45 +38,65 @@ export default function RelatorioAtividades() {
     );
   }
 
+  // Filter salespeople data based on outcome filter
+  const filteredSalespeople = data?.salespeople?.filter(sp => {
+    if (outcomeFilter === 'all') return true;
+    // Only show salespeople with at least 1 activity of the selected outcome
+    return sp[outcomeFilter] > 0;
+  }) || [];
+
+  // Recalculate team summary based on filtered data
+  const filteredTeamSummary = {
+    total_activities: outcomeFilter === 'all' 
+      ? data?.teamSummary.total_activities || 0
+      : filteredSalespeople.reduce((sum, sp) => sum + sp[outcomeFilter], 0),
+    total_calls: data?.teamSummary.total_calls || 0,
+    total_emails: data?.teamSummary.total_emails || 0,
+    total_meetings: data?.teamSummary.total_meetings || 0,
+    avg_connection_rate: data?.teamSummary.avg_connection_rate || 0,
+    avg_scheduling_rate: data?.teamSummary.avg_scheduling_rate || 0,
+    top_performer_name: data?.teamSummary.top_performer_name,
+  };
+
   const stats = [
     {
-      label: "Total Atividades",
-      value: data?.teamSummary.total_activities || 0,
+      label: outcomeFilter === 'all' ? "Total Atividades" : outcomeLabels[outcomeFilter],
+      value: filteredTeamSummary.total_activities,
       icon: Users,
       color: "text-primary",
       bgColor: "bg-primary/10",
     },
     {
       label: "Calls",
-      value: data?.teamSummary.total_calls || 0,
+      value: filteredTeamSummary.total_calls,
       icon: Phone,
       color: "text-green-400",
       bgColor: "bg-green-400/10",
     },
     {
       label: "Emails",
-      value: data?.teamSummary.total_emails || 0,
+      value: filteredTeamSummary.total_emails,
       icon: Mail,
       color: "text-blue-400",
       bgColor: "bg-blue-400/10",
     },
     {
       label: "Reuniões",
-      value: data?.teamSummary.total_meetings || 0,
+      value: filteredTeamSummary.total_meetings,
       icon: Calendar,
       color: "text-purple-400",
       bgColor: "bg-purple-400/10",
     },
     {
       label: "Taxa Conexão",
-      value: `${(data?.teamSummary.avg_connection_rate || 0).toFixed(0)}%`,
+      value: `${(filteredTeamSummary.avg_connection_rate).toFixed(0)}%`,
       icon: Percent,
       color: "text-emerald-400",
       bgColor: "bg-emerald-400/10",
     },
     {
       label: "Taxa Agendamento",
-      value: `${(data?.teamSummary.avg_scheduling_rate || 0).toFixed(0)}%`,
+      value: `${(filteredTeamSummary.avg_scheduling_rate).toFixed(0)}%`,
       icon: TrendingUp,
       color: "text-amber-400",
       bgColor: "bg-amber-400/10",
@@ -70,13 +104,13 @@ export default function RelatorioAtividades() {
   ];
 
   const handleExportCSV = () => {
-    if (!data?.salespeople?.length) {
+    if (!filteredSalespeople.length) {
       toast.error("Nenhum dado para exportar");
       return;
     }
 
     exportToCSV(
-      data.salespeople,
+      filteredSalespeople,
       [
         { header: "Vendedor", accessor: "salesperson_name" },
         { header: "Calls", accessor: "calls" },
@@ -91,11 +125,12 @@ export default function RelatorioAtividades() {
         { header: "Taxa Conexão", accessor: (item) => formatPercentForExport(item.connection_rate) },
         { header: "Taxa Agendamento", accessor: (item) => formatPercentForExport(item.scheduling_rate) },
       ],
-      `relatorio-atividades-${new Date().toISOString().split('T')[0]}`
+      `relatorio-atividades-${outcomeFilter !== 'all' ? outcomeFilter + '-' : ''}${new Date().toISOString().split('T')[0]}`
     );
 
     toast.success("Relatório exportado com sucesso!");
   };
+
   return (
     <MainLayout>
       <SkeletonTransition
@@ -114,19 +149,30 @@ export default function RelatorioAtividades() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                {data?.teamSummary.top_performer_name && (
+                {filteredTeamSummary.top_performer_name && (
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
                     <span className="text-lg">🏆</span>
                     <span className="text-xs font-medium text-primary">
-                      Top: {data.teamSummary.top_performer_name}
+                      Top: {filteredTeamSummary.top_performer_name}
                     </span>
                   </div>
                 )}
+                <Select value={outcomeFilter} onValueChange={(v) => setOutcomeFilter(v as OutcomeFilter)}>
+                  <SelectTrigger className="w-[180px] gap-2">
+                    <Filter className="h-4 w-4" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(outcomeLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleExportCSV}
-                  disabled={!data?.salespeople?.length}
+                  disabled={!filteredSalespeople.length}
                   className="gap-2"
                 >
                   <Download className="h-4 w-4" />
@@ -158,10 +204,10 @@ export default function RelatorioAtividades() {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
-              <ActivityVolumeChart data={data?.salespeople || []} />
+              <ActivityVolumeChart data={filteredSalespeople} />
             </div>
             <div className="animate-fade-in" style={{ animationDelay: "250ms" }}>
-              <ActivityOutcomesChart data={data?.salespeople || []} />
+              <ActivityOutcomesChart data={filteredSalespeople} />
             </div>
           </div>
 
@@ -172,7 +218,7 @@ export default function RelatorioAtividades() {
 
           {/* Salesperson Table */}
           <div className="animate-fade-in" style={{ animationDelay: "350ms" }}>
-            <SalespersonActivityTable data={data?.salespeople || []} />
+            <SalespersonActivityTable data={filteredSalespeople} />
           </div>
         </div>
       </SkeletonTransition>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Plus, Trash2, Mail, Clock, AlertTriangle, Users, Target, Loader2, TrendingDown } from "lucide-react";
+import { Bell, Plus, Trash2, Mail, Clock, AlertTriangle, Users, Target, Loader2, TrendingDown, Check, X, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -29,6 +29,12 @@ const frequencyLabels = {
   weekly: "Semanal",
 };
 
+interface EditingThreshold {
+  id: string;
+  field: 'stagnant_threshold_days' | 'inactive_threshold_days' | 'consecutive_days_threshold';
+  value: number;
+}
+
 export default function Notificacoes() {
   const { data: preferences, isLoading } = useNotificationPreferences();
   const createPreference = useCreateNotificationPreference();
@@ -37,6 +43,7 @@ export default function Notificacoes() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isTesting, setIsTesting] = useState<string | null>(null);
+  const [editingThreshold, setEditingThreshold] = useState<EditingThreshold | null>(null);
   const [newPreference, setNewPreference] = useState<{
     email: string;
     frequency: "realtime" | "daily" | "weekly";
@@ -93,6 +100,29 @@ export default function Notificacoes() {
     });
   };
 
+  const handleStartEditThreshold = (pref: NotificationPreference, field: EditingThreshold['field']) => {
+    setEditingThreshold({
+      id: pref.id,
+      field,
+      value: pref[field] as number,
+    });
+  };
+
+  const handleSaveThreshold = async () => {
+    if (!editingThreshold) return;
+    
+    await updatePreference.mutateAsync({
+      id: editingThreshold.id,
+      [editingThreshold.field]: editingThreshold.value,
+    });
+    setEditingThreshold(null);
+    toast.success("Threshold atualizado!");
+  };
+
+  const handleCancelEditThreshold = () => {
+    setEditingThreshold(null);
+  };
+
   const handleTestNotification = async (pref: NotificationPreference) => {
     setIsTesting(pref.id);
     try {
@@ -112,6 +142,73 @@ export default function Notificacoes() {
     } finally {
       setIsTesting(null);
     }
+  };
+
+  const renderThresholdButton = (
+    pref: NotificationPreference, 
+    field: EditingThreshold['field'],
+    label: string,
+    icon: React.ReactNode,
+    colorClasses: string,
+    enabled: boolean
+  ) => {
+    const isEditing = editingThreshold?.id === pref.id && editingThreshold?.field === field;
+    const value = pref[field] as number;
+
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-muted">
+          <Input
+            type="number"
+            min={1}
+            max={field === 'consecutive_days_threshold' ? 14 : 365}
+            value={editingThreshold.value}
+            onChange={(e) => setEditingThreshold({ 
+              ...editingThreshold, 
+              value: parseInt(e.target.value) || 1 
+            })}
+            className="h-6 w-14 text-xs px-1 text-center"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSaveThreshold();
+              if (e.key === 'Escape') handleCancelEditThreshold();
+            }}
+          />
+          <button
+            onClick={handleSaveThreshold}
+            className="p-0.5 rounded hover:bg-primary/20 transition-colors"
+          >
+            <Check className="h-3.5 w-3.5 text-status-success" />
+          </button>
+          <button
+            onClick={handleCancelEditThreshold}
+            className="p-0.5 rounded hover:bg-destructive/20 transition-colors"
+          >
+            <X className="h-3.5 w-3.5 text-destructive" />
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <button
+        onClick={() => enabled ? handleToggleAlertType(pref, field.replace('_threshold_days', '').replace('consecutive_days_', '') === 'stagnant' ? 'notify_stagnant_deals' : field.includes('inactive') ? 'notify_inactive_clients' : 'notify_at_risk_goals' as keyof NotificationPreference) : null}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all group ${colorClasses}`}
+      >
+        {icon}
+        <span>{label}</span>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleStartEditThreshold(pref, field);
+          }}
+          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-background/50 hover:bg-background/80 transition-colors ml-1"
+        >
+          <span>{value}d</span>
+          <Pencil className="h-2.5 w-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </button>
+      </button>
+    );
   };
 
   return (
@@ -302,30 +399,30 @@ export default function Notificacoes() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Tipos de alerta</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                    Tipos de alerta <span className="text-[10px] normal-case">(clique no valor para editar)</span>
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleToggleAlertType(pref, "notify_stagnant_deals")}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                        pref.notify_stagnant_deals 
-                          ? "bg-warning/20 text-warning" 
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      <Clock className="h-3 w-3" />
-                      Deals parados ({pref.stagnant_threshold_days}d)
-                    </button>
-                    <button
-                      onClick={() => handleToggleAlertType(pref, "notify_inactive_clients")}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                        pref.notify_inactive_clients 
-                          ? "bg-destructive/20 text-destructive" 
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      <Users className="h-3 w-3" />
-                      Clientes inativos ({pref.inactive_threshold_days}d)
-                    </button>
+                    {renderThresholdButton(
+                      pref,
+                      'stagnant_threshold_days',
+                      'Deals parados',
+                      <Clock className="h-3 w-3" />,
+                      pref.notify_stagnant_deals 
+                        ? "bg-warning/20 text-warning" 
+                        : "bg-muted text-muted-foreground",
+                      pref.notify_stagnant_deals
+                    )}
+                    {renderThresholdButton(
+                      pref,
+                      'inactive_threshold_days',
+                      'Clientes inativos',
+                      <Users className="h-3 w-3" />,
+                      pref.notify_inactive_clients 
+                        ? "bg-destructive/20 text-destructive" 
+                        : "bg-muted text-muted-foreground",
+                      pref.notify_inactive_clients
+                    )}
                     <button
                       onClick={() => handleToggleAlertType(pref, "notify_at_risk_goals")}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
@@ -337,10 +434,14 @@ export default function Notificacoes() {
                       <Target className="h-3 w-3" />
                       Metas em risco
                     </button>
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-accent/20 text-accent-foreground">
-                      <TrendingDown className="h-3 w-3" />
-                      SDR consecutivo ({pref.consecutive_days_threshold}d)
-                    </span>
+                    {renderThresholdButton(
+                      pref,
+                      'consecutive_days_threshold',
+                      'SDR consecutivo',
+                      <TrendingDown className="h-3 w-3" />,
+                      "bg-accent/20 text-accent-foreground",
+                      true
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2 pt-2">
