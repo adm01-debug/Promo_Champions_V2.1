@@ -50,53 +50,49 @@ export function useSDRMetrics(period: PeriodFilter = "month") {
       const currentRange = getPeriodRange(period, 0);
       const previousRange = getPeriodRange(period, 1);
 
-      // Fetch SDRs (role = sdr or hybrid)
-      const { data: sdrs } = await supabase
-        .from("salespeople")
-        .select("id")
-        .in("role", ["sdr", "hybrid"]);
+      // Fetch all data in parallel for better performance
+      const [sdrsResult, currentSalesResult, previousSalesResult, leadScoresResult, currentTasksResult, previousTasksResult] = await Promise.all([
+        supabase
+          .from("salespeople")
+          .select("id")
+          .in("role", ["sdr", "hybrid"]),
+        supabase
+          .from("sales")
+          .select("id, status, salesperson_id")
+          .gte("created_at", currentRange.start.toISOString())
+          .lte("created_at", currentRange.end.toISOString()),
+        supabase
+          .from("sales")
+          .select("id, status, salesperson_id")
+          .gte("created_at", previousRange.start.toISOString())
+          .lte("created_at", previousRange.end.toISOString()),
+        supabase
+          .from("lead_scores")
+          .select("sale_id, score"),
+        supabase
+          .from("tasks")
+          .select("id, salesperson_id")
+          .eq("task_type", "meeting")
+          .gte("created_at", currentRange.start.toISOString())
+          .lte("created_at", currentRange.end.toISOString()),
+        supabase
+          .from("tasks")
+          .select("id, salesperson_id")
+          .eq("task_type", "meeting")
+          .gte("created_at", previousRange.start.toISOString())
+          .lte("created_at", previousRange.end.toISOString()),
+      ]);
 
-      const sdrIds = sdrs?.map(s => s.id) || [];
+      const sdrIds = sdrsResult.data?.map(s => s.id) || [];
+      
+      // Filter sales by SDR IDs
+      const currentSales = currentSalesResult.data?.filter(s => sdrIds.includes(s.salesperson_id || '')) || [];
+      const previousSales = previousSalesResult.data?.filter(s => sdrIds.includes(s.salesperson_id || '')) || [];
+      const currentTasks = currentTasksResult.data?.filter(t => sdrIds.includes(t.salesperson_id || '')) || [];
+      const previousTasks = previousTasksResult.data?.filter(t => sdrIds.includes(t.salesperson_id || '')) || [];
+      const leadScores = leadScoresResult.data || [];
 
-      // Fetch current period sales for SDRs
-      const { data: currentSales } = await supabase
-        .from("sales")
-        .select("*")
-        .in("salesperson_id", sdrIds)
-        .gte("created_at", currentRange.start.toISOString())
-        .lte("created_at", currentRange.end.toISOString());
-
-      // Fetch previous period sales
-      const { data: previousSales } = await supabase
-        .from("sales")
-        .select("*")
-        .in("salesperson_id", sdrIds)
-        .gte("created_at", previousRange.start.toISOString())
-        .lte("created_at", previousRange.end.toISOString());
-
-      // Fetch lead scores for temperature classification
-      const { data: leadScores } = await supabase
-        .from("lead_scores")
-        .select("sale_id, score");
-
-      // Fetch tasks to count meetings scheduled (only for SDRs)
-      const { data: currentTasks } = await supabase
-        .from("tasks")
-        .select("*")
-        .eq("task_type", "meeting")
-        .in("salesperson_id", sdrIds)
-        .gte("created_at", currentRange.start.toISOString())
-        .lte("created_at", currentRange.end.toISOString());
-
-      const { data: previousTasks } = await supabase
-        .from("tasks")
-        .select("*")
-        .eq("task_type", "meeting")
-        .in("salesperson_id", sdrIds)
-        .gte("created_at", previousRange.start.toISOString())
-        .lte("created_at", previousRange.end.toISOString());
-
-      const scoreMap = new Map(leadScores?.map(s => [s.sale_id, s.score]) || []);
+      const scoreMap = new Map(leadScores.map(s => [s.sale_id, s.score]));
 
       const calculateMetrics = (sales: any[], tasks: any[]): SDRMetrics => {
         const totalLeads = sales?.length || 0;
@@ -149,6 +145,7 @@ export function useSDRMetrics(period: PeriodFilter = "month") {
         },
       };
     },
+    staleTime: 60000, // Consider data fresh for 1 minute
   });
 }
 

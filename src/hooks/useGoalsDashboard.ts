@@ -46,37 +46,37 @@ export function useGoalsDashboard() {
       const daysElapsed = differenceInDays(now, monthStart) + 1;
       const daysRemaining = totalDays - daysElapsed;
 
-      // Fetch salespeople
-      const { data: salespeople, error: spError } = await supabase
-        .from("salespeople")
-        .select("*")
-        .eq("is_active", true);
+      // Fetch all data in parallel for better performance
+      const [salespeopleResult, goalsResult, salesResult] = await Promise.all([
+        supabase
+          .from("salespeople")
+          .select("id, name, avatar_url, role, commission_rate")
+          .eq("is_active", true),
+        supabase
+          .from("sales_goals")
+          .select("salesperson_id, goal_amount")
+          .eq("month", currentMonth),
+        supabase
+          .from("sales")
+          .select("salesperson_id, amount")
+          .eq("status", "completed")
+          .gte("created_at", monthStart.toISOString())
+          .lte("created_at", monthEnd.toISOString()),
+      ]);
 
-      if (spError) throw spError;
+      if (salespeopleResult.error) throw salespeopleResult.error;
+      if (goalsResult.error) throw goalsResult.error;
+      if (salesResult.error) throw salesResult.error;
 
-      // Fetch goals for current month
-      const { data: goals, error: goalsError } = await supabase
-        .from("sales_goals")
-        .select("*")
-        .eq("month", currentMonth);
-
-      if (goalsError) throw goalsError;
-
-      // Fetch completed sales for current month
-      const { data: sales, error: salesError } = await supabase
-        .from("sales")
-        .select("*")
-        .eq("status", "completed")
-        .gte("created_at", monthStart.toISOString())
-        .lte("created_at", monthEnd.toISOString());
-
-      if (salesError) throw salesError;
+      const salespeople = salespeopleResult.data || [];
+      const goals = goalsResult.data || [];
+      const sales = salesResult.data || [];
 
       // Calculate per-salesperson data
-      const salespeopleData: SalespersonGoalData[] = (salespeople || []).map(sp => {
-        const goal = (goals || []).find(g => g.salesperson_id === sp.id);
+      const salespeopleData: SalespersonGoalData[] = salespeople.map(sp => {
+        const goal = goals.find(g => g.salesperson_id === sp.id);
         const goalAmount = goal ? Number(goal.goal_amount) : 0;
-        const spSales = (sales || []).filter(s => s.salesperson_id === sp.id);
+        const spSales = sales.filter(s => s.salesperson_id === sp.id);
         const currentSales = spSales.reduce((sum, s) => sum + Number(s.amount), 0);
         const progress = goalAmount > 0 ? (currentSales / goalAmount) * 100 : 0;
         const dailyAverage = daysElapsed > 0 ? currentSales / daysElapsed : 0;
@@ -134,6 +134,7 @@ export function useGoalsDashboard() {
         salespeople: salespeopleData.sort((a, b) => b.progress - a.progress),
       };
     },
-    refetchInterval: 30000, // Refresh every 30 seconds for real-time feel
+    refetchInterval: 60000, // Refresh every 60 seconds (optimized from 30s)
+    staleTime: 30000, // Consider data fresh for 30 seconds
   });
 }

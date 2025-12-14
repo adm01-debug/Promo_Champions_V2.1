@@ -32,32 +32,32 @@ export function useCompetitiveRanking() {
       const monthStart = startOfMonth(now);
       const monthEnd = endOfMonth(now);
 
-      // Fetch active salespeople
-      const { data: salespeople, error: spError } = await supabase
-        .from("salespeople")
-        .select("*")
-        .eq("is_active", true);
+      // Fetch all data in parallel for better performance
+      const [salespeopleResult, salesResult, leadsResult] = await Promise.all([
+        supabase
+          .from("salespeople")
+          .select("id, name, avatar_url, role")
+          .eq("is_active", true),
+        supabase
+          .from("sales")
+          .select("salesperson_id, amount")
+          .eq("status", "completed")
+          .gte("created_at", monthStart.toISOString())
+          .lte("created_at", monthEnd.toISOString()),
+        supabase
+          .from("sales")
+          .select("salesperson_id")
+          .neq("status", "completed")
+          .neq("status", "lost"),
+      ]);
 
-      if (spError) throw spError;
+      if (salespeopleResult.error) throw salespeopleResult.error;
+      if (salesResult.error) throw salesResult.error;
+      if (leadsResult.error) throw leadsResult.error;
 
-      // Fetch completed sales for current month
-      const { data: sales, error: salesError } = await supabase
-        .from("sales")
-        .select("*")
-        .eq("status", "completed")
-        .gte("created_at", monthStart.toISOString())
-        .lte("created_at", monthEnd.toISOString());
-
-      if (salesError) throw salesError;
-
-      // Fetch all leads (pending/in-progress sales) for each salesperson
-      const { data: leads, error: leadsError } = await supabase
-        .from("sales")
-        .select("*")
-        .neq("status", "completed")
-        .neq("status", "lost");
-
-      if (leadsError) throw leadsError;
+      const salespeople = salespeopleResult.data;
+      const sales = salesResult.data;
+      const leads = leadsResult.data;
 
       // Calculate stats per salesperson
       const statsMap = new Map<string, { totalSales: number; dealsCount: number; leadsCount: number }>();
@@ -106,6 +106,7 @@ export function useCompetitiveRanking() {
         };
       });
     },
-    refetchInterval: 15000, // Refresh every 15 seconds for real-time feel
+    refetchInterval: 60000, // Refresh every 60 seconds (optimized from 15s)
+    staleTime: 30000, // Consider data fresh for 30 seconds
   });
 }
