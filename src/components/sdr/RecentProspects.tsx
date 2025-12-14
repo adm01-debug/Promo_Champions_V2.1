@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Users, Flame, Thermometer, Snowflake } from "lucide-react";
+import { Users, Flame, Thermometer, Snowflake, Clock, Package } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function RecentProspects() {
   const { data: prospects } = useQuery({
@@ -34,9 +36,9 @@ export function RecentProspects() {
   });
 
   const getTemperature = (score: number) => {
-    if (score >= 75) return { label: "Quente", color: "text-status-error", bgColor: "bg-status-error/10", icon: Flame };
-    if (score >= 50) return { label: "Morno", color: "text-status-warning", bgColor: "bg-status-warning/10", icon: Thermometer };
-    return { label: "Frio", color: "text-status-info", bgColor: "bg-status-info/10", icon: Snowflake };
+    if (score >= 75) return { label: "Quente", color: "text-status-error", bgColor: "bg-status-error/10", borderColor: "border-status-error/30", icon: Flame, glowClass: "hover-glow-error" };
+    if (score >= 50) return { label: "Morno", color: "text-status-warning", bgColor: "bg-status-warning/10", borderColor: "border-status-warning/30", icon: Thermometer, glowClass: "hover-glow" };
+    return { label: "Frio", color: "text-status-info", bgColor: "bg-status-info/10", borderColor: "border-status-info/30", icon: Snowflake, glowClass: "" };
   };
 
   const getStatusLabel = (status: string) => {
@@ -56,59 +58,91 @@ export function RecentProspects() {
   };
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300 animate-fade-in">
+    <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40">
-            <Users className="h-4 w-4 text-white" />
-          </div>
-          <span className="gradient-text">Prospects Recentes</span>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
+              <Users className="h-4 w-4 text-primary" />
+            </div>
+            <span className="gradient-text">Prospects Recentes</span>
+          </CardTitle>
+          {prospects && prospects.length > 0 && (
+            <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary shadow-sm">
+              {prospects.length} prospects
+            </Badge>
+          )}
+        </div>
       </CardHeader>
-      <CardContent className="space-y-2">
-        {prospects?.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
-            <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
-              <Users className="h-8 w-8 opacity-50" />
-            </div>
-            <p className="text-sm font-display font-medium gradient-text">Nenhum prospect encontrado</p>
+      <CardContent>
+        <ScrollArea className="h-[320px] pr-2">
+          <div className="space-y-2">
+            {prospects?.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
+                <div className="p-4 rounded-full bg-gradient-to-br from-muted/30 to-muted/10 mb-3 shadow-lg">
+                  <Users className="h-10 w-10 opacity-50 animate-pulse" />
+                </div>
+                <p className="text-sm font-display font-medium gradient-text">Nenhum prospect encontrado</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">Novos leads aparecerão aqui</p>
+              </div>
+            )}
+            {prospects?.map((prospect, index) => {
+              const temp = getTemperature(prospect.score);
+              const TempIcon = temp.icon;
+              
+              return (
+                <div 
+                  key={prospect.id}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-xl glass border hover-lift transition-all group cursor-pointer animate-fade-in",
+                    temp.borderColor,
+                    temp.glowClass
+                  )}
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className={cn(
+                    "p-2.5 rounded-lg shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg",
+                    temp.bgColor,
+                    temp.color
+                  )}>
+                    <TempIcon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-display font-medium truncate group-hover:text-primary transition-colors">
+                      {prospect.client_name}
+                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <Package className="h-3 w-3 text-muted-foreground/60" />
+                      <p className="text-[10px] text-muted-foreground truncate group-hover:text-foreground/70 transition-colors">
+                        {prospect.product_name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right space-y-1.5">
+                    <Badge 
+                      variant="outline" 
+                      className={cn(
+                        "text-[10px] transition-all group-hover:scale-105 shadow-sm",
+                        getStatusColor(prospect.status)
+                      )}
+                    >
+                      {getStatusLabel(prospect.status)}
+                    </Badge>
+                    <div className="flex items-center gap-1 justify-end text-[10px] text-muted-foreground">
+                      <Clock className="h-2.5 w-2.5" />
+                      <span>
+                        {formatDistanceToNow(new Date(prospect.created_at), { 
+                          addSuffix: true, 
+                          locale: ptBR 
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-        {prospects?.map((prospect, index) => {
-          const temp = getTemperature(prospect.score);
-          const TempIcon = temp.icon;
-          
-          return (
-            <div 
-              key={prospect.id}
-              className="flex items-center gap-3 p-3 rounded-xl glass border border-border/30 hover-lift transition-all duration-300 group cursor-pointer animate-fade-in"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <div className={`p-2 rounded-lg ${temp.bgColor} ${temp.color} shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
-                <TempIcon className="h-4 w-4" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-display font-medium truncate group-hover:text-primary transition-colors duration-300">
-                  {prospect.client_name}
-                </p>
-                <p className="text-[10px] text-muted-foreground truncate transition-colors group-hover:text-foreground/70">
-                  {prospect.product_name}
-                </p>
-              </div>
-              <div className="text-right space-y-1">
-                <Badge variant="outline" className={`text-[10px] transition-all duration-300 group-hover:scale-105 ${getStatusColor(prospect.status)}`}>
-                  {getStatusLabel(prospect.status)}
-                </Badge>
-                <p className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(prospect.created_at), { 
-                    addSuffix: true, 
-                    locale: ptBR 
-                  })}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+        </ScrollArea>
       </CardContent>
     </Card>
   );
