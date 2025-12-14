@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type PeriodFilter = 'week' | 'month' | 'quarter';
 type ViewMode = 'activity' | 'comparison';
+type ActivityTypeFilter = 'all' | 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp';
 
 interface SDRActivityTrendProps {
   period: PeriodFilter;
@@ -48,9 +49,9 @@ const COLORS = [
   'hsl(var(--chart-5))',
 ];
 
-const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode: ViewMode) => {
+const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode: ViewMode, activityTypeFilter: ActivityTypeFilter) => {
   return useQuery({
-    queryKey: ['sdr-activity-trend', period, selectedSDR, viewMode],
+    queryKey: ['sdr-activity-trend', period, selectedSDR, viewMode, activityTypeFilter],
     queryFn: async () => {
       const now = new Date();
       let startDate: Date;
@@ -193,7 +194,8 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
             const matchDate = useWeeklyAggregation
               ? format(startOfWeek(actDate, { weekStartsOn: 1 }), 'yyyy-MM-dd') === dateKey
               : format(actDate, 'yyyy-MM-dd') === dateKey;
-            return a.salesperson_id === sdr.id && matchDate;
+            const matchType = activityTypeFilter === 'all' || a.activity_type === activityTypeFilter;
+            return a.salesperson_id === sdr.id && matchDate && matchType;
           }).length ?? 0;
 
           point[sdr.id] = sdrActivities;
@@ -236,7 +238,8 @@ const ACTIVITY_LABELS: Record<string, string> = {
 export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
   const [selectedSDR, setSelectedSDR] = useState<string>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("activity");
-  const { data, isLoading } = useSDRActivityTrend(period, selectedSDR, viewMode);
+  const [activityTypeFilter, setActivityTypeFilter] = useState<ActivityTypeFilter>("all");
+  const { data, isLoading } = useSDRActivityTrend(period, selectedSDR, viewMode, activityTypeFilter);
 
   if (isLoading) {
     return (
@@ -318,6 +321,22 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                     {sdr.name}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          )}
+          {viewMode === 'comparison' && (
+            <Select value={activityTypeFilter} onValueChange={(v) => setActivityTypeFilter(v as ActivityTypeFilter)}>
+              <SelectTrigger className="w-[140px] h-9 text-sm">
+                <Activity className="w-4 h-4 mr-2 text-muted-foreground" />
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="call">Ligações</SelectItem>
+                <SelectItem value="email">E-mails</SelectItem>
+                <SelectItem value="meeting">Reuniões</SelectItem>
+                <SelectItem value="linkedin">LinkedIn</SelectItem>
+                <SelectItem value="whatsapp">WhatsApp</SelectItem>
               </SelectContent>
             </Select>
           )}
