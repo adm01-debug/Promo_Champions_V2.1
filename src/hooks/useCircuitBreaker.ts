@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 
@@ -10,6 +11,7 @@ interface CircuitBreakerConfig {
   onStateChange?: (state: CircuitState, previousState: CircuitState) => void;
   onOpen?: (failures: number) => void;
   onClose?: () => void;
+  persistEvents?: boolean; // Enable database persistence
 }
 
 interface CircuitBreakerState {
@@ -23,6 +25,7 @@ const DEFAULT_CONFIG: Required<Omit<CircuitBreakerConfig, 'onStateChange' | 'onO
   failureThreshold: 5,
   resetTimeout: 30000, // 30 seconds
   halfOpenMaxAttempts: 3,
+  persistEvents: true,
 };
 
 // Global circuit breaker registry
@@ -200,9 +203,11 @@ export function withCircuitBreaker<T>(
     failureThreshold = DEFAULT_CONFIG.failureThreshold,
     resetTimeout = DEFAULT_CONFIG.resetTimeout,
     halfOpenMaxAttempts = DEFAULT_CONFIG.halfOpenMaxAttempts,
+    persistEvents = DEFAULT_CONFIG.persistEvents,
   } = config;
 
   const circuit = getOrCreateCircuit(circuitName);
+  const previousState = circuit.state;
 
   // Check if request should be allowed
   if (circuit.state === 'OPEN') {
@@ -211,6 +216,11 @@ export function withCircuitBreaker<T>(
     if (timeSinceLastFailure >= resetTimeout) {
       circuit.state = 'HALF_OPEN';
       circuit.halfOpenAttempts = 0;
+      
+      // Log state transition
+      if (persistEvents) {
+        logCircuitEvent(circuitName, 'half_open', 'OPEN', 'HALF_OPEN', circuit.failures);
+      }
     } else {
       return Promise.reject(new CircuitBreakerError(circuitName));
     }
@@ -227,6 +237,11 @@ export function withCircuitBreaker<T>(
         circuit.failures = 0;
         circuit.lastFailure = null;
         circuit.halfOpenAttempts = 0;
+        
+        // Log recovery
+        if (persistEvents) {
+          logCircuitEvent(circuitName, 'closed', 'HALF_OPEN', 'CLOSED', 0);
+        }
       } else if (circuit.failures > 0) {
         circuit.failures = Math.max(0, circuit.failures - 1);
       }
@@ -240,6 +255,14 @@ export function withCircuitBreaker<T>(
         circuit.halfOpenAttempts += 1;
         if (circuit.halfOpenAttempts >= halfOpenMaxAttempts) {
           circuit.state = 'OPEN';
+          
+          // Log reopening
+          if (persistEvents) {
+            logCircuitEvent(circuitName, 'opened', 'HALF_OPEN', 'OPEN', circuit.failures);
+          }
+        } else if (persistEvents) {
+          // Log failure during recovery
+          logCircuitEvent(circuitName, 'failure', 'HALF_OPEN', 'HALF_OPEN', circuit.failures);
         }
       } else if (circuit.failures >= failureThreshold) {
         circuit.state = 'OPEN';
@@ -249,6 +272,14 @@ export function withCircuitBreaker<T>(
         }
         
         toast.warning(`Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s...`);
+        
+        // Log opening
+        if (persistEvents) {
+          logCircuitEvent(circuitName, 'opened', previousState, 'OPEN', circuit.failures);
+        }
+      } else if (persistEvents) {
+        // Log failure
+        logCircuitEvent(circuitName, 'failure', circuit.state, circuit.state, circuit.failures);
       }
 
       throw error;
@@ -264,24 +295,59 @@ export function getAllCircuitStates(): Record<string, CircuitBreakerState> {
   return states;
 }
 
+// Log event to database (fire-and-forget)
+async function logCircuitEvent(
+  circuitName: string,
+  eventType: string,
+  previousState?: string,
+  newState?: string,
+  failureCount?: number
+): Promise<void> {
+  try {
+    await supabase.from('circuit_breaker_events').insert([{
+      circuit_name: circuitName,
+      event_type: eventType,
+      previous_state: previousState || null,
+      new_state: newState || null,
+      failure_count: failureCount || 0,
+      details: {},
+    }]);
+  } catch (error) {
+    // Silent fail - don't break the circuit breaker for logging failures
+    if (import.meta.env.DEV) {
+      console.warn('[CircuitBreaker] Failed to log event:', error);
+    }
+  }
+}
+
 // Reset a specific circuit
 export function resetCircuit(name: string): void {
   const circuit = circuitBreakers.get(name);
   if (circuit) {
+    const previousState = circuit.state;
     circuit.state = 'CLOSED';
     circuit.failures = 0;
     circuit.lastFailure = null;
     circuit.halfOpenAttempts = 0;
+    
+    // Log reset event
+    logCircuitEvent(name, 'closed', previousState, 'CLOSED', 0);
   }
 }
 
 // Reset all circuits
 export function resetAllCircuits(): void {
-  circuitBreakers.forEach((circuit) => {
+  circuitBreakers.forEach((circuit, name) => {
+    const previousState = circuit.state;
     circuit.state = 'CLOSED';
     circuit.failures = 0;
     circuit.lastFailure = null;
     circuit.halfOpenAttempts = 0;
+    
+    // Log reset event for each
+    if (previousState !== 'CLOSED') {
+      logCircuitEvent(name, 'closed', previousState, 'CLOSED', 0);
+    }
   });
 }
 
