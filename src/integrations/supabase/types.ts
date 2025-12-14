@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_denied_logs: {
+        Row: {
+          attempted_path: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          required_role: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string
+          user_role: string | null
+        }
+        Insert: {
+          attempted_path: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          required_role?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id: string
+          user_role?: string | null
+        }
+        Update: {
+          attempted_path?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          required_role?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string
+          user_role?: string | null
+        }
+        Relationships: []
+      }
       achievements: {
         Row: {
           achievement_date: string
