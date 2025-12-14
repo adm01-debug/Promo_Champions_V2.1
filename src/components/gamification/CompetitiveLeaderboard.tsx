@@ -132,13 +132,13 @@ export function CompetitiveLeaderboard() {
                             {person.title && (
                               <Badge 
                                 variant="outline" 
-                                className={`text-[10px] px-1.5 py-0 bg-gradient-to-r ${person.color} text-primary-foreground border-0 shadow-sm`}
+                                className={`text-[10px] px-1.5 py-0 bg-gradient-to-r ${person.color} text-primary-foreground border-0 shadow-sm animate-bounce-in hover:animate-pop`}
                               >
                                 {person.emoji} {person.title}
                               </Badge>
                             )}
                             {isCurrentUser && (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30 shadow-sm">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30 shadow-sm animate-bounce-in">
                                 Você
                               </Badge>
                             )}

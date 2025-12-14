@@ -158,7 +158,7 @@ export function AchievementsHistory() {
                 return (
                   <div
                     key={achievement.id}
-                    className={`p-4 rounded-lg border ${config.color} transition-all hover:scale-[1.02]`}
+                    className={`p-4 rounded-lg border ${config.color} transition-all hover:animate-pop animate-bounce-in`}
                   >
                     <div className="flex items-center gap-3 mb-2">
                       <Avatar className="h-8 w-8 border border-current/30">
@@ -230,7 +230,7 @@ export function AchievementsHistory() {
                       </div>
                     </div>
                     
-                    <Badge className={`${config.color} flex items-center gap-1`}>
+                    <Badge className={`${config.color} flex items-center gap-1 animate-bounce-in hover:animate-pop`}>
                       {config.icon}
                       <span className="hidden sm:inline">{config.label}</span>
                     </Badge>
