@@ -8,6 +8,7 @@ import { TopSDRsRanking } from "@/components/sdr/TopSDRsRanking";
 import { RecentProspects } from "@/components/sdr/RecentProspects";
 import { SDRConversionRanking } from "@/components/sdr/SDRConversionRanking";
 import { SDRConversionEvolution } from "@/components/sdr/SDRConversionEvolution";
+import { SDRActivityTrend } from "@/components/sdr/SDRActivityTrend";
 import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { SDRDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -144,27 +145,32 @@ export default function SDRDashboard() {
           </div>
         </div>
 
-        {/* Conversion Evolution Chart */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
-          <SDRConversionEvolution period={period} />
+        {/* Evolution Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
+            <SDRConversionEvolution period={period} />
+          </div>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
+            <SDRActivityTrend period={period} />
+          </div>
         </div>
 
-        {/* Bottom Row */}
+        {/* Rankings Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
             <SDRConversionRanking period={period} />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "750ms" }}>
             <TopSDRsRanking />
           </div>
         </div>
 
         {/* Last Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "800ms" }}>
             <RecentProspects />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "750ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "850ms" }}>
             <LeadSLAMonitor />
           </div>
         </div>
