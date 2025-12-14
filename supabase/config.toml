@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.access-denied-alerts]
 verify_jwt = false
+
+[functions.auto-reassign-inactive]
+verify_jwt = false
