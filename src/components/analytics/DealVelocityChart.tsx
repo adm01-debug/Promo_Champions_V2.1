@@ -1,11 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useDealVelocity } from '@/hooks/useDealVelocity';
-import { Clock, AlertTriangle, Zap, Timer, TrendingUp, Activity } from 'lucide-react';
+import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface DealVelocityChartProps {
   salespersonId?: string;
+}
+
+function ChangeIndicator({ change, inverted = false }: { change?: number; inverted?: boolean }) {
+  if (change === undefined || change === 0) return null;
+  
+  // For velocity, negative change (faster) is good
+  const isPositive = inverted ? change < 0 : change > 0;
+  const Icon = isPositive ? TrendingUp : TrendingDown;
+  const color = isPositive ? 'text-status-success' : 'text-status-error';
+  
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-xs font-medium ${color}`}>
+      <Icon className="h-3 w-3" />
+      {Math.abs(change).toFixed(1)}%
+    </span>
+  );
 }
 
 export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
@@ -49,11 +65,19 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
             </div>
             <span className="gradient-text">Velocidade do Deal</span>
           </CardTitle>
-          {hasData && (
-            <Badge variant="secondary" className="text-xs">
-              {totalDeals} deals analisados
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {data?.totalChange !== undefined && data.totalChange !== 0 && (
+              <Badge variant="outline" className="text-xs gap-1">
+                vs mês anterior
+                <ChangeIndicator change={data.totalChange} inverted />
+              </Badge>
+            )}
+            {hasData && (
+              <Badge variant="secondary" className="text-xs">
+                {totalDeals} deals analisados
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -73,7 +97,10 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30 group-hover:rotate-3">
                   <Timer className="h-4 w-4 text-white" />
                 </div>
-                <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.totalAvgDays.toFixed(1)}d</p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.totalAvgDays.toFixed(1)}d</p>
+                  <ChangeIndicator change={data.totalChange} inverted />
+                </div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Ciclo Total</p>
               </div>
               <div 
@@ -172,9 +199,12 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                     style={{ animationDelay: `${(index + 4) * 50}ms` }}
                   >
                     <p className="text-xs font-display font-medium truncate transition-colors group-hover:text-primary">{stage.stage}</p>
-                    <p className={`text-lg font-bold font-display transition-transform duration-300 group-hover:scale-110 ${stage.bottleneck ? 'text-destructive' : 'gradient-text'}`}>
-                      {stage.avgDays.toFixed(1)}d
-                    </p>
+                    <div className="flex items-center justify-center gap-1">
+                      <p className={`text-lg font-bold font-display transition-transform duration-300 group-hover:scale-110 ${stage.bottleneck ? 'text-destructive' : 'gradient-text'}`}>
+                        {stage.avgDays.toFixed(1)}d
+                      </p>
+                      <ChangeIndicator change={stage.change} inverted />
+                    </div>
                     <p className="text-xs text-muted-foreground transition-colors group-hover:text-foreground/70">{stage.totalDeals} deals</p>
                     {stage.bottleneck && (
                       <Badge variant="destructive" className="text-[10px] mt-1.5 px-1.5 py-0 h-5 animate-pulse">
