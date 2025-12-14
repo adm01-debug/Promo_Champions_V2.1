@@ -180,6 +180,48 @@ export type Database = {
           },
         ]
       }
+      bitrix24_sync_logs: {
+        Row: {
+          companies_from_bitrix: number | null
+          companies_to_bitrix: number | null
+          created_at: string
+          deals_from_bitrix: number | null
+          deals_to_bitrix: number | null
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          status: string
+          sync_type: string
+          triggered_by: string | null
+        }
+        Insert: {
+          companies_from_bitrix?: number | null
+          companies_to_bitrix?: number | null
+          created_at?: string
+          deals_from_bitrix?: number | null
+          deals_to_bitrix?: number | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status?: string
+          sync_type?: string
+          triggered_by?: string | null
+        }
+        Update: {
+          companies_from_bitrix?: number | null
+          companies_to_bitrix?: number | null
+          created_at?: string
+          deals_from_bitrix?: number | null
+          deals_to_bitrix?: number | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status?: string
+          sync_type?: string
+          triggered_by?: string | null
+        }
+        Relationships: []
+      }
       cadence_steps: {
         Row: {
           action_type: string

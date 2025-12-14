@@ -17,6 +17,20 @@ interface SyncResult {
   timestamp: string;
 }
 
+interface SyncLog {
+  id: string;
+  sync_type: string;
+  status: string;
+  companies_from_bitrix: number;
+  companies_to_bitrix: number;
+  deals_from_bitrix: number;
+  deals_to_bitrix: number;
+  error_message: string | null;
+  duration_ms: number;
+  triggered_by: string;
+  created_at: string;
+}
+
 export function useBitrix24() {
   const queryClient = useQueryClient();
   const [isSyncing, setIsSyncing] = useState(false);
@@ -36,14 +50,27 @@ export function useBitrix24() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  const { data: syncLogs, isLoading: isLoadingLogs, refetch: refetchLogs } = useQuery({
+    queryKey: ["bitrix24-sync-logs"],
+    queryFn: async (): Promise<SyncLog[]> => {
+      const { data, error } = await supabase
+        .from("bitrix24_sync_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(20);
+      
+      if (error) {
+        console.error("Error fetching sync logs:", error);
+        return [];
+      }
+      
+      return data as SyncLog[];
+    },
+    staleTime: 1000 * 30, // 30 seconds
+  });
+
   const getAuthUrl = useMutation({
     mutationFn: async (): Promise<string> => {
-      const { data, error } = await supabase.functions.invoke("bitrix24-oauth", {
-        body: {},
-      });
-      
-      // Try with query param approach
-      const url = new URL(window.location.origin);
       const projectUrl = import.meta.env.VITE_SUPABASE_URL;
       const authUrl = `${projectUrl}/functions/v1/bitrix24-oauth?action=authorize`;
       
@@ -84,7 +111,7 @@ export function useBitrix24() {
     mutationFn: async (action?: string): Promise<SyncResult> => {
       setIsSyncing(true);
       const { data, error } = await supabase.functions.invoke("bitrix24-sync", {
-        body: { action: action || "sync-all" },
+        body: { action: action || "sync-all", triggered_by: "manual" },
       });
       
       if (error) {
@@ -102,12 +129,14 @@ export function useBitrix24() {
         queryClient.invalidateQueries({ queryKey: ["clients"] });
         queryClient.invalidateQueries({ queryKey: ["sales"] });
         queryClient.invalidateQueries({ queryKey: ["pipeline"] });
+        queryClient.invalidateQueries({ queryKey: ["bitrix24-sync-logs"] });
       } else {
         toast.error("Erro na sincronização", { description: data.error });
       }
     },
     onError: (error) => {
       toast.error("Erro na sincronização", { description: error.message });
+      queryClient.invalidateQueries({ queryKey: ["bitrix24-sync-logs"] });
     },
     onSettled: () => {
       setIsSyncing(false);
@@ -148,5 +177,8 @@ export function useBitrix24() {
     refreshToken: refreshToken.mutate,
     isRefreshing: refreshToken.isPending,
     refetchStatus,
+    syncLogs: syncLogs || [],
+    isLoadingLogs,
+    refetchLogs,
   };
 }
