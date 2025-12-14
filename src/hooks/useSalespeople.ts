@@ -14,6 +14,7 @@ interface Salesperson {
   commission_rate: number;
   is_active: boolean;
   role: SalespersonRole;
+  auth_user_id: string | null;
 }
 
 interface SalesGoal {
