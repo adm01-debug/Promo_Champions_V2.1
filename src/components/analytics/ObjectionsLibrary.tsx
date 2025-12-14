@@ -142,7 +142,7 @@ export function ObjectionsLibrary() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleAddObjection} className="w-full hover-lift" variant="glow" disabled={addObjection.isPending}>
+                <Button onClick={handleAddObjection} className="w-full hover-lift" variant="glow-pulse" disabled={addObjection.isPending}>
                   {addObjection.isPending ? 'Salvando...' : 'Salvar Objeção'}
                 </Button>
               </div>
