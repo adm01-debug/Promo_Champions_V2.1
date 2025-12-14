@@ -19,12 +19,14 @@ import {
   Swords,
   Sparkles,
   TrendingUp,
-  Settings
+  Settings,
+  LucideIcon
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -40,32 +42,39 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainItems = [
+interface MenuItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  requireAdminOrManager?: boolean;
+}
+
+const mainItems: MenuItem[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
-  { title: "Metas", url: "/metas", icon: Target },
+  { title: "Metas", url: "/metas", icon: Target, requireAdminOrManager: true },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Produtos", url: "/produtos", icon: Package },
-  { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
+  { title: "Relatórios", url: "/relatorios", icon: BarChart3, requireAdminOrManager: true },
 ];
 
-const teamItems = [
-  { title: "Vendedores", url: "/vendedores", icon: Trophy },
+const teamItems: MenuItem[] = [
+  { title: "Vendedores", url: "/vendedores", icon: Trophy, requireAdminOrManager: true },
   { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Cadências", url: "/cadencias", icon: GitBranch },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Metas Atividades", url: "/metas-atividades", icon: Crosshair },
-  { title: "Relatório Atividades", url: "/relatorio-atividades", icon: BarChart3 },
+  { title: "Relatório Atividades", url: "/relatorio-atividades", icon: BarChart3, requireAdminOrManager: true },
   { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
-  { title: "Playbooks", url: "/playbooks", icon: BookOpen },
-  { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
-  { title: "Analytics", url: "/analytics", icon: PieChart },
+  { title: "Playbooks", url: "/playbooks", icon: BookOpen, requireAdminOrManager: true },
+  { title: "Fonte de Leads", url: "/fonte-leads", icon: Target, requireAdminOrManager: true },
+  { title: "Analytics", url: "/analytics", icon: PieChart, requireAdminOrManager: true },
 ];
 
-const systemItems = [
+const systemItems: MenuItem[] = [
   { title: "Configurações", url: "/configuracoes", icon: Settings },
   { title: "Notificações", url: "/notificacoes", icon: Bell },
   { title: "Animações", url: "/animacoes", icon: Sparkles },
@@ -77,6 +86,17 @@ export function AppSidebar() {
   const { data: alerts } = useAlerts();
   const alertCount = alerts?.length || 0;
   const { salesperson } = useAuth();
+  const { isAdminOrManager, isLoadingCurrentRole } = useUserRoles();
+
+  // Filter items based on user permissions
+  const filterItems = (items: MenuItem[]) => {
+    if (isLoadingCurrentRole) return items; // Show all while loading
+    return items.filter(item => !item.requireAdminOrManager || isAdminOrManager);
+  };
+
+  const visibleMainItems = filterItems(mainItems);
+  const visibleTeamItems = filterItems(teamItems);
+  const visibleSystemItems = filterItems(systemItems);
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -101,7 +121,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
+              {visibleMainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink 
@@ -126,7 +146,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {teamItems.map((item) => (
+              {visibleTeamItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink 
@@ -151,7 +171,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {systemItems.map((item) => {
+              {visibleSystemItems.map((item) => {
                 const isNotifications = item.title === "Notificações";
                 const hasAlerts = isNotifications && alertCount > 0;
                 
