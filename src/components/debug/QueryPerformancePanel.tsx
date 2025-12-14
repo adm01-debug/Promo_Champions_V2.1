@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { getQueryMetrics, clearQueryMetrics, logQueryMetrics, configureQueryAlerts, getAlertConfig } from "@/hooks/useQueryPerformance";
+import { exportPerformanceJSON, exportPerformanceCSV, exportRecentQueriesCSV } from "@/utils/performanceExport";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Activity, Trash2, AlertTriangle, Clock, Database, Bell, X, Settings } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Activity, Trash2, AlertTriangle, Clock, Database, Bell, X, Settings, Download, FileJson, FileSpreadsheet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function QueryPerformancePanel() {
@@ -76,6 +78,27 @@ export function QueryPerformancePanel() {
           Query Performance
         </CardTitle>
         <div className="flex items-center gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Download className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={exportPerformanceJSON}>
+                <FileJson className="h-4 w-4 mr-2" />
+                Exportar JSON
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportPerformanceCSV}>
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Exportar CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportRecentQueriesCSV}>
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Queries Recentes (CSV)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowSettings(!showSettings)}>
             <Settings className={cn("h-3.5 w-3.5", showSettings && "text-primary")} />
           </Button>
