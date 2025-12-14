@@ -176,7 +176,7 @@ export function CreateTaskDialog() {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button variant="glow" type="submit" disabled={createTask.isPending || !title.trim()}>
+            <Button variant="glow-pulse" type="submit" disabled={createTask.isPending || !title.trim()}>
               {createTask.isPending ? 'Criando...' : 'Criar Tarefa'}
             </Button>
           </div>

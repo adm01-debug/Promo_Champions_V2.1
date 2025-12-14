@@ -267,7 +267,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
               Cancelar
             </Button>
             <Button 
-              variant="glow" 
+              variant="glow-pulse" 
               type="submit" 
               disabled={createMutation.isPending}
               className="transition-all"

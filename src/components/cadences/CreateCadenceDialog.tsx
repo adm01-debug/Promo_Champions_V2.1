@@ -240,7 +240,7 @@ export function CreateCadenceDialog() {
             </Button>
 
             <Button
-              variant="glow-success"
+              variant="glow-pulse-success"
               className="w-full font-medium"
               onClick={handleSaveSteps}
               disabled={createStep.isPending || steps.every(s => !s.title.trim())}
