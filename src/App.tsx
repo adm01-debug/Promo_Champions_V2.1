@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { QueryPerformancePanel } from "@/components/debug/QueryPerformancePanel";
 import Index from "./pages/Index";
 import Vendas from "./pages/Vendas";
 import Clientes from "./pages/Clientes";
@@ -122,6 +123,7 @@ const App = () => (
             />
           </Routes>
         </AuthProvider>
+        <QueryPerformancePanel />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
