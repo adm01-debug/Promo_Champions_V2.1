@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -96,7 +96,14 @@ export function ActivityList({
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [showStats, setShowStats] = useState(true);
+  const [showStats, setShowStats] = useState(() => {
+    const saved = localStorage.getItem('activityListShowStats');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('activityListShowStats', JSON.stringify(showStats));
+  }, [showStats]);
 
   const salespersonOptions = useMemo(() => {
     if (!salespeople) return [];
