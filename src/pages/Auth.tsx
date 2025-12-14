@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Crown, Swords, Trophy, Loader2 } from "lucide-react";
+import { Crown, Swords, Trophy, Loader2, Mail } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(6, "Senha deve ter pelo menos 6 caracteres");
@@ -21,6 +23,9 @@ export default function Auth() {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupName, setSignupName] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [isResetLoading, setIsResetLoading] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
@@ -86,6 +91,35 @@ export default function Auth() {
     } else {
       toast.success("Conta criada com sucesso! Bem-vindo à equipe! 🎉");
       navigate("/");
+    }
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      emailSchema.parse(resetEmail);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast.error(err.errors[0].message);
+        return;
+      }
+    }
+
+    setIsResetLoading(true);
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    
+    setIsResetLoading(false);
+
+    if (error) {
+      toast.error("Erro ao enviar email de recuperação. Tente novamente.");
+    } else {
+      toast.success("Email de recuperação enviado! Verifique sua caixa de entrada.");
+      setResetDialogOpen(false);
+      setResetEmail("");
     }
   };
 
@@ -160,6 +194,53 @@ export default function Auth() {
                       required
                     />
                   </div>
+                  
+                  <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        type="button" 
+                        variant="link" 
+                        className="px-0 h-auto font-normal text-muted-foreground hover:text-primary"
+                      >
+                        Esqueci minha senha
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <Mail className="h-5 w-5" />
+                          Recuperar Senha
+                        </DialogTitle>
+                        <DialogDescription>
+                          Digite seu email para receber um link de recuperação de senha.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handlePasswordReset} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="reset-email">Email</Label>
+                          <Input
+                            id="reset-email"
+                            type="email"
+                            placeholder="seu@email.com"
+                            value={resetEmail}
+                            onChange={(e) => setResetEmail(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <Button type="submit" className="w-full" disabled={isResetLoading}>
+                          {isResetLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Enviando...
+                            </>
+                          ) : (
+                            "Enviar Link de Recuperação"
+                          )}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+
                   <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
                     {isLoading ? (
                       <>
