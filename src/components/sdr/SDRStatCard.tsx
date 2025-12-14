@@ -76,7 +76,7 @@ export function SDRStatCard({
                 {title}
               </p>
               {highlight && (
-                <Sparkles className="h-3 w-3 text-primary animate-pulse" />
+                <Sparkles className="h-3 w-3 text-primary animate-heartbeat" />
               )}
             </div>
             <div className="flex items-baseline gap-2">

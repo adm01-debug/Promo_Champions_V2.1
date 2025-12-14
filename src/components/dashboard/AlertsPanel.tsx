@@ -189,7 +189,7 @@ export const AlertsPanel = () => {
             Notificar
           </Button>
           {criticalCount > 0 && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-destructive/20 text-destructive border border-destructive/30 shadow-sm animate-pulse">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-destructive/20 text-destructive border border-destructive/30 shadow-sm animate-heartbeat">
               {criticalCount} críticos
             </span>
           )}
