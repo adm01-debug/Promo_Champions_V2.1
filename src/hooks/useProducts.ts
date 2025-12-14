@@ -1,7 +1,8 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useInvalidateCache } from "@/hooks/useInvalidateCache";
+import { useRetryMutation } from "@/hooks/useRetryMutation";
 
 export interface Product {
   id: string;
@@ -97,8 +98,8 @@ export const useTopProducts = (limit = 5) => {
 export const useCreateProduct = () => {
   const { invalidateDomain } = useInvalidateCache();
 
-  return useMutation({
-    mutationFn: async (input: CreateProductInput) => {
+  return useRetryMutation(
+    async (input: CreateProductInput) => {
       const { data, error } = await supabase
         .from("products")
         .insert([input])
@@ -108,22 +109,25 @@ export const useCreateProduct = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      invalidateDomain("products");
-      toast.success("Produto criado com sucesso!");
-    },
-    onError: (error) => {
-      console.error("Error creating product:", error);
-      toast.error("Erro ao criar produto");
-    },
-  });
+    {
+      retryConfig: { maxRetries: 3, baseDelay: 1000 },
+      onSuccess: () => {
+        invalidateDomain("products");
+        toast.success("Produto criado com sucesso!");
+      },
+      onError: (error) => {
+        console.error("Error creating product:", error);
+        toast.error("Erro ao criar produto após múltiplas tentativas");
+      },
+    }
+  );
 };
 
 export const useUpdateProduct = () => {
   const { invalidateDomain } = useInvalidateCache();
 
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Product> & { id: string }) => {
+  return useRetryMutation(
+    async ({ id, ...updates }: Partial<Product> & { id: string }) => {
       const { data, error } = await supabase
         .from("products")
         .update(updates)
@@ -134,32 +138,38 @@ export const useUpdateProduct = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      invalidateDomain("products");
-      toast.success("Produto atualizado com sucesso!");
-    },
-    onError: (error) => {
-      console.error("Error updating product:", error);
-      toast.error("Erro ao atualizar produto");
-    },
-  });
+    {
+      retryConfig: { maxRetries: 3, baseDelay: 1000 },
+      onSuccess: () => {
+        invalidateDomain("products");
+        toast.success("Produto atualizado com sucesso!");
+      },
+      onError: (error) => {
+        console.error("Error updating product:", error);
+        toast.error("Erro ao atualizar produto após múltiplas tentativas");
+      },
+    }
+  );
 };
 
 export const useDeleteProduct = () => {
   const { invalidateDomain } = useInvalidateCache();
 
-  return useMutation({
-    mutationFn: async (id: string) => {
+  return useRetryMutation(
+    async (id: string) => {
       const { error } = await supabase.from("products").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      invalidateDomain("products");
-      toast.success("Produto excluído com sucesso!");
-    },
-    onError: (error) => {
-      console.error("Error deleting product:", error);
-      toast.error("Erro ao excluir produto");
-    },
-  });
+    {
+      retryConfig: { maxRetries: 3, baseDelay: 1000 },
+      onSuccess: () => {
+        invalidateDomain("products");
+        toast.success("Produto excluído com sucesso!");
+      },
+      onError: (error) => {
+        console.error("Error deleting product:", error);
+        toast.error("Erro ao excluir produto após múltiplas tentativas");
+      },
+    }
+  );
 };
