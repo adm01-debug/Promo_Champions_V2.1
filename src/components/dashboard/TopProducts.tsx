@@ -1,45 +1,52 @@
-import { Package, TrendingUp, TrendingDown, Award } from "lucide-react";
+import { Package, TrendingUp, TrendingDown, Award, Loader2 } from "lucide-react";
+import { useTopProducts } from "@/hooks/useProducts";
 
-const products = [
-  {
-    name: "Plano Enterprise",
-    revenue: 285000,
-    sales: 12,
-    trend: 15.2,
-    color: "from-primary to-accent",
-  },
-  {
-    name: "Plano Business",
-    revenue: 198500,
-    sales: 28,
-    trend: 8.7,
-    color: "from-secondary to-accent",
-  },
-  {
-    name: "Plano Starter",
-    revenue: 156000,
-    sales: 45,
-    trend: -3.2,
-    color: "from-accent to-status-success",
-  },
-  {
-    name: "Add-ons Premium",
-    revenue: 98000,
-    sales: 67,
-    trend: 22.1,
-    color: "from-status-success to-warning",
-  },
-  {
-    name: "Consultoria",
-    revenue: 75000,
-    sales: 8,
-    trend: 5.4,
-    color: "from-warning to-primary",
-  },
+const COLORS = [
+  "from-primary to-accent",
+  "from-secondary to-accent",
+  "from-accent to-status-success",
+  "from-status-success to-warning",
+  "from-warning to-primary",
 ];
 
 export const TopProducts = () => {
-  const maxRevenue = Math.max(...products.map((p) => p.revenue));
+  const { data: products, isLoading } = useTopProducts(5);
+  
+  const maxRevenue = products && products.length > 0 
+    ? Math.max(...products.map((p) => p.revenue)) 
+    : 1;
+
+  if (isLoading) {
+    return (
+      <div className="glass rounded-xl p-6 border border-border/40 dark:border-glow card-elevated">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!products || products.length === 0) {
+    return (
+      <div className="glass rounded-xl p-6 border border-border/40 dark:border-glow card-elevated">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl gradient-primary">
+              <Award className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold font-display gradient-text">Top Produtos</h3>
+              <p className="text-sm text-muted-foreground">Por faturamento</p>
+            </div>
+          </div>
+        </div>
+        <div className="text-center py-8 text-muted-foreground">
+          <Package className="h-10 w-10 mx-auto mb-3 opacity-50" />
+          <p>Nenhuma venda registrada ainda</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="glass rounded-xl p-6 border border-border/40 dark:border-glow card-elevated">
@@ -61,8 +68,9 @@ export const TopProducts = () => {
       <div className="space-y-4">
         {products.map((product, index) => {
           const width = (product.revenue / maxRevenue) * 100;
-          const isPositive = product.trend > 0;
+          const isPositive = product.trend >= 0;
           const TrendIcon = isPositive ? TrendingUp : TrendingDown;
+          const color = COLORS[index % COLORS.length];
 
           return (
             <div key={product.name} className="group p-2 rounded-lg hover:bg-muted/20 transition-colors">
@@ -84,22 +92,24 @@ export const TopProducts = () => {
                   <span className="text-sm font-bold gradient-text">
                     R$ {(product.revenue / 1000).toFixed(0)}k
                   </span>
-                  <div
-                    className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                      isPositive 
-                        ? "bg-status-success/20 text-status-success" 
-                        : "bg-destructive/20 text-destructive"
-                    }`}
-                  >
-                    <TrendIcon className="h-3 w-3" />
-                    {isPositive ? "+" : ""}
-                    {product.trend}%
-                  </div>
+                  {product.trend !== 0 && (
+                    <div
+                      className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
+                        isPositive 
+                          ? "bg-status-success/20 text-status-success" 
+                          : "bg-destructive/20 text-destructive"
+                      }`}
+                    >
+                      <TrendIcon className="h-3 w-3" />
+                      {isPositive ? "+" : ""}
+                      {product.trend}%
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="h-2 bg-muted/40 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full bg-gradient-to-r ${product.color} transition-all duration-700 ease-out`}
+                  className={`h-full rounded-full bg-gradient-to-r ${color} transition-all duration-700 ease-out`}
                   style={{ 
                     width: `${width}%`,
                     boxShadow: index === 0 ? "0 0 8px hsl(var(--primary) / 0.4)" : undefined

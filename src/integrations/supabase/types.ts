@@ -287,6 +287,39 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          total_value: number
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          total_value?: number
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          total_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       daily_metrics: {
         Row: {
           avg_ticket: number
@@ -634,6 +667,42 @@ export type Database = {
           id?: string
           stage?: string
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          price: number
+          rating: number
+          sales_count: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          name: string
+          price?: number
+          rating?: number
+          sales_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          price?: number
+          rating?: number
+          sales_count?: number
+          status?: string
           updated_at?: string
         }
         Relationships: []
