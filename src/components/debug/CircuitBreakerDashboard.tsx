@@ -10,6 +10,7 @@ import {
   resetAllCircuits 
 } from '@/hooks/useCircuitBreaker';
 import { useCircuitBreakerHistory, useCircuitBreakerStats, useDeleteOldCircuitBreakerEvents } from '@/hooks/useCircuitBreakerHistory';
+import { CircuitBreakerTrendChart } from './CircuitBreakerTrendChart';
 import { 
   Shield, 
   ShieldAlert, 
@@ -23,7 +24,8 @@ import {
   Zap,
   History,
   Trash2,
-  TrendingUp
+  TrendingUp,
+  BarChart3
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -215,12 +217,16 @@ export function CircuitBreakerDashboard() {
         </Card>
       </div>
 
-      {/* Tabs for Current State vs History */}
+      {/* Tabs for Current State vs History vs Trends */}
       <Tabs defaultValue="current" className="space-y-4">
         <TabsList>
           <TabsTrigger value="current" className="gap-2">
             <Shield className="h-4 w-4" />
             Estado Atual
+          </TabsTrigger>
+          <TabsTrigger value="trends" className="gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Tendências
           </TabsTrigger>
           <TabsTrigger value="history" className="gap-2">
             <History className="h-4 w-4" />
@@ -372,6 +378,10 @@ export function CircuitBreakerDashboard() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="trends" className="space-y-4">
+          <CircuitBreakerTrendChart days={7} />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-4">
