@@ -4,7 +4,8 @@ import { useRecentActivities, ActivityType, ActivityOutcome } from "@/hooks/useA
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePagination } from "@/hooks/usePagination";
@@ -86,6 +87,7 @@ export function ActivityList({
   const [typeFilter, setTypeFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
   const [salespersonFilter, setSalespersonFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const salespersonOptions = useMemo(() => {
     if (!salespeople) return [];
@@ -95,6 +97,15 @@ export function ActivityList({
     if (!activities) return [];
     
     let filtered = [...activities];
+
+    // Apply search filter
+    if (searchTerm) {
+      const search = searchTerm.toLowerCase();
+      filtered = filtered.filter(a => 
+        (a.contact_name?.toLowerCase().includes(search)) ||
+        (a.notes?.toLowerCase().includes(search))
+      );
+    }
     
     // Apply type filter
     if (typeFilter) {
@@ -122,7 +133,7 @@ export function ActivityList({
           return 0;
       }
     });
-  }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter]);
+  }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter, searchTerm]);
 
   const {
     paginatedItems,
@@ -203,6 +214,17 @@ export function ActivityList({
               />
             )}
           </div>
+          {showFilters && (
+            <div className="mt-3 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Buscar por contato ou notas..." 
+                className="pl-10 bg-muted/50 border-border/50 h-9 text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          )}
         </CardHeader>
       )}
       <CardContent>
@@ -211,7 +233,7 @@ export function ActivityList({
             <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border/50">
               <ClipboardList className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
               <p className="text-xs text-muted-foreground">
-                {typeFilter || outcomeFilter || salespersonFilter
+                {searchTerm || typeFilter || outcomeFilter || salespersonFilter
                   ? "Nenhuma atividade encontrada com os filtros aplicados" 
                   : "Nenhuma atividade registrada"}
               </p>
