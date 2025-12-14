@@ -147,13 +147,20 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
           })
           .eq("id", existingIcp.client_id);
 
+        const ramoAtividade = company[BITRIX_FIELD_RAMO_ATIVIDADE] as string || null;
+        const grupoNicho = company[BITRIX_FIELD_NICHO_SEGMENTO] as string || null;
+        
+        // Auto-validate ICP: true if both ramo_atividade and grupo_nicho are filled
+        const isIcpMatch = !!(ramoAtividade && grupoNicho);
+
         await supabase
           .from("icp_data")
           .update({
             capital_social: company.UF_CRM_CAPITAL_SOCIAL ? parseFloat(company.UF_CRM_CAPITAL_SOCIAL as string) : null,
             num_colaboradores: company.UF_CRM_NUM_COLABORADORES ? parseInt(company.UF_CRM_NUM_COLABORADORES as string) : null,
-            ramo_atividade: company[BITRIX_FIELD_RAMO_ATIVIDADE] as string || null,
-            grupo_nicho: company[BITRIX_FIELD_NICHO_SEGMENTO] as string || null,
+            ramo_atividade: ramoAtividade,
+            grupo_nicho: grupoNicho,
+            is_icp_match: isIcpMatch,
             updated_at: new Date().toISOString(),
           })
           .eq("bitrix_id", company.ID);
@@ -170,13 +177,18 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
           .single();
 
         if (newClient?.id) {
+          const ramoAtividade = company[BITRIX_FIELD_RAMO_ATIVIDADE] as string || null;
+          const grupoNicho = company[BITRIX_FIELD_NICHO_SEGMENTO] as string || null;
+          const isIcpMatch = !!(ramoAtividade && grupoNicho);
+
           await supabase.from("icp_data").insert({
             client_id: newClient.id,
             bitrix_id: company.ID,
             capital_social: company.UF_CRM_CAPITAL_SOCIAL ? parseFloat(company.UF_CRM_CAPITAL_SOCIAL as string) : null,
             num_colaboradores: company.UF_CRM_NUM_COLABORADORES ? parseInt(company.UF_CRM_NUM_COLABORADORES as string) : null,
-            ramo_atividade: company[BITRIX_FIELD_RAMO_ATIVIDADE] as string || null,
-            grupo_nicho: company[BITRIX_FIELD_NICHO_SEGMENTO] as string || null,
+            ramo_atividade: ramoAtividade,
+            grupo_nicho: grupoNicho,
+            is_icp_match: isIcpMatch,
           });
         }
       }
