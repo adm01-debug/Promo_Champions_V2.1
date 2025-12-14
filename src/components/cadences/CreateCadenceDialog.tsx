@@ -1,13 +1,23 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCreateCadence, useCreateCadenceStep, useCadenceSteps, ActionType } from "@/hooks/useCadences";
 import { Plus, Trash2, Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const actionTypes: { value: ActionType; label: string; icon: typeof Phone }[] = [
   { value: "email", label: "E-mail", icon: Mail },
@@ -17,6 +27,13 @@ const actionTypes: { value: ActionType; label: string; icon: typeof Phone }[] = 
   { value: "meeting", label: "Reunião", icon: Users },
   { value: "other", label: "Outro", icon: MoreHorizontal },
 ];
+
+const cadenceSchema = z.object({
+  name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome deve ter no máximo 100 caracteres"),
+  description: z.string().max(500, "Descrição deve ter no máximo 500 caracteres").optional(),
+});
+
+type CadenceFormData = z.infer<typeof cadenceSchema>;
 
 interface StepInput {
   day_number: number;
@@ -29,8 +46,6 @@ export function CreateCadenceDialog() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<"info" | "steps">("info");
   const [cadenceId, setCadenceId] = useState<string | null>(null);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [steps, setSteps] = useState<StepInput[]>([
     { day_number: 1, action_type: "email", title: "Email de introdução", description: "" },
   ]);
@@ -39,18 +54,26 @@ export function CreateCadenceDialog() {
   const createStep = useCreateCadenceStep();
   const { data: savedSteps } = useCadenceSteps(cadenceId || undefined);
 
+  const form = useForm<CadenceFormData>({
+    resolver: zodResolver(cadenceSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
+
   const resetForm = () => {
     setStep("info");
     setCadenceId(null);
-    setName("");
-    setDescription("");
+    form.reset();
     setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "" }]);
   };
 
-  const handleCreateCadence = async () => {
-    if (!name.trim()) return;
-
-    const result = await createCadence.mutateAsync({ name, description: description || undefined });
+  const handleCreateCadence = async (data: CadenceFormData) => {
+    const result = await createCadence.mutateAsync({ 
+      name: data.name, 
+      description: data.description || undefined 
+    });
     setCadenceId(result.id);
     setStep("steps");
   };
@@ -115,39 +138,57 @@ export function CreateCadenceDialog() {
         </DialogHeader>
 
         {step === "info" ? (
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Nome da Cadência</Label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ex: Cadência de Prospecção Inicial"
-                className="bg-muted/30 border-border/50 focus:border-primary transition-colors"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleCreateCadence)} className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome da Cadência *</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Ex: Cadência de Prospecção Inicial"
+                        className="bg-muted/30 border-border/50 focus:border-primary transition-colors"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Descrição (opcional)</Label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Descreva o objetivo desta cadência..."
-                className="resize-none bg-muted/30 border-border/50 focus:border-primary transition-colors"
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição (opcional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Descreva o objetivo desta cadência..."
+                        className="resize-none bg-muted/30 border-border/50 focus:border-primary transition-colors"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <Button
-              variant="glow"
-              className="w-full font-medium"
-              onClick={handleCreateCadence}
-              disabled={!name.trim() || createCadence.isPending}
-            >
-              {createCadence.isPending ? "Criando..." : "Continuar para Etapas"}
-            </Button>
-          </div>
+              <Button
+                variant="glow"
+                type="submit"
+                className="w-full font-medium"
+                disabled={createCadence.isPending}
+              >
+                {createCadence.isPending ? "Criando..." : "Continuar para Etapas"}
+              </Button>
+            </form>
+          </Form>
         ) : (
           <div className="space-y-4 py-4">
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/30">
               <p className="text-sm text-muted-foreground">
-                Configure as etapas de contato da cadência "<span className="text-foreground font-medium">{name}</span>"
+                Configure as etapas de contato da cadência "<span className="text-foreground font-medium">{form.getValues("name")}</span>"
               </p>
               <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">{steps.length} etapas</Badge>
             </div>
@@ -176,7 +217,7 @@ export function CreateCadenceDialog() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-muted-foreground">Dia</Label>
+                      <FormLabel className="text-xs font-medium text-muted-foreground">Dia *</FormLabel>
                       <Input
                         type="number"
                         min={1}
@@ -186,7 +227,7 @@ export function CreateCadenceDialog() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-muted-foreground">Tipo de Ação</Label>
+                      <FormLabel className="text-xs font-medium text-muted-foreground">Tipo de Ação</FormLabel>
                       <Select
                         value={s.action_type}
                         onValueChange={(v) => updateStep(index, "action_type", v)}
@@ -212,7 +253,7 @@ export function CreateCadenceDialog() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">Título da Ação</Label>
+                    <FormLabel className="text-xs font-medium text-muted-foreground">Título da Ação *</FormLabel>
                     <Input
                       value={s.title}
                       onChange={(e) => updateStep(index, "title", e.target.value)}
@@ -222,7 +263,7 @@ export function CreateCadenceDialog() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">Descrição (opcional)</Label>
+                    <FormLabel className="text-xs font-medium text-muted-foreground">Descrição (opcional)</FormLabel>
                     <Textarea
                       value={s.description}
                       onChange={(e) => updateStep(index, "description", e.target.value)}
