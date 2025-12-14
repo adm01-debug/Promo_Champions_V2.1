@@ -17,6 +17,7 @@ export const soundOptions: SoundOption[] = [
 ];
 
 const STORAGE_KEY = 'celebration-sound-preference';
+const VOLUME_STORAGE_KEY = 'celebration-sound-volume';
 
 export function useSoundSettings() {
   const [selectedSound, setSelectedSound] = useState<SoundType>(() => {
@@ -26,16 +27,28 @@ export function useSoundSettings() {
     return 'fanfare';
   });
 
+  const [volume, setVolume] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(VOLUME_STORAGE_KEY);
+      return saved ? parseFloat(saved) : 0.5;
+    }
+    return 0.5;
+  });
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, selectedSound);
   }, [selectedSound]);
 
+  useEffect(() => {
+    localStorage.setItem(VOLUME_STORAGE_KEY, volume.toString());
+  }, [volume]);
+
   const playSound = useCallback((soundType: SoundType = selectedSound) => {
-    if (soundType === 'none') return;
+    if (soundType === 'none' || volume === 0) return;
 
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     
-    const playNote = (freq: number, startTime: number, duration: number, gain = 0.3) => {
+    const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.3) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -45,7 +58,8 @@ export function useSoundSettings() {
       oscillator.frequency.value = freq;
       oscillator.type = 'sine';
       
-      gainNode.gain.setValueAtTime(gain, startTime);
+      const adjustedGain = baseGain * volume;
+      gainNode.gain.setValueAtTime(adjustedGain, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
       
       oscillator.start(startTime);
@@ -86,7 +100,7 @@ export function useSoundSettings() {
         playNote(880, now + 0.24, 0.25, 0.3);
         break;
     }
-  }, [selectedSound]);
+  }, [selectedSound, volume]);
 
   const previewSound = useCallback((soundType: SoundType) => {
     playSound(soundType);
@@ -95,6 +109,8 @@ export function useSoundSettings() {
   return {
     selectedSound,
     setSelectedSound,
+    volume,
+    setVolume,
     playSound,
     previewSound,
     soundOptions,
