@@ -130,6 +130,32 @@ export function useReportMetrics(dateRange: DateRange) {
     // Get unique clients
     const uniqueClients = new Set(salesQuery.data.map(s => s.client_name));
     
+    // Calculate real change percentages based on daily metrics if available
+    let revenueChange = 0;
+    let clientsChange = 0;
+    let conversionChange = 0;
+    let ticketChange = 0;
+    
+    if (metricsQuery.data && metricsQuery.data.length >= 2) {
+      const midpoint = Math.floor(metricsQuery.data.length / 2);
+      const firstHalf = metricsQuery.data.slice(0, midpoint);
+      const secondHalf = metricsQuery.data.slice(midpoint);
+      
+      const firstRevenue = firstHalf.reduce((sum, m) => sum + Number(m.revenue), 0);
+      const secondRevenue = secondHalf.reduce((sum, m) => sum + Number(m.revenue), 0);
+      const firstClients = firstHalf.reduce((sum, m) => sum + m.new_clients, 0);
+      const secondClients = secondHalf.reduce((sum, m) => sum + m.new_clients, 0);
+      const firstConversion = firstHalf.length > 0 ? firstHalf.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / firstHalf.length : 0;
+      const secondConversion = secondHalf.length > 0 ? secondHalf.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / secondHalf.length : 0;
+      const firstTicket = firstHalf.length > 0 ? firstHalf.reduce((sum, m) => sum + Number(m.avg_ticket), 0) / firstHalf.length : 0;
+      const secondTicket = secondHalf.length > 0 ? secondHalf.reduce((sum, m) => sum + Number(m.avg_ticket), 0) / secondHalf.length : 0;
+      
+      revenueChange = firstRevenue > 0 ? ((secondRevenue - firstRevenue) / firstRevenue) * 100 : 0;
+      clientsChange = firstClients > 0 ? ((secondClients - firstClients) / firstClients) * 100 : 0;
+      conversionChange = firstConversion > 0 ? ((secondConversion - firstConversion) / firstConversion) * 100 : 0;
+      ticketChange = firstTicket > 0 ? ((secondTicket - firstTicket) / firstTicket) * 100 : 0;
+    }
+    
     return {
       totalRevenue,
       newClients: uniqueClients.size,
@@ -137,10 +163,10 @@ export function useReportMetrics(dateRange: DateRange) {
         ? (completedSales.length / salesQuery.data.length) * 100 
         : 0,
       avgTicket,
-      revenueChange: 12.5,
-      clientsChange: 8.3,
-      conversionChange: -2.1,
-      ticketChange: 15.7,
+      revenueChange: Number(revenueChange.toFixed(1)),
+      clientsChange: Number(clientsChange.toFixed(1)),
+      conversionChange: Number(conversionChange.toFixed(1)),
+      ticketChange: Number(ticketChange.toFixed(1)),
     };
   };
 

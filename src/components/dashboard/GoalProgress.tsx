@@ -16,6 +16,36 @@ export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
   const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
   const remaining = Math.max(0, goal - current);
 
+  // Show empty state when no goal is configured
+  if (goal === 0) {
+    return (
+      <div className="glass rounded-xl p-6 h-full border border-border/40 dark:border-glow card-elevated">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 rounded-xl gradient-primary">
+            <Target className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold font-display gradient-text">Meta Mensal</h3>
+            <p className="text-sm text-muted-foreground capitalize">{currentMonth}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <Target className="h-16 w-16 text-muted-foreground/30 mb-4" />
+          <h4 className="text-lg font-semibold mb-2">Nenhuma meta configurada</h4>
+          <p className="text-sm text-muted-foreground max-w-[200px]">
+            Configure metas para seus vendedores na página de Metas
+          </p>
+        </div>
+
+        <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-muted/20 border border-border/30">
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <span><span className="font-semibold">{daysLeft} {daysLeft === 1 ? 'dia' : 'dias'}</span> restantes no mês</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="glass rounded-xl p-6 h-full border border-border/40 dark:border-glow card-elevated">
       <div className="flex items-center gap-3 mb-6">
