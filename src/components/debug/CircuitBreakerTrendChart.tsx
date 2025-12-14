@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useCircuitBreakerTrends } from "@/hooks/useCircuitBreakerHistory";
+import { useCircuitBreakerTrends, useCircuitBreakerNames } from "@/hooks/useCircuitBreakerHistory";
 import { 
   AreaChart, 
   Area, 
@@ -13,9 +13,16 @@ import {
   BarChart,
   Bar
 } from "recharts";
-import { TrendingUp, AlertTriangle, RefreshCw } from "lucide-react";
+import { TrendingUp, RefreshCw, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CircuitBreakerTrendChartProps {
   days?: number;
@@ -23,7 +30,12 @@ interface CircuitBreakerTrendChartProps {
 
 export function CircuitBreakerTrendChart({ days = 7 }: CircuitBreakerTrendChartProps) {
   const [chartType, setChartType] = useState<"area" | "bar">("area");
-  const { data, isLoading, refetch } = useCircuitBreakerTrends(days);
+  const [selectedCircuit, setSelectedCircuit] = useState<string>("all");
+  const { data: circuitNames } = useCircuitBreakerNames(30);
+  const { data, isLoading, refetch } = useCircuitBreakerTrends(
+    days, 
+    selectedCircuit === "all" ? undefined : selectedCircuit
+  );
 
   if (isLoading) {
     return (
@@ -89,6 +101,22 @@ export function CircuitBreakerTrendChart({ days = 7 }: CircuitBreakerTrendChartP
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+              <Select value={selectedCircuit} onValueChange={setSelectedCircuit}>
+                <SelectTrigger className="h-7 w-[140px] text-xs">
+                  <SelectValue placeholder="Todos circuits" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  {circuitNames?.map((name) => (
+                    <SelectItem key={name} value={name} className="text-xs">
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Badge variant="outline" className="text-xs">
               {data.totalEvents} eventos
             </Badge>

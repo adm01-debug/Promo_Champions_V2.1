@@ -146,18 +146,24 @@ export function useCircuitBreakerStats() {
 }
 
 // Get trend data for charts (last 7 days, hourly aggregation)
-export function useCircuitBreakerTrends(days = 7) {
+export function useCircuitBreakerTrends(days = 7, circuitFilter?: string) {
   return useQuery({
-    queryKey: ["circuit-breaker-trends", days],
+    queryKey: ["circuit-breaker-trends", days, circuitFilter],
     queryFn: async () => {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
-      const { data, error } = await supabase
+      let query = supabase
         .from("circuit_breaker_events")
         .select("event_type, created_at, circuit_name")
         .gte("created_at", startDate.toISOString())
         .order("created_at", { ascending: true });
+
+      if (circuitFilter) {
+        query = query.eq("circuit_name", circuitFilter);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching circuit breaker trends:", error);
@@ -225,5 +231,29 @@ export function useCircuitBreakerTrends(days = 7) {
       };
     },
     staleTime: 60000,
+  });
+}
+
+// Get list of all unique circuit names
+export function useCircuitBreakerNames(days = 30) {
+  return useQuery({
+    queryKey: ["circuit-breaker-names", days],
+    queryFn: async () => {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      const { data, error } = await supabase
+        .from("circuit_breaker_events")
+        .select("circuit_name")
+        .gte("created_at", startDate.toISOString());
+
+      if (error) {
+        console.error("Error fetching circuit names:", error);
+        throw error;
+      }
+
+      return [...new Set(data?.map((e) => e.circuit_name) || [])];
+    },
+    staleTime: 120000,
   });
 }
