@@ -22,6 +22,7 @@ import {
   TrendingUp,
   Settings,
   Link2,
+  Briefcase,
   LucideIcon
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -64,6 +65,7 @@ const mainItems: MenuItem[] = [
 const teamItems: MenuItem[] = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy, requireAdminOrManager: true },
   { title: "Times", url: "/times", icon: Users2, requireAdminOrManager: true },
+  { title: "Portfólio", url: "/portfolio", icon: Briefcase, requireAdminOrManager: true },
   { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
