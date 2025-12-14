@@ -726,4 +726,256 @@
   .animate-subtle-pulse {
     animation: subtle-pulse 2.5s ease-in-out infinite;
   }
+
+  /* ============= New Animations ============= */
+  
+  /* Bounce In - great for modals, notifications, badges */
+  .animate-bounce-in {
+    animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  @keyframes bounce-in {
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Wiggle - for attention, errors, playful feedback */
+  .animate-wiggle {
+    animation: wiggle 0.5s ease-in-out;
+  }
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+
+  /* Pop - quick emphasis effect */
+  .animate-pop {
+    animation: pop 0.3s ease-in-out;
+  }
+  
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  /* Pulse Ring - for notifications, status indicators */
+  .animate-pulse-ring {
+    position: relative;
+  }
+  
+  .animate-pulse-ring::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 2px solid hsl(var(--primary));
+    animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
+  /* Glow Pulse - for CTAs, important elements */
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 5px hsl(var(--primary) / 0.5); }
+    50% { box-shadow: 0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.4); }
+  }
+
+  /* Press Scale - tactile button feedback */
+  .press-scale {
+    @apply transition-transform duration-150 ease-out;
+  }
+  
+  .press-scale:active {
+    transform: scale(0.95);
+  }
+
+  /* Count Up - for number animations */
+  .animate-count-up {
+    animation: count-up 0.4s ease-out;
+  }
+  
+  @keyframes count-up {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Flash Success - for successful actions */
+  .animate-flash-success {
+    animation: flash-success 0.5s ease-in-out;
+  }
+  
+  @keyframes flash-success {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: hsl(var(--success) / 0.2); }
+  }
+
+  /* Flash Error - for error feedback */
+  .animate-flash-error {
+    animation: flash-error 0.5s ease-in-out;
+  }
+  
+  @keyframes flash-error {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: hsl(var(--destructive) / 0.2); }
+  }
+
+  /* Bounce Attention - draw attention to element */
+  .animate-bounce-attention {
+    animation: bounce-attention 1s ease-in-out;
+  }
+  
+  @keyframes bounce-attention {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-8px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-4px); }
+  }
+
+  /* Spin Slow - for loading states, decorative */
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+  
+  @keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Ping Slow - for notifications, status */
+  .animate-ping-slow {
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  
+  @keyframes ping-slow {
+    0% { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  /* Slide Up/Down - for dropdowns, tooltips */
+  .animate-slide-up {
+    animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes slide-down {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shake - for errors, warnings */
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+  }
+
+  /* Heartbeat - for likes, favorites */
+  .animate-heartbeat {
+    animation: heartbeat 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.15); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    70% { transform: scale(1); }
+  }
+
+  /* Jello - playful wobble effect */
+  .animate-jello {
+    animation: jello 0.9s ease-in-out;
+  }
+  
+  @keyframes jello {
+    0%, 100% { transform: scale3d(1, 1, 1); }
+    30% { transform: scale3d(1.25, 0.75, 1); }
+    40% { transform: scale3d(0.75, 1.25, 1); }
+    50% { transform: scale3d(1.15, 0.85, 1); }
+    65% { transform: scale3d(0.95, 1.05, 1); }
+    75% { transform: scale3d(1.05, 0.95, 1); }
+  }
+
+  /* Rubber Band - elastic effect */
+  .animate-rubber-band {
+    animation: rubber-band 0.8s ease-in-out;
+  }
+  
+  @keyframes rubber-band {
+    0% { transform: scale3d(1, 1, 1); }
+    30% { transform: scale3d(1.25, 0.75, 1); }
+    40% { transform: scale3d(0.75, 1.25, 1); }
+    50% { transform: scale3d(1.15, 0.85, 1); }
+    65% { transform: scale3d(0.95, 1.05, 1); }
+    75% { transform: scale3d(1.05, 0.95, 1); }
+    100% { transform: scale3d(1, 1, 1); }
+  }
+
+  /* Tada - celebration effect */
+  .animate-tada {
+    animation: tada 1s ease-in-out;
+  }
+  
+  @keyframes tada {
+    0% { transform: scale3d(1, 1, 1); }
+    10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
+    30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
+    40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
+    100% { transform: scale3d(1, 1, 1); }
+  }
+
+  /* Flip In - for card flips, reveals */
+  .animate-flip-in {
+    animation: flip-in 0.6s ease-out;
+  }
+  
+  @keyframes flip-in {
+    0% { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+    40% { transform: perspective(400px) rotateY(-10deg); }
+    70% { transform: perspective(400px) rotateY(10deg); }
+    100% { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+  }
+
+  /* Zoom In - for modals, focus elements */
+  .animate-zoom-in {
+    animation: zoom-in 0.3s ease-out;
+  }
+  
+  @keyframes zoom-in {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Zoom Out - for dismissals */
+  .animate-zoom-out {
+    animation: zoom-out 0.3s ease-in forwards;
+  }
+  
+  @keyframes zoom-out {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.5); }
+  }
 }
