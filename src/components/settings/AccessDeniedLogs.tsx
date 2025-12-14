@@ -12,11 +12,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
-import { ShieldX, AlertTriangle, Clock, User, Globe, FileWarning, Search, CalendarIcon, X, TrendingUp } from "lucide-react";
+import { ShieldX, AlertTriangle, Clock, User, Globe, FileWarning, Search, CalendarIcon, X, TrendingUp, Bell, Loader2 } from "lucide-react";
 import { format, startOfDay, endOfDay, subDays, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
+import { toast } from "@/hooks/use-toast";
 interface AccessDeniedLog {
   id: string;
   user_id: string;
@@ -33,7 +33,37 @@ export function AccessDeniedLogs() {
   const [searchEmail, setSearchEmail] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>(subDays(new Date(), 7));
   const [dateTo, setDateTo] = useState<Date | undefined>(new Date());
+  const [isTestingAlert, setIsTestingAlert] = useState(false);
 
+  const handleTestAlert = async () => {
+    setIsTestingAlert(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("access-denied-alerts");
+      
+      if (error) throw error;
+      
+      if (data?.spikesDetected && data.spikesDetected.length > 0) {
+        toast({
+          title: "Alerta enviado!",
+          description: `${data.spikesDetected.length} pico(s) detectado(s). Email enviado para admins.`,
+        });
+      } else {
+        toast({
+          title: "Nenhum pico detectado",
+          description: data?.message || "Não há picos de acesso negado no momento.",
+        });
+      }
+    } catch (error: any) {
+      console.error("Error testing alert:", error);
+      toast({
+        title: "Erro ao testar alerta",
+        description: error.message || "Não foi possível executar o teste.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTestingAlert(false);
+    }
+  };
   const { data: logs, isLoading } = useQuery({
     queryKey: ["access-denied-logs", searchEmail, dateFrom?.toISOString(), dateTo?.toISOString()],
     queryFn: async () => {
@@ -159,13 +189,31 @@ export function AccessDeniedLogs() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileWarning className="h-5 w-5 text-warning" />
-          Logs de Acesso Negado
-        </CardTitle>
-        <CardDescription>
-          Registro de tentativas de acesso a páginas restritas (últimos 100 registros)
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <FileWarning className="h-5 w-5 text-warning" />
+              Logs de Acesso Negado
+            </CardTitle>
+            <CardDescription>
+              Registro de tentativas de acesso a páginas restritas (últimos 100 registros)
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleTestAlert}
+            disabled={isTestingAlert}
+            className="gap-2"
+          >
+            {isTestingAlert ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Bell className="h-4 w-4" />
+            )}
+            Testar Alerta
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Filters */}
