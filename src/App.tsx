@@ -38,6 +38,7 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import AccessDenied from "./pages/AccessDenied";
 import Portfolio from "./pages/Portfolio";
+import ICP from "./pages/ICP";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -133,6 +134,11 @@ const App = () => (
                     <Route path="/portfolio" element={
                       <ProtectedRoute requireAdminOrManager>
                         <Portfolio />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/icp" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <ICP />
                       </ProtectedRoute>
                     } />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
