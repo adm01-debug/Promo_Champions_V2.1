@@ -744,6 +744,7 @@ export type Database = {
       }
       notification_preferences: {
         Row: {
+          consecutive_days_threshold: number
           created_at: string
           email: string
           frequency: string
@@ -758,6 +759,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          consecutive_days_threshold?: number
           created_at?: string
           email: string
           frequency?: string
@@ -772,6 +774,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          consecutive_days_threshold?: number
           created_at?: string
           email?: string
           frequency?: string

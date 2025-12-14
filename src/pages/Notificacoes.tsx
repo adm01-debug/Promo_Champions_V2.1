@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Plus, Trash2, Mail, Clock, AlertTriangle, Users, Target, Loader2 } from "lucide-react";
+import { Bell, Plus, Trash2, Mail, Clock, AlertTriangle, Users, Target, Loader2, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -43,6 +43,7 @@ export default function Notificacoes() {
     notify_at_risk_goals: boolean;
     stagnant_threshold_days: number;
     inactive_threshold_days: number;
+    consecutive_days_threshold: number;
     preferred_time: string;
     is_active: boolean;
   }>({
@@ -53,6 +54,7 @@ export default function Notificacoes() {
     notify_at_risk_goals: true,
     stagnant_threshold_days: 14,
     inactive_threshold_days: 60,
+    consecutive_days_threshold: 3,
     preferred_time: "08:00",
     is_active: true,
   });
@@ -72,6 +74,7 @@ export default function Notificacoes() {
       notify_at_risk_goals: true,
       stagnant_threshold_days: 14,
       inactive_threshold_days: 60,
+      consecutive_days_threshold: 3,
       preferred_time: "08:00",
       is_active: true,
     });
@@ -208,9 +211,9 @@ export default function Notificacoes() {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label>Limite deal parado (dias)</Label>
+                  <Label>Deal parado (dias)</Label>
                   <Input
                     type="number"
                     min={1}
@@ -219,12 +222,22 @@ export default function Notificacoes() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Limite inatividade (dias)</Label>
+                  <Label>Inatividade (dias)</Label>
                   <Input
                     type="number"
                     min={1}
                     value={newPreference.inactive_threshold_days}
                     onChange={(e) => setNewPreference({ ...newPreference, inactive_threshold_days: parseInt(e.target.value) || 60 })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>SDR consecutivo (dias)</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={14}
+                    value={newPreference.consecutive_days_threshold}
+                    onChange={(e) => setNewPreference({ ...newPreference, consecutive_days_threshold: parseInt(e.target.value) || 3 })}
                   />
                 </div>
               </div>
@@ -322,6 +335,10 @@ export default function Notificacoes() {
                       <Target className="h-3 w-3" />
                       Metas em risco
                     </button>
+                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-accent/20 text-accent-foreground">
+                      <TrendingDown className="h-3 w-3" />
+                      SDR consecutivo ({pref.consecutive_days_threshold}d)
+                    </span>
                   </div>
                 </div>
                 <div className="flex gap-2 pt-2">

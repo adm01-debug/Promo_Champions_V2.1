@@ -12,6 +12,7 @@ export interface NotificationPreference {
   notify_at_risk_goals: boolean;
   stagnant_threshold_days: number;
   inactive_threshold_days: number;
+  consecutive_days_threshold: number;
   preferred_time: string;
   created_at: string;
   updated_at: string;

@@ -18,7 +18,7 @@ interface UnderperformingSDR {
   dailyGoal: number;
 }
 
-async function getUnderperformingSDRs(supabase: any): Promise<UnderperformingSDR[]> {
+async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: number = 3): Promise<UnderperformingSDR[]> {
   console.log("Fetching SDRs and their activity goals...");
   
   // Get SDRs (role = 'sdr' or 'hybrid')
@@ -114,7 +114,7 @@ async function getUnderperformingSDRs(supabase: any): Promise<UnderperformingSDR
       }
     }
 
-    if (maxConsecutive >= 3) {
+    if (maxConsecutive >= consecutiveThreshold) {
       underperforming.push({
         id: sdr.id,
         name: sdr.name,
@@ -276,7 +276,18 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const underperformingSDRs = await getUnderperformingSDRs(supabase);
+    // Get the minimum consecutive threshold from notification preferences
+    const { data: notifPrefs } = await supabase
+      .from("notification_preferences")
+      .select("consecutive_days_threshold")
+      .eq("is_active", true)
+      .order("consecutive_days_threshold", { ascending: true })
+      .limit(1);
+
+    const consecutiveThreshold = notifPrefs?.[0]?.consecutive_days_threshold || 3;
+    console.log(`Using consecutive threshold: ${consecutiveThreshold} days`);
+
+    const underperformingSDRs = await getUnderperformingSDRs(supabase, consecutiveThreshold);
 
     if (underperformingSDRs.length === 0) {
       console.log("No underperforming SDRs found, no alerts needed");
