@@ -1,24 +1,20 @@
-import { Volume2, VolumeX, Play, PartyPopper, Sparkles } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSettings";
-import { useCelebration } from "@/hooks/useCelebration";
 import { toast } from "sonner";
 
 export function SoundSettings() {
   const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
-  const { triggerLevelUpConfetti } = useCelebration();
 
   const handleTestCelebration = async () => {
     const confetti = (await import('canvas-confetti')).default;
     
-    // Play sound
     playSound();
     
-    // Trigger confetti burst
     const count = 200;
     const defaults = {
       origin: { y: 0.7 },
@@ -52,6 +48,59 @@ export function SoundSettings() {
 
     toast.success("🎉 Celebração de teste!", {
       description: "Som e confetti disparados com sucesso!",
+    });
+  };
+
+  const handleTestLevelUp = async () => {
+    const confetti = (await import('canvas-confetti')).default;
+    
+    // Play sound twice for level up
+    playSound();
+    setTimeout(() => playSound(), 300);
+    
+    // Golden confetti animation
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const colors = ['#FFD700', '#FFA500', '#FF6347', '#9400D3', '#00CED1'];
+
+    const frame = () => {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors,
+        zIndex: 9999,
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors,
+        zIndex: 9999,
+      });
+
+      if (Date.now() < animationEnd) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+
+    // Big burst in center
+    setTimeout(() => {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: colors,
+        zIndex: 9999,
+        scalar: 1.5,
+      });
+    }, 500);
+
+    toast.success("🎖️ Level Up de teste!", {
+      description: "Celebração especial com confetti dourado!",
     });
   };
 
@@ -131,18 +180,29 @@ export function SoundSettings() {
           </RadioGroup>
         </div>
 
-        {/* Test Celebration Button */}
-        <div className="pt-4 border-t border-border/40">
-          <Button
-            onClick={handleTestCelebration}
-            className="w-full gap-2"
-            disabled={selectedSound === 'none' && volume === 0}
-          >
-            <Sparkles className="h-4 w-4" />
-            Testar Celebração Completa
-          </Button>
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            Dispara confetti e o som selecionado
+        {/* Test Celebration Buttons */}
+        <div className="pt-4 border-t border-border/40 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              onClick={handleTestCelebration}
+              variant="outline"
+              className="gap-2"
+              disabled={selectedSound === 'none' && volume === 0}
+            >
+              <Sparkles className="h-4 w-4" />
+              Celebração
+            </Button>
+            <Button
+              onClick={handleTestLevelUp}
+              className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+              disabled={selectedSound === 'none' && volume === 0}
+            >
+              <Crown className="h-4 w-4" />
+              Level Up
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground text-center">
+            Teste os diferentes tipos de celebração
           </p>
         </div>
       </CardContent>
