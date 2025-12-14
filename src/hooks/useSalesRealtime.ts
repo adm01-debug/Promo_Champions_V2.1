@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useSoundSettings } from "./useSoundSettings";
+import { useSystemSoundSettings } from "./useSystemSoundSettings";
 import { XP_REWARDS, calculateLevelFromXP, getLevelInfo } from "./useSalespersonXP";
 import { useCelebration } from "./useCelebration";
 
@@ -24,6 +25,7 @@ const RANK_TITLES = {
 export function useSalesRealtime(currentSalespersonId?: string) {
   const queryClient = useQueryClient();
   const { playSound } = useSoundSettings();
+  const { playSoundForCategory } = useSystemSoundSettings();
   const { celebrateLevelUp, triggerLevelUpConfetti } = useCelebration();
   const celebrationRef = useRef({ celebrateLevelUp, triggerLevelUpConfetti });
 
@@ -158,6 +160,7 @@ export function useSalesRealtime(currentSalespersonId?: string) {
 
               // Play celebration sound and confetti based on sale value
               playSound();
+              playSoundForCategory('newSale');
               triggerConfetti(newSale.amount);
 
               // Award XP for the sale and check for level up
