@@ -23,7 +23,7 @@ let alertConfig: AlertConfig = {
   enabled: true,
   threshold: 2000, // 2 seconds
   showToast: import.meta.env.DEV, // Only show toasts in dev by default
-  logToConsole: true,
+  logToConsole: import.meta.env.DEV, // Only log to console in dev
   onSlowQuery: undefined,
 };
 
