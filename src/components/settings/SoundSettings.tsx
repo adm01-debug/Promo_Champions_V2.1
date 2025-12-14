@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,12 @@ import { toast } from "sonner";
 
 export function SoundSettings() {
   const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
+  const [activeCelebration, setActiveCelebration] = useState<'meta' | 'levelup' | 'record' | null>(null);
 
   const handleTestCelebration = async () => {
+    if (activeCelebration) return;
+    setActiveCelebration('meta');
+    
     const confetti = (await import('canvas-confetti')).default;
     
     playSound();
@@ -49,9 +54,14 @@ export function SoundSettings() {
     toast.success("🎉 Celebração de teste!", {
       description: "Som e confetti disparados com sucesso!",
     });
+
+    setTimeout(() => setActiveCelebration(null), 2000);
   };
 
   const handleTestLevelUp = async () => {
+    if (activeCelebration) return;
+    setActiveCelebration('levelup');
+    
     const confetti = (await import('canvas-confetti')).default;
     
     playSound();
@@ -99,17 +109,20 @@ export function SoundSettings() {
     toast.success("🎖️ Level Up de teste!", {
       description: "Celebração especial com confetti dourado!",
     });
+
+    setTimeout(() => setActiveCelebration(null), 3500);
   };
 
   const handleTestStreakRecord = async () => {
+    if (activeCelebration) return;
+    setActiveCelebration('record');
+    
     const confetti = (await import('canvas-confetti')).default;
     
     playSound();
     
-    // Yellow/gold themed confetti for streak record
     const colors = ['#FFD700', '#FFEC8B', '#FFC125', '#DAA520', '#F0E68C'];
     
-    // Multiple bursts simulating streak achievement
     confetti({
       particleCount: 80,
       spread: 70,
@@ -143,6 +156,8 @@ export function SoundSettings() {
     toast.success("🏆 Novo Recorde Pessoal!", {
       description: "Celebração de recorde de sequência!",
     });
+
+    setTimeout(() => setActiveCelebration(null), 2500);
   };
 
   return (
@@ -228,8 +243,8 @@ export function SoundSettings() {
               onClick={handleTestCelebration}
               variant="outline"
               size="sm"
-              className="gap-1.5"
-              disabled={selectedSound === 'none' && volume === 0}
+              className={`gap-1.5 transition-all ${activeCelebration === 'meta' ? 'animate-pulse ring-2 ring-primary' : ''}`}
+              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'meta')}
             >
               <Sparkles className="h-3.5 w-3.5" />
               Meta
@@ -237,8 +252,8 @@ export function SoundSettings() {
             <Button
               onClick={handleTestLevelUp}
               size="sm"
-              className="gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-              disabled={selectedSound === 'none' && volume === 0}
+              className={`gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white transition-all ${activeCelebration === 'levelup' ? 'animate-pulse ring-2 ring-amber-400' : ''}`}
+              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'levelup')}
             >
               <Crown className="h-3.5 w-3.5" />
               Level Up
@@ -246,8 +261,8 @@ export function SoundSettings() {
             <Button
               onClick={handleTestStreakRecord}
               size="sm"
-              className="gap-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white"
-              disabled={selectedSound === 'none' && volume === 0}
+              className={`gap-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white transition-all ${activeCelebration === 'record' ? 'animate-pulse ring-2 ring-yellow-400' : ''}`}
+              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'record')}
             >
               <Trophy className="h-3.5 w-3.5" />
               Recorde
