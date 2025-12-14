@@ -17,6 +17,7 @@ export const securityAlertSoundOptions: SecurityAlertSoundOption[] = [
 ];
 
 const STORAGE_KEY = 'security-alert-sound-preference';
+const VOLUME_STORAGE_KEY = 'security-alert-volume';
 
 export function useSecurityAlertSoundSettings() {
   const [selectedSound, setSelectedSound] = useState<SecurityAlertSoundType>(() => {
@@ -26,17 +27,29 @@ export function useSecurityAlertSoundSettings() {
     return 'alarm';
   });
 
+  const [volume, setVolume] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(VOLUME_STORAGE_KEY);
+      return saved ? parseFloat(saved) : 0.5;
+    }
+    return 0.5;
+  });
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, selectedSound);
   }, [selectedSound]);
 
+  useEffect(() => {
+    localStorage.setItem(VOLUME_STORAGE_KEY, volume.toString());
+  }, [volume]);
+
   const playSound = useCallback((soundType: SecurityAlertSoundType = selectedSound) => {
-    if (soundType === 'none') return;
+    if (soundType === 'none' || volume === 0) return;
 
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const now = audioContext.currentTime;
     
-    const playNote = (freq: number, startTime: number, duration: number, gain = 0.4, type: OscillatorType = 'square') => {
+    const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.4, type: OscillatorType = 'square') => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -46,7 +59,8 @@ export function useSecurityAlertSoundSettings() {
       oscillator.frequency.value = freq;
       oscillator.type = type;
       
-      gainNode.gain.setValueAtTime(gain, startTime);
+      const adjustedGain = baseGain * volume;
+      gainNode.gain.setValueAtTime(adjustedGain, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
       
       oscillator.start(startTime);
@@ -55,7 +69,6 @@ export function useSecurityAlertSoundSettings() {
 
     switch (soundType) {
       case 'alarm':
-        // Descending warning tone (current default)
         playNote(880, now, 0.15);
         playNote(660, now + 0.15, 0.15);
         playNote(880, now + 0.3, 0.15);
@@ -63,7 +76,6 @@ export function useSecurityAlertSoundSettings() {
         break;
       
       case 'siren':
-        // Alternating siren-like sound
         playNote(800, now, 0.2, 0.35, 'sawtooth');
         playNote(600, now + 0.2, 0.2, 0.35, 'sawtooth');
         playNote(800, now + 0.4, 0.2, 0.35, 'sawtooth');
@@ -71,7 +83,6 @@ export function useSecurityAlertSoundSettings() {
         break;
       
       case 'beep':
-        // Short repeated beeps
         playNote(1000, now, 0.1, 0.3, 'sine');
         playNote(1000, now + 0.15, 0.1, 0.3, 'sine');
         playNote(1000, now + 0.3, 0.1, 0.3, 'sine');
@@ -79,13 +90,12 @@ export function useSecurityAlertSoundSettings() {
         break;
       
       case 'urgent':
-        // Deep intense warning
         playNote(200, now, 0.3, 0.5, 'square');
         playNote(150, now + 0.3, 0.3, 0.5, 'square');
         playNote(200, now + 0.6, 0.25, 0.4, 'square');
         break;
     }
-  }, [selectedSound]);
+  }, [selectedSound, volume]);
 
   const previewSound = useCallback((soundType: SecurityAlertSoundType) => {
     playSound(soundType);
@@ -94,6 +104,8 @@ export function useSecurityAlertSoundSettings() {
   return {
     selectedSound,
     setSelectedSound,
+    volume,
+    setVolume,
     playSound,
     previewSound,
     soundOptions: securityAlertSoundOptions,
