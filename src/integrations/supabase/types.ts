@@ -963,6 +963,36 @@ export type Database = {
           },
         ]
       }
+      security_alert_history: {
+        Row: {
+          access_count: number
+          alert_type: string
+          created_at: string
+          id: string
+          recipients: string[]
+          threshold_used: number
+          time_window_hours: number
+        }
+        Insert: {
+          access_count: number
+          alert_type?: string
+          created_at?: string
+          id?: string
+          recipients: string[]
+          threshold_used: number
+          time_window_hours: number
+        }
+        Update: {
+          access_count?: number
+          alert_type?: string
+          created_at?: string
+          id?: string
+          recipients?: string[]
+          threshold_used?: number
+          time_window_hours?: number
+        }
+        Relationships: []
+      }
       security_alert_settings: {
         Row: {
           cooldown_hours: number
