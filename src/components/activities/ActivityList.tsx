@@ -201,12 +201,17 @@ export function ActivityList({
       {showHeader && (
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-4">
-            <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
-                <ClipboardList className="h-4 w-4 gradient-primary" />
-              </div>
-              Log de Atividades
-            </CardTitle>
+            <div className="flex items-center gap-3">
+              <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+                  <ClipboardList className="h-4 w-4 gradient-primary" />
+                </div>
+                Log de Atividades
+              </CardTitle>
+              <Badge variant="secondary" className="text-xs">
+                {filteredAndSortedActivities.length} {filteredAndSortedActivities.length === 1 ? 'atividade' : 'atividades'}
+              </Badge>
+            </div>
             {showFilters && (
               <FilterPopover
                 sortOptions={sortOptions}
