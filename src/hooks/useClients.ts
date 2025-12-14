@@ -1,7 +1,8 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useInvalidateCache } from "@/hooks/useInvalidateCache";
+import { updateItemInArray, removeItemFromArray } from "@/hooks/useOptimisticUpdate";
 
 export interface Client {
   id: string;
@@ -43,6 +44,7 @@ export const useClients = (searchTerm?: string) => {
 };
 
 export const useCreateClient = () => {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
@@ -56,18 +58,44 @@ export const useCreateClient = () => {
       if (error) throw error;
       return data;
     },
+    onMutate: async (newClient) => {
+      await queryClient.cancelQueries({ queryKey: ["clients"] });
+      const previousClients = queryClient.getQueryData<Client[]>(["clients"]);
+      
+      const optimisticClient: Client = {
+        id: `temp-${Date.now()}`,
+        name: newClient.name,
+        email: newClient.email || null,
+        phone: newClient.phone || null,
+        company: newClient.company || null,
+        total_value: newClient.total_value || 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      queryClient.setQueryData<Client[]>(["clients"], (old) =>
+        old ? [optimisticClient, ...old] : [optimisticClient]
+      );
+      
+      return { previousClients };
+    },
+    onError: (_err, _newClient, context) => {
+      if (context?.previousClients) {
+        queryClient.setQueryData(["clients"], context.previousClients);
+      }
+      toast.error("Erro ao criar cliente");
+    },
     onSuccess: () => {
-      invalidateDomain("clients");
       toast.success("Cliente criado com sucesso!");
     },
-    onError: (error) => {
-      console.error("Error creating client:", error);
-      toast.error("Erro ao criar cliente");
+    onSettled: () => {
+      invalidateDomain("clients");
     },
   });
 };
 
 export const useUpdateClient = () => {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
@@ -82,18 +110,33 @@ export const useUpdateClient = () => {
       if (error) throw error;
       return data;
     },
+    onMutate: async ({ id, ...updates }) => {
+      await queryClient.cancelQueries({ queryKey: ["clients"] });
+      const previousClients = queryClient.getQueryData<Client[]>(["clients"]);
+      
+      queryClient.setQueryData<Client[]>(["clients"], (old) =>
+        updateItemInArray(old, id, updates)
+      );
+      
+      return { previousClients };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousClients) {
+        queryClient.setQueryData(["clients"], context.previousClients);
+      }
+      toast.error("Erro ao atualizar cliente");
+    },
     onSuccess: () => {
-      invalidateDomain("clients");
       toast.success("Cliente atualizado com sucesso!");
     },
-    onError: (error) => {
-      console.error("Error updating client:", error);
-      toast.error("Erro ao atualizar cliente");
+    onSettled: () => {
+      invalidateDomain("clients");
     },
   });
 };
 
 export const useDeleteClient = () => {
+  const queryClient = useQueryClient();
   const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
@@ -101,13 +144,27 @@ export const useDeleteClient = () => {
       const { error } = await supabase.from("clients").delete().eq("id", id);
       if (error) throw error;
     },
+    onMutate: async (clientId) => {
+      await queryClient.cancelQueries({ queryKey: ["clients"] });
+      const previousClients = queryClient.getQueryData<Client[]>(["clients"]);
+      
+      queryClient.setQueryData<Client[]>(["clients"], (old) =>
+        removeItemFromArray(old, clientId)
+      );
+      
+      return { previousClients };
+    },
+    onError: (_err, _clientId, context) => {
+      if (context?.previousClients) {
+        queryClient.setQueryData(["clients"], context.previousClients);
+      }
+      toast.error("Erro ao excluir cliente");
+    },
     onSuccess: () => {
-      invalidateDomain("clients");
       toast.success("Cliente excluído com sucesso!");
     },
-    onError: (error) => {
-      console.error("Error deleting client:", error);
-      toast.error("Erro ao excluir cliente");
+    onSettled: () => {
+      invalidateDomain("clients");
     },
   });
 };
