@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSystemSoundSettings } from '@/hooks/useSystemSoundSettings';
+import { useInvalidateCache } from '@/hooks/useInvalidateCache';
 
 export type TaskPriority = 'high' | 'medium' | 'low';
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
@@ -91,7 +92,7 @@ export function useTodayTasks(salespersonId?: string) {
 }
 
 export function useCreateTask() {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
   const { playSoundForCategory } = useSystemSoundSettings();
 
@@ -116,7 +117,7 @@ export function useCreateTask() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      invalidateDomain('tasks');
       toast({ title: 'Tarefa criada com sucesso!' });
       playSoundForCategory('newTask');
     },
@@ -127,7 +128,7 @@ export function useCreateTask() {
 }
 
 export function useUpdateTask() {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
 
   return useMutation({
@@ -143,7 +144,7 @@ export function useUpdateTask() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      invalidateDomain('tasks');
     },
     onError: () => {
       toast({ title: 'Erro ao atualizar tarefa', variant: 'destructive' });
@@ -152,7 +153,7 @@ export function useUpdateTask() {
 }
 
 export function useCompleteTask() {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
 
   return useMutation({
@@ -171,7 +172,7 @@ export function useCompleteTask() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      invalidateDomain('tasks');
       toast({ title: 'Tarefa concluída!' });
     },
     onError: () => {
@@ -181,7 +182,7 @@ export function useCompleteTask() {
 }
 
 export function useDeleteTask() {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
   const { toast } = useToast();
 
   return useMutation({
@@ -194,7 +195,7 @@ export function useDeleteTask() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      invalidateDomain('tasks');
       toast({ title: 'Tarefa removida!' });
     },
     onError: () => {

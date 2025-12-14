@@ -1,6 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useInvalidateCache } from "@/hooks/useInvalidateCache";
 
 export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'other';
 export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified';
@@ -96,7 +97,7 @@ export function useActivityStats() {
 }
 
 export function useCreateActivity() {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (input: CreateActivityInput) => {
@@ -110,9 +111,7 @@ export function useCreateActivity() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["activities"] });
-      queryClient.invalidateQueries({ queryKey: ["recent-activities"] });
-      queryClient.invalidateQueries({ queryKey: ["activity-stats"] });
+      invalidateDomain("activities");
       toast.success("Atividade registrada com sucesso!");
     },
     onError: (error) => {
