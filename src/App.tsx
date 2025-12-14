@@ -32,6 +32,7 @@ import RankingCompetitivo from "./pages/RankingCompetitivo";
 import Configuracoes from "./pages/Configuracoes";
 import AnimacoesDemo from "./pages/AnimacoesDemo";
 import Times from "./pages/Times";
+import TimesPerformance from "./pages/TimesPerformance";
 import Bitrix24 from "./pages/Bitrix24";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -123,6 +124,11 @@ const App = () => (
                     <Route path="/times" element={
                       <ProtectedRoute requireAdminOrManager>
                         <Times />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/times-performance" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <TimesPerformance />
                       </ProtectedRoute>
                     } />
                     <Route path="/bitrix24" element={
