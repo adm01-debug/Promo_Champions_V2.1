@@ -5,7 +5,7 @@ import { useRecentActivities, ActivityType, ActivityOutcome } from "@/hooks/useA
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { format, formatDistanceToNow, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search, CalendarIcon, X } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search, CalendarIcon, X, BarChart3, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -96,6 +96,7 @@ export function ActivityList({
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [showStats, setShowStats] = useState(true);
 
   const salespersonOptions = useMemo(() => {
     if (!salespeople) return [];
@@ -375,8 +376,22 @@ export function ActivityList({
       <CardContent>
         {/* Statistics Summary */}
         {filteredAndSortedActivities.length > 0 && (
-          <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/30">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-between text-xs text-muted-foreground hover:text-foreground mb-2"
+              onClick={() => setShowStats(!showStats)}
+            >
+              <span className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Estatísticas e Gráficos
+              </span>
+              {showStats ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+            {showStats && (
+              <div className="p-3 rounded-lg bg-muted/30 border border-border/30 animate-fade-in">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Bar Chart */}
               <div className="lg:col-span-1">
                 <p className="text-xs font-medium text-muted-foreground mb-2">Distribuição por Tipo</p>
@@ -501,6 +516,8 @@ export function ActivityList({
                 </div>
               </div>
             </div>
+          </div>
+            )}
           </div>
         )}
         
