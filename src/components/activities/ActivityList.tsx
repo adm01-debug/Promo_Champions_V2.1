@@ -394,11 +394,21 @@ export function ActivityList({
                 <BarChart3 className="h-4 w-4" />
                 Estatísticas e Gráficos
               </span>
-              {showStats ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {showStats ? (
+                <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+              ) : (
+                <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+              )}
             </Button>
-            {showStats && (
-              <div className="p-3 rounded-lg bg-muted/30 border border-border/30 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div
+              className={cn(
+                "grid transition-all duration-300 ease-out",
+                showStats ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Bar Chart */}
               <div className="lg:col-span-1">
                 <p className="text-xs font-medium text-muted-foreground mb-2">Distribuição por Tipo</p>
@@ -524,7 +534,8 @@ export function ActivityList({
               </div>
             </div>
           </div>
-            )}
+              </div>
+            </div>
           </div>
         )}
         
