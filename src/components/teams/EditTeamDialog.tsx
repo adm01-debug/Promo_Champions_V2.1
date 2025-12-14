@@ -54,10 +54,18 @@ export function EditTeamDialog({ team, open, onOpenChange }: EditTeamDialogProps
     }
   }, [team]);
 
+  // Validation: must have exactly 1 SDR and 2 Closers
+  const isValidTeam = name.trim() && sdrId && selectedClosers.length === 2;
+  const validationMessage = !sdrId 
+    ? "Selecione 1 SDR" 
+    : selectedClosers.length !== 2 
+      ? `Selecione exatamente 2 Closers (${selectedClosers.length}/2)` 
+      : null;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!team || !name.trim()) return;
+    if (!team || !isValidTeam) return;
 
     await updateTeam.mutateAsync({
       id: team.id,
@@ -244,11 +252,17 @@ export function EditTeamDialog({ team, open, onOpenChange }: EditTeamDialogProps
             </ScrollArea>
           </div>
 
+          {validationMessage && (
+            <p className="text-sm text-status-warning flex items-center gap-1">
+              ⚠️ {validationMessage}
+            </p>
+          )}
+
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={updateTeam.isPending || !name.trim()}>
+            <Button type="submit" disabled={updateTeam.isPending || !isValidTeam}>
               {updateTeam.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Salvar Alterações
             </Button>

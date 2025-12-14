@@ -1,6 +1,7 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, Mail, Calendar, TrendingUp, Users, Percent } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download } from "lucide-react";
 import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/useSalespersonActivityReport";
 import { SalespersonActivityTable } from "@/components/analytics/SalespersonActivityTable";
 import { ActivityVolumeChart } from "@/components/analytics/ActivityVolumeChart";
@@ -8,6 +9,8 @@ import { ActivityOutcomesChart } from "@/components/analytics/ActivityOutcomesCh
 import { ActivityTrendChart } from "@/components/analytics/ActivityTrendChart";
 import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { exportToCSV, formatPercentForExport } from "@/utils/csvExport";
+import { toast } from "sonner";
 
 export default function RelatorioAtividades() {
   const { data, isLoading, error } = useSalespersonActivityReport(1);
@@ -66,6 +69,33 @@ export default function RelatorioAtividades() {
     },
   ];
 
+  const handleExportCSV = () => {
+    if (!data?.salespeople?.length) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+
+    exportToCSV(
+      data.salespeople,
+      [
+        { header: "Vendedor", accessor: "salesperson_name" },
+        { header: "Calls", accessor: "calls" },
+        { header: "Emails", accessor: "emails" },
+        { header: "Reuniões", accessor: "meetings" },
+        { header: "LinkedIn", accessor: "linkedin" },
+        { header: "WhatsApp", accessor: "whatsapp" },
+        { header: "Total Atividades", accessor: "total_activities" },
+        { header: "Conectou", accessor: "connected" },
+        { header: "Agendou", accessor: "scheduled" },
+        { header: "Não Atendeu", accessor: "no_answer" },
+        { header: "Taxa Conexão", accessor: (item) => formatPercentForExport(item.connection_rate) },
+        { header: "Taxa Agendamento", accessor: (item) => formatPercentForExport(item.scheduling_rate) },
+      ],
+      `relatorio-atividades-${new Date().toISOString().split('T')[0]}`
+    );
+
+    toast.success("Relatório exportado com sucesso!");
+  };
   return (
     <MainLayout>
       <SkeletonTransition
@@ -83,14 +113,26 @@ export default function RelatorioAtividades() {
                   Volume de atividades vs resultados por vendedor
                 </p>
               </div>
-              {data?.teamSummary.top_performer_name && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-                  <span className="text-lg">🏆</span>
-                  <span className="text-xs font-medium text-primary">
-                    Top: {data.teamSummary.top_performer_name}
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center gap-3">
+                {data?.teamSummary.top_performer_name && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+                    <span className="text-lg">🏆</span>
+                    <span className="text-xs font-medium text-primary">
+                      Top: {data.teamSummary.top_performer_name}
+                    </span>
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExportCSV}
+                  disabled={!data?.salespeople?.length}
+                  className="gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Exportar CSV
+                </Button>
+              </div>
             </div>
           </div>
 

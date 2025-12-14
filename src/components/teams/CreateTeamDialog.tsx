@@ -41,10 +41,18 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
   // Filter SDRs from all salespeople
   const sdrs = salespeople?.filter(s => s.role === 'sdr' || s.role === 'hybrid') || [];
 
+  // Validation: must have exactly 1 SDR and 2 Closers
+  const isValidTeam = name.trim() && sdrId && selectedClosers.length === 2;
+  const validationMessage = !sdrId 
+    ? "Selecione 1 SDR" 
+    : selectedClosers.length !== 2 
+      ? `Selecione exatamente 2 Closers (${selectedClosers.length}/2)` 
+      : null;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim()) return;
+    if (!isValidTeam) return;
 
     await createTeam.mutateAsync({
       name: name.trim(),
@@ -210,11 +218,17 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
             </ScrollArea>
           </div>
 
+          {validationMessage && (
+            <p className="text-sm text-status-warning flex items-center gap-1">
+              ⚠️ {validationMessage}
+            </p>
+          )}
+
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={createTeam.isPending || !name.trim()}>
+            <Button type="submit" disabled={createTeam.isPending || !isValidTeam}>
               {createTeam.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Criar Time
             </Button>
