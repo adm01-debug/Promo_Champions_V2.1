@@ -2,6 +2,7 @@ import {
   LayoutDashboard, 
   ShoppingCart, 
   Users, 
+  Users2,
   Package, 
   BarChart3, 
   Bell,
@@ -61,6 +62,7 @@ const mainItems: MenuItem[] = [
 
 const teamItems: MenuItem[] = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy, requireAdminOrManager: true },
+  { title: "Times", url: "/times", icon: Users2, requireAdminOrManager: true },
   { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },

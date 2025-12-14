@@ -30,6 +30,7 @@ import MetasAtividades from "./pages/MetasAtividades";
 import RankingCompetitivo from "./pages/RankingCompetitivo";
 import Configuracoes from "./pages/Configuracoes";
 import AnimacoesDemo from "./pages/AnimacoesDemo";
+import Times from "./pages/Times";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -114,6 +115,11 @@ const App = () => (
                     <Route path="/ranking" element={<RankingCompetitivo />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
                     <Route path="/animacoes" element={<AnimacoesDemo />} />
+                    <Route path="/times" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Times />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/acesso-negado" element={<AccessDenied />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
