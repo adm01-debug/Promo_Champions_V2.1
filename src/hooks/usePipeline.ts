@@ -1,6 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useInvalidateCache } from "@/hooks/useInvalidateCache";
 
 export const PIPELINE_STAGES = [
   { id: "lead", label: "Lead", color: "bg-slate-500" },
@@ -75,7 +76,7 @@ export const usePipelineDeals = () => {
 };
 
 export const useMoveDeal = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async ({ dealId, newStage }: { dealId: string; newStage: PipelineStage }) => {
@@ -92,8 +93,8 @@ export const useMoveDeal = () => {
       return data;
     },
     onSuccess: (_, { newStage }) => {
-      queryClient.invalidateQueries({ queryKey: ["pipeline-deals"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      invalidateDomain("pipeline");
+      invalidateDomain("sales");
       const stageLabel = PIPELINE_STAGES.find(s => s.id === newStage)?.label;
       toast.success(`Deal movido para ${stageLabel}`);
     },

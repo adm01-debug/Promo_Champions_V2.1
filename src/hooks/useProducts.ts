@@ -1,6 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useInvalidateCache } from "@/hooks/useInvalidateCache";
 
 export interface Product {
   id: string;
@@ -94,7 +95,7 @@ export const useTopProducts = (limit = 5) => {
 };
 
 export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (input: CreateProductInput) => {
@@ -108,8 +109,7 @@ export const useCreateProduct = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["top-products"] });
+      invalidateDomain("products");
       toast.success("Produto criado com sucesso!");
     },
     onError: (error) => {
@@ -120,7 +120,7 @@ export const useCreateProduct = () => {
 };
 
 export const useUpdateProduct = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Product> & { id: string }) => {
@@ -135,8 +135,7 @@ export const useUpdateProduct = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["top-products"] });
+      invalidateDomain("products");
       toast.success("Produto atualizado com sucesso!");
     },
     onError: (error) => {
@@ -147,7 +146,7 @@ export const useUpdateProduct = () => {
 };
 
 export const useDeleteProduct = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -155,8 +154,7 @@ export const useDeleteProduct = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["top-products"] });
+      invalidateDomain("products");
       toast.success("Produto excluído com sucesso!");
     },
     onError: (error) => {

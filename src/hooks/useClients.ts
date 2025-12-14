@@ -1,6 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useInvalidateCache } from "@/hooks/useInvalidateCache";
 
 export interface Client {
   id: string;
@@ -42,7 +43,7 @@ export const useClients = (searchTerm?: string) => {
 };
 
 export const useCreateClient = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (input: CreateClientInput) => {
@@ -56,7 +57,7 @@ export const useCreateClient = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      invalidateDomain("clients");
       toast.success("Cliente criado com sucesso!");
     },
     onError: (error) => {
@@ -67,7 +68,7 @@ export const useCreateClient = () => {
 };
 
 export const useUpdateClient = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Client> & { id: string }) => {
@@ -82,7 +83,7 @@ export const useUpdateClient = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      invalidateDomain("clients");
       toast.success("Cliente atualizado com sucesso!");
     },
     onError: (error) => {
@@ -93,7 +94,7 @@ export const useUpdateClient = () => {
 };
 
 export const useDeleteClient = () => {
-  const queryClient = useQueryClient();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -101,7 +102,7 @@ export const useDeleteClient = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      invalidateDomain("clients");
       toast.success("Cliente excluído com sucesso!");
     },
     onError: (error) => {
