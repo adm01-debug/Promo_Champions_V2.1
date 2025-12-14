@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface QueryMetrics {
   queryKey: string;
@@ -9,20 +10,88 @@ interface QueryMetrics {
   dataSize?: number;
 }
 
+interface AlertConfig {
+  enabled: boolean;
+  threshold: number; // ms
+  showToast: boolean;
+  logToConsole: boolean;
+  onSlowQuery?: (metric: QueryMetrics) => void;
+}
+
+// Default alert configuration
+let alertConfig: AlertConfig = {
+  enabled: true,
+  threshold: 2000, // 2 seconds
+  showToast: import.meta.env.DEV, // Only show toasts in dev by default
+  logToConsole: true,
+  onSlowQuery: undefined,
+};
+
 // Store for query metrics
 const queryMetricsStore: QueryMetrics[] = [];
 const MAX_STORED_METRICS = 100;
-const SLOW_QUERY_THRESHOLD_MS = 1000; // 1 second
+const SLOW_QUERY_THRESHOLD_MS = 1000; // 1 second for stats
 
-// Add metric to store
+// Track alerted queries to avoid spam
+const alertedQueries = new Map<string, number>();
+const ALERT_COOLDOWN_MS = 30000; // 30 seconds cooldown per query
+
+// Configure alerts
+export function configureQueryAlerts(config: Partial<AlertConfig>) {
+  alertConfig = { ...alertConfig, ...config };
+}
+
+// Check if should alert for this query
+function shouldAlert(queryKey: string): boolean {
+  if (!alertConfig.enabled) return false;
+  
+  const lastAlerted = alertedQueries.get(queryKey);
+  if (lastAlerted && Date.now() - lastAlerted < ALERT_COOLDOWN_MS) {
+    return false;
+  }
+  return true;
+}
+
+// Add metric to store with alerting
 function addMetric(metric: QueryMetrics) {
   queryMetricsStore.unshift(metric);
   if (queryMetricsStore.length > MAX_STORED_METRICS) {
     queryMetricsStore.pop();
   }
 
-  // Log slow queries in development
-  if (import.meta.env.DEV && metric.duration > SLOW_QUERY_THRESHOLD_MS) {
+  // Check for slow query alert
+  if (metric.duration > alertConfig.threshold && shouldAlert(metric.queryKey)) {
+    alertedQueries.set(metric.queryKey, Date.now());
+    
+    // Log to console
+    if (alertConfig.logToConsole) {
+      console.warn(
+        `⚠️ [SLOW QUERY ALERT] ${metric.queryKey} took ${metric.duration}ms (threshold: ${alertConfig.threshold}ms)`,
+        {
+          queryKey: metric.queryKey,
+          duration: metric.duration,
+          threshold: alertConfig.threshold,
+          timestamp: new Date(metric.timestamp).toISOString(),
+        }
+      );
+    }
+
+    // Show toast notification
+    if (alertConfig.showToast) {
+      toast.warning(`Query lenta detectada`, {
+        description: `${metric.queryKey.substring(0, 30)}... levou ${metric.duration}ms`,
+        duration: 5000,
+      });
+    }
+
+    // Custom callback
+    if (alertConfig.onSlowQuery) {
+      alertConfig.onSlowQuery(metric);
+    }
+  }
+
+  // Standard dev logging for moderately slow queries
+  if (import.meta.env.DEV && metric.duration > SLOW_QUERY_THRESHOLD_MS && metric.duration <= alertConfig.threshold) {
     console.warn(
       `[SLOW QUERY] ${metric.queryKey} took ${metric.duration}ms`,
       metric
@@ -167,11 +236,18 @@ export function logQueryMetrics() {
   console.groupEnd();
 }
 
+// Get current alert config
+export function getAlertConfig() {
+  return { ...alertConfig };
+}
+
 // Expose to window for debugging in production
 if (typeof window !== "undefined") {
   (window as any).__queryMetrics = {
     get: getQueryMetrics,
     clear: clearQueryMetrics,
     log: logQueryMetrics,
+    configureAlerts: configureQueryAlerts,
+    getAlertConfig: getAlertConfig,
   };
 }

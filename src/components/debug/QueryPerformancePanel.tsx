@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
-import { getQueryMetrics, clearQueryMetrics, logQueryMetrics } from "@/hooks/useQueryPerformance";
+import { getQueryMetrics, clearQueryMetrics, logQueryMetrics, configureQueryAlerts, getAlertConfig } from "@/hooks/useQueryPerformance";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Trash2, RefreshCw, AlertTriangle, Clock, Database } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Activity, Trash2, AlertTriangle, Clock, Database, Bell, X, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function QueryPerformancePanel() {
   const [metrics, setMetrics] = useState(getQueryMetrics());
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [alertConfig, setAlertConfig] = useState(getAlertConfig());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,6 +32,21 @@ export function QueryPerformancePanel() {
 
   const handleLog = () => {
     logQueryMetrics();
+  };
+
+  const toggleAlerts = (enabled: boolean) => {
+    configureQueryAlerts({ enabled });
+    setAlertConfig(getAlertConfig());
+  };
+
+  const toggleToasts = (showToast: boolean) => {
+    configureQueryAlerts({ showToast });
+    setAlertConfig(getAlertConfig());
+  };
+
+  const updateThreshold = (threshold: number) => {
+    configureQueryAlerts({ threshold });
+    setAlertConfig(getAlertConfig());
   };
 
   if (!isExpanded) {
@@ -50,13 +69,16 @@ export function QueryPerformancePanel() {
   }
 
   return (
-    <Card className="fixed bottom-4 right-4 z-50 w-96 max-h-[400px] overflow-hidden shadow-xl">
+    <Card className="fixed bottom-4 right-4 z-50 w-96 max-h-[450px] overflow-hidden shadow-xl">
       <CardHeader className="py-3 px-4 flex flex-row items-center justify-between">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
           Query Performance
         </CardTitle>
         <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowSettings(!showSettings)}>
+            <Settings className={cn("h-3.5 w-3.5", showSettings && "text-primary")} />
+          </Button>
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleLog}>
             <Database className="h-3.5 w-3.5" />
           </Button>
@@ -64,11 +86,55 @@ export function QueryPerformancePanel() {
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsExpanded(false)}>
-            <RefreshCw className="h-3.5 w-3.5" />
+            <X className="h-3.5 w-3.5" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="py-2 px-4 space-y-3 max-h-[320px] overflow-y-auto">
+      <CardContent className="py-2 px-4 space-y-3 max-h-[380px] overflow-y-auto">
+        {/* Alert Settings */}
+        {showSettings && (
+          <div className="p-3 rounded-lg bg-muted/50 space-y-3 border border-border/50">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="alerts-enabled" className="text-xs flex items-center gap-2">
+                <Bell className="h-3 w-3" />
+                Alertas automáticos
+              </Label>
+              <Switch
+                id="alerts-enabled"
+                checked={alertConfig.enabled}
+                onCheckedChange={toggleAlerts}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="toast-enabled" className="text-xs">
+                Mostrar toasts
+              </Label>
+              <Switch
+                id="toast-enabled"
+                checked={alertConfig.showToast}
+                onCheckedChange={toggleToasts}
+                disabled={!alertConfig.enabled}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Threshold (ms)</Label>
+              <div className="flex gap-1">
+                {[1000, 2000, 3000, 5000].map((t) => (
+                  <Button
+                    key={t}
+                    variant={alertConfig.threshold === t ? "default" : "outline"}
+                    size="sm"
+                    className="h-6 text-[10px] px-2"
+                    onClick={() => updateThreshold(t)}
+                  >
+                    {t}ms
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Summary Stats */}
         <div className="grid grid-cols-4 gap-2 text-center">
           <div className="p-2 rounded-lg bg-muted/50">
