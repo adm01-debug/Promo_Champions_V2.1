@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2 } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2, Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -15,12 +15,14 @@ export function SoundSettings() {
   const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
   const [activeCelebration, setActiveCelebration] = useState<'meta' | 'levelup' | 'record' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isConfettiReady, setIsConfettiReady] = useState(false);
   const confettiRef = useRef<ConfettiFunction | null>(null);
 
   // Preload confetti on mount
   useEffect(() => {
     import('canvas-confetti').then((module) => {
       confettiRef.current = module.default;
+      setIsConfettiReady(true);
     });
   }, []);
 
@@ -316,9 +318,23 @@ export function SoundSettings() {
               Recorde
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground text-center">
-            Teste os diferentes tipos de celebração
-          </p>
+          <div className="flex items-center justify-center gap-2">
+            {isConfettiReady ? (
+              <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
+                <Check className="h-3 w-3" />
+                Pronto
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Carregando...
+              </span>
+            )}
+            <span className="text-xs text-muted-foreground">•</span>
+            <span className="text-xs text-muted-foreground">
+              Teste os diferentes tipos de celebração
+            </span>
+          </div>
         </div>
       </CardContent>
     </Card>
