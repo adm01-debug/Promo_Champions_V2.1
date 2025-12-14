@@ -13,6 +13,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useAllSalespeopleXP, getLevelInfo, calculateLevelFromXP } from "@/hooks/useSalespersonXP";
 import { XPProgressBar } from "@/components/gamification/XPProgressBar";
 import { LevelBadge } from "@/components/gamification/LevelBadge";
+import { RankingLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 const RankingCompetitivo = () => {
   const { data: ranking, isLoading } = useCompetitiveRanking();
@@ -93,22 +95,12 @@ const RankingCompetitivo = () => {
   const totalDeals = ranking?.reduce((sum, r) => sum + r.dealsCount, 0) || 0;
   const leader = ranking?.[0];
 
-  if (isLoading) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-muted rounded w-1/3" />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-32 bg-muted rounded-xl" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<RankingLoadingSkeleton />}
+      duration={400}
+    >
     <div className="p-6 space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -576,6 +568,7 @@ const RankingCompetitivo = () => {
         </TabsContent>
       </Tabs>
     </div>
+    </SkeletonTransition>
   );
 };
 

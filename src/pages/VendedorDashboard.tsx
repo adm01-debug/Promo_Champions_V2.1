@@ -16,8 +16,9 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { VendedorDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { startOfMonth, endOfMonth, format, subMonths, differenceInDays, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -170,21 +171,7 @@ const VendedorDashboard = () => {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useVendedorData(id || "");
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background p-6 lg:p-8">
-        <div className="max-w-[1400px] mx-auto space-y-6">
-          <Skeleton className="h-32 w-full rounded-xl" />
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
-          </div>
-          <Skeleton className="h-80 w-full rounded-xl" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !data) {
+  if (!isLoading && (error || !data)) {
     return (
       <div className="min-h-screen bg-background p-6 lg:p-8 flex items-center justify-center">
         <div className="text-center">
@@ -198,7 +185,7 @@ const VendedorDashboard = () => {
     );
   }
 
-  const { salesperson, goal, currentSales, previousSales, allSales } = data;
+  const { salesperson, goal, currentSales, previousSales, allSales } = data || { salesperson: null, goal: 0, currentSales: [], previousSales: [], allSales: [] };
 
   // Calculate stats
   const completedSales = currentSales.filter(s => s.status === "completed");
@@ -243,6 +230,11 @@ const VendedorDashboard = () => {
     : 0;
 
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<VendedorDashboardLoadingSkeleton />}
+      duration={400}
+    >
     <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-[1400px] mx-auto space-y-6">
         {/* Header */}
@@ -538,6 +530,7 @@ const VendedorDashboard = () => {
         </div>
       </div>
     </div>
+    </SkeletonTransition>
   );
 };
 
