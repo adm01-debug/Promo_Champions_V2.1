@@ -21,6 +21,7 @@ import {
   Sparkles,
   TrendingUp,
   Settings,
+  Link2,
   LucideIcon
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -78,6 +79,7 @@ const teamItems: MenuItem[] = [
 
 const systemItems: MenuItem[] = [
   { title: "Configurações", url: "/configuracoes", icon: Settings },
+  { title: "Bitrix24", url: "/bitrix24", icon: Link2, requireAdminOrManager: true },
   { title: "Notificações", url: "/notificacoes", icon: Bell },
   { title: "Animações", url: "/animacoes", icon: Sparkles },
 ];

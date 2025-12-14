@@ -31,6 +31,7 @@ import RankingCompetitivo from "./pages/RankingCompetitivo";
 import Configuracoes from "./pages/Configuracoes";
 import AnimacoesDemo from "./pages/AnimacoesDemo";
 import Times from "./pages/Times";
+import Bitrix24 from "./pages/Bitrix24";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -118,6 +119,11 @@ const App = () => (
                     <Route path="/times" element={
                       <ProtectedRoute requireAdminOrManager>
                         <Times />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/bitrix24" element={
+                      <ProtectedRoute requireAdminOrManager>
+                        <Bitrix24 />
                       </ProtectedRoute>
                     } />
                     <Route path="/acesso-negado" element={<AccessDenied />} />
