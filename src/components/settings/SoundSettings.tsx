@@ -1,13 +1,59 @@
-import { Volume2, VolumeX, Play, PartyPopper } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSettings";
+import { useCelebration } from "@/hooks/useCelebration";
+import { toast } from "sonner";
 
 export function SoundSettings() {
-  const { selectedSound, setSelectedSound, volume, setVolume, previewSound } = useSoundSettings();
+  const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
+  const { triggerLevelUpConfetti } = useCelebration();
+
+  const handleTestCelebration = async () => {
+    const confetti = (await import('canvas-confetti')).default;
+    
+    // Play sound
+    playSound();
+    
+    // Trigger confetti burst
+    const count = 200;
+    const defaults = {
+      origin: { y: 0.7 },
+      zIndex: 9999,
+    };
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.25),
+      spread: 26,
+      startVelocity: 55,
+      origin: { x: 0.2, y: 0.7 },
+    });
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.35),
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8,
+      origin: { x: 0.8, y: 0.7 },
+    });
+
+    confetti({
+      ...defaults,
+      particleCount: Math.floor(count * 0.4),
+      spread: 120,
+      startVelocity: 45,
+      origin: { x: 0.5, y: 0.7 },
+    });
+
+    toast.success("🎉 Celebração de teste!", {
+      description: "Som e confetti disparados com sucesso!",
+    });
+  };
 
   return (
     <Card className="card-elevated">
@@ -83,6 +129,21 @@ export function SoundSettings() {
               </div>
             ))}
           </RadioGroup>
+        </div>
+
+        {/* Test Celebration Button */}
+        <div className="pt-4 border-t border-border/40">
+          <Button
+            onClick={handleTestCelebration}
+            className="w-full gap-2"
+            disabled={selectedSound === 'none' && volume === 0}
+          >
+            <Sparkles className="h-4 w-4" />
+            Testar Celebração Completa
+          </Button>
+          <p className="text-xs text-muted-foreground text-center mt-2">
+            Dispara confetti e o som selecionado
+          </p>
         </div>
       </CardContent>
     </Card>
