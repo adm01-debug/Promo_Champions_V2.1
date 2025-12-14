@@ -62,7 +62,10 @@ const Clientes = () => {
     startIndex,
     endIndex,
     totalItems,
-  } = usePagination(sortedClients, { itemsPerPage: 12 });
+    itemsPerPage,
+    setItemsPerPage,
+    itemsPerPageOptions,
+  } = usePagination(sortedClients, { initialItemsPerPage: 12 });
 
   const handleDelete = () => {
     if (!deletingClient) return;
@@ -193,6 +196,9 @@ const Clientes = () => {
                 startIndex={startIndex}
                 endIndex={endIndex}
                 totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={setItemsPerPage}
+                itemsPerPageOptions={itemsPerPageOptions}
               />
             </div>
           ) : (

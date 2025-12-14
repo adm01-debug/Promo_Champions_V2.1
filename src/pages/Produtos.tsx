@@ -93,7 +93,10 @@ const Produtos = () => {
     startIndex,
     endIndex,
     totalItems,
-  } = usePagination(filteredAndSortedProducts, { itemsPerPage: 12 });
+    itemsPerPage,
+    setItemsPerPage,
+    itemsPerPageOptions,
+  } = usePagination(filteredAndSortedProducts, { initialItemsPerPage: 12 });
 
   const handleDelete = () => {
     if (!deletingProduct) return;
@@ -231,6 +234,9 @@ const Produtos = () => {
                 startIndex={startIndex}
                 endIndex={endIndex}
                 totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={setItemsPerPage}
+                itemsPerPageOptions={itemsPerPageOptions}
               />
             </div>
           ) : (
