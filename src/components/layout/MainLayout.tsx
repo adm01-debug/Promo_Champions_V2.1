@@ -4,6 +4,7 @@ import { AppSidebar } from "./AppSidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { GlobalSearch, SearchTrigger } from "./GlobalSearch";
 import { Search } from "lucide-react";
+import { useSecurityAlertNotifications } from "@/hooks/useSecurityAlertNotifications";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [searchOpen, setSearchOpen] = useState(false);
+  
+  // Enable real-time security alert notifications for admins/managers
+  useSecurityAlertNotifications();
 
   return (
     <SidebarProvider>
