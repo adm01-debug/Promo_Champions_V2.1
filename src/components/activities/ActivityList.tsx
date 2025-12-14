@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRecentActivities, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { useSalespeople } from "@/hooks/useSalespeople";
-import { format, formatDistanceToNow, startOfDay, endOfDay } from "date-fns";
+import { format, formatDistanceToNow, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search, CalendarIcon, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -246,67 +246,107 @@ export function ActivityList({
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={cn(
-                        "h-9 text-xs justify-start text-left font-normal",
-                        !startDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-1 h-3 w-3" />
-                      {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "De"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={startDate}
-                      onSelect={setStartDate}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                      locale={ptBR}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={cn(
-                        "h-9 text-xs justify-start text-left font-normal",
-                        !endDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-1 h-3 w-3" />
-                      {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Até"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={endDate}
-                      onSelect={setEndDate}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                      locale={ptBR}
-                    />
-                  </PopoverContent>
-                </Popover>
-                {(startDate || endDate) && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1">
                   <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9"
-                    onClick={clearDateFilter}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => {
+                      const today = new Date();
+                      setStartDate(today);
+                      setEndDate(today);
+                    }}
                   >
-                    <X className="h-4 w-4" />
+                    Hoje
                   </Button>
-                )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => {
+                      const today = new Date();
+                      setStartDate(startOfWeek(today, { locale: ptBR }));
+                      setEndDate(endOfWeek(today, { locale: ptBR }));
+                    }}
+                  >
+                    Esta Semana
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => {
+                      const today = new Date();
+                      setStartDate(startOfMonth(today));
+                      setEndDate(endOfMonth(today));
+                    }}
+                  >
+                    Este Mês
+                  </Button>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          "h-8 text-xs justify-start text-left font-normal",
+                          !startDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-1 h-3 w-3" />
+                        {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "De"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={setStartDate}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          "h-8 text-xs justify-start text-left font-normal",
+                          !endDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-1 h-3 w-3" />
+                        {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Até"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={endDate}
+                        onSelect={setEndDate}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {(startDate || endDate) && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={clearDateFilter}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}
