@@ -38,8 +38,10 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
+import { TablePagination } from "@/components/shared/TablePagination";
 import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap, ICPData } from "@/hooks/useICPData";
+import { usePagination } from "@/hooks/usePagination";
 
 type SortField = "client" | "icp" | "status" | "lastPurchase" | "assignedAt";
 type SortDirection = "asc" | "desc";
@@ -114,6 +116,19 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
       return sortDirection === "asc" ? comparison : -comparison;
     });
   }, [data, sortField, sortDirection, icpMap]);
+
+  // Pagination
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems,
+    goToPage,
+    startIndex,
+    endIndex,
+    totalItems,
+    itemsPerPage,
+    setItemsPerPage,
+  } = usePagination(sortedData || [], { initialItemsPerPage: 10 });
 
   const handleToggleStatus = (item: ClientPortfolioItem) => {
     const newStatus = item.status === "active" ? "inactive" : "active";
@@ -220,7 +235,7 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedData?.map((item) => {
+            {paginatedItems.map((item) => {
               const icpData = item.client_id ? icpMap.get(item.client_id) : null;
               
               return (
@@ -337,6 +352,17 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={goToPage}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        totalItems={totalItems}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={setItemsPerPage}
+      />
 
       <DeleteConfirmDialog
         open={!!deleteId}
