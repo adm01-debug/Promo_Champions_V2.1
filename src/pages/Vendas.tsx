@@ -7,6 +7,8 @@ import { useState, useMemo } from "react";
 import { useSalesData } from "@/hooks/useSalesData";
 import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
+import { usePagination } from "@/hooks/usePagination";
+import { TablePagination } from "@/components/shared/TablePagination";
 
 const statusColors: Record<string, string> = {
   concluída: "bg-status-success/20 text-status-success border-status-success/30",
@@ -67,6 +69,16 @@ const Vendas = () => {
       }
     });
   }, [sales, sortBy, statusFilter]);
+
+  const {
+    paginatedItems,
+    currentPage,
+    totalPages,
+    goToPage,
+    startIndex,
+    endIndex,
+    totalItems,
+  } = usePagination(filteredAndSortedSales, { itemsPerPage: 10 });
 
   return (
     <SkeletonTransition
@@ -137,7 +149,7 @@ const Vendas = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredAndSortedSales.map((sale, index) => (
+                    {paginatedItems.map((sale, index) => (
                       <tr 
                         key={sale.id} 
                         className="border-b border-border/30 hover:bg-muted/30 transition-colors"
@@ -157,6 +169,16 @@ const Vendas = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="px-4 pb-4">
+                <TablePagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  startIndex={startIndex}
+                  endIndex={endIndex}
+                  totalItems={totalItems}
+                />
               </div>
             </div>
           ) : (
