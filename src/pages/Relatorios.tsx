@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { useReportMetrics } from "@/hooks/useReportData";
 import { RelatoriosLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { downloadSalesReport, downloadClientsReport, downloadProductsReport } from "@/utils/reportDownload";
+import { toast } from "sonner";
 import {
   BarChart,
   Bar,
@@ -30,9 +32,9 @@ type DateRange = {
 };
 
 const reportsData = [
-  { nome: "Relatório de Vendas Mensal", tipo: "Vendas", data: "Dezembro 2024", formato: "PDF" },
-  { nome: "Análise de Clientes", tipo: "Clientes", data: "Dezembro 2024", formato: "Excel" },
-  { nome: "Performance de Produtos", tipo: "Produtos", data: "Dezembro 2024", formato: "PDF" },
+  { nome: "Relatório de Vendas", tipo: "Vendas", formato: "CSV", action: "sales" },
+  { nome: "Análise de Clientes", tipo: "Clientes", formato: "CSV", action: "clients" },
+  { nome: "Performance de Produtos", tipo: "Produtos", formato: "CSV", action: "products" },
 ];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -396,12 +398,24 @@ const Relatorios = () => {
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-xs text-muted-foreground">{report.tipo}</span>
                       <span className="text-xs text-muted-foreground">•</span>
-                      <span className="text-xs text-muted-foreground">{report.data}</span>
-                      <span className="text-xs text-muted-foreground">•</span>
                       <span className="text-xs px-2 py-0.5 rounded bg-muted/50">{report.formato}</span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="glass">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="glass"
+                    onClick={async () => {
+                      try {
+                        if (report.action === "sales") await downloadSalesReport(selectedPeriod);
+                        else if (report.action === "clients") await downloadClientsReport();
+                        else if (report.action === "products") await downloadProductsReport();
+                        toast.success("Relatório baixado com sucesso!");
+                      } catch (error) {
+                        toast.error("Erro ao baixar relatório");
+                      }
+                    }}
+                  >
                     <Download className="h-4 w-4 mr-2" />
                     Baixar
                   </Button>

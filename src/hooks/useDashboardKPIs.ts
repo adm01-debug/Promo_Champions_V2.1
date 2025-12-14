@@ -141,7 +141,42 @@ export const useDetailedKPIs = () => {
       const currentConversion = calcAvg(current, "conversion_rate");
       const previousConversion = calcAvg(previous, "conversion_rate");
 
-      // Simulated metrics with real calculations
+      // Fetch deal stage history for average closing time
+      const { data: stageHistory } = await supabase
+        .from("deal_stage_history")
+        .select("sale_id, stage, entered_at, exited_at");
+
+      // Calculate average closing time
+      const closedDeals = stageHistory?.filter(
+        (h) => h.stage === "completed" || h.stage === "Fechado"
+      ) || [];
+      
+      let avgClosingDays = 0;
+      if (closedDeals.length > 0) {
+        const closingTimes = closedDeals
+          .filter(d => d.entered_at)
+          .map(d => {
+            const start = new Date(d.entered_at);
+            const end = d.exited_at ? new Date(d.exited_at) : new Date();
+            return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+          });
+        avgClosingDays = closingTimes.length > 0 
+          ? closingTimes.reduce((a, b) => a + b, 0) / closingTimes.length 
+          : 0;
+      }
+
+      // Calculate return rate from completed sales
+      const { data: allSales } = await supabase
+        .from("sales")
+        .select("client_name, status");
+      
+      const completedSales = allSales?.filter(s => s.status === "completed") || [];
+      const uniqueClients = new Set(completedSales.map(s => s.client_name));
+      const repeatClients = completedSales.length - uniqueClients.size;
+      const returnRate = completedSales.length > 0 
+        ? (repeatClients / completedSales.length) * 100 
+        : 0;
+
       const kpis: DetailedKPI[] = [
         {
           title: "Ticket Médio",
@@ -159,16 +194,16 @@ export const useDetailedKPIs = () => {
         },
         {
           title: "Tempo Médio",
-          value: "12 dias",
-          previousValue: "14 dias",
-          change: -14.3,
+          value: `${Math.round(avgClosingDays)} dias`,
+          previousValue: "N/A",
+          change: 0,
           icon: "Clock",
         },
         {
           title: "Taxa de Retorno",
-          value: "18.5%",
-          previousValue: "17.5%",
-          change: 5.7,
+          value: `${returnRate.toFixed(1)}%`,
+          previousValue: "N/A",
+          change: 0,
           icon: "RotateCcw",
         },
         {
