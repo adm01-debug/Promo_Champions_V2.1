@@ -5,21 +5,37 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSettings";
 import { toast } from "sonner";
 
 // Preload confetti module
 type ConfettiFunction = typeof import('canvas-confetti').default;
 
+const READY_SOUND_KEY = 'celebration-ready-sound-enabled';
+
 export function SoundSettings() {
   const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
   const [activeCelebration, setActiveCelebration] = useState<'meta' | 'levelup' | 'record' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfettiReady, setIsConfettiReady] = useState(false);
+  const [readySoundEnabled, setReadySoundEnabled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(READY_SOUND_KEY);
+      return saved !== 'false'; // Default to true
+    }
+    return true;
+  });
   const confettiRef = useRef<ConfettiFunction | null>(null);
+
+  // Save ready sound preference
+  useEffect(() => {
+    localStorage.setItem(READY_SOUND_KEY, String(readySoundEnabled));
+  }, [readySoundEnabled]);
 
   // Play subtle ding sound
   const playReadyDing = () => {
+    if (!readySoundEnabled) return;
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
@@ -49,6 +65,7 @@ export function SoundSettings() {
       setIsConfettiReady(true);
       playReadyDing();
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTestCelebration = async () => {
@@ -258,7 +275,20 @@ export function SoundSettings() {
           </div>
         </div>
 
-        {/* Sound Selection */}
+        {/* Ready Sound Toggle */}
+        <div className="flex items-center justify-between p-3 rounded-lg border border-border/40">
+          <div className="space-y-0.5">
+            <Label className="text-sm font-medium">Som de "Pronto"</Label>
+            <p className="text-xs text-muted-foreground">
+              Toca um som sutil quando o confetti estiver carregado
+            </p>
+          </div>
+          <Switch
+            checked={readySoundEnabled}
+            onCheckedChange={setReadySoundEnabled}
+          />
+        </div>
+
         <div className="space-y-3">
           <Label className="text-sm font-medium">Tipo de Som</Label>
           <RadioGroup
