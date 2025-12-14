@@ -1,5 +1,6 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { withCircuitBreaker, CircuitBreakerError } from './useCircuitBreaker';
 
 interface RetryConfig {
   maxRetries?: number;
@@ -8,6 +9,13 @@ interface RetryConfig {
   backoffMultiplier?: number;
   retryCondition?: (error: Error) => boolean;
   onRetry?: (attemptNumber: number, error: Error, delay: number) => void;
+}
+
+interface CircuitBreakerConfig {
+  enabled?: boolean;
+  name?: string;
+  failureThreshold?: number;
+  resetTimeout?: number;
 }
 
 const DEFAULT_RETRY_CONFIG: Required<Omit<RetryConfig, 'onRetry' | 'retryCondition'>> = {
@@ -31,6 +39,11 @@ export function calculateBackoffDelay(
 
 // Check if error is retryable (network errors, 5xx server errors)
 export function isRetryableError(error: Error): boolean {
+  // Circuit breaker errors should not be retried
+  if (error instanceof CircuitBreakerError) {
+    return false;
+  }
+
   const message = error.message.toLowerCase();
   
   // Network errors
@@ -103,18 +116,19 @@ export async function withRetry<T>(
   throw lastError!;
 }
 
-// Hook for mutations with automatic retry
+// Hook for mutations with automatic retry and circuit breaker
 export function useRetryMutation<TData, TError extends Error, TVariables, TContext>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   options?: UseMutationOptions<TData, TError, TVariables, TContext> & {
     retryConfig?: RetryConfig;
+    circuitBreaker?: CircuitBreakerConfig;
     showRetryToast?: boolean;
   }
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const { retryConfig, showRetryToast = true, ...mutationOptions } = options || {};
+  const { retryConfig, circuitBreaker, showRetryToast = true, ...mutationOptions } = options || {};
 
   const wrappedMutationFn = async (variables: TVariables): Promise<TData> => {
-    return withRetry(
+    const executeWithRetry = () => withRetry(
       () => mutationFn(variables),
       {
         ...retryConfig,
@@ -129,6 +143,16 @@ export function useRetryMutation<TData, TError extends Error, TVariables, TConte
         },
       }
     );
+
+    // Wrap with circuit breaker if enabled
+    if (circuitBreaker?.enabled && circuitBreaker.name) {
+      return withCircuitBreaker(executeWithRetry, circuitBreaker.name, {
+        failureThreshold: circuitBreaker.failureThreshold,
+        resetTimeout: circuitBreaker.resetTimeout,
+      });
+    }
+
+    return executeWithRetry();
   };
 
   return useMutation({
