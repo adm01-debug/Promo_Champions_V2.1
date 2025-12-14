@@ -1,27 +1,87 @@
-import { Package, Filter, Search, Star, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Package, Search, Star, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProdutosLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useProducts, useDeleteProduct, Product } from "@/hooks/useProducts";
 import { CreateProductDialog } from "@/components/products/CreateProductDialog";
 import { EditProductDialog } from "@/components/products/EditProductDialog";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
+import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 
 const statusColors: Record<string, string> = {
   ativo: "bg-status-success/20 text-status-success border-status-success/30",
   pausado: "bg-warning/20 text-warning border-warning/30",
 };
 
+const sortOptions: SortOption[] = [
+  { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
+  { label: "Nome (Z-A)", value: "name_desc", direction: "desc" },
+  { label: "Maior preço", value: "price_desc", direction: "desc" },
+  { label: "Menor preço", value: "price_asc", direction: "asc" },
+  { label: "Mais vendidos", value: "sales_desc", direction: "desc" },
+  { label: "Melhor avaliação", value: "rating_desc", direction: "desc" },
+];
+
+const categoryOptions = [
+  { label: "Assinatura", value: "Assinatura" },
+  { label: "Serviço", value: "Serviço" },
+  { label: "Consultoria", value: "Consultoria" },
+];
+
+const statusOptions = [
+  { label: "Ativo", value: "ativo" },
+  { label: "Pausado", value: "pausado" },
+];
+
 const Produtos = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("sales_desc");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   
   const { data: products, isLoading } = useProducts(searchTerm);
   const deleteProduct = useDeleteProduct();
+
+  const filteredAndSortedProducts = useMemo(() => {
+    if (!products) return [];
+    
+    let filtered = [...products];
+    
+    // Apply category filter
+    if (categoryFilter) {
+      filtered = filtered.filter(p => p.category === categoryFilter);
+    }
+    
+    // Apply status filter
+    if (statusFilter) {
+      filtered = filtered.filter(p => p.status === statusFilter);
+    }
+    
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "name_asc":
+          return a.name.localeCompare(b.name);
+        case "name_desc":
+          return b.name.localeCompare(a.name);
+        case "price_desc":
+          return Number(b.price) - Number(a.price);
+        case "price_asc":
+          return Number(a.price) - Number(b.price);
+        case "sales_desc":
+          return b.sales_count - a.sales_count;
+        case "rating_desc":
+          return Number(b.rating) - Number(a.rating);
+        default:
+          return 0;
+      }
+    });
+  }, [products, sortBy, categoryFilter, statusFilter]);
 
   const handleDelete = () => {
     if (!deletingProduct) return;
@@ -67,17 +127,32 @@ const Produtos = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button variant="outline" className="glass">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
-              </Button>
+              <FilterPopover
+                sortOptions={sortOptions}
+                currentSort={sortBy}
+                onSortChange={setSortBy}
+                filterOptions={[
+                  {
+                    label: "Categoria",
+                    options: categoryOptions,
+                    value: categoryFilter,
+                    onChange: setCategoryFilter,
+                  },
+                  {
+                    label: "Status",
+                    options: statusOptions,
+                    value: statusFilter,
+                    onChange: setStatusFilter,
+                  },
+                ]}
+              />
             </div>
           </div>
 
           {/* Products Grid */}
-          {products && products.length > 0 ? (
+          {filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((product, index) => (
+              {filteredAndSortedProducts.map((product, index) => (
                 <div 
                   key={product.id}
                   className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all group relative"
@@ -141,7 +216,9 @@ const Produtos = () => {
               <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
               <p className="text-muted-foreground mb-4">
-                {searchTerm ? "Tente uma busca diferente" : "Adicione seu primeiro produto para começar"}
+                {searchTerm || categoryFilter || statusFilter 
+                  ? "Tente ajustar os filtros" 
+                  : "Adicione seu primeiro produto para começar"}
               </p>
             </div>
           )}
