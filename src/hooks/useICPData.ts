@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export interface ICPData {
   id: string;
@@ -37,9 +38,9 @@ export function useICPDataByClientId(clientId: string | undefined) {
         .from("icp_data")
         .select("*")
         .eq("client_id", clientId)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) throw error;
       return data as ICPData | null;
     },
     enabled: !!clientId,
@@ -81,5 +82,38 @@ export function useICPByClientName() {
       return nameMap;
     },
     staleTime: 60000,
+  });
+}
+
+// Update ICP data
+export function useUpdateICPData() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (updates: {
+      id: string;
+      ramo_atividade?: string | null;
+      grupo_nicho?: string | null;
+      capital_social?: number | null;
+      num_colaboradores?: number | null;
+      is_icp_match?: boolean;
+    }) => {
+      const { id, ...data } = updates;
+      const { error } = await supabase
+        .from("icp_data")
+        .update(data)
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["icp-data"] });
+      queryClient.invalidateQueries({ queryKey: ["icp-by-client-name"] });
+      toast.success("Dados ICP atualizados com sucesso");
+    },
+    onError: (error) => {
+      toast.error("Erro ao atualizar dados ICP");
+      console.error("Error updating ICP data:", error);
+    },
   });
 }
