@@ -16,6 +16,8 @@ import { useState, useMemo } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 const activityIcons: Record<ActivityType, typeof Phone> = {
   call: Phone,
@@ -374,7 +376,51 @@ export function ActivityList({
         {/* Statistics Summary */}
         {filteredAndSortedActivities.length > 0 && (
           <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/30">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Bar Chart */}
+              <div className="lg:col-span-1">
+                <p className="text-xs font-medium text-muted-foreground mb-2">Distribuição por Tipo</p>
+                <div className="h-[120px]">
+                  <ChartContainer
+                    config={{
+                      count: { label: "Quantidade", color: "hsl(var(--primary))" }
+                    }}
+                    className="h-full w-full"
+                  >
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={Object.entries(stats.typeStats).map(([type, count]) => ({
+                          name: activityLabels[type as ActivityType],
+                          count,
+                          type
+                        }))}
+                        layout="vertical"
+                        margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+                      >
+                        <XAxis type="number" hide />
+                        <YAxis 
+                          type="category" 
+                          dataKey="name" 
+                          width={70} 
+                          tick={{ fontSize: 10 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={20}>
+                          {Object.entries(stats.typeStats).map(([type], index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={`hsl(var(--primary))`}
+                              fillOpacity={0.8 - (index * 0.1)}
+                            />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
+              </div>
               {/* Type Stats */}
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2">Por Tipo</p>
