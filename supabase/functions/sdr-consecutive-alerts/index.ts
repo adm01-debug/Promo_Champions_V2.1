@@ -197,7 +197,7 @@ function buildEmailHtml(sdrs: UnderperformingSDR[]): string {
   `;
 }
 
-async function sendNotificationToSDR(sdr: UnderperformingSDR): Promise<void> {
+async function sendNotificationToSDR(sdr: UnderperformingSDR, supabase: any): Promise<void> {
   if (!sdr.email) {
     console.log(`SDR ${sdr.name} has no email configured, skipping personal notification`);
     return;
@@ -250,16 +250,37 @@ async function sendNotificationToSDR(sdr: UnderperformingSDR): Promise<void> {
     </html>
   `;
 
+  const subject = `⚠️ Alerta: Você está ${sdr.consecutiveDays} dias abaixo da meta`;
+
   try {
     await resend.emails.send({
       from: "CRM <onboarding@resend.dev>",
       to: [sdr.email],
-      subject: `⚠️ Alerta: Você está ${sdr.consecutiveDays} dias abaixo da meta`,
+      subject,
       html,
     });
     console.log(`Personal notification sent to ${sdr.name} (${sdr.email})`);
-  } catch (error) {
+    
+    // Log successful email
+    await supabase.from("email_logs").insert({
+      function_name: "sdr-consecutive-alerts",
+      recipient_email: sdr.email,
+      subject,
+      status: "sent",
+      metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays }
+    });
+  } catch (error: any) {
     console.error(`Error sending email to ${sdr.email}:`, error);
+    
+    // Log failed email
+    await supabase.from("email_logs").insert({
+      function_name: "sdr-consecutive-alerts",
+      recipient_email: sdr.email,
+      subject,
+      status: "failed",
+      error_message: error.message,
+      metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays }
+    });
   }
 }
 
@@ -347,18 +368,45 @@ const handler = async (req: Request): Promise<Response> => {
     // Send summary to admins/managers
     if (adminEmails.length > 0) {
       const summaryHtml = buildEmailHtml(underperformingSDRs);
-      await resend.emails.send({
-        from: "CRM <onboarding@resend.dev>",
-        to: adminEmails,
-        subject: `⚠️ Alerta: ${underperformingSDRs.length} SDRs abaixo da meta por dias consecutivos`,
-        html: summaryHtml,
-      });
-      console.log("Summary email sent to admins/managers");
+      const summarySubject = `⚠️ Alerta: ${underperformingSDRs.length} SDRs abaixo da meta por dias consecutivos`;
+      
+      try {
+        await resend.emails.send({
+          from: "CRM <onboarding@resend.dev>",
+          to: adminEmails,
+          subject: summarySubject,
+          html: summaryHtml,
+        });
+        console.log("Summary email sent to admins/managers");
+        
+        // Log successful emails for each admin
+        for (const email of adminEmails) {
+          await supabase.from("email_logs").insert({
+            function_name: "sdr-consecutive-alerts",
+            recipient_email: email,
+            subject: summarySubject,
+            status: "sent",
+            metadata: { type: "admin_summary", sdrs_count: underperformingSDRs.length }
+          });
+        }
+      } catch (error: any) {
+        console.error("Error sending summary email:", error);
+        for (const email of adminEmails) {
+          await supabase.from("email_logs").insert({
+            function_name: "sdr-consecutive-alerts",
+            recipient_email: email,
+            subject: summarySubject,
+            status: "failed",
+            error_message: error.message,
+            metadata: { type: "admin_summary", sdrs_count: underperformingSDRs.length }
+          });
+        }
+      }
     }
 
     // Send individual notifications to each underperforming SDR
     for (const sdr of underperformingSDRs) {
-      await sendNotificationToSDR(sdr);
+      await sendNotificationToSDR(sdr, supabase);
     }
 
     // Log the alert to history

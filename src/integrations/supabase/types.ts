@@ -605,6 +605,39 @@ export type Database = {
           },
         ]
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          function_name: string
+          id: string
+          metadata: Json | null
+          recipient_email: string
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          function_name: string
+          id?: string
+          metadata?: Json | null
+          recipient_email: string
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          function_name?: string
+          id?: string
+          metadata?: Json | null
+          recipient_email?: string
+          status?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
       icp_data: {
         Row: {
           bitrix_id: string | null
