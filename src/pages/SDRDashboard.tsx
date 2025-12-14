@@ -7,6 +7,7 @@ import { SchedulingRateGauge } from "@/components/sdr/SchedulingRateGauge";
 import { TopSDRsRanking } from "@/components/sdr/TopSDRsRanking";
 import { RecentProspects } from "@/components/sdr/RecentProspects";
 import { SDRConversionRanking } from "@/components/sdr/SDRConversionRanking";
+import { SDRConversionEvolution } from "@/components/sdr/SDRConversionEvolution";
 import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { SDRDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -143,12 +144,17 @@ export default function SDRDashboard() {
           </div>
         </div>
 
+        {/* Conversion Evolution Chart */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
+          <SDRConversionEvolution period={period} />
+        </div>
+
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
             <SDRConversionRanking period={period} />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
             <TopSDRsRanking />
           </div>
         </div>
