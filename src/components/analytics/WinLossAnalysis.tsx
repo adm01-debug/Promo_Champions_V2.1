@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useWinLossAnalysis, WinLossFilters } from '@/hooks/useWinLossAnalysis';
 import { useSalespeople } from '@/hooks/useSalespeople';
-import { Trophy, XCircle, TrendingUp, Package, Users, Filter, Calendar } from 'lucide-react';
+import { Trophy, XCircle, TrendingUp, Package, Users, Filter, Calendar, Sparkles } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
   Select,
@@ -19,8 +21,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 
-const COLORS_WON = ['hsl(var(--chart-2))', 'hsl(142 76% 46%)', 'hsl(142 76% 56%)', 'hsl(142 76% 66%)'];
+const COLORS_WON = ['hsl(var(--status-success))', 'hsl(142 76% 46%)', 'hsl(142 76% 56%)', 'hsl(142 76% 66%)'];
 const COLORS_LOST = ['hsl(var(--destructive))', 'hsl(0 84% 50%)', 'hsl(0 84% 60%)', 'hsl(0 84% 70%)'];
 
 const PERIOD_PRESETS = [
@@ -57,18 +60,18 @@ export function WinLossAnalysis() {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="glass border-border/40 dark:border-glow animate-fade-in">
+      <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
         <CardHeader>
           <CardTitle className="text-lg font-display flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
-              <Trophy className="h-4 w-4 text-white" />
+            <div className="p-2 rounded-lg bg-gradient-to-br from-rank-gold/20 to-rank-gold/5 shadow-lg">
+              <Trophy className="h-4 w-4 text-rank-gold animate-pulse" />
             </div>
             <span className="gradient-text">Análise Win/Loss</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-32 bg-muted/50 rounded-lg animate-shimmer" />
+            <div className="h-32 bg-muted/30 rounded-xl animate-shimmer" />
           </div>
         </CardContent>
       </Card>
@@ -76,28 +79,42 @@ export function WinLossAnalysis() {
   }
 
   const hasData = data && (data.totalWins > 0 || data.totalLosses > 0);
+  const isHighWinRate = data && data.winRate >= 50;
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow hover-lift transition-all duration-300 animate-fade-in">
+    <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40">
-              <Trophy className="h-4 w-4 text-white" />
+          <CardTitle className="text-lg font-display flex items-center gap-2 group">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-rank-gold/20 to-rank-gold/5 shadow-lg group-hover:scale-110 transition-transform">
+              <Trophy className="h-4 w-4 text-rank-gold" />
             </div>
             <span className="gradient-text">Análise Win/Loss</span>
+            {isHighWinRate && (
+              <Sparkles className="h-4 w-4 text-rank-gold animate-pulse" />
+            )}
           </CardTitle>
-          <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
-            <CollapsibleTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 transition-all duration-300 hover:scale-105">
-                <Filter className="h-4 w-4" />
-                Filtros
-                {hasActiveFilters && (
-                  <span className="ml-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-          </Collapsible>
+          <div className="flex items-center gap-2">
+            {hasData && (
+              <Badge variant="secondary" className={cn(
+                "text-[10px] shadow-sm",
+                isHighWinRate ? "bg-status-success/10 text-status-success" : "bg-destructive/10 text-destructive"
+              )}>
+                {data.winRate.toFixed(0)}% win rate
+              </Badge>
+            )}
+            <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
+              <CollapsibleTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2 hover:scale-105 transition-transform">
+                  <Filter className="h-4 w-4" />
+                  Filtros
+                  {hasActiveFilters && (
+                    <span className="ml-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+            </Collapsible>
+          </div>
         </div>
 
         {/* Filters Panel */}
@@ -250,13 +267,15 @@ export function WinLossAnalysis() {
             {/* Reasons Charts */}
             <div className="grid grid-cols-2 gap-4">
               {/* Win Reasons */}
-              <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
-                <h4 className="text-sm font-display font-medium mb-2 flex items-center gap-1">
-                  <Trophy className="h-4 w-4 text-status-success" />
+              <div className="animate-fade-in glass rounded-xl p-4 border border-status-success/20" style={{ animationDelay: '150ms' }}>
+                <h4 className="text-sm font-display font-medium mb-3 flex items-center gap-2">
+                  <div className="p-1 rounded-md bg-status-success/10">
+                    <Trophy className="h-3.5 w-3.5 text-status-success" />
+                  </div>
                   Motivos de Vitória
                 </h4>
                 {data.reasonsWon.length > 0 ? (
-                  <div className="h-40">
+                  <div className="h-36">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -265,16 +284,27 @@ export function WinLossAnalysis() {
                           nameKey="reason"
                           cx="50%"
                           cy="50%"
-                          innerRadius={30}
-                          outerRadius={60}
+                          innerRadius={28}
+                          outerRadius={55}
                         >
                           {data.reasonsWon.map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS_WON[index % COLORS_WON.length]} />
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={COLORS_WON[index % COLORS_WON.length]}
+                              className="transition-all hover:opacity-80"
+                              style={{ filter: `drop-shadow(0 2px 4px ${COLORS_WON[index % COLORS_WON.length]}40)` }}
+                            />
                           ))}
                         </Pie>
                         <Tooltip 
                           formatter={(value: number, name: string) => [`${value} (${((value / data.totalWins) * 100).toFixed(0)}%)`, name]}
-                          contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '0.75rem' }}
+                          contentStyle={{ 
+                            backgroundColor: 'hsl(var(--card))', 
+                            borderColor: 'hsl(var(--border))', 
+                            borderRadius: '12px',
+                            boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
+                            backdropFilter: 'blur(8px)'
+                          }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -282,27 +312,31 @@ export function WinLossAnalysis() {
                 ) : (
                   <p className="text-sm text-muted-foreground glass rounded-lg p-4 text-center">Sem dados</p>
                 )}
-                <div className="space-y-1 mt-2">
-                  {data.reasonsWon.slice(0, 3).map((r, i) => (
-                    <div key={r.reason} className="flex items-center justify-between text-xs group cursor-pointer hover:bg-muted/30 rounded-md px-2 py-1 transition-all">
-                      <span className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full shadow-sm" style={{ backgroundColor: COLORS_WON[i] }} />
-                        <span className="group-hover:text-foreground transition-colors">{r.reason}</span>
-                      </span>
-                      <span className="text-muted-foreground font-display font-medium">{r.percentage.toFixed(0)}%</span>
-                    </div>
-                  ))}
-                </div>
+                <ScrollArea className="h-[80px] mt-2">
+                  <div className="space-y-1">
+                    {data.reasonsWon.slice(0, 5).map((r, i) => (
+                      <div key={r.reason} className="flex items-center justify-between text-xs group cursor-default hover:bg-status-success/5 rounded-md px-2 py-1.5 transition-all">
+                        <span className="flex items-center gap-2">
+                          <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: COLORS_WON[i % COLORS_WON.length] }} />
+                          <span className="group-hover:text-status-success transition-colors truncate max-w-[120px]">{r.reason}</span>
+                        </span>
+                        <span className="text-status-success font-display font-bold">{r.percentage.toFixed(0)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
 
               {/* Loss Reasons */}
-              <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-                <h4 className="text-sm font-display font-medium mb-2 flex items-center gap-1">
-                  <XCircle className="h-4 w-4 text-destructive" />
+              <div className="animate-fade-in glass rounded-xl p-4 border border-destructive/20" style={{ animationDelay: '200ms' }}>
+                <h4 className="text-sm font-display font-medium mb-3 flex items-center gap-2">
+                  <div className="p-1 rounded-md bg-destructive/10">
+                    <XCircle className="h-3.5 w-3.5 text-destructive" />
+                  </div>
                   Motivos de Perda
                 </h4>
                 {data.reasonsLost.length > 0 ? (
-                  <div className="h-40">
+                  <div className="h-36">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -311,16 +345,27 @@ export function WinLossAnalysis() {
                           nameKey="reason"
                           cx="50%"
                           cy="50%"
-                          innerRadius={30}
-                          outerRadius={60}
+                          innerRadius={28}
+                          outerRadius={55}
                         >
                           {data.reasonsLost.map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS_LOST[index % COLORS_LOST.length]} />
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={COLORS_LOST[index % COLORS_LOST.length]}
+                              className="transition-all hover:opacity-80"
+                              style={{ filter: `drop-shadow(0 2px 4px ${COLORS_LOST[index % COLORS_LOST.length]}40)` }}
+                            />
                           ))}
                         </Pie>
                         <Tooltip 
                           formatter={(value: number, name: string) => [`${value} (${((value / data.totalLosses) * 100).toFixed(0)}%)`, name]}
-                          contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '0.75rem' }}
+                          contentStyle={{ 
+                            backgroundColor: 'hsl(var(--card))', 
+                            borderColor: 'hsl(var(--border))', 
+                            borderRadius: '12px',
+                            boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
+                            backdropFilter: 'blur(8px)'
+                          }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -328,17 +373,19 @@ export function WinLossAnalysis() {
                 ) : (
                   <p className="text-sm text-muted-foreground glass rounded-lg p-4 text-center">Sem dados</p>
                 )}
-                <div className="space-y-1 mt-2">
-                  {data.reasonsLost.slice(0, 3).map((r, i) => (
-                    <div key={r.reason} className="flex items-center justify-between text-xs group cursor-pointer hover:bg-muted/30 rounded-md px-2 py-1 transition-all">
-                      <span className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full shadow-sm" style={{ backgroundColor: COLORS_LOST[i] }} />
-                        <span className="group-hover:text-foreground transition-colors">{r.reason}</span>
-                      </span>
-                      <span className="text-muted-foreground font-display font-medium">{r.percentage.toFixed(0)}%</span>
-                    </div>
-                  ))}
-                </div>
+                <ScrollArea className="h-[80px] mt-2">
+                  <div className="space-y-1">
+                    {data.reasonsLost.slice(0, 5).map((r, i) => (
+                      <div key={r.reason} className="flex items-center justify-between text-xs group cursor-default hover:bg-destructive/5 rounded-md px-2 py-1.5 transition-all">
+                        <span className="flex items-center gap-2">
+                          <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: COLORS_LOST[i % COLORS_LOST.length] }} />
+                          <span className="group-hover:text-destructive transition-colors truncate max-w-[120px]">{r.reason}</span>
+                        </span>
+                        <span className="text-destructive font-display font-bold">{r.percentage.toFixed(0)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
             </div>
 
