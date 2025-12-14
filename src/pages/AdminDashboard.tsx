@@ -35,6 +35,7 @@ import { useUserRoles } from "@/hooks/useUserRoles";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
 import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";
+import { EmailMetricsDashboard } from "@/components/analytics/EmailMetricsDashboard";
 import { getQueryMetrics } from "@/hooks/useQueryPerformance";
 
 // Quick stats hook
@@ -553,6 +554,9 @@ function AdminDashboardContent() {
 
       {/* Circuit Breaker Dashboard */}
       <CircuitBreakerDashboard />
+
+      {/* Email Metrics Dashboard */}
+      <EmailMetricsDashboard />
     </div>
   );
 }
