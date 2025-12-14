@@ -5,6 +5,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { GlobalSearch, SearchTrigger } from "./GlobalSearch";
 import { Search } from "lucide-react";
 import { useSecurityAlertNotifications } from "@/hooks/useSecurityAlertNotifications";
+import { useSDRAlertNotifications } from "@/hooks/useSDRAlertNotifications";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,9 @@ export function MainLayout({ children }: MainLayoutProps) {
   
   // Enable real-time security alert notifications for admins/managers
   useSecurityAlertNotifications();
+  
+  // Enable real-time SDR alert notifications for admins/managers
+  useSDRAlertNotifications();
 
   return (
     <SidebarProvider>
