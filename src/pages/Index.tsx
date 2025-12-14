@@ -12,6 +12,7 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { CompetitiveLeaderboard } from "@/components/gamification/CompetitiveLeaderboard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
+import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -24,6 +25,7 @@ import {
 
 const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
+  const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
   
   // Subscribe to real-time sales notifications
@@ -55,8 +57,8 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
             <StatCard
               title="Faturamento Total"
-              value={kpis ? formatCurrency(kpis.current.totalRevenue) : "R$ 847.250"}
-              change={kpis?.changes.revenue ?? 12.5}
+              value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
+              change={kpis?.changes.revenue ?? 0}
               previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
               icon={DollarSign}
               variant="primary"
@@ -65,8 +67,8 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
             <StatCard
               title="Vendas Realizadas"
-              value={kpis ? String(kpis.current.totalSales) : "312"}
-              change={kpis?.changes.sales ?? 8.3}
+              value={String(kpis?.current.totalSales ?? 0)}
+              change={kpis?.changes.sales ?? 0}
               previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
               icon={ShoppingBag}
             />
@@ -74,8 +76,8 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             <StatCard
               title="Novos Clientes"
-              value={kpis ? String(kpis.current.newClients) : "89"}
-              change={kpis?.changes.clients ?? -2.1}
+              value={String(kpis?.current.newClients ?? 0)}
+              change={kpis?.changes.clients ?? 0}
               previousValue={kpis ? String(kpis.previous.newClients) : undefined}
               icon={Users}
             />
@@ -83,8 +85,8 @@ const Index = () => {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
             <StatCard
               title="Taxa de Conversão"
-              value={kpis ? `${kpis.current.conversionRate.toFixed(1)}%` : "12.6%"}
-              change={kpis?.changes.conversion ?? 15.7}
+              value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+              change={kpis?.changes.conversion ?? 0}
               previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
               icon={TrendingUp}
             />
@@ -100,7 +102,10 @@ const Index = () => {
 
           {/* Right Column - Goal */}
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-            <GoalProgress current={kpis?.current.totalRevenue ?? 847250} goal={1000000} />
+            <GoalProgress 
+              current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
+              goal={goalsData?.totalGoal || 0} 
+            />
           </div>
         </div>
 
