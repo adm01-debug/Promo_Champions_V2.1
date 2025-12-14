@@ -23,7 +23,8 @@ import {
   Settings,
   Link2,
   Briefcase,
-  LucideIcon
+  LucideIcon,
+  ShieldCheck
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -81,6 +82,7 @@ const teamItems: MenuItem[] = [
 ];
 
 const systemItems: MenuItem[] = [
+  { title: "Admin", url: "/admin", icon: ShieldCheck, requireAdminOrManager: true },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
   { title: "Bitrix24", url: "/bitrix24", icon: Link2, requireAdminOrManager: true },
   { title: "Notificações", url: "/notificacoes", icon: Bell },
