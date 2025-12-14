@@ -32,6 +32,7 @@ import AnimacoesDemo from "./pages/AnimacoesDemo";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import AccessDenied from "./pages/AccessDenied";
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,7 @@ const App = () => (
                     <Route path="/ranking" element={<RankingCompetitivo />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
                     <Route path="/animacoes" element={<AnimacoesDemo />} />
+                    <Route path="/acesso-negado" element={<AccessDenied />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
