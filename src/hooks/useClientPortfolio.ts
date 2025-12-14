@@ -33,6 +33,9 @@ export interface PortfolioStats {
   activeClients: number;
   inactiveClients: number;
   totalValue: number;
+  icpMatch: number;
+  icpPartial: number;
+  icpNone: number;
 }
 
 export function useClientPortfolio(salespersonId?: string) {
@@ -80,6 +83,7 @@ export function usePortfolioStats(salespersonId?: string) {
         .from("client_portfolio")
         .select(`
           status,
+          client_id,
           client:clients(total_value)
         `);
 
@@ -91,6 +95,31 @@ export function usePortfolioStats(salespersonId?: string) {
 
       if (error) throw error;
 
+      // Get ICP data for these clients
+      const clientIds = data?.map(item => item.client_id).filter(Boolean) || [];
+      const { data: icpData } = await supabase
+        .from("icp_data")
+        .select("client_id, is_icp_match, ramo_atividade, grupo_nicho")
+        .in("client_id", clientIds);
+
+      const icpMap = new Map(icpData?.map(icp => [icp.client_id, icp]) || []);
+
+      // Calculate ICP stats
+      let icpMatch = 0;
+      let icpPartial = 0;
+      let icpNone = 0;
+
+      data?.forEach(item => {
+        const icp = icpMap.get(item.client_id);
+        if (icp?.is_icp_match) {
+          icpMatch++;
+        } else if (icp?.ramo_atividade || icp?.grupo_nicho) {
+          icpPartial++;
+        } else {
+          icpNone++;
+        }
+      });
+
       const stats: PortfolioStats = {
         totalClients: data?.length || 0,
         activeClients: data?.filter(item => item.status === 'active').length || 0,
@@ -99,6 +128,9 @@ export function usePortfolioStats(salespersonId?: string) {
           const value = (item.client as any)?.total_value || 0;
           return sum + Number(value);
         }, 0) || 0,
+        icpMatch,
+        icpPartial,
+        icpNone,
       };
 
       return stats;
