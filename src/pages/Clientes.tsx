@@ -1,16 +1,29 @@
-import { Users, Filter, Search, Mail, Phone, Loader2 } from "lucide-react";
+import { Users, Filter, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ClientesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState } from "react";
-import { useClients } from "@/hooks/useClients";
+import { useClients, useDeleteClient, Client } from "@/hooks/useClients";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
+import { EditClientDialog } from "@/components/clients/EditClientDialog";
+import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 
 const Clientes = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [deletingClient, setDeletingClient] = useState<Client | null>(null);
+  
   const { data: clients, isLoading } = useClients(searchTerm);
+  const deleteClient = useDeleteClient();
+
+  const handleDelete = () => {
+    if (!deletingClient) return;
+    deleteClient.mutate(deletingClient.id, {
+      onSuccess: () => setDeletingClient(null),
+    });
+  };
 
   return (
     <SkeletonTransition
@@ -62,16 +75,36 @@ const Clientes = () => {
               {clients.map((client, index) => (
                 <div 
                   key={client.id}
-                  className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all cursor-pointer group"
+                  className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all group relative"
                   style={{ animationDelay: `${200 + index * 50}ms` }}
                 >
+                  {/* Action Buttons */}
+                  <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
+                      onClick={() => setEditingClient(client)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive"
+                      onClick={() => setDeletingClient(client)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
                         {client.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 pr-16">
                       <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
                         {client.name}
                       </h3>
@@ -116,6 +149,23 @@ const Clientes = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <EditClientDialog
+        client={editingClient}
+        open={!!editingClient}
+        onOpenChange={(open) => !open && setEditingClient(null)}
+      />
+
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={!!deletingClient}
+        onOpenChange={(open) => !open && setDeletingClient(null)}
+        onConfirm={handleDelete}
+        title="Excluir Cliente"
+        description={`Tem certeza que deseja excluir o cliente "${deletingClient?.name}"? Esta ação não pode ser desfeita.`}
+        isDeleting={deleteClient.isPending}
+      />
     </SkeletonTransition>
   );
 };
