@@ -16,6 +16,8 @@ import {
   NotificationPreference
 } from "@/hooks/useNotificationPreferences";
 import { SoundSettings } from "@/components/settings/SoundSettings";
+import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
+import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -371,14 +373,20 @@ export default function Notificacoes() {
         </div>
       )}
 
-      <SoundSettings />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SoundSettings />
+        <SDRAlertHistory />
+      </div>
 
       <Card className="glass">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-warning" />
-            Sobre as Notificações
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-warning" />
+              Sobre as Notificações
+            </CardTitle>
+            <TestSDRAlertButton />
+          </div>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
@@ -388,6 +396,7 @@ export default function Notificacoes() {
             <li>Deals parados há mais de X dias sem atualização</li>
             <li>Clientes inativos há mais de X dias sem compra</li>
             <li>Vendedores com metas 40%+ abaixo do esperado</li>
+            <li>SDRs abaixo da meta por dias consecutivos</li>
           </ul>
           <p className="pt-2">
             Configure o domínio do Resend para enviar emails de produção. 

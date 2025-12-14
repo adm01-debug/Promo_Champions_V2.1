@@ -271,6 +271,19 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log("Starting SDR consecutive alerts check...");
 
+    // Check if this is a manual trigger
+    let triggeredBy = "cron";
+    try {
+      const body = await req.json();
+      if (body?.triggered_by === "manual") {
+        triggeredBy = "manual";
+      }
+    } catch {
+      // No body or invalid JSON, default to cron
+    }
+
+    console.log(`Triggered by: ${triggeredBy}`);
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -291,6 +304,18 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (underperformingSDRs.length === 0) {
       console.log("No underperforming SDRs found, no alerts needed");
+
+      // Still log the check for manual triggers
+      if (triggeredBy === "manual") {
+        await supabase.from("sdr_alert_history").insert({
+          triggered_by: triggeredBy,
+          sdrs_notified: 0,
+          threshold_used: consecutiveThreshold,
+          sdr_details: [],
+          admin_emails: [],
+        });
+      }
+
       return new Response(
         JSON.stringify({ success: true, message: "No alerts needed", count: 0 }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -335,6 +360,15 @@ const handler = async (req: Request): Promise<Response> => {
     for (const sdr of underperformingSDRs) {
       await sendNotificationToSDR(sdr);
     }
+
+    // Log the alert to history
+    await supabase.from("sdr_alert_history").insert({
+      triggered_by: triggeredBy,
+      sdrs_notified: underperformingSDRs.length,
+      threshold_used: consecutiveThreshold,
+      sdr_details: underperformingSDRs,
+      admin_emails: adminEmails,
+    });
 
     return new Response(
       JSON.stringify({ 
