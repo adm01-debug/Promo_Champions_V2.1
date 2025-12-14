@@ -20,7 +20,8 @@ import {
   GitBranch,
   Target,
   Crosshair,
-  Swords
+  Swords,
+  Sparkles
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -71,6 +72,7 @@ const financeItems = [
 
 const systemItems = [
   { title: "Notificações", url: "/notificacoes", icon: Bell },
+  { title: "Animações", url: "/animacoes", icon: Sparkles },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
   { title: "Ajuda", url: "/ajuda", icon: HelpCircle },
 ];
