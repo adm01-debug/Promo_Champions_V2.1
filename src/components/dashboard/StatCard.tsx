@@ -76,7 +76,7 @@ export const StatCard = ({
             className={cn(
               "h-5 w-5",
               variant === "primary"
-                ? "text-white"
+                ? "text-white animate-heartbeat"
                 : variant === "secondary"
                 ? "text-secondary-foreground"
                 : "text-muted-foreground group-hover:text-primary transition-colors"
