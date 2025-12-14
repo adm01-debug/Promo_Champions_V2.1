@@ -12,22 +12,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useClientPortfolio, usePortfolioStats } from "@/hooks/useClientPortfolio";
+import { useRoutingHistory, useSalespersonPerformance } from "@/hooks/useLeadRouting";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { PortfolioStatsCards } from "@/components/portfolio/PortfolioStatsCards";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 import { AssignClientDialog } from "@/components/portfolio/AssignClientDialog";
-import { Briefcase, Plus, Search, Filter } from "lucide-react";
+import { AutoRouteDialog } from "@/components/portfolio/AutoRouteDialog";
+import { RoutingHistoryTable } from "@/components/portfolio/RoutingHistoryTable";
+import { PerformanceRankingCard } from "@/components/portfolio/PerformanceRankingCard";
+import { Briefcase, Plus, Search, Filter, Zap, History } from "lucide-react";
 
 export default function Portfolio() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [routeDialogOpen, setRouteDialogOpen] = useState(false);
 
   const salespersonId = selectedSalesperson === "all" ? undefined : selectedSalesperson;
 
   const { data: portfolio, isLoading: loadingPortfolio } = useClientPortfolio(salespersonId);
   const { data: stats, isLoading: loadingStats } = usePortfolioStats(salespersonId);
+  const { data: routingHistory, isLoading: loadingHistory } = useRoutingHistory();
+  const { data: performers, isLoading: loadingPerformers } = useSalespersonPerformance();
   const { data: salespeople } = useSalespeople();
 
   // Filter to Closers and Hybrids (portfolio owners)
@@ -73,10 +80,16 @@ export default function Portfolio() {
             </p>
           </div>
 
-          <Button onClick={() => setAssignDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Atribuir Cliente
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setRouteDialogOpen(true)}>
+              <Zap className="mr-2 h-4 w-4" />
+              Rotear Lead
+            </Button>
+            <Button onClick={() => setAssignDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Atribuir Cliente
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -140,6 +153,11 @@ export default function Portfolio() {
           <TabsList>
             <TabsTrigger value="table">Tabela</TabsTrigger>
             <TabsTrigger value="by-closer">Por Closer</TabsTrigger>
+            <TabsTrigger value="routing" className="flex items-center gap-1">
+              <History className="h-3 w-3" />
+              Roteamentos
+            </TabsTrigger>
+            <TabsTrigger value="ranking">Ranking</TabsTrigger>
           </TabsList>
 
           <TabsContent value="table">
@@ -206,12 +224,35 @@ export default function Portfolio() {
               })}
             </div>
           </TabsContent>
+
+          <TabsContent value="routing">
+            <Card className="glass">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <History className="h-5 w-5 text-primary" />
+                  Histórico de Roteamentos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RoutingHistoryTable data={routingHistory} isLoading={loadingHistory} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="ranking">
+            <PerformanceRankingCard data={performers} isLoading={loadingPerformers} />
+          </TabsContent>
         </Tabs>
       </div>
 
       <AssignClientDialog
         open={assignDialogOpen}
         onOpenChange={setAssignDialogOpen}
+      />
+
+      <AutoRouteDialog
+        open={routeDialogOpen}
+        onOpenChange={setRouteDialogOpen}
       />
     </>
   );
