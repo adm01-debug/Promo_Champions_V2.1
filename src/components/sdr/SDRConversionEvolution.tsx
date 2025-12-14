@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
 import { TrendingUp, Users } from "lucide-react";
 import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -31,6 +31,7 @@ interface SDR {
 interface ChartDataPoint {
   date: string;
   label: string;
+  teamAverage: number;
   [key: string]: number | string;
 }
 
@@ -60,7 +61,7 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
         .eq('is_active', true)
         .in('role', ['sdr', 'hybrid']);
 
-      if (!sdrs?.length) return { chartData: [], sdrs: [] };
+      if (!sdrs?.length) return { chartData: [], sdrs: [], overallAverage: 0 };
 
       // Fetch activities (meetings scheduled)
       const { data: activities } = await supabase
@@ -89,7 +90,10 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
           ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}`
           : format(date, 'dd/MM', { locale: ptBR });
 
-        const point: ChartDataPoint = { date: dateKey, label };
+        const point: ChartDataPoint = { date: dateKey, label, teamAverage: 0 };
+
+        let totalMeetings = 0;
+        let totalLeads = 0;
 
         sdrs.forEach(sdr => {
           // Count meetings scheduled
@@ -112,15 +116,27 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
             return s.salesperson_id === sdr.id && matchDate;
           }).length ?? 0;
 
+          totalMeetings += meetings;
+          totalLeads += leads;
+
           // Calculate conversion rate
           const conversionRate = leads > 0 ? Math.round((meetings / leads) * 100) : 0;
           point[sdr.id] = conversionRate;
         });
 
+        // Calculate team average for this point
+        point.teamAverage = totalLeads > 0 ? Math.round((totalMeetings / totalLeads) * 100) : 0;
+
         return point;
       });
 
-      return { chartData, sdrs };
+      // Calculate overall average across all data points
+      const validAverages = chartData.filter(p => p.teamAverage > 0).map(p => p.teamAverage);
+      const overallAverage = validAverages.length > 0 
+        ? Math.round(validAverages.reduce((a, b) => a + b, 0) / validAverages.length)
+        : 0;
+
+      return { chartData, sdrs, overallAverage };
     },
     staleTime: 60000,
   });
@@ -143,7 +159,7 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
     );
   }
 
-  const { chartData = [], sdrs = [] } = data || {};
+  const { chartData = [], sdrs = [], overallAverage = 0 } = data || {};
 
   const displayedSDRs = selectedSDR === "all" 
     ? sdrs 
@@ -172,12 +188,20 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
   return (
     <Card className="glass border-border/40 hover-lift">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="flex items-center gap-2 font-display">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-primary" />
-          </div>
-          Evolução de Conversão SDR
-        </CardTitle>
+        <div className="flex items-center gap-4">
+          <CardTitle className="flex items-center gap-2 font-display">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-primary" />
+            </div>
+            Evolução de Conversão SDR
+          </CardTitle>
+          {overallAverage > 0 && (
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 text-xs">
+              <span className="text-muted-foreground">Média:</span>
+              <span className="font-semibold text-foreground">{overallAverage}%</span>
+            </div>
+          )}
+        </div>
         <Select value={selectedSDR} onValueChange={setSelectedSDR}>
           <SelectTrigger className="w-[180px] h-9 text-sm">
             <Users className="w-4 h-4 mr-2 text-muted-foreground" />
@@ -209,6 +233,20 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
               tickFormatter={(value) => `${value}%`}
               domain={[0, 100]}
             />
+            {overallAverage > 0 && (
+              <ReferenceLine 
+                y={overallAverage} 
+                stroke="hsl(var(--muted-foreground))" 
+                strokeDasharray="5 5"
+                strokeWidth={1.5}
+                label={{
+                  value: `Média ${overallAverage}%`,
+                  position: 'right',
+                  fill: 'hsl(var(--muted-foreground))',
+                  fontSize: 11,
+                }}
+              />
+            )}
             <Tooltip
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
@@ -218,18 +256,30 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
               }}
               labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600 }}
               formatter={(value: number, name: string) => {
+                if (name === 'teamAverage') return [`${value}%`, 'Média Equipe'];
                 const sdr = sdrs.find(s => s.id === name);
                 return [`${value}%`, sdr?.name || name];
               }}
             />
             <Legend 
               formatter={(value) => {
+                if (value === 'teamAverage') return 'Média Equipe';
                 const sdr = sdrs.find(s => s.id === value);
                 return sdr?.name || value;
               }}
               wrapperStyle={{ paddingTop: '20px' }}
             />
-            {displayedSDRs.map((sdr, index) => {
+            {/* Team average line */}
+            <Line
+              type="monotone"
+              dataKey="teamAverage"
+              name="teamAverage"
+              stroke="hsl(var(--muted-foreground))"
+              strokeWidth={2}
+              strokeDasharray="5 5"
+              dot={false}
+            />
+            {displayedSDRs.map((sdr) => {
               const colorIndex = sdrs.findIndex(s => s.id === sdr.id);
               return (
                 <Line
