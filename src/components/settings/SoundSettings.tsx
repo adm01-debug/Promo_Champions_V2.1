@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,18 +8,35 @@ import { Slider } from "@/components/ui/slider";
 import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSettings";
 import { toast } from "sonner";
 
+// Preload confetti module
+type ConfettiFunction = typeof import('canvas-confetti').default;
+
 export function SoundSettings() {
   const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
   const [activeCelebration, setActiveCelebration] = useState<'meta' | 'levelup' | 'record' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const confettiRef = useRef<ConfettiFunction | null>(null);
+
+  // Preload confetti on mount
+  useEffect(() => {
+    import('canvas-confetti').then((module) => {
+      confettiRef.current = module.default;
+    });
+  }, []);
 
   const handleTestCelebration = async () => {
     if (activeCelebration || isLoading) return;
-    setIsLoading(true);
-    setActiveCelebration('meta');
     
-    const confetti = (await import('canvas-confetti')).default;
-    setIsLoading(false);
+    let confetti = confettiRef.current;
+    if (!confetti) {
+      setIsLoading(true);
+      setActiveCelebration('meta');
+      confetti = (await import('canvas-confetti')).default;
+      confettiRef.current = confetti;
+      setIsLoading(false);
+    } else {
+      setActiveCelebration('meta');
+    }
     
     playSound();
     
@@ -63,11 +80,17 @@ export function SoundSettings() {
 
   const handleTestLevelUp = async () => {
     if (activeCelebration || isLoading) return;
-    setIsLoading(true);
-    setActiveCelebration('levelup');
     
-    const confetti = (await import('canvas-confetti')).default;
-    setIsLoading(false);
+    let confetti = confettiRef.current;
+    if (!confetti) {
+      setIsLoading(true);
+      setActiveCelebration('levelup');
+      confetti = (await import('canvas-confetti')).default;
+      confettiRef.current = confetti;
+      setIsLoading(false);
+    } else {
+      setActiveCelebration('levelup');
+    }
     
     playSound();
     setTimeout(() => playSound(), 300);
@@ -120,11 +143,17 @@ export function SoundSettings() {
 
   const handleTestStreakRecord = async () => {
     if (activeCelebration || isLoading) return;
-    setIsLoading(true);
-    setActiveCelebration('record');
     
-    const confetti = (await import('canvas-confetti')).default;
-    setIsLoading(false);
+    let confetti = confettiRef.current;
+    if (!confetti) {
+      setIsLoading(true);
+      setActiveCelebration('record');
+      confetti = (await import('canvas-confetti')).default;
+      confettiRef.current = confetti;
+      setIsLoading(false);
+    } else {
+      setActiveCelebration('record');
+    }
     
     playSound();
     
