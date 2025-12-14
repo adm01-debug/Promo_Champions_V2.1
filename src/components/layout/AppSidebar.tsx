@@ -180,7 +180,11 @@ export function AppSidebar() {
             <SidebarMenu>
               {systemItems.map((item) => {
                 const isNotifications = item.title === "Notificações";
+                const isSettings = item.title === "Configurações";
                 const hasAlerts = isNotifications && alertCount > 0;
+                // For demo purposes, settings wiggle can be triggered by a condition
+                // In production, this would check for pending configurations
+                const hasPendingConfig = isSettings && false; // Set to true to test wiggle
                 
                 return (
                   <SidebarMenuItem key={item.title}>
@@ -194,12 +198,16 @@ export function AppSidebar() {
                         <div className="relative">
                           <item.icon className={cn(
                             "h-4 w-4 flex-shrink-0",
-                            hasAlerts && "animate-bounce text-warning"
+                            hasAlerts && "animate-bounce text-warning",
+                            hasPendingConfig && "animate-wiggle-loop text-primary"
                           )} />
                           {hasAlerts && (
                             <span className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-destructive text-[9px] font-bold text-white flex items-center justify-center shadow-sm">
                               {alertCount > 9 ? "9+" : alertCount}
                             </span>
+                          )}
+                          {hasPendingConfig && (
+                            <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-primary animate-ping-slow" />
                           )}
                         </div>
                         {!isCollapsed && <span>{item.title}</span>}
