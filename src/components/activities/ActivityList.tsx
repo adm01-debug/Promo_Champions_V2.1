@@ -85,7 +85,12 @@ export function ActivityList({
   const [sortBy, setSortBy] = useState("date_desc");
   const [typeFilter, setTypeFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
+  const [salespersonFilter, setSalespersonFilter] = useState("");
 
+  const salespersonOptions = useMemo(() => {
+    if (!salespeople) return [];
+    return salespeople.map(sp => ({ label: sp.name, value: sp.id }));
+  }, [salespeople]);
   const filteredAndSortedActivities = useMemo(() => {
     if (!activities) return [];
     
@@ -100,6 +105,11 @@ export function ActivityList({
     if (outcomeFilter) {
       filtered = filtered.filter(a => a.outcome === outcomeFilter);
     }
+
+    // Apply salesperson filter
+    if (salespersonFilter) {
+      filtered = filtered.filter(a => a.salesperson_id === salespersonFilter);
+    }
     
     // Apply sorting
     return filtered.sort((a, b) => {
@@ -112,7 +122,7 @@ export function ActivityList({
           return 0;
       }
     });
-  }, [activities, sortBy, typeFilter, outcomeFilter]);
+  }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter]);
 
   const {
     paginatedItems,
@@ -183,6 +193,12 @@ export function ActivityList({
                     value: outcomeFilter,
                     onChange: setOutcomeFilter,
                   },
+                  {
+                    label: "Vendedor",
+                    options: salespersonOptions,
+                    value: salespersonFilter,
+                    onChange: setSalespersonFilter,
+                  },
                 ]}
               />
             )}
@@ -195,7 +211,7 @@ export function ActivityList({
             <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border/50">
               <ClipboardList className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
               <p className="text-xs text-muted-foreground">
-                {typeFilter || outcomeFilter 
+                {typeFilter || outcomeFilter || salespersonFilter
                   ? "Nenhuma atividade encontrada com os filtros aplicados" 
                   : "Nenhuma atividade registrada"}
               </p>
