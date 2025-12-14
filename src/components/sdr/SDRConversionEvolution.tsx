@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
-import { TrendingUp, Users } from "lucide-react";
+import { TrendingUp, TrendingDown, Users, Minus } from "lucide-react";
 import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -282,6 +282,8 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
                         const isTeamAverage = entry.dataKey === 'teamAverage';
                         const sdr = sdrs.find(s => s.id === entry.dataKey);
                         const details = dataPoint?.details?.[entry.dataKey];
+                        const teamAvg = dataPoint?.teamAverage ?? 0;
+                        const diff = !isTeamAverage ? (entry.value as number) - teamAvg : 0;
                         
                         return (
                           <div key={entry.dataKey} className="flex flex-col gap-0.5">
@@ -293,14 +295,40 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
                               <span className="text-xs text-muted-foreground">
                                 {isTeamAverage ? 'Média Equipe' : sdr?.name}
                               </span>
-                              <span className="text-xs font-semibold ml-auto">
-                                {entry.value}%
-                              </span>
+                              <div className="flex items-center gap-1 ml-auto">
+                                {!isTeamAverage && (
+                                  <>
+                                    {diff > 0 ? (
+                                      <TrendingUp className="w-3 h-3 text-emerald-500" />
+                                    ) : diff < 0 ? (
+                                      <TrendingDown className="w-3 h-3 text-red-500" />
+                                    ) : (
+                                      <Minus className="w-3 h-3 text-muted-foreground" />
+                                    )}
+                                  </>
+                                )}
+                                <span className={`text-xs font-semibold ${
+                                  !isTeamAverage 
+                                    ? diff > 0 
+                                      ? 'text-emerald-500' 
+                                      : diff < 0 
+                                        ? 'text-red-500' 
+                                        : ''
+                                    : ''
+                                }`}>
+                                  {entry.value}%
+                                </span>
+                              </div>
                             </div>
                             {!isTeamAverage && details && (
-                              <div className="ml-4 flex gap-3 text-[10px] text-muted-foreground">
+                              <div className="ml-4 flex items-center gap-3 text-[10px] text-muted-foreground">
                                 <span>{details.meetings} reuniões</span>
                                 <span>{details.leads} leads</span>
+                                {diff !== 0 && (
+                                  <span className={`font-medium ${diff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                    {diff > 0 ? '+' : ''}{diff}% vs média
+                                  </span>
+                                )}
                               </div>
                             )}
                             {isTeamAverage && dataPoint && (
