@@ -15,7 +15,7 @@ export function ProtectedRoute({
   children,
   requiredRole,
   requireAdminOrManager = false,
-  fallbackPath = "/",
+  fallbackPath = "/acesso-negado",
 }: ProtectedRouteProps) {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { currentUserRole, isLoadingCurrentRole, isAdmin, isAdminOrManager } = useUserRoles();
