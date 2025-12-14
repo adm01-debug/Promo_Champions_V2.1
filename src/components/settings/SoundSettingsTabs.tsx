@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2, Check, ShieldAlert, Bell } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2, Check, ShieldAlert, Bell, ListTodo, DollarSign, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -7,14 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSettings";
 import { useSecurityAlertSoundSettings, SecurityAlertSoundType } from "@/hooks/useSecurityAlertSoundSettings";
+import { useSystemSoundSettings, SystemSoundType } from "@/hooks/useSystemSoundSettings";
 import { toast } from "sonner";
 
 // Preload confetti module
 type ConfettiFunction = typeof import('canvas-confetti').default;
-
-const READY_SOUND_KEY = 'celebration-ready-sound-enabled';
 
 export function SoundSettingsTabs() {
   // Celebration sound settings
@@ -22,13 +22,6 @@ export function SoundSettingsTabs() {
   const [activeCelebration, setActiveCelebration] = useState<'meta' | 'levelup' | 'record' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfettiReady, setIsConfettiReady] = useState(false);
-  const [readySoundEnabled, setReadySoundEnabled] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(READY_SOUND_KEY);
-      return saved !== 'false';
-    }
-    return true;
-  });
   const confettiRef = useRef<ConfettiFunction | null>(null);
 
   // Security alert sound settings
@@ -41,45 +34,27 @@ export function SoundSettingsTabs() {
     soundOptions: securitySoundOptions 
   } = useSecurityAlertSoundSettings();
 
-  // Save ready sound preference
-  useEffect(() => {
-    localStorage.setItem(READY_SOUND_KEY, String(readySoundEnabled));
-  }, [readySoundEnabled]);
-
-  // Play subtle ding sound
-  const playReadyDing = () => {
-    if (!readySoundEnabled) return;
-    try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = 1200;
-      oscillator.type = 'sine';
-      
-      const now = audioContext.currentTime;
-      gainNode.gain.setValueAtTime(0.15, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      
-      oscillator.start(now);
-      oscillator.stop(now + 0.2);
-    } catch (e) {
-      // Silently fail if audio context not available
-    }
-  };
+  // System sound settings
+  const {
+    preferences: systemPreferences,
+    updatePreference: updateSystemPreference,
+    volume: systemVolume,
+    setVolume: setSystemVolume,
+    previewSound: previewSystemSound,
+    playReadySound,
+    soundOptions: systemSoundOptions
+  } = useSystemSoundSettings();
 
   // Preload confetti on mount
   useEffect(() => {
     import('canvas-confetti').then((module) => {
       confettiRef.current = module.default;
       setIsConfettiReady(true);
-      playReadyDing();
+      playReadySound();
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const handleTestCelebration = async () => {
     if (activeCelebration || isLoading) return;
@@ -472,23 +447,179 @@ export function SoundSettingsTabs() {
 
           {/* System Tab */}
           <TabsContent value="system" className="space-y-6 mt-0">
-            <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
-              <div className="space-y-0.5">
-                <Label className="text-sm font-medium">Som de "Pronto"</Label>
-                <p className="text-xs text-muted-foreground">
-                  Toca um som sutil quando o confetti estiver carregado
-                </p>
+            {/* Volume Control */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Volume Geral</Label>
+              <div className="flex items-center gap-4">
+                <VolumeX className="h-4 w-4 text-muted-foreground" />
+                <Slider
+                  value={[systemVolume * 100]}
+                  onValueChange={([value]) => setSystemVolume(value / 100)}
+                  max={100}
+                  step={5}
+                  className="flex-1"
+                />
+                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground w-12 text-right">
+                  {Math.round(systemVolume * 100)}%
+                </span>
               </div>
-              <Switch
-                checked={readySoundEnabled}
-                onCheckedChange={setReadySoundEnabled}
-              />
             </div>
 
-            <div className="p-4 rounded-lg bg-muted/50 border border-border/40">
-              <p className="text-sm text-muted-foreground">
-                Mais configurações de sons do sistema serão adicionadas aqui conforme necessário.
-              </p>
+            {/* Sound Categories */}
+            <div className="space-y-4">
+              <Label className="text-sm font-medium">Notificações</Label>
+              
+              {/* New Task Sound */}
+              <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-500/10">
+                    <ListTodo className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Nova Tarefa</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Toca quando uma nova tarefa é criada
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select
+                    value={systemPreferences.newTask.sound}
+                    onValueChange={(value) => updateSystemPreference('newTask', { sound: value as SystemSoundType })}
+                    disabled={!systemPreferences.newTask.enabled}
+                  >
+                    <SelectTrigger className="w-28 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {systemSoundOptions.map((opt) => (
+                        <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => previewSystemSound(systemPreferences.newTask.sound)}
+                    disabled={!systemPreferences.newTask.enabled || systemPreferences.newTask.sound === 'none' || systemVolume === 0}
+                  >
+                    <Play className="h-3.5 w-3.5" />
+                  </Button>
+                  <Switch
+                    checked={systemPreferences.newTask.enabled}
+                    onCheckedChange={(checked) => updateSystemPreference('newTask', { enabled: checked })}
+                  />
+                </div>
+              </div>
+
+              {/* New Sale Sound */}
+              <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-emerald-500/10">
+                    <DollarSign className="h-4 w-4 text-emerald-500" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Nova Venda</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Toca quando uma nova venda é registrada
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select
+                    value={systemPreferences.newSale.sound}
+                    onValueChange={(value) => updateSystemPreference('newSale', { sound: value as SystemSoundType })}
+                    disabled={!systemPreferences.newSale.enabled}
+                  >
+                    <SelectTrigger className="w-28 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {systemSoundOptions.map((opt) => (
+                        <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => previewSystemSound(systemPreferences.newSale.sound)}
+                    disabled={!systemPreferences.newSale.enabled || systemPreferences.newSale.sound === 'none' || systemVolume === 0}
+                  >
+                    <Play className="h-3.5 w-3.5" />
+                  </Button>
+                  <Switch
+                    checked={systemPreferences.newSale.enabled}
+                    onCheckedChange={(checked) => updateSystemPreference('newSale', { enabled: checked })}
+                  />
+                </div>
+              </div>
+
+              {/* Deal Update Sound */}
+              <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-amber-500/10">
+                    <RefreshCw className="h-4 w-4 text-amber-500" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Atualização de Deal</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Toca quando um deal muda de estágio
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select
+                    value={systemPreferences.dealUpdate.sound}
+                    onValueChange={(value) => updateSystemPreference('dealUpdate', { sound: value as SystemSoundType })}
+                    disabled={!systemPreferences.dealUpdate.enabled}
+                  >
+                    <SelectTrigger className="w-28 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {systemSoundOptions.map((opt) => (
+                        <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => previewSystemSound(systemPreferences.dealUpdate.sound)}
+                    disabled={!systemPreferences.dealUpdate.enabled || systemPreferences.dealUpdate.sound === 'none' || systemVolume === 0}
+                  >
+                    <Play className="h-3.5 w-3.5" />
+                  </Button>
+                  <Switch
+                    checked={systemPreferences.dealUpdate.enabled}
+                    onCheckedChange={(checked) => updateSystemPreference('dealUpdate', { enabled: checked })}
+                  />
+                </div>
+              </div>
+
+              {/* Ready Sound */}
+              <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Som de "Pronto"</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Toca quando o confetti estiver carregado
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={systemPreferences.ready.enabled}
+                  onCheckedChange={(checked) => updateSystemPreference('ready', { enabled: checked })}
+                />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
