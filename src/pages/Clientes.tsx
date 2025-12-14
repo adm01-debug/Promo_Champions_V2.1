@@ -12,6 +12,8 @@ import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
+import { ICPBadge } from "@/components/shared/ICPBadge";
+import { useICPDataMap } from "@/hooks/useICPData";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
@@ -29,6 +31,7 @@ const Clientes = () => {
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   
   const { data: clients, isLoading } = useClients(searchTerm);
+  const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
 
   const sortedClients = useMemo(() => {
@@ -149,19 +152,22 @@ const Clientes = () => {
                     </Button>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
-                        {client.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0 pr-16">
-                      <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
-                        {client.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground truncate">{client.company || "Sem empresa"}</p>
+                    <div className="flex items-start gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
+                          {client.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0 pr-16">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+                            {client.name}
+                          </h3>
+                          <ICPBadge icpData={icpMap.get(client.id)} size="sm" />
+                        </div>
+                        <p className="text-sm text-muted-foreground truncate">{client.company || "Sem empresa"}</p>
+                      </div>
                     </div>
-                  </div>
                   
                   <div className="mt-4 space-y-2">
                     {client.email && (

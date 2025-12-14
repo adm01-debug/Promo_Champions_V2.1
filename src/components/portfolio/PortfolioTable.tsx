@@ -35,6 +35,8 @@ import {
   Phone,
 } from "lucide-react";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
+import { ICPBadge } from "@/components/shared/ICPBadge";
+import { useICPDataMap } from "@/hooks/useICPData";
 
 interface PortfolioTableProps {
   data: ClientPortfolioItem[] | undefined;
@@ -45,6 +47,7 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const updateStatus = useUpdatePortfolioStatus();
   const removeFromPortfolio = useRemoveFromPortfolio();
+  const { icpMap } = useICPDataMap();
 
   const handleToggleStatus = (item: ClientPortfolioItem) => {
     const newStatus = item.status === "active" ? "inactive" : "active";
@@ -104,7 +107,12 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
               <TableRow key={item.id} className="group">
                 <TableCell>
                   <div>
-                    <p className="font-medium">{item.client?.name || "—"}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{item.client?.name || "—"}</p>
+                      {item.client_id && (
+                        <ICPBadge icpData={icpMap.get(item.client_id)} size="sm" />
+                      )}
+                    </div>
                     {item.client?.company && (
                       <p className="text-sm text-muted-foreground">
                         {item.client.company}

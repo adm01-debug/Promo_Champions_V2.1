@@ -22,6 +22,8 @@ import { DealTimeline } from "./DealTimeline";
 import { EnrollCadenceDialog } from "@/components/cadences/EnrollCadenceDialog";
 import { Button } from "@/components/ui/button";
 import { usePauseCadence, useCancelCadence, useResumeCadence } from "@/hooks/useCadences";
+import { ICPBadge } from "@/components/shared/ICPBadge";
+import { ICPData } from "@/hooks/useICPData";
 
 interface DealProbability {
   probability: number;
@@ -51,9 +53,10 @@ interface DealCardProps {
   probability?: DealProbability;
   leadScore?: LeadScoreData;
   activeCadence?: ActiveCadenceInfo;
+  icpData?: ICPData | null;
 }
 
-export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCardProps) => {
+export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData }: DealCardProps) => {
   const pauseCadence = usePauseCadence();
   const cancelCadence = useCancelCadence();
   const resumeCadence = useResumeCadence();
@@ -102,8 +105,11 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence }: DealCa
         <GripVertical className="h-4 w-4 text-muted-foreground/60 flex-shrink-0 mt-0.5 hover:text-muted-foreground transition-colors" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h4 className="font-display font-semibold text-sm truncate">{deal.client_name}</h4>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h4 className="font-display font-semibold text-sm truncate">{deal.client_name}</h4>
+              {icpData && <ICPBadge icpData={icpData} size="sm" />}
+            </div>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {leadScore && (
                 <TooltipProvider>
                   <Tooltip>

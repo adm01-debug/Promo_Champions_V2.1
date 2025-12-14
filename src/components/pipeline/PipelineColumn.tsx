@@ -3,6 +3,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Deal, PIPELINE_STAGES, PipelineStage } from "@/hooks/usePipeline";
 import { DealCard } from "./DealCard";
 import { cn } from "@/lib/utils";
+import { ICPData } from "@/hooks/useICPData";
 
 interface DealProbability {
   probability: number;
@@ -33,9 +34,10 @@ interface PipelineColumnProps {
   probabilities?: Record<string, DealProbability>;
   leadScores?: Record<string, LeadScoreData>;
   activeCadences?: Record<string, ActiveCadenceInfo>;
+  icpByClientName?: Map<string, ICPData>;
 }
 
-export const PipelineColumn = ({ stage, deals, probabilities, leadScores, activeCadences }: PipelineColumnProps) => {
+export const PipelineColumn = ({ stage, deals, probabilities, leadScores, activeCadences, icpByClientName }: PipelineColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: stage.id,
   });
@@ -92,6 +94,7 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
                 probability={probabilities?.[deal.id]}
                 leadScore={leadScores?.[deal.id]}
                 activeCadence={activeCadences?.[deal.id]}
+                icpData={icpByClientName?.get(deal.client_name.toLowerCase())}
               />
             ))
           )}
