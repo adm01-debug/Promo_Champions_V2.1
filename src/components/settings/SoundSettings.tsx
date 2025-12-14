@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy } from "lucide-react";
+import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -11,12 +11,15 @@ import { toast } from "sonner";
 export function SoundSettings() {
   const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
   const [activeCelebration, setActiveCelebration] = useState<'meta' | 'levelup' | 'record' | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTestCelebration = async () => {
-    if (activeCelebration) return;
+    if (activeCelebration || isLoading) return;
+    setIsLoading(true);
     setActiveCelebration('meta');
     
     const confetti = (await import('canvas-confetti')).default;
+    setIsLoading(false);
     
     playSound();
     
@@ -59,10 +62,12 @@ export function SoundSettings() {
   };
 
   const handleTestLevelUp = async () => {
-    if (activeCelebration) return;
+    if (activeCelebration || isLoading) return;
+    setIsLoading(true);
     setActiveCelebration('levelup');
     
     const confetti = (await import('canvas-confetti')).default;
+    setIsLoading(false);
     
     playSound();
     setTimeout(() => playSound(), 300);
@@ -114,10 +119,12 @@ export function SoundSettings() {
   };
 
   const handleTestStreakRecord = async () => {
-    if (activeCelebration) return;
+    if (activeCelebration || isLoading) return;
+    setIsLoading(true);
     setActiveCelebration('record');
     
     const confetti = (await import('canvas-confetti')).default;
+    setIsLoading(false);
     
     playSound();
     
@@ -244,27 +251,39 @@ export function SoundSettings() {
               variant="outline"
               size="sm"
               className={`gap-1.5 transition-all ${activeCelebration === 'meta' ? 'animate-pulse ring-2 ring-primary' : ''}`}
-              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'meta')}
+              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'meta') || isLoading}
             >
-              <Sparkles className="h-3.5 w-3.5" />
+              {isLoading && activeCelebration === 'meta' ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Sparkles className="h-3.5 w-3.5" />
+              )}
               Meta
             </Button>
             <Button
               onClick={handleTestLevelUp}
               size="sm"
               className={`gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white transition-all ${activeCelebration === 'levelup' ? 'animate-pulse ring-2 ring-amber-400' : ''}`}
-              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'levelup')}
+              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'levelup') || isLoading}
             >
-              <Crown className="h-3.5 w-3.5" />
+              {isLoading && activeCelebration === 'levelup' ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Crown className="h-3.5 w-3.5" />
+              )}
               Level Up
             </Button>
             <Button
               onClick={handleTestStreakRecord}
               size="sm"
               className={`gap-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white transition-all ${activeCelebration === 'record' ? 'animate-pulse ring-2 ring-yellow-400' : ''}`}
-              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'record')}
+              disabled={(selectedSound === 'none' && volume === 0) || (activeCelebration !== null && activeCelebration !== 'record') || isLoading}
             >
-              <Trophy className="h-3.5 w-3.5" />
+              {isLoading && activeCelebration === 'record' ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trophy className="h-3.5 w-3.5" />
+              )}
               Recorde
             </Button>
           </div>
