@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Activity, Users } from "lucide-react";
+import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Activity, Users, BarChart3 } from "lucide-react";
 import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type PeriodFilter = 'week' | 'month' | 'quarter';
+type ViewMode = 'activity' | 'comparison';
 
 interface SDRActivityTrendProps {
   period: PeriodFilter;
@@ -20,7 +22,7 @@ interface SDR {
   name: string;
 }
 
-interface ChartDataPoint {
+interface ActivityChartDataPoint {
   date: string;
   label: string;
   calls: number;
@@ -32,9 +34,23 @@ interface ChartDataPoint {
   [key: string]: number | string;
 }
 
-const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
+interface ComparisonChartDataPoint {
+  date: string;
+  label: string;
+  [key: string]: number | string;
+}
+
+const COLORS = [
+  'hsl(var(--chart-1))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
+];
+
+const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode: ViewMode) => {
   return useQuery({
-    queryKey: ['sdr-activity-trend', period, selectedSDR],
+    queryKey: ['sdr-activity-trend', period, selectedSDR, viewMode],
     queryFn: async () => {
       const now = new Date();
       let startDate: Date;
@@ -58,7 +74,12 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
         .eq('is_active', true)
         .in('role', ['sdr', 'hybrid']);
 
-      if (!sdrs?.length) return { chartData: [], sdrs: [], totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 } };
+      if (!sdrs?.length) return { 
+        activityData: [], 
+        comparisonData: [], 
+        sdrs: [], 
+        totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 } 
+      };
 
       // Build query for activities
       let activitiesQuery = supabase
@@ -67,7 +88,7 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
         .gte('created_at', startDate.toISOString())
         .in('salesperson_id', sdrs.map(s => s.id));
 
-      if (selectedSDR !== 'all') {
+      if (viewMode === 'activity' && selectedSDR !== 'all') {
         activitiesQuery = activitiesQuery.eq('salesperson_id', selectedSDR);
       }
 
@@ -79,14 +100,14 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
         ? eachWeekOfInterval({ start: startDate, end: now }, { weekStartsOn: 1 })
         : eachDayOfInterval({ start: startDate, end: now });
 
-      // Build chart data
-      const chartData: ChartDataPoint[] = intervals.map(date => {
+      // Build activity chart data (by type)
+      const activityData: ActivityChartDataPoint[] = intervals.map(date => {
         const dateKey = format(date, 'yyyy-MM-dd');
         const label = useWeeklyAggregation
           ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}`
           : format(date, 'dd/MM', { locale: ptBR });
 
-        const point: ChartDataPoint = { 
+        const point: ActivityChartDataPoint = { 
           date: dateKey, 
           label, 
           calls: 0, 
@@ -97,7 +118,11 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
           total: 0
         };
 
-        activities?.forEach(activity => {
+        const filteredActivities = viewMode === 'activity' && selectedSDR !== 'all'
+          ? activities?.filter(a => a.salesperson_id === selectedSDR)
+          : activities;
+
+        filteredActivities?.forEach(activity => {
           const actDate = new Date(activity.created_at);
           const matchDate = useWeeklyAggregation
             ? format(startOfWeek(actDate, { weekStartsOn: 1 }), 'yyyy-MM-dd') === dateKey
@@ -128,8 +153,32 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
         return point;
       });
 
+      // Build comparison chart data (by SDR)
+      const comparisonData: ComparisonChartDataPoint[] = intervals.map(date => {
+        const dateKey = format(date, 'yyyy-MM-dd');
+        const label = useWeeklyAggregation
+          ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}`
+          : format(date, 'dd/MM', { locale: ptBR });
+
+        const point: ComparisonChartDataPoint = { date: dateKey, label };
+
+        sdrs.forEach(sdr => {
+          const sdrActivities = activities?.filter(a => {
+            const actDate = new Date(a.created_at);
+            const matchDate = useWeeklyAggregation
+              ? format(startOfWeek(actDate, { weekStartsOn: 1 }), 'yyyy-MM-dd') === dateKey
+              : format(actDate, 'yyyy-MM-dd') === dateKey;
+            return a.salesperson_id === sdr.id && matchDate;
+          }).length ?? 0;
+
+          point[sdr.id] = sdrActivities;
+        });
+
+        return point;
+      });
+
       // Calculate totals
-      const totals = chartData.reduce((acc, point) => ({
+      const totals = activityData.reduce((acc, point) => ({
         calls: acc.calls + point.calls,
         emails: acc.emails + point.emails,
         meetings: acc.meetings + point.meetings,
@@ -137,7 +186,7 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string) => {
         whatsapp: acc.whatsapp + point.whatsapp,
       }), { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 });
 
-      return { chartData, sdrs, totals };
+      return { activityData, comparisonData, sdrs, totals };
     },
     staleTime: 60000,
   });
@@ -161,7 +210,8 @@ const ACTIVITY_LABELS: Record<string, string> = {
 
 export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
   const [selectedSDR, setSelectedSDR] = useState<string>("all");
-  const { data, isLoading } = useSDRActivityTrend(period, selectedSDR);
+  const [viewMode, setViewMode] = useState<ViewMode>("activity");
+  const { data, isLoading } = useSDRActivityTrend(period, selectedSDR, viewMode);
 
   if (isLoading) {
     return (
@@ -176,9 +226,9 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
     );
   }
 
-  const { chartData = [], sdrs = [], totals } = data || {};
+  const { activityData = [], comparisonData = [], sdrs = [], totals } = data || {};
 
-  if (!chartData.length) {
+  if (!activityData.length && !comparisonData.length) {
     return (
       <Card className="glass border-border/40">
         <CardHeader>
@@ -210,125 +260,215 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
             </div>
             Tendência de Atividades
           </CardTitle>
-          {totalActivities > 0 && (
+          {totalActivities > 0 && viewMode === 'activity' && (
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 text-xs">
               <span className="text-muted-foreground">Total:</span>
               <span className="font-semibold text-foreground">{totalActivities}</span>
             </div>
           )}
         </div>
-        <Select value={selectedSDR} onValueChange={setSelectedSDR}>
-          <SelectTrigger className="w-[180px] h-9 text-sm">
-            <Users className="w-4 h-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Filtrar SDR" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os SDRs</SelectItem>
-            {sdrs.map(sdr => (
-              <SelectItem key={sdr.id} value={sdr.id}>
-                {sdr.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
+            <TabsList className="h-9">
+              <TabsTrigger value="activity" className="text-xs px-3">
+                <Activity className="w-3.5 h-3.5 mr-1.5" />
+                Por Tipo
+              </TabsTrigger>
+              <TabsTrigger value="comparison" className="text-xs px-3">
+                <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
+                Por SDR
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {viewMode === 'activity' && (
+            <Select value={selectedSDR} onValueChange={setSelectedSDR}>
+              <SelectTrigger className="w-[160px] h-9 text-sm">
+                <Users className="w-4 h-4 mr-2 text-muted-foreground" />
+                <SelectValue placeholder="Filtrar SDR" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os SDRs</SelectItem>
+                {sdrs.map(sdr => (
+                  <SelectItem key={sdr.id} value={sdr.id}>
+                    {sdr.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <defs>
-              {Object.entries(ACTIVITY_COLORS).map(([key, color]) => (
-                <linearGradient key={key} id={`gradient-${key}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={color} stopOpacity={0} />
-                </linearGradient>
+        {viewMode === 'activity' ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={activityData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <defs>
+                {Object.entries(ACTIVITY_COLORS).map(([key, color]) => (
+                  <linearGradient key={key} id={`gradient-${key}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={color} stopOpacity={0} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <XAxis 
+                dataKey="label" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length) return null;
+                  
+                  const dataPoint = activityData.find(p => p.label === label);
+                  
+                  return (
+                    <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
+                      <div className="flex items-center justify-between gap-4">
+                        <p className="font-semibold text-foreground text-sm">{label}</p>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Total: {dataPoint?.total ?? 0}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        {payload.map((entry: any) => (
+                          <div key={entry.dataKey} className="flex items-center gap-2">
+                            <div 
+                              className="w-2.5 h-2.5 rounded-full" 
+                              style={{ backgroundColor: entry.stroke }}
+                            />
+                            <span className="text-xs text-muted-foreground">
+                              {ACTIVITY_LABELS[entry.dataKey] || entry.dataKey}
+                            </span>
+                            <span className="text-xs font-semibold ml-auto">
+                              {entry.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }}
+              />
+              <Legend 
+                formatter={(value) => ACTIVITY_LABELS[value] || value}
+                wrapperStyle={{ paddingTop: '20px' }}
+              />
+              <Area
+                type="monotone"
+                dataKey="calls"
+                stroke={ACTIVITY_COLORS.calls}
+                fill={`url(#gradient-calls)`}
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="emails"
+                stroke={ACTIVITY_COLORS.emails}
+                fill={`url(#gradient-emails)`}
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="meetings"
+                stroke={ACTIVITY_COLORS.meetings}
+                fill={`url(#gradient-meetings)`}
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="linkedin"
+                stroke={ACTIVITY_COLORS.linkedin}
+                fill={`url(#gradient-linkedin)`}
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="whatsapp"
+                stroke={ACTIVITY_COLORS.whatsapp}
+                fill={`url(#gradient-whatsapp)`}
+                strokeWidth={2}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={comparisonData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <XAxis 
+                dataKey="label" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length) return null;
+                  
+                  const total = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
+                  
+                  return (
+                    <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
+                      <div className="flex items-center justify-between gap-4">
+                        <p className="font-semibold text-foreground text-sm">{label}</p>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Total: {total}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        {payload.sort((a: any, b: any) => (b.value || 0) - (a.value || 0)).map((entry: any) => {
+                          const sdr = sdrs.find(s => s.id === entry.dataKey);
+                          return (
+                            <div key={entry.dataKey} className="flex items-center gap-2">
+                              <div 
+                                className="w-2.5 h-2.5 rounded-full" 
+                                style={{ backgroundColor: entry.stroke }}
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                {sdr?.name || entry.dataKey}
+                              </span>
+                              <span className="text-xs font-semibold ml-auto">
+                                {entry.value}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }}
+              />
+              <Legend 
+                formatter={(value) => {
+                  const sdr = sdrs.find(s => s.id === value);
+                  return sdr?.name || value;
+                }}
+                wrapperStyle={{ paddingTop: '20px' }}
+              />
+              {sdrs.map((sdr, index) => (
+                <Line
+                  key={sdr.id}
+                  type="monotone"
+                  dataKey={sdr.id}
+                  name={sdr.id}
+                  stroke={COLORS[index % COLORS.length]}
+                  strokeWidth={2}
+                  dot={{ fill: COLORS[index % COLORS.length], strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, strokeWidth: 2 }}
+                />
               ))}
-            </defs>
-            <XAxis 
-              dataKey="label" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-            />
-            <YAxis 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-            />
-            <Tooltip
-              content={({ active, payload, label }) => {
-                if (!active || !payload?.length) return null;
-                
-                const dataPoint = chartData.find(p => p.label === label);
-                
-                return (
-                  <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
-                    <div className="flex items-center justify-between gap-4">
-                      <p className="font-semibold text-foreground text-sm">{label}</p>
-                      <span className="text-xs font-medium text-muted-foreground">
-                        Total: {dataPoint?.total ?? 0}
-                      </span>
-                    </div>
-                    <div className="space-y-1">
-                      {payload.map((entry: any) => (
-                        <div key={entry.dataKey} className="flex items-center gap-2">
-                          <div 
-                            className="w-2.5 h-2.5 rounded-full" 
-                            style={{ backgroundColor: entry.stroke }}
-                          />
-                          <span className="text-xs text-muted-foreground">
-                            {ACTIVITY_LABELS[entry.dataKey] || entry.dataKey}
-                          </span>
-                          <span className="text-xs font-semibold ml-auto">
-                            {entry.value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }}
-            />
-            <Legend 
-              formatter={(value) => ACTIVITY_LABELS[value] || value}
-              wrapperStyle={{ paddingTop: '20px' }}
-            />
-            <Area
-              type="monotone"
-              dataKey="calls"
-              stroke={ACTIVITY_COLORS.calls}
-              fill={`url(#gradient-calls)`}
-              strokeWidth={2}
-            />
-            <Area
-              type="monotone"
-              dataKey="emails"
-              stroke={ACTIVITY_COLORS.emails}
-              fill={`url(#gradient-emails)`}
-              strokeWidth={2}
-            />
-            <Area
-              type="monotone"
-              dataKey="meetings"
-              stroke={ACTIVITY_COLORS.meetings}
-              fill={`url(#gradient-meetings)`}
-              strokeWidth={2}
-            />
-            <Area
-              type="monotone"
-              dataKey="linkedin"
-              stroke={ACTIVITY_COLORS.linkedin}
-              fill={`url(#gradient-linkedin)`}
-              strokeWidth={2}
-            />
-            <Area
-              type="monotone"
-              dataKey="whatsapp"
-              stroke={ACTIVITY_COLORS.whatsapp}
-              fill={`url(#gradient-whatsapp)`}
-              strokeWidth={2}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );
