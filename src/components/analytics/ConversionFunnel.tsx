@@ -2,12 +2,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useConversionAnalysis } from '@/hooks/useConversionAnalysis';
-import { TrendingUp, AlertTriangle, ArrowRight, Target, Percent, Filter } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Target, Percent, Filter } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
 interface ConversionFunnelProps {
   salespersonId?: string;
+}
+
+function ChangeIndicator({ change }: { change?: number }) {
+  if (change === undefined || change === 0) return null;
+  
+  const isPositive = change > 0;
+  const Icon = isPositive ? TrendingUp : TrendingDown;
+  const color = isPositive ? 'text-status-success' : 'text-status-error';
+  
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-xs font-medium ${color}`}>
+      <Icon className="h-3 w-3" />
+      {Math.abs(change).toFixed(1)}%
+    </span>
+  );
 }
 
 export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
@@ -46,12 +61,20 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
             </div>
             <span className="gradient-text">Análise de Conversão</span>
           </CardTitle>
-          {bottleneckCount > 0 && (
-            <Badge variant="destructive" className="text-[10px] shadow-sm animate-pulse">
-              <AlertTriangle className="h-3 w-3 mr-1" />
-              {bottleneckCount} gargalo{bottleneckCount > 1 ? 's' : ''}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {data?.overallChange !== undefined && data.overallChange !== 0 && (
+              <Badge variant="outline" className="text-xs gap-1">
+                vs mês anterior
+                <ChangeIndicator change={data.overallChange} />
+              </Badge>
+            )}
+            {bottleneckCount > 0 && (
+              <Badge variant="destructive" className="text-[10px] shadow-sm animate-pulse">
+                <AlertTriangle className="h-3 w-3 mr-1" />
+                {bottleneckCount} gargalo{bottleneckCount > 1 ? 's' : ''}
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -71,7 +94,10 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
                 <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-md w-fit mx-auto mb-2 group-hover:scale-110 transition-transform">
                   <Target className="h-4 w-4 text-primary" />
                 </div>
-                <p className="text-2xl font-bold font-display gradient-text group-hover:scale-105 transition-transform">{data.overallConversion.toFixed(1)}%</p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-2xl font-bold font-display gradient-text group-hover:scale-105 transition-transform">{data.overallConversion.toFixed(1)}%</p>
+                  <ChangeIndicator change={data.overallChange} />
+                </div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-display font-medium">Conversão Total</p>
               </div>
               <div 
@@ -127,12 +153,15 @@ export function ConversionFunnel({ salespersonId }: ConversionFunnelProps) {
                             </Badge>
                           )}
                         </div>
-                        <span className={cn(
-                          "text-lg font-bold font-display group-hover:scale-110 transition-transform",
-                          conv.isBottleneck ? 'text-destructive' : 'gradient-text'
-                        )}>
-                          {conv.conversionRate.toFixed(1)}%
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            "text-lg font-bold font-display group-hover:scale-110 transition-transform",
+                            conv.isBottleneck ? 'text-destructive' : 'gradient-text'
+                          )}>
+                            {conv.conversionRate.toFixed(1)}%
+                          </span>
+                          <ChangeIndicator change={conv.change} />
+                        </div>
                       </div>
                       <Progress 
                         value={conv.conversionRate} 

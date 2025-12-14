@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useClosingTime } from '@/hooks/useClosingTime';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Clock, User, Package, Tag, Timer, TrendingDown, Trophy } from 'lucide-react';
+import { Clock, User, Package, Tag, Timer, TrendingDown, TrendingUp, Trophy } from 'lucide-react';
 
 const COLORS = [
   'hsl(var(--status-success))',
@@ -12,6 +12,22 @@ const COLORS = [
   'hsl(var(--status-info))',
   'hsl(var(--status-purple))',
 ];
+
+function ChangeIndicator({ change, inverted = false }: { change?: number; inverted?: boolean }) {
+  if (change === undefined || change === 0) return null;
+  
+  // For closing time, negative change (faster) is good
+  const isPositive = inverted ? change < 0 : change > 0;
+  const Icon = isPositive ? TrendingUp : TrendingDown;
+  const color = isPositive ? 'text-status-success' : 'text-status-error';
+  
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-xs font-medium ${color}`}>
+      <Icon className="h-3 w-3" />
+      {Math.abs(change).toFixed(1)}%
+    </span>
+  );
+}
 
 export function ClosingTimeChart() {
   const { data, isLoading } = useClosingTime();
@@ -56,6 +72,12 @@ export function ClosingTimeChart() {
               </span>
               <span className="font-medium text-foreground">{item.deals}</span>
             </p>
+            {item.change !== undefined && item.change !== 0 && (
+              <p className="text-sm text-muted-foreground flex items-center justify-between gap-4">
+                <span>vs mês anterior:</span>
+                <ChangeIndicator change={item.change} inverted />
+              </p>
+            )}
           </div>
         </div>
       );
@@ -63,7 +85,7 @@ export function ClosingTimeChart() {
     return null;
   };
 
-  const renderChart = (items: { name: string; avgDays: number; deals: number }[]) => (
+  const renderChart = (items: { name: string; avgDays: number; deals: number; change?: number }[]) => (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={items} layout="vertical" margin={{ top: 10, right: 30, left: 100, bottom: 10 }}>
         <defs>
@@ -116,13 +138,21 @@ export function ClosingTimeChart() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Tempo Médio de Fechamento</p>
-                <p className="text-4xl font-bold font-display gradient-text mt-1 transition-transform duration-300 group-hover:scale-105">
-                  {data?.overall.avgDays || 0} <span className="text-lg font-normal text-muted-foreground">dias</span>
-                </p>
+                <div className="flex items-center gap-3 mt-1">
+                  <p className="text-4xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">
+                    {data?.overall.avgDays || 0} <span className="text-lg font-normal text-muted-foreground">dias</span>
+                  </p>
+                  <ChangeIndicator change={data?.overall.change} inverted />
+                </div>
               </div>
             </div>
             <div className="text-right space-y-1">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Total de Deals</p>
+              <div className="flex items-center justify-end gap-2">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display">Total de Deals</p>
+                {data?.overall.change !== undefined && data.overall.change !== 0 && (
+                  <Badge variant="outline" className="text-xs">vs mês anterior</Badge>
+                )}
+              </div>
               <p className="text-2xl font-bold font-display text-foreground">{data?.overall.totalDeals || 0}</p>
               {fastestSalesperson && (
                 <Badge variant="outline" className="bg-status-success/10 border-status-success/30 text-status-success text-xs mt-1">
