@@ -26,19 +26,22 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
   const start = format(startDate, "yyyy-MM-dd");
   const end = format(endDate, "yyyy-MM-dd");
 
-  // Fetch sales for the period
-  const { data: sales } = await supabase
-    .from("sales")
-    .select("amount, status")
-    .gte("created_at", start)
-    .lte("created_at", end);
+  // Fetch sales and metrics in parallel
+  const [salesResult, metricsResult] = await Promise.all([
+    supabase
+      .from("sales")
+      .select("amount, status")
+      .gte("created_at", start)
+      .lte("created_at", end),
+    supabase
+      .from("daily_metrics")
+      .select("new_clients, conversion_rate")
+      .gte("date", start)
+      .lte("date", end),
+  ]);
 
-  // Fetch daily metrics for the period
-  const { data: metrics } = await supabase
-    .from("daily_metrics")
-    .select("*")
-    .gte("date", start)
-    .lte("date", end);
+  const sales = salesResult.data;
+  const metrics = metricsResult.data;
 
   const completedSales = sales?.filter(s => s.status === "completed") || [];
   const totalRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
@@ -141,10 +144,18 @@ export const useDetailedKPIs = () => {
       const currentConversion = calcAvg(current, "conversion_rate");
       const previousConversion = calcAvg(previous, "conversion_rate");
 
-      // Fetch deal stage history for average closing time
-      const { data: stageHistory } = await supabase
-        .from("deal_stage_history")
-        .select("sale_id, stage, entered_at, exited_at");
+      // Fetch stage history and sales in parallel
+      const [stageHistoryResult, allSalesResult] = await Promise.all([
+        supabase
+          .from("deal_stage_history")
+          .select("sale_id, stage, entered_at, exited_at"),
+        supabase
+          .from("sales")
+          .select("client_name, status"),
+      ]);
+
+      const stageHistory = stageHistoryResult.data;
+      const allSales = allSalesResult.data;
 
       // Calculate average closing time
       const closedDeals = stageHistory?.filter(
@@ -166,10 +177,6 @@ export const useDetailedKPIs = () => {
       }
 
       // Calculate return rate from completed sales
-      const { data: allSales } = await supabase
-        .from("sales")
-        .select("client_name, status");
-      
       const completedSales = allSales?.filter(s => s.status === "completed") || [];
       const uniqueClients = new Set(completedSales.map(s => s.client_name));
       const repeatClients = completedSales.length - uniqueClients.size;

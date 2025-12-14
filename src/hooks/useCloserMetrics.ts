@@ -49,29 +49,29 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
       const currentRange = getPeriodRange(period, 0);
       const previousRange = getPeriodRange(period, 1);
 
-      // Fetch closers
-      const { data: closers } = await supabase
-        .from("salespeople")
-        .select("id")
-        .in("role", ["closer", "hybrid"]);
+      // Fetch all data in parallel for better performance
+      const [closersResult, currentSalesResult, previousSalesResult] = await Promise.all([
+        supabase
+          .from("salespeople")
+          .select("id")
+          .in("role", ["closer", "hybrid"]),
+        supabase
+          .from("sales")
+          .select("id, status, amount, salesperson_id")
+          .gte("created_at", currentRange.start.toISOString())
+          .lte("created_at", currentRange.end.toISOString()),
+        supabase
+          .from("sales")
+          .select("id, status, amount, salesperson_id")
+          .gte("created_at", previousRange.start.toISOString())
+          .lte("created_at", previousRange.end.toISOString()),
+      ]);
 
-      const closerIds = closers?.map(c => c.id) || [];
-
-      // Fetch current period sales for closers
-      const { data: currentSales } = await supabase
-        .from("sales")
-        .select("*")
-        .in("salesperson_id", closerIds)
-        .gte("created_at", currentRange.start.toISOString())
-        .lte("created_at", currentRange.end.toISOString());
-
-      // Fetch previous period sales
-      const { data: previousSales } = await supabase
-        .from("sales")
-        .select("*")
-        .in("salesperson_id", closerIds)
-        .gte("created_at", previousRange.start.toISOString())
-        .lte("created_at", previousRange.end.toISOString());
+      const closerIds = closersResult.data?.map(c => c.id) || [];
+      
+      // Filter sales by Closer IDs
+      const currentSales = currentSalesResult.data?.filter(s => closerIds.includes(s.salesperson_id || '')) || [];
+      const previousSales = previousSalesResult.data?.filter(s => closerIds.includes(s.salesperson_id || '')) || [];
 
       const calculateMetrics = (sales: any[]): RoleMetrics => {
         const totalDeals = sales?.length || 0;
@@ -112,6 +112,7 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
         },
       };
     },
+    staleTime: 60000, // Consider data fresh for 1 minute
   });
 }
 
