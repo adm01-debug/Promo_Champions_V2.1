@@ -409,6 +409,71 @@ export function ActivityList({
               </div>
             </div>
           )}
+          {/* Active Filters Chips */}
+          {showFilters && activeFiltersCount > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {typeFilter && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setTypeFilter("")}
+                >
+                  Tipo: {activityLabels[typeFilter as ActivityType]}
+                  <X className="h-3 w-3 ml-1 hover:text-destructive" />
+                </Badge>
+              )}
+              {outcomeFilter && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setOutcomeFilter("")}
+                >
+                  Resultado: {outcomeLabels[outcomeFilter as ActivityOutcome].label}
+                  <X className="h-3 w-3 ml-1 hover:text-destructive" />
+                </Badge>
+              )}
+              {salespersonFilter && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setSalespersonFilter("")}
+                >
+                  Vendedor: {salespeople?.find(sp => sp.id === salespersonFilter)?.name || 'N/A'}
+                  <X className="h-3 w-3 ml-1 hover:text-destructive" />
+                </Badge>
+              )}
+              {searchTerm && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setSearchTerm("")}
+                >
+                  Busca: "{searchTerm.length > 15 ? searchTerm.slice(0, 15) + '...' : searchTerm}"
+                  <X className="h-3 w-3 ml-1 hover:text-destructive" />
+                </Badge>
+              )}
+              {startDate && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setStartDate(undefined)}
+                >
+                  De: {format(startDate, "dd/MM/yyyy", { locale: ptBR })}
+                  <X className="h-3 w-3 ml-1 hover:text-destructive" />
+                </Badge>
+              )}
+              {endDate && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setEndDate(undefined)}
+                >
+                  Até: {format(endDate, "dd/MM/yyyy", { locale: ptBR })}
+                  <X className="h-3 w-3 ml-1 hover:text-destructive" />
+                </Badge>
+              )}
+            </div>
+          )}
         </CardHeader>
       )}
       <CardContent>
