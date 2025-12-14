@@ -3,12 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
-import { Activity, Users, BarChart3 } from "lucide-react";
+import { Activity, Users, BarChart3, AlertTriangle } from "lucide-react";
 import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type PeriodFilter = 'week' | 'month' | 'quarter';
 type ViewMode = 'activity' | 'comparison';
@@ -213,7 +215,43 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
         whatsapp: acc.whatsapp + point.whatsapp,
       }), { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 });
 
-      return { activityData, comparisonData, sdrs, totals, dailyGoal: totalDailyGoal, sdrGoals };
+      // Calculate underperforming SDRs (below goal for 3+ consecutive days)
+      const underperformingSDRs: { id: string; name: string; consecutiveDays: number; avgDeficit: number }[] = [];
+      
+      sdrs.forEach(sdr => {
+        const goal = sdrGoals[sdr.id] || 0;
+        if (goal <= 0) return;
+        
+        let consecutiveCount = 0;
+        let maxConsecutive = 0;
+        let totalDeficit = 0;
+        let deficitDays = 0;
+        
+        // Check recent days (last 7 for accuracy)
+        const recentData = comparisonData.slice(-7);
+        recentData.forEach(point => {
+          const value = (point[sdr.id] as number) || 0;
+          if (value < goal) {
+            consecutiveCount++;
+            totalDeficit += (goal - value);
+            deficitDays++;
+            maxConsecutive = Math.max(maxConsecutive, consecutiveCount);
+          } else {
+            consecutiveCount = 0;
+          }
+        });
+        
+        if (maxConsecutive >= 3) {
+          underperformingSDRs.push({
+            id: sdr.id,
+            name: sdr.name,
+            consecutiveDays: maxConsecutive,
+            avgDeficit: deficitDays > 0 ? Math.round(totalDeficit / deficitDays) : 0,
+          });
+        }
+      });
+
+      return { activityData, comparisonData, sdrs, totals, dailyGoal: totalDailyGoal, sdrGoals, underperformingSDRs };
     },
     staleTime: 60000,
   });
@@ -254,7 +292,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
     );
   }
 
-  const { activityData = [], comparisonData = [], sdrs = [], totals, dailyGoal = 0, sdrGoals = {} } = data || {};
+  const { activityData = [], comparisonData = [], sdrs = [], totals, dailyGoal = 0, sdrGoals = {}, underperformingSDRs = [] } = data || {};
 
   if (!activityData.length && !comparisonData.length) {
     return (
@@ -293,6 +331,33 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
               <span className="text-muted-foreground">Total:</span>
               <span className="font-semibold text-foreground">{totalActivities}</span>
             </div>
+          )}
+          {viewMode === 'comparison' && underperformingSDRs.length > 0 && (
+            <TooltipProvider>
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="destructive" className="gap-1.5 cursor-help animate-pulse">
+                    <AlertTriangle className="w-3 h-3" />
+                    {underperformingSDRs.length} abaixo da meta
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <div className="space-y-2">
+                    <p className="font-semibold text-sm">SDRs consistentemente abaixo da meta:</p>
+                    <ul className="space-y-1">
+                      {underperformingSDRs.map(sdr => (
+                        <li key={sdr.id} className="text-xs flex items-center justify-between gap-3">
+                          <span>{sdr.name}</span>
+                          <span className="text-destructive font-medium">
+                            {sdr.consecutiveDays} dias | -{sdr.avgDeficit}/dia
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </TooltipContent>
+              </UITooltip>
+            </TooltipProvider>
           )}
         </div>
         <div className="flex items-center gap-2">
