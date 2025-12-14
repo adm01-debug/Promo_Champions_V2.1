@@ -356,6 +356,67 @@ export type Database = {
         }
         Relationships: []
       }
+      client_portfolio: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          client_id: string
+          created_at: string
+          id: string
+          last_purchase_date: string | null
+          salesperson_id: string
+          source: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          client_id: string
+          created_at?: string
+          id?: string
+          last_purchase_date?: string | null
+          salesperson_id: string
+          source?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          client_id?: string
+          created_at?: string
+          id?: string
+          last_purchase_date?: string | null
+          salesperson_id?: string
+          source?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_portfolio_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portfolio_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portfolio_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           company: string | null
@@ -498,6 +559,105 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      icp_data: {
+        Row: {
+          bitrix_id: string | null
+          capital_social: number | null
+          client_id: string
+          created_at: string
+          grupo_nicho: string | null
+          id: string
+          is_icp_match: boolean | null
+          num_colaboradores: number | null
+          ramo_atividade: string | null
+          updated_at: string
+        }
+        Insert: {
+          bitrix_id?: string | null
+          capital_social?: number | null
+          client_id: string
+          created_at?: string
+          grupo_nicho?: string | null
+          id?: string
+          is_icp_match?: boolean | null
+          num_colaboradores?: number | null
+          ramo_atividade?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bitrix_id?: string | null
+          capital_social?: number | null
+          client_id?: string
+          created_at?: string
+          grupo_nicho?: string | null
+          id?: string
+          is_icp_match?: boolean | null
+          num_colaboradores?: number | null
+          ramo_atividade?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "icp_data_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_routing_log: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          from_salesperson_id: string | null
+          id: string
+          notes: string | null
+          routing_reason: string
+          to_salesperson_id: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          from_salesperson_id?: string | null
+          id?: string
+          notes?: string | null
+          routing_reason: string
+          to_salesperson_id?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          from_salesperson_id?: string | null
+          id?: string
+          notes?: string | null
+          routing_reason?: string
+          to_salesperson_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_routing_log_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_routing_log_from_salesperson_id_fkey"
+            columns: ["from_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_routing_log_to_salesperson_id_fkey"
+            columns: ["to_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
         ]
@@ -736,6 +896,30 @@ export type Database = {
           id?: string
           stage?: string
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_settings: {
+        Row: {
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: string
           updated_at?: string
         }
         Relationships: []
@@ -1110,6 +1294,80 @@ export type Database = {
           {
             foreignKeyName: "tasks_salesperson_id_fkey"
             columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_closers: {
+        Row: {
+          closer_id: string
+          created_at: string
+          id: string
+          team_id: string
+        }
+        Insert: {
+          closer_id: string
+          created_at?: string
+          id?: string
+          team_id: string
+        }
+        Update: {
+          closer_id?: string
+          created_at?: string
+          id?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_closers_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_closers_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string
+          id: string
+          inactivity_days: number
+          is_active: boolean
+          name: string
+          sdr_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inactivity_days?: number
+          is_active?: boolean
+          name: string
+          sdr_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inactivity_days?: number
+          is_active?: boolean
+          name?: string
+          sdr_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_sdr_id_fkey"
+            columns: ["sdr_id"]
             isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
