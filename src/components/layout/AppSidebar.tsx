@@ -64,8 +64,7 @@ const mainItems: MenuItem[] = [
 
 const teamItems: MenuItem[] = [
   { title: "Vendedores", url: "/vendedores", icon: Trophy, requireAdminOrManager: true },
-  { title: "Times", url: "/times", icon: Users2, requireAdminOrManager: true },
-  { title: "Performance Times", url: "/times-performance", icon: TrendingUp, requireAdminOrManager: true },
+  { title: "Atribuições SDR", url: "/times", icon: GitBranch, requireAdminOrManager: true },
   { title: "Portfólio", url: "/portfolio", icon: Briefcase, requireAdminOrManager: true },
   { title: "ICP", url: "/icp", icon: Target, requireAdminOrManager: true },
   { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
