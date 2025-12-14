@@ -15,6 +15,7 @@ import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { useState, useMemo, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
@@ -411,68 +412,112 @@ export function ActivityList({
           )}
           {/* Active Filters Chips */}
           {showFilters && activeFiltersCount > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2 transition-all duration-300">
-              {typeFilter && (
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
-                  onClick={() => setTypeFilter("")}
-                >
-                  Tipo: {activityLabels[typeFilter as ActivityType]}
-                  <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
-                </Badge>
-              )}
-              {outcomeFilter && (
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
-                  onClick={() => setOutcomeFilter("")}
-                >
-                  Resultado: {outcomeLabels[outcomeFilter as ActivityOutcome].label}
-                  <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
-                </Badge>
-              )}
-              {salespersonFilter && (
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
-                  onClick={() => setSalespersonFilter("")}
-                >
-                  Vendedor: {salespeople?.find(sp => sp.id === salespersonFilter)?.name || 'N/A'}
-                  <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
-                </Badge>
-              )}
-              {searchTerm && (
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
-                  onClick={() => setSearchTerm("")}
-                >
-                  Busca: "{searchTerm.length > 15 ? searchTerm.slice(0, 15) + '...' : searchTerm}"
-                  <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
-                </Badge>
-              )}
-              {startDate && (
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
-                  onClick={() => setStartDate(undefined)}
-                >
-                  De: {format(startDate, "dd/MM/yyyy", { locale: ptBR })}
-                  <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
-                </Badge>
-              )}
-              {endDate && (
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
-                  onClick={() => setEndDate(undefined)}
-                >
-                  Até: {format(endDate, "dd/MM/yyyy", { locale: ptBR })}
-                  <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
-                </Badge>
-              )}
-            </div>
+            <TooltipProvider delayDuration={300}>
+              <div className="mt-3 flex flex-wrap gap-2 transition-all duration-300">
+                {typeFilter && (
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
+                        onClick={() => setTypeFilter("")}
+                      >
+                        Tipo: {activityLabels[typeFilter as ActivityType]}
+                        <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Clique para remover
+                    </TooltipContent>
+                  </UITooltip>
+                )}
+                {outcomeFilter && (
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
+                        onClick={() => setOutcomeFilter("")}
+                      >
+                        Resultado: {outcomeLabels[outcomeFilter as ActivityOutcome].label}
+                        <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Clique para remover
+                    </TooltipContent>
+                  </UITooltip>
+                )}
+                {salespersonFilter && (
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
+                        onClick={() => setSalespersonFilter("")}
+                      >
+                        Vendedor: {salespeople?.find(sp => sp.id === salespersonFilter)?.name || 'N/A'}
+                        <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Clique para remover
+                    </TooltipContent>
+                  </UITooltip>
+                )}
+                {searchTerm && (
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
+                        onClick={() => setSearchTerm("")}
+                      >
+                        Busca: "{searchTerm.length > 15 ? searchTerm.slice(0, 15) + '...' : searchTerm}"
+                        <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Clique para remover
+                    </TooltipContent>
+                  </UITooltip>
+                )}
+                {startDate && (
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
+                        onClick={() => setStartDate(undefined)}
+                      >
+                        De: {format(startDate, "dd/MM/yyyy", { locale: ptBR })}
+                        <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Clique para remover
+                    </TooltipContent>
+                  </UITooltip>
+                )}
+                {endDate && (
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-secondary/80 transition-all duration-200 animate-scale-in hover:scale-105 active:scale-95"
+                        onClick={() => setEndDate(undefined)}
+                      >
+                        Até: {format(endDate, "dd/MM/yyyy", { locale: ptBR })}
+                        <X className="h-3 w-3 ml-1 hover:text-destructive transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Clique para remover
+                    </TooltipContent>
+                  </UITooltip>
+                )}
+              </div>
+            </TooltipProvider>
           )}
         </CardHeader>
       )}
