@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
 import { Activity, Users, BarChart3 } from "lucide-react";
 import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -78,8 +78,33 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
         activityData: [], 
         comparisonData: [], 
         sdrs: [], 
-        totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 } 
+        totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 },
+        dailyGoal: 0,
+        sdrGoals: {} as Record<string, number>
       };
+
+      // Fetch activity goals
+      const { data: goals } = await supabase
+        .from('activity_goals')
+        .select('salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal')
+        .in('salesperson_id', sdrs.map(s => s.id));
+
+      // Calculate goals
+      const sdrGoals: Record<string, number> = {};
+      let totalDailyGoal = 0;
+
+      if (selectedSDR !== 'all') {
+        const sdrGoal = goals?.find(g => g.salesperson_id === selectedSDR);
+        if (sdrGoal) {
+          totalDailyGoal = sdrGoal.calls_goal + sdrGoal.emails_goal + sdrGoal.meetings_goal + sdrGoal.linkedin_goal + sdrGoal.whatsapp_goal;
+        }
+      } else {
+        goals?.forEach(goal => {
+          const sdrTotal = goal.calls_goal + goal.emails_goal + goal.meetings_goal + goal.linkedin_goal + goal.whatsapp_goal;
+          sdrGoals[goal.salesperson_id] = sdrTotal;
+          totalDailyGoal += sdrTotal;
+        });
+      }
 
       // Build query for activities
       let activitiesQuery = supabase
@@ -186,7 +211,7 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
         whatsapp: acc.whatsapp + point.whatsapp,
       }), { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 });
 
-      return { activityData, comparisonData, sdrs, totals };
+      return { activityData, comparisonData, sdrs, totals, dailyGoal: totalDailyGoal, sdrGoals };
     },
     staleTime: 60000,
   });
@@ -226,7 +251,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
     );
   }
 
-  const { activityData = [], comparisonData = [], sdrs = [], totals } = data || {};
+  const { activityData = [], comparisonData = [], sdrs = [], totals, dailyGoal = 0, sdrGoals = {} } = data || {};
 
   if (!activityData.length && !comparisonData.length) {
     return (
@@ -321,6 +346,20 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                 tickLine={false}
                 tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
               />
+              {dailyGoal > 0 && (
+                <ReferenceLine 
+                  y={dailyGoal} 
+                  stroke="hsl(var(--primary))" 
+                  strokeDasharray="5 5"
+                  strokeWidth={1.5}
+                  label={{
+                    value: `Meta: ${dailyGoal}`,
+                    position: 'right',
+                    fill: 'hsl(var(--primary))',
+                    fontSize: 11,
+                  }}
+                />
+              )}
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;
@@ -427,18 +466,31 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <div className="space-y-1">
                         {payload.sort((a: any, b: any) => (b.value || 0) - (a.value || 0)).map((entry: any) => {
                           const sdr = sdrs.find(s => s.id === entry.dataKey);
+                          const goal = sdrGoals[entry.dataKey] || 0;
+                          const diff = goal > 0 ? (entry.value as number) - goal : 0;
                           return (
-                            <div key={entry.dataKey} className="flex items-center gap-2">
-                              <div 
-                                className="w-2.5 h-2.5 rounded-full" 
-                                style={{ backgroundColor: entry.stroke }}
-                              />
-                              <span className="text-xs text-muted-foreground">
-                                {sdr?.name || entry.dataKey}
-                              </span>
-                              <span className="text-xs font-semibold ml-auto">
-                                {entry.value}
-                              </span>
+                            <div key={entry.dataKey} className="flex flex-col gap-0.5">
+                              <div className="flex items-center gap-2">
+                                <div 
+                                  className="w-2.5 h-2.5 rounded-full" 
+                                  style={{ backgroundColor: entry.stroke }}
+                                />
+                                <span className="text-xs text-muted-foreground">
+                                  {sdr?.name || entry.dataKey}
+                                </span>
+                                <span className={`text-xs font-semibold ml-auto ${
+                                  goal > 0 
+                                    ? diff >= 0 ? 'text-emerald-500' : 'text-red-500'
+                                    : ''
+                                }`}>
+                                  {entry.value}
+                                </span>
+                              </div>
+                              {goal > 0 && (
+                                <div className="ml-4 text-[10px] text-muted-foreground">
+                                  Meta: {goal} | {diff >= 0 ? '+' : ''}{diff}
+                                </div>
+                              )}
                             </div>
                           );
                         })}
