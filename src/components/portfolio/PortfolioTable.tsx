@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -33,10 +33,16 @@ import {
   Building2,
   Mail,
   Phone,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { ICPBadge } from "@/components/shared/ICPBadge";
-import { useICPDataMap } from "@/hooks/useICPData";
+import { useICPDataMap, ICPData } from "@/hooks/useICPData";
+
+type SortField = "client" | "icp" | "status" | "lastPurchase" | "assignedAt";
+type SortDirection = "asc" | "desc";
 
 interface PortfolioTableProps {
   data: ClientPortfolioItem[] | undefined;
@@ -45,9 +51,69 @@ interface PortfolioTableProps {
 
 export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  
   const updateStatus = useUpdatePortfolioStatus();
   const removeFromPortfolio = useRemoveFromPortfolio();
   const { icpMap } = useICPDataMap();
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3 w-3 ml-1 opacity-50" />;
+    }
+    return sortDirection === "asc" 
+      ? <ArrowUp className="h-3 w-3 ml-1" />
+      : <ArrowDown className="h-3 w-3 ml-1" />;
+  };
+
+  const getIcpSortValue = (icpData: ICPData | undefined): number => {
+    if (!icpData) return 0;
+    if (icpData.is_icp_match) return 3;
+    if (icpData.ramo_atividade || icpData.grupo_nicho) return 2;
+    return 1;
+  };
+
+  const sortedData = useMemo(() => {
+    if (!data || !sortField) return data;
+
+    return [...data].sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortField) {
+        case "client":
+          comparison = (a.client?.name || "").localeCompare(b.client?.name || "");
+          break;
+        case "icp":
+          const icpA = a.client_id ? icpMap.get(a.client_id) : undefined;
+          const icpB = b.client_id ? icpMap.get(b.client_id) : undefined;
+          comparison = getIcpSortValue(icpA) - getIcpSortValue(icpB);
+          break;
+        case "status":
+          comparison = (a.status || "").localeCompare(b.status || "");
+          break;
+        case "lastPurchase":
+          const dateA = a.last_purchase_date ? new Date(a.last_purchase_date).getTime() : 0;
+          const dateB = b.last_purchase_date ? new Date(b.last_purchase_date).getTime() : 0;
+          comparison = dateA - dateB;
+          break;
+        case "assignedAt":
+          comparison = new Date(a.assigned_at).getTime() - new Date(b.assigned_at).getTime();
+          break;
+      }
+
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
+  }, [data, sortField, sortDirection, icpMap]);
 
   const handleToggleStatus = (item: ClientPortfolioItem) => {
     const newStatus = item.status === "active" ? "inactive" : "active";
@@ -93,18 +159,68 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Cliente</TableHead>
-              <TableHead>ICP</TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-auto p-0 font-medium hover:bg-transparent"
+                  onClick={() => handleSort("client")}
+                >
+                  Cliente
+                  {getSortIcon("client")}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-auto p-0 font-medium hover:bg-transparent"
+                  onClick={() => handleSort("icp")}
+                >
+                  ICP
+                  {getSortIcon("icp")}
+                </Button>
+              </TableHead>
               <TableHead>Contato</TableHead>
               <TableHead>Responsável</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Última Compra</TableHead>
-              <TableHead>Atribuído Em</TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-auto p-0 font-medium hover:bg-transparent"
+                  onClick={() => handleSort("status")}
+                >
+                  Status
+                  {getSortIcon("status")}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-auto p-0 font-medium hover:bg-transparent"
+                  onClick={() => handleSort("lastPurchase")}
+                >
+                  Última Compra
+                  {getSortIcon("lastPurchase")}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-auto p-0 font-medium hover:bg-transparent"
+                  onClick={() => handleSort("assignedAt")}
+                >
+                  Atribuído Em
+                  {getSortIcon("assignedAt")}
+                </Button>
+              </TableHead>
               <TableHead className="w-[70px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((item) => {
+            {sortedData?.map((item) => {
               const icpData = item.client_id ? icpMap.get(item.client_id) : null;
               
               return (
