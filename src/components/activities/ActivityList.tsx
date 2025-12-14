@@ -156,6 +156,19 @@ export function ActivityList({
     });
   }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter, searchTerm, startDate, endDate]);
 
+  // Statistics for filtered activities
+  const stats = useMemo(() => {
+    const typeStats: Record<string, number> = {};
+    const outcomeStats: Record<string, number> = {};
+    
+    filteredAndSortedActivities.forEach(activity => {
+      typeStats[activity.activity_type] = (typeStats[activity.activity_type] || 0) + 1;
+      outcomeStats[activity.outcome] = (outcomeStats[activity.outcome] || 0) + 1;
+    });
+    
+    return { typeStats, outcomeStats };
+  }, [filteredAndSortedActivities]);
+
   const {
     paginatedItems,
     currentPage,
@@ -358,6 +371,43 @@ export function ActivityList({
         </CardHeader>
       )}
       <CardContent>
+        {/* Statistics Summary */}
+        {filteredAndSortedActivities.length > 0 && (
+          <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/30">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Type Stats */}
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Por Tipo</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {Object.entries(stats.typeStats).map(([type, count]) => {
+                    const Icon = activityIcons[type as ActivityType];
+                    return (
+                      <Badge key={type} variant="secondary" className="text-[10px] gap-1">
+                        <Icon className="h-3 w-3" />
+                        {activityLabels[type as ActivityType]}: {count}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Outcome Stats */}
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Por Resultado</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {Object.entries(stats.outcomeStats).map(([outcome, count]) => {
+                    const style = outcomeLabels[outcome as ActivityOutcome];
+                    return (
+                      <Badge key={outcome} variant="outline" className={`text-[10px] border ${style.color}`}>
+                        {style.label}: {count}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="space-y-2">
           {filteredAndSortedActivities.length === 0 && (
             <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border/50">
