@@ -1033,7 +1033,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_salesperson_id: { Args: never; Returns: string }
+      is_authenticated: { Args: never; Returns: boolean }
     }
     Enums: {
       activity_outcome:
