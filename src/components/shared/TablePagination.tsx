@@ -7,6 +7,13 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TablePaginationProps {
   currentPage: number;
@@ -15,6 +22,9 @@ interface TablePaginationProps {
   startIndex: number;
   endIndex: number;
   totalItems: number;
+  itemsPerPage?: number;
+  onItemsPerPageChange?: (count: number) => void;
+  itemsPerPageOptions?: number[];
 }
 
 export function TablePagination({
@@ -24,8 +34,11 @@ export function TablePagination({
   startIndex,
   endIndex,
   totalItems,
+  itemsPerPage,
+  onItemsPerPageChange,
+  itemsPerPageOptions = [10, 25, 50, 100],
 }: TablePaginationProps) {
-  if (totalPages <= 1) return null;
+  if (totalItems === 0) return null;
 
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
@@ -62,46 +75,74 @@ export function TablePagination({
     return pages;
   };
 
+  const showItemsPerPageSelector = itemsPerPage !== undefined && onItemsPerPageChange !== undefined;
+
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-      <p className="text-sm text-muted-foreground">
-        Mostrando {startIndex} a {endIndex} de {totalItems} registros
-      </p>
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => onPageChange(currentPage - 1)}
-              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-            />
-          </PaginationItem>
+      <div className="flex items-center gap-4">
+        <p className="text-sm text-muted-foreground">
+          Mostrando {startIndex} a {endIndex} de {totalItems} registros
+        </p>
+        {showItemsPerPageSelector && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">|</span>
+            <Select
+              value={itemsPerPage.toString()}
+              onValueChange={(value) => onItemsPerPageChange(parseInt(value))}
+            >
+              <SelectTrigger className="h-8 w-[70px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {itemsPerPageOptions.map((option) => (
+                  <SelectItem key={option} value={option.toString()}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-muted-foreground">por página</span>
+          </div>
+        )}
+      </div>
+      
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => onPageChange(currentPage - 1)}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              />
+            </PaginationItem>
 
-          {getPageNumbers().map((page, index) =>
-            page === "ellipsis" ? (
-              <PaginationItem key={`ellipsis-${index}`}>
-                <PaginationEllipsis />
-              </PaginationItem>
-            ) : (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  onClick={() => onPageChange(page)}
-                  isActive={currentPage === page}
-                  className="cursor-pointer"
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            )
-          )}
+            {getPageNumbers().map((page, index) =>
+              page === "ellipsis" ? (
+                <PaginationItem key={`ellipsis-${index}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              ) : (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => onPageChange(page)}
+                    isActive={currentPage === page}
+                    className="cursor-pointer"
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              )
+            )}
 
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => onPageChange(currentPage + 1)}
-              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => onPageChange(currentPage + 1)}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }

@@ -78,7 +78,10 @@ const Vendas = () => {
     startIndex,
     endIndex,
     totalItems,
-  } = usePagination(filteredAndSortedSales, { itemsPerPage: 10 });
+    itemsPerPage,
+    setItemsPerPage,
+    itemsPerPageOptions,
+  } = usePagination(filteredAndSortedSales, { initialItemsPerPage: 10 });
 
   return (
     <SkeletonTransition
@@ -178,6 +181,9 @@ const Vendas = () => {
                   startIndex={startIndex}
                   endIndex={endIndex}
                   totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  onItemsPerPageChange={setItemsPerPage}
+                  itemsPerPageOptions={itemsPerPageOptions}
                 />
               </div>
             </div>
