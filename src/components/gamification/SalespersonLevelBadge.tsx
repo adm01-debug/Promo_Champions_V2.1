@@ -37,9 +37,9 @@ export function SalespersonLevelBadge({
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge 
-            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 ${sizeClasses[size]} cursor-default flex-shrink-0 flex items-center gap-0.5`}
+            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 shadow-sm hover:shadow-md transition-all duration-200 ${sizeClasses[size]} cursor-default flex-shrink-0 flex items-center gap-0.5 animate-bounce-in hover:animate-pop`}
           >
-            <Star className={`${iconSizes[size]} fill-current`} />
+            <Star className={`${iconSizes[size]} fill-current group-hover:animate-wiggle`} />
             {levelInfo.emoji} {showTitle ? levelInfo.title : `${level}`}
           </Badge>
         </TooltipTrigger>

@@ -30,9 +30,9 @@ export function LevelBadge({ totalXP, showTitle = false, size = "md" }: LevelBad
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge 
-            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 ${sizeClasses[size]} cursor-default flex items-center gap-1 group animate-fade-in`}
+            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 shadow-lg hover:shadow-xl transition-all duration-300 ${sizeClasses[size]} cursor-default flex items-center gap-1 group animate-bounce-in hover:animate-pop`}
           >
-            <Star className={`${iconSizes[size]} fill-current group-hover:animate-pulse`} />
+            <Star className={`${iconSizes[size]} fill-current group-hover:animate-wiggle`} />
             <span className="font-display font-bold">
               {levelInfo.emoji} {showTitle ? levelInfo.title : `Nv.${level}`}
             </span>

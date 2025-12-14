@@ -29,14 +29,14 @@ const getStatusBadge = (progress: number, hasGoals: boolean) => {
   if (!hasGoals) return null;
   if (progress >= 100) {
     return (
-      <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] gap-1 border border-status-success/30">
-        <Flame className="h-3 w-3" />
+      <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] gap-1 border border-status-success/30 animate-bounce-in hover:animate-pop">
+        <Flame className="h-3 w-3 animate-fire-pulse" />
         Meta Batida!
       </Badge>
     );
   }
   if (progress >= 80) {
-    return <Badge className="bg-status-info/20 text-status-info text-[10px] border border-status-info/30">Quase lá!</Badge>;
+    return <Badge className="bg-status-info/20 text-status-info text-[10px] border border-status-info/30 animate-bounce-in">Quase lá!</Badge>;
   }
   return null;
 };
@@ -67,7 +67,7 @@ export function DailyActivityRanking({ data }: DailyActivityRankingProps) {
             <span className="gradient-text">Ranking do Dia</span>
           </CardTitle>
           {completedCount > 0 && (
-            <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-xs border border-status-success/40 shadow-sm shadow-status-success/20 animate-pulse font-medium">
+            <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-xs border border-status-success/40 shadow-sm shadow-status-success/20 animate-bounce-in hover:animate-pop font-medium">
               🎉 {completedCount} bateram meta
             </Badge>
           )}

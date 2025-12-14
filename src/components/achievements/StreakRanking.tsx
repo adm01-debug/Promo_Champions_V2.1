@@ -135,7 +135,7 @@ export function StreakRanking() {
                     {/* Current Streak */}
                     {person.currentStreak > 0 && (
                       <div className="text-center">
-                        <Badge className={`${getStreakBadgeColor(person.currentStreak)} flex items-center gap-1`}>
+                        <Badge className={`${getStreakBadgeColor(person.currentStreak)} flex items-center gap-1 animate-bounce-in hover:animate-pop`}>
                           {getStreakIcon(person.currentStreak)}
                           <span>{person.currentStreak}</span>
                         </Badge>
@@ -145,8 +145,8 @@ export function StreakRanking() {
 
                     {/* Best Streak */}
                     <div className="text-center">
-                      <div className={`px-3 py-1.5 rounded-lg border ${getStreakBadgeColor(person.bestStreak)} flex items-center gap-1.5`}>
-                        <Trophy className="h-4 w-4" />
+                      <div className={`px-3 py-1.5 rounded-lg border ${getStreakBadgeColor(person.bestStreak)} flex items-center gap-1.5 animate-bounce-in hover:animate-pop`}>
+                        <Trophy className="h-4 w-4 group-hover:animate-wiggle" />
                         <span className="font-bold">{person.bestStreak}</span>
                       </div>
                       <div className="text-[9px] text-muted-foreground mt-1">Recorde</div>
