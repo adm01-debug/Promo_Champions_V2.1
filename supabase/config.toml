@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.detect-at-risk-deals]
 verify_jwt = false
+
+[functions.access-denied-alerts]
+verify_jwt = false
