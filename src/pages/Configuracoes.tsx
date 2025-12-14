@@ -3,8 +3,9 @@ import { SoundSettingsTabs } from "@/components/settings/SoundSettingsTabs";
 import { AccessDeniedLogs } from "@/components/settings/AccessDeniedLogs";
 import { SecurityAlertSettings } from "@/components/settings/SecurityAlertSettings";
 import { SecurityAlertHistory } from "@/components/settings/SecurityAlertHistory";
+import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 
 export default function Configuracoes() {
@@ -23,20 +24,26 @@ export default function Configuracoes() {
       </div>
 
       <Tabs defaultValue="roles" className="w-full">
-        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3' : 'grid-cols-2'} max-w-xl`}>
+        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-4' : 'grid-cols-2'} max-w-2xl`}>
           <TabsTrigger value="roles" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
-            Roles e Permissões
+            Roles
           </TabsTrigger>
           <TabsTrigger value="sounds" className="flex items-center gap-2">
             <Volume2 className="h-4 w-4" />
             Sons
           </TabsTrigger>
           {isAdmin && (
-            <TabsTrigger value="audit" className="flex items-center gap-2">
-              <FileWarning className="h-4 w-4" />
-              Auditoria
-            </TabsTrigger>
+            <>
+              <TabsTrigger value="audit" className="flex items-center gap-2">
+                <FileWarning className="h-4 w-4" />
+                Auditoria
+              </TabsTrigger>
+              <TabsTrigger value="circuits" className="flex items-center gap-2">
+                <Activity className="h-4 w-4" />
+                Circuit Breakers
+              </TabsTrigger>
+            </>
           )}
         </TabsList>
 
@@ -49,11 +56,17 @@ export default function Configuracoes() {
         </TabsContent>
 
         {isAdmin && (
-          <TabsContent value="audit" className="mt-6 space-y-6">
-            <SecurityAlertSettings />
-            <SecurityAlertHistory />
-            <AccessDeniedLogs />
-          </TabsContent>
+          <>
+            <TabsContent value="audit" className="mt-6 space-y-6">
+              <SecurityAlertSettings />
+              <SecurityAlertHistory />
+              <AccessDeniedLogs />
+            </TabsContent>
+            
+            <TabsContent value="circuits" className="mt-6">
+              <CircuitBreakerDashboard />
+            </TabsContent>
+          </>
         )}
       </Tabs>
     </div>
