@@ -1,11 +1,13 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { TrendingUp } from "lucide-react";
-import { format, startOfWeek, startOfMonth, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval } from "date-fns";
+import { TrendingUp, Users } from "lucide-react";
+import { format, startOfWeek, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type PeriodFilter = 'week' | 'month' | 'quarter';
 
@@ -114,6 +116,7 @@ const formatCurrency = (value: number) => {
 };
 
 export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) {
+  const [selectedCloser, setSelectedCloser] = useState<string>("all");
   const { data, isLoading } = useCloserRevenueEvolution(period);
 
   if (isLoading) {
@@ -130,6 +133,11 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
   }
 
   const { chartData = [], closers = [] } = data || {};
+
+  // Filter closers based on selection
+  const displayedClosers = selectedCloser === "all" 
+    ? closers 
+    : closers.filter(c => c.id === selectedCloser);
 
   if (!chartData.length || !closers.length) {
     return (
@@ -153,13 +161,27 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
 
   return (
     <Card className="glass border-border/40 hover-lift">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="flex items-center gap-2 font-display">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
             <TrendingUp className="w-4 h-4 text-primary" />
           </div>
           Evolução de Receita
         </CardTitle>
+        <Select value={selectedCloser} onValueChange={setSelectedCloser}>
+          <SelectTrigger className="w-[180px] h-9 text-sm">
+            <Users className="w-4 h-4 mr-2 text-muted-foreground" />
+            <SelectValue placeholder="Filtrar Closer" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Closers</SelectItem>
+            {closers.map(closer => (
+              <SelectItem key={closer.id} value={closer.id}>
+                {closer.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -199,18 +221,21 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
               }}
               wrapperStyle={{ paddingTop: '20px' }}
             />
-            {closers.map((closer, index) => (
-              <Line
-                key={closer.id}
-                type="monotone"
-                dataKey={closer.id}
-                name={closer.id}
-                stroke={COLORS[index % COLORS.length]}
-                strokeWidth={2}
-                dot={{ fill: COLORS[index % COLORS.length], strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, strokeWidth: 2 }}
-              />
-            ))}
+            {displayedClosers.map((closer, index) => {
+              const colorIndex = closers.findIndex(c => c.id === closer.id);
+              return (
+                <Line
+                  key={closer.id}
+                  type="monotone"
+                  dataKey={closer.id}
+                  name={closer.id}
+                  stroke={COLORS[colorIndex % COLORS.length]}
+                  strokeWidth={2}
+                  dot={{ fill: COLORS[colorIndex % COLORS.length], strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, strokeWidth: 2 }}
+                />
+              );
+            })}
           </LineChart>
         </ResponsiveContainer>
       </CardContent>
