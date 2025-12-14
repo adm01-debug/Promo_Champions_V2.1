@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
+import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
+import { useState, useMemo } from "react";
 
 const activityIcons: Record<ActivityType, typeof Phone> = {
   call: Phone,
@@ -39,15 +41,78 @@ const outcomeLabels: Record<ActivityOutcome, { label: string; color: string }> =
   qualified: { label: "Qualificado", color: "bg-primary/10 text-primary border-primary/20" },
 };
 
+const sortOptions: SortOption[] = [
+  { label: "Mais recente", value: "date_desc", direction: "desc" },
+  { label: "Mais antigo", value: "date_asc", direction: "asc" },
+];
+
+const activityTypeOptions = [
+  { label: "Ligação", value: "call" },
+  { label: "E-mail", value: "email" },
+  { label: "Reunião", value: "meeting" },
+  { label: "LinkedIn", value: "linkedin" },
+  { label: "WhatsApp", value: "whatsapp" },
+  { label: "Outro", value: "other" },
+];
+
+const outcomeOptions = [
+  { label: "Conectou", value: "connected" },
+  { label: "Não Atendeu", value: "no_answer" },
+  { label: "Agendou", value: "scheduled" },
+  { label: "Caixa Postal", value: "voicemail" },
+  { label: "Ocupado", value: "busy" },
+  { label: "Retornar", value: "callback" },
+  { label: "Sem Interesse", value: "not_interested" },
+  { label: "Qualificado", value: "qualified" },
+];
+
 interface ActivityListProps {
   limit?: number;
   showHeader?: boolean;
   showPagination?: boolean;
+  showFilters?: boolean;
 }
 
-export function ActivityList({ limit = 100, showHeader = true, showPagination = true }: ActivityListProps) {
+export function ActivityList({ 
+  limit = 100, 
+  showHeader = true, 
+  showPagination = true,
+  showFilters = true,
+}: ActivityListProps) {
   const { data: activities, isLoading } = useRecentActivities(limit);
   const { data: salespeople } = useSalespeople();
+  
+  const [sortBy, setSortBy] = useState("date_desc");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [outcomeFilter, setOutcomeFilter] = useState("");
+
+  const filteredAndSortedActivities = useMemo(() => {
+    if (!activities) return [];
+    
+    let filtered = [...activities];
+    
+    // Apply type filter
+    if (typeFilter) {
+      filtered = filtered.filter(a => a.activity_type === typeFilter);
+    }
+    
+    // Apply outcome filter
+    if (outcomeFilter) {
+      filtered = filtered.filter(a => a.outcome === outcomeFilter);
+    }
+    
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "date_desc":
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case "date_asc":
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        default:
+          return 0;
+      }
+    });
+  }, [activities, sortBy, typeFilter, outcomeFilter]);
 
   const {
     paginatedItems,
@@ -60,7 +125,7 @@ export function ActivityList({ limit = 100, showHeader = true, showPagination = 
     itemsPerPage,
     setItemsPerPage,
     itemsPerPageOptions,
-  } = usePagination(activities || [], { initialItemsPerPage: 10 });
+  } = usePagination(filteredAndSortedActivities, { initialItemsPerPage: 10 });
 
   const getSalesperson = (id: string | null) => 
     salespeople?.find(sp => sp.id === id);
@@ -93,21 +158,46 @@ export function ActivityList({ limit = 100, showHeader = true, showPagination = 
     <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
       {showHeader && (
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
-              <ClipboardList className="h-4 w-4 gradient-primary" />
-            </div>
-            Log de Atividades
-          </CardTitle>
+          <div className="flex items-center justify-between gap-4">
+            <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+                <ClipboardList className="h-4 w-4 gradient-primary" />
+              </div>
+              Log de Atividades
+            </CardTitle>
+            {showFilters && (
+              <FilterPopover
+                sortOptions={sortOptions}
+                currentSort={sortBy}
+                onSortChange={setSortBy}
+                filterOptions={[
+                  {
+                    label: "Tipo",
+                    options: activityTypeOptions,
+                    value: typeFilter,
+                    onChange: setTypeFilter,
+                  },
+                  {
+                    label: "Resultado",
+                    options: outcomeOptions,
+                    value: outcomeFilter,
+                    onChange: setOutcomeFilter,
+                  },
+                ]}
+              />
+            )}
+          </div>
         </CardHeader>
       )}
       <CardContent>
         <div className="space-y-2">
-          {activities?.length === 0 && (
+          {filteredAndSortedActivities.length === 0 && (
             <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border/50">
               <ClipboardList className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
               <p className="text-xs text-muted-foreground">
-                Nenhuma atividade registrada
+                {typeFilter || outcomeFilter 
+                  ? "Nenhuma atividade encontrada com os filtros aplicados" 
+                  : "Nenhuma atividade registrada"}
               </p>
             </div>
           )}
@@ -180,7 +270,7 @@ export function ActivityList({ limit = 100, showHeader = true, showPagination = 
           })}
         </div>
         
-        {showPagination && activities && activities.length > 0 && (
+        {showPagination && filteredAndSortedActivities.length > 0 && (
           <TablePagination
             currentPage={currentPage}
             totalPages={totalPages}
