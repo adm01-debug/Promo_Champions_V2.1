@@ -1,10 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
-
+import { useRetryMutation } from "@/hooks/useRetryMutation";
 export interface Sale {
   id: string;
   client_name: string;
@@ -71,8 +71,8 @@ export const useCreateSale = () => {
   const queryClient = useQueryClient();
   const { playSoundForCategory } = useSystemSoundSettings();
 
-  return useMutation({
-    mutationFn: async (input: CreateSaleInput) => {
+  return useRetryMutation(
+    async (input: CreateSaleInput) => {
       const { data, error } = await supabase
         .from("sales")
         .insert([input])
@@ -82,16 +82,19 @@ export const useCreateSale = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sales-list"] });
-      queryClient.invalidateQueries({ queryKey: ["sales"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
-      toast.success("Venda criada com sucesso!");
-      playSoundForCategory('newSale');
-    },
-    onError: (error) => {
-      console.error("Error creating sale:", error);
-      toast.error("Erro ao criar venda");
-    },
-  });
+    {
+      retryConfig: { maxRetries: 3, baseDelay: 1000 },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["sales-list"] });
+        queryClient.invalidateQueries({ queryKey: ["sales"] });
+        queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+        toast.success("Venda criada com sucesso!");
+        playSoundForCategory('newSale');
+      },
+      onError: (error) => {
+        console.error("Error creating sale:", error);
+        toast.error("Erro ao criar venda após múltiplas tentativas");
+      },
+    }
+  );
 };
