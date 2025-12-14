@@ -1,73 +1,101 @@
-# Welcome to your Lovable project
+# Sales CRM - Sistema de Gestão de Vendas
 
-## Project info
+![E2E Tests](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/e2e-tests.yml/badge.svg)
+![PR Checks](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/pr-checks.yml/badge.svg)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Sistema completo de CRM para equipes de vendas com SDRs e Closers, incluindo pipeline visual, gamificação, analytics avançados e IA para coaching.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 📊 **Dashboard** - KPIs em tempo real, métricas de vendas, forecasts
+- 🎯 **Pipeline Kanban** - Drag-and-drop para gestão de deals
+- 🏆 **Gamificação** - Rankings competitivos, streaks, achievements
+- 📈 **Analytics** - Win/Loss analysis, velocidade de deals, conversão
+- 🤖 **IA Coaching** - Análise de performance e recomendações
+- 📋 **Playbooks** - Checklists por estágio do funil
+- 🔔 **Alertas** - Notificações de deals em risco e metas
+- 👥 **Roles** - Admin, Manager, Salesperson com RLS
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
+- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions)
+- **Testing**: Vitest (unit), Playwright (E2E)
+- **CI/CD**: GitHub Actions
 
-Changes made via Lovable will be committed automatically to this repo.
+## Quick Start
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
+# Clone o repositório
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Instale dependências
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Testing
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Testes unitários
+npm test
 
-**Use GitHub Codespaces**
+# Testes E2E
+npx playwright install chromium
+npx playwright test
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Com interface visual
+npx playwright test --ui
+```
 
-## What technologies are used for this project?
+## Segurança
 
-This project is built with:
+O sistema implementa Row Level Security (RLS) com três níveis de acesso:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Permissão | Salesperson | Manager | Admin |
+|-----------|-------------|---------|-------|
+| Ver dashboard | ✅ | ✅ | ✅ |
+| Ver rankings | ✅ | ✅ | ✅ |
+| Criar clientes | ❌ | ✅ | ✅ |
+| Criar produtos | ❌ | ✅ | ✅ |
+| Gerenciar roles | ❌ | ❌ | ✅ |
+| Ver logs de segurança | ❌ | ✅ | ✅ |
 
-## How can I deploy this project?
+## Estrutura do Projeto
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+```
+src/
+├── components/     # Componentes React
+│   ├── ui/         # shadcn/ui components
+│   ├── dashboard/  # Dashboard widgets
+│   ├── pipeline/   # Kanban pipeline
+│   └── ...
+├── hooks/          # React Query hooks
+├── pages/          # Páginas da aplicação
+├── contexts/       # React contexts (Auth)
+└── integrations/   # Supabase client
 
-## Can I connect a custom domain to my Lovable project?
+e2e/                # Testes E2E Playwright
+supabase/
+├── functions/      # Edge Functions
+└── migrations/     # Database migrations
+```
 
-Yes, you can!
+## Documentação
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- [Design System](docs/DESIGN_SYSTEM.md)
+- [Hover Utilities](docs/HOVER_UTILITIES.md)
+- [E2E Tests](e2e/README.md)
+- [GitHub Actions](.github/workflows/README.md)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Deployment
+
+1. Clique em **Share → Publish** no Lovable
+2. Ou conecte ao GitHub e use o CI/CD configurado
+
+## License
+
+MIT
