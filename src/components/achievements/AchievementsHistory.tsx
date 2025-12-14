@@ -19,7 +19,7 @@ const getAchievementConfig = (type: string): AchievementConfig => {
       return {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Crown className="h-4 w-4" />,
-        color: "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-pulse"
+        color: "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada"
       };
     }
     if (streakNum >= 15) {

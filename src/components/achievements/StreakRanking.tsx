@@ -22,7 +22,7 @@ const getStreakIcon = (streak: number) => {
 };
 
 const getStreakBadgeColor = (streak: number) => {
-  if (streak >= 30) return "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50";
+  if (streak >= 30) return "bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada";
   if (streak >= 15) return "bg-gradient-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50";
   if (streak >= 7) return "bg-gradient-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50";
   if (streak >= 3) return "bg-status-info/20 text-status-info border-status-info/40";
