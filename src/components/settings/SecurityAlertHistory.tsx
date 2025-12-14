@@ -3,11 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { History, Mail, AlertTriangle, Clock, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
+import { format, subDays, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AlertHistory {
   id: string;
@@ -19,7 +20,18 @@ interface AlertHistory {
   created_at: string;
 }
 
+type PeriodOption = "7" | "15" | "30" | "90";
+
+const periodOptions: { value: PeriodOption; label: string }[] = [
+  { value: "7", label: "7 dias" },
+  { value: "15", label: "15 dias" },
+  { value: "30", label: "30 dias" },
+  { value: "90", label: "90 dias" },
+];
+
 export function SecurityAlertHistory() {
+  const [period, setPeriod] = useState<PeriodOption>("30");
+
   const { data: alerts, isLoading } = useQuery({
     queryKey: ['security-alert-history'],
     queryFn: async () => {
@@ -27,7 +39,7 @@ export function SecurityAlertHistory() {
         .from('security_alert_history')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(100);
       
       if (error) throw error;
       return data as AlertHistory[];
@@ -37,10 +49,11 @@ export function SecurityAlertHistory() {
   const chartData = useMemo(() => {
     if (!alerts || alerts.length === 0) return [];
 
+    const days = parseInt(period);
     const today = new Date();
-    const thirtyDaysAgo = subDays(today, 29);
+    const startDate = subDays(today, days - 1);
     
-    const days = eachDayOfInterval({ start: thirtyDaysAgo, end: today });
+    const dateRange = eachDayOfInterval({ start: startDate, end: today });
     
     const alertsByDay = alerts.reduce((acc, alert) => {
       const day = format(new Date(alert.created_at), 'yyyy-MM-dd');
@@ -48,7 +61,7 @@ export function SecurityAlertHistory() {
       return acc;
     }, {} as Record<string, number>);
 
-    return days.map(day => {
+    return dateRange.map(day => {
       const key = format(day, 'yyyy-MM-dd');
       return {
         date: format(day, 'dd/MM', { locale: ptBR }),
@@ -56,7 +69,7 @@ export function SecurityAlertHistory() {
         alertas: alertsByDay[key] || 0,
       };
     });
-  }, [alerts]);
+  }, [alerts, period]);
 
   if (isLoading) {
     return (
@@ -110,9 +123,23 @@ export function SecurityAlertHistory() {
         {/* Trend Chart */}
         {chartData.length > 0 && (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <TrendingUp className="h-4 w-4" />
-              Tendência de alertas (últimos 30 dias)
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <TrendingUp className="h-4 w-4" />
+                Tendência de alertas
+              </div>
+              <Select value={period} onValueChange={(v) => setPeriod(v as PeriodOption)}>
+                <SelectTrigger className="w-[120px] h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {periodOptions.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="h-48 w-full">
               <ResponsiveContainer width="100%" height="100%">
