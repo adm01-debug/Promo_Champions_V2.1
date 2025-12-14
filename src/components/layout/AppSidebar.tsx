@@ -18,9 +18,12 @@ import {
   Crosshair,
   Swords,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  Settings
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
 import { cn } from "@/lib/utils";
 import {
@@ -63,6 +66,7 @@ const teamItems = [
 ];
 
 const systemItems = [
+  { title: "Configurações", url: "/configuracoes", icon: Settings },
   { title: "Notificações", url: "/notificacoes", icon: Bell },
   { title: "Animações", url: "/animacoes", icon: Sparkles },
 ];
@@ -72,6 +76,7 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
   const alertCount = alerts?.length || 0;
+  const { salesperson } = useAuth();
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -189,8 +194,11 @@ export function AppSidebar() {
                 <Users className="h-4 w-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Admin User</p>
-                <p className="text-xs text-muted-foreground truncate">admin@salespro.com</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium truncate">{salesperson?.name || "Usuário"}</p>
+                  <UserRoleBadge />
+                </div>
+                <p className="text-xs text-muted-foreground truncate">{salesperson?.email || ""}</p>
               </div>
             </div>
           </div>
