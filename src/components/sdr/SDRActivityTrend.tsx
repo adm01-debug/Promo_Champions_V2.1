@@ -218,8 +218,12 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
         whatsapp: acc.whatsapp + point.whatsapp,
       }), { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 });
 
-      // Calculate underperforming SDRs (below goal for 3+ consecutive days)
+      // Calculate underperforming SDRs based on the selected period
+      // Use all data points from the period, not just last 7 days
       const underperformingSDRs: { id: string; name: string; consecutiveDays: number; avgDeficit: number }[] = [];
+      
+      // Determine how many consecutive days threshold based on period
+      const consecutiveThreshold = period === 'week' ? 2 : period === 'month' ? 3 : 5;
       
       sdrs.forEach(sdr => {
         const goal = sdrGoals[sdr.id] || 0;
@@ -230,9 +234,8 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
         let totalDeficit = 0;
         let deficitDays = 0;
         
-        // Check recent days (last 7 for accuracy)
-        const recentData = comparisonData.slice(-7);
-        recentData.forEach(point => {
+        // Use all data from the selected period
+        comparisonData.forEach(point => {
           const value = (point[sdr.id] as number) || 0;
           if (value < goal) {
             consecutiveCount++;
@@ -244,7 +247,7 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
           }
         });
         
-        if (maxConsecutive >= 3) {
+        if (maxConsecutive >= consecutiveThreshold) {
           underperformingSDRs.push({
             id: sdr.id,
             name: sdr.name,
