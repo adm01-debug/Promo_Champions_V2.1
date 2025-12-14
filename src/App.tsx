@@ -8,6 +8,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { QueryPerformancePanel } from "@/components/debug/QueryPerformancePanel";
+import { PageErrorBoundary } from "@/components/errors/PageErrorBoundary";
+import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import Index from "./pages/Index";
 import Vendas from "./pages/Vendas";
 import Clientes from "./pages/Clientes";
@@ -55,107 +57,111 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route
-              path="/*"
-              element={
-                <MainLayout>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/vendas" element={<Vendas />} />
-                    <Route path="/clientes" element={<Clientes />} />
-                    <Route path="/produtos" element={<Produtos />} />
-                    <Route path="/relatorios" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Relatorios />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/vendedores" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Vendedores />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/vendedor/:id" element={<VendedorDashboard />} />
-                    <Route path="/analytics" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Analytics />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/notificacoes" element={<Notificacoes />} />
-                    <Route path="/pipeline" element={<Pipeline />} />
-                    <Route path="/tarefas" element={<Tarefas />} />
-                    <Route path="/playbooks" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Playbooks />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/sdr" element={<SDRDashboard />} />
-                    <Route path="/closer" element={<CloserDashboard />} />
-                    <Route path="/atividades" element={<Atividades />} />
-                    <Route path="/cadencias" element={<Cadencias />} />
-                    <Route path="/metas" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Metas />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/fonte-leads" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <FonteLeads />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/relatorio-atividades" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <RelatorioAtividades />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/metas-atividades" element={<MetasAtividades />} />
-                    <Route path="/ranking" element={<RankingCompetitivo />} />
-                    <Route path="/configuracoes" element={<Configuracoes />} />
-                    <Route path="/animacoes" element={<AnimacoesDemo />} />
-                    <Route path="/times" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Times />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/bitrix24" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Bitrix24 />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/acesso-negado" element={<AccessDenied />} />
-                    <Route path="/portfolio" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <Portfolio />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/icp" element={
-                      <ProtectedRoute requireAdminOrManager>
-                        <ICP />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </MainLayout>
-              }
-            />
-          </Routes>
-        </AuthProvider>
-        <QueryPerformancePanel />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-  </HelmetProvider>
+  <PageErrorBoundary>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+            <Routes>
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route
+                path="/*"
+                element={
+                  <MainLayout>
+                    <ErrorBoundary>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/vendas" element={<Vendas />} />
+                        <Route path="/clientes" element={<Clientes />} />
+                        <Route path="/produtos" element={<Produtos />} />
+                        <Route path="/relatorios" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Relatorios />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/vendedores" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Vendedores />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/vendedor/:id" element={<VendedorDashboard />} />
+                        <Route path="/analytics" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Analytics />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/notificacoes" element={<Notificacoes />} />
+                        <Route path="/pipeline" element={<Pipeline />} />
+                        <Route path="/tarefas" element={<Tarefas />} />
+                        <Route path="/playbooks" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Playbooks />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/sdr" element={<SDRDashboard />} />
+                        <Route path="/closer" element={<CloserDashboard />} />
+                        <Route path="/atividades" element={<Atividades />} />
+                        <Route path="/cadencias" element={<Cadencias />} />
+                        <Route path="/metas" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Metas />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/fonte-leads" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <FonteLeads />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/relatorio-atividades" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <RelatorioAtividades />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/metas-atividades" element={<MetasAtividades />} />
+                        <Route path="/ranking" element={<RankingCompetitivo />} />
+                        <Route path="/configuracoes" element={<Configuracoes />} />
+                        <Route path="/animacoes" element={<AnimacoesDemo />} />
+                        <Route path="/times" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Times />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/bitrix24" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Bitrix24 />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/acesso-negado" element={<AccessDenied />} />
+                        <Route path="/portfolio" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <Portfolio />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/icp" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <ICP />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/admin" element={<AdminDashboard />} />
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </ErrorBoundary>
+                  </MainLayout>
+                }
+              />
+            </Routes>
+          </AuthProvider>
+          <QueryPerformancePanel />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+    </HelmetProvider>
+  </PageErrorBoundary>
 );
 
 export default App;
