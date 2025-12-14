@@ -144,3 +144,86 @@ export function useCircuitBreakerStats() {
     staleTime: 30000,
   });
 }
+
+// Get trend data for charts (last 7 days, hourly aggregation)
+export function useCircuitBreakerTrends(days = 7) {
+  return useQuery({
+    queryKey: ["circuit-breaker-trends", days],
+    queryFn: async () => {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      const { data, error } = await supabase
+        .from("circuit_breaker_events")
+        .select("event_type, created_at, circuit_name")
+        .gte("created_at", startDate.toISOString())
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching circuit breaker trends:", error);
+        throw error;
+      }
+
+      // Aggregate by hour
+      const hourlyData: Record<string, { 
+        time: string; 
+        hour: string;
+        failures: number; 
+        opened: number; 
+        closed: number; 
+        halfOpen: number;
+        total: number;
+      }> = {};
+
+      data?.forEach((event) => {
+        const date = new Date(event.created_at);
+        const hourKey = `${date.toISOString().slice(0, 13)}:00`;
+        const displayHour = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}h`;
+
+        if (!hourlyData[hourKey]) {
+          hourlyData[hourKey] = {
+            time: hourKey,
+            hour: displayHour,
+            failures: 0,
+            opened: 0,
+            closed: 0,
+            halfOpen: 0,
+            total: 0,
+          };
+        }
+
+        hourlyData[hourKey].total++;
+
+        switch (event.event_type) {
+          case "failure":
+            hourlyData[hourKey].failures++;
+            break;
+          case "opened":
+            hourlyData[hourKey].opened++;
+            break;
+          case "closed":
+            hourlyData[hourKey].closed++;
+            break;
+          case "half_open":
+            hourlyData[hourKey].halfOpen++;
+            break;
+        }
+      });
+
+      // Convert to array and sort by time
+      const trendData = Object.values(hourlyData).sort((a, b) => 
+        a.time.localeCompare(b.time)
+      );
+
+      // Get unique circuits
+      const circuits = [...new Set(data?.map((e) => e.circuit_name) || [])];
+
+      return {
+        trendData,
+        circuits,
+        totalEvents: data?.length || 0,
+      };
+    },
+    staleTime: 60000,
+  });
+}
