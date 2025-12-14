@@ -5,7 +5,7 @@ import { useRecentActivities, ActivityType, ActivityOutcome } from "@/hooks/useA
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { format, formatDistanceToNow, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search, CalendarIcon, X, BarChart3, ChevronDown, ChevronUp } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search, CalendarIcon, X, BarChart3, ChevronDown, ChevronUp, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -179,6 +179,26 @@ export function ActivityList({
     return { typeStats, outcomeStats };
   }, [filteredAndSortedActivities]);
 
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (typeFilter) count++;
+    if (outcomeFilter) count++;
+    if (salespersonFilter) count++;
+    if (searchTerm) count++;
+    if (startDate) count++;
+    if (endDate) count++;
+    return count;
+  }, [typeFilter, outcomeFilter, salespersonFilter, searchTerm, startDate, endDate]);
+
+  const clearAllFilters = () => {
+    setTypeFilter("");
+    setOutcomeFilter("");
+    setSalespersonFilter("");
+    setSearchTerm("");
+    setStartDate(undefined);
+    setEndDate(undefined);
+  };
+
   const {
     paginatedItems,
     currentPage,
@@ -234,6 +254,17 @@ export function ActivityList({
               <Badge variant="secondary" className="text-xs">
                 {filteredAndSortedActivities.length} {filteredAndSortedActivities.length === 1 ? 'atividade' : 'atividades'}
               </Badge>
+              {activeFiltersCount > 0 && (
+                <Badge 
+                  variant="outline" 
+                  className="text-xs gap-1 bg-primary/10 text-primary border-primary/30 cursor-pointer hover:bg-primary/20 transition-colors"
+                  onClick={clearAllFilters}
+                >
+                  <Filter className="h-3 w-3" />
+                  {activeFiltersCount} {activeFiltersCount === 1 ? 'filtro' : 'filtros'}
+                  <X className="h-3 w-3 ml-0.5" />
+                </Badge>
+              )}
             </div>
             {showFilters && (
               <FilterPopover
