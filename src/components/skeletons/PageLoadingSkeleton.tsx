@@ -1426,3 +1426,242 @@ export function PlaybooksLoadingSkeleton() {
     </div>
   );
 }
+
+export function RankingLoadingSkeleton() {
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div 
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
+      >
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-8 w-8 rounded" variant="primary" shimmer="glow" />
+          <Skeleton className="h-9 w-56" variant="intense" shimmer="glow" />
+        </div>
+        <Skeleton className="h-4 w-48" />
+      </div>
+
+      {/* Stats Cards */}
+      <div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+      >
+        {[1, 2, 3, 4].map((i) => (
+          <StatCardSkeleton key={i} highlighted={i === 1} />
+        ))}
+      </div>
+
+      {/* Leader Spotlight */}
+      <div 
+        className="glass rounded-2xl p-6 border-2 border-border/30 opacity-0 animate-fade-in"
+        style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+      >
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <Skeleton className="h-28 w-28 rounded-full" variant="primary" shimmer="glow" />
+          <div className="flex-1 space-y-3 text-center md:text-left">
+            <Skeleton className="h-4 w-32 mx-auto md:mx-0" />
+            <Skeleton className="h-8 w-48 mx-auto md:mx-0" variant="intense" shimmer="intense" />
+            <div className="flex gap-2 justify-center md:justify-start">
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+            </div>
+          </div>
+          <div className="flex gap-8">
+            <div className="text-center space-y-2">
+              <Skeleton className="h-10 w-32" variant="intense" shimmer="glow" />
+              <Skeleton className="h-3 w-16 mx-auto" />
+            </div>
+            <div className="text-center space-y-2">
+              <Skeleton className="h-10 w-12" shimmer="intense" />
+              <Skeleton className="h-3 w-12 mx-auto" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div 
+        className="flex gap-2 opacity-0 animate-fade-in"
+        style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+      >
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-10 w-28 rounded-lg" shimmer={i === 1 ? "intense" : "default"} />
+        ))}
+      </div>
+
+      {/* Ranking List */}
+      <div 
+        className="space-y-3 opacity-0 animate-fade-in"
+        style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+      >
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="glass rounded-xl p-4 flex items-center gap-4">
+            <Skeleton className="h-8 w-8 rounded-full" variant={i <= 3 ? "primary" : "default"} shimmer={i === 1 ? "glow" : "default"} />
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-5 w-32" shimmer={i === 1 ? "intense" : "default"} />
+              <Skeleton className="h-3 w-24" />
+            </div>
+            <Skeleton className="h-8 w-28" variant={i === 1 ? "primary" : "default"} shimmer={i === 1 ? "glow" : "default"} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TimesLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div 
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
+      >
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-12 w-12 rounded-xl" variant="primary" shimmer="glow" />
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" variant="intense" shimmer="glow" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-36 rounded-md" variant="primary" shimmer="intense" />
+      </div>
+
+      {/* Stats */}
+      <div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4 opacity-0 animate-fade-in"
+        style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+      >
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="glass rounded-xl p-4 flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-lg" variant={i === 1 ? "primary" : "default"} shimmer={i === 1 ? "glow" : "default"} />
+            <div className="space-y-1">
+              <Skeleton className="h-6 w-12" variant={i === 1 ? "intense" : "default"} shimmer={i === 1 ? "intense" : "default"} />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Team Cards */}
+      <div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in"
+        style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+      >
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="glass rounded-xl p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-10 rounded-full" variant={i === 1 ? "primary" : "default"} shimmer={i === 1 ? "glow" : "default"} />
+                <Skeleton className="h-5 w-32" shimmer={i === 1 ? "intense" : "default"} />
+              </div>
+              <Skeleton className="h-6 w-14 rounded-full" />
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-4 rounded" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-4 rounded" />
+                <Skeleton className="h-4 w-16" />
+                <div className="flex -space-x-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Skeleton className="h-9 flex-1 rounded-md" />
+              <Skeleton className="h-9 w-9 rounded-md" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function VendedorDashboardLoadingSkeleton() {
+  return (
+    <div className="min-h-screen bg-background p-6 lg:p-8">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+        {/* Back link */}
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+          <Skeleton className="h-5 w-36 mb-4" />
+        </div>
+
+        {/* Header Card */}
+        <div 
+          className="glass rounded-2xl p-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+        >
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <Skeleton className="h-24 w-24 rounded-full" variant="primary" shimmer="glow" />
+            <div className="flex-1 space-y-3 text-center md:text-left">
+              <Skeleton className="h-8 w-48 mx-auto md:mx-0" variant="intense" shimmer="glow" />
+              <div className="flex gap-2 justify-center md:justify-start">
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </div>
+            </div>
+            <div className="flex gap-6">
+              <div className="text-center space-y-2">
+                <Skeleton className="h-10 w-28" variant="intense" shimmer="glow" />
+                <Skeleton className="h-3 w-16 mx-auto" />
+              </div>
+              <div className="text-center space-y-2">
+                <Skeleton className="h-10 w-16" shimmer="intense" />
+                <Skeleton className="h-3 w-12 mx-auto" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-4 gap-4 opacity-0 animate-fade-in"
+          style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+        >
+          {[1, 2, 3, 4].map((i) => (
+            <StatCardSkeleton key={i} highlighted={i === 1} />
+          ))}
+        </div>
+
+        {/* Charts Grid */}
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+        >
+          <ChartSkeleton height="h-[300px]" highlighted />
+          <ChartSkeleton height="h-[300px]" />
+        </div>
+
+        {/* Bottom Section */}
+        <div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in"
+          style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+        >
+          <TableSkeleton rows={5} />
+          <div className="glass rounded-xl p-6 space-y-4">
+            <Skeleton className="h-6 w-32" shimmer="intense" />
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border/30">
+                <Skeleton className="h-8 w-8 rounded" variant={i === 1 ? "primary" : "default"} shimmer={i === 1 ? "glow" : "default"} />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

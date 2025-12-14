@@ -8,7 +8,8 @@ import { CreateTeamDialog } from "@/components/teams/CreateTeamDialog";
 import { EditTeamDialog } from "@/components/teams/EditTeamDialog";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { useTeams, useDeleteTeam, Team } from "@/hooks/useTeams";
-import { Skeleton } from "@/components/ui/skeleton";
+import { TimesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
+import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function Times() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -33,31 +34,12 @@ export default function Times() {
   ).length || 0;
   const incompleteTeams = totalTeams - completeTeams;
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-12 w-12 rounded-xl" />
-          <div>
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-64 mt-2" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-64 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
+    <SkeletonTransition
+      isLoading={isLoading}
+      skeleton={<TimesLoadingSkeleton />}
+      duration={400}
+    >
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -190,5 +172,6 @@ export default function Times() {
         isDeleting={deleteTeam.isPending}
       />
     </div>
+    </SkeletonTransition>
   );
 }
