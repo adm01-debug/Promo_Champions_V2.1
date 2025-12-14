@@ -963,6 +963,33 @@ export type Database = {
           },
         ]
       }
+      security_alert_settings: {
+        Row: {
+          cooldown_hours: number
+          created_at: string
+          id: string
+          spike_threshold: number
+          time_window_hours: number
+          updated_at: string
+        }
+        Insert: {
+          cooldown_hours?: number
+          created_at?: string
+          id?: string
+          spike_threshold?: number
+          time_window_hours?: number
+          updated_at?: string
+        }
+        Update: {
+          cooldown_hours?: number
+          created_at?: string
+          id?: string
+          spike_threshold?: number
+          time_window_hours?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           completed_at: string | null

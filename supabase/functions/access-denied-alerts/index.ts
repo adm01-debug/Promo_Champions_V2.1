@@ -9,10 +9,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Configuration
-const SPIKE_THRESHOLD = 5; // Number of attempts in time window to trigger alert
-const TIME_WINDOW_HOURS = 1; // Time window to check for spikes
-const COOLDOWN_HOURS = 6; // Don't send another alert for same issue within this period
+// Default configuration (used if DB fetch fails)
+const DEFAULT_SPIKE_THRESHOLD = 5;
+const DEFAULT_TIME_WINDOW_HOURS = 1;
+const DEFAULT_COOLDOWN_HOURS = 24;
 
 interface AccessDeniedLog {
   id: string;
@@ -32,7 +32,13 @@ interface SpikeInfo {
   latestAttempt: string;
 }
 
-const buildSpikeAlertHtml = (spikes: SpikeInfo[], totalAttempts: number) => {
+interface AlertSettings {
+  spike_threshold: number;
+  time_window_hours: number;
+  cooldown_hours: number;
+}
+
+const buildSpikeAlertHtml = (spikes: SpikeInfo[], totalAttempts: number, settings: AlertSettings) => {
   const spikesHtml = spikes
     .map(
       (spike) => `
@@ -62,10 +68,10 @@ const buildSpikeAlertHtml = (spikes: SpikeInfo[], totalAttempts: number) => {
           <div style="background: #16162a; padding: 24px; border-radius: 0 0 12px 12px;">
             <div style="background: #0f0f23; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
               <p style="color: #94a3b8; margin: 0; font-size: 14px;">
-                <strong style="color: #f97316;">${totalAttempts}</strong> tentativas de acesso negado na última hora
+                <strong style="color: #f97316;">${totalAttempts}</strong> tentativas de acesso negado nas últimas ${settings.time_window_hours}h
               </p>
               <p style="color: #64748b; margin: 8px 0 0 0; font-size: 12px;">
-                Limite configurado: ${SPIKE_THRESHOLD} tentativas por usuário em ${TIME_WINDOW_HOURS}h
+                Limite configurado: ${settings.spike_threshold} tentativas por usuário em ${settings.time_window_hours}h
               </p>
             </div>
             
@@ -93,6 +99,38 @@ const buildSpikeAlertHtml = (spikes: SpikeInfo[], totalAttempts: number) => {
   `;
 };
 
+async function getAlertSettings(supabase: any): Promise<AlertSettings> {
+  try {
+    const { data, error } = await supabase
+      .from("security_alert_settings")
+      .select("spike_threshold, time_window_hours, cooldown_hours")
+      .limit(1)
+      .single();
+
+    if (error || !data) {
+      console.log("Using default settings (DB fetch failed):", error?.message);
+      return {
+        spike_threshold: DEFAULT_SPIKE_THRESHOLD,
+        time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
+        cooldown_hours: DEFAULT_COOLDOWN_HOURS,
+      };
+    }
+
+    console.log("Loaded settings from DB:", data);
+    return {
+      spike_threshold: data.spike_threshold,
+      time_window_hours: data.time_window_hours,
+      cooldown_hours: data.cooldown_hours,
+    };
+  } catch (e) {
+    console.error("Error fetching settings:", e);
+    return {
+      spike_threshold: DEFAULT_SPIKE_THRESHOLD,
+      time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
+      cooldown_hours: DEFAULT_COOLDOWN_HOURS,
+    };
+  }
+}
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -105,11 +143,15 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Get alert settings from database
+    const settings = await getAlertSettings(supabase);
+    console.log("Using settings:", settings);
+
     // Calculate time window
     const timeWindowStart = new Date();
-    timeWindowStart.setHours(timeWindowStart.getHours() - TIME_WINDOW_HOURS);
+    timeWindowStart.setHours(timeWindowStart.getHours() - settings.time_window_hours);
 
-    // Fetch access denied logs from the last hour
+    // Fetch access denied logs from the time window
     const { data: logs, error: logsError } = await supabase
       .from("access_denied_logs")
       .select("*")
@@ -123,12 +165,12 @@ const handler = async (req: Request): Promise<Response> => {
     if (!logs || logs.length === 0) {
       console.log("No access denied attempts in the time window");
       return new Response(
-        JSON.stringify({ message: "No access denied attempts found", spikesDetected: 0 }),
+        JSON.stringify({ message: "No access denied attempts found", spikesDetected: [] }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    console.log(`Found ${logs.length} access denied attempts in the last ${TIME_WINDOW_HOURS} hour(s)`);
+    console.log(`Found ${logs.length} access denied attempts in the last ${settings.time_window_hours} hour(s)`);
 
     // Group attempts by user
     const attemptsByUser: Record<string, AccessDeniedLog[]> = {};
@@ -142,7 +184,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Detect spikes (users with attempts >= threshold)
     const spikes: SpikeInfo[] = [];
     for (const [userId, userLogs] of Object.entries(attemptsByUser)) {
-      if (userLogs.length >= SPIKE_THRESHOLD) {
+      if (userLogs.length >= settings.spike_threshold) {
         const paths = [...new Set(userLogs.map(l => l.attempted_path))];
         spikes.push({
           userId,
@@ -160,7 +202,8 @@ const handler = async (req: Request): Promise<Response> => {
         JSON.stringify({ 
           message: "No spikes detected", 
           totalAttempts: logs.length,
-          spikesDetected: 0 
+          spikesDetected: [],
+          settings 
         }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
@@ -224,7 +267,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending spike alert to ${allEmails.length} admin(s):`, allEmails);
 
     // Send alert email
-    const emailHtml = buildSpikeAlertHtml(spikes, logs.length);
+    const emailHtml = buildSpikeAlertHtml(spikes, logs.length, settings);
 
     const emailResponse = await resend.emails.send({
       from: "Segurança <onboarding@resend.dev>",
@@ -239,10 +282,10 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({
         message: "Spike alert sent successfully",
         totalAttempts: logs.length,
-        spikesDetected: spikes.length,
-        spikes,
+        spikesDetected: spikes,
         emailsSentTo: allEmails,
         emailResponse,
+        settings,
       }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
