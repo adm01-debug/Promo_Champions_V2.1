@@ -1,10 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpdateProduct, Product } from "@/hooks/useProducts";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const editProductSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Nome deve ter no máximo 100 caracteres"),
+  category: z.string().default("Assinatura"),
+  price: z
+    .string()
+    .min(1, "Preço é obrigatório")
+    .refine((val) => !isNaN(parseFloat(val)), "Preço inválido")
+    .refine((val) => parseFloat(val) >= 0, "Preço deve ser positivo"),
+  status: z.string().default("ativo"),
+  rating: z
+    .string()
+    .refine((val) => !val || !isNaN(parseFloat(val)), "Avaliação inválida")
+    .refine((val) => !val || (parseFloat(val) >= 0 && parseFloat(val) <= 5), "Avaliação deve ser entre 0 e 5"),
+  sales_count: z
+    .string()
+    .refine((val) => !val || !isNaN(parseInt(val)), "Quantidade inválida")
+    .refine((val) => !val || parseInt(val) >= 0, "Quantidade deve ser positiva"),
+});
+
+type EditProductFormData = z.infer<typeof editProductSchema>;
 
 interface EditProductDialogProps {
   product: Product | null;
@@ -13,20 +48,23 @@ interface EditProductDialogProps {
 }
 
 export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDialogProps) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "Assinatura",
-    price: "",
-    status: "ativo",
-    rating: "",
-    sales_count: "",
-  });
-
   const updateProduct = useUpdateProduct();
+
+  const form = useForm<EditProductFormData>({
+    resolver: zodResolver(editProductSchema),
+    defaultValues: {
+      name: "",
+      category: "Assinatura",
+      price: "0",
+      status: "ativo",
+      rating: "0",
+      sales_count: "0",
+    },
+  });
 
   useEffect(() => {
     if (product) {
-      setFormData({
+      form.reset({
         name: product.name || "",
         category: product.category || "Assinatura",
         price: product.price?.toString() || "0",
@@ -35,21 +73,20 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
         sales_count: product.sales_count?.toString() || "0",
       });
     }
-  }, [product]);
+  }, [product, form]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!product || !formData.name.trim() || !formData.price) return;
+  const onSubmit = (data: EditProductFormData) => {
+    if (!product) return;
 
     updateProduct.mutate(
       {
         id: product.id,
-        name: formData.name,
-        category: formData.category,
-        price: parseFloat(formData.price),
-        status: formData.status,
-        rating: parseFloat(formData.rating) || 0,
-        sales_count: parseInt(formData.sales_count) || 0,
+        name: data.name,
+        category: data.category,
+        price: parseFloat(data.price),
+        status: data.status,
+        rating: parseFloat(data.rating) || 0,
+        sales_count: parseInt(data.sales_count) || 0,
       },
       {
         onSuccess: () => {
@@ -65,95 +102,141 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
         <DialogHeader>
           <DialogTitle className="gradient-text">Editar Produto</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="edit-prod-name">Nome *</Label>
-            <Input
-              id="edit-prod-name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nome do produto"
-              required
-              className="bg-muted/50 border-border/50"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Nome do produto"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label htmlFor="edit-prod-category">Categoria</Label>
-            <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-              <SelectTrigger className="bg-muted/50 border-border/50">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Assinatura">Assinatura</SelectItem>
-                <SelectItem value="Serviço">Serviço</SelectItem>
-                <SelectItem value="Projeto">Projeto</SelectItem>
-                <SelectItem value="Consultoria">Consultoria</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="edit-prod-price">Preço *</Label>
-            <Input
-              id="edit-prod-price"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              placeholder="0.00"
-              required
-              className="bg-muted/50 border-border/50"
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Categoria</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="bg-muted/50 border-border/50">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Assinatura">Assinatura</SelectItem>
+                      <SelectItem value="Serviço">Serviço</SelectItem>
+                      <SelectItem value="Projeto">Projeto</SelectItem>
+                      <SelectItem value="Consultoria">Consultoria</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="edit-prod-rating">Avaliação</Label>
-              <Input
-                id="edit-prod-rating"
-                type="number"
-                step="0.1"
-                min="0"
-                max="5"
-                value={formData.rating}
-                onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
-                placeholder="0.0"
-                className="bg-muted/50 border-border/50"
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preço *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="rating"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Avaliação</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        placeholder="0.0"
+                        className="bg-muted/50 border-border/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="sales_count"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Vendas</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        className="bg-muted/50 border-border/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div>
-              <Label htmlFor="edit-prod-sales">Vendas</Label>
-              <Input
-                id="edit-prod-sales"
-                type="number"
-                min="0"
-                value={formData.sales_count}
-                onChange={(e) => setFormData({ ...formData, sales_count: e.target.value })}
-                placeholder="0"
-                className="bg-muted/50 border-border/50"
-              />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="bg-muted/50 border-border/50">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ativo">Ativo</SelectItem>
+                      <SelectItem value="pausado">Pausado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="gradient-primary" disabled={updateProduct.isPending}>
+                {updateProduct.isPending ? "Salvando..." : "Salvar"}
+              </Button>
             </div>
-          </div>
-          <div>
-            <Label htmlFor="edit-prod-status">Status</Label>
-            <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
-              <SelectTrigger className="bg-muted/50 border-border/50">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ativo">Ativo</SelectItem>
-                <SelectItem value="pausado">Pausado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit" className="gradient-primary" disabled={updateProduct.isPending}>
-              {updateProduct.isPending ? "Salvando..." : "Salvar"}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

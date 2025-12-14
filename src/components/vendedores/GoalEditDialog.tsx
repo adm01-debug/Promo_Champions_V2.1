@@ -1,12 +1,39 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const goalEditSchema = z.object({
+  commission_rate: z
+    .string()
+    .min(1, "Taxa de comissão é obrigatória")
+    .refine((val) => !isNaN(parseFloat(val)), "Taxa inválida")
+    .refine((val) => parseFloat(val) >= 0, "Taxa deve ser positiva")
+    .refine((val) => parseFloat(val) <= 100, "Taxa deve ser no máximo 100%"),
+  goal_amount: z
+    .string()
+    .min(1, "Meta é obrigatória")
+    .refine((val) => !isNaN(parseFloat(val)), "Valor inválido")
+    .refine((val) => parseFloat(val) >= 0, "Meta deve ser positiva")
+    .refine((val) => parseFloat(val) <= 100000000, "Meta deve ser no máximo R$ 100.000.000"),
+});
+
+type GoalEditFormData = z.infer<typeof goalEditSchema>;
 
 interface GoalEditDialogProps {
   open: boolean;
@@ -20,17 +47,24 @@ interface GoalEditDialogProps {
 }
 
 export function GoalEditDialog({ open, onOpenChange, salesperson }: GoalEditDialogProps) {
-  const [commissionRate, setCommissionRate] = useState("");
-  const [goalAmount, setGoalAmount] = useState("");
-
   const queryClient = useQueryClient();
+
+  const form = useForm<GoalEditFormData>({
+    resolver: zodResolver(goalEditSchema),
+    defaultValues: {
+      commission_rate: "0",
+      goal_amount: "0",
+    },
+  });
 
   useEffect(() => {
     if (salesperson) {
-      setCommissionRate(salesperson.commission_rate.toString());
-      setGoalAmount(salesperson.goalAmount.toString());
+      form.reset({
+        commission_rate: salesperson.commission_rate.toString(),
+        goal_amount: salesperson.goalAmount.toString(),
+      });
     }
-  }, [salesperson]);
+  }, [salesperson, form]);
 
   const updateMutation = useMutation({
     mutationFn: async (data: { commission_rate: number; goal_amount: number }) => {
@@ -77,23 +111,11 @@ export function GoalEditDialog({ open, onOpenChange, salesperson }: GoalEditDial
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const commission = parseFloat(commissionRate);
-    const goal = parseFloat(goalAmount);
-
-    if (isNaN(commission) || commission < 0 || commission > 100) {
-      toast({ title: "Taxa de comissão inválida", variant: "destructive" });
-      return;
-    }
-
-    if (isNaN(goal) || goal < 0) {
-      toast({ title: "Meta inválida", variant: "destructive" });
-      return;
-    }
-
-    updateMutation.mutate({ commission_rate: commission, goal_amount: goal });
+  const onSubmit = (data: GoalEditFormData) => {
+    updateMutation.mutate({
+      commission_rate: parseFloat(data.commission_rate),
+      goal_amount: parseFloat(data.goal_amount),
+    });
   };
 
   if (!salesperson) return null;
@@ -104,50 +126,64 @@ export function GoalEditDialog({ open, onOpenChange, salesperson }: GoalEditDial
         <DialogHeader>
           <DialogTitle className="gradient-text">Editar Meta - {salesperson.name}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="edit-commission">Taxa de Comissão (%)</Label>
-            <Input
-              id="edit-commission"
-              type="number"
-              step="0.5"
-              min="0"
-              max="100"
-              value={commissionRate}
-              onChange={(e) => setCommissionRate(e.target.value)}
-              className="bg-background/50 border-border/50"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="edit-goal">Meta Mensal (R$)</Label>
-            <Input
-              id="edit-goal"
-              type="number"
-              step="1000"
-              min="0"
-              value={goalAmount}
-              onChange={(e) => setGoalAmount(e.target.value)}
-              className="bg-background/50 border-border/50"
-            />
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button variant="glow-pulse-success" type="submit" disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                "Salvar"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            <FormField
+              control={form.control}
+              name="commission_rate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Taxa de Comissão (%)</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      step="0.5"
+                      min="0"
+                      max="100"
+                      className="bg-background/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </Button>
-          </div>
-        </form>
+            />
+            <FormField
+              control={form.control}
+              name="goal_amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Meta Mensal (R$)</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      step="1000"
+                      min="0"
+                      className="bg-background/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancelar
+              </Button>
+              <Button variant="glow-pulse-success" type="submit" disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  "Salvar"
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

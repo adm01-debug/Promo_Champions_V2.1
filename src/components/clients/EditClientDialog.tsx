@@ -1,9 +1,47 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useUpdateClient, Client } from "@/hooks/useClients";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const editClientSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Nome deve ter no máximo 100 caracteres"),
+  email: z
+    .string()
+    .trim()
+    .email("E-mail inválido")
+    .max(255, "E-mail deve ter no máximo 255 caracteres")
+    .or(z.literal("")),
+  phone: z
+    .string()
+    .trim()
+    .max(20, "Telefone deve ter no máximo 20 caracteres"),
+  company: z
+    .string()
+    .trim()
+    .max(100, "Empresa deve ter no máximo 100 caracteres"),
+  total_value: z
+    .string()
+    .refine((val) => !val || !isNaN(parseFloat(val)), "Valor inválido")
+    .refine((val) => !val || parseFloat(val) >= 0, "Valor deve ser positivo"),
+});
+
+type EditClientFormData = z.infer<typeof editClientSchema>;
 
 interface EditClientDialogProps {
   client: Client | null;
@@ -12,19 +50,22 @@ interface EditClientDialogProps {
 }
 
 export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialogProps) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    total_value: "",
-  });
-
   const updateClient = useUpdateClient();
+
+  const form = useForm<EditClientFormData>({
+    resolver: zodResolver(editClientSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      total_value: "0",
+    },
+  });
 
   useEffect(() => {
     if (client) {
-      setFormData({
+      form.reset({
         name: client.name || "",
         email: client.email || "",
         phone: client.phone || "",
@@ -32,20 +73,19 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         total_value: client.total_value?.toString() || "0",
       });
     }
-  }, [client]);
+  }, [client, form]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!client || !formData.name.trim()) return;
+  const onSubmit = (data: EditClientFormData) => {
+    if (!client) return;
 
     updateClient.mutate(
       {
         id: client.id,
-        name: formData.name,
-        email: formData.email || null,
-        phone: formData.phone || null,
-        company: formData.company || null,
-        total_value: parseFloat(formData.total_value) || 0,
+        name: data.name,
+        email: data.email || null,
+        phone: data.phone || null,
+        company: data.company || null,
+        total_value: parseFloat(data.total_value) || 0,
       },
       {
         onSuccess: () => {
@@ -61,71 +101,107 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         <DialogHeader>
           <DialogTitle className="gradient-text">Editar Cliente</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="edit-name">Nome *</Label>
-            <Input
-              id="edit-name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nome do cliente"
-              required
-              className="bg-muted/50 border-border/50"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Nome do cliente"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label htmlFor="edit-email">E-mail</Label>
-            <Input
-              id="edit-email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="email@exemplo.com"
-              className="bg-muted/50 border-border/50"
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>E-mail</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="email@exemplo.com"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label htmlFor="edit-phone">Telefone</Label>
-            <Input
-              id="edit-phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="(11) 99999-9999"
-              className="bg-muted/50 border-border/50"
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="(11) 99999-9999"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label htmlFor="edit-company">Empresa</Label>
-            <Input
-              id="edit-company"
-              value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              placeholder="Nome da empresa"
-              className="bg-muted/50 border-border/50"
+            <FormField
+              control={form.control}
+              name="company"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Empresa</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Nome da empresa"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label htmlFor="edit-total-value">Valor Total</Label>
-            <Input
-              id="edit-total-value"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.total_value}
-              onChange={(e) => setFormData({ ...formData, total_value: e.target.value })}
-              placeholder="0.00"
-              className="bg-muted/50 border-border/50"
+            <FormField
+              control={form.control}
+              name="total_value"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor Total</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit" className="gradient-primary" disabled={updateClient.isPending}>
-              {updateClient.isPending ? "Salvando..." : "Salvar"}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="gradient-primary" disabled={updateClient.isPending}>
+                {updateClient.isPending ? "Salvando..." : "Salvar"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
