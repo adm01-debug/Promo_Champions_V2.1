@@ -163,7 +163,10 @@ export const AlertsPanel = () => {
     <div className="glass rounded-xl p-6 border border-border/40 dark:border-glow card-elevated animate-fade-in">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3 group">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-warning/30 to-warning/10 shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg">
+          <div className={cn(
+            "p-2.5 rounded-xl bg-gradient-to-br from-warning/30 to-warning/10 shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg",
+            visibleAlerts.length > 0 && "animate-bounce"
+          )}>
             <Bell className="h-5 w-5 text-warning" />
           </div>
           <div>

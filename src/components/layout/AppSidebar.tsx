@@ -23,7 +23,8 @@ import {
   Swords
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-
+import { useAlerts } from "@/hooks/useAlerts";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -77,6 +78,8 @@ const systemItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { data: alerts } = useAlerts();
+  const alertCount = alerts?.length || 0;
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -175,21 +178,36 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {systemItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all hover:text-foreground hover:bg-muted/50"
-                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
-                    >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {systemItems.map((item) => {
+                const isNotifications = item.title === "Notificações";
+                const hasAlerts = isNotifications && alertCount > 0;
+                
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild tooltip={item.title}>
+                      <NavLink 
+                        to={item.url} 
+                        end 
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all hover:text-foreground hover:bg-muted/50"
+                        activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
+                      >
+                        <div className="relative">
+                          <item.icon className={cn(
+                            "h-4 w-4 flex-shrink-0",
+                            hasAlerts && "animate-bounce text-warning"
+                          )} />
+                          {hasAlerts && (
+                            <span className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-destructive text-[9px] font-bold text-white flex items-center justify-center shadow-sm">
+                              {alertCount > 9 ? "9+" : alertCount}
+                            </span>
+                          )}
+                        </div>
+                        {!isCollapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
