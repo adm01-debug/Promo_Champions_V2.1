@@ -12,6 +12,10 @@ const BITRIX24_CLIENT_SECRET = Deno.env.get("BITRIX24_CLIENT_SECRET");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
+// Bitrix24 Custom Field IDs (from user's Bitrix24 configuration)
+const BITRIX_FIELD_RAMO_ATIVIDADE = 'UF_CRM_1590780873288';
+const BITRIX_FIELD_NICHO_SEGMENTO = 'UF_CRM_1631795570468';
+
 interface BitrixCompany {
   ID: string;
   TITLE: string;
@@ -19,8 +23,8 @@ interface BitrixCompany {
   EMAIL?: { VALUE: string }[];
   UF_CRM_CAPITAL_SOCIAL?: string;
   UF_CRM_NUM_COLABORADORES?: string;
-  UF_CRM_RAMO_ATIVIDADE?: string;
-  UF_CRM_GRUPO_NICHO?: string;
+  // Allow dynamic custom field access
+  [key: string]: unknown;
 }
 
 interface BitrixDeal {
@@ -114,7 +118,7 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
   
   try {
     const companies = await bitrixApiCall("crm.company.list", {
-      select: ["ID", "TITLE", "PHONE", "EMAIL", "UF_CRM_CAPITAL_SOCIAL", "UF_CRM_NUM_COLABORADORES", "UF_CRM_RAMO_ATIVIDADE", "UF_CRM_GRUPO_NICHO"],
+      select: ["ID", "TITLE", "PHONE", "EMAIL", "UF_CRM_CAPITAL_SOCIAL", "UF_CRM_NUM_COLABORADORES", BITRIX_FIELD_RAMO_ATIVIDADE, BITRIX_FIELD_NICHO_SEGMENTO],
     }) as BitrixCompany[];
 
     if (!companies || !Array.isArray(companies)) {
@@ -146,10 +150,10 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
         await supabase
           .from("icp_data")
           .update({
-            capital_social: company.UF_CRM_CAPITAL_SOCIAL ? parseFloat(company.UF_CRM_CAPITAL_SOCIAL) : null,
-            num_colaboradores: company.UF_CRM_NUM_COLABORADORES ? parseInt(company.UF_CRM_NUM_COLABORADORES) : null,
-            ramo_atividade: company.UF_CRM_RAMO_ATIVIDADE,
-            grupo_nicho: company.UF_CRM_GRUPO_NICHO,
+            capital_social: company.UF_CRM_CAPITAL_SOCIAL ? parseFloat(company.UF_CRM_CAPITAL_SOCIAL as string) : null,
+            num_colaboradores: company.UF_CRM_NUM_COLABORADORES ? parseInt(company.UF_CRM_NUM_COLABORADORES as string) : null,
+            ramo_atividade: company[BITRIX_FIELD_RAMO_ATIVIDADE] as string || null,
+            grupo_nicho: company[BITRIX_FIELD_NICHO_SEGMENTO] as string || null,
             updated_at: new Date().toISOString(),
           })
           .eq("bitrix_id", company.ID);
@@ -169,10 +173,10 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
           await supabase.from("icp_data").insert({
             client_id: newClient.id,
             bitrix_id: company.ID,
-            capital_social: company.UF_CRM_CAPITAL_SOCIAL ? parseFloat(company.UF_CRM_CAPITAL_SOCIAL) : null,
-            num_colaboradores: company.UF_CRM_NUM_COLABORADORES ? parseInt(company.UF_CRM_NUM_COLABORADORES) : null,
-            ramo_atividade: company.UF_CRM_RAMO_ATIVIDADE,
-            grupo_nicho: company.UF_CRM_GRUPO_NICHO,
+            capital_social: company.UF_CRM_CAPITAL_SOCIAL ? parseFloat(company.UF_CRM_CAPITAL_SOCIAL as string) : null,
+            num_colaboradores: company.UF_CRM_NUM_COLABORADORES ? parseInt(company.UF_CRM_NUM_COLABORADORES as string) : null,
+            ramo_atividade: company[BITRIX_FIELD_RAMO_ATIVIDADE] as string || null,
+            grupo_nicho: company[BITRIX_FIELD_NICHO_SEGMENTO] as string || null,
           });
         }
       }
@@ -301,8 +305,8 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
             EMAIL: client.email ? [{ VALUE: client.email, VALUE_TYPE: "WORK" }] : [],
             UF_CRM_CAPITAL_SOCIAL: icp?.capital_social?.toString(),
             UF_CRM_NUM_COLABORADORES: icp?.num_colaboradores?.toString(),
-            UF_CRM_RAMO_ATIVIDADE: icp?.ramo_atividade,
-            UF_CRM_GRUPO_NICHO: icp?.grupo_nicho,
+            [BITRIX_FIELD_RAMO_ATIVIDADE]: icp?.ramo_atividade,
+            [BITRIX_FIELD_NICHO_SEGMENTO]: icp?.grupo_nicho,
           },
         }) as string;
 
