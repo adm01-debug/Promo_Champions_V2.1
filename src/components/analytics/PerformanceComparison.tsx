@@ -83,87 +83,113 @@ function SalespersonCard({
   index: number;
 }) {
   const isTop = rank === 1;
+  const isTopThree = rank <= 3;
   
   return (
     <div 
-      className={`p-4 rounded-xl glass hover-lift transition-all animate-fade-in ${
+      className={`p-4 rounded-xl glass border border-border/40 dark:border-glow transition-all duration-300 animate-fade-in ${
         isTop 
-          ? "ring-1 ring-rank-gold/30 hover-glow-gold" 
-          : ""
+          ? "ring-1 ring-rank-gold/30 hover-glow-gold bg-gradient-to-br from-rank-gold/5 to-transparent" 
+          : isTopThree
+          ? "hover-glow"
+          : "hover-lift"
       }`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       <div className="flex items-start gap-3">
-        <div className="relative">
-          <Avatar className={`h-12 w-12 transition-all ${
-            isTop ? "border-2 border-rank-gold shadow-lg shadow-rank-gold/20" : ""
+        <div className="relative group">
+          <Avatar className={`h-12 w-12 transition-all duration-300 group-hover:scale-105 ${
+            isTop ? "border-2 border-rank-gold shadow-lg shadow-rank-gold/20" : 
+            isTopThree ? "border-2 border-primary/30" : ""
           }`}>
             <AvatarImage src={person.avatar_url || ""} />
-            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-bold">
+            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-bold font-display">
               {person.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           {isTop && (
-            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg">
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg animate-pulse">
               <Crown className="h-3 w-3 text-background" />
+            </div>
+          )}
+          {rank === 2 && (
+            <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full p-0.5 shadow">
+              <span className="text-[8px] font-bold text-background">2º</span>
+            </div>
+          )}
+          {rank === 3 && (
+            <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full p-0.5 shadow">
+              <span className="text-[8px] font-bold text-background">3º</span>
             </div>
           )}
         </div>
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className={`font-semibold truncate ${isTop ? "gradient-text" : ""}`}>
+            <span className={`font-semibold font-display truncate ${isTop ? "gradient-text" : ""}`}>
               {person.name}
             </span>
             {isTop && (
-              <Badge variant="secondary" className="bg-rank-gold/20 text-rank-gold text-[10px]">
+              <Badge variant="secondary" className="bg-rank-gold/20 text-rank-gold text-[10px] border border-rank-gold/30">
+                <Trophy className="h-2.5 w-2.5 mr-1" />
                 Top
               </Badge>
             )}
           </div>
           
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Receita</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{formatCurrency(person.totalRevenue)}</span>
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-background/30 dark:bg-background/10">
+              <span className="text-muted-foreground text-xs">Receita</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-medium text-xs">{formatCurrency(person.totalRevenue)}</span>
                 <ComparisonIndicator value={person.totalRevenue} avg={avgRevenue} />
               </div>
             </div>
             
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Win Rate</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{person.winRate.toFixed(0)}%</span>
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-background/30 dark:bg-background/10">
+              <span className="text-muted-foreground text-xs">Win Rate</span>
+              <div className="flex items-center gap-1.5">
+                <span className={`font-medium text-xs ${person.winRate >= 50 ? "text-status-success" : ""}`}>
+                  {person.winRate.toFixed(0)}%
+                </span>
                 <ComparisonIndicator value={person.winRate} avg={avgWinRate} />
               </div>
             </div>
             
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Atividades</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{person.totalActivities}</span>
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-background/30 dark:bg-background/10">
+              <span className="text-muted-foreground text-xs">Atividades</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-medium text-xs">{person.totalActivities}</span>
                 <ComparisonIndicator value={person.totalActivities} avg={avgActivities} />
               </div>
             </div>
             
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Vendas</span>
-              <span className="font-medium">{person.totalSales}</span>
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-background/30 dark:bg-background/10">
+              <span className="text-muted-foreground text-xs">Vendas</span>
+              <span className="font-medium text-xs">{person.totalSales}</span>
             </div>
           </div>
           
           {person.goalProgress > 0 && (
-            <div className="mt-3">
-              <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Meta</span>
-                <span className={person.goalProgress >= 100 ? "text-status-success font-medium" : "text-foreground"}>
+            <div className="mt-3 p-2 rounded-lg bg-background/30 dark:bg-background/10">
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Target className="h-3 w-3" />
+                  Meta
+                </span>
+                <span className={`font-medium ${
+                  person.goalProgress >= 100 
+                    ? "text-status-success" 
+                    : person.goalProgress >= 75 
+                    ? "text-status-warning" 
+                    : ""
+                }`}>
                   {person.goalProgress.toFixed(0)}%
                 </span>
               </div>
               <Progress 
                 value={Math.min(person.goalProgress, 100)} 
-                className="h-1.5"
+                className={`h-1.5 ${person.goalProgress >= 100 ? "[&>div]:bg-status-success" : ""}`}
               />
             </div>
           )}
@@ -244,63 +270,82 @@ export function PerformanceComparison() {
     <div className="space-y-6">
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {benchmarks.map((benchmark, index) => (
-          <Card 
-            key={benchmark.role} 
-            className="glass dark:border-glow card-elevated hover-lift animate-fade-in"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <Badge 
-                  variant="secondary" 
-                  style={{ backgroundColor: `${ROLE_COLORS[benchmark.role]}20`, color: ROLE_COLORS[benchmark.role] }}
-                  className="font-medium"
-                >
-                  {ROLE_LABELS[benchmark.role]}
-                </Badge>
-                <span className="text-xs text-muted-foreground">
-                  {benchmark.salespeople.length} vendedores
-                </span>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Receita Média</span>
-                  <span className="font-bold font-display gradient-text">{formatCurrency(benchmark.avgRevenue)}</span>
+        {benchmarks.map((benchmark, index) => {
+          const isLeadingRole = benchmark.avgRevenue === Math.max(...benchmarks.map(b => b.avgRevenue));
+          return (
+            <Card 
+              key={benchmark.role} 
+              className={`glass dark:border-glow card-elevated transition-all duration-300 animate-fade-in ${
+                isLeadingRole ? "ring-1 ring-primary/30 hover-glow" : "hover-lift"
+              }`}
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <Badge 
+                    variant="secondary" 
+                    style={{ backgroundColor: `${ROLE_COLORS[benchmark.role]}20`, color: ROLE_COLORS[benchmark.role] }}
+                    className="font-medium border"
+                    // @ts-ignore
+                    css={{ borderColor: `${ROLE_COLORS[benchmark.role]}30` }}
+                  >
+                    {isLeadingRole && <Crown className="h-3 w-3 mr-1" />}
+                    {ROLE_LABELS[benchmark.role]}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full">
+                    {benchmark.salespeople.length} vendedores
+                  </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Win Rate Médio</span>
-                  <span className="font-bold">{benchmark.avgWinRate.toFixed(0)}%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Atividades Média</span>
-                  <span className="font-bold">{benchmark.avgActivities.toFixed(0)}</span>
-                </div>
-              </div>
-
-              {benchmark.topPerformer && (
-                <div className="mt-4 pt-4 border-t border-border/50">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8 border border-rank-gold/50">
-                      <AvatarImage src={benchmark.topPerformer.avatar_url || ""} />
-                      <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5">
-                        {benchmark.topPerformer.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Top Performer</p>
-                      <p className="text-sm font-medium">{benchmark.topPerformer.name}</p>
-                    </div>
-                    <div className="ml-auto p-1.5 rounded-full bg-rank-gold/20">
-                      <Trophy className="h-4 w-4 text-rank-gold" />
-                    </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-background/30 dark:bg-background/10">
+                    <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <TrendingUp className="h-3.5 w-3.5" />
+                      Receita Média
+                    </span>
+                    <span className="font-bold font-display gradient-text">{formatCurrency(benchmark.avgRevenue)}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-background/30 dark:bg-background/10">
+                    <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <Target className="h-3.5 w-3.5" />
+                      Win Rate Médio
+                    </span>
+                    <span className={`font-bold ${benchmark.avgWinRate >= 50 ? "text-status-success" : ""}`}>
+                      {benchmark.avgWinRate.toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-background/30 dark:bg-background/10">
+                    <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <Phone className="h-3.5 w-3.5" />
+                      Atividades Média
+                    </span>
+                    <span className="font-bold">{benchmark.avgActivities.toFixed(0)}</span>
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+
+                {benchmark.topPerformer && (
+                  <div className="mt-4 pt-4 border-t border-border/50">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-rank-gold/5 border border-rank-gold/20">
+                      <Avatar className="h-8 w-8 border-2 border-rank-gold/50 shadow-sm shadow-rank-gold/20">
+                        <AvatarImage src={benchmark.topPerformer.avatar_url || ""} />
+                        <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5 font-display">
+                          {benchmark.topPerformer.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-muted-foreground">Top Performer</p>
+                        <p className="text-sm font-medium font-display truncate">{benchmark.topPerformer.name}</p>
+                      </div>
+                      <div className="p-1.5 rounded-full bg-rank-gold/20 animate-pulse">
+                        <Trophy className="h-4 w-4 text-rank-gold" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Charts */}
