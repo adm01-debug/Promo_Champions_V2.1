@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, Plus, Phone, Handshake, AlertCircle } from "lucide-react";
+import { GitBranch, Plus, Phone, Handshake, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -63,20 +63,20 @@ export default function Times() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-xl gradient-primary">
-            <Users className="h-6 w-6 text-white" />
+            <GitBranch className="h-6 w-6 text-white" />
           </div>
           <div>
             <h1 className="text-3xl font-bold gradient-text font-display">
-              Gestão de Times
+              Atribuições SDR
             </h1>
             <p className="text-muted-foreground">
-              Configure times SDR + Closers (1:2)
+              Configure qual SDR atende quais Closers (1:2)
             </p>
           </div>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          Novo Time
+          Nova Atribuição
         </Button>
       </div>
 
@@ -86,10 +86,10 @@ export default function Times() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Times</p>
+                <p className="text-sm text-muted-foreground">Total Atribuições</p>
                 <p className="text-2xl font-bold gradient-text">{totalTeams}</p>
               </div>
-              <Users className="h-8 w-8 text-primary/20" />
+              <GitBranch className="h-8 w-8 text-primary/20" />
             </div>
           </CardContent>
         </Card>
@@ -98,11 +98,11 @@ export default function Times() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Times Ativos</p>
+                <p className="text-sm text-muted-foreground">Ativas</p>
                 <p className="text-2xl font-bold text-status-success">{activeTeams}</p>
               </div>
               <Badge variant="default" className="bg-status-success/20 text-status-success">
-                Ativos
+                Ativas
               </Badge>
             </div>
           </CardContent>
@@ -112,7 +112,7 @@ export default function Times() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Completos</p>
+                <p className="text-sm text-muted-foreground">Completas</p>
                 <p className="text-2xl font-bold text-primary">{completeTeams}</p>
               </div>
               <div className="flex -space-x-1">
@@ -127,7 +127,7 @@ export default function Times() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Incompletos</p>
+                <p className="text-sm text-muted-foreground">Incompletas</p>
                 <p className="text-2xl font-bold text-warning">{incompleteTeams}</p>
               </div>
               <AlertCircle className="h-8 w-8 text-warning/20" />
@@ -156,14 +156,14 @@ export default function Times() {
       ) : (
         <Card className="card-elevated">
           <CardContent className="p-12 text-center">
-            <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhum time cadastrado</h3>
+            <GitBranch className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Nenhuma atribuição cadastrada</h3>
             <p className="text-muted-foreground mb-4">
-              Crie times para organizar SDRs e Closers em estrutura 1:2
+              Configure qual SDR atende quais Closers (estrutura 1:2)
             </p>
             <Button onClick={() => setCreateDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Criar Primeiro Time
+              Criar Primeira Atribuição
             </Button>
           </CardContent>
         </Card>
@@ -185,8 +185,8 @@ export default function Times() {
         open={!!deletingTeam}
         onOpenChange={(open) => !open && setDeletingTeam(null)}
         onConfirm={handleDelete}
-        title="Excluir Time"
-        description={`Tem certeza que deseja excluir o time "${deletingTeam?.name}"? Esta ação não pode ser desfeita.`}
+        title="Excluir Atribuição"
+        description={`Tem certeza que deseja excluir a atribuição "${deletingTeam?.name}"? Esta ação não pode ser desfeita.`}
         isDeleting={deleteTeam.isPending}
       />
     </div>

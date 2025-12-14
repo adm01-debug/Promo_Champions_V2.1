@@ -99,19 +99,19 @@ export function EditTeamDialog({ team, open, onOpenChange }: EditTeamDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Editar Time</DialogTitle>
+          <DialogTitle className="font-display text-xl">Editar Atribuição SDR</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Nome e Status */}
           <div className="flex gap-4">
             <div className="flex-1 space-y-2">
-              <Label htmlFor="name">Nome do Time *</Label>
+              <Label htmlFor="name">Nome da Atribuição *</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ex: Time Alpha"
+                placeholder="Ex: Atribuição Alpha"
                 required
               />
             </div>
@@ -186,12 +186,16 @@ export function EditTeamDialog({ team, open, onOpenChange }: EditTeamDialogProps
             <Label className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <Handshake className="h-4 w-4" />
-                Closers do Time
+                Closers Atendidos
               </span>
               <Badge variant="outline" className="text-xs">
                 {selectedClosers.length}/2
               </Badge>
             </Label>
+            
+            <p className="text-xs text-muted-foreground">
+              Os 2 Closers que este SDR atende (são concorrentes entre si)
+            </p>
             
             {selectedClosers.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">

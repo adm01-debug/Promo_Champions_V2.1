@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-  Users, 
+  GitBranch, 
   Phone, 
   Handshake, 
   Edit, 
@@ -37,7 +37,7 @@ export function TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
               "p-2.5 rounded-xl",
               isComplete ? "gradient-primary" : "bg-muted"
             )}>
-              <Users className={cn(
+              <GitBranch className={cn(
                 "h-5 w-5",
                 isComplete ? "text-white" : "text-muted-foreground"
               )} />
@@ -109,7 +109,7 @@ export function TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
               <Handshake className="h-4 w-4" />
-              <span>Closers</span>
+              <span>Closers Atendidos</span>
             </div>
             <Badge 
               variant={closerCount >= 2 ? "default" : "outline"} 
@@ -159,7 +159,7 @@ export function TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
           <div className="pt-2 border-t border-border/50">
             <p className="text-xs text-warning flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-warning animate-pulse" />
-              Time incompleto - configure SDR e 2 Closers
+              Atribuição incompleta - configure SDR e 2 Closers
             </p>
           </div>
         )}

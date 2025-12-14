@@ -84,18 +84,18 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Criar Novo Time</DialogTitle>
+          <DialogTitle className="font-display text-xl">Nova Atribuição SDR</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Nome do Time */}
+          {/* Nome da Atribuição */}
           <div className="space-y-2">
-            <Label htmlFor="name">Nome do Time *</Label>
+            <Label htmlFor="name">Nome da Atribuição *</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Time Alpha"
+              placeholder="Ex: Atribuição Alpha"
               required
             />
           </div>
@@ -149,13 +149,16 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
             <Label className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <Handshake className="h-4 w-4" />
-                Closers do Time
+                Closers Atendidos
               </span>
               <Badge variant="outline" className="text-xs">
                 {selectedClosers.length}/2
               </Badge>
             </Label>
             
+            <p className="text-xs text-muted-foreground">
+              Selecione os 2 Closers que este SDR vai atender (são concorrentes entre si)
+            </p>
             {selectedClosers.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {selectedClosers.map((closerId) => {
@@ -230,7 +233,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
             </Button>
             <Button type="submit" disabled={createTeam.isPending || !isValidTeam}>
               {createTeam.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Criar Time
+              Criar Atribuição
             </Button>
           </div>
         </form>
