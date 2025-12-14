@@ -1225,6 +1225,36 @@ export type Database = {
           },
         ]
       }
+      sdr_alert_history: {
+        Row: {
+          admin_emails: string[]
+          created_at: string
+          id: string
+          sdr_details: Json
+          sdrs_notified: number
+          threshold_used: number
+          triggered_by: string | null
+        }
+        Insert: {
+          admin_emails?: string[]
+          created_at?: string
+          id?: string
+          sdr_details?: Json
+          sdrs_notified?: number
+          threshold_used?: number
+          triggered_by?: string | null
+        }
+        Update: {
+          admin_emails?: string[]
+          created_at?: string
+          id?: string
+          sdr_details?: Json
+          sdrs_notified?: number
+          threshold_used?: number
+          triggered_by?: string | null
+        }
+        Relationships: []
+      }
       security_alert_history: {
         Row: {
           access_count: number

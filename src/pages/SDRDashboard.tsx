@@ -56,9 +56,24 @@ export default function SDRDashboard() {
           </div>
         </div>
 
+        {/* Scheduling Rate KPI - Destacado */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 rounded-xl blur-xl opacity-70" />
+            <div className="relative">
+              <SchedulingRateGauge
+                rate={metrics?.current.schedulingRate ?? 0}
+                change={metrics?.changes.schedulingRate}
+                meetings={metrics?.current.meetingsScheduled ?? 0}
+                leads={metrics?.current.totalLeads ?? 0}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
             <SDRStatCard
               title="Total de Leads"
               value={metrics?.current.totalLeads ?? 0}
@@ -68,7 +83,7 @@ export default function SDRDashboard() {
               subtitle="Leads em prospecção"
             />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             <SDRStatCard
               title="Leads Qualificados"
               value={metrics?.current.qualifiedLeads ?? 0}
@@ -78,7 +93,7 @@ export default function SDRDashboard() {
               subtitle="Prontos para Closer"
             />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
             <SDRStatCard
               title="Reuniões Agendadas"
               value={metrics?.current.meetingsScheduled ?? 0}
@@ -87,7 +102,7 @@ export default function SDRDashboard() {
               subtitle={periodLabel}
             />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
             <SDRStatCard
               title="Prospects Ativos"
               value={metrics?.current.activeProspects ?? 0}
@@ -100,7 +115,7 @@ export default function SDRDashboard() {
 
         {/* Second Row - Lead Temperature Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
             <SDRStatCard
               title="Leads Quentes"
               value={metrics?.current.hotLeads ?? 0}
@@ -109,7 +124,7 @@ export default function SDRDashboard() {
               subtitle="Score ≥ 75"
             />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
             <SDRStatCard
               title="Leads Mornos"
               value={metrics?.current.warmLeads ?? 0}
@@ -117,7 +132,7 @@ export default function SDRDashboard() {
               subtitle="Score 50-74"
             />
           </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
             <SDRStatCard
               title="Leads Frios"
               value={metrics?.current.coldLeads ?? 0}
@@ -128,15 +143,7 @@ export default function SDRDashboard() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
-            <SchedulingRateGauge
-              rate={metrics?.current.schedulingRate ?? 0}
-              change={metrics?.changes.schedulingRate}
-              meetings={metrics?.current.meetingsScheduled ?? 0}
-              leads={metrics?.current.totalLeads ?? 0}
-            />
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
             <ProspectingFunnel />
           </div>

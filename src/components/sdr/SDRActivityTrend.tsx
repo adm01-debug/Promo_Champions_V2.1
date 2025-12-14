@@ -3,14 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
-import { Activity, Users, BarChart3, AlertTriangle } from "lucide-react";
+import { Activity, Users, BarChart3, AlertTriangle, Download } from "lucide-react";
 import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { exportToCSV, formatDateForExport } from "@/utils/csvExport";
+import { toast } from "sonner";
 
 type PeriodFilter = 'week' | 'month' | 'quarter';
 type ViewMode = 'activity' | 'comparison';
@@ -294,6 +297,34 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
 
   const { activityData = [], comparisonData = [], sdrs = [], totals, dailyGoal = 0, sdrGoals = {}, underperformingSDRs = [] } = data || {};
 
+  const handleExportCSV = () => {
+    if (viewMode === 'activity') {
+      exportToCSV(
+        activityData,
+        [
+          { header: "Data", accessor: "label" },
+          { header: "Ligações", accessor: "calls" },
+          { header: "E-mails", accessor: "emails" },
+          { header: "Reuniões", accessor: "meetings" },
+          { header: "LinkedIn", accessor: "linkedin" },
+          { header: "WhatsApp", accessor: "whatsapp" },
+          { header: "Total", accessor: "total" },
+        ],
+        `sdr-atividades-por-tipo-${format(new Date(), "yyyy-MM-dd")}`
+      );
+    } else {
+      const columns = [
+        { header: "Data", accessor: "label" as keyof typeof comparisonData[0] },
+        ...sdrs.map(sdr => ({
+          header: sdr.name,
+          accessor: ((item: typeof comparisonData[0]) => (item[sdr.id] as number) || 0),
+        })),
+      ];
+      exportToCSV(comparisonData, columns, `sdr-comparacao-${format(new Date(), "yyyy-MM-dd")}`);
+    }
+    toast.success("CSV exportado com sucesso");
+  };
+
   if (!activityData.length && !comparisonData.length) {
     return (
       <Card className="glass border-border/40">
@@ -361,6 +392,21 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <TooltipProvider>
+            <UITooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 w-9 p-0"
+                  onClick={handleExportCSV}
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Exportar CSV</TooltipContent>
+            </UITooltip>
+          </TooltipProvider>
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
             <TabsList className="h-9">
               <TabsTrigger value="activity" className="text-xs px-3">
