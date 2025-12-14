@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useRecentActivities, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { useSalespeople } from "@/hooks/useSalespeople";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Clock, ClipboardList, Search, CalendarIcon, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,9 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { useState, useMemo } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const activityIcons: Record<ActivityType, typeof Phone> = {
   call: Phone,
@@ -88,11 +92,18 @@ export function ActivityList({
   const [outcomeFilter, setOutcomeFilter] = useState("");
   const [salespersonFilter, setSalespersonFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
   const salespersonOptions = useMemo(() => {
     if (!salespeople) return [];
     return salespeople.map(sp => ({ label: sp.name, value: sp.id }));
   }, [salespeople]);
+
+  const clearDateFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+  };
   const filteredAndSortedActivities = useMemo(() => {
     if (!activities) return [];
     
@@ -121,6 +132,16 @@ export function ActivityList({
     if (salespersonFilter) {
       filtered = filtered.filter(a => a.salesperson_id === salespersonFilter);
     }
+
+    // Apply date range filter
+    if (startDate) {
+      const start = startOfDay(startDate);
+      filtered = filtered.filter(a => new Date(a.created_at) >= start);
+    }
+    if (endDate) {
+      const end = endOfDay(endDate);
+      filtered = filtered.filter(a => new Date(a.created_at) <= end);
+    }
     
     // Apply sorting
     return filtered.sort((a, b) => {
@@ -133,7 +154,7 @@ export function ActivityList({
           return 0;
       }
     });
-  }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter, searchTerm]);
+  }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter, searchTerm, startDate, endDate]);
 
   const {
     paginatedItems,
@@ -215,14 +236,78 @@ export function ActivityList({
             )}
           </div>
           {showFilters && (
-            <div className="mt-3 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Buscar por contato ou notas..." 
-                className="pl-10 bg-muted/50 border-border/50 h-9 text-sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+            <div className="mt-3 flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Buscar por contato ou notas..." 
+                  className="pl-10 bg-muted/50 border-border/50 h-9 text-sm"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "h-9 text-xs justify-start text-left font-normal",
+                        !startDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-1 h-3 w-3" />
+                      {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "De"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={setStartDate}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "h-9 text-xs justify-start text-left font-normal",
+                        !endDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-1 h-3 w-3" />
+                      {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Até"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {(startDate || endDate) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9"
+                    onClick={clearDateFilter}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           )}
         </CardHeader>
@@ -233,7 +318,7 @@ export function ActivityList({
             <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border/50">
               <ClipboardList className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
               <p className="text-xs text-muted-foreground">
-                {searchTerm || typeFilter || outcomeFilter || salespersonFilter
+                {searchTerm || typeFilter || outcomeFilter || salespersonFilter || startDate || endDate
                   ? "Nenhuma atividade encontrada com os filtros aplicados" 
                   : "Nenhuma atividade registrada"}
               </p>
