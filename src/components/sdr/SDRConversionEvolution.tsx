@@ -28,11 +28,20 @@ interface SDR {
   name: string;
 }
 
+interface SDRDetails {
+  meetings: number;
+  leads: number;
+  rate: number;
+}
+
 interface ChartDataPoint {
   date: string;
   label: string;
   teamAverage: number;
-  [key: string]: number | string;
+  teamMeetings: number;
+  teamLeads: number;
+  details: Record<string, SDRDetails>;
+  [key: string]: number | string | Record<string, SDRDetails>;
 }
 
 const useSDRConversionEvolution = (period: PeriodFilter) => {
@@ -90,7 +99,14 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
           ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}`
           : format(date, 'dd/MM', { locale: ptBR });
 
-        const point: ChartDataPoint = { date: dateKey, label, teamAverage: 0 };
+        const point: ChartDataPoint = { 
+          date: dateKey, 
+          label, 
+          teamAverage: 0, 
+          teamMeetings: 0, 
+          teamLeads: 0,
+          details: {}
+        };
 
         let totalMeetings = 0;
         let totalLeads = 0;
@@ -122,9 +138,14 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
           // Calculate conversion rate
           const conversionRate = leads > 0 ? Math.round((meetings / leads) * 100) : 0;
           point[sdr.id] = conversionRate;
+          
+          // Store details for tooltip
+          point.details[sdr.id] = { meetings, leads, rate: conversionRate };
         });
 
-        // Calculate team average for this point
+        // Calculate team totals and average
+        point.teamMeetings = totalMeetings;
+        point.teamLeads = totalLeads;
         point.teamAverage = totalLeads > 0 ? Math.round((totalMeetings / totalLeads) * 100) : 0;
 
         return point;
@@ -248,17 +269,52 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
               />
             )}
             <Tooltip
-              contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px',
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-              }}
-              labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600 }}
-              formatter={(value: number, name: string) => {
-                if (name === 'teamAverage') return [`${value}%`, 'Média Equipe'];
-                const sdr = sdrs.find(s => s.id === name);
-                return [`${value}%`, sdr?.name || name];
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                
+                const dataPoint = chartData.find(p => p.label === label);
+                
+                return (
+                  <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
+                    <p className="font-semibold text-foreground text-sm">{label}</p>
+                    <div className="space-y-1.5">
+                      {payload.map((entry: any) => {
+                        const isTeamAverage = entry.dataKey === 'teamAverage';
+                        const sdr = sdrs.find(s => s.id === entry.dataKey);
+                        const details = dataPoint?.details?.[entry.dataKey];
+                        
+                        return (
+                          <div key={entry.dataKey} className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="w-2.5 h-2.5 rounded-full" 
+                                style={{ backgroundColor: entry.stroke }}
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                {isTeamAverage ? 'Média Equipe' : sdr?.name}
+                              </span>
+                              <span className="text-xs font-semibold ml-auto">
+                                {entry.value}%
+                              </span>
+                            </div>
+                            {!isTeamAverage && details && (
+                              <div className="ml-4 flex gap-3 text-[10px] text-muted-foreground">
+                                <span>{details.meetings} reuniões</span>
+                                <span>{details.leads} leads</span>
+                              </div>
+                            )}
+                            {isTeamAverage && dataPoint && (
+                              <div className="ml-4 flex gap-3 text-[10px] text-muted-foreground">
+                                <span>{dataPoint.teamMeetings} reuniões</span>
+                                <span>{dataPoint.teamLeads} leads</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
               }}
             />
             <Legend 
