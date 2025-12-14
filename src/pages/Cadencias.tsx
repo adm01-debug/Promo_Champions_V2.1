@@ -1,4 +1,4 @@
-import { useCadences, useCadenceSteps, useDeleteCadence } from "@/hooks/useCadences";
+import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats } from "@/hooks/useCadences";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
@@ -10,6 +10,7 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
+  const { data: cadenceStats } = useCadenceStats();
   const deleteCadence = useDeleteCadence();
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
@@ -60,7 +61,7 @@ export default function Cadencias() {
                 <Clock className="h-5 w-5 text-blue-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">-</p>
+                <p className="text-2xl font-bold">{cadenceStats?.prospectsInCadence ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Prospects em Cadência</p>
               </div>
             </CardContent>
@@ -71,7 +72,7 @@ export default function Cadencias() {
                 <CheckCircle className="h-5 w-5 text-green-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">-</p>
+                <p className="text-2xl font-bold">{cadenceStats?.tasksCompletedToday ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Tarefas Concluídas Hoje</p>
               </div>
             </CardContent>

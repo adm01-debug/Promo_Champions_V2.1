@@ -484,3 +484,32 @@ export function useCancelCadence() {
     },
   });
 }
+
+export function useCadenceStats() {
+  return useQuery({
+    queryKey: ["cadence-stats"],
+    queryFn: async () => {
+      const today = format(new Date(), "yyyy-MM-dd");
+
+      // Count active prospects in cadences
+      const { count: prospectsInCadence } = await supabase
+        .from("prospect_cadences")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "active");
+
+      // Count tasks completed today
+      const { count: tasksCompletedToday } = await supabase
+        .from("cadence_tasks")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "completed")
+        .gte("completed_at", `${today}T00:00:00`)
+        .lte("completed_at", `${today}T23:59:59`);
+
+      return {
+        prospectsInCadence: prospectsInCadence || 0,
+        tasksCompletedToday: tasksCompletedToday || 0,
+      };
+    },
+    refetchInterval: 30000,
+  });
+}
