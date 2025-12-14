@@ -23,7 +23,6 @@ export function useSecurityAlertNotifications() {
           table: 'security_alert_history'
         },
         (payload) => {
-          console.log('New security alert:', payload);
           
           const newAlert = payload.new as {
             access_count: number;

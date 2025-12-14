@@ -216,6 +216,8 @@ export function useQueryMetricsLive() {
 
 // Console logger for metrics (call manually or on interval)
 export function logQueryMetrics() {
+  if (!import.meta.env.DEV) return; // Only log in development
+  
   const metrics = getQueryMetrics();
   
   console.group("📊 Query Performance Metrics");
