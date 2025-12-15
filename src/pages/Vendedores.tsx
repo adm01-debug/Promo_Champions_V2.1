@@ -4,11 +4,14 @@ import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edi
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
+import { useAllSalespeopleXP, calculateLevelFromXP, getLevelInfo } from "@/hooks/useSalespersonXP";
 import { SalespersonForm, SalespersonRole } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
+import { GamificationCard, CompactGamificationCard } from "@/components/gamification/GamificationCard";
 import { cn } from "@/lib/utils";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -77,7 +80,9 @@ const periodLabels: Record<PeriodFilter, string> = {
 
 const Vendedores = () => {
   const [period, setPeriod] = useState<PeriodFilter>("month");
+  const [viewMode, setViewMode] = useState<"classic" | "gamified">("gamified");
   const { data: salespeople, isLoading, error } = useSalespeopleRanking(period);
+  const { data: xpData } = useAllSalespeopleXP();
   const [editingSalesperson, setEditingSalesperson] = useState<{
     id: string;
     name: string;
@@ -92,6 +97,12 @@ const Vendedores = () => {
     : 0;
 
   const topSeller = salespeople?.[0];
+
+  // Merge XP data with salespeople
+  const getXPForSalesperson = (salespersonId: string) => {
+    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
+    return xp?.total_xp || 0;
+  };
 
   return (
     <SkeletonTransition
@@ -210,11 +221,27 @@ const Vendedores = () => {
         {/* Ranking List */}
         <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "300ms" }}>
           <div className="p-5 border-b border-border/50">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Ranking Completo</h2>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold">Ranking Completo</h2>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">Quem será o próximo a subir? 🔥</p>
+              </div>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "classic" | "gamified")}>
+                <TabsList className="h-8">
+                  <TabsTrigger value="gamified" className="text-xs px-3 h-7">
+                    <Zap className="h-3 w-3 mr-1" />
+                    Gamificado
+                  </TabsTrigger>
+                  <TabsTrigger value="classic" className="text-xs px-3 h-7">
+                    <Users className="h-3 w-3 mr-1" />
+                    Clássico
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">Quem será o próximo a subir? 🔥</p>
           </div>
 
           {isLoading ? (
@@ -233,9 +260,42 @@ const Vendedores = () => {
             <div className="p-5 text-center text-muted-foreground">
               Erro ao carregar vendedores
             </div>
+          ) : viewMode === "gamified" ? (
+            /* Gamified View */
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {salespeople?.map((sp) => {
+                const totalXP = getXPForSalesperson(sp.id);
+                const { level, xpInLevel, xpToNext } = calculateLevelFromXP(totalXP);
+                const levelInfo = getLevelInfo(level);
+                const streakDays = sp.goalProgress >= 100 ? Math.floor(sp.goalProgress / 20) : 0;
+                
+                return (
+                  <Link key={sp.id} to={`/vendedor/${sp.id}`}>
+                    <GamificationCard
+                      name={sp.name}
+                      avatarUrl={sp.avatar_url || undefined}
+                      level={level}
+                      totalXP={totalXP}
+                      xpProgress={xpInLevel}
+                      xpToNext={xpToNext}
+                      levelTitle={levelInfo.title}
+                      levelEmoji={levelInfo.emoji}
+                      levelColor={levelInfo.color}
+                      rank={sp.rank}
+                      streak={streakDays}
+                      streakRecord={streakDays + 3}
+                      achievements={sp.completedSales}
+                      showDetails={true}
+                      size="md"
+                    />
+                  </Link>
+                );
+              })}
+            </div>
           ) : (
+            /* Classic View */
             <div className="divide-y divide-border/20 p-3">
-              {salespeople?.map((sp, index) => {
+              {salespeople?.map((sp) => {
                 const styles = getRankStyles(sp.rank);
                 const streak = getStreakInfo(sp.goalProgress);
                 
