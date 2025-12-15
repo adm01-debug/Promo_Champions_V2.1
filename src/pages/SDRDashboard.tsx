@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSDRMetrics, PeriodFilter } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "@/components/sdr/SDRStatCard";
+import { CompactStatCard } from "@/components/dashboard/CompactStatCard";
 import { ProspectingFunnel } from "@/components/sdr/ProspectingFunnel";
 import { LeadTemperatureChart } from "@/components/sdr/LeadTemperatureChart";
 import { SchedulingRateGauge } from "@/components/sdr/SchedulingRateGauge";
@@ -22,7 +23,10 @@ import {
   Target,
   Flame,
   Thermometer,
-  Phone
+  Phone,
+  Snowflake,
+  Clock,
+  TrendingUp
 } from "lucide-react";
 
 export default function SDRDashboard() {
@@ -129,40 +133,53 @@ export default function SDRDashboard() {
               </motion.div>
             </motion.div>
 
-            {/* Second Row - Lead Temperature Stats */}
+            {/* Secondary Metrics - Compact Cards with Circular Icons */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.35 }}
             >
-              <motion.div variants={itemVariants}>
-                <SDRStatCard
-                  title="Leads Quentes"
-                  value={metrics?.current.hotLeads ?? 0}
-                  icon={Flame}
-                  variant="danger"
-                  subtitle="Score ≥ 75"
-                />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <SDRStatCard
-                  title="Leads Mornos"
-                  value={metrics?.current.warmLeads ?? 0}
-                  icon={Thermometer}
-                  variant="warning"
-                  subtitle="Score 50-74"
-                />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <SDRStatCard
-                  title="Leads Frios"
-                  value={metrics?.current.coldLeads ?? 0}
-                  icon={Thermometer}
-                  variant="default"
-                  subtitle="Score < 50"
-                />
-              </motion.div>
+              <CompactStatCard
+                title="Leads Quentes"
+                value={metrics?.current.hotLeads ?? 0}
+                icon={Flame}
+                variant="danger"
+                subtitle="Score ≥ 75"
+              />
+              <CompactStatCard
+                title="Leads Mornos"
+                value={metrics?.current.warmLeads ?? 0}
+                icon={Thermometer}
+                variant="warning"
+                subtitle="Score 50-74"
+              />
+              <CompactStatCard
+                title="Leads Frios"
+                value={metrics?.current.coldLeads ?? 0}
+                icon={Snowflake}
+                variant="info"
+                subtitle="Score < 50"
+              />
+              <CompactStatCard
+                title="Taxa Conversão"
+                value={`${(metrics?.current.schedulingRate ?? 0).toFixed(1)}%`}
+                icon={TrendingUp}
+                variant="success"
+              />
+              <CompactStatCard
+                title="Tempo Médio"
+                value="3.2d"
+                icon={Clock}
+                variant="primary"
+                subtitle="Lead → Qualificado"
+              />
+              <CompactStatCard
+                title="Atividades Hoje"
+                value={metrics?.current.activeProspects ?? 0}
+                icon={Target}
+                variant="primary"
+              />
             </motion.div>
 
             {/* Main Grid */}
