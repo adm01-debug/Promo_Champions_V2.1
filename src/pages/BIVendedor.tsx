@@ -39,6 +39,8 @@ import {
 } from "recharts";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { motion } from "framer-motion";
+import { PageTransition, StaggeredContainer, MotionItem } from "@/components/transitions/PageTransition";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 
@@ -64,11 +66,16 @@ const BIVendedor = () => {
       skeleton={<BIVendedorLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background">
-        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-          {/* Header */}
-          <div className="animate-slide-up">
-            <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
               {/* Background gradient effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
@@ -145,10 +152,10 @@ const BIVendedor = () => {
                 </div>
               </div>
             </div>
-          </div>
+            </motion.div>
 
-          {/* KPI Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {/* KPI Stats */}
+            <StaggeredContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" delay={0.2}>
             {[
               { title: "Faturamento", value: formatCurrency(data?.totalRevenue || 0), icon: DollarSign, change: data?.revenueChange, variant: "primary" },
               { title: "Meta", value: formatCurrency(data?.currentGoal || 0), icon: Target },
@@ -203,10 +210,10 @@ const BIVendedor = () => {
                   </CardContent>
                 </Card>
               </div>
-            ))}
-          </div>
+              ))}
+            </StaggeredContainer>
 
-          {/* Daily Target Alert */}
+            {/* Daily Target Alert */}
           {data && data.dailyRequired > 0 && data.goalProgress < 100 && (
             <div className="animate-slide-up glass-card rounded-xl p-4 border-2 border-warning/30 relative overflow-hidden" style={{ animationDelay: "350ms" }}>
               <div className="absolute inset-0 bg-gradient-to-r from-warning/5 via-transparent to-warning/5 pointer-events-none" />
@@ -407,6 +414,7 @@ const BIVendedor = () => {
           </div>
         </div>
       </div>
+      </PageTransition>
     </SkeletonTransition>
   );
 };

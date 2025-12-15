@@ -39,6 +39,8 @@ import {
 } from "recharts";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { motion } from "framer-motion";
+import { PageTransition, StaggeredContainer, MotionItem } from "@/components/transitions/PageTransition";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 const ABC_COLORS = { A: "hsl(var(--success))", B: "hsl(var(--warning))", C: "hsl(var(--destructive))" };
@@ -64,11 +66,16 @@ const BIGestor = () => {
       skeleton={<BIGestorLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background">
-        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-          {/* Header */}
-          <div className="animate-slide-up">
-            <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
               {/* Background effects */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
               <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
@@ -96,9 +103,9 @@ const BIGestor = () => {
                 </div>
               </div>
             </div>
-          </div>
+            </motion.div>
 
-          {/* Team KPIs */}
+            {/* Team KPIs */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { title: "Faturamento Time", value: formatCurrency(data?.totalTeamRevenue || 0), icon: DollarSign, change: data?.teamRevenueChange, variant: "primary" },
@@ -509,6 +516,7 @@ const BIGestor = () => {
           </Card>
         </div>
       </div>
+      </PageTransition>
     </SkeletonTransition>
   );
 };
