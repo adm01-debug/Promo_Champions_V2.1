@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { CompactStatCard } from "@/components/dashboard/CompactStatCard";
 import { cn } from "@/lib/utils";
 import {
   DollarSign,
@@ -21,7 +22,10 @@ import {
   Calendar,
   Percent,
   Award,
-  Sparkles
+  Sparkles,
+  Users,
+  FileText,
+  CheckCircle
 } from "lucide-react";
 import {
   AreaChart,
@@ -223,6 +227,51 @@ const BIVendedor = () => {
               );
             })}
             </StaggeredContainer>
+
+            {/* Secondary Metrics with Circular Icons */}
+            <motion.div 
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <CompactStatCard
+                title="Deals Ativos"
+                value={data?.dealsByStage.reduce((acc, s) => acc + s.count, 0) || 0}
+                icon={ShoppingBag}
+                variant="primary"
+              />
+              <CompactStatCard
+                title="Dias no Pipeline"
+                value={`${(data?.avgDaysInPipeline || 0).toFixed(0)}d`}
+                icon={Clock}
+                variant="info"
+              />
+              <CompactStatCard
+                title="Atividades (30d)"
+                value={data?.totalActivities || 0}
+                icon={Activity}
+                variant="success"
+              />
+              <CompactStatCard
+                title="Conquistas"
+                value={data?.totalAchievements || 0}
+                icon={Award}
+                variant="warning"
+              />
+              <CompactStatCard
+                title="Sequência"
+                value={`${data?.currentStreak || 0}d`}
+                icon={Flame}
+                variant="danger"
+              />
+              <CompactStatCard
+                title="Recorde"
+                value={`${data?.bestStreak || 0}d`}
+                icon={Trophy}
+                variant="primary"
+              />
+            </motion.div>
 
             {/* Daily Target Alert */}
           {data && data.dailyRequired > 0 && data.goalProgress < 100 && (
