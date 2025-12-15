@@ -26,6 +26,7 @@ import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
 import { VoiceControls } from './VoiceControls';
 import { DealContextSelector } from './DealContextSelector';
+import { DealPreviewCard } from './DealPreviewCard';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, subDays, subMonths, isAfter } from 'date-fns';
@@ -578,6 +579,19 @@ export function SalesAssistantChat() {
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+        {/* Deal Preview Card */}
+        {dealContext && (
+          <div className="px-4 pt-3">
+            <DealPreviewCard
+              dealId={dealContext.dealId}
+              clientName={dealContext.clientName}
+              productName={dealContext.productName}
+              amount={dealContext.amount}
+              status={dealContext.status}
+            />
+          </div>
+        )}
+
         {/* Messages */}
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {messages.length === 0 ? (
