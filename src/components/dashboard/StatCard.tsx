@@ -9,8 +9,48 @@ interface StatCardProps {
   change?: number;
   previousValue?: string;
   icon: LucideIcon;
-  variant?: "default" | "primary" | "secondary";
+  variant?: "default" | "primary" | "success" | "warning" | "danger";
 }
+
+const getVariantStyles = (variant: string) => {
+  switch (variant) {
+    case "primary":
+      return {
+        border: "border-l-4 border-l-primary",
+        iconBg: "bg-primary/15",
+        iconColor: "text-primary",
+        glow: "hover:shadow-primary/20",
+      };
+    case "success":
+      return {
+        border: "border-l-4 border-l-success",
+        iconBg: "bg-success/15",
+        iconColor: "text-success",
+        glow: "hover:shadow-success/20",
+      };
+    case "warning":
+      return {
+        border: "border-l-4 border-l-warning",
+        iconBg: "bg-warning/15",
+        iconColor: "text-warning",
+        glow: "hover:shadow-warning/20",
+      };
+    case "danger":
+      return {
+        border: "border-l-4 border-l-destructive",
+        iconBg: "bg-destructive/15",
+        iconColor: "text-destructive",
+        glow: "hover:shadow-destructive/20",
+      };
+    default:
+      return {
+        border: "border-l-4 border-l-muted-foreground/30",
+        iconBg: "bg-muted/50",
+        iconColor: "text-muted-foreground group-hover:text-primary",
+        glow: "hover:shadow-muted/20",
+      };
+  }
+};
 
 export const StatCard = ({
   title,
@@ -22,6 +62,7 @@ export const StatCard = ({
 }: StatCardProps) => {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
+  const styles = getVariantStyles(variant);
 
   const changeElement = change !== undefined && (
     <TooltipProvider>
@@ -30,8 +71,8 @@ export const StatCard = ({
           <span
             className={cn(
               "text-xs font-bold px-2 py-1 rounded-full cursor-help shadow-sm",
-              isPositive && "bg-status-success/20 text-status-success",
-              isNegative && "bg-status-error/20 text-status-error",
+              isPositive && "bg-success/20 text-success",
+              isNegative && "bg-destructive/20 text-destructive",
               !isPositive && !isNegative && "bg-muted/50 text-muted-foreground"
             )}
           >
@@ -54,11 +95,9 @@ export const StatCard = ({
   return (
     <motion.div
       className={cn(
-        "glass rounded-xl p-5 cursor-pointer group border",
-        "dark:border-glow",
-        variant === "default" && "border-border/40",
-        variant === "primary" && "border-primary/30 shadow-sm shadow-primary/10",
-        variant === "secondary" && "border-secondary/30"
+        "glass rounded-xl p-5 cursor-pointer group border border-border/40",
+        styles.border,
+        styles.glow
       )}
       whileHover={{ 
         scale: 1.02,
@@ -69,36 +108,16 @@ export const StatCard = ({
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <div className="flex items-start justify-between mb-4">
-        <div
-          className={cn(
-            "p-2.5 rounded-xl shadow-sm",
-            variant === "primary"
-              ? "gradient-primary"
-              : variant === "secondary"
-              ? "bg-secondary/20"
-              : "bg-muted/50"
-          )}
-        >
-          <Icon
-            className={cn(
-              "h-5 w-5",
-              variant === "primary"
-                ? "text-white animate-heartbeat"
-                : variant === "secondary"
-                ? "text-secondary-foreground"
-                : "text-muted-foreground group-hover:text-primary transition-colors"
-            )}
-          />
+        <div className={cn("p-2.5 rounded-xl shadow-sm transition-colors", styles.iconBg)}>
+          <Icon className={cn("h-5 w-5 transition-colors", styles.iconColor)} />
         </div>
         {changeElement}
       </div>
       <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1.5">{title}</p>
-      <p
-        className={cn(
-          "text-2xl font-bold",
-          variant === "primary" ? "gradient-text" : "text-foreground"
-        )}
-      >
+      <p className={cn(
+        "text-2xl font-bold font-display",
+        variant === "primary" ? "gradient-text" : "text-foreground"
+      )}>
         {value}
       </p>
     </motion.div>
