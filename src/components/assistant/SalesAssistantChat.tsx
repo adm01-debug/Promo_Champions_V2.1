@@ -24,7 +24,7 @@ import {
 import { useSalesAssistant, ChatMessage, ConversationWithMatches, DealContext } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
-import { useDealChatHistory } from '@/hooks/useDealChatHistory';
+import { useDealChatHistory, QuestionType, QUESTION_TYPES } from '@/hooks/useDealChatHistory';
 import { VoiceControls } from './VoiceControls';
 import { DealContextSelector } from './DealContextSelector';
 import { DealPreviewCard } from './DealPreviewCard';
@@ -36,20 +36,54 @@ import { ptBR } from 'date-fns/locale';
 type PeriodFilter = 'all' | 'week' | 'month' | '3months';
 
 const QUICK_PROMPTS = [
-  { label: 'Como lidar com objeção de preço?', icon: '💰' },
-  { label: 'Dicas para cold calling', icon: '📞' },
-  { label: 'Como fazer follow-up efetivo?', icon: '📧' },
-  { label: 'Técnicas de fechamento', icon: '🎯' },
-  { label: 'Me motive!', icon: '🔥' },
+  { label: 'Como lidar com objeção de preço?', icon: '💰', type: 'objections' as QuestionType },
+  { label: 'Dicas para cold calling', icon: '📞', type: 'strategy' as QuestionType },
+  { label: 'Como fazer follow-up efetivo?', icon: '📧', type: 'strategy' as QuestionType },
+  { label: 'Técnicas de fechamento', icon: '🎯', type: 'closing' as QuestionType },
+  { label: 'Me motive!', icon: '🔥', type: 'general' as QuestionType },
 ];
 
 const DEAL_CONTEXT_PROMPTS = [
-  { label: 'Analise este deal', icon: '🔍', prompt: 'Analise este deal em detalhes. Quais são os pontos fortes e fracos? O que posso melhorar?' },
-  { label: 'Como fechar esta venda?', icon: '🎯', prompt: 'Como posso fechar esta venda? Me dê estratégias específicas considerando o valor e estágio atual.' },
-  { label: 'Riscos deste deal', icon: '⚠️', prompt: 'Quais são os principais riscos deste deal? O que pode dar errado e como me preparar?' },
-  { label: 'Próximos passos', icon: '📋', prompt: 'Quais devem ser os próximos passos para avançar este deal? Me dê um plano de ação concreto.' },
-  { label: 'Objeções prováveis', icon: '🛡️', prompt: 'Quais objeções posso esperar deste cliente? Como devo responder a cada uma?' },
+  { label: 'Analise este deal', icon: '🔍', prompt: 'Analise este deal em detalhes. Quais são os pontos fortes e fracos? O que posso melhorar?', type: 'analysis' as QuestionType },
+  { label: 'Como fechar esta venda?', icon: '🎯', prompt: 'Como posso fechar esta venda? Me dê estratégias específicas considerando o valor e estágio atual.', type: 'closing' as QuestionType },
+  { label: 'Riscos deste deal', icon: '⚠️', prompt: 'Quais são os principais riscos deste deal? O que pode dar errado e como me preparar?', type: 'analysis' as QuestionType },
+  { label: 'Próximos passos', icon: '📋', prompt: 'Quais devem ser os próximos passos para avançar este deal? Me dê um plano de ação concreto.', type: 'strategy' as QuestionType },
+  { label: 'Objeções prováveis', icon: '🛡️', prompt: 'Quais objeções posso esperar deste cliente? Como devo responder a cada uma?', type: 'objections' as QuestionType },
 ];
+
+// Auto-detect question type based on keywords
+function detectQuestionType(text: string): QuestionType {
+  const lowerText = text.toLowerCase();
+  
+  // Objections keywords
+  if (lowerText.includes('objeç') || lowerText.includes('objecao') || lowerText.includes('recusa') || 
+      lowerText.includes('resistência') || lowerText.includes('resistencia') || lowerText.includes('não quer') ||
+      lowerText.includes('caro') || lowerText.includes('preço alto')) {
+    return 'objections';
+  }
+  
+  // Closing keywords
+  if (lowerText.includes('fechar') || lowerText.includes('fechamento') || lowerText.includes('finalizar') ||
+      lowerText.includes('concluir') || lowerText.includes('assinar') || lowerText.includes('contrato')) {
+    return 'closing';
+  }
+  
+  // Analysis keywords
+  if (lowerText.includes('analis') || lowerText.includes('avaliar') || lowerText.includes('avaliação') ||
+      lowerText.includes('risco') || lowerText.includes('pontos fortes') || lowerText.includes('pontos fracos') ||
+      lowerText.includes('diagnóstico') || lowerText.includes('situação')) {
+    return 'analysis';
+  }
+  
+  // Strategy keywords
+  if (lowerText.includes('estratégia') || lowerText.includes('estrategia') || lowerText.includes('plano') ||
+      lowerText.includes('abordagem') || lowerText.includes('técnica') || lowerText.includes('como fazer') ||
+      lowerText.includes('dicas') || lowerText.includes('próximos passos') || lowerText.includes('follow')) {
+    return 'strategy';
+  }
+  
+  return 'general';
+}
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -117,6 +151,7 @@ function HighlightedText({ text, searchTerm }: { text: string; searchTerm: strin
 export function SalesAssistantChat() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string | null>(null);
   const [input, setInput] = useState('');
+  const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | 'auto'>('auto');
   const [isTTSEnabled, setIsTTSEnabled] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -204,9 +239,10 @@ export function SalesAssistantChat() {
     }
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = (overrideType?: QuestionType) => {
     if (!input.trim() || isLoading) return;
     const question = input.trim();
+    const questionType = overrideType || (selectedQuestionType === 'auto' ? detectQuestionType(question) : selectedQuestionType);
     
     // Save to deal chat history if deal context is active
     if (dealContext?.dealId && selectedSalesperson) {
@@ -214,6 +250,7 @@ export function SalesAssistantChat() {
         dealId: dealContext.dealId,
         salespersonId: selectedSalesperson,
         question,
+        questionType,
       });
     }
     
@@ -229,8 +266,9 @@ export function SalesAssistantChat() {
     }
   };
 
-  const handleQuickPrompt = (prompt: string) => {
+  const handleQuickPrompt = (prompt: string, type?: QuestionType) => {
     if (isLoading) return;
+    const questionType = type || detectQuestionType(prompt);
     
     // Save to deal chat history if deal context is active
     if (dealContext?.dealId && selectedSalesperson) {
@@ -238,6 +276,7 @@ export function SalesAssistantChat() {
         dealId: dealContext.dealId,
         salespersonId: selectedSalesperson,
         question: prompt,
+        questionType,
       });
     }
     
@@ -593,7 +632,7 @@ export function SalesAssistantChat() {
                 key={prompt.label}
                 variant="outline"
                 className="cursor-pointer hover:bg-primary/10 hover:border-primary/30 transition-colors py-1 px-2.5 text-xs"
-                onClick={() => handleQuickPrompt(prompt.prompt)}
+                onClick={() => handleQuickPrompt(prompt.prompt, prompt.type)}
               >
                 <span className="mr-1">{prompt.icon}</span>
                 {prompt.label}
@@ -637,7 +676,7 @@ export function SalesAssistantChat() {
                     key={prompt.label}
                     variant="secondary"
                     className="cursor-pointer hover:bg-primary/20 transition-colors py-1.5 px-3"
-                    onClick={() => handleQuickPrompt(prompt.label)}
+                    onClick={() => handleQuickPrompt(prompt.label, prompt.type)}
                   >
                     <span className="mr-1.5">{prompt.icon}</span>
                     {prompt.label}
@@ -666,6 +705,36 @@ export function SalesAssistantChat() {
 
         {/* Input */}
         <div className="p-4 border-t border-border/50 bg-background/50">
+          {/* Question type selector - only show when deal context is active */}
+          {dealContext && (
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Tipo:</span>
+              <div className="flex gap-1 flex-wrap">
+                <Badge
+                  variant={selectedQuestionType === 'auto' ? 'default' : 'outline'}
+                  className="cursor-pointer text-[10px] px-2 py-0.5"
+                  onClick={() => setSelectedQuestionType('auto')}
+                >
+                  ✨ Auto
+                </Badge>
+                {QUESTION_TYPES.map((type) => (
+                  <Badge
+                    key={type.value}
+                    variant={selectedQuestionType === type.value ? 'default' : 'outline'}
+                    className="cursor-pointer text-[10px] px-2 py-0.5"
+                    onClick={() => setSelectedQuestionType(type.value)}
+                  >
+                    {type.label}
+                  </Badge>
+                ))}
+              </div>
+              {selectedQuestionType === 'auto' && input.trim() && (
+                <span className="text-[10px] text-muted-foreground">
+                  → {QUESTION_TYPES.find(t => t.value === detectQuestionType(input))?.label || 'Geral'}
+                </span>
+              )}
+            </div>
+          )}
           <div className="flex gap-2">
             <div className="flex-1 relative">
               <Textarea
@@ -695,7 +764,7 @@ export function SalesAssistantChat() {
               </div>
             </div>
             <Button
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={!input.trim() || isLoading}
               className="shrink-0"
             >
