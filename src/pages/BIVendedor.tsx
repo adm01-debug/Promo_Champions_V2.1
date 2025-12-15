@@ -157,60 +157,71 @@ const BIVendedor = () => {
             {/* KPI Stats */}
             <StaggeredContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" delay={0.2}>
             {[
-              { title: "Faturamento", value: formatCurrency(data?.totalRevenue || 0), icon: DollarSign, change: data?.revenueChange, variant: "primary" },
-              { title: "Meta", value: formatCurrency(data?.currentGoal || 0), icon: Target },
-              { title: "Comissão", value: formatCurrency(data?.commission || 0), icon: TrendingUp, variant: "success" },
-              { title: "Pipeline", value: formatCurrency(data?.pipelineValue || 0), icon: ShoppingBag },
-              { title: "Conversão", value: `${(data?.conversionRate || 0).toFixed(1)}%`, icon: Percent },
-              { title: "Ranking", value: `#${data?.currentRank || "-"}`, icon: Trophy, variant: data && data.currentRank <= 3 ? "gold" : "default" }
-            ].map((stat, index) => (
-              <div key={stat.title} className="animate-slide-up" style={{ animationDelay: `${100 + index * 80}ms` }}>
-                <Card className={cn(
-                  "glass-card hover-lift press-scale group relative overflow-hidden",
-                  stat.variant === "primary" && "border-primary/30",
-                  stat.variant === "success" && "border-success/30",
-                  stat.variant === "gold" && "border-rank-gold/30"
-                )}>
-                  {/* Gradient overlay */}
-                  <div className={cn(
-                    "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
-                    stat.variant === "primary" && "bg-gradient-to-br from-primary/10 to-transparent",
-                    stat.variant === "success" && "bg-gradient-to-br from-success/10 to-transparent",
-                    stat.variant === "gold" && "bg-gradient-to-br from-rank-gold/10 to-transparent"
-                  )} />
-                  
-                  <CardContent className="p-4 relative">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={cn(
-                        "p-2 rounded-xl transition-all duration-300 group-hover:scale-110",
-                        stat.variant === "primary" ? "bg-gradient-to-br from-primary to-primary-glow" :
-                        stat.variant === "success" ? "bg-gradient-to-br from-success to-success/80" :
-                        stat.variant === "gold" ? "rank-gold" : "bg-muted"
-                      )}>
-                        <stat.icon className={cn(
-                          "h-4 w-4",
-                          stat.variant ? "text-primary-foreground" : "text-muted-foreground"
-                        )} />
+              { title: "Faturamento", value: formatCurrency(data?.totalRevenue || 0), icon: DollarSign, change: data?.revenueChange, variant: "primary" as const },
+              { title: "Meta", value: formatCurrency(data?.currentGoal || 0), icon: Target, variant: "default" as const },
+              { title: "Comissão", value: formatCurrency(data?.commission || 0), icon: TrendingUp, variant: "success" as const },
+              { title: "Pipeline", value: formatCurrency(data?.pipelineValue || 0), icon: ShoppingBag, variant: "warning" as const },
+              { title: "Conversão", value: `${(data?.conversionRate || 0).toFixed(1)}%`, icon: Percent, variant: "default" as const },
+              { title: "Ranking", value: `#${data?.currentRank || "-"}`, icon: Trophy, variant: data && data.currentRank <= 3 ? "gold" as const : "default" as const }
+            ].map((stat, index) => {
+              const getBorderColor = () => {
+                if (stat.variant === "primary") return "border-l-4 border-l-primary";
+                if (stat.variant === "success") return "border-l-4 border-l-success";
+                if (stat.variant === "warning") return "border-l-4 border-l-warning";
+                if (stat.variant === "gold") return "border-l-4 border-l-rank-gold";
+                return "border-l-4 border-l-muted-foreground/30";
+              };
+              
+              const getIconBg = () => {
+                if (stat.variant === "primary") return "bg-primary/15";
+                if (stat.variant === "success") return "bg-success/15";
+                if (stat.variant === "warning") return "bg-warning/15";
+                if (stat.variant === "gold") return "bg-rank-gold/15";
+                return "bg-muted/50";
+              };
+              
+              const getIconColor = () => {
+                if (stat.variant === "primary") return "text-primary";
+                if (stat.variant === "success") return "text-success";
+                if (stat.variant === "warning") return "text-warning";
+                if (stat.variant === "gold") return "text-rank-gold";
+                return "text-muted-foreground";
+              };
+
+              return (
+                <div key={stat.title} className="animate-slide-up" style={{ animationDelay: `${100 + index * 80}ms` }}>
+                  <Card className={cn(
+                    "glass-card hover-lift press-scale group relative overflow-hidden border-border/40",
+                    getBorderColor()
+                  )}>
+                    <CardContent className="p-4 relative">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={cn(
+                          "p-2 rounded-xl transition-all duration-300 group-hover:scale-110",
+                          getIconBg()
+                        )}>
+                          <stat.icon className={cn("h-4 w-4", getIconColor())} />
+                        </div>
+                        <span className="text-xs text-muted-foreground font-medium">{stat.title}</span>
                       </div>
-                      <span className="text-xs text-muted-foreground font-medium">{stat.title}</span>
-                    </div>
-                    <p className={cn(
-                      "text-lg font-bold",
-                      stat.variant === "primary" && "gradient-text",
-                      stat.variant === "gold" && "gradient-text-gold"
-                    )}>{stat.value}</p>
-                    {stat.change !== undefined && (
-                      <span className={cn(
-                        "text-xs font-medium",
-                        stat.change > 0 ? "text-success" : stat.change < 0 ? "text-destructive" : "text-muted-foreground"
-                      )}>
-                        {stat.change > 0 && "+"}{stat.change.toFixed(1)}% vs mês anterior
-                      </span>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-              ))}
+                      <p className={cn(
+                        "text-lg font-bold font-display",
+                        stat.variant === "primary" && "gradient-text",
+                        stat.variant === "gold" && "gradient-text-gold"
+                      )}>{stat.value}</p>
+                      {stat.change !== undefined && (
+                        <span className={cn(
+                          "text-xs font-medium",
+                          stat.change > 0 ? "text-success" : stat.change < 0 ? "text-destructive" : "text-muted-foreground"
+                        )}>
+                          {stat.change > 0 && "+"}{stat.change.toFixed(1)}% vs mês anterior
+                        </span>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              );
+            })}
             </StaggeredContainer>
 
             {/* Daily Target Alert */}

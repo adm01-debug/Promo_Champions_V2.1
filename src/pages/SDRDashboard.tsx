@@ -141,7 +141,7 @@ export default function SDRDashboard() {
                   title="Leads Quentes"
                   value={metrics?.current.hotLeads ?? 0}
                   icon={Flame}
-                  variant="primary"
+                  variant="danger"
                   subtitle="Score ≥ 75"
                 />
               </motion.div>
@@ -150,6 +150,7 @@ export default function SDRDashboard() {
                   title="Leads Mornos"
                   value={metrics?.current.warmLeads ?? 0}
                   icon={Thermometer}
+                  variant="warning"
                   subtitle="Score 50-74"
                 />
               </motion.div>
@@ -158,6 +159,7 @@ export default function SDRDashboard() {
                   title="Leads Frios"
                   value={metrics?.current.coldLeads ?? 0}
                   icon={Thermometer}
+                  variant="default"
                   subtitle="Score < 50"
                 />
               </motion.div>
