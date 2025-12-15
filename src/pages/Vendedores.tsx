@@ -12,6 +12,7 @@ import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { GamificationCard } from "@/components/gamification/GamificationCard";
+import { CelebrationTestButtons } from "@/components/gamification/CelebrationTestButtons";
 import { cn } from "@/lib/utils";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -438,6 +439,11 @@ const Vendedores = () => {
               })}
             </div>
           )}
+        </div>
+
+        {/* Celebration Test Buttons */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
+          <CelebrationTestButtons />
         </div>
 
         <GoalEditDialog
