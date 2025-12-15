@@ -2,6 +2,7 @@ import { Receipt, Percent, Clock, RotateCcw, CreditCard, Wallet, LucideIcon } fr
 import { useDetailedKPIs } from "@/hooks/useDashboardKPIs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 const iconMap: Record<string, LucideIcon> = {
   Receipt,
@@ -46,7 +47,16 @@ export const KPIGrid = () => {
           return (
             <Tooltip key={kpi.title}>
               <TooltipTrigger asChild>
-                <div className="p-4 rounded-xl bg-muted/20 border border-border/30 hover:bg-muted/40 hover:border-primary/30 transition-all duration-200 group cursor-help">
+                <motion.div 
+                  className="p-4 rounded-xl bg-muted/20 border border-border/30 group cursor-help"
+                  whileHover={{ 
+                    scale: 1.03,
+                    y: -2,
+                    boxShadow: "0 10px 30px -10px hsl(var(--primary) / 0.2)",
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
                       <Icon className="h-3.5 w-3.5 text-primary" />
@@ -64,7 +74,7 @@ export const KPIGrid = () => {
                       {kpi.change}%
                     </span>
                   </div>
-                </div>
+                </motion.div>
               </TooltipTrigger>
               <TooltipContent side="top" className="glass border-border/40">
                 <div className="text-xs">
