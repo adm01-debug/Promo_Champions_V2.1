@@ -23,14 +23,17 @@ import {
   Plus,
   ChevronLeft,
   Search,
-  X
+  X,
+  Calendar
 } from 'lucide-react';
 import { useSalesAssistant, ChatMessage, ConversationWithMatches } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, subDays, subMonths, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
+type PeriodFilter = 'all' | 'week' | 'month' | '3months';
 
 const QUICK_PROMPTS = [
   { label: 'Como lidar com objeção de preço?', icon: '💰' },
@@ -329,6 +332,7 @@ export function SalesAssistantChat() {
 
   // Search state for history
   const [searchQuery, setSearchQuery] = useState('');
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all');
   const [searchResults, setSearchResults] = useState<ConversationWithMatches[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -359,8 +363,32 @@ export function SalesAssistantChat() {
     };
   }, [searchQuery, searchConversations]);
 
-  // Use search results if available, otherwise use all conversations
-  const displayedConversations = searchResults !== null ? searchResults : conversations;
+  // Filter by period
+  const filterByPeriod = useCallback((convs: typeof conversations) => {
+    if (!convs || periodFilter === 'all') return convs;
+    
+    const now = new Date();
+    let cutoffDate: Date;
+    
+    switch (periodFilter) {
+      case 'week':
+        cutoffDate = subDays(now, 7);
+        break;
+      case 'month':
+        cutoffDate = subMonths(now, 1);
+        break;
+      case '3months':
+        cutoffDate = subMonths(now, 3);
+        break;
+      default:
+        return convs;
+    }
+    
+    return convs.filter(conv => isAfter(new Date(conv.updated_at), cutoffDate));
+  }, [periodFilter]);
+
+  // Use search results if available, otherwise use all conversations, then filter by period
+  const displayedConversations = filterByPeriod(searchResults !== null ? searchResults : conversations);
 
   // History sidebar
   if (showHistory) {
@@ -397,6 +425,28 @@ export function SalesAssistantChat() {
                   <X className="h-4 w-4" />
                 </Button>
               )}
+            </div>
+          )}
+          {selectedSalesperson && conversations && conversations.length > 0 && (
+            <div className="flex gap-1 flex-wrap">
+              {[
+                { value: 'all' as PeriodFilter, label: 'Todas' },
+                { value: 'week' as PeriodFilter, label: '7 dias' },
+                { value: 'month' as PeriodFilter, label: '30 dias' },
+                { value: '3months' as PeriodFilter, label: '3 meses' },
+              ].map((option) => (
+                <Badge
+                  key={option.value}
+                  variant={periodFilter === option.value ? 'default' : 'outline'}
+                  className={cn(
+                    'cursor-pointer text-xs',
+                    periodFilter === option.value ? '' : 'hover:bg-muted'
+                  )}
+                  onClick={() => setPeriodFilter(option.value)}
+                >
+                  {option.label}
+                </Badge>
+              ))}
             </div>
           )}
         </CardHeader>
