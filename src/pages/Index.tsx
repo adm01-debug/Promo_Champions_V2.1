@@ -16,6 +16,8 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { motion } from "framer-motion";
+import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import {
   DollarSign,
   ShoppingBag,
@@ -40,105 +42,135 @@ const Index = () => {
       skeleton={<DashboardLoadingSkeleton />}
       duration={400}
     >
-    <div className="min-h-screen bg-background">
-      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-        {/* Header */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
-          <DashboardHeader />
-        </div>
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <DashboardHeader />
+            </motion.div>
 
-        {/* Competitive Status Bar */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "50ms" }}>
-          <CompetitiveStatusBar />
-        </div>
+            {/* Competitive Status Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <CompetitiveStatusBar />
+            </motion.div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-            <StatCard
-              title="Faturamento Total"
-              value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
-              change={kpis?.changes.revenue ?? 0}
-              previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
-              icon={DollarSign}
-              variant="primary"
-            />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
-            <StatCard
-              title="Vendas Realizadas"
-              value={String(kpis?.current.totalSales ?? 0)}
-              change={kpis?.changes.sales ?? 0}
-              previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
-              icon={ShoppingBag}
-            />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            <StatCard
-              title="Novos Clientes"
-              value={String(kpis?.current.newClients ?? 0)}
-              change={kpis?.changes.clients ?? 0}
-              previousValue={kpis ? String(kpis.previous.newClients) : undefined}
-              icon={Users}
-            />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "250ms" }}>
-            <StatCard
-              title="Taxa de Conversão"
-              value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
-              change={kpis?.changes.conversion ?? 0}
-              previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
-              icon={TrendingUp}
-            />
+            {/* Stats Row */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <StatCard
+                  title="Faturamento Total"
+                  value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
+                  change={kpis?.changes.revenue ?? 0}
+                  previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
+                  icon={DollarSign}
+                  variant="primary"
+                />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <StatCard
+                  title="Vendas Realizadas"
+                  value={String(kpis?.current.totalSales ?? 0)}
+                  change={kpis?.changes.sales ?? 0}
+                  previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
+                  icon={ShoppingBag}
+                />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <StatCard
+                  title="Novos Clientes"
+                  value={String(kpis?.current.newClients ?? 0)}
+                  change={kpis?.changes.clients ?? 0}
+                  previousValue={kpis ? String(kpis.previous.newClients) : undefined}
+                  icon={Users}
+                />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <StatCard
+                  title="Taxa de Conversão"
+                  value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                  change={kpis?.changes.conversion ?? 0}
+                  previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
+                  icon={TrendingUp}
+                />
+              </motion.div>
+            </motion.div>
+
+            {/* Main Grid */}
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              {/* Left Column - Chart */}
+              <div className="lg:col-span-2">
+                <SalesChart />
+              </div>
+
+              {/* Right Column - Goal */}
+              <div>
+                <GoalProgress 
+                  current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
+                  goal={goalsData?.totalGoal || 0} 
+                />
+              </div>
+            </motion.div>
+
+            {/* Second Row */}
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-4 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <FunnelChart />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <SalesForecast />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <KPIGrid />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <AlertsPanel />
+              </motion.div>
+            </motion.div>
+
+            {/* Third Row */}
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <RecentDeals />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <TopProducts />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <CompetitiveLeaderboard />
+              </motion.div>
+            </motion.div>
           </div>
         </div>
-
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Chart */}
-          <div className="lg:col-span-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-            <SalesChart />
-          </div>
-
-          {/* Right Column - Goal */}
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-            <GoalProgress 
-              current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
-              goal={goalsData?.totalGoal || 0} 
-            />
-          </div>
-        </div>
-
-        {/* Second Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
-            <FunnelChart />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
-            <SalesForecast />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
-            <KPIGrid />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
-            <AlertsPanel />
-          </div>
-        </div>
-
-        {/* Third Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
-            <RecentDeals />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
-            <TopProducts />
-          </div>
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
-            <CompetitiveLeaderboard />
-          </div>
-        </div>
-      </div>
-    </div>
+      </PageTransition>
     </SkeletonTransition>
   );
 };
