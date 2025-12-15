@@ -169,6 +169,37 @@ const generateAlerts = async (supabase: any, pref: NotificationPreference): Prom
   return alerts;
 };
 
+const logEmailToDatabase = async (
+  supabase: any,
+  email: string,
+  subject: string,
+  status: 'sent' | 'failed',
+  alertsCount: number,
+  alerts: Alert[],
+  errorMessage?: string
+) => {
+  try {
+    await supabase.from('email_logs').insert({
+      function_name: 'send-alert-notifications',
+      recipient_email: email,
+      subject,
+      status,
+      error_message: errorMessage || null,
+      metadata: {
+        alerts_count: alertsCount,
+        alert_types: alerts.map(a => a.type),
+        alerts_summary: alerts.map(a => ({
+          type: a.type,
+          title: a.title,
+          amount: a.amount,
+        })),
+      },
+    });
+  } catch (logError) {
+    console.error('Failed to log email to database:', logError);
+  }
+};
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -223,19 +254,27 @@ const handler = async (req: Request): Promise<Response> => {
             continue;
           }
 
+          const subject = `🚨 ${alerts.length} Alerta(s) Crítico(s) - Ação Necessária`;
           const emailHtml = buildEmailHtml(alerts);
 
-          const emailResponse = await resend.emails.send({
-            from: "Alertas <onboarding@resend.dev>",
-            to: [pref.email],
-            subject: `🚨 ${alerts.length} Alerta(s) Crítico(s) - Ação Necessária`,
-            html: emailHtml,
-          });
+          try {
+            const emailResponse = await resend.emails.send({
+              from: "Alertas <onboarding@resend.dev>",
+              to: [pref.email],
+              subject,
+              html: emailHtml,
+            });
 
-          console.log(`Email sent to ${pref.email}:`, emailResponse);
-          results.push({ email: pref.email, alertsSent: alerts.length, success: true });
+            console.log(`Email sent to ${pref.email}:`, emailResponse);
+            await logEmailToDatabase(supabase, pref.email, subject, 'sent', alerts.length, alerts);
+            results.push({ email: pref.email, alertsSent: alerts.length, success: true });
+          } catch (emailError: any) {
+            console.error(`Error sending to ${pref.email}:`, emailError);
+            await logEmailToDatabase(supabase, pref.email, subject, 'failed', alerts.length, alerts, emailError.message);
+            results.push({ email: pref.email, alertsSent: 0, success: false, error: emailError.message });
+          }
         } catch (error: any) {
-          console.error(`Error sending to ${pref.email}:`, error);
+          console.error(`Error processing ${pref.email}:`, error);
           results.push({ email: pref.email, alertsSent: 0, success: false, error: error.message });
         }
       }
@@ -278,25 +317,40 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
+      const subject = `🚨 ${alerts.length} Alerta(s) Crítico(s) - Ação Necessária`;
       const emailHtml = buildEmailHtml(alerts);
 
-      const emailResponse = await resend.emails.send({
-        from: "Alertas <onboarding@resend.dev>",
-        to: [recipientEmail],
-        subject: `🚨 ${alerts.length} Alerta(s) Crítico(s) - Ação Necessária`,
-        html: emailHtml,
-      });
+      try {
+        const emailResponse = await resend.emails.send({
+          from: "Alertas <onboarding@resend.dev>",
+          to: [recipientEmail],
+          subject,
+          html: emailHtml,
+        });
 
-      console.log("Email sent successfully:", emailResponse);
+        console.log("Email sent successfully:", emailResponse);
+        await logEmailToDatabase(supabase, recipientEmail, subject, 'sent', alerts.length, alerts);
 
-      return new Response(
-        JSON.stringify({
-          message: "Critical alerts sent successfully",
-          alertsSent: alerts.length,
-          emailResponse,
-        }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+        return new Response(
+          JSON.stringify({
+            message: "Critical alerts sent successfully",
+            alertsSent: alerts.length,
+            emailResponse,
+          }),
+          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      } catch (emailError: any) {
+        console.error("Error sending email:", emailError);
+        await logEmailToDatabase(supabase, recipientEmail, subject, 'failed', alerts.length, alerts, emailError.message);
+
+        return new Response(
+          JSON.stringify({
+            message: "Failed to send email",
+            error: emailError.message,
+          }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
     }
   } catch (error: any) {
     console.error("Error in send-alert-notifications:", error);
