@@ -14,6 +14,7 @@ interface Conversation {
   title: string;
   created_at: string;
   updated_at: string;
+  message_count?: number;
 }
 
 export interface ConversationWithMatches extends Conversation {
@@ -26,18 +27,39 @@ export function useSalesAssistant(salespersonId: string | null) {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  // Fetch conversations for the salesperson
+  // Fetch conversations for the salesperson with message counts
   const { data: conversations, isLoading: loadingConversations } = useQuery({
     queryKey: ['chat-conversations', salespersonId],
     queryFn: async () => {
       if (!salespersonId) return [];
-      const { data, error } = await supabase
+      
+      // Get conversations
+      const { data: convs, error } = await supabase
         .from('chat_conversations')
         .select('*')
         .eq('salesperson_id', salespersonId)
         .order('updated_at', { ascending: false });
       if (error) throw error;
-      return data as Conversation[];
+      
+      // Get message counts for each conversation
+      const conversationIds = convs.map(c => c.id);
+      const { data: messageCounts, error: countError } = await supabase
+        .from('chat_messages')
+        .select('conversation_id')
+        .in('conversation_id', conversationIds);
+      
+      if (countError) throw countError;
+      
+      // Count messages per conversation
+      const countMap = new Map<string, number>();
+      messageCounts?.forEach(m => {
+        countMap.set(m.conversation_id, (countMap.get(m.conversation_id) || 0) + 1);
+      });
+      
+      return convs.map(conv => ({
+        ...conv,
+        message_count: countMap.get(conv.id) || 0,
+      })) as Conversation[];
     },
     enabled: !!salespersonId,
   });
