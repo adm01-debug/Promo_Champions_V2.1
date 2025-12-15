@@ -484,7 +484,14 @@ export function SalesAssistantChat() {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{conv.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium truncate">{conv.title}</p>
+                          {conv.message_count !== undefined && conv.message_count > 0 && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
+                              {conv.message_count} msg
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(conv.updated_at), {
                             addSuffix: true,
