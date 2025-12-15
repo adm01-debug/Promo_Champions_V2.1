@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,10 +12,6 @@ import {
   Send, 
   Loader2, 
   Trash2, 
-  Mic, 
-  MicOff,
-  Volume2,
-  VolumeX,
   Sparkles,
   User,
   MessageSquare,
@@ -24,10 +20,11 @@ import {
   ChevronLeft,
   Search,
   X,
-  Calendar
 } from 'lucide-react';
 import { useSalesAssistant, ChatMessage, ConversationWithMatches } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
+import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
+import { VoiceControls } from './VoiceControls';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, subDays, subMonths, isAfter } from 'date-fns';
@@ -42,9 +39,6 @@ const QUICK_PROMPTS = [
   { label: 'Técnicas de fechamento', icon: '🎯' },
   { label: 'Me motive!', icon: '🔥' },
 ];
-
-// Check browser support for Speech Recognition
-const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -112,13 +106,10 @@ function HighlightedText({ text, searchTerm }: { text: string; searchTerm: strin
 export function SalesAssistantChat() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string | null>(null);
   const [input, setInput] = useState('');
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isCurrentlySpeaking, setIsCurrentlySpeaking] = useState(false);
+  const [isTTSEnabled, setIsTTSEnabled] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<any>(null);
   const lastSpokenMessageRef = useRef<string | null>(null);
   const { toast } = useToast();
 
@@ -139,42 +130,37 @@ export function SalesAssistantChat() {
 
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
 
-  // Speech Synthesis function
-  const speakText = useCallback((text: string) => {
-    if (!('speechSynthesis' in window)) {
+  // ElevenLabs Voice Hook
+  const {
+    speak,
+    stopSpeaking,
+    isSpeaking,
+    isLoadingTTS,
+    startListening,
+    stopListening,
+    isListening,
+    isProcessingSTT,
+    transcript,
+    voiceId,
+    setVoiceId,
+    isApiConfigured,
+    useBrowserFallback,
+    setUseBrowserFallback,
+  } = useElevenLabsVoice({
+    onSpeakStart: () => {},
+    onSpeakEnd: () => {},
+    onError: (error) => {
       toast({
-        title: 'Navegador não suportado',
-        description: 'Seu navegador não suporta síntese de voz.',
+        title: 'Erro de voz',
+        description: error,
         variant: 'destructive',
       });
-      return;
-    }
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'pt-BR';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-
-    // Try to find a Portuguese voice
-    const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => v.lang.startsWith('pt')) || voices[0];
-    if (ptVoice) {
-      utterance.voice = ptVoice;
-    }
-
-    utterance.onstart = () => setIsCurrentlySpeaking(true);
-    utterance.onend = () => setIsCurrentlySpeaking(false);
-    utterance.onerror = () => setIsCurrentlySpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
-  }, [toast]);
+    },
+  });
 
   // Auto-speak new assistant messages when TTS is enabled
   useEffect(() => {
-    if (!isSpeaking || messages.length === 0) return;
+    if (!isTTSEnabled || messages.length === 0) return;
 
     const lastMessage = messages[messages.length - 1];
     if (
@@ -184,67 +170,16 @@ export function SalesAssistantChat() {
       !isLoading
     ) {
       lastSpokenMessageRef.current = lastMessage.id;
-      speakText(lastMessage.content);
+      speak(lastMessage.content);
     }
-  }, [messages, isSpeaking, isLoading, speakText]);
+  }, [messages, isTTSEnabled, isLoading, speak]);
 
-  // Initialize Speech Recognition
+  // Update input when transcript changes from voice input
   useEffect(() => {
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = 'pt-BR';
-
-      recognition.onresult = (event: any) => {
-        const transcript = Array.from(event.results)
-          .map((result: any) => result[0].transcript)
-          .join('');
-        setInput(transcript);
-      };
-
-      recognition.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-        if (event.error === 'not-allowed') {
-          toast({
-            title: 'Microfone bloqueado',
-            description: 'Permita o acesso ao microfone nas configurações do navegador.',
-            variant: 'destructive',
-          });
-        }
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognitionRef.current = recognition;
+    if (transcript) {
+      setInput(transcript);
     }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
-    };
-  }, [toast]);
-
-  // Load voices when component mounts
-  useEffect(() => {
-    if ('speechSynthesis' in window) {
-      // Voices may load asynchronously
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-      };
-    }
-
-    return () => {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
+  }, [transcript]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -272,48 +207,31 @@ export function SalesAssistantChat() {
     sendMessage(prompt);
   };
 
-  const toggleVoice = useCallback(() => {
-    if (!SpeechRecognition) {
-      toast({
-        title: 'Navegador não suportado',
-        description: 'Use Chrome, Edge ou Safari para entrada de voz.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  const handleToggleListening = useCallback(() => {
     if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
+      stopListening();
     } else {
-      try {
-        recognitionRef.current?.start();
-        setIsListening(true);
-        toast({
-          title: 'Escutando...',
-          description: 'Fale sua pergunta.',
-        });
-      } catch (error) {
-        console.error('Error starting recognition:', error);
-      }
+      startListening();
+      toast({
+        title: 'Escutando...',
+        description: 'Fale sua pergunta.',
+      });
     }
-  }, [isListening, toast]);
+  }, [isListening, startListening, stopListening, toast]);
 
-  const toggleSpeaker = useCallback(() => {
-    const newState = !isSpeaking;
-    setIsSpeaking(newState);
+  const handleToggleTTS = useCallback(() => {
+    const newState = !isTTSEnabled;
+    setIsTTSEnabled(newState);
     
     if (!newState) {
-      // Stop any ongoing speech when disabled
-      window.speechSynthesis.cancel();
-      setIsCurrentlySpeaking(false);
+      stopSpeaking();
     } else {
       toast({
         title: 'Leitura ativada',
-        description: 'As respostas serão lidas em voz alta.',
+        description: isApiConfigured ? 'Usando voz ElevenLabs' : 'Usando voz do navegador',
       });
     }
-  }, [isSpeaking, toast]);
+  }, [isTTSEnabled, stopSpeaking, isApiConfigured, toast]);
 
   const handleSelectConversation = (conversationId: string) => {
     loadConversation(conversationId);
@@ -656,32 +574,21 @@ export function SalesAssistantChat() {
                 className="min-h-[44px] max-h-[120px] resize-none pr-20"
                 rows={1}
               />
-              <div className="absolute right-2 bottom-2 flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    'h-7 w-7',
-                    isListening && 'text-destructive bg-destructive/10'
-                  )}
-                  onClick={toggleVoice}
-                  title="Entrada por voz"
-                >
-                  {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    'h-7 w-7',
-                    isSpeaking && 'text-primary bg-primary/10',
-                    isCurrentlySpeaking && 'animate-pulse'
-                  )}
-                  onClick={toggleSpeaker}
-                  title={isSpeaking ? 'Desativar leitura em voz alta' : 'Ativar leitura em voz alta'}
-                >
-                  {isSpeaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                </Button>
+              <div className="absolute right-2 bottom-2">
+                <VoiceControls
+                  isTTSEnabled={isTTSEnabled}
+                  onToggleTTS={handleToggleTTS}
+                  isSpeaking={isSpeaking}
+                  isLoadingTTS={isLoadingTTS}
+                  isListening={isListening}
+                  onToggleListening={handleToggleListening}
+                  isProcessingSTT={isProcessingSTT}
+                  voiceId={voiceId}
+                  onVoiceChange={setVoiceId}
+                  isApiConfigured={isApiConfigured}
+                  useBrowserFallback={useBrowserFallback}
+                  onFallbackChange={setUseBrowserFallback}
+                />
               </div>
             </div>
             <Button
