@@ -588,6 +588,7 @@ export function SalesAssistantChat() {
               productName={dealContext.productName}
               amount={dealContext.amount}
               status={dealContext.status}
+              onAskAssistant={handleQuickPrompt}
             />
           </div>
         )}
