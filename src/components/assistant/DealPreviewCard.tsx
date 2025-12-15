@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
   DollarSign, 
   Clock, 
@@ -10,6 +11,9 @@ import {
   AlertCircle,
   Package,
   Sparkles,
+  History,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -22,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { DealChatHistory } from './DealChatHistory';
 
 interface DealPreviewCardProps {
   dealId: string;
@@ -220,6 +225,7 @@ export function DealPreviewCard({
   status,
   onAskAssistant,
 }: DealPreviewCardProps) {
+  const [showHistory, setShowHistory] = useState(false);
   // Fetch additional deal info: time in pipeline and last activity
   const { data: dealDetails } = useQuery({
     queryKey: ['deal-preview-details', dealId],
@@ -447,6 +453,36 @@ export function DealPreviewCard({
           </div>
         </div>
       )}
+
+      {/* Chat History Toggle */}
+      <div className="mt-3 border-t border-border/30 pt-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-between h-7 text-xs text-muted-foreground hover:text-foreground"
+          onClick={() => setShowHistory(!showHistory)}
+        >
+          <div className="flex items-center gap-1.5">
+            <History className="h-3 w-3" />
+            <span>Histórico de perguntas</span>
+          </div>
+          {showHistory ? (
+            <ChevronUp className="h-3 w-3" />
+          ) : (
+            <ChevronDown className="h-3 w-3" />
+          )}
+        </Button>
+        
+        {showHistory && (
+          <div className="mt-2">
+            <DealChatHistory
+              dealId={dealId}
+              clientName={clientName}
+              onSelectQuestion={(question) => onAskAssistant?.(question)}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
