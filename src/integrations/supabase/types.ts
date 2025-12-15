@@ -592,6 +592,48 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_chat_history: {
+        Row: {
+          created_at: string
+          deal_id: string
+          id: string
+          question: string
+          response: string | null
+          salesperson_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          deal_id: string
+          id?: string
+          question: string
+          response?: string | null
+          salesperson_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string
+          id?: string
+          question?: string
+          response?: string | null
+          salesperson_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_chat_history_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_chat_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_outcomes: {
         Row: {
           created_at: string

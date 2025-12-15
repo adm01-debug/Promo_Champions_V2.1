@@ -24,6 +24,7 @@ import {
 import { useSalesAssistant, ChatMessage, ConversationWithMatches, DealContext } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
+import { useDealChatHistory } from '@/hooks/useDealChatHistory';
 import { VoiceControls } from './VoiceControls';
 import { DealContextSelector } from './DealContextSelector';
 import { DealPreviewCard } from './DealPreviewCard';
@@ -140,6 +141,9 @@ export function SalesAssistantChat() {
     setDealContext,
   } = useSalesAssistant(selectedSalesperson);
 
+  // Deal chat history
+  const { addEntry: addChatHistoryEntry } = useDealChatHistory(dealContext?.dealId || null);
+
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
 
   // ElevenLabs Voice Hook
@@ -202,7 +206,18 @@ export function SalesAssistantChat() {
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
-    sendMessage(input.trim());
+    const question = input.trim();
+    
+    // Save to deal chat history if deal context is active
+    if (dealContext?.dealId && selectedSalesperson) {
+      addChatHistoryEntry.mutate({
+        dealId: dealContext.dealId,
+        salespersonId: selectedSalesperson,
+        question,
+      });
+    }
+    
+    sendMessage(question);
     setInput('');
     textareaRef.current?.focus();
   };
@@ -216,6 +231,16 @@ export function SalesAssistantChat() {
 
   const handleQuickPrompt = (prompt: string) => {
     if (isLoading) return;
+    
+    // Save to deal chat history if deal context is active
+    if (dealContext?.dealId && selectedSalesperson) {
+      addChatHistoryEntry.mutate({
+        dealId: dealContext.dealId,
+        salespersonId: selectedSalesperson,
+        question: prompt,
+      });
+    }
+    
     sendMessage(prompt);
   };
 
