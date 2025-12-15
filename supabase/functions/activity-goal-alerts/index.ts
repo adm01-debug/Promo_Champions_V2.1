@@ -133,6 +133,7 @@ serve(async (req) => {
       const adminEmail = notifPrefs?.[0]?.email;
 
       if (adminEmail) {
+        const subject = `⚠️ Alerta: ${alertList.length} vendedor(es) abaixo da meta de atividades`;
         const emailHtml = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #f97316;">⚠️ Alerta: Vendedores Abaixo da Meta</h2>
@@ -174,16 +175,31 @@ serve(async (req) => {
           body: JSON.stringify({
             from: 'SalesPro <onboarding@resend.dev>',
             to: [adminEmail],
-            subject: `⚠️ Alerta: ${alertList.length} vendedor(es) abaixo da meta de atividades`,
+            subject,
             html: emailHtml,
           }),
+        });
+
+        // Log email to email_logs table
+        const emailStatus = emailRes.ok ? 'sent' : 'failed';
+        const errorMessage = emailRes.ok ? null : await emailRes.text();
+
+        await supabase.from('email_logs').insert({
+          function_name: 'activity-goal-alerts',
+          recipient_email: adminEmail,
+          subject,
+          status: emailStatus,
+          error_message: errorMessage,
+          metadata: {
+            salespeople_count: alertList.length,
+            salespeople: alertList.map(a => ({ name: a.name, progress: a.progress })),
+          },
         });
 
         if (emailRes.ok) {
           console.log(`Email alert sent to ${adminEmail}`);
         } else {
-          const errorText = await emailRes.text();
-          console.error('Error sending email:', errorText);
+          console.error('Error sending email:', errorMessage);
         }
       } else {
         console.log('No admin email configured in notification_preferences');

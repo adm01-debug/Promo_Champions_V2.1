@@ -131,6 +131,7 @@ async function getAlertSettings(supabase: any): Promise<AlertSettings> {
     };
   }
 }
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -267,16 +268,45 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending spike alert to ${allEmails.length} admin(s):`, allEmails);
 
     // Send alert email
+    const subject = `🛡️ ALERTA: ${spikes.length} usuário(s) com pico de acessos negados`;
     const emailHtml = buildSpikeAlertHtml(spikes, logs.length, settings);
 
-    const emailResponse = await resend.emails.send({
-      from: "Segurança <onboarding@resend.dev>",
-      to: allEmails,
-      subject: `🛡️ ALERTA: ${spikes.length} usuário(s) com pico de acessos negados`,
-      html: emailHtml,
-    });
+    let emailStatus = 'sent';
+    let errorMessage: string | null = null;
 
-    console.log("Spike alert email sent:", emailResponse);
+    try {
+      const emailResponse = await resend.emails.send({
+        from: "Segurança <onboarding@resend.dev>",
+        to: allEmails,
+        subject,
+        html: emailHtml,
+      });
+      console.log("Spike alert email sent:", emailResponse);
+    } catch (emailError: any) {
+      emailStatus = 'failed';
+      errorMessage = emailError?.message || 'Unknown email error';
+      console.error("Error sending email:", emailError);
+    }
+
+    // Log email to email_logs table for each recipient
+    for (const email of allEmails) {
+      await supabase.from('email_logs').insert({
+        function_name: 'access-denied-alerts',
+        recipient_email: email,
+        subject,
+        status: emailStatus,
+        error_message: errorMessage,
+        metadata: {
+          spikes_count: spikes.length,
+          total_attempts: logs.length,
+          settings,
+          spikes: spikes.map(s => ({
+            user_email: s.userEmail,
+            attempt_count: s.attemptCount,
+          })),
+        },
+      });
+    }
 
     // Log alert to history
     const { error: historyError } = await supabase
@@ -297,11 +327,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     return new Response(
       JSON.stringify({
-        message: "Spike alert sent successfully",
+        message: emailStatus === 'sent' ? "Spike alert sent successfully" : "Spike alert failed",
         totalAttempts: logs.length,
         spikesDetected: spikes,
         emailsSentTo: allEmails,
-        emailResponse,
+        emailStatus,
         settings,
       }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
