@@ -38,9 +38,9 @@ const getVariantStyles = (variant: string) => {
       };
     case "info":
       return {
-        iconBg: "bg-blue-500",
-        iconColor: "text-white",
-        textColor: "text-blue-500",
+        iconBg: "bg-info",
+        iconColor: "text-info-foreground",
+        textColor: "text-info",
       };
     default:
       return {

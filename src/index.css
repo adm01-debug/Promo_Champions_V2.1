@@ -54,6 +54,8 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+    --info: 200 85% 50%;
+    --info-foreground: 0 0% 100%;
     
     /* ===== GAMIFICAÇÃO ===== */
     --xp: 280 85% 60%;
@@ -127,61 +129,63 @@
   }
 
   .dark {
-    /* ===== BASE ===== */
-    --background: 220 20% 7%;
+    /* ===== BASE - Fundo mais escuro e profundo ===== */
+    --background: 240 15% 6%;
     --foreground: 210 40% 96%;
     
-    /* ===== CARDS ===== */
-    --card: 220 18% 11%;
+    /* ===== CARDS - Sutilmente elevados ===== */
+    --card: 240 12% 10%;
     --card-foreground: 210 40% 96%;
-    --card-elevated: 220 16% 14%;
+    --card-elevated: 240 10% 13%;
     
     /* ===== POPOVER/DIALOG ===== */
-    --popover: 220 18% 11%;
+    --popover: 240 12% 10%;
     --popover-foreground: 210 40% 96%;
     
     /* ===== CORES PRIMÁRIAS - Laranja vibrante ===== */
-    --primary: 25 95% 53%;
+    --primary: 24 95% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 25 100% 60%;
+    --primary-glow: 24 100% 58%;
     
     /* ===== CORES SECUNDÁRIAS ===== */
-    --secondary: 220 15% 16%;
+    --secondary: 240 10% 14%;
     --secondary-foreground: 210 40% 90%;
     
     /* ===== MUTED ===== */
-    --muted: 220 12% 18%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 240 8% 16%;
+    --muted-foreground: 215 15% 50%;
     
-    /* ===== ACCENT ===== */
-    --accent: 220 15% 18%;
-    --accent-foreground: 210 40% 96%;
+    /* ===== ACCENT - Roxo/Violeta ===== */
+    --accent: 270 60% 55%;
+    --accent-foreground: 0 0% 100%;
     
-    /* ===== DESTRUCTIVE - Vermelho ===== */
-    --destructive: 0 72% 51%;
+    /* ===== DESTRUCTIVE - Vermelho vibrante ===== */
+    --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
     
     /* ===== BORDAS E INPUTS ===== */
-    --border: 220 12% 20%;
-    --input: 220 15% 16%;
-    --ring: 25 95% 53%;
+    --border: 240 8% 18%;
+    --input: 240 10% 14%;
+    --ring: 24 95% 50%;
     
-    /* ===== ESTADOS ===== */
-    --success: 142 71% 45%;
+    /* ===== ESTADOS - Cores vibrantes ===== */
+    --success: 145 80% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 95% 50%;
     --warning-foreground: 0 0% 100%;
+    --info: 200 85% 55%;
+    --info-foreground: 0 0% 100%;
     
     /* ===== GAMIFICAÇÃO ===== */
-    --xp: 25 95% 58%;
-    --xp-foreground: 0 0% 100%;
-    --coins: 45 93% 55%;
+    --xp: 45 95% 50%;
+    --xp-foreground: 0 0% 10%;
+    --coins: 45 95% 55%;
     --coins-foreground: 0 0% 10%;
-    --streak: 25 95% 58%;
+    --streak: 24 95% 55%;
     --streak-foreground: 0 0% 100%;
     
     /* ===== RANKS ===== */
-    --rank-gold: 45 93% 55%;
+    --rank-gold: 45 95% 55%;
     --rank-gold-foreground: 45 100% 95%;
     --rank-silver: 220 15% 75%;
     --rank-silver-foreground: 220 20% 95%;
@@ -189,49 +193,52 @@
     --rank-bronze-foreground: 30 60% 95%;
     
     /* ===== ELEVAÇÃO ===== */
-    --elevated: 220 16% 14%;
-    --elevated-hover: 220 16% 17%;
+    --elevated: 240 10% 13%;
+    --elevated-hover: 240 10% 16%;
     
     /* ===== GLASS ===== */
-    --glass-bg: 220 18% 13% / 0.85;
-    --glass-border: 220 20% 25% / 0.4;
+    --glass-bg: 240 12% 11% / 0.9;
+    --glass-border: 240 15% 22% / 0.5;
     
     /* ===== CHART ===== */
-    --chart-1: 25 95% 58%;
-    --chart-2: 142 71% 55%;
-    --chart-3: 45 93% 60%;
-    --chart-4: 200 80% 55%;
-    --chart-5: 0 72% 55%;
+    --chart-1: 24 95% 55%;
+    --chart-2: 145 80% 50%;
+    --chart-3: 45 95% 55%;
+    --chart-4: 200 85% 55%;
+    --chart-5: 0 85% 55%;
     
     /* ===== SIDEBAR ===== */
-    --sidebar-background: 220 20% 8%;
+    --sidebar-background: 240 15% 7%;
     --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary: 24 95% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 16%;
+    --sidebar-accent: 240 10% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 220 12% 16%;
-    --sidebar-ring: 25 95% 53%;
+    --sidebar-border: 240 8% 14%;
+    --sidebar-ring: 24 95% 50%;
     
     /* ===== SHADOWS ===== */
-    --shadow-xs: 0 1px 2px hsl(220 50% 3% / 0.5);
-    --shadow-sm: 0 1px 3px hsl(220 50% 3% / 0.6), 0 1px 2px hsl(220 50% 3% / 0.5);
-    --shadow-md: 0 4px 6px -1px hsl(220 50% 3% / 0.6), 0 2px 4px -2px hsl(220 50% 3% / 0.5);
-    --shadow-lg: 0 10px 15px -3px hsl(220 50% 3% / 0.6), 0 4px 6px -4px hsl(220 50% 3% / 0.5);
-    --shadow-xl: 0 20px 25px -5px hsl(220 50% 3% / 0.7), 0 8px 10px -6px hsl(220 50% 3% / 0.6);
-    --shadow-glow-primary: 0 0 30px hsl(25 95% 53% / 0.35);
-    --shadow-glow-secondary: 0 0 25px hsl(220 15% 16% / 0.4);
-    --shadow-glow-success: 0 0 25px hsl(142 71% 45% / 0.3);
-    --shadow-header: 0 1px 3px hsl(220 50% 3% / 0.5), inset 0 1px 0 hsl(220 12% 22% / 0.3);
+    --shadow-xs: 0 1px 2px hsl(240 50% 3% / 0.5);
+    --shadow-sm: 0 1px 3px hsl(240 50% 3% / 0.6), 0 1px 2px hsl(240 50% 3% / 0.5);
+    --shadow-md: 0 4px 6px -1px hsl(240 50% 3% / 0.6), 0 2px 4px -2px hsl(240 50% 3% / 0.5);
+    --shadow-lg: 0 10px 15px -3px hsl(240 50% 3% / 0.6), 0 4px 6px -4px hsl(240 50% 3% / 0.5);
+    --shadow-xl: 0 20px 25px -5px hsl(240 50% 3% / 0.7), 0 8px 10px -6px hsl(240 50% 3% / 0.6);
+    --shadow-glow-primary: 0 0 30px hsl(24 95% 50% / 0.4);
+    --shadow-glow-secondary: 0 0 25px hsl(270 60% 55% / 0.3);
+    --shadow-glow-success: 0 0 25px hsl(145 80% 42% / 0.35);
+    --shadow-glow-warning: 0 0 25px hsl(38 95% 50% / 0.35);
+    --shadow-glow-error: 0 0 25px hsl(0 85% 55% / 0.35);
+    --shadow-header: 0 1px 3px hsl(240 50% 3% / 0.5), inset 0 1px 0 hsl(240 8% 20% / 0.3);
     
     /* ===== GRADIENTS ===== */
-    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%), hsl(38 92% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(220 15% 16%), hsl(220 18% 11%));
-    --gradient-success: linear-gradient(135deg, hsl(142 71% 45%), hsl(142 71% 55%));
-    --gradient-xp: linear-gradient(90deg, hsl(25 95% 58%), hsl(38 92% 55%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 93% 55%), hsl(38 92% 50%));
-    --gradient-surface: linear-gradient(180deg, hsl(220 18% 11%), hsl(220 20% 7%));
-    --gradient-divider: linear-gradient(90deg, transparent, hsl(220 12% 20% / 0.5), transparent);
+    --gradient-primary: linear-gradient(135deg, hsl(24 95% 50%), hsl(38 95% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(270 60% 55%), hsl(280 70% 60%));
+    --gradient-success: linear-gradient(135deg, hsl(145 80% 42%), hsl(145 80% 52%));
+    --gradient-warning: linear-gradient(135deg, hsl(38 95% 50%), hsl(45 95% 55%));
+    --gradient-xp: linear-gradient(90deg, hsl(45 95% 50%), hsl(38 95% 55%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 95% 55%), hsl(38 95% 50%));
+    --gradient-surface: linear-gradient(180deg, hsl(240 12% 10%), hsl(240 15% 6%));
+    --gradient-divider: linear-gradient(90deg, transparent, hsl(240 8% 18% / 0.5), transparent);
   }
 }
 
