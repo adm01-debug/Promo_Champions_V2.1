@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, Trash2, Clock, Loader2 } from 'lucide-react';
+import { MessageSquare, Trash2, Clock, Loader2, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useDealChatHistory } from '@/hooks/useDealChatHistory';
+import { useDealChatHistory, QUESTION_TYPES, QuestionType } from '@/hooks/useDealChatHistory';
+import { Badge } from '@/components/ui/badge';
 
 interface DealChatHistoryProps {
   dealId: string;
@@ -19,8 +20,16 @@ interface DealChatHistoryProps {
   onSelectQuestion: (question: string) => void;
 }
 
+const TYPE_COLORS: Record<QuestionType, string> = {
+  general: 'bg-muted text-muted-foreground',
+  analysis: 'bg-blue-500/20 text-blue-500',
+  objections: 'bg-orange-500/20 text-orange-500',
+  closing: 'bg-green-500/20 text-green-500',
+  strategy: 'bg-purple-500/20 text-purple-500',
+};
+
 export function DealChatHistory({ dealId, clientName, onSelectQuestion }: DealChatHistoryProps) {
-  const { history, isLoading, deleteEntry } = useDealChatHistory(dealId);
+  const { history, allHistory, isLoading, deleteEntry, filterType, setFilterType } = useDealChatHistory(dealId);
 
   if (isLoading) {
     return (
@@ -30,7 +39,7 @@ export function DealChatHistory({ dealId, clientName, onSelectQuestion }: DealCh
     );
   }
 
-  if (history.length === 0) {
+  if (allHistory.length === 0) {
     return (
       <div className="text-center py-4 text-xs text-muted-foreground">
         <MessageSquare className="h-4 w-4 mx-auto mb-1 opacity-50" />
@@ -41,11 +50,26 @@ export function DealChatHistory({ dealId, clientName, onSelectQuestion }: DealCh
 
   return (
     <div className="space-y-1">
-      <div className="flex items-center gap-1.5 mb-2">
-        <Clock className="h-3 w-3 text-muted-foreground" />
-        <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-          Histórico de Perguntas ({history.length})
-        </span>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1.5">
+          <Clock className="h-3 w-3 text-muted-foreground" />
+          <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            Histórico ({history.length})
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Filter className="h-3 w-3 text-muted-foreground" />
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value as QuestionType | 'all')}
+            className="text-[10px] bg-transparent border-none text-muted-foreground focus:outline-none cursor-pointer"
+          >
+            <option value="all">Todos</option>
+            {QUESTION_TYPES.map(type => (
+              <option key={type.value} value={type.value}>{type.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <ScrollArea className="max-h-[120px]">
         <div className="space-y-1.5">
@@ -58,8 +82,16 @@ export function DealChatHistory({ dealId, clientName, onSelectQuestion }: DealCh
               )}
               onClick={() => onSelectQuestion(entry.question)}
             >
-              <p className="text-xs line-clamp-2 pr-6">{entry.question}</p>
-              <span className="text-[10px] text-muted-foreground mt-1 block">
+              <div className="flex items-start gap-2 pr-6">
+                <Badge 
+                  variant="secondary" 
+                  className={cn("text-[8px] px-1 py-0 shrink-0", TYPE_COLORS[entry.question_type as QuestionType] || TYPE_COLORS.general)}
+                >
+                  {QUESTION_TYPES.find(t => t.value === entry.question_type)?.label || 'Geral'}
+                </Badge>
+                <p className="text-xs line-clamp-2 flex-1">{entry.question}</p>
+              </div>
+              <span className="text-[10px] text-muted-foreground mt-1 block pl-0">
                 {formatDistanceToNow(new Date(entry.created_at), { 
                   addSuffix: true, 
                   locale: ptBR 
