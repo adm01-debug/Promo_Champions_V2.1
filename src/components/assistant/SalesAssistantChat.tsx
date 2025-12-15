@@ -41,6 +41,14 @@ const QUICK_PROMPTS = [
   { label: 'Me motive!', icon: '🔥' },
 ];
 
+const DEAL_CONTEXT_PROMPTS = [
+  { label: 'Analise este deal', icon: '🔍', prompt: 'Analise este deal em detalhes. Quais são os pontos fortes e fracos? O que posso melhorar?' },
+  { label: 'Como fechar esta venda?', icon: '🎯', prompt: 'Como posso fechar esta venda? Me dê estratégias específicas considerando o valor e estágio atual.' },
+  { label: 'Riscos deste deal', icon: '⚠️', prompt: 'Quais são os principais riscos deste deal? O que pode dar errado e como me preparar?' },
+  { label: 'Próximos passos', icon: '📋', prompt: 'Quais devem ser os próximos passos para avançar este deal? Me dê um plano de ação concreto.' },
+  { label: 'Objeções prováveis', icon: '🛡️', prompt: 'Quais objeções posso esperar deste cliente? Como devo responder a cada uma?' },
+];
+
 interface MessageBubbleProps {
   message: ChatMessage;
   salespersonAvatar?: string;
@@ -544,10 +552,27 @@ export function SalesAssistantChat() {
               salespersonId={selectedSalesperson}
             />
             {dealContext && (
-              <span className="text-xs text-muted-foreground">
-                Análise contextual ativada
-              </span>
+              <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                🎯 Análise contextual ativada
+              </Badge>
             )}
+          </div>
+        )}
+
+        {/* Deal Context Quick Prompts */}
+        {dealContext && (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {DEAL_CONTEXT_PROMPTS.map((prompt) => (
+              <Badge
+                key={prompt.label}
+                variant="outline"
+                className="cursor-pointer hover:bg-primary/10 hover:border-primary/30 transition-colors py-1 px-2.5 text-xs"
+                onClick={() => handleQuickPrompt(prompt.prompt)}
+              >
+                <span className="mr-1">{prompt.icon}</span>
+                {prompt.label}
+              </Badge>
+            ))}
           </div>
         )}
       </CardHeader>
