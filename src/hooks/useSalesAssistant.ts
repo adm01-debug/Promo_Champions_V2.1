@@ -1,4 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export interface ChatMessage {
   id: string;
@@ -7,9 +9,110 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+interface Conversation {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export function useSalesAssistant(salespersonId: string | null) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  // Fetch conversations for the salesperson
+  const { data: conversations, isLoading: loadingConversations } = useQuery({
+    queryKey: ['chat-conversations', salespersonId],
+    queryFn: async () => {
+      if (!salespersonId) return [];
+      const { data, error } = await supabase
+        .from('chat_conversations')
+        .select('*')
+        .eq('salesperson_id', salespersonId)
+        .order('updated_at', { ascending: false });
+      if (error) throw error;
+      return data as Conversation[];
+    },
+    enabled: !!salespersonId,
+  });
+
+  // Load messages for a conversation
+  const loadConversation = useCallback(async (conversationId: string) => {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error loading messages:', error);
+      return;
+    }
+
+    setMessages(
+      data.map((msg) => ({
+        id: msg.id,
+        role: msg.role as 'user' | 'assistant',
+        content: msg.content,
+        timestamp: new Date(msg.created_at),
+      }))
+    );
+    setCurrentConversationId(conversationId);
+  }, []);
+
+  // Create a new conversation
+  const createConversation = useCallback(async (firstMessage: string) => {
+    if (!salespersonId) return null;
+
+    const title = firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : '');
+    
+    const { data, error } = await supabase
+      .from('chat_conversations')
+      .insert({ salesperson_id: salespersonId, title })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating conversation:', error);
+      return null;
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['chat-conversations', salespersonId] });
+    return data.id;
+  }, [salespersonId, queryClient]);
+
+  // Save message to database
+  const saveMessage = useCallback(async (conversationId: string, role: 'user' | 'assistant', content: string) => {
+    const { error } = await supabase
+      .from('chat_messages')
+      .insert({ conversation_id: conversationId, role, content });
+
+    if (error) {
+      console.error('Error saving message:', error);
+    }
+
+    // Update conversation updated_at
+    await supabase
+      .from('chat_conversations')
+      .update({ updated_at: new Date().toISOString() })
+      .eq('id', conversationId);
+  }, []);
+
+  // Delete conversation mutation
+  const deleteConversationMutation = useMutation({
+    mutationFn: async (conversationId: string) => {
+      const { error } = await supabase
+        .from('chat_conversations')
+        .delete()
+        .eq('id', conversationId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chat-conversations', salespersonId] });
+    },
+  });
 
   const sendMessage = useCallback(async (content: string) => {
     const userMessage: ChatMessage = {
@@ -21,6 +124,20 @@ export function useSalesAssistant(salespersonId: string | null) {
 
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
+
+    // Create or use existing conversation
+    let conversationId = currentConversationId;
+    if (!conversationId) {
+      conversationId = await createConversation(content);
+      if (conversationId) {
+        setCurrentConversationId(conversationId);
+      }
+    }
+
+    // Save user message
+    if (conversationId) {
+      await saveMessage(conversationId, 'user', content);
+    }
 
     let assistantContent = '';
     const assistantId = crypto.randomUUID();
@@ -99,28 +216,64 @@ export function useSalesAssistant(salespersonId: string | null) {
           }
         }
       }
+
+      // Save assistant response
+      if (conversationId && assistantContent) {
+        await saveMessage(conversationId, 'assistant', assistantContent);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
+      const errorMessage = 'Desculpe, ocorreu um erro. Por favor, tente novamente.';
       setMessages(prev =>
         prev.map(m =>
           m.id === assistantId
-            ? { ...m, content: 'Desculpe, ocorreu um erro. Por favor, tente novamente.' }
+            ? { ...m, content: errorMessage }
             : m
         )
       );
+      // Save error message too
+      if (conversationId) {
+        await saveMessage(conversationId, 'assistant', errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [messages, salespersonId]);
+  }, [messages, salespersonId, currentConversationId, createConversation, saveMessage]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
+    setCurrentConversationId(null);
   }, []);
+
+  const newConversation = useCallback(() => {
+    setMessages([]);
+    setCurrentConversationId(null);
+  }, []);
+
+  const deleteConversation = useCallback((conversationId: string) => {
+    deleteConversationMutation.mutate(conversationId);
+    if (currentConversationId === conversationId) {
+      setMessages([]);
+      setCurrentConversationId(null);
+    }
+  }, [deleteConversationMutation, currentConversationId]);
+
+  // Reset when salesperson changes
+  useEffect(() => {
+    setMessages([]);
+    setCurrentConversationId(null);
+  }, [salespersonId]);
 
   return {
     messages,
     isLoading,
     sendMessage,
     clearMessages,
+    conversations,
+    loadingConversations,
+    currentConversationId,
+    loadConversation,
+    newConversation,
+    deleteConversation,
   };
 }

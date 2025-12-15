@@ -17,12 +17,17 @@ import {
   VolumeX,
   Sparkles,
   User,
-  MessageSquare
+  MessageSquare,
+  History,
+  Plus,
+  ChevronLeft
 } from 'lucide-react';
 import { useSalesAssistant, ChatMessage } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const QUICK_PROMPTS = [
   { label: 'Como lidar com objeção de preço?', icon: '💰' },
@@ -82,6 +87,7 @@ export function SalesAssistantChat() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isCurrentlySpeaking, setIsCurrentlySpeaking] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -89,7 +95,18 @@ export function SalesAssistantChat() {
   const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
-  const { messages, isLoading, sendMessage, clearMessages } = useSalesAssistant(selectedSalesperson);
+  const { 
+    messages, 
+    isLoading, 
+    sendMessage, 
+    clearMessages,
+    conversations,
+    loadingConversations,
+    currentConversationId,
+    loadConversation,
+    newConversation,
+    deleteConversation
+  } = useSalesAssistant(selectedSalesperson);
 
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
 
@@ -269,6 +286,98 @@ export function SalesAssistantChat() {
     }
   }, [isSpeaking, toast]);
 
+  const handleSelectConversation = (conversationId: string) => {
+    loadConversation(conversationId);
+    setShowHistory(false);
+  };
+
+  const handleNewConversation = () => {
+    newConversation();
+    setShowHistory(false);
+  };
+
+  const handleDeleteConversation = (e: React.MouseEvent, conversationId: string) => {
+    e.stopPropagation();
+    deleteConversation(conversationId);
+  };
+
+  // History sidebar
+  if (showHistory) {
+    return (
+      <Card className="flex flex-col h-[700px] border-border/50 bg-card/50 backdrop-blur-sm">
+        <CardHeader className="border-b border-border/50 pb-4">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => setShowHistory(false)}>
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <CardTitle className="text-lg">Histórico de Conversas</CardTitle>
+              <p className="text-xs text-muted-foreground">
+                {selectedPerson?.name || 'Selecione um vendedor'}
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 p-0 overflow-hidden">
+          <ScrollArea className="h-full">
+            {!selectedSalesperson ? (
+              <div className="p-6 text-center text-muted-foreground">
+                Selecione um vendedor para ver o histórico
+              </div>
+            ) : loadingConversations ? (
+              <div className="p-6 flex items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : conversations?.length === 0 ? (
+              <div className="p-6 text-center text-muted-foreground">
+                Nenhuma conversa encontrada
+              </div>
+            ) : (
+              <div className="divide-y divide-border/50">
+                {conversations?.map((conv) => (
+                  <div
+                    key={conv.id}
+                    className={cn(
+                      'p-4 cursor-pointer hover:bg-muted/50 transition-colors group',
+                      currentConversationId === conv.id && 'bg-muted/50'
+                    )}
+                    onClick={() => handleSelectConversation(conv.id)}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{conv.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(conv.updated_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                        onClick={(e) => handleDeleteConversation(e, conv.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </CardContent>
+        <div className="p-4 border-t border-border/50">
+          <Button onClick={handleNewConversation} className="w-full">
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Conversa
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="flex flex-col h-[700px] border-border/50 bg-card/50 backdrop-blur-sm">
       <CardHeader className="border-b border-border/50 pb-4">
@@ -305,14 +414,26 @@ export function SalesAssistantChat() {
                 ))}
               </SelectContent>
             </Select>
+            {selectedSalesperson && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowHistory(true)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Histórico de conversas"
+              >
+                <History className="h-4 w-4" />
+              </Button>
+            )}
             {messages.length > 0 && (
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={clearMessages}
-                className="text-muted-foreground hover:text-destructive"
+                onClick={handleNewConversation}
+                className="text-muted-foreground hover:text-foreground"
+                title="Nova conversa"
               >
-                <Trash2 className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
               </Button>
             )}
           </div>
