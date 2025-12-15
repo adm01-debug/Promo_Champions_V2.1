@@ -8,10 +8,45 @@ interface SDRStatCardProps {
   value: string | number;
   change?: number;
   icon: LucideIcon;
-  variant?: "default" | "primary" | "success" | "warning" | "info";
+  variant?: "default" | "primary" | "success" | "warning" | "danger";
   subtitle?: string;
   highlight?: boolean;
 }
+
+const getVariantStyles = (variant: string) => {
+  switch (variant) {
+    case "primary":
+      return {
+        border: "border-l-4 border-l-primary",
+        iconBg: "bg-primary/15",
+        iconColor: "text-primary",
+      };
+    case "success":
+      return {
+        border: "border-l-4 border-l-success",
+        iconBg: "bg-success/15",
+        iconColor: "text-success",
+      };
+    case "warning":
+      return {
+        border: "border-l-4 border-l-warning",
+        iconBg: "bg-warning/15",
+        iconColor: "text-warning",
+      };
+    case "danger":
+      return {
+        border: "border-l-4 border-l-destructive",
+        iconBg: "bg-destructive/15",
+        iconColor: "text-destructive",
+      };
+    default:
+      return {
+        border: "border-l-4 border-l-muted-foreground/30",
+        iconBg: "bg-muted/50",
+        iconColor: "text-muted-foreground",
+      };
+  }
+};
 
 export function SDRStatCard({ 
   title, 
@@ -24,38 +59,7 @@ export function SDRStatCard({
 }: SDRStatCardProps) {
   const isPositive = (change ?? 0) >= 0;
   const hasSignificantChange = Math.abs(change ?? 0) >= 10;
-
-  const getVariantStyles = () => {
-    switch (variant) {
-      case "primary":
-        return {
-          iconBg: "bg-gradient-to-br from-primary to-accent shadow-primary/30 group-hover:shadow-primary/50",
-          ring: "ring-1 ring-primary/20",
-        };
-      case "success":
-        return {
-          iconBg: "bg-gradient-to-br from-status-success to-status-success/70 shadow-status-success/30 group-hover:shadow-status-success/50",
-          ring: "ring-1 ring-status-success/20",
-        };
-      case "warning":
-        return {
-          iconBg: "bg-gradient-to-br from-streak to-streak/70 shadow-streak/30 group-hover:shadow-streak/50",
-          ring: "ring-1 ring-streak/20",
-        };
-      case "info":
-        return {
-          iconBg: "bg-gradient-to-br from-status-info to-status-info/70 shadow-status-info/30 group-hover:shadow-status-info/50",
-          ring: "ring-1 ring-status-info/20",
-        };
-      default:
-        return {
-          iconBg: "bg-gradient-to-br from-muted/70 to-muted/50 shadow-muted/20",
-          ring: "",
-        };
-    }
-  };
-
-  const styles = getVariantStyles();
+  const styles = getVariantStyles(variant);
 
   return (
     <motion.div
@@ -68,8 +72,8 @@ export function SDRStatCard({
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <Card className={cn(
-        "glass dark:border-glow card-elevated overflow-hidden group cursor-pointer",
-        styles.ring,
+        "glass overflow-hidden group cursor-pointer border-border/40",
+        styles.border,
         highlight && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
       )}>
         <CardContent className="p-4">
@@ -80,19 +84,22 @@ export function SDRStatCard({
                   {title}
                 </p>
                 {highlight && (
-                  <Sparkles className="h-3 w-3 text-primary animate-heartbeat" />
+                  <Sparkles className="h-3 w-3 text-primary animate-pulse" />
                 )}
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold font-display gradient-text transition-transform group-hover:scale-105">
+                <span className={cn(
+                  "text-2xl font-bold font-display transition-transform group-hover:scale-105",
+                  variant === "primary" ? "gradient-text" : "text-foreground"
+                )}>
                   {value}
                 </span>
                 {change !== undefined && (
                   <span className={cn(
                     "flex items-center text-xs font-medium px-1.5 py-0.5 rounded-md border transition-all group-hover:scale-105 shadow-sm",
                     isPositive 
-                      ? "text-status-success bg-status-success/15 border-status-success/30 shadow-status-success/10" 
-                      : "text-status-error bg-status-error/15 border-status-error/30 shadow-status-error/10",
+                      ? "text-success bg-success/15 border-success/30 shadow-success/10" 
+                      : "text-destructive bg-destructive/15 border-destructive/30 shadow-destructive/10",
                     hasSignificantChange && isPositive && "animate-pulse"
                   )}>
                     {isPositive ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
@@ -107,13 +114,10 @@ export function SDRStatCard({
               )}
             </div>
             <div className={cn(
-              "h-12 w-12 rounded-xl flex items-center justify-center shadow-lg transition-all group-hover:scale-110 group-hover:shadow-xl",
+              "h-12 w-12 rounded-xl flex items-center justify-center shadow-lg transition-all group-hover:scale-110",
               styles.iconBg
             )}>
-              <Icon className={cn(
-                "h-5 w-5 transition-all group-hover:scale-110",
-                variant !== "default" ? "text-white" : "text-primary"
-              )} />
+              <Icon className={cn("h-5 w-5 transition-all group-hover:scale-110", styles.iconColor)} />
             </div>
           </div>
         </CardContent>
