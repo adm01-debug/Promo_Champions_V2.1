@@ -20,7 +20,8 @@ import {
   Star,
   Calendar,
   Percent,
-  Award
+  Award,
+  Sparkles
 } from "lucide-react";
 import {
   AreaChart,
@@ -39,7 +40,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))", "hsl(var(--success))", "hsl(var(--warning))", "hsl(var(--accent))"];
+const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 
 const STAGE_LABELS: Record<string, string> = {
   pending: "Lead",
@@ -66,36 +67,43 @@ const BIVendedor = () => {
       <div className="min-h-screen bg-background">
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
           {/* Header */}
-          <div className="opacity-0 animate-fade-in-up">
-            <div className="glass rounded-2xl p-6 border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5">
-              <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="animate-slide-up">
+            <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
+              {/* Background gradient effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+              
+              <div className="relative flex flex-col md:flex-row items-center gap-6">
                 <div className="relative">
-                  <Avatar className="h-20 w-20 ring-4 ring-primary/30 shadow-xl">
+                  <Avatar className="h-20 w-20 ring-4 ring-primary/30 shadow-xl hover-scale">
                     <AvatarImage src={salesperson?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xl font-bold">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xl font-bold">
                       {salesperson?.name?.split(" ").map(n => n[0]).join("")}
                     </AvatarFallback>
                   </Avatar>
                   {data && data.goalProgress >= 100 && (
-                    <div className="absolute -top-1 -right-1 p-1.5 bg-success rounded-full shadow-lg">
-                      <Star className="h-4 w-4 text-white" />
+                    <div className="absolute -top-1 -right-1 p-1.5 bg-success rounded-full shadow-lg animate-bounce-in">
+                      <Star className="h-4 w-4 text-success-foreground" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-2xl md:text-3xl font-black">Meu BI</h1>
-                  <p className="text-muted-foreground">{salesperson?.name} • {currentMonth}</p>
-                  <div className="flex items-center justify-center md:justify-start gap-2 mt-2">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                  <h1 className="text-display flex items-center justify-center md:justify-start gap-2">
+                    <Sparkles className="h-6 w-6 text-primary" />
+                    <span className="gradient-text">Meu BI</span>
+                  </h1>
+                  <p className="text-muted-foreground font-medium">{salesperson?.name} • {currentMonth}</p>
+                  <div className="flex items-center justify-center md:justify-start gap-2 mt-3">
+                    <Badge className="bg-primary/10 text-primary border-primary/20 hover-scale-sm">
                       {data?.commissionRate}% comissão
                     </Badge>
                     {data && data.currentRank <= 3 && (
-                      <Badge className="bg-rank-gold/20 text-rank-gold border-rank-gold/30">
+                      <Badge className="rank-gold text-rank-gold-foreground animate-pulse-glow">
                         <Trophy className="h-3 w-3 mr-1" /> Top {data.currentRank}
                       </Badge>
                     )}
                     {data && data.currentStreak >= 3 && (
-                      <Badge className="bg-warning/20 text-warning border-warning/30">
+                      <Badge className="bg-streak/20 text-streak border-streak/30 animate-streak-fire">
                         <Flame className="h-3 w-3 mr-1" /> {data.currentStreak} dias
                       </Badge>
                     )}
@@ -103,7 +111,7 @@ const BIVendedor = () => {
                 </div>
                 {/* Goal Progress Circle */}
                 <div className="flex flex-col items-center gap-1">
-                  <span className="text-sm text-muted-foreground">Progresso da Meta</span>
+                  <span className="text-sm text-muted-foreground font-medium">Progresso da Meta</span>
                   <div className="relative w-28 h-28">
                     <svg className="w-full h-full transform -rotate-90">
                       <circle cx="56" cy="56" r="48" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
@@ -116,11 +124,12 @@ const BIVendedor = () => {
                         strokeWidth="8"
                         strokeLinecap="round"
                         strokeDasharray={`${Math.min(data?.goalProgress || 0, 100) * 3.02} 302`}
+                        className="transition-all duration-1000 ease-out"
                       />
                       <defs>
                         <linearGradient id="gradientBI" x1="0%" y1="0%" x2="100%" y2="0%">
                           <stop offset="0%" stopColor="hsl(var(--primary))" />
-                          <stop offset="100%" stopColor="hsl(var(--secondary))" />
+                          <stop offset="100%" stopColor="hsl(var(--primary-glow))" />
                         </linearGradient>
                       </defs>
                     </svg>
@@ -139,7 +148,7 @@ const BIVendedor = () => {
           </div>
 
           {/* KPI Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { title: "Faturamento", value: formatCurrency(data?.totalRevenue || 0), icon: DollarSign, change: data?.revenueChange, variant: "primary" },
               { title: "Meta", value: formatCurrency(data?.currentGoal || 0), icon: Target },
@@ -148,35 +157,44 @@ const BIVendedor = () => {
               { title: "Conversão", value: `${(data?.conversionRate || 0).toFixed(1)}%`, icon: Percent },
               { title: "Ranking", value: `#${data?.currentRank || "-"}`, icon: Trophy, variant: data && data.currentRank <= 3 ? "gold" : "default" }
             ].map((stat, index) => (
-              <div key={stat.title} className="opacity-0 animate-fade-in-up" style={{ animationDelay: `${100 + index * 50}ms` }}>
+              <div key={stat.title} className="animate-slide-up" style={{ animationDelay: `${100 + index * 80}ms` }}>
                 <Card className={cn(
-                  "glass hover-lift",
-                  stat.variant === "primary" && "border-primary/30 bg-primary/5",
-                  stat.variant === "success" && "border-success/30 bg-success/5",
-                  stat.variant === "gold" && "border-rank-gold/30 bg-rank-gold/5"
+                  "glass-card hover-lift press-scale group relative overflow-hidden",
+                  stat.variant === "primary" && "border-primary/30",
+                  stat.variant === "success" && "border-success/30",
+                  stat.variant === "gold" && "border-rank-gold/30"
                 )}>
-                  <CardContent className="p-4">
+                  {/* Gradient overlay */}
+                  <div className={cn(
+                    "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
+                    stat.variant === "primary" && "bg-gradient-to-br from-primary/10 to-transparent",
+                    stat.variant === "success" && "bg-gradient-to-br from-success/10 to-transparent",
+                    stat.variant === "gold" && "bg-gradient-to-br from-rank-gold/10 to-transparent"
+                  )} />
+                  
+                  <CardContent className="p-4 relative">
                     <div className="flex items-center gap-2 mb-2">
                       <div className={cn(
-                        "p-2 rounded-lg",
-                        stat.variant === "primary" ? "gradient-primary" :
-                        stat.variant === "success" ? "bg-success/20" :
-                        stat.variant === "gold" ? "bg-rank-gold/20" : "bg-muted"
+                        "p-2 rounded-xl transition-all duration-300 group-hover:scale-110",
+                        stat.variant === "primary" ? "bg-gradient-to-br from-primary to-primary-glow" :
+                        stat.variant === "success" ? "bg-gradient-to-br from-success to-success/80" :
+                        stat.variant === "gold" ? "rank-gold" : "bg-muted"
                       )}>
                         <stat.icon className={cn(
                           "h-4 w-4",
-                          stat.variant ? "text-white" : "text-muted-foreground"
+                          stat.variant ? "text-primary-foreground" : "text-muted-foreground"
                         )} />
                       </div>
-                      <span className="text-xs text-muted-foreground">{stat.title}</span>
+                      <span className="text-xs text-muted-foreground font-medium">{stat.title}</span>
                     </div>
                     <p className={cn(
                       "text-lg font-bold",
-                      stat.variant === "primary" && "gradient-text"
+                      stat.variant === "primary" && "gradient-text",
+                      stat.variant === "gold" && "gradient-text-gold"
                     )}>{stat.value}</p>
                     {stat.change !== undefined && (
                       <span className={cn(
-                        "text-xs",
+                        "text-xs font-medium",
                         stat.change > 0 ? "text-success" : stat.change < 0 ? "text-destructive" : "text-muted-foreground"
                       )}>
                         {stat.change > 0 && "+"}{stat.change.toFixed(1)}% vs mês anterior
@@ -190,13 +208,14 @@ const BIVendedor = () => {
 
           {/* Daily Target Alert */}
           {data && data.dailyRequired > 0 && data.goalProgress < 100 && (
-            <div className="opacity-0 animate-fade-in-up glass rounded-xl p-4 border border-warning/30 bg-warning/5" style={{ animationDelay: "350ms" }}>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-warning/20">
-                  <Calendar className="h-5 w-5 text-warning" />
+            <div className="animate-slide-up glass-card rounded-xl p-4 border-2 border-warning/30 relative overflow-hidden" style={{ animationDelay: "350ms" }}>
+              <div className="absolute inset-0 bg-gradient-to-r from-warning/5 via-transparent to-warning/5 pointer-events-none" />
+              <div className="relative flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-warning to-warning/80 animate-pulse-glow">
+                  <Calendar className="h-5 w-5 text-warning-foreground" />
                 </div>
                 <div>
-                  <p className="font-medium">Para bater a meta</p>
+                  <p className="font-display font-semibold text-foreground">Para bater a meta</p>
                   <p className="text-sm text-muted-foreground">
                     Faltam <span className="font-bold text-warning">{data.daysRemaining} dias</span> • 
                     Você precisa vender <span className="font-bold text-warning">{formatCurrency(data.dailyRequired)}/dia</span>
@@ -209,10 +228,12 @@ const BIVendedor = () => {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Sales Chart */}
-            <Card className="lg:col-span-2 glass opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
+            <Card className="lg:col-span-2 glass-card animate-slide-up" style={{ animationDelay: "400ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                    <TrendingUp className="h-4 w-4 text-primary-foreground" />
+                  </div>
                   Vendas do Mês
                 </CardTitle>
               </CardHeader>
@@ -222,36 +243,40 @@ const BIVendedor = () => {
                     <AreaChart data={data.salesByDay}>
                       <defs>
                         <linearGradient id="colorValueBI" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
                           <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                       <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                       <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(var(--card))",
                           border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px"
+                          borderRadius: "12px",
+                          boxShadow: "var(--shadow-lg)"
                         }}
                         formatter={(value: number) => [formatCurrency(value), "Vendas"]}
                       />
-                      <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fillOpacity={1} fill="url(#colorValueBI)" />
+                      <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorValueBI)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : (
                   <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                    Nenhuma venda este mês
+                    <div className="text-center">
+                      <ShoppingBag className="h-12 w-12 mx-auto mb-2 text-muted-foreground/50" />
+                      <p>Nenhuma venda este mês</p>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
             {/* Category Pie */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "450ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg">Por Categoria</CardTitle>
+                <CardTitle className="text-lg font-display">Por Categoria</CardTitle>
               </CardHeader>
               <CardContent>
                 {data?.salesByCategory && data.salesByCategory.length > 0 ? (
@@ -263,15 +288,22 @@ const BIVendedor = () => {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value: number) => [formatCurrency(value)]} />
+                        <Tooltip 
+                          formatter={(value: number) => [formatCurrency(value)]}
+                          contentStyle={{
+                            backgroundColor: "hsl(var(--card))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "12px"
+                          }}
+                        />
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="space-y-2 mt-2">
                       {data.salesByCategory.map((cat, idx) => (
-                        <div key={cat.category} className="flex items-center gap-2 text-sm">
+                        <div key={cat.category} className="flex items-center gap-2 text-sm hover-scale-sm cursor-default">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
-                          <span className="flex-1 truncate">{cat.category}</span>
-                          <span className="font-medium">{formatCurrency(cat.value)}</span>
+                          <span className="flex-1 truncate text-muted-foreground">{cat.category}</span>
+                          <span className="font-semibold">{formatCurrency(cat.value)}</span>
                         </div>
                       ))}
                     </div>
@@ -286,20 +318,22 @@ const BIVendedor = () => {
           {/* Pipeline & Activities Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Pipeline by Stage */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "500ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <ShoppingBag className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                    <ShoppingBag className="h-4 w-4 text-primary-foreground" />
+                  </div>
                   Pipeline por Estágio
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {data?.dealsByStage.map((stage, idx) => (
-                    <div key={stage.stage}>
+                    <div key={stage.stage} className="animate-slide-up" style={{ animationDelay: `${550 + idx * 50}ms` }}>
                       <div className="flex items-center justify-between text-sm mb-1">
-                        <span>{STAGE_LABELS[stage.stage] || stage.stage}</span>
-                        <span className="font-medium">{stage.count} deals • {formatCurrency(stage.value)}</span>
+                        <span className="font-medium">{STAGE_LABELS[stage.stage] || stage.stage}</span>
+                        <span className="text-muted-foreground">{stage.count} deals • <span className="font-semibold text-foreground">{formatCurrency(stage.value)}</span></span>
                       </div>
                       <Progress value={stage.count > 0 ? (stage.value / (data?.pipelineValue || 1)) * 100 : 0} className="h-2" />
                     </div>
@@ -310,52 +344,60 @@ const BIVendedor = () => {
                     <Clock className="h-4 w-4" />
                     <span>Média no pipeline</span>
                   </div>
-                  <span className="font-bold">{(data?.avgDaysInPipeline || 0).toFixed(0)} dias</span>
+                  <span className="font-bold gradient-text">{(data?.avgDaysInPipeline || 0).toFixed(0)} dias</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Activities & Streak */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "550ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-xp to-primary">
+                    <Activity className="h-4 w-4 text-xp-foreground" />
+                  </div>
                   Atividades & Conquistas
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="text-center p-4 rounded-lg bg-muted/30">
-                    <p className="text-2xl font-bold gradient-text">{data?.totalActivities || 0}</p>
-                    <p className="text-xs text-muted-foreground">Atividades (30d)</p>
+                  <div className="text-center p-4 rounded-xl glass hover-scale-sm">
+                    <p className="text-2xl font-black gradient-text">{data?.totalActivities || 0}</p>
+                    <p className="text-xs text-muted-foreground font-medium">Atividades (30d)</p>
                   </div>
-                  <div className="text-center p-4 rounded-lg bg-muted/30">
-                    <p className="text-2xl font-bold text-success">{data?.totalAchievements || 0}</p>
-                    <p className="text-xs text-muted-foreground">Conquistas</p>
+                  <div className="text-center p-4 rounded-xl glass hover-scale-sm">
+                    <p className="text-2xl font-black text-success">{data?.totalAchievements || 0}</p>
+                    <p className="text-xs text-muted-foreground font-medium">Conquistas</p>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-warning/10 border border-warning/20">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-streak/10 to-transparent border border-streak/20 hover-lift-sm">
                     <div className="flex items-center gap-2">
-                      <Flame className="h-5 w-5 text-warning" />
-                      <span className="font-medium">Sequência Atual</span>
+                      <div className="p-2 rounded-lg bg-streak/20 animate-streak-fire">
+                        <Flame className="h-5 w-5 text-streak" />
+                      </div>
+                      <span className="font-display font-semibold">Sequência Atual</span>
                     </div>
-                    <span className="text-xl font-bold text-warning">{data?.currentStreak || 0} dias</span>
+                    <span className="text-xl font-black text-streak">{data?.currentStreak || 0} dias</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-primary/10 border border-primary/20">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 hover-lift-sm">
                     <div className="flex items-center gap-2">
-                      <Award className="h-5 w-5 text-primary" />
-                      <span className="font-medium">Recorde Pessoal</span>
+                      <div className="p-2 rounded-lg bg-primary/20">
+                        <Award className="h-5 w-5 text-primary" />
+                      </div>
+                      <span className="font-display font-semibold">Recorde Pessoal</span>
                     </div>
-                    <span className="text-xl font-bold text-primary">{data?.bestStreak || 0} dias</span>
+                    <span className="text-xl font-black gradient-text">{data?.bestStreak || 0} dias</span>
                   </div>
                 </div>
                 {data?.activitiesByType && data.activitiesByType.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-border/50">
-                    <p className="text-sm text-muted-foreground mb-2">Por tipo</p>
+                    <p className="text-sm text-muted-foreground mb-2 font-medium">Por tipo</p>
                     <div className="flex flex-wrap gap-2">
                       {data.activitiesByType.map(a => (
-                        <Badge key={a.type} variant="secondary">{a.type}: {a.count}</Badge>
+                        <Badge key={a.type} variant="secondary" className="hover-scale-sm">
+                          {a.type}: {a.count}
+                        </Badge>
                       ))}
                     </div>
                   </div>

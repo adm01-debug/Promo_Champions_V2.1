@@ -18,7 +18,9 @@ import {
   PieChart as PieIcon,
   Activity,
   TrendingDown,
-  Briefcase
+  Briefcase,
+  Crown,
+  Sparkles
 } from "lucide-react";
 import {
   AreaChart,
@@ -38,7 +40,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))", "hsl(var(--success))", "hsl(var(--warning))", "hsl(var(--accent))"];
+const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 const ABC_COLORS = { A: "hsl(var(--success))", B: "hsl(var(--warning))", C: "hsl(var(--destructive))" };
 
 const STAGE_LABELS: Record<string, string> = {
@@ -65,29 +67,39 @@ const BIGestor = () => {
       <div className="min-h-screen bg-background">
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
           {/* Header */}
-          <div className="opacity-0 animate-fade-in-up">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-black gradient-text">BI Gestão</h1>
-                <p className="text-muted-foreground">{currentMonth} • Visão consolidada do time</p>
-              </div>
-              <div className="flex items-center gap-2">
-                {data && data.stagnantDeals > 0 && (
-                  <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30">
-                    <AlertTriangle className="h-3 w-3 mr-1" /> {data.stagnantDeals} deals estagnados
-                  </Badge>
-                )}
-                {data && data.missedGoals > 0 && (
-                  <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">
-                    <TrendingDown className="h-3 w-3 mr-1" /> {data.missedGoals} abaixo da meta
-                  </Badge>
-                )}
+          <div className="animate-slide-up">
+            <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
+              {/* Background effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+              <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+              
+              <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-display flex items-center gap-3">
+                    <Sparkles className="h-8 w-8 text-primary" />
+                    <span className="gradient-text">BI Gestão</span>
+                  </h1>
+                  <p className="text-muted-foreground font-medium mt-1">{currentMonth} • Visão consolidada do time</p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {data && data.stagnantDeals > 0 && (
+                    <Badge className="bg-warning/10 text-warning border-warning/30 animate-pulse-glow">
+                      <AlertTriangle className="h-3 w-3 mr-1" /> {data.stagnantDeals} deals estagnados
+                    </Badge>
+                  )}
+                  {data && data.missedGoals > 0 && (
+                    <Badge className="bg-destructive/10 text-destructive border-destructive/30">
+                      <TrendingDown className="h-3 w-3 mr-1" /> {data.missedGoals} abaixo da meta
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Team KPIs */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { title: "Faturamento Time", value: formatCurrency(data?.totalTeamRevenue || 0), icon: DollarSign, change: data?.teamRevenueChange, variant: "primary" },
               { title: "Meta Time", value: formatCurrency(data?.totalTeamGoal || 0), icon: Target, progress: data?.teamGoalProgress },
@@ -96,26 +108,33 @@ const BIGestor = () => {
               { title: "Vendedores Ativos", value: String(data?.activeSalespeople || 0), icon: Users },
               { title: "Performance Média", value: `${(data?.avgPerformance || 0).toFixed(0)}%`, icon: BarChart3 }
             ].map((stat, index) => (
-              <div key={stat.title} className="opacity-0 animate-fade-in-up" style={{ animationDelay: `${100 + index * 50}ms` }}>
+              <div key={stat.title} className="animate-slide-up" style={{ animationDelay: `${100 + index * 80}ms` }}>
                 <Card className={cn(
-                  "glass hover-lift",
-                  stat.variant === "primary" && "border-primary/30 bg-primary/5",
-                  stat.variant === "success" && "border-success/30 bg-success/5"
+                  "glass-card hover-lift press-scale group relative overflow-hidden",
+                  stat.variant === "primary" && "border-primary/30",
+                  stat.variant === "success" && "border-success/30"
                 )}>
-                  <CardContent className="p-4">
+                  {/* Gradient overlay */}
+                  <div className={cn(
+                    "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
+                    stat.variant === "primary" && "bg-gradient-to-br from-primary/10 to-transparent",
+                    stat.variant === "success" && "bg-gradient-to-br from-success/10 to-transparent"
+                  )} />
+                  
+                  <CardContent className="p-4 relative">
                     <div className="flex items-center gap-2 mb-2">
                       <div className={cn(
-                        "p-2 rounded-lg",
-                        stat.variant === "primary" ? "gradient-primary" :
-                        stat.variant === "success" ? "bg-success/20" : "bg-muted"
+                        "p-2 rounded-xl transition-all duration-300 group-hover:scale-110",
+                        stat.variant === "primary" ? "bg-gradient-to-br from-primary to-primary-glow" :
+                        stat.variant === "success" ? "bg-gradient-to-br from-success to-success/80" : "bg-muted"
                       )}>
-                        <stat.icon className={cn("h-4 w-4", stat.variant ? "text-white" : "text-muted-foreground")} />
+                        <stat.icon className={cn("h-4 w-4", stat.variant ? "text-primary-foreground" : "text-muted-foreground")} />
                       </div>
-                      <span className="text-xs text-muted-foreground truncate">{stat.title}</span>
+                      <span className="text-xs text-muted-foreground font-medium truncate">{stat.title}</span>
                     </div>
                     <p className={cn("text-lg font-bold", stat.variant === "primary" && "gradient-text")}>{stat.value}</p>
                     {stat.change !== undefined && (
-                      <span className={cn("text-xs", stat.change > 0 ? "text-success" : stat.change < 0 ? "text-destructive" : "text-muted-foreground")}>
+                      <span className={cn("text-xs font-medium", stat.change > 0 ? "text-success" : stat.change < 0 ? "text-destructive" : "text-muted-foreground")}>
                         {stat.change > 0 && "+"}{stat.change.toFixed(1)}% vs mês anterior
                       </span>
                     )}
@@ -134,10 +153,12 @@ const BIGestor = () => {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Revenue Trend */}
-            <Card className="lg:col-span-2 glass opacity-0 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
+            <Card className="lg:col-span-2 glass-card animate-slide-up" style={{ animationDelay: "400ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                    <TrendingUp className="h-4 w-4 text-primary-foreground" />
+                  </div>
                   Evolução de Receita (6 meses)
                 </CardTitle>
               </CardHeader>
@@ -147,31 +168,43 @@ const BIGestor = () => {
                     <AreaChart data={data.revenueByMonth}>
                       <defs>
                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
                           <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                       <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                       <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                       <Tooltip
-                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
+                        contentStyle={{ 
+                          backgroundColor: "hsl(var(--card))", 
+                          border: "1px solid hsl(var(--border))", 
+                          borderRadius: "12px",
+                          boxShadow: "var(--shadow-lg)"
+                        }}
                         formatter={(value: number) => [formatCurrency(value), "Receita"]}
                       />
-                      <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
+                      <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-[250px] flex items-center justify-center text-muted-foreground">Sem dados</div>
+                  <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <BarChart3 className="h-12 w-12 mx-auto mb-2 text-muted-foreground/50" />
+                      <p>Sem dados</p>
+                    </div>
+                  </div>
                 )}
               </CardContent>
             </Card>
 
             {/* ABC Analysis */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "450ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <PieIcon className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-xp to-primary">
+                    <PieIcon className="h-4 w-4 text-xp-foreground" />
+                  </div>
                   Análise ABC
                 </CardTitle>
               </CardHeader>
@@ -185,16 +218,23 @@ const BIGestor = () => {
                             <Cell key={entry.classification} fill={ABC_COLORS[entry.classification as keyof typeof ABC_COLORS]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value: number) => [formatCurrency(value)]} />
+                        <Tooltip 
+                          formatter={(value: number) => [formatCurrency(value)]}
+                          contentStyle={{
+                            backgroundColor: "hsl(var(--card))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "12px"
+                          }}
+                        />
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="space-y-2">
                       {data.abcClients.map(abc => (
-                        <div key={abc.classification} className="flex items-center gap-2 text-sm">
+                        <div key={abc.classification} className="flex items-center gap-2 text-sm hover-scale-sm cursor-default">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ABC_COLORS[abc.classification as keyof typeof ABC_COLORS] }} />
-                          <span className="font-medium">Classe {abc.classification}</span>
+                          <span className="font-semibold">Classe {abc.classification}</span>
                           <span className="text-muted-foreground">• {abc.count} vendedores</span>
-                          <span className="ml-auto font-medium">{formatCurrency(abc.revenue)}</span>
+                          <span className="ml-auto font-bold">{formatCurrency(abc.revenue)}</span>
                         </div>
                       ))}
                     </div>
@@ -209,34 +249,36 @@ const BIGestor = () => {
           {/* Pipeline & Team Performance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Pipeline Health */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "500ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                    <Briefcase className="h-4 w-4 text-primary-foreground" />
+                  </div>
                   Saúde do Pipeline
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center p-3 rounded-lg bg-muted/30">
-                    <p className="text-2xl font-bold">{data?.totalPipelineDeals || 0}</p>
-                    <p className="text-xs text-muted-foreground">Deals</p>
+                  <div className="text-center p-3 rounded-xl glass hover-scale-sm">
+                    <p className="text-2xl font-black gradient-text">{data?.totalPipelineDeals || 0}</p>
+                    <p className="text-xs text-muted-foreground font-medium">Deals</p>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-warning/10">
-                    <p className="text-2xl font-bold text-warning">{data?.atRiskDeals || 0}</p>
-                    <p className="text-xs text-muted-foreground">Em Risco</p>
+                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-warning/10 to-transparent border border-warning/20 hover-scale-sm">
+                    <p className="text-2xl font-black text-warning">{data?.atRiskDeals || 0}</p>
+                    <p className="text-xs text-muted-foreground font-medium">Em Risco</p>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-muted/30">
-                    <p className="text-2xl font-bold">{(data?.avgDaysInPipeline || 0).toFixed(0)}d</p>
-                    <p className="text-xs text-muted-foreground">Média</p>
+                  <div className="text-center p-3 rounded-xl glass hover-scale-sm">
+                    <p className="text-2xl font-black">{(data?.avgDaysInPipeline || 0).toFixed(0)}d</p>
+                    <p className="text-xs text-muted-foreground font-medium">Média</p>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {data?.dealsByStage.map((stage) => (
-                    <div key={stage.stage}>
+                  {data?.dealsByStage.map((stage, idx) => (
+                    <div key={stage.stage} className="animate-slide-up" style={{ animationDelay: `${550 + idx * 50}ms` }}>
                       <div className="flex items-center justify-between text-sm mb-1">
-                        <span>{STAGE_LABELS[stage.stage] || stage.stage}</span>
-                        <span className="font-medium">{stage.count} • {formatCurrency(stage.value)}</span>
+                        <span className="font-medium">{STAGE_LABELS[stage.stage] || stage.stage}</span>
+                        <span className="text-muted-foreground">{stage.count} • <span className="font-semibold text-foreground">{formatCurrency(stage.value)}</span></span>
                       </div>
                       <Progress value={stage.count > 0 ? (stage.value / (data?.totalPipelineValue || 1)) * 100 : 0} className="h-2" />
                     </div>
@@ -246,10 +288,12 @@ const BIGestor = () => {
             </Card>
 
             {/* Deals by Source */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "550ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "550ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-chart-2 to-success">
+                    <Activity className="h-4 w-4 text-success-foreground" />
+                  </div>
                   Deals por Fonte
                 </CardTitle>
               </CardHeader>
@@ -257,14 +301,18 @@ const BIGestor = () => {
                 {data?.dealsBySource && data.dealsBySource.length > 0 ? (
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={data.dealsBySource} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                       <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                       <YAxis type="category" dataKey="source" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} />
                       <Tooltip
-                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
+                        contentStyle={{ 
+                          backgroundColor: "hsl(var(--card))", 
+                          border: "1px solid hsl(var(--border))", 
+                          borderRadius: "12px" 
+                        }}
                         formatter={(value: number) => [formatCurrency(value), "Valor"]}
                       />
-                      <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -277,10 +325,12 @@ const BIGestor = () => {
           {/* Team Ranking */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Performers */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "600ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "600ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-rank-gold" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg rank-gold">
+                    <Trophy className="h-4 w-4 text-rank-gold-foreground" />
+                  </div>
                   Top Performers
                 </CardTitle>
               </CardHeader>
@@ -288,70 +338,91 @@ const BIGestor = () => {
                 {data?.topPerformers && data.topPerformers.length > 0 ? (
                   <div className="space-y-3">
                     {data.topPerformers.map((sp, idx) => (
-                      <div key={sp.id} className={cn(
-                        "flex items-center gap-3 p-3 rounded-lg",
-                        idx === 0 ? "bg-rank-gold/10 border border-rank-gold/30" : "bg-muted/30"
-                      )}>
+                      <div 
+                        key={sp.id} 
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover-lift-sm",
+                          idx === 0 ? "bg-gradient-to-r from-rank-gold/10 to-transparent border-2 border-rank-gold/30" : 
+                          idx === 1 ? "bg-gradient-to-r from-rank-silver/10 to-transparent border border-rank-silver/30" :
+                          idx === 2 ? "bg-gradient-to-r from-rank-bronze/10 to-transparent border border-rank-bronze/30" : 
+                          "glass"
+                        )}
+                        style={{ animationDelay: `${650 + idx * 50}ms` }}
+                      >
                         <span className={cn(
-                          "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
-                          idx === 0 ? "bg-rank-gold text-black" : idx === 1 ? "bg-rank-silver text-black" : idx === 2 ? "bg-rank-bronze text-white" : "bg-muted"
+                          "w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shadow-lg",
+                          idx === 0 ? "rank-gold" : 
+                          idx === 1 ? "rank-silver" : 
+                          idx === 2 ? "rank-bronze" : 
+                          "bg-muted text-muted-foreground"
                         )}>
-                          {idx + 1}
+                          {idx === 0 ? <Crown className="h-4 w-4" /> : idx + 1}
                         </span>
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-9 w-9 ring-2 ring-border">
                           <AvatarImage src={sp.avatar_url || undefined} />
-                          <AvatarFallback className="text-xs">{sp.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                          <AvatarFallback className="text-xs font-bold">{sp.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{sp.name}</p>
+                          <p className="font-display font-semibold truncate">{sp.name}</p>
                           <p className="text-xs text-muted-foreground">{sp.deals} vendas • {sp.goalProgress.toFixed(0)}% da meta</p>
                         </div>
-                        <span className="font-bold text-success">{formatCurrency(sp.revenue)}</span>
+                        <span className="font-black gradient-text-success">{formatCurrency(sp.revenue)}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">Nenhum vendedor atingiu 100% da meta</div>
+                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <Trophy className="h-12 w-12 mx-auto mb-2 text-muted-foreground/50" />
+                      <p>Nenhum vendedor atingiu 100% da meta</p>
+                    </div>
+                  </div>
                 )}
               </CardContent>
             </Card>
 
             {/* Underperformers */}
-            <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "650ms" }}>
+            <Card className="glass-card animate-slide-up" style={{ animationDelay: "650ms" }}>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-warning" />
+                <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-warning to-warning/80">
+                    <AlertTriangle className="h-4 w-4 text-warning-foreground" />
+                  </div>
                   Requerem Atenção
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {data?.underperformers && data.underperformers.length > 0 ? (
                   <div className="space-y-3">
-                    {data.underperformers.map(sp => (
-                      <div key={sp.id} className="flex items-center gap-3 p-3 rounded-lg bg-warning/5 border border-warning/20">
-                        <Avatar className="h-8 w-8">
+                    {data.underperformers.map((sp, idx) => (
+                      <div 
+                        key={sp.id} 
+                        className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-warning/5 to-transparent border border-warning/20 hover-lift-sm"
+                        style={{ animationDelay: `${700 + idx * 50}ms` }}
+                      >
+                        <Avatar className="h-9 w-9 ring-2 ring-warning/30">
                           <AvatarImage src={sp.avatar_url || undefined} />
-                          <AvatarFallback className="text-xs">{sp.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                          <AvatarFallback className="text-xs font-bold">{sp.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{sp.name}</p>
+                          <p className="font-display font-semibold truncate">{sp.name}</p>
                           <div className="flex items-center gap-2">
                             <Progress value={sp.goalProgress} className="h-1.5 flex-1" />
-                            <span className="text-xs text-warning">{sp.goalProgress.toFixed(0)}%</span>
+                            <span className="text-xs text-warning font-bold">{sp.goalProgress.toFixed(0)}%</span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">{formatCurrency(sp.revenue)}</p>
+                          <p className="font-bold">{formatCurrency(sp.revenue)}</p>
                           <p className="text-xs text-muted-foreground">{sp.activities} atividades</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="h-[200px] flex items-center justify-center text-muted-foreground text-center">
-                    <div>
-                      <Trophy className="h-8 w-8 text-success mx-auto mb-2" />
-                      <p>Todos os vendedores estão no caminho!</p>
+                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <Sparkles className="h-12 w-12 mx-auto mb-2 text-success/50" />
+                      <p className="text-success">Todos estão performando bem!</p>
                     </div>
                   </div>
                 )}
@@ -359,73 +430,81 @@ const BIGestor = () => {
             </Card>
           </div>
 
-          {/* Full Team Table */}
-          <Card className="glass opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
+          {/* Team Performance Table */}
+          <Card className="glass-card animate-slide-up" style={{ animationDelay: "700ms" }}>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                Performance Completa do Time
+              <CardTitle className="text-lg font-display flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                  <Users className="h-4 w-4 text-primary-foreground" />
+                </div>
+                Performance Detalhada do Time
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border/50">
-                      <th className="text-left py-3 px-2">#</th>
-                      <th className="text-left py-3 px-2">Vendedor</th>
-                      <th className="text-right py-3 px-2">Receita</th>
-                      <th className="text-right py-3 px-2">Deals</th>
-                      <th className="text-right py-3 px-2">Conversão</th>
-                      <th className="text-right py-3 px-2">Ticket Médio</th>
-                      <th className="text-right py-3 px-2">Atividades</th>
-                      <th className="text-right py-3 px-2">Meta</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data?.salespeoplePerformance.map((sp, idx) => (
-                      <tr key={sp.id} className="border-b border-border/30 hover:bg-muted/30 transition-colors">
-                        <td className="py-3 px-2">
-                          <span className={cn(
-                            "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
-                            idx === 0 ? "bg-rank-gold text-black" : idx === 1 ? "bg-rank-silver text-black" : idx === 2 ? "bg-rank-bronze text-white" : "bg-muted text-muted-foreground"
-                          )}>
-                            {idx + 1}
-                          </span>
-                        </td>
-                        <td className="py-3 px-2">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-7 w-7">
-                              <AvatarImage src={sp.avatar_url || undefined} />
-                              <AvatarFallback className="text-[10px]">{sp.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium">{sp.name}</p>
-                              <Badge variant="outline" className="text-[10px] px-1">{sp.role}</Badge>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 px-2 text-right font-medium">{formatCurrency(sp.revenue)}</td>
-                        <td className="py-3 px-2 text-right">{sp.deals}</td>
-                        <td className="py-3 px-2 text-right">{sp.conversionRate.toFixed(1)}%</td>
-                        <td className="py-3 px-2 text-right">{formatCurrency(sp.avgTicket)}</td>
-                        <td className="py-3 px-2 text-right">{sp.activities}</td>
-                        <td className="py-3 px-2 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Progress value={Math.min(sp.goalProgress, 100)} className="w-16 h-1.5" />
-                            <span className={cn(
-                              "text-xs font-medium",
-                              sp.goalProgress >= 100 ? "text-success" : sp.goalProgress >= 80 ? "text-foreground" : "text-warning"
-                            )}>
-                              {sp.goalProgress.toFixed(0)}%
-                            </span>
-                          </div>
-                        </td>
+              {data?.salespeoplePerformance && data.salespeoplePerformance.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border/50">
+                        <th className="text-left py-3 px-2 text-sm font-display text-muted-foreground">#</th>
+                        <th className="text-left py-3 px-2 text-sm font-display text-muted-foreground">Vendedor</th>
+                        <th className="text-right py-3 px-2 text-sm font-display text-muted-foreground">Receita</th>
+                        <th className="text-right py-3 px-2 text-sm font-display text-muted-foreground">Progresso</th>
+                        <th className="text-right py-3 px-2 text-sm font-display text-muted-foreground">Deals</th>
+                        <th className="text-right py-3 px-2 text-sm font-display text-muted-foreground">Atividades</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {data.salespeoplePerformance.map((sp, idx) => (
+                        <tr 
+                          key={sp.id} 
+                          className={cn(
+                            "border-b border-border/30 hover:bg-muted/30 transition-colors",
+                            idx < 3 && "bg-gradient-to-r from-rank-gold/5 to-transparent"
+                          )}
+                        >
+                          <td className="py-3 px-2">
+                            <span className={cn(
+                              "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
+                              idx === 0 ? "rank-gold" : 
+                              idx === 1 ? "rank-silver" : 
+                              idx === 2 ? "rank-bronze" : 
+                              "bg-muted text-muted-foreground"
+                            )}>
+                              {idx + 1}
+                            </span>
+                          </td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={sp.avatar_url || undefined} />
+                                <AvatarFallback className="text-xs">{sp.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium">{sp.name}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-2 text-right font-bold">{formatCurrency(sp.revenue)}</td>
+                          <td className="py-3 px-2 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Progress value={Math.min(sp.goalProgress, 100)} className="w-16 h-1.5" />
+                              <span className={cn(
+                                "text-sm font-bold",
+                                sp.goalProgress >= 100 ? "text-success" : sp.goalProgress >= 70 ? "text-warning" : "text-destructive"
+                              )}>
+                                {sp.goalProgress.toFixed(0)}%
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-2 text-right">{sp.deals}</td>
+                          <td className="py-3 px-2 text-right">{sp.activities}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-muted-foreground">Sem dados</div>
+              )}
             </CardContent>
           </Card>
         </div>
