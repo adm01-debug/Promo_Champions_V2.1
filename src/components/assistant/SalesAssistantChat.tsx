@@ -84,6 +84,28 @@ function MessageBubble({ message, salespersonAvatar }: MessageBubbleProps) {
   );
 }
 
+// Highlight search term in text
+function HighlightedText({ text, searchTerm }: { text: string; searchTerm: string }) {
+  if (!searchTerm.trim()) return <>{text}</>;
+  
+  const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+  
+  return (
+    <>
+      {parts.map((part, i) => 
+        regex.test(part) ? (
+          <mark key={i} className="bg-primary/30 text-foreground rounded px-0.5">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 export function SalesAssistantChat() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string | null>(null);
   const [input, setInput] = useState('');
@@ -424,7 +446,7 @@ export function SalesAssistantChat() {
                           <div className="mt-2 space-y-1">
                             {(conv as ConversationWithMatches).matchedMessages!.map((snippet, idx) => (
                               <p key={idx} className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1 italic">
-                                "{snippet}"
+                                "<HighlightedText text={snippet} searchTerm={searchQuery} />"
                               </p>
                             ))}
                           </div>
