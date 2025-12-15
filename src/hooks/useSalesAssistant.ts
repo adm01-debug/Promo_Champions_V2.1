@@ -21,10 +21,19 @@ export interface ConversationWithMatches extends Conversation {
   matchedMessages?: string[];
 }
 
+export interface DealContext {
+  dealId: string;
+  clientName: string;
+  productName: string;
+  amount: number;
+  status: string;
+}
+
 export function useSalesAssistant(salespersonId: string | null) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [dealContext, setDealContext] = useState<DealContext | null>(null);
   const queryClient = useQueryClient();
 
   // Fetch conversations for the salesperson with message counts
@@ -247,6 +256,13 @@ export function useSalesAssistant(salespersonId: string | null) {
             message: content,
             salespersonId,
             conversationHistory,
+            dealContext: dealContext ? {
+              dealId: dealContext.dealId,
+              clientName: dealContext.clientName,
+              productName: dealContext.productName,
+              amount: dealContext.amount,
+              status: dealContext.status,
+            } : undefined,
           }),
         }
       );
@@ -319,7 +335,7 @@ export function useSalesAssistant(salespersonId: string | null) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, salespersonId, currentConversationId, createConversation, saveMessage]);
+  }, [messages, salespersonId, currentConversationId, createConversation, saveMessage, dealContext]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -357,5 +373,7 @@ export function useSalesAssistant(salespersonId: string | null) {
     newConversation,
     deleteConversation,
     searchConversations,
+    dealContext,
+    setDealContext,
   };
 }

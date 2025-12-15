@@ -21,10 +21,11 @@ import {
   Search,
   X,
 } from 'lucide-react';
-import { useSalesAssistant, ChatMessage, ConversationWithMatches } from '@/hooks/useSalesAssistant';
+import { useSalesAssistant, ChatMessage, ConversationWithMatches, DealContext } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
 import { VoiceControls } from './VoiceControls';
+import { DealContextSelector } from './DealContextSelector';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, subDays, subMonths, isAfter } from 'date-fns';
@@ -125,7 +126,9 @@ export function SalesAssistantChat() {
     loadConversation,
     newConversation,
     deleteConversation,
-    searchConversations
+    searchConversations,
+    dealContext,
+    setDealContext,
   } = useSalesAssistant(selectedSalesperson);
 
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
@@ -454,7 +457,7 @@ export function SalesAssistantChat() {
 
   return (
     <Card className="flex flex-col h-[700px] border-border/50 bg-card/50 backdrop-blur-sm">
-      <CardHeader className="border-b border-border/50 pb-4">
+      <CardHeader className="border-b border-border/50 pb-4 space-y-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl gradient-primary">
@@ -512,6 +515,41 @@ export function SalesAssistantChat() {
             )}
           </div>
         </div>
+        
+        {/* Deal Context Selector */}
+        {selectedSalesperson && (
+          <div className="flex items-center gap-2">
+            <DealContextSelector
+              selectedDeal={dealContext ? {
+                id: dealContext.dealId,
+                client_name: dealContext.clientName,
+                product_name: dealContext.productName,
+                amount: dealContext.amount,
+                status: dealContext.status,
+                created_at: '',
+              } : null}
+              onSelectDeal={(deal) => {
+                if (deal) {
+                  setDealContext({
+                    dealId: deal.id,
+                    clientName: deal.client_name,
+                    productName: deal.product_name,
+                    amount: deal.amount,
+                    status: deal.status,
+                  });
+                } else {
+                  setDealContext(null);
+                }
+              }}
+              salespersonId={selectedSalesperson}
+            />
+            {dealContext && (
+              <span className="text-xs text-muted-foreground">
+                Análise contextual ativada
+              </span>
+            )}
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
