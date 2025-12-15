@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -20,7 +21,9 @@ import {
   MessageSquare,
   History,
   Plus,
-  ChevronLeft
+  ChevronLeft,
+  Search,
+  X
 } from 'lucide-react';
 import { useSalesAssistant, ChatMessage } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
@@ -301,11 +304,24 @@ export function SalesAssistantChat() {
     deleteConversation(conversationId);
   };
 
+  // Search state for history
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter conversations based on search query
+  const filteredConversations = useMemo(() => {
+    if (!searchQuery.trim() || !conversations) return conversations;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return conversations.filter((conv) => 
+      conv.title.toLowerCase().includes(query)
+    );
+  }, [conversations, searchQuery]);
+
   // History sidebar
   if (showHistory) {
     return (
       <Card className="flex flex-col h-[700px] border-border/50 bg-card/50 backdrop-blur-sm">
-        <CardHeader className="border-b border-border/50 pb-4">
+        <CardHeader className="border-b border-border/50 pb-4 space-y-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => setShowHistory(false)}>
               <ChevronLeft className="h-5 w-5" />
@@ -317,6 +333,27 @@ export function SalesAssistantChat() {
               </p>
             </div>
           </div>
+          {selectedSalesperson && conversations && conversations.length > 0 && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar conversas..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 pr-9"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          )}
         </CardHeader>
         <CardContent className="flex-1 p-0 overflow-hidden">
           <ScrollArea className="h-full">
@@ -328,13 +365,20 @@ export function SalesAssistantChat() {
               <div className="p-6 flex items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : conversations?.length === 0 ? (
+            ) : filteredConversations?.length === 0 ? (
               <div className="p-6 text-center text-muted-foreground">
-                Nenhuma conversa encontrada
+                {searchQuery ? (
+                  <>
+                    <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p>Nenhuma conversa encontrada para "{searchQuery}"</p>
+                  </>
+                ) : (
+                  'Nenhuma conversa encontrada'
+                )}
               </div>
             ) : (
               <div className="divide-y divide-border/50">
-                {conversations?.map((conv) => (
+                {filteredConversations?.map((conv) => (
                   <div
                     key={conv.id}
                     className={cn(
