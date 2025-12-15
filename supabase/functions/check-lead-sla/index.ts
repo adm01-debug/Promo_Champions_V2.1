@@ -138,6 +138,7 @@ serve(async (req) => {
         )
         .join("");
 
+      const subject = `⚠️ ${violations.length} leads aguardando contato há +${criticalHours}h`;
       const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #dc2626;">⚠️ Alerta de SLA - Leads sem Contato</h2>
@@ -169,18 +170,42 @@ serve(async (req) => {
         </div>
       `;
 
+      let emailStatus = 'sent';
+      let errorMessage: string | null = null;
+
       try {
         const emailResponse = await resend.emails.send({
           from: "SLA Alerts <onboarding@resend.dev>",
           to: [notifyEmail],
-          subject: `⚠️ ${violations.length} leads aguardando contato há +${criticalHours}h`,
+          subject,
           html: emailHtml,
         });
 
         console.log("Email sent:", emailResponse);
-      } catch (emailError) {
+      } catch (emailError: any) {
+        emailStatus = 'failed';
+        errorMessage = emailError?.message || 'Unknown email error';
         console.error("Error sending email:", emailError);
       }
+
+      // Log email to email_logs table
+      await supabase.from('email_logs').insert({
+        function_name: 'check-lead-sla',
+        recipient_email: notifyEmail,
+        subject,
+        status: emailStatus,
+        error_message: errorMessage,
+        metadata: {
+          violations_count: violations.length,
+          total_value: totalValue,
+          critical_hours: criticalHours,
+          violations: violations.map(v => ({
+            client_name: v.client_name,
+            hours_since_contact: v.hours_since_contact,
+            salesperson_name: v.salesperson_name,
+          })),
+        },
+      });
     }
 
     return new Response(
