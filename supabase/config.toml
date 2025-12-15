@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.sdr-consecutive-alerts]
 verify_jwt = false
+
+[functions.sales-assistant-chat]
+verify_jwt = false

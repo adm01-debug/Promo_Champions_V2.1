@@ -42,6 +42,7 @@ import AccessDenied from "./pages/AccessDenied";
 import Portfolio from "./pages/Portfolio";
 import ICP from "./pages/ICP";
 import AdminDashboard from "./pages/AdminDashboard";
+import Assistente from "./pages/Assistente";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -147,6 +148,7 @@ const App = () => (
                           </ProtectedRoute>
                         } />
                         <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/assistente" element={<Assistente />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
