@@ -9,6 +9,7 @@ import {
   CheckCircle,
   AlertCircle,
   Package,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -28,6 +29,7 @@ interface DealPreviewCardProps {
   productName: string;
   amount: number;
   status: string;
+  onAskAssistant?: (question: string) => void;
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string; icon: string }> = {
@@ -216,6 +218,7 @@ export function DealPreviewCard({
   productName,
   amount,
   status,
+  onAskAssistant,
 }: DealPreviewCardProps) {
   // Fetch additional deal info: time in pipeline and last activity
   const { data: dealDetails } = useQuery({
@@ -408,23 +411,39 @@ export function DealPreviewCard({
             ? "bg-amber-500/5 border-amber-500/20"
             : "bg-emerald-500/5 border-emerald-500/20"
         )}>
-          <div className="flex items-start gap-2">
-            <span className="text-base shrink-0">{riskLevel.action.icon}</span>
-            <div>
-              <span className="font-medium text-[10px] uppercase tracking-wide text-muted-foreground block mb-0.5">
-                Ação Recomendada
-              </span>
-              <p className={cn(
-                "font-medium",
-                riskLevel.level === 'high' 
-                  ? "text-red-600 dark:text-red-400" 
-                  : riskLevel.level === 'medium'
-                  ? "text-amber-600 dark:text-amber-400"
-                  : "text-emerald-600 dark:text-emerald-400"
-              )}>
-                {riskLevel.action.text}
-              </p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2 flex-1">
+              <span className="text-base shrink-0">{riskLevel.action.icon}</span>
+              <div>
+                <span className="font-medium text-[10px] uppercase tracking-wide text-muted-foreground block mb-0.5">
+                  Ação Recomendada
+                </span>
+                <p className={cn(
+                  "font-medium",
+                  riskLevel.level === 'high' 
+                    ? "text-red-600 dark:text-red-400" 
+                    : riskLevel.level === 'medium'
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-emerald-600 dark:text-emerald-400"
+                )}>
+                  {riskLevel.action.text}
+                </p>
+              </div>
             </div>
+            {onAskAssistant && (
+              <button
+                onClick={() => onAskAssistant(`Como posso "${riskLevel.action.text.toLowerCase()}" para o cliente ${clientName}? Me dê dicas práticas e um script.`)}
+                className={cn(
+                  "shrink-0 p-1.5 rounded-md transition-colors",
+                  "hover:bg-primary/10 text-primary",
+                  "flex items-center gap-1 text-[10px] font-medium"
+                )}
+                title="Perguntar ao assistente"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Perguntar</span>
+              </button>
+            )}
           </div>
         </div>
       )}
