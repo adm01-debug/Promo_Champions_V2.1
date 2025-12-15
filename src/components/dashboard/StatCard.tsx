@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface StatCardProps {
@@ -51,15 +52,21 @@ export const StatCard = ({
   );
 
   return (
-    <div
+    <motion.div
       className={cn(
-        "glass rounded-xl p-5 cursor-pointer group border transition-all duration-200",
-        "hover:shadow-md hover:border-primary/30",
+        "glass rounded-xl p-5 cursor-pointer group border",
         "dark:border-glow",
         variant === "default" && "border-border/40",
-        variant === "primary" && "border-primary/30 shadow-sm shadow-primary/10 hover:shadow-primary/20",
+        variant === "primary" && "border-primary/30 shadow-sm shadow-primary/10",
         variant === "secondary" && "border-secondary/30"
       )}
+      whileHover={{ 
+        scale: 1.02,
+        y: -4,
+        boxShadow: "0 20px 40px -15px hsl(var(--primary) / 0.15)",
+      }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <div className="flex items-start justify-between mb-4">
         <div
@@ -94,6 +101,6 @@ export const StatCard = ({
       >
         {value}
       </p>
-    </div>
+    </motion.div>
   );
 };
