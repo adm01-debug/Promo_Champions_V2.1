@@ -598,6 +598,7 @@ export type Database = {
           deal_id: string
           id: string
           question: string
+          question_type: string
           response: string | null
           salesperson_id: string | null
         }
@@ -606,6 +607,7 @@ export type Database = {
           deal_id: string
           id?: string
           question: string
+          question_type?: string
           response?: string | null
           salesperson_id?: string | null
         }
@@ -614,6 +616,7 @@ export type Database = {
           deal_id?: string
           id?: string
           question?: string
+          question_type?: string
           response?: string | null
           salesperson_id?: string | null
         }

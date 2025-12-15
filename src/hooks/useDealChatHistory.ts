@@ -1,19 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useState } from 'react';
+
+export type QuestionType = 'general' | 'analysis' | 'objections' | 'closing' | 'strategy';
+
+export const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
+  { value: 'general', label: 'Geral' },
+  { value: 'analysis', label: 'Análise' },
+  { value: 'objections', label: 'Objeções' },
+  { value: 'closing', label: 'Fechamento' },
+  { value: 'strategy', label: 'Estratégia' },
+];
 
 interface DealChatEntry {
   id: string;
   deal_id: string;
   salesperson_id: string | null;
   question: string;
+  question_type: string;
   response: string | null;
   created_at: string;
 }
 
 export function useDealChatHistory(dealId: string | null) {
   const queryClient = useQueryClient();
+  const [filterType, setFilterType] = useState<QuestionType | 'all'>('all');
 
-  const { data: history = [], isLoading } = useQuery({
+  const { data: allHistory = [], isLoading } = useQuery({
     queryKey: ['deal-chat-history', dealId],
     queryFn: async () => {
       if (!dealId) return [];
@@ -23,7 +36,7 @@ export function useDealChatHistory(dealId: string | null) {
         .select('*')
         .eq('deal_id', dealId)
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(20);
 
       if (error) {
         console.error('Error fetching deal chat history:', error);
@@ -41,11 +54,13 @@ export function useDealChatHistory(dealId: string | null) {
       dealId, 
       salespersonId, 
       question, 
+      questionType = 'general',
       response 
     }: { 
       dealId: string; 
       salespersonId: string | null; 
       question: string; 
+      questionType?: QuestionType;
       response?: string;
     }) => {
       const { data, error } = await supabase
@@ -54,6 +69,7 @@ export function useDealChatHistory(dealId: string | null) {
           deal_id: dealId,
           salesperson_id: salespersonId,
           question,
+          question_type: questionType,
           response: response || null,
         })
         .select()
@@ -81,10 +97,17 @@ export function useDealChatHistory(dealId: string | null) {
     },
   });
 
+  const history = allHistory.filter(entry => 
+    filterType === 'all' || entry.question_type === filterType
+  );
+
   return {
     history,
+    allHistory,
     isLoading,
     addEntry,
     deleteEntry,
+    filterType,
+    setFilterType,
   };
 }
