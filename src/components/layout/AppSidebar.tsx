@@ -17,6 +17,7 @@ import {
   GitBranch,
   Target,
   Crosshair,
+  Bot,
   Swords,
   Sparkles,
   TrendingUp,
@@ -79,6 +80,7 @@ const teamItems: MenuItem[] = [
   { title: "Playbooks", url: "/playbooks", icon: BookOpen, requireAdminOrManager: true },
   { title: "Fonte de Leads", url: "/fonte-leads", icon: Target, requireAdminOrManager: true },
   { title: "Analytics", url: "/analytics", icon: PieChart, requireAdminOrManager: true },
+  { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
 
 const systemItems: MenuItem[] = [
