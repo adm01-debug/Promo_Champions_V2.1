@@ -4,14 +4,14 @@ import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edi
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
-import { useAllSalespeopleXP, calculateLevelFromXP, getLevelInfo } from "@/hooks/useSalespersonXP";
+import { useGamificationData } from "@/hooks/useGamificationData";
 import { SalespersonForm, SalespersonRole } from "@/components/vendedores/SalespersonForm";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
-import { GamificationCard, CompactGamificationCard } from "@/components/gamification/GamificationCard";
+import { GamificationCard } from "@/components/gamification/GamificationCard";
 import { cn } from "@/lib/utils";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -82,7 +82,7 @@ const Vendedores = () => {
   const [period, setPeriod] = useState<PeriodFilter>("month");
   const [viewMode, setViewMode] = useState<"classic" | "gamified">("gamified");
   const { data: salespeople, isLoading, error } = useSalespeopleRanking(period);
-  const { data: xpData } = useAllSalespeopleXP();
+  const { data: gamificationData } = useGamificationData();
   const [editingSalesperson, setEditingSalesperson] = useState<{
     id: string;
     name: string;
@@ -98,10 +98,9 @@ const Vendedores = () => {
 
   const topSeller = salespeople?.[0];
 
-  // Merge XP data with salespeople
-  const getXPForSalesperson = (salespersonId: string) => {
-    const xp = xpData?.find(x => x.salesperson_id === salespersonId);
-    return xp?.total_xp || 0;
+  // Get gamification data for a salesperson
+  const getGamificationForSalesperson = (salespersonId: string) => {
+    return gamificationData?.find(g => g.salesperson_id === salespersonId);
   };
 
   return (
@@ -264,27 +263,24 @@ const Vendedores = () => {
             /* Gamified View */
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {salespeople?.map((sp) => {
-                const totalXP = getXPForSalesperson(sp.id);
-                const { level, xpInLevel, xpToNext } = calculateLevelFromXP(totalXP);
-                const levelInfo = getLevelInfo(level);
-                const streakDays = sp.goalProgress >= 100 ? Math.floor(sp.goalProgress / 20) : 0;
+                const gamification = getGamificationForSalesperson(sp.id);
                 
                 return (
                   <Link key={sp.id} to={`/vendedor/${sp.id}`}>
                     <GamificationCard
                       name={sp.name}
                       avatarUrl={sp.avatar_url || undefined}
-                      level={level}
-                      totalXP={totalXP}
-                      xpProgress={xpInLevel}
-                      xpToNext={xpToNext}
-                      levelTitle={levelInfo.title}
-                      levelEmoji={levelInfo.emoji}
-                      levelColor={levelInfo.color}
+                      level={gamification?.level || 1}
+                      totalXP={gamification?.totalXP || 0}
+                      xpProgress={gamification?.xpInLevel || 0}
+                      xpToNext={gamification?.xpToNext || 100}
+                      levelTitle={gamification?.levelTitle || "Iniciante"}
+                      levelEmoji={gamification?.levelEmoji || "🌱"}
+                      levelColor={gamification?.levelColor || "from-gray-400 to-gray-500"}
                       rank={sp.rank}
-                      streak={streakDays}
-                      streakRecord={streakDays + 3}
-                      achievements={sp.completedSales}
+                      streak={gamification?.currentStreak || 0}
+                      streakRecord={gamification?.bestStreak || 0}
+                      achievements={gamification?.totalAchievements || 0}
                       showDetails={true}
                       size="md"
                     />
