@@ -6,7 +6,7 @@ import { GlobalSearch, SearchTrigger } from "./GlobalSearch";
 import { Search } from "lucide-react";
 import { useSecurityAlertNotifications } from "@/hooks/useSecurityAlertNotifications";
 import { useSDRAlertNotifications } from "@/hooks/useSDRAlertNotifications";
-import { useRealtimeCelebrations } from "@/hooks/useRealtimeCelebrations";
+import { CelebrationOverlayProvider } from "@/components/gamification/CelebrationOverlayProvider";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -20,9 +20,6 @@ export function MainLayout({ children }: MainLayoutProps) {
   
   // Enable real-time SDR alert notifications for admins/managers
   useSDRAlertNotifications();
-  
-  // Enable real-time celebrations for level-ups and achievements
-  useRealtimeCelebrations();
 
   return (
     <SidebarProvider>
@@ -42,6 +39,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           <GlobalSearch />
           {children}
         </main>
+        
+        {/* Global celebration overlays */}
+        <CelebrationOverlayProvider />
       </div>
     </SidebarProvider>
   );
