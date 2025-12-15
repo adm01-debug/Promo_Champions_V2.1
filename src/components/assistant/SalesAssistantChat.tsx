@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -22,6 +22,7 @@ import {
 import { useSalesAssistant, ChatMessage } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 const QUICK_PROMPTS = [
   { label: 'Como lidar com objeção de preço?', icon: '💰' },
@@ -30,6 +31,9 @@ const QUICK_PROMPTS = [
   { label: 'Técnicas de fechamento', icon: '🎯' },
   { label: 'Me motive!', icon: '🔥' },
 ];
+
+// Check browser support for Speech Recognition
+const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -79,11 +83,54 @@ export function SalesAssistantChat() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<any>(null);
+  const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
   const { messages, isLoading, sendMessage, clearMessages } = useSalesAssistant(selectedSalesperson);
 
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
+
+  // Initialize Speech Recognition
+  useEffect(() => {
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'pt-BR';
+
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        setInput(transcript);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        if (event.error === 'not-allowed') {
+          toast({
+            title: 'Microfone bloqueado',
+            description: 'Permita o acesso ao microfone nas configurações do navegador.',
+            variant: 'destructive',
+          });
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+    };
+  }, [toast]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -111,10 +158,32 @@ export function SalesAssistantChat() {
     sendMessage(prompt);
   };
 
-  const toggleVoice = () => {
-    setIsListening(!isListening);
-    // Voice functionality would be implemented here with ElevenLabs
-  };
+  const toggleVoice = useCallback(() => {
+    if (!SpeechRecognition) {
+      toast({
+        title: 'Navegador não suportado',
+        description: 'Use Chrome, Edge ou Safari para entrada de voz.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current?.start();
+        setIsListening(true);
+        toast({
+          title: 'Escutando...',
+          description: 'Fale sua pergunta.',
+        });
+      } catch (error) {
+        console.error('Error starting recognition:', error);
+      }
+    }
+  }, [isListening, toast]);
 
   const toggleSpeaker = () => {
     setIsSpeaking(!isSpeaking);
