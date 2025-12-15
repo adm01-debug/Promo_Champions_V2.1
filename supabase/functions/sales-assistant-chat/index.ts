@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, salespersonId, conversationHistory = [] } = await req.json();
+    const { message, salespersonId, conversationHistory = [], dealContext } = await req.json();
 
     if (!message) {
       throw new Error("Message is required");
@@ -24,6 +24,9 @@ serve(async (req) => {
 
     // Fetch salesperson context if provided
     let salespersonContext = "";
+    let dealContextStr = "";
+    let performanceSuggestions = "";
+    
     if (salespersonId) {
       // Get salesperson info
       const { data: salesperson } = await supabase
@@ -48,12 +51,14 @@ serve(async (req) => {
       
       const { data: sales } = await supabase
         .from("sales")
-        .select("amount, status")
+        .select("id, amount, status, client_name, product_name, category, source, created_at, updated_at")
         .eq("salesperson_id", salespersonId)
         .gte("created_at", startOfMonth.toISOString());
 
       const totalSales = sales?.filter(s => s.status === "completed").reduce((sum, s) => sum + Number(s.amount), 0) || 0;
-      const pendingDeals = sales?.filter(s => s.status !== "completed" && s.status !== "cancelled").length || 0;
+      const pendingDeals = sales?.filter(s => s.status !== "completed" && s.status !== "cancelled") || [];
+      const goalAmount = goals?.goal_amount || 0;
+      const progressPercent = goalAmount ? Math.round((totalSales / goalAmount) * 100) : 0;
 
       // Get recent deal outcomes
       const { data: outcomes } = await supabase
@@ -71,15 +76,25 @@ serve(async (req) => {
       const today = new Date().toISOString().split("T")[0];
       const { data: activities } = await supabase
         .from("activities")
-        .select("activity_type")
+        .select("activity_type, outcome")
         .eq("salesperson_id", salespersonId)
         .gte("created_at", today);
+
+      const { data: activityGoals } = await supabase
+        .from("activity_goals")
+        .select("*")
+        .eq("salesperson_id", salespersonId)
+        .single();
 
       const activityCounts = {
         call: activities?.filter(a => a.activity_type === "call").length || 0,
         email: activities?.filter(a => a.activity_type === "email").length || 0,
         meeting: activities?.filter(a => a.activity_type === "meeting").length || 0,
+        linkedin: activities?.filter(a => a.activity_type === "linkedin").length || 0,
+        whatsapp: activities?.filter(a => a.activity_type === "whatsapp").length || 0,
       };
+
+      const scheduledMeetings = activities?.filter(a => a.outcome === "scheduled").length || 0;
 
       // Get objections library for reference
       const { data: objections } = await supabase
@@ -87,6 +102,59 @@ serve(async (req) => {
         .select("objection, response, category")
         .order("effectiveness_score", { ascending: false })
         .limit(10);
+
+      // Get lead scores for pending deals
+      const pendingDealIds = pendingDeals.map(d => d.id);
+      const { data: leadScores } = await supabase
+        .from("lead_scores")
+        .select("sale_id, score, factors")
+        .in("sale_id", pendingDealIds);
+
+      // Generate performance-based suggestions
+      const lossReasons = outcomes?.filter(o => o.outcome === "lost").map(o => o.reason) || [];
+      const topLossReason = lossReasons.length > 0 
+        ? lossReasons.reduce((a, b, i, arr) => 
+            arr.filter(v => v === a).length >= arr.filter(v => v === b).length ? a : b
+          )
+        : null;
+
+      performanceSuggestions = `
+ANÁLISE DE PERFORMANCE E SUGESTÕES AUTOMÁTICAS:`;
+      
+      if (progressPercent < 50 && new Date().getDate() > 15) {
+        performanceSuggestions += `
+- ⚠️ ALERTA: Progresso de meta abaixo de 50% na segunda metade do mês. Foque em deals de alto valor.`;
+      }
+      
+      if (winRate < 30 && outcomes?.length && outcomes.length >= 5) {
+        performanceSuggestions += `
+- 📉 Win rate baixo (${winRate}%). Revise seu processo de qualificação.`;
+      }
+      
+      if (topLossReason) {
+        performanceSuggestions += `
+- 🔍 Principal motivo de perda: "${topLossReason}". Prepare argumentos para essa objeção.`;
+      }
+
+      if (activityGoals) {
+        const callProgress = activityGoals.calls_goal ? (activityCounts.call / activityGoals.calls_goal) * 100 : 100;
+        if (callProgress < 50 && new Date().getHours() >= 14) {
+          performanceSuggestions += `
+- 📞 Ligações abaixo do esperado para esse horário. Aumente o ritmo!`;
+        }
+      }
+
+      const hotDeals = leadScores?.filter(ls => ls.score >= 75) || [];
+      if (hotDeals.length > 0) {
+        performanceSuggestions += `
+- 🔥 Você tem ${hotDeals.length} lead(s) quente(s). Priorize o follow-up deles!`;
+      }
+
+      // Build deals list for context
+      const dealsListStr = pendingDeals.slice(0, 10).map(d => {
+        const score = leadScores?.find(ls => ls.sale_id === d.id);
+        return `  - ${d.client_name} | ${d.product_name} | R$ ${Number(d.amount).toLocaleString("pt-BR")} | Status: ${d.status}${score ? ` | Score: ${score.score}` : ""}`;
+      }).join("\n");
 
       salespersonContext = `
 CONTEXTO DO VENDEDOR:
@@ -96,9 +164,9 @@ CONTEXTO DO VENDEDOR:
 
 MÉTRICAS DO MÊS:
 - Vendas Fechadas: R$ ${totalSales.toLocaleString("pt-BR")}
-- Meta: R$ ${goals?.goal_amount?.toLocaleString("pt-BR") || "Não definida"}
-- Progresso: ${goals?.goal_amount ? Math.round((totalSales / goals.goal_amount) * 100) : 0}%
-- Deals em Andamento: ${pendingDeals}
+- Meta: R$ ${goalAmount.toLocaleString("pt-BR") || "Não definida"}
+- Progresso: ${progressPercent}%
+- Deals em Andamento: ${pendingDeals.length}
 
 PERFORMANCE RECENTE:
 - Win Rate (últimos 10 deals): ${winRate}%
@@ -106,13 +174,71 @@ PERFORMANCE RECENTE:
 ${outcomes?.filter(o => o.outcome === "lost").slice(0, 3).map(o => `- Motivo de perda: ${o.reason}`).join("\n") || ""}
 
 ATIVIDADES DE HOJE:
-- Ligações: ${activityCounts.call}
-- Emails: ${activityCounts.email}
-- Reuniões: ${activityCounts.meeting}
+- Ligações: ${activityCounts.call}${activityGoals?.calls_goal ? `/${activityGoals.calls_goal}` : ""}
+- Emails: ${activityCounts.email}${activityGoals?.emails_goal ? `/${activityGoals.emails_goal}` : ""}
+- Reuniões: ${activityCounts.meeting}${activityGoals?.meetings_goal ? `/${activityGoals.meetings_goal}` : ""}
+- LinkedIn: ${activityCounts.linkedin}${activityGoals?.linkedin_goal ? `/${activityGoals.linkedin_goal}` : ""}
+- WhatsApp: ${activityCounts.whatsapp}${activityGoals?.whatsapp_goal ? `/${activityGoals.whatsapp_goal}` : ""}
+- Reuniões Agendadas Hoje: ${scheduledMeetings}
+
+DEALS EM ANDAMENTO (até 10):
+${dealsListStr || "Nenhum deal em andamento"}
 
 OBJEÇÕES COMUNS E RESPOSTAS:
 ${objections?.slice(0, 5).map(o => `- "${o.objection}": ${o.response.substring(0, 100)}...`).join("\n") || "Nenhuma objeção cadastrada"}
+${performanceSuggestions}
 `;
+
+      // If a specific deal context is provided, fetch detailed info
+      if (dealContext?.dealId) {
+        const { data: deal } = await supabase
+          .from("sales")
+          .select("*")
+          .eq("id", dealContext.dealId)
+          .single();
+
+        if (deal) {
+          const { data: dealScore } = await supabase
+            .from("lead_scores")
+            .select("score, factors")
+            .eq("sale_id", dealContext.dealId)
+            .single();
+
+          const { data: dealActivities } = await supabase
+            .from("activities")
+            .select("activity_type, outcome, created_at, notes")
+            .eq("sale_id", dealContext.dealId)
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+          const { data: stageHistory } = await supabase
+            .from("deal_stage_history")
+            .select("stage, entered_at, exited_at")
+            .eq("sale_id", dealContext.dealId)
+            .order("entered_at", { ascending: false })
+            .limit(5);
+
+          dealContextStr = `
+
+🎯 CONTEXTO DO DEAL ESPECÍFICO:
+- Cliente: ${deal.client_name}
+- Produto: ${deal.product_name}
+- Valor: R$ ${Number(deal.amount).toLocaleString("pt-BR")}
+- Status: ${deal.status}
+- Categoria: ${deal.category}
+- Fonte: ${deal.source || "Não informada"}
+- Criado em: ${new Date(deal.created_at).toLocaleDateString("pt-BR")}
+${dealScore ? `- Lead Score: ${dealScore.score}/100` : ""}
+${dealScore?.factors ? `- Fatores do Score: ${JSON.stringify(dealScore.factors)}` : ""}
+
+Histórico de Estágios:
+${stageHistory?.map(s => `  - ${s.stage}: ${new Date(s.entered_at).toLocaleDateString("pt-BR")}${s.exited_at ? ` → ${new Date(s.exited_at).toLocaleDateString("pt-BR")}` : " (atual)"}`).join("\n") || "Sem histórico"}
+
+Últimas Atividades:
+${dealActivities?.map(a => `  - ${a.activity_type} (${a.outcome}): ${new Date(a.created_at).toLocaleDateString("pt-BR")}${a.notes ? ` - "${a.notes.substring(0, 50)}..."` : ""}`).join("\n") || "Nenhuma atividade registrada"}
+`;
+        }
+      }
     }
 
     const systemPrompt = `Você é um Coach de Vendas IA especializado e motivador. Seu papel é:
@@ -122,8 +248,11 @@ ${objections?.slice(0, 5).map(o => `- "${o.objection}": ${o.response.substring(0
 3. MOTIVAR o vendedor com frases de incentivo e reconhecimento de conquistas
 4. AJUDAR com objeções comuns e como superá-las
 5. SUGERIR próximos passos baseados na situação atual
+6. ANALISAR deals específicos quando o contexto de um deal for fornecido
+7. FORNECER sugestões proativas baseadas na análise de performance
 
 ${salespersonContext}
+${dealContextStr}
 
 DIRETRIZES:
 - Seja direto, prático e motivador
@@ -134,6 +263,8 @@ DIRETRIZES:
 - Use linguagem informal mas profissional
 - Responda em português brasileiro
 - Mantenha respostas concisas (máximo 3 parágrafos para dúvidas simples)
+- Quando analisar um deal específico, dê dicas contextualizadas para avançar esse deal
+- Use os dados de ANÁLISE DE PERFORMANCE para dar sugestões proativas
 
 ÁREAS DE EXPERTISE:
 - SPIN Selling, BANT, MEDDIC
