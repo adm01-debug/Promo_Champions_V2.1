@@ -16,6 +16,10 @@ interface Conversation {
   updated_at: string;
 }
 
+export interface ConversationWithMatches extends Conversation {
+  matchedMessages?: string[];
+}
+
 export function useSalesAssistant(salespersonId: string | null) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +41,61 @@ export function useSalesAssistant(salespersonId: string | null) {
     },
     enabled: !!salespersonId,
   });
+
+  // Search conversations by message content
+  const searchConversations = useCallback(async (query: string): Promise<ConversationWithMatches[]> => {
+    if (!salespersonId || !query.trim()) return conversations || [];
+    
+    const searchTerm = query.toLowerCase().trim();
+    
+    // First get all conversation IDs for this salesperson
+    const { data: convs, error: convsError } = await supabase
+      .from('chat_conversations')
+      .select('id, title, created_at, updated_at')
+      .eq('salesperson_id', salespersonId)
+      .order('updated_at', { ascending: false });
+    
+    if (convsError || !convs) return [];
+    
+    // Get all messages for these conversations
+    const conversationIds = convs.map(c => c.id);
+    const { data: allMessages, error: messagesError } = await supabase
+      .from('chat_messages')
+      .select('conversation_id, content')
+      .in('conversation_id', conversationIds);
+    
+    if (messagesError) return [];
+    
+    // Filter conversations that have matching messages or titles
+    const results: ConversationWithMatches[] = [];
+    
+    for (const conv of convs) {
+      const titleMatch = conv.title.toLowerCase().includes(searchTerm);
+      const convMessages = allMessages?.filter(m => m.conversation_id === conv.id) || [];
+      const matchingMessages = convMessages
+        .filter(m => m.content.toLowerCase().includes(searchTerm))
+        .map(m => {
+          // Extract a snippet around the match
+          const content = m.content;
+          const matchIndex = content.toLowerCase().indexOf(searchTerm);
+          const start = Math.max(0, matchIndex - 30);
+          const end = Math.min(content.length, matchIndex + searchTerm.length + 30);
+          let snippet = content.slice(start, end);
+          if (start > 0) snippet = '...' + snippet;
+          if (end < content.length) snippet = snippet + '...';
+          return snippet;
+        });
+      
+      if (titleMatch || matchingMessages.length > 0) {
+        results.push({
+          ...conv,
+          matchedMessages: matchingMessages.slice(0, 2), // Limit to 2 snippets
+        });
+      }
+    }
+    
+    return results;
+  }, [salespersonId, conversations]);
 
   // Load messages for a conversation
   const loadConversation = useCallback(async (conversationId: string) => {
@@ -275,5 +334,6 @@ export function useSalesAssistant(salespersonId: string | null) {
     loadConversation,
     newConversation,
     deleteConversation,
+    searchConversations,
   };
 }

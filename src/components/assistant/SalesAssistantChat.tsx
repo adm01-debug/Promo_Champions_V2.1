@@ -25,7 +25,7 @@ import {
   Search,
   X
 } from 'lucide-react';
-import { useSalesAssistant, ChatMessage } from '@/hooks/useSalesAssistant';
+import { useSalesAssistant, ChatMessage, ConversationWithMatches } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -108,7 +108,8 @@ export function SalesAssistantChat() {
     currentConversationId,
     loadConversation,
     newConversation,
-    deleteConversation
+    deleteConversation,
+    searchConversations
   } = useSalesAssistant(selectedSalesperson);
 
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
@@ -306,16 +307,38 @@ export function SalesAssistantChat() {
 
   // Search state for history
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<ConversationWithMatches[] | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Filter conversations based on search query
-  const filteredConversations = useMemo(() => {
-    if (!searchQuery.trim() || !conversations) return conversations;
-    
-    const query = searchQuery.toLowerCase().trim();
-    return conversations.filter((conv) => 
-      conv.title.toLowerCase().includes(query)
-    );
-  }, [conversations, searchQuery]);
+  // Debounced full-text search
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (!searchQuery.trim()) {
+      setSearchResults(null);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    searchTimeoutRef.current = setTimeout(async () => {
+      const results = await searchConversations(searchQuery);
+      setSearchResults(results);
+      setIsSearching(false);
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchQuery, searchConversations]);
+
+  // Use search results if available, otherwise use all conversations
+  const displayedConversations = searchResults !== null ? searchResults : conversations;
 
   // History sidebar
   if (showHistory) {
@@ -361,11 +384,11 @@ export function SalesAssistantChat() {
               <div className="p-6 text-center text-muted-foreground">
                 Selecione um vendedor para ver o histórico
               </div>
-            ) : loadingConversations ? (
+            ) : loadingConversations || isSearching ? (
               <div className="p-6 flex items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : filteredConversations?.length === 0 ? (
+            ) : displayedConversations?.length === 0 ? (
               <div className="p-6 text-center text-muted-foreground">
                 {searchQuery ? (
                   <>
@@ -378,7 +401,7 @@ export function SalesAssistantChat() {
               </div>
             ) : (
               <div className="divide-y divide-border/50">
-                {filteredConversations?.map((conv) => (
+                {displayedConversations?.map((conv) => (
                   <div
                     key={conv.id}
                     className={cn(
@@ -396,6 +419,16 @@ export function SalesAssistantChat() {
                             locale: ptBR,
                           })}
                         </p>
+                        {/* Show matched message snippets */}
+                        {(conv as ConversationWithMatches).matchedMessages && (conv as ConversationWithMatches).matchedMessages!.length > 0 && (
+                          <div className="mt-2 space-y-1">
+                            {(conv as ConversationWithMatches).matchedMessages!.map((snippet, idx) => (
+                              <p key={idx} className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1 italic">
+                                "{snippet}"
+                              </p>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <Button
                         variant="ghost"
