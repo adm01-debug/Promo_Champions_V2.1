@@ -46,6 +46,69 @@ interface RiskLevel {
   bgColor: string;
   icon: React.ReactNode;
   reasons: string[];
+  action: {
+    text: string;
+    icon: string;
+  };
+}
+
+function getRecommendedAction(
+  status: string,
+  daysWithoutActivity: number | null,
+  daysInStage: number | null,
+  riskLevel: 'low' | 'medium' | 'high'
+): { text: string; icon: string } {
+  // Stage-specific actions
+  const stageActions: Record<string, { low: string; medium: string; high: string }> = {
+    lead: {
+      low: 'Continue qualificando o lead com perguntas exploratórias',
+      medium: 'Agende uma ligação para avançar a qualificação',
+      high: 'Entre em contato urgente antes de perder o timing',
+    },
+    qualified: {
+      low: 'Prepare uma proposta personalizada para o cliente',
+      medium: 'Envie uma proposta ou agende reunião de apresentação',
+      high: 'Ligue agora para entender bloqueios e avançar',
+    },
+    proposal: {
+      low: 'Faça follow-up para verificar se há dúvidas na proposta',
+      medium: 'Agende reunião para discutir a proposta e objeções',
+      high: 'Contato urgente - cliente pode estar avaliando concorrentes',
+    },
+    negotiation: {
+      low: 'Trabalhe objeções finais e prepare o fechamento',
+      medium: 'Ofereça condição especial para acelerar decisão',
+      high: 'Ligação urgente para entender impedimentos ao fechamento',
+    },
+  };
+
+  const actions = stageActions[status] || stageActions.qualified;
+  
+  // Activity-specific overrides
+  if (daysWithoutActivity === null || daysWithoutActivity >= 14) {
+    return { 
+      text: 'Faça contato imediato - muito tempo sem interação', 
+      icon: '🚨' 
+    };
+  }
+  
+  if (daysWithoutActivity >= 7) {
+    return { 
+      text: 'Registre uma atividade - cliente pode esfriar', 
+      icon: '⚡' 
+    };
+  }
+
+  const icons: Record<string, string> = {
+    low: '✨',
+    medium: '⚠️',
+    high: '🔥',
+  };
+
+  return { 
+    text: actions[riskLevel], 
+    icon: icons[riskLevel] 
+  };
 }
 
 function calculateRiskLevel(
@@ -65,6 +128,7 @@ function calculateRiskLevel(
       bgColor: 'bg-muted/50',
       icon: <CheckCircle className="h-3.5 w-3.5" />,
       reasons: ['Deal já foi concluído'],
+      action: { text: 'Deal finalizado - nenhuma ação necessária', icon: '✅' },
     };
   }
 
@@ -107,33 +171,42 @@ function calculateRiskLevel(
     }
   }
 
+  let level: 'low' | 'medium' | 'high';
+  let label: string;
+  let color: string;
+  let bgColor: string;
+  let icon: React.ReactNode;
+
   if (riskScore >= 4) {
-    return {
-      level: 'high',
-      label: 'Alto Risco',
-      color: 'text-red-500',
-      bgColor: 'bg-red-500/10',
-      icon: <AlertTriangle className="h-3.5 w-3.5" />,
-      reasons,
-    };
+    level = 'high';
+    label = 'Alto Risco';
+    color = 'text-red-500';
+    bgColor = 'bg-red-500/10';
+    icon = <AlertTriangle className="h-3.5 w-3.5" />;
   } else if (riskScore >= 2) {
-    return {
-      level: 'medium',
-      label: 'Atenção',
-      color: 'text-amber-500',
-      bgColor: 'bg-amber-500/10',
-      icon: <AlertCircle className="h-3.5 w-3.5" />,
-      reasons,
-    };
+    level = 'medium';
+    label = 'Atenção';
+    color = 'text-amber-500';
+    bgColor = 'bg-amber-500/10';
+    icon = <AlertCircle className="h-3.5 w-3.5" />;
+  } else {
+    level = 'low';
+    label = 'Baixo Risco';
+    color = 'text-emerald-500';
+    bgColor = 'bg-emerald-500/10';
+    icon = <CheckCircle className="h-3.5 w-3.5" />;
   }
 
+  const action = getRecommendedAction(status, daysWithoutActivity, daysInStage, level);
+
   return {
-    level: 'low',
-    label: 'Baixo Risco',
-    color: 'text-emerald-500',
-    bgColor: 'bg-emerald-500/10',
-    icon: <CheckCircle className="h-3.5 w-3.5" />,
+    level,
+    label,
+    color,
+    bgColor,
+    icon,
     reasons: reasons.length > 0 ? reasons : ['Deal em bom andamento'],
+    action,
   };
 }
 
@@ -324,6 +397,37 @@ export function DealPreviewCard({
           </div>
         </div>
       </div>
+
+      {/* Recommended Action */}
+      {status !== 'closed_won' && status !== 'closed_lost' && (
+        <div className={cn(
+          "mt-3 p-2 rounded-md border text-xs",
+          riskLevel.level === 'high' 
+            ? "bg-red-500/5 border-red-500/20" 
+            : riskLevel.level === 'medium'
+            ? "bg-amber-500/5 border-amber-500/20"
+            : "bg-emerald-500/5 border-emerald-500/20"
+        )}>
+          <div className="flex items-start gap-2">
+            <span className="text-base shrink-0">{riskLevel.action.icon}</span>
+            <div>
+              <span className="font-medium text-[10px] uppercase tracking-wide text-muted-foreground block mb-0.5">
+                Ação Recomendada
+              </span>
+              <p className={cn(
+                "font-medium",
+                riskLevel.level === 'high' 
+                  ? "text-red-600 dark:text-red-400" 
+                  : riskLevel.level === 'medium'
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-emerald-600 dark:text-emerald-400"
+              )}>
+                {riskLevel.action.text}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
