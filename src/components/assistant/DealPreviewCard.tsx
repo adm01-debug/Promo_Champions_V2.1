@@ -5,8 +5,9 @@ import {
   Clock, 
   Activity, 
   TrendingUp,
-  Calendar,
-  User,
+  AlertTriangle,
+  CheckCircle,
+  AlertCircle,
   Package,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -14,6 +15,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface DealPreviewCardProps {
   dealId: string;
@@ -31,6 +38,104 @@ const STATUS_LABELS: Record<string, { label: string; color: string; icon: string
   closed_won: { label: 'Fechado', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: '🎉' },
   closed_lost: { label: 'Perdido', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: '❌' },
 };
+
+interface RiskLevel {
+  level: 'low' | 'medium' | 'high';
+  label: string;
+  color: string;
+  bgColor: string;
+  icon: React.ReactNode;
+  reasons: string[];
+}
+
+function calculateRiskLevel(
+  daysWithoutActivity: number | null,
+  daysInStage: number | null,
+  status: string
+): RiskLevel {
+  const reasons: string[] = [];
+  let riskScore = 0;
+
+  // Closed deals have no risk
+  if (status === 'closed_won' || status === 'closed_lost') {
+    return {
+      level: 'low',
+      label: 'Concluído',
+      color: 'text-muted-foreground',
+      bgColor: 'bg-muted/50',
+      icon: <CheckCircle className="h-3.5 w-3.5" />,
+      reasons: ['Deal já foi concluído'],
+    };
+  }
+
+  // Activity risk
+  if (daysWithoutActivity !== null) {
+    if (daysWithoutActivity >= 14) {
+      riskScore += 3;
+      reasons.push(`${daysWithoutActivity} dias sem atividade`);
+    } else if (daysWithoutActivity >= 7) {
+      riskScore += 2;
+      reasons.push(`${daysWithoutActivity} dias sem atividade`);
+    } else if (daysWithoutActivity >= 3) {
+      riskScore += 1;
+      reasons.push(`${daysWithoutActivity} dias sem atividade`);
+    }
+  } else {
+    riskScore += 2;
+    reasons.push('Nenhuma atividade registrada');
+  }
+
+  // Stage stagnation risk
+  if (daysInStage !== null) {
+    const stageThresholds: Record<string, number> = {
+      lead: 7,
+      qualified: 10,
+      proposal: 14,
+      negotiation: 21,
+    };
+    const threshold = stageThresholds[status] || 14;
+    
+    if (daysInStage >= threshold * 2) {
+      riskScore += 3;
+      reasons.push(`${daysInStage} dias neste estágio (limite: ${threshold})`);
+    } else if (daysInStage >= threshold) {
+      riskScore += 2;
+      reasons.push(`${daysInStage} dias neste estágio (limite: ${threshold})`);
+    } else if (daysInStage >= threshold * 0.7) {
+      riskScore += 1;
+      reasons.push(`Próximo do limite de tempo no estágio`);
+    }
+  }
+
+  if (riskScore >= 4) {
+    return {
+      level: 'high',
+      label: 'Alto Risco',
+      color: 'text-red-500',
+      bgColor: 'bg-red-500/10',
+      icon: <AlertTriangle className="h-3.5 w-3.5" />,
+      reasons,
+    };
+  } else if (riskScore >= 2) {
+    return {
+      level: 'medium',
+      label: 'Atenção',
+      color: 'text-amber-500',
+      bgColor: 'bg-amber-500/10',
+      icon: <AlertCircle className="h-3.5 w-3.5" />,
+      reasons,
+    };
+  }
+
+  return {
+    level: 'low',
+    label: 'Baixo Risco',
+    color: 'text-emerald-500',
+    bgColor: 'bg-emerald-500/10',
+    icon: <CheckCircle className="h-3.5 w-3.5" />,
+    reasons: reasons.length > 0 ? reasons : ['Deal em bom andamento'],
+  };
+}
 
 export function DealPreviewCard({
   dealId,
@@ -87,6 +192,12 @@ export function DealPreviewCard({
     ? differenceInDays(new Date(), new Date(dealDetails.currentStageEntry.entered_at))
     : null;
 
+  const daysWithoutActivity = dealDetails?.lastActivity?.created_at
+    ? differenceInDays(new Date(), new Date(dealDetails.lastActivity.created_at))
+    : null;
+
+  const riskLevel = calculateRiskLevel(daysWithoutActivity, daysInCurrentStage, status);
+
   const lastActivityType: Record<string, string> = {
     call: 'Ligação',
     email: 'E-mail',
@@ -97,7 +208,40 @@ export function DealPreviewCard({
   };
 
   return (
-    <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 mb-3 animate-fade-in">
+    <div className={cn(
+      "rounded-lg border p-3 mb-3 animate-fade-in",
+      riskLevel.level === 'high' 
+        ? "border-red-500/30 bg-red-500/5" 
+        : riskLevel.level === 'medium'
+        ? "border-amber-500/30 bg-amber-500/5"
+        : "border-primary/20 bg-primary/5"
+    )}>
+      {/* Risk Indicator */}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={cn(
+              "inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium mb-2 cursor-help",
+              riskLevel.bgColor,
+              riskLevel.color
+            )}>
+              {riskLevel.icon}
+              {riskLevel.label}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[200px]">
+            <p className="font-medium mb-1 text-xs">Análise de Risco</p>
+            <ul className="text-[10px] space-y-0.5">
+              {riskLevel.reasons.map((reason, i) => (
+                <li key={i} className="flex items-start gap-1">
+                  <span className="text-muted-foreground">•</span>
+                  {reason}
+                </li>
+              ))}
+            </ul>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
