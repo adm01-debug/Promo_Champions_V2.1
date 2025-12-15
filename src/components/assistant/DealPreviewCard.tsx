@@ -1,0 +1,185 @@
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { 
+  DollarSign, 
+  Clock, 
+  Activity, 
+  TrendingUp,
+  Calendar,
+  User,
+  Package,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { formatDistanceToNow, differenceInDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
+interface DealPreviewCardProps {
+  dealId: string;
+  clientName: string;
+  productName: string;
+  amount: number;
+  status: string;
+}
+
+const STATUS_LABELS: Record<string, { label: string; color: string; icon: string }> = {
+  lead: { label: 'Lead', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30', icon: '🎯' },
+  qualified: { label: 'Qualificado', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: '✅' },
+  proposal: { label: 'Proposta', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', icon: '📄' },
+  negotiation: { label: 'Negociação', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', icon: '🤝' },
+  closed_won: { label: 'Fechado', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: '🎉' },
+  closed_lost: { label: 'Perdido', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: '❌' },
+};
+
+export function DealPreviewCard({
+  dealId,
+  clientName,
+  productName,
+  amount,
+  status,
+}: DealPreviewCardProps) {
+  // Fetch additional deal info: time in pipeline and last activity
+  const { data: dealDetails } = useQuery({
+    queryKey: ['deal-preview-details', dealId],
+    queryFn: async () => {
+      const [saleRes, activityRes, stageRes] = await Promise.all([
+        supabase
+          .from('sales')
+          .select('created_at, updated_at')
+          .eq('id', dealId)
+          .maybeSingle(),
+        supabase
+          .from('activities')
+          .select('created_at, activity_type')
+          .eq('sale_id', dealId)
+          .order('created_at', { ascending: false })
+          .limit(1),
+        supabase
+          .from('deal_stage_history')
+          .select('stage, entered_at')
+          .eq('sale_id', dealId)
+          .order('entered_at', { ascending: false })
+          .limit(1),
+      ]);
+
+      return {
+        createdAt: saleRes.data?.created_at,
+        updatedAt: saleRes.data?.updated_at,
+        lastActivity: activityRes.data?.[0],
+        currentStageEntry: stageRes.data?.[0],
+      };
+    },
+    staleTime: 30000,
+  });
+
+  const statusInfo = STATUS_LABELS[status] || { 
+    label: status, 
+    color: 'bg-muted text-muted-foreground', 
+    icon: '📋' 
+  };
+
+  const daysInPipeline = dealDetails?.createdAt 
+    ? differenceInDays(new Date(), new Date(dealDetails.createdAt))
+    : null;
+
+  const daysInCurrentStage = dealDetails?.currentStageEntry?.entered_at
+    ? differenceInDays(new Date(), new Date(dealDetails.currentStageEntry.entered_at))
+    : null;
+
+  const lastActivityType: Record<string, string> = {
+    call: 'Ligação',
+    email: 'E-mail',
+    meeting: 'Reunião',
+    linkedin: 'LinkedIn',
+    whatsapp: 'WhatsApp',
+    other: 'Outro',
+  };
+
+  return (
+    <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 mb-3 animate-fade-in">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-lg">{statusInfo.icon}</span>
+            <h4 className="font-semibold text-sm truncate">{clientName}</h4>
+          </div>
+          <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            {productName}
+          </p>
+        </div>
+        <Badge variant="secondary" className={cn('text-[10px] px-2 py-0.5 shrink-0', statusInfo.color)}>
+          {statusInfo.label}
+        </Badge>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 mt-3">
+        {/* Value */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <div className="p-1 rounded bg-emerald-500/10">
+            <DollarSign className="h-3 w-3 text-emerald-500" />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[10px]">Valor</span>
+            <span className="font-medium">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 0,
+              }).format(amount)}
+            </span>
+          </div>
+        </div>
+
+        {/* Time in Pipeline */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <div className="p-1 rounded bg-blue-500/10">
+            <Clock className="h-3 w-3 text-blue-500" />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[10px]">No Pipeline</span>
+            <span className="font-medium">
+              {daysInPipeline !== null ? `${daysInPipeline} dias` : '-'}
+            </span>
+          </div>
+        </div>
+
+        {/* Time in Current Stage */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <div className="p-1 rounded bg-purple-500/10">
+            <TrendingUp className="h-3 w-3 text-purple-500" />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[10px]">Neste Estágio</span>
+            <span className="font-medium">
+              {daysInCurrentStage !== null ? `${daysInCurrentStage} dias` : '-'}
+            </span>
+          </div>
+        </div>
+
+        {/* Last Activity */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <div className="p-1 rounded bg-amber-500/10">
+            <Activity className="h-3 w-3 text-amber-500" />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[10px]">Última Atividade</span>
+            <span className="font-medium">
+              {dealDetails?.lastActivity ? (
+                <span title={lastActivityType[dealDetails.lastActivity.activity_type] || dealDetails.lastActivity.activity_type}>
+                  {formatDistanceToNow(new Date(dealDetails.lastActivity.created_at), {
+                    addSuffix: false,
+                    locale: ptBR,
+                  })}
+                </span>
+              ) : (
+                'Sem atividade'
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
