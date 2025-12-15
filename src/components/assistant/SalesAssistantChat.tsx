@@ -81,15 +81,66 @@ export function SalesAssistantChat() {
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isCurrentlySpeaking, setIsCurrentlySpeaking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
+  const lastSpokenMessageRef = useRef<string | null>(null);
   const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
   const { messages, isLoading, sendMessage, clearMessages } = useSalesAssistant(selectedSalesperson);
 
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
+
+  // Speech Synthesis function
+  const speakText = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) {
+      toast({
+        title: 'Navegador não suportado',
+        description: 'Seu navegador não suporta síntese de voz.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    // Try to find a Portuguese voice
+    const voices = window.speechSynthesis.getVoices();
+    const ptVoice = voices.find(v => v.lang.startsWith('pt')) || voices[0];
+    if (ptVoice) {
+      utterance.voice = ptVoice;
+    }
+
+    utterance.onstart = () => setIsCurrentlySpeaking(true);
+    utterance.onend = () => setIsCurrentlySpeaking(false);
+    utterance.onerror = () => setIsCurrentlySpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  }, [toast]);
+
+  // Auto-speak new assistant messages when TTS is enabled
+  useEffect(() => {
+    if (!isSpeaking || messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    if (
+      lastMessage.role === 'assistant' && 
+      lastMessage.content && 
+      lastMessage.id !== lastSpokenMessageRef.current &&
+      !isLoading
+    ) {
+      lastSpokenMessageRef.current = lastMessage.id;
+      speakText(lastMessage.content);
+    }
+  }, [messages, isSpeaking, isLoading, speakText]);
 
   // Initialize Speech Recognition
   useEffect(() => {
@@ -131,6 +182,23 @@ export function SalesAssistantChat() {
       }
     };
   }, [toast]);
+
+  // Load voices when component mounts
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      // Voices may load asynchronously
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -185,10 +253,21 @@ export function SalesAssistantChat() {
     }
   }, [isListening, toast]);
 
-  const toggleSpeaker = () => {
-    setIsSpeaking(!isSpeaking);
-    // Text-to-speech would be implemented here
-  };
+  const toggleSpeaker = useCallback(() => {
+    const newState = !isSpeaking;
+    setIsSpeaking(newState);
+    
+    if (!newState) {
+      // Stop any ongoing speech when disabled
+      window.speechSynthesis.cancel();
+      setIsCurrentlySpeaking(false);
+    } else {
+      toast({
+        title: 'Leitura ativada',
+        description: 'As respostas serão lidas em voz alta.',
+      });
+    }
+  }, [isSpeaking, toast]);
 
   return (
     <Card className="flex flex-col h-[700px] border-border/50 bg-card/50 backdrop-blur-sm">
@@ -318,10 +397,11 @@ export function SalesAssistantChat() {
                   size="icon"
                   className={cn(
                     'h-7 w-7',
-                    isSpeaking && 'text-primary bg-primary/10'
+                    isSpeaking && 'text-primary bg-primary/10',
+                    isCurrentlySpeaking && 'animate-pulse'
                   )}
                   onClick={toggleSpeaker}
-                  title="Ler respostas em voz alta"
+                  title={isSpeaking ? 'Desativar leitura em voz alta' : 'Ativar leitura em voz alta'}
                 >
                   {isSpeaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
