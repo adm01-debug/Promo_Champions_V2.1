@@ -25,7 +25,9 @@ import {
   Link2,
   Briefcase,
   LucideIcon,
-  ShieldCheck
+  ShieldCheck,
+  LineChart,
+  BarChart2
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -56,6 +58,8 @@ interface MenuItem {
 
 const mainItems: MenuItem[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Meu BI", url: "/bi-vendedor", icon: LineChart },
+  { title: "BI Gestão", url: "/bi-gestor", icon: BarChart2, requireAdminOrManager: true },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Metas", url: "/metas", icon: Target, requireAdminOrManager: true },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },

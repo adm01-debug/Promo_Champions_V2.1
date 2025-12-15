@@ -43,6 +43,8 @@ import Portfolio from "./pages/Portfolio";
 import ICP from "./pages/ICP";
 import AdminDashboard from "./pages/AdminDashboard";
 import Assistente from "./pages/Assistente";
+import BIVendedor from "./pages/BIVendedor";
+import BIGestor from "./pages/BIGestor";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -149,6 +151,12 @@ const App = () => (
                         } />
                         <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/assistente" element={<Assistente />} />
+                        <Route path="/bi-vendedor" element={<BIVendedor />} />
+                        <Route path="/bi-gestor" element={
+                          <ProtectedRoute requireAdminOrManager>
+                            <BIGestor />
+                          </ProtectedRoute>
+                        } />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
