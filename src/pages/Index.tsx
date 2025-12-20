@@ -170,7 +170,7 @@ const Index = () => {
                 <CompetitiveLeaderboard />
               </motion.div>
               <motion.div variants={itemVariants}>
-                <DailyChallengesCard salespersonId={salesperson?.id} compact />
+                <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
               </motion.div>
               <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
