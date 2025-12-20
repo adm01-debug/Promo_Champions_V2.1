@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useInvalidateCache } from "@/hooks/useInvalidateCache";
+import { updateChallengeProgressForSale } from "@/hooks/useChallengeProgressUpdater";
 
 export const PIPELINE_STAGES = [
   { id: "lead", label: "Lead", color: "bg-slate-500" },
@@ -85,6 +86,13 @@ export const useMoveDeal = () => {
     mutationFn: async ({ dealId, newStage }: { dealId: string; newStage: PipelineStage }) => {
       const newStatus = stageToStatus[newStage];
       
+      // First get the deal to know the salesperson
+      const { data: dealData } = await supabase
+        .from("sales")
+        .select("salesperson_id")
+        .eq("id", dealId)
+        .single();
+      
       const { data, error } = await supabase
         .from("sales")
         .update({ status: newStatus, updated_at: new Date().toISOString() })
@@ -93,6 +101,23 @@ export const useMoveDeal = () => {
         .single();
 
       if (error) throw error;
+
+      // If deal is being moved to completed, update sales challenge progress
+      if (newStage === "completed" && dealData?.salesperson_id) {
+        try {
+          const challengeResults = await updateChallengeProgressForSale(dealData.salesperson_id);
+          
+          if (challengeResults) {
+            const completed = challengeResults.filter(r => r.justCompleted);
+            for (const c of completed) {
+              toast.success(`🎯 Desafio completado: ${c.title}! Resgate +${c.xpReward} XP`);
+            }
+          }
+        } catch (e) {
+          console.error("Error updating sales challenge progress:", e);
+        }
+      }
+
       return data;
     },
     onMutate: async ({ dealId, newStage }) => {
@@ -142,6 +167,7 @@ export const useMoveDeal = () => {
     onSettled: () => {
       invalidateDomain("pipeline");
       invalidateDomain("sales");
+      invalidateDomain("challenge-progress");
     },
   });
 };

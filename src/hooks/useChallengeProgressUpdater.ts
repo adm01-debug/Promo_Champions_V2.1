@@ -1,8 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
+// Challenge types that can be updated
+export type ChallengeUpdateType = "calls" | "emails" | "meetings" | "linkedin" | "whatsapp" | "sales";
+
 // Map activity types to challenge types
-const ACTIVITY_TO_CHALLENGE_TYPE: Record<string, string> = {
+const ACTIVITY_TO_CHALLENGE_TYPE: Record<string, ChallengeUpdateType> = {
   call: "calls",
   email: "emails",
   meeting: "meetings",
@@ -16,6 +19,18 @@ export async function updateChallengeProgressForActivity(
 ) {
   const challengeType = ACTIVITY_TO_CHALLENGE_TYPE[activityType];
   if (!challengeType) return null;
+
+  return updateChallengeProgress(salespersonId, challengeType);
+}
+
+export async function updateChallengeProgressForSale(salespersonId: string) {
+  return updateChallengeProgress(salespersonId, "sales");
+}
+
+async function updateChallengeProgress(
+  salespersonId: string,
+  challengeType: ChallengeUpdateType
+) {
 
   const today = new Date().toISOString().split("T")[0];
 
