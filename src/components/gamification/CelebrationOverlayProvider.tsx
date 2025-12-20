@@ -16,7 +16,18 @@ interface StreakData {
   salespersonId: string;
   salespersonName: string;
   streakDays: number;
+  milestoneTitle?: string;
+  milestoneIcon?: string;
+  xpReward?: number;
 }
+
+// Streak milestone info mapping
+const STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: number }> = {
+  'streak_3': { title: 'Iniciante Dedicado', icon: '🔥', xp: 50 },
+  'streak_7': { title: 'Semana Perfeita', icon: '⚡', xp: 150 },
+  'streak_14': { title: 'Duas Semanas de Fogo', icon: '🌟', xp: 400 },
+  'streak_30': { title: 'Mestre da Consistência', icon: '👑', xp: 1000 },
+};
 
 export function CelebrationOverlayProvider() {
   const { triggerLevelUp, triggerStreakMilestone } = useLevelUpCelebration();
@@ -143,7 +154,7 @@ export function CelebrationOverlayProvider() {
       )
       .subscribe();
 
-    // Subscribe to achievements for streak milestones
+    // Subscribe to achievements for streak milestones (legacy)
     const achievementsChannel = supabase
       .channel('achievement-celebrations-overlay')
       .on(
@@ -180,9 +191,49 @@ export function CelebrationOverlayProvider() {
       )
       .subscribe();
 
+    // Subscribe to daily_streak_achievements for new streak system
+    const dailyStreakChannel = supabase
+      .channel('daily-streak-celebrations-overlay')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'daily_streak_achievements',
+        },
+        (payload) => {
+          const streakAchievement = payload.new as {
+            salesperson_id: string;
+            streak_type: string;
+            streak_count: number;
+            xp_awarded: number;
+          };
+
+          const salespersonName = salespersonNamesRef.current.get(streakAchievement.salesperson_id) || 'Vendedor';
+          const milestoneInfo = STREAK_MILESTONE_INFO[streakAchievement.streak_type];
+
+          console.log(`🔥 Daily streak achievement overlay queued! ${salespersonName}: ${streakAchievement.streak_type}`);
+
+          celebrationQueueRef.current.push({
+            type: 'streak',
+            data: {
+              salespersonId: streakAchievement.salesperson_id,
+              salespersonName,
+              streakDays: streakAchievement.streak_count,
+              milestoneTitle: milestoneInfo?.title || 'Conquista de Streak!',
+              milestoneIcon: milestoneInfo?.icon || '🔥',
+              xpReward: streakAchievement.xp_awarded,
+            }
+          });
+          processQueue();
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(xpChannel);
       supabase.removeChannel(achievementsChannel);
+      supabase.removeChannel(dailyStreakChannel);
     };
   }, [processQueue]);
 
@@ -200,6 +251,9 @@ export function CelebrationOverlayProvider() {
         isVisible={showStreak}
         streakDays={streakData?.streakDays || 0}
         salespersonName={streakData?.salespersonName || ''}
+        milestoneTitle={streakData?.milestoneTitle}
+        milestoneIcon={streakData?.milestoneIcon}
+        xpReward={streakData?.xpReward}
         onComplete={handleStreakComplete}
       />
     </>
