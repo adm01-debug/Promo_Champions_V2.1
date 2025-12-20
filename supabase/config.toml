@@ -50,3 +50,9 @@ verify_jwt = false
 
 [functions.rotate-daily-challenges]
 verify_jwt = false
+
+[functions.push-subscribe]
+verify_jwt = false
+
+[functions.send-push-notification]
+verify_jwt = false
