@@ -74,6 +74,7 @@ const teamItems: MenuItem[] = [
   { title: "Portfólio", url: "/portfolio", icon: Briefcase, requireAdminOrManager: true },
   { title: "ICP", url: "/icp", icon: Target, requireAdminOrManager: true },
   { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
+  { title: "Desafios Semanais", url: "/desafios", icon: Trophy },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Cadências", url: "/cadencias", icon: GitBranch },
