@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.challenge-expiration-alerts]
 verify_jwt = false
+
+[functions.rotate-daily-challenges]
+verify_jwt = false
