@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   useNotificationPreferences, 
   useCreateNotificationPreference, 
@@ -19,6 +20,7 @@ import { SoundSettings } from "@/components/settings/SoundSettings";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
 import { BrowserPushSettings } from "@/components/settings/BrowserPushSettings";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -223,11 +225,27 @@ export default function Notificacoes() {
         <div>
           <h1 className="text-3xl font-bold gradient-text">Notificações</h1>
           <p className="text-muted-foreground mt-1">
-            Gerencie suas preferências de alertas e notificações
+            Central de notificações e configurações de alertas
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
+      </div>
+
+      <Tabs defaultValue="central" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="central">Central de Notificações</TabsTrigger>
+          <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
+          <TabsTrigger value="sons">Sons</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="central" className="space-y-6">
+          <NotificationCenter />
+        </TabsContent>
+
+        <TabsContent value="configuracoes" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Destinatários de Alertas</h2>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
             <Button className="gradient-primary">
               <Plus className="h-4 w-4 mr-2" />
               Nova Configuração
@@ -352,9 +370,9 @@ export default function Notificacoes() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+          </div>
 
-      {isLoading ? (
+          {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2">
           {[...Array(2)].map((_, i) => (
             <Skeleton key={i} className="h-64 rounded-xl" />
@@ -473,40 +491,44 @@ export default function Notificacoes() {
             </Card>
           ))}
         </div>
-      )}
+          )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <BrowserPushSettings />
-        <SoundSettings />
-        <SDRAlertHistory />
-      </div>
-
-      <Card className="glass">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-warning" />
-              Sobre as Notificações
-            </CardTitle>
-            <TestSDRAlertButton />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <SDRAlertHistory />
+            <Card className="glass">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-warning" />
+                    Sobre as Notificações
+                  </CardTitle>
+                  <TestSDRAlertButton />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  <strong className="text-foreground">Alertas críticos incluem:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Deals parados há mais de X dias sem atualização</li>
+                  <li>Clientes inativos há mais de X dias sem compra</li>
+                  <li>Vendedores com metas 40%+ abaixo do esperado</li>
+                  <li>SDRs abaixo da meta por dias consecutivos</li>
+                </ul>
+                <p className="pt-2">
+                  Configure o domínio do Resend para enviar emails de produção. 
+                  Atualmente usando o domínio de teste (onboarding@resend.dev).
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground">
-          <p>
-            <strong className="text-foreground">Alertas críticos incluem:</strong>
-          </p>
-          <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>Deals parados há mais de X dias sem atualização</li>
-            <li>Clientes inativos há mais de X dias sem compra</li>
-            <li>Vendedores com metas 40%+ abaixo do esperado</li>
-            <li>SDRs abaixo da meta por dias consecutivos</li>
-          </ul>
-          <p className="pt-2">
-            Configure o domínio do Resend para enviar emails de produção. 
-            Atualmente usando o domínio de teste (onboarding@resend.dev).
-          </p>
-        </CardContent>
-      </Card>
+        </TabsContent>
+
+        <TabsContent value="sons" className="space-y-6">
+          <SoundSettings />
+          <BrowserPushSettings />
+        </TabsContent>
+      </Tabs>
     </div>
     </SkeletonTransition>
   );
