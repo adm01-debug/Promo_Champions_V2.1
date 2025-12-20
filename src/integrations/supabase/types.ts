@@ -727,6 +727,44 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_streak_achievements: {
+        Row: {
+          achieved_at: string
+          created_at: string
+          id: string
+          salesperson_id: string
+          streak_count: number
+          streak_type: string
+          xp_awarded: number
+        }
+        Insert: {
+          achieved_at?: string
+          created_at?: string
+          id?: string
+          salesperson_id: string
+          streak_count: number
+          streak_type: string
+          xp_awarded?: number
+        }
+        Update: {
+          achieved_at?: string
+          created_at?: string
+          id?: string
+          salesperson_id?: string
+          streak_count?: number
+          streak_type?: string
+          xp_awarded?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_streak_achievements_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_chat_history: {
         Row: {
           created_at: string
@@ -1835,6 +1873,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_daily_challenge_streak: {
+        Args: { p_salesperson_id: string }
+        Returns: number
+      }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_user_role: {
