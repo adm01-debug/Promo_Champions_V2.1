@@ -887,6 +887,53 @@ export type Database = {
           },
         ]
       }
+      demand_forecasts: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          factors: Json | null
+          forecast_date: string
+          id: string
+          model_version: string | null
+          predicted_quantity: number
+          predicted_revenue: number
+          product_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          factors?: Json | null
+          forecast_date: string
+          id?: string
+          model_version?: string | null
+          predicted_quantity?: number
+          predicted_revenue?: number
+          product_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          factors?: Json | null
+          forecast_date?: string
+          id?: string
+          model_version?: string | null
+          predicted_quantity?: number
+          predicted_revenue?: number
+          product_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demand_forecasts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           created_at: string
@@ -963,6 +1010,53 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: true
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_levels: {
+        Row: {
+          created_at: string
+          current_stock: number
+          id: string
+          last_restock_date: string | null
+          lead_time_days: number | null
+          max_stock_level: number
+          min_stock_level: number
+          product_id: string | null
+          reorder_point: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_restock_date?: string | null
+          lead_time_days?: number | null
+          max_stock_level?: number
+          min_stock_level?: number
+          product_id?: string | null
+          reorder_point?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_restock_date?: string | null
+          lead_time_days?: number | null
+          max_stock_level?: number
+          min_stock_level?: number
+          product_id?: string | null
+          reorder_point?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_levels_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -1656,6 +1750,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          id: string
+          movement_type: string
+          performed_by: string | null
+          product_id: string | null
+          quantity: number
+          reason: string | null
+          reference_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          movement_type: string
+          performed_by?: string | null
+          product_id?: string | null
+          quantity: number
+          reason?: string | null
+          reference_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          movement_type?: string
+          performed_by?: string | null
+          product_id?: string | null
+          quantity?: number
+          reason?: string | null
+          reference_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
