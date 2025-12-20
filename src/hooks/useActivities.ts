@@ -2,6 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useInvalidateCache } from "@/hooks/useInvalidateCache";
+import { updateChallengeProgressForActivity } from "@/hooks/useChallengeProgressUpdater";
 
 export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'other';
 export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified';
@@ -108,10 +109,32 @@ export function useCreateActivity() {
         .single();
 
       if (error) throw error;
+
+      // Update challenge progress if salesperson is set
+      if (input.salesperson_id) {
+        try {
+          const challengeResults = await updateChallengeProgressForActivity(
+            input.salesperson_id,
+            input.activity_type
+          );
+          
+          // Notify if a challenge was just completed
+          if (challengeResults) {
+            const completed = challengeResults.filter(r => r.justCompleted);
+            for (const c of completed) {
+              toast.success(`🎯 Desafio completado: ${c.title}! Resgate +${c.xpReward} XP`);
+            }
+          }
+        } catch (e) {
+          console.error("Error updating challenge progress:", e);
+        }
+      }
+
       return data;
     },
     onSuccess: () => {
       invalidateDomain("activities");
+      invalidateDomain("challenge-progress");
       toast.success("Atividade registrada com sucesso!");
     },
     onError: (error) => {
