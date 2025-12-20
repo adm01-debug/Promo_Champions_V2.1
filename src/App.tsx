@@ -66,6 +66,10 @@ const BIVendedor = lazy(() => import("./pages/BIVendedor"));
 const BIGestor = lazy(() => import("./pages/BIGestor"));
 const DesafiosSemanais = lazy(() => import("./pages/DesafiosSemanais"));
 const HistoricoDesafiosDiarios = lazy(() => import("./pages/HistoricoDesafiosDiarios"));
+const PrevisaoDemanda = lazy(() => import("./pages/PrevisaoDemanda"));
+const Fornecedores = lazy(() => import("./pages/Fornecedores"));
+const ComparadorPrecos = lazy(() => import("./pages/ComparadorPrecos"));
+const AssinaturaDigital = lazy(() => import("./pages/AssinaturaDigital"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -182,6 +186,26 @@ const App = () => (
                           } />
                           <Route path="/desafios" element={<DesafiosSemanais />} />
                           <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
+                          <Route path="/previsao-demanda" element={
+                            <ProtectedRoute requireAdminOrManager>
+                              <PrevisaoDemanda />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/fornecedores" element={
+                            <ProtectedRoute requireAdminOrManager>
+                              <Fornecedores />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/comparador-precos" element={
+                            <ProtectedRoute requireAdminOrManager>
+                              <ComparadorPrecos />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/assinatura-digital" element={
+                            <ProtectedRoute requireAdminOrManager>
+                              <AssinaturaDigital />
+                            </ProtectedRoute>
+                          } />
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
