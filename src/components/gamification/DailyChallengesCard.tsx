@@ -2,8 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Gift, Zap, Clock } from "lucide-react";
+import { Gift, Zap, Clock, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   useDailyChallengesWithProgress,
   useClaimDailyChallengeReward,
@@ -14,15 +18,41 @@ import {
 interface DailyChallengesCardProps {
   salespersonId?: string;
   compact?: boolean;
+  showTestButton?: boolean;
 }
 
-export function DailyChallengesCard({ salespersonId, compact = false }: DailyChallengesCardProps) {
+export function DailyChallengesCard({ salespersonId, compact = false, showTestButton = false }: DailyChallengesCardProps) {
   const { data: challenges, isLoading } = useDailyChallengesWithProgress(salespersonId);
   const claimReward = useClaimDailyChallengeReward();
+  const queryClient = useQueryClient();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleClaimReward = (challengeId: string, xpReward: number) => {
     if (!salespersonId) return;
     claimReward.mutate({ challengeId, salespersonId, xpReward });
+  };
+
+  const handleGenerateDailyChallenges = async () => {
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('rotate-daily-challenges');
+      
+      if (error) throw error;
+      
+      toast.success('Desafios diários gerados!', {
+        description: data?.message || 'Novos desafios disponíveis'
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['daily-challenges'] });
+      queryClient.invalidateQueries({ queryKey: ['daily-challenge-progress'] });
+    } catch (error) {
+      console.error('Error generating daily challenges:', error);
+      toast.error('Erro ao gerar desafios', {
+        description: 'Tente novamente mais tarde'
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (isLoading) {
@@ -55,6 +85,18 @@ export function DailyChallengesCard({ salespersonId, compact = false }: DailyCha
             <p className="text-sm text-muted-foreground">
               Novos desafios serão gerados em breve!
             </p>
+            {showTestButton && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleGenerateDailyChallenges}
+                disabled={isGenerating}
+                className="mt-3 gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                Gerar Agora (Teste)
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -72,9 +114,23 @@ export function DailyChallengesCard({ salespersonId, compact = false }: DailyCha
             <Zap className="h-5 w-5 text-amber-500" />
             Desafios do Dia
           </CardTitle>
-          <span className="text-xs text-muted-foreground">
-            {completedCount}/{challenges.length} • {totalXP} XP
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {completedCount}/{challenges.length} • {totalXP} XP
+            </span>
+            {showTestButton && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleGenerateDailyChallenges}
+                disabled={isGenerating}
+                className="h-7 w-7 p-0"
+                title="Gerar novos desafios (teste)"
+              >
+                <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
