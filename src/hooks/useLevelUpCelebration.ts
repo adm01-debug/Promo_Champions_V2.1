@@ -43,7 +43,7 @@ export function useLevelUpCelebration() {
   }, [celebrateLevelUp]);
 
   const triggerStreakMilestone = useCallback(async (event: StreakMilestoneEvent) => {
-    const milestones = [5, 10, 15, 20, 30, 50, 100];
+    const milestones = [3, 7, 14, 30, 50, 100];
     
     // Find the highest milestone achieved
     const achievedMilestone = milestones.reverse().find(m => event.streakDays >= m);
@@ -57,42 +57,79 @@ export function useLevelUpCelebration() {
     const confetti = (await import('canvas-confetti')).default;
 
     // Fire-themed celebration for streak milestones
-    const colors = ['#FF6B35', '#FF8F00', '#FFB300', '#FFD54F', '#FF5722'];
+    const fireColors = ['#FF6B35', '#FF8F00', '#FFB300', '#FFD54F', '#FF5722', '#E64A19'];
     
-    // Burst from both sides
+    // Initial side bursts
     confetti({
-      particleCount: 80,
+      particleCount: 100,
       angle: 60,
-      spread: 70,
-      origin: { x: 0, y: 0.6 },
-      colors: colors,
-      zIndex: 9999,
+      spread: 80,
+      origin: { x: 0, y: 0.7 },
+      colors: fireColors,
+      zIndex: 10000,
+      scalar: 1.2,
     });
     
     confetti({
-      particleCount: 80,
+      particleCount: 100,
       angle: 120,
-      spread: 70,
-      origin: { x: 1, y: 0.6 },
-      colors: colors,
-      zIndex: 9999,
+      spread: 80,
+      origin: { x: 1, y: 0.7 },
+      colors: fireColors,
+      zIndex: 10000,
+      scalar: 1.2,
     });
 
-    // Center burst
+    // Center burst with delay
     setTimeout(() => {
       confetti({
-        particleCount: 100,
-        spread: 100,
-        origin: { y: 0.6 },
-        colors: colors,
-        scalar: 1.2,
-        zIndex: 9999,
+        particleCount: 150,
+        spread: 120,
+        origin: { x: 0.5, y: 0.5 },
+        colors: fireColors,
+        scalar: 1.3,
+        zIndex: 10000,
       });
-    }, 200);
+    }, 150);
+
+    // Continuous fire effect
+    const duration = 2000;
+    const end = Date.now() + duration;
+    
+    const fireInterval = setInterval(() => {
+      if (Date.now() > end) {
+        clearInterval(fireInterval);
+        return;
+      }
+      
+      confetti({
+        particleCount: 5,
+        angle: 90 + (Math.random() - 0.5) * 30,
+        spread: 50,
+        origin: { x: 0.3 + Math.random() * 0.4, y: 0.9 },
+        colors: fireColors,
+        scalar: 0.8,
+        gravity: 0.8,
+        drift: (Math.random() - 0.5) * 0.5,
+        zIndex: 10000,
+      });
+    }, 50);
+
+    // Final big burst
+    setTimeout(() => {
+      confetti({
+        particleCount: 200,
+        spread: 160,
+        origin: { y: 0.6 },
+        colors: ['#FFD700', '#FFC107', '#FF9800', '#FF5722', '#F44336'],
+        scalar: 1.5,
+        zIndex: 10000,
+      });
+    }, duration + 200);
 
     sendPushNotification(
       '🔥 Sequência Incrível!',
-      `${event.salespersonName} completou ${event.streakDays} dias seguidos batendo meta!`
+      `${event.salespersonName} completou ${event.streakDays} dias consecutivos!`
     );
   }, [sendPushNotification]);
 
