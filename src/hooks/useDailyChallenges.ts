@@ -1,6 +1,110 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+// Streak milestone definitions (duplicated to avoid circular dependency)
+const STREAK_MILESTONES = [
+  { type: 'streak_3', days: 3, xp: 50, title: 'Iniciante Dedicado', icon: '🔥' },
+  { type: 'streak_7', days: 7, xp: 150, title: 'Semana Perfeita', icon: '⚡' },
+  { type: 'streak_14', days: 14, xp: 400, title: 'Duas Semanas de Fogo', icon: '🌟' },
+  { type: 'streak_30', days: 30, xp: 1000, title: 'Mestre da Consistência', icon: '👑' },
+];
+
+// Helper function to check and award streak milestones
+async function checkAndAwardStreakMilestones(salespersonId: string, queryClient: QueryClient) {
+  try {
+    // Get current streak
+    const { data: currentStreak, error: streakError } = await supabase
+      .rpc('calculate_daily_challenge_streak', { p_salesperson_id: salespersonId });
+    
+    if (streakError) throw streakError;
+    
+    // Get existing achievements
+    const { data: existingAchievements } = await supabase
+      .from('daily_streak_achievements')
+      .select('streak_type')
+      .eq('salesperson_id', salespersonId);
+    
+    const existingTypes = new Set(existingAchievements?.map(a => a.streak_type) || []);
+    
+    // Check for new milestones
+    const newMilestones = STREAK_MILESTONES.filter(
+      milestone => currentStreak >= milestone.days && !existingTypes.has(milestone.type)
+    );
+    
+    if (newMilestones.length === 0) return;
+    
+    // Award new milestones
+    for (const milestone of newMilestones) {
+      // Insert streak achievement
+      const { error: insertError } = await supabase
+        .from('daily_streak_achievements')
+        .insert({
+          salesperson_id: salespersonId,
+          streak_type: milestone.type,
+          streak_count: currentStreak,
+          xp_awarded: milestone.xp,
+        });
+      
+      if (insertError && !insertError.message.includes('duplicate')) {
+        console.error('Error inserting streak achievement:', insertError);
+        continue;
+      }
+      
+      // Award XP
+      const { data: xpData } = await supabase
+        .from('salesperson_xp')
+        .select('total_xp, current_level, xp_to_next_level')
+        .eq('salesperson_id', salespersonId)
+        .single();
+      
+      if (xpData) {
+        const newTotalXP = xpData.total_xp + milestone.xp;
+        let newLevel = xpData.current_level;
+        let newXPToNext = xpData.xp_to_next_level;
+        
+        while (newTotalXP >= newXPToNext) {
+          newLevel++;
+          newXPToNext = newLevel * 100;
+        }
+        
+        await supabase
+          .from('salesperson_xp')
+          .update({
+            total_xp: newTotalXP,
+            current_level: newLevel,
+            xp_to_next_level: newXPToNext,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('salesperson_id', salespersonId);
+        
+        // Log XP history
+        await supabase
+          .from('xp_history')
+          .insert({
+            salesperson_id: salespersonId,
+            xp_amount: milestone.xp,
+            source_type: 'streak_achievement',
+            description: `Conquista: ${milestone.title} (${milestone.days} dias)`,
+          });
+      }
+      
+      // Show celebration toast
+      toast.success(`${milestone.icon} Conquista Desbloqueada!`, {
+        description: `${milestone.title}: +${milestone.xp} XP`,
+        duration: 5000,
+      });
+    }
+    
+    // Invalidate queries
+    queryClient.invalidateQueries({ queryKey: ['streak-achievements'] });
+    queryClient.invalidateQueries({ queryKey: ['daily-streak'] });
+    queryClient.invalidateQueries({ queryKey: ['salesperson-xp'] });
+    queryClient.invalidateQueries({ queryKey: ['xp-history'] });
+  } catch (error) {
+    console.error('Error checking streak milestones:', error);
+  }
+}
 
 export interface DailyChallenge {
   id: string;
@@ -130,6 +234,8 @@ export function useClaimDailyChallengeReward() {
       salespersonId: string;
       xpReward: number;
     }) => {
+      const today = new Date().toISOString().split('T')[0];
+      
       // Mark as claimed
       const { error: progressError } = await supabase
         .from('daily_challenge_progress')
@@ -178,15 +284,41 @@ export function useClaimDailyChallengeReward() {
         description: 'Desafio diário completado',
       });
 
-      return { xpReward };
+      // Check if all daily challenges are now completed
+      const { data: todaysChallenges } = await supabase
+        .from('daily_challenges')
+        .select('id')
+        .eq('challenge_date', today)
+        .eq('is_active', true);
+
+      const { data: completedProgress } = await supabase
+        .from('daily_challenge_progress')
+        .select('challenge_id, xp_claimed')
+        .eq('salesperson_id', salespersonId)
+        .in('challenge_id', todaysChallenges?.map(c => c.id) || []);
+
+      const allChallengesCompleted = todaysChallenges?.length === completedProgress?.filter(p => p.xp_claimed).length;
+
+      return { xpReward, salespersonId, allChallengesCompleted };
     },
-    onSuccess: (data, variables) => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ['daily-challenge-progress'] });
       queryClient.invalidateQueries({ queryKey: ['salesperson-xp'] });
       queryClient.invalidateQueries({ queryKey: ['xp-history'] });
       queryClient.invalidateQueries({ queryKey: ['daily-streak'] });
       queryClient.invalidateQueries({ queryKey: ['streak-achievements'] });
       toast.success(`+${data.xpReward} XP! Desafio diário completado!`);
+
+      // If all challenges completed, check for streak milestones
+      if (data.allChallengesCompleted) {
+        toast.success('🎉 Todos os desafios do dia completados!', {
+          description: 'Verificando conquistas de streak...',
+          duration: 3000,
+        });
+        
+        // Trigger streak milestone check
+        await checkAndAwardStreakMilestones(data.salespersonId, queryClient);
+      }
     },
     onError: (error) => {
       console.error('Error claiming daily challenge reward:', error);
