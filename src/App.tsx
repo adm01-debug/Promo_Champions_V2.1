@@ -45,6 +45,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Assistente from "./pages/Assistente";
 import BIVendedor from "./pages/BIVendedor";
 import BIGestor from "./pages/BIGestor";
+import DesafiosSemanais from "./pages/DesafiosSemanais";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -157,6 +158,7 @@ const App = () => (
                             <BIGestor />
                           </ProtectedRoute>
                         } />
+                        <Route path="/desafios" element={<DesafiosSemanais />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>

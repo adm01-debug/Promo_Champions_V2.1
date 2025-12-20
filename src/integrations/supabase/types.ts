@@ -365,6 +365,54 @@ export type Database = {
         }
         Relationships: []
       }
+      challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed_at: string | null
+          created_at: string
+          current_value: number
+          id: string
+          salesperson_id: string
+          updated_at: string
+          xp_claimed: boolean
+        }
+        Insert: {
+          challenge_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number
+          id?: string
+          salesperson_id: string
+          updated_at?: string
+          xp_claimed?: boolean
+        }
+        Update: {
+          challenge_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number
+          id?: string
+          salesperson_id?: string
+          updated_at?: string
+          xp_claimed?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_progress_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_conversations: {
         Row: {
           created_at: string
@@ -1612,6 +1660,48 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_challenges: {
+        Row: {
+          challenge_type: string
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean
+          start_date: string
+          target_value: number
+          title: string
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          challenge_type?: string
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean
+          start_date: string
+          target_value?: number
+          title: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          challenge_type?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          target_value?: number
+          title?: string
+          updated_at?: string
+          xp_reward?: number
         }
         Relationships: []
       }
