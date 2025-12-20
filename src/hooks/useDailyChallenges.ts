@@ -180,10 +180,12 @@ export function useClaimDailyChallengeReward() {
 
       return { xpReward };
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['daily-challenge-progress'] });
       queryClient.invalidateQueries({ queryKey: ['salesperson-xp'] });
       queryClient.invalidateQueries({ queryKey: ['xp-history'] });
+      queryClient.invalidateQueries({ queryKey: ['daily-streak'] });
+      queryClient.invalidateQueries({ queryKey: ['streak-achievements'] });
       toast.success(`+${data.xpReward} XP! Desafio diário completado!`);
     },
     onError: (error) => {

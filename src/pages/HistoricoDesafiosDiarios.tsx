@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { getDailyChallengeIcon, getDailyChallengeColor } from "@/hooks/useDailyChallenges";
+import { StreakAchievementsCard } from "@/components/gamification/StreakAchievementsCard";
+import { useCheckAndAwardStreakMilestone } from "@/hooks/useDailyStreakAchievements";
 
 interface DailyChallengeWithProgress {
   id: string;
@@ -43,6 +45,7 @@ export default function HistoricoDesafiosDiarios() {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
+  const checkStreakMilestone = useCheckAndAwardStreakMilestone();
 
   const { data: history, isLoading } = useQuery({
     queryKey: ['daily-challenges-history', salesperson?.id],
@@ -252,12 +255,41 @@ export default function HistoricoDesafiosDiarios() {
           </motion.div>
         </motion.div>
 
+        {/* Streak Achievements Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          <StreakAchievementsCard salespersonId={salesperson?.id} />
+        </motion.div>
+
+        {/* Check for new streak milestones button */}
+        {salesperson?.id && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex justify-center"
+          >
+            <Button
+              variant="outline"
+              onClick={() => checkStreakMilestone.mutate({ salespersonId: salesperson.id })}
+              disabled={checkStreakMilestone.isPending}
+              className="gap-2"
+            >
+              <CheckCircle className={`h-4 w-4 ${checkStreakMilestone.isPending ? 'animate-spin' : ''}`} />
+              Verificar Conquistas de Streak
+            </Button>
+          </motion.div>
+        )}
+
         {/* History by Date */}
         <motion.div
           className="space-y-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.25 }}
         >
           {Object.entries(groupedByDate).length === 0 ? (
             <Card>
