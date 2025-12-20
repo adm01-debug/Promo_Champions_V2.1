@@ -23,7 +23,7 @@ import { useProducts } from "@/hooks/useProducts";
 
 export default function ComparadorPrecos() {
   const { supplierProducts, productsLoading, getPriceComparison, getBestSupplier } = useSuppliers();
-  const { products: productsData } = useProducts();
+  const { data: productsData } = useProducts();
   const products = productsData || [];
   const productGroups = products?.map(product => {
     const comparison = getPriceComparison(product.id);
