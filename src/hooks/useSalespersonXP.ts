@@ -23,7 +23,7 @@ interface XPHistory {
 }
 
 // XP thresholds per level (exponential growth)
-const LEVEL_THRESHOLDS = [
+export const LEVEL_THRESHOLDS = [
   0,      // Level 1: 0 XP
   100,    // Level 2: 100 XP
   250,    // Level 3: 250 XP
