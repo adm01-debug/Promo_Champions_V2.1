@@ -27,7 +27,8 @@ import {
   LucideIcon,
   ShieldCheck,
   LineChart,
-  BarChart2
+  BarChart2,
+  Zap
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -75,6 +76,7 @@ const teamItems: MenuItem[] = [
   { title: "ICP", url: "/icp", icon: Target, requireAdminOrManager: true },
   { title: "Ranking Competitivo", url: "/ranking", icon: Swords },
   { title: "Desafios Semanais", url: "/desafios", icon: Trophy },
+  { title: "Desafios Diários", url: "/desafios-diarios", icon: Zap },
   { title: "SDR Dashboard", url: "/sdr", icon: Phone },
   { title: "Closer Dashboard", url: "/closer", icon: Handshake },
   { title: "Cadências", url: "/cadencias", icon: GitBranch },
