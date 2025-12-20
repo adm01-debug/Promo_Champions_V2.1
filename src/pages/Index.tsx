@@ -11,6 +11,7 @@ import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 import { CompetitiveLeaderboard } from "@/components/gamification/CompetitiveLeaderboard";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
+import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -154,7 +155,7 @@ const Index = () => {
 
             {/* Third Row */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-5 gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -167,6 +168,9 @@ const Index = () => {
               </motion.div>
               <motion.div variants={itemVariants}>
                 <CompetitiveLeaderboard />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <DailyChallengesCard salespersonId={salesperson?.id} compact />
               </motion.div>
               <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
