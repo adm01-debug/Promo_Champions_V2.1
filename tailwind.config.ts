@@ -169,10 +169,10 @@ export default {
   			'102': '1.02'
   		},
   		spacing: {
-  			'card': 'var(--spacing-card)',
+  			card: 'var(--spacing-card)',
   			'card-sm': 'var(--spacing-card-sm)',
   			'card-lg': 'var(--spacing-card-lg)',
-  			'section': 'var(--spacing-section)',
+  			section: 'var(--spacing-section)',
   			'section-lg': 'var(--spacing-section-lg)'
   		},
   		boxShadow: {
