@@ -93,7 +93,7 @@ export default function ICP() {
     };
   }, [icpData]);
 
-  const handleEdit = (icp: any) => {
+  const handleEdit = (icp: ICPData) => {
     setEditingICP(icp);
     setEditForm({
       ramo_atividade: icp.ramo_atividade || "",
