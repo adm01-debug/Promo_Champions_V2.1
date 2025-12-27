@@ -136,7 +136,9 @@ export function CelebrationOverlayProvider() {
           if (newLevel.level > oldLevel.level) {
             const levelInfo = getLevelInfo(newLevel.level);
             
+            if (import.meta.env.DEV) {
             console.log(`🎉 Level Up overlay queued! ${salespersonName}: ${oldLevel.level} → ${newLevel.level}`);
+            }
             
             celebrationQueueRef.current.push({
               type: 'levelUp',
@@ -175,7 +177,9 @@ export function CelebrationOverlayProvider() {
             const salespersonName = salespersonNamesRef.current.get(achievement.salesperson_id) || 'Vendedor';
             const streakDays = achievement.details?.streak_days || 0;
 
+            if (import.meta.env.DEV) {
             console.log(`🔥 Streak milestone overlay queued! ${salespersonName}: ${streakDays} days`);
+            }
 
             celebrationQueueRef.current.push({
               type: 'streak',
@@ -212,7 +216,9 @@ export function CelebrationOverlayProvider() {
           const salespersonName = salespersonNamesRef.current.get(streakAchievement.salesperson_id) || 'Vendedor';
           const milestoneInfo = STREAK_MILESTONE_INFO[streakAchievement.streak_type];
 
+          if (import.meta.env.DEV) {
           console.log(`🔥 Daily streak achievement overlay queued! ${salespersonName}: ${streakAchievement.streak_type}`);
+          }
 
           celebrationQueueRef.current.push({
             type: 'streak',
