@@ -286,8 +286,7 @@ export function PerformanceComparison() {
                     variant="secondary" 
                     style={{ backgroundColor: `${ROLE_COLORS[benchmark.role]}20`, color: ROLE_COLORS[benchmark.role] }}
                     className="font-medium border"
-                    // @ts-ignore
-                    css={{ borderColor: `${ROLE_COLORS[benchmark.role]}30` }}
+                    style={{ borderColor: `${ROLE_COLORS[benchmark.role]}30` }}
                   >
                     {isLeadingRole && <Crown className="h-3 w-3 mr-1" />}
                     {ROLE_LABELS[benchmark.role]}
