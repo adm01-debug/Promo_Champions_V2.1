@@ -23,83 +23,110 @@ export interface CreateClientInput {
   total_value?: number;
 }
 
-export const useClients = (searchTerm?: string) => {
+export interface ClientsQueryResult {
+  data: Client[];
+  count: number;
+  pageCount: number;
+}
+
+export const useClients = (
+  searchTerm?: string, 
+  page = 1, 
+  pageSize = 50
+) => {
   return useQuery({
-    queryKey: ["clients", searchTerm],
-    queryFn: async (): Promise<Client[]> => {
+    queryKey: ["clients", searchTerm, page, pageSize],
+    queryFn: async (): Promise<ClientsQueryResult> => {
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+      
       let query = supabase
         .from("clients")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
-      if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,company.ilike.%${searchTerm}%`);
+      if (searchTerm && searchTerm.trim() !== "") {
+        query = query.or(
+          `name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,company.ilike.%${searchTerm}%`
+        );
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
+      const { data, error, count } = await query;
+
+      if (error) {
+        console.error("Error fetching clients:", error);
+        throw error;
+      }
+
+      return {
+        data: data || [],
+        count: count || 0,
+        pageCount: Math.ceil((count || 0) / pageSize),
+      };
     },
   });
 };
 
 export const useCreateClient = () => {
   const queryClient = useQueryClient();
-  const { invalidateDomain } = useInvalidateCache();
+  const { invalidateClients } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (input: CreateClientInput) => {
       const { data, error } = await supabase
         .from("clients")
-        .insert([input])
+        .insert([
+          {
+            name: input.name,
+            email: input.email || null,
+            phone: input.phone || null,
+            company: input.company || null,
+            total_value: input.total_value || 0,
+          },
+        ])
         .select()
         .single();
 
       if (error) throw error;
       return data;
     },
-    onMutate: async (newClient) => {
-      await queryClient.cancelQueries({ queryKey: ["clients"] });
-      const previousClients = queryClient.getQueryData<Client[]>(["clients"]);
-      
-      const optimisticClient: Client = {
-        id: `temp-${Date.now()}`,
-        name: newClient.name,
-        email: newClient.email || null,
-        phone: newClient.phone || null,
-        company: newClient.company || null,
-        total_value: newClient.total_value || 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      
-      queryClient.setQueryData<Client[]>(["clients"], (old) =>
-        old ? [optimisticClient, ...old] : [optimisticClient]
-      );
-      
-      return { previousClients };
-    },
-    onError: (_err, _newClient, context) => {
-      if (context?.previousClients) {
-        queryClient.setQueryData(["clients"], context.previousClients);
-      }
-      toast.error("Erro ao criar cliente");
-    },
-    onSuccess: () => {
+    onSuccess: (newClient) => {
       toast.success("Cliente criado com sucesso!");
+      invalidateClients();
+      
+      // Atualizar cache de forma otimista
+      queryClient.setQueryData<ClientsQueryResult>(
+        ["clients", undefined, 1, 50],
+        (old) => {
+          if (!old) return { data: [newClient], count: 1, pageCount: 1 };
+          return {
+            data: [newClient, ...old.data],
+            count: old.count + 1,
+            pageCount: Math.ceil((old.count + 1) / 50),
+          };
+        }
+      );
     },
-    onSettled: () => {
-      invalidateDomain("clients");
+    onError: (error) => {
+      console.error("Error creating client:", error);
+      toast.error("Erro ao criar cliente. Tente novamente.");
     },
   });
 };
 
 export const useUpdateClient = () => {
   const queryClient = useQueryClient();
-  const { invalidateDomain } = useInvalidateCache();
+  const { invalidateClients } = useInvalidateCache();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Client> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Partial<Client>;
+    }) => {
       const { data, error } = await supabase
         .from("clients")
         .update(updates)
@@ -110,61 +137,60 @@ export const useUpdateClient = () => {
       if (error) throw error;
       return data;
     },
-    onMutate: async ({ id, ...updates }) => {
-      await queryClient.cancelQueries({ queryKey: ["clients"] });
-      const previousClients = queryClient.getQueryData<Client[]>(["clients"]);
-      
-      queryClient.setQueryData<Client[]>(["clients"], (old) =>
-        updateItemInArray(old, id, updates)
-      );
-      
-      return { previousClients };
-    },
-    onError: (_err, _variables, context) => {
-      if (context?.previousClients) {
-        queryClient.setQueryData(["clients"], context.previousClients);
-      }
-      toast.error("Erro ao atualizar cliente");
-    },
-    onSuccess: () => {
+    onSuccess: (updatedClient) => {
       toast.success("Cliente atualizado com sucesso!");
+      invalidateClients();
+      
+      // Atualizar cache de forma otimista
+      queryClient.setQueriesData<ClientsQueryResult>(
+        { queryKey: ["clients"] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: updateItemInArray(old.data, updatedClient),
+          };
+        }
+      );
     },
-    onSettled: () => {
-      invalidateDomain("clients");
+    onError: (error) => {
+      console.error("Error updating client:", error);
+      toast.error("Erro ao atualizar cliente. Tente novamente.");
     },
   });
 };
 
 export const useDeleteClient = () => {
   const queryClient = useQueryClient();
-  const { invalidateDomain } = useInvalidateCache();
+  const { invalidateClients } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("clients").delete().eq("id", id);
       if (error) throw error;
+      return id;
     },
-    onMutate: async (clientId) => {
-      await queryClient.cancelQueries({ queryKey: ["clients"] });
-      const previousClients = queryClient.getQueryData<Client[]>(["clients"]);
-      
-      queryClient.setQueryData<Client[]>(["clients"], (old) =>
-        removeItemFromArray(old, clientId)
-      );
-      
-      return { previousClients };
-    },
-    onError: (_err, _clientId, context) => {
-      if (context?.previousClients) {
-        queryClient.setQueryData(["clients"], context.previousClients);
-      }
-      toast.error("Erro ao excluir cliente");
-    },
-    onSuccess: () => {
+    onSuccess: (deletedId) => {
       toast.success("Cliente excluído com sucesso!");
+      invalidateClients();
+      
+      // Atualizar cache de forma otimista
+      queryClient.setQueriesData<ClientsQueryResult>(
+        { queryKey: ["clients"] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: removeItemFromArray(old.data, deletedId),
+            count: old.count - 1,
+            pageCount: Math.ceil((old.count - 1) / 50),
+          };
+        }
+      );
     },
-    onSettled: () => {
-      invalidateDomain("clients");
+    onError: (error) => {
+      console.error("Error deleting client:", error);
+      toast.error("Erro ao excluir cliente. Tente novamente.");
     },
   });
 };
