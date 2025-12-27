@@ -127,12 +127,13 @@ export function useConversionAnalysis(salespersonId?: string) {
   return useQuery({
     queryKey: ['conversion-analysis', salespersonId],
     queryFn: async (): Promise<ConversionAnalysisData> => {
+      // Use deal_stage_history instead of sales_stage_history
       const { data: currentHistory, error: currentError } = await supabase
-        .from('sales_stage_history')
+        .from('deal_stage_history')
         .select(`
           sale_id,
           stage,
-          sales (
+          sales:sale_id (
             salesperson_id
           )
         `)
@@ -142,11 +143,11 @@ export function useConversionAnalysis(salespersonId?: string) {
       if (currentError) throw currentError;
 
       const { data: previousHistory, error: previousError } = await supabase
-        .from('sales_stage_history')
+        .from('deal_stage_history')
         .select(`
           sale_id,
           stage,
-          sales (
+          sales:sale_id (
             salesperson_id
           )
         `)
@@ -156,11 +157,11 @@ export function useConversionAnalysis(salespersonId?: string) {
       if (previousError) throw previousError;
 
       const currentData = calculateConversionData(
-        currentHistory as StageHistoryRecord[], 
+        (currentHistory || []) as unknown as StageHistoryRecord[], 
         salespersonId
       );
       const previousData = calculateConversionData(
-        previousHistory as StageHistoryRecord[], 
+        (previousHistory || []) as unknown as StageHistoryRecord[], 
         salespersonId
       );
 

@@ -81,11 +81,13 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
     updateClient.mutate(
       {
         id: client.id,
-        name: data.name,
-        email: data.email || null,
-        phone: data.phone || null,
-        company: data.company || null,
-        total_value: parseFloat(data.total_value) || 0,
+        updates: {
+          name: data.name,
+          email: data.email || null,
+          phone: data.phone || null,
+          company: data.company || null,
+          total_value: parseFloat(data.total_value) || 0,
+        },
       },
       {
         onSuccess: () => {

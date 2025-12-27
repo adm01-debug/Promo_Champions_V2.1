@@ -14,7 +14,7 @@ export interface ICPData {
 }
 
 interface ICPDataWithClient extends ICPData {
-  client?: {
+  clients?: {
     name: string;
   } | null;
 }
@@ -73,15 +73,15 @@ export function useICPByClientName() {
         .from("icp_data")
         .select(`
           *,
-          client:clients(name)
+          clients(name)
         `);
 
       if (error) throw error;
 
       const nameMap = new Map<string, ICPData>();
-      data?.forEach((item: ICPData) => {
-        if (item.client?.name) {
-          nameMap.set(item.client.name.toLowerCase(), item);
+      data?.forEach((item: ICPDataWithClient) => {
+        if (item.clients?.name) {
+          nameMap.set(item.clients.name.toLowerCase(), item);
         }
       });
 

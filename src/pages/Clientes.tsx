@@ -30,12 +30,13 @@ const Clientes = () => {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   
-  const { data: clients, isLoading } = useClients(searchTerm);
+  const { data: clientsData, isLoading } = useClients(searchTerm);
+  const clients = clientsData?.data || [];
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
 
   const sortedClients = useMemo(() => {
-    if (!clients) return [];
+    if (!clients || clients.length === 0) return [];
     
     return [...clients].sort((a, b) => {
       switch (sortBy) {
