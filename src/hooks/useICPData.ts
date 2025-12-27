@@ -13,6 +13,12 @@ export interface ICPData {
   is_icp_match: boolean;
 }
 
+interface ICPDataWithClient extends ICPData {
+  client?: {
+    name: string;
+  } | null;
+}
+
 export function useICPData() {
   return useQuery({
     queryKey: ["icp-data"],
@@ -73,7 +79,7 @@ export function useICPByClientName() {
       if (error) throw error;
 
       const nameMap = new Map<string, ICPData>();
-      data?.forEach((item: any) => {
+      data?.forEach((item: ICPData) => {
         if (item.client?.name) {
           nameMap.set(item.client.name.toLowerCase(), item);
         }
