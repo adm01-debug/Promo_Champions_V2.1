@@ -284,9 +284,12 @@ export function PerformanceComparison() {
                 <div className="flex items-center justify-between mb-4">
                   <Badge 
                     variant="secondary" 
-                    style={{ backgroundColor: `${ROLE_COLORS[benchmark.role]}20`, color: ROLE_COLORS[benchmark.role] }}
+                    style={{ 
+                      backgroundColor: `${ROLE_COLORS[benchmark.role]}20`, 
+                      color: ROLE_COLORS[benchmark.role],
+                      borderColor: `${ROLE_COLORS[benchmark.role]}30` 
+                    }}
                     className="font-medium border"
-                    style={{ borderColor: `${ROLE_COLORS[benchmark.role]}30` }}
                   >
                     {isLeadingRole && <Crown className="h-3 w-3 mr-1" />}
                     {ROLE_LABELS[benchmark.role]}

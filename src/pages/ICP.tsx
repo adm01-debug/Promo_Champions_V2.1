@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
-import { useICPData, useUpdateICPData } from "@/hooks/useICPData";
+import { useICPData, useUpdateICPData, type ICPData } from "@/hooks/useICPData";
 import { useClients } from "@/hooks/useClients";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,8 @@ import {
 
 export default function ICP() {
   const { data: icpData, isLoading: isLoadingICP } = useICPData();
-  const { data: clients, isLoading: isLoadingClients } = useClients();
+  const { data: clientsData, isLoading: isLoadingClients } = useClients();
+  const clients = clientsData?.data || [];
   const updateICP = useUpdateICPData();
   
   const [searchTerm, setSearchTerm] = useState("");

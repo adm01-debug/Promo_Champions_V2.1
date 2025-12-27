@@ -70,7 +70,7 @@ export const useClients = (
 
 export const useCreateClient = () => {
   const queryClient = useQueryClient();
-  const { invalidateClients } = useInvalidateCache();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (input: CreateClientInput) => {
@@ -93,7 +93,7 @@ export const useCreateClient = () => {
     },
     onSuccess: (newClient) => {
       toast.success("Cliente criado com sucesso!");
-      invalidateClients();
+      invalidateDomain("clients");
       
       // Atualizar cache de forma otimista
       queryClient.setQueryData<ClientsQueryResult>(
@@ -117,7 +117,7 @@ export const useCreateClient = () => {
 
 export const useUpdateClient = () => {
   const queryClient = useQueryClient();
-  const { invalidateClients } = useInvalidateCache();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async ({
@@ -139,7 +139,7 @@ export const useUpdateClient = () => {
     },
     onSuccess: (updatedClient) => {
       toast.success("Cliente atualizado com sucesso!");
-      invalidateClients();
+      invalidateDomain("clients");
       
       // Atualizar cache de forma otimista
       queryClient.setQueriesData<ClientsQueryResult>(
@@ -148,7 +148,7 @@ export const useUpdateClient = () => {
           if (!old) return old;
           return {
             ...old,
-            data: updateItemInArray(old.data, updatedClient),
+            data: old.data.map(item => item.id === updatedClient.id ? updatedClient : item),
           };
         }
       );
@@ -162,7 +162,7 @@ export const useUpdateClient = () => {
 
 export const useDeleteClient = () => {
   const queryClient = useQueryClient();
-  const { invalidateClients } = useInvalidateCache();
+  const { invalidateDomain } = useInvalidateCache();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -172,7 +172,7 @@ export const useDeleteClient = () => {
     },
     onSuccess: (deletedId) => {
       toast.success("Cliente excluído com sucesso!");
-      invalidateClients();
+      invalidateDomain("clients");
       
       // Atualizar cache de forma otimista
       queryClient.setQueriesData<ClientsQueryResult>(
