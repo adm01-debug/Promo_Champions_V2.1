@@ -934,6 +934,94 @@ export type Database = {
           },
         ]
       }
+      digital_signatures: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expires_at: string | null
+          file_url: string | null
+          id: string
+          signed_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          file_url?: string | null
+          id?: string
+          signed_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          file_url?: string | null
+          id?: string
+          signed_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digital_signatures_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_signers: {
+        Row: {
+          created_at: string
+          document_id: string
+          email: string
+          id: string
+          name: string
+          sign_order: number | null
+          signed_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          email: string
+          id?: string
+          name: string
+          sign_order?: number | null
+          signed_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          email?: string
+          id?: string
+          name?: string
+          sign_order?: number | null
+          signed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_signers_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "digital_signatures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           created_at: string
@@ -1377,6 +1465,115 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      price_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean
+          new_price: number
+          old_price: number | null
+          price_change_percent: number | null
+          product_id: string | null
+          supplier_id: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          new_price: number
+          old_price?: number | null
+          price_change_percent?: number | null
+          product_id?: string | null
+          supplier_id?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          new_price?: number
+          old_price?: number | null
+          price_change_percent?: number | null
+          product_id?: string | null
+          supplier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_alerts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_alerts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      price_history: {
+        Row: {
+          created_at: string
+          id: string
+          new_price: number
+          old_price: number
+          price_change_percent: number | null
+          product_id: string | null
+          recorded_at: string
+          supplier_id: string | null
+          supplier_product_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          new_price: number
+          old_price: number
+          price_change_percent?: number | null
+          product_id?: string | null
+          recorded_at?: string
+          supplier_id?: string | null
+          supplier_product_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          new_price?: number
+          old_price?: number
+          price_change_percent?: number | null
+          product_id?: string | null
+          recorded_at?: string
+          supplier_id?: string | null
+          supplier_product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_history_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_history_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_history_supplier_product_id_fkey"
+            columns: ["supplier_product_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {

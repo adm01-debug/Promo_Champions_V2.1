@@ -31,57 +31,22 @@ import {
   XCircle,
   Send,
   Download,
-  Eye
+  Eye,
+  Trash2,
+  Loader2
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-interface Document {
-  id: string;
-  title: string;
-  description: string;
-  status: 'draft' | 'pending' | 'signed' | 'rejected' | 'expired';
-  signers: { name: string; email: string; status: string; signed_at?: string }[];
-  created_at: string;
-  expires_at?: string;
-}
-
-// Mock data - in production this would come from an API/database
-const mockDocuments: Document[] = [
-  {
-    id: '1',
-    title: 'Contrato de Vendas - Cliente ABC',
-    description: 'Contrato padrão de prestação de serviços',
-    status: 'pending',
-    signers: [
-      { name: 'João Silva', email: 'joao@clienteabc.com', status: 'pending' },
-      { name: 'Maria Santos', email: 'maria@empresa.com', status: 'signed', signed_at: '2024-01-15T10:30:00' },
-    ],
-    created_at: '2024-01-10T09:00:00',
-    expires_at: '2024-02-10T23:59:59',
-  },
-  {
-    id: '2',
-    title: 'Proposta Comercial - Projeto XYZ',
-    description: 'Proposta de implementação do sistema',
-    status: 'signed',
-    signers: [
-      { name: 'Pedro Costa', email: 'pedro@xyz.com', status: 'signed', signed_at: '2024-01-12T14:00:00' },
-    ],
-    created_at: '2024-01-05T11:00:00',
-  },
-  {
-    id: '3',
-    title: 'NDA - Parceria Estratégica',
-    description: 'Acordo de confidencialidade',
-    status: 'draft',
-    signers: [],
-    created_at: '2024-01-18T08:00:00',
-  },
-];
+import { useDigitalSignatures } from "@/hooks/useDigitalSignatures";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AssinaturaDigital() {
-  const { toast } = useToast();
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
+  const { 
+    documents, 
+    isLoading, 
+    createDocument, 
+    sendForSignature, 
+    deleteDocument 
+  } = useDigitalSignatures();
+  
   const [isOpen, setIsOpen] = useState(false);
   const [newDoc, setNewDoc] = useState({
     title: '',
@@ -91,36 +56,30 @@ export default function AssinaturaDigital() {
   });
 
   const handleCreateDocument = () => {
-    const newDocument: Document = {
-      id: Date.now().toString(),
+    const signers = newDoc.signerEmail 
+      ? [{ name: newDoc.signerName, email: newDoc.signerEmail }] 
+      : [];
+    
+    createDocument.mutate({
       title: newDoc.title,
       description: newDoc.description,
-      status: 'draft',
-      signers: newDoc.signerEmail ? [{ name: newDoc.signerName, email: newDoc.signerEmail, status: 'pending' }] : [],
-      created_at: new Date().toISOString(),
-    };
-    
-    setDocuments(prev => [newDocument, ...prev]);
-    setIsOpen(false);
-    setNewDoc({ title: '', description: '', signerName: '', signerEmail: '' });
-    
-    toast({
-      title: "Documento criado",
-      description: "O documento foi criado como rascunho.",
+      signers,
+    }, {
+      onSuccess: () => {
+        setIsOpen(false);
+        setNewDoc({ title: '', description: '', signerName: '', signerEmail: '' });
+      }
     });
   };
 
   const handleSendForSignature = (docId: string) => {
-    setDocuments(prev => prev.map(doc => 
-      doc.id === docId 
-        ? { ...doc, status: 'pending' as const, expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() }
-        : doc
-    ));
-    
-    toast({
-      title: "Documento enviado",
-      description: "O documento foi enviado para assinatura.",
-    });
+    sendForSignature.mutate(docId);
+  };
+
+  const handleDeleteDocument = (docId: string) => {
+    if (confirm('Tem certeza que deseja excluir este documento?')) {
+      deleteDocument.mutate(docId);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -220,7 +179,11 @@ export default function AssinaturaDigital() {
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-                  <Button onClick={handleCreateDocument} disabled={!newDoc.title}>
+                  <Button 
+                    onClick={handleCreateDocument} 
+                    disabled={!newDoc.title || createDocument.isPending}
+                  >
+                    {createDocument.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     Criar Documento
                   </Button>
                 </DialogFooter>
@@ -238,7 +201,11 @@ export default function AssinaturaDigital() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{documents.length}</div>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <div className="text-2xl font-bold">{documents.length}</div>
+                )}
               </CardContent>
             </Card>
 
@@ -250,7 +217,11 @@ export default function AssinaturaDigital() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-status-warning">{pendingDocs}</div>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <div className="text-2xl font-bold text-status-warning">{pendingDocs}</div>
+                )}
               </CardContent>
             </Card>
 
@@ -262,7 +233,11 @@ export default function AssinaturaDigital() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-status-success">{signedDocs}</div>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <div className="text-2xl font-bold text-status-success">{signedDocs}</div>
+                )}
               </CardContent>
             </Card>
 
@@ -274,7 +249,11 @@ export default function AssinaturaDigital() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{draftDocs}</div>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <div className="text-2xl font-bold">{draftDocs}</div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -286,7 +265,13 @@ export default function AssinaturaDigital() {
               <CardDescription>Lista de todos os documentos criados</CardDescription>
             </CardHeader>
             <CardContent>
-              {documents.length > 0 ? (
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : documents.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -311,12 +296,14 @@ export default function AssinaturaDigital() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {doc.signers.length > 0 ? (
+                          {doc.document_signers && doc.document_signers.length > 0 ? (
                             <div className="space-y-1">
-                              {doc.signers.map((signer, i) => (
-                                <div key={i} className="flex items-center gap-2 text-sm">
+                              {doc.document_signers.map((signer) => (
+                                <div key={signer.id} className="flex items-center gap-2 text-sm">
                                   {signer.status === 'signed' ? (
                                     <CheckCircle2 className="h-3 w-3 text-status-success" />
+                                  ) : signer.status === 'rejected' ? (
+                                    <XCircle className="h-3 w-3 text-destructive" />
                                   ) : (
                                     <Clock className="h-3 w-3 text-muted-foreground" />
                                   )}
@@ -340,14 +327,26 @@ export default function AssinaturaDigital() {
                               <Eye className="h-4 w-4" />
                             </Button>
                             {doc.status === 'draft' && (
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="h-8 w-8 p-0"
-                                onClick={() => handleSendForSignature(doc.id)}
-                              >
-                                <Send className="h-4 w-4" />
-                              </Button>
+                              <>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => handleSendForSignature(doc.id)}
+                                  disabled={sendForSignature.isPending}
+                                >
+                                  <Send className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() => handleDeleteDocument(doc.id)}
+                                  disabled={deleteDocument.isPending}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </>
                             )}
                             {doc.status === 'signed' && (
                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { 
   Table, 
   TableBody, 
@@ -16,14 +18,25 @@ import {
   TrendingUp, 
   Star,
   Package,
-  DollarSign
+  DollarSign,
+  Bell,
+  BellOff,
+  History,
+  AlertTriangle
 } from "lucide-react";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useProducts } from "@/hooks/useProducts";
+import { usePriceAlerts, usePriceHistory } from "@/hooks/usePriceHistory";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function ComparadorPrecos() {
   const { supplierProducts, productsLoading, getPriceComparison, getBestSupplier } = useSuppliers();
   const { data: productsData } = useProducts();
+  const { alerts, unreadCount, markAllAsRead } = usePriceAlerts();
+  const { data: priceHistory } = usePriceHistory();
+  const [showAlerts, setShowAlerts] = useState(false);
+
   const products = productsData || [];
   const productGroups = products?.map(product => {
     const comparison = getPriceComparison(product.id);
@@ -69,18 +82,95 @@ export default function ComparadorPrecos() {
       <div className="min-h-screen bg-background">
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
           {/* Header */}
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Scale className="h-6 w-6 text-primary" />
-              Comparador de Preços
-            </h1>
-            <p className="text-muted-foreground">
-              Compare preços entre fornecedores e otimize suas compras
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold flex items-center gap-2">
+                <Scale className="h-6 w-6 text-primary" />
+                Comparador de Preços
+              </h1>
+              <p className="text-muted-foreground">
+                Compare preços entre fornecedores e otimize suas compras
+              </p>
+            </div>
+            <Button
+              variant={showAlerts ? "default" : "outline"}
+              onClick={() => setShowAlerts(!showAlerts)}
+              className="gap-2"
+            >
+              {unreadCount > 0 ? (
+                <>
+                  <Bell className="h-4 w-4" />
+                  {unreadCount} Alertas
+                </>
+              ) : (
+                <>
+                  <BellOff className="h-4 w-4" />
+                  Alertas
+                </>
+              )}
+            </Button>
           </div>
 
+          {/* Price Alerts Panel */}
+          {showAlerts && (
+            <Card className="glass border-status-warning/30 bg-status-warning/5">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-status-warning" />
+                    Alertas de Preço
+                  </CardTitle>
+                  {unreadCount > 0 && (
+                    <Button variant="ghost" size="sm" onClick={() => markAllAsRead.mutate()}>
+                      Marcar todos como lidos
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {alerts.length > 0 ? (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {alerts.slice(0, 10).map((alert) => (
+                      <div 
+                        key={alert.id} 
+                        className={`p-3 rounded-lg border ${alert.is_read ? 'bg-muted/30' : 'bg-background'}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {alert.alert_type === 'price_drop' ? (
+                              <TrendingDown className="h-4 w-4 text-status-success" />
+                            ) : (
+                              <TrendingUp className="h-4 w-4 text-destructive" />
+                            )}
+                            <span className="font-medium">{alert.products?.name}</span>
+                            <span className="text-muted-foreground">•</span>
+                            <span className="text-sm text-muted-foreground">{alert.suppliers?.name}</span>
+                          </div>
+                          <Badge variant={alert.alert_type === 'price_drop' ? 'default' : 'destructive'}>
+                            {alert.price_change_percent?.toFixed(1)}%
+                          </Badge>
+                        </div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          {alert.old_price && formatCurrency(alert.old_price)} → {formatCurrency(alert.new_price)}
+                          <span className="ml-2">•</span>
+                          <span className="ml-2">
+                            {formatDistanceToNow(new Date(alert.created_at), { addSuffix: true, locale: ptBR })}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    Nenhum alerta de preço. Alertas são criados automaticamente quando preços variam mais de 5%.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <Card className="glass border-border/40">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -128,6 +218,18 @@ export default function ComparadorPrecos() {
                 <div className="text-2xl font-bold">
                   {new Set(supplierProducts?.map(sp => sp.supplier_id)).size}
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass border-border/40">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <History className="h-4 w-4" />
+                  Histórico de Preços
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{priceHistory?.length || 0}</div>
               </CardContent>
             </Card>
           </div>
@@ -186,7 +288,7 @@ export default function ComparadorPrecos() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {comparison.map((sp: any, index: number) => (
+                          {comparison.map((sp, index: number) => (
                             <TableRow key={sp.id} className={best?.id === sp.id ? 'bg-status-success/10' : ''}>
                               <TableCell className="font-medium">
                                 {sp.suppliers?.name}
@@ -233,6 +335,62 @@ export default function ComparadorPrecos() {
               )}
             </CardContent>
           </Card>
+
+          {/* Recent Price History */}
+          {priceHistory && priceHistory.length > 0 && (
+            <Card className="glass border-border/40">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  Histórico Recente de Preços
+                </CardTitle>
+                <CardDescription>
+                  Últimas alterações de preço dos fornecedores
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Produto</TableHead>
+                      <TableHead>Fornecedor</TableHead>
+                      <TableHead className="text-right">Preço Anterior</TableHead>
+                      <TableHead className="text-right">Novo Preço</TableHead>
+                      <TableHead className="text-center">Variação</TableHead>
+                      <TableHead className="text-center">Data</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {priceHistory.slice(0, 10).map((record) => (
+                      <TableRow key={record.id}>
+                        <TableCell className="font-medium">{record.products?.name}</TableCell>
+                        <TableCell>{record.suppliers?.name}</TableCell>
+                        <TableCell className="text-right font-mono">
+                          {formatCurrency(record.old_price)}
+                        </TableCell>
+                        <TableCell className="text-right font-mono">
+                          {formatCurrency(record.new_price)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={record.price_change_percent < 0 ? 'default' : 'destructive'}>
+                            {record.price_change_percent < 0 ? (
+                              <TrendingDown className="h-3 w-3 mr-1" />
+                            ) : (
+                              <TrendingUp className="h-3 w-3 mr-1" />
+                            )}
+                            {record.price_change_percent.toFixed(1)}%
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center text-sm text-muted-foreground">
+                          {formatDistanceToNow(new Date(record.recorded_at), { addSuffix: true, locale: ptBR })}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </>
