@@ -1,0 +1,5 @@
+# Melhoria 104 - .env.staging
+VITE_SUPABASE_URL=https://staging-project.supabase.co
+VITE_SUPABASE_ANON_KEY=staging_key_here
+VITE_API_URL=https://api-staging.salespro.com
+VITE_ENVIRONMENT=staging
