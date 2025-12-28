@@ -18,6 +18,7 @@ import { ptBR } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetasAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { cn } from "@/lib/utils";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
@@ -78,13 +79,13 @@ export default function MetasAtividades() {
       skeleton={<MetasAtividadesLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background bg-gradient-subtle">
       <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
         {/* Header */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
+        <div className="animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Metas de Atividades Diárias</h1>
+              <h1 className="text-2xl font-bold gradient-text font-display">Metas de Atividades Diárias</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Acompanhe o progresso diário de cada vendedor • {format(new Date(), "dd 'de' MMMM", { locale: ptBR })}
               </p>
@@ -94,12 +95,12 @@ export default function MetasAtividades() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleTestCelebration}
-                className="gap-2"
+                className="gap-2 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
               >
                 <PartyPopper className="h-4 w-4" />
                 Testar Celebração
               </Button>
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs shadow-sm">
                 Progresso médio: {avgProgress.toFixed(0)}%
               </Badge>
             </div>
@@ -107,22 +108,29 @@ export default function MetasAtividades() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {isLoading ? (
             [...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-24 w-full" />
+              <Skeleton key={i} className="h-24 w-full rounded-xl" />
             ))
           ) : (
             stats.map((stat, index) => (
-              <Card key={index} className="glass border-border/40">
+              <Card 
+                key={index} 
+                variant="glass"
+                className={cn(
+                  "animate-fade-in-up hover:shadow-lg transition-all duration-300",
+                  `stagger-${index + 1}`
+                )}
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                    <div className={`p-2.5 rounded-xl ${stat.bgColor} shadow-sm transition-transform duration-200 group-hover:scale-110`}>
                       <stat.icon className={`h-4 w-4 ${stat.color}`} />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{stat.value}</p>
-                      <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                      <p className="text-2xl font-bold font-display">{stat.value}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -132,43 +140,45 @@ export default function MetasAtividades() {
         </div>
 
         {/* Tabs: Progress + Achievements */}
-        <Tabs defaultValue="progress" className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="progress" className="gap-2">
+        <Tabs defaultValue="progress" className="animate-fade-in-up stagger-5">
+          <TabsList className="mb-4 bg-muted/30 p-1 rounded-xl">
+            <TabsTrigger value="progress" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Target className="h-4 w-4" />
               Progresso Diário
             </TabsTrigger>
-            <TabsTrigger value="streaks" className="gap-2">
+            <TabsTrigger value="streaks" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Flame className="h-4 w-4" />
               Ranking de Sequências
             </TabsTrigger>
-            <TabsTrigger value="stats" className="gap-2">
+            <TabsTrigger value="stats" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <TrendingUp className="h-4 w-4" />
               Estatísticas
             </TabsTrigger>
-            <TabsTrigger value="history" className="gap-2">
+            <TabsTrigger value="history" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Trophy className="h-4 w-4" />
               Histórico
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="progress">
+          <TabsContent value="progress" className="animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Ranking */}
-              <div>
+              <div className="animate-fade-in-up stagger-1">
                 {isLoading ? (
-                  <Skeleton className="h-[450px] w-full" />
+                  <Skeleton className="h-[450px] w-full rounded-xl" />
                 ) : (
                   <DailyActivityRanking data={progressData || []} />
                 )}
               </div>
 
               {/* Progress Cards Grid */}
-              <div className="lg:col-span-2">
-                <Card className="glass border-border/40">
+              <div className="lg:col-span-2 animate-fade-in-up stagger-2">
+                <Card variant="glass">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <Target className="h-4 w-4 text-primary" />
+                      <div className="icon-container-primary p-1.5 rounded-lg">
+                        <Target className="h-4 w-4" />
+                      </div>
                       Progresso por Vendedor
                     </CardTitle>
                   </CardHeader>
@@ -176,23 +186,25 @@ export default function MetasAtividades() {
                     {isLoading ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {[...Array(4)].map((_, i) => (
-                          <Skeleton key={i} className="h-64 w-full" />
+                          <Skeleton key={i} className="h-64 w-full rounded-xl" />
                         ))}
                       </div>
                     ) : progressData && progressData.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {progressData.map((sp) => (
-                          <ActivityGoalCard
-                            key={sp.salesperson_id}
-                            data={sp}
-                            onEdit={setEditingId}
-                          />
+                        {progressData.map((sp, index) => (
+                          <div key={sp.salesperson_id} className={cn("animate-fade-in-up", `stagger-${index + 1}`)}>
+                            <ActivityGoalCard
+                              data={sp}
+                              onEdit={setEditingId}
+                            />
+                          </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                        <Users className="h-12 w-12 mb-3 opacity-50" />
-                        <p className="text-sm font-medium">Nenhum vendedor encontrado</p>
+                      <div className="empty-state">
+                        <Users className="empty-state-icon" />
+                        <p className="empty-state-title">Nenhum vendedor encontrado</p>
+                        <p className="empty-state-description">Adicione vendedores para ver o progresso de atividades.</p>
                       </div>
                     )}
                   </CardContent>
@@ -201,15 +213,15 @@ export default function MetasAtividades() {
             </div>
           </TabsContent>
 
-          <TabsContent value="streaks">
+          <TabsContent value="streaks" className="animate-fade-in">
             <StreakRanking />
           </TabsContent>
 
-          <TabsContent value="stats">
+          <TabsContent value="stats" className="animate-fade-in">
             <TeamAchievementStats />
           </TabsContent>
 
-          <TabsContent value="history">
+          <TabsContent value="history" className="animate-fade-in">
             <AchievementsHistory />
           </TabsContent>
         </Tabs>

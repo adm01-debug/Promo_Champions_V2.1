@@ -117,16 +117,16 @@ export function AppSidebar() {
   const visibleSystemItems = filterItems(systemItems);
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
+    <Sidebar collapsible="icon" className="border-r-0 bg-gradient-to-b from-sidebar to-sidebar/95">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0">
+        <div className="flex items-center gap-3 group">
+          <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0 shadow-md group-hover:shadow-glow-primary transition-shadow duration-300">
             <TrendingUp className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col">
               <span className="text-lg font-bold gradient-text">SalesPro</span>
-              <span className="text-xs text-muted-foreground">Dashboard</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Dashboard</span>
             </div>
           )}
         </div>
@@ -134,22 +134,22 @@ export function AppSidebar() {
 
       <SidebarContent className="px-2">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-wider">
+          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-widest font-medium mb-2">
             Principal
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {visibleMainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink 
                       to={item.url} 
                       end 
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all hover:text-foreground hover:bg-muted/50"
-                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
+                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary shadow-sm"
                     >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      <item.icon className="h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover/item:scale-110" />
+                      {!isCollapsed && <span className="font-medium">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -159,22 +159,22 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-wider">
+          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-widest font-medium mb-2">
             Equipe
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {visibleTeamItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink 
                       to={item.url} 
                       end 
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all hover:text-foreground hover:bg-muted/50"
-                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
+                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary shadow-sm"
                     >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      <item.icon className="h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover/item:scale-110" />
+                      {!isCollapsed && <span className="font-medium">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -184,11 +184,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-wider">
+          <SidebarGroupLabel className="text-muted-foreground/60 uppercase text-[10px] tracking-widest font-medium mb-2">
             Sistema
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {visibleSystemItems.map((item) => {
                 const isNotifications = item.title === "Notificações";
                 const hasAlerts = isNotifications && alertCount > 0;
@@ -199,21 +199,21 @@ export function AppSidebar() {
                       <NavLink 
                         to={item.url} 
                         end 
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all hover:text-foreground hover:bg-muted/50"
-                        activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
+                        activeClassName="bg-primary/10 text-primary border-l-2 border-primary shadow-sm"
                       >
                         <div className="relative">
                           <item.icon className={cn(
-                            "h-4 w-4 flex-shrink-0",
-                            hasAlerts && "animate-bounce text-warning"
+                            "h-4 w-4 flex-shrink-0 transition-all duration-200 group-hover/item:scale-110",
+                            hasAlerts && "text-warning animate-bounce"
                           )} />
                           {hasAlerts && (
-                            <span className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-destructive text-[9px] font-bold text-white flex items-center justify-center shadow-sm">
+                            <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center shadow-sm animate-pulse">
                               {alertCount > 9 ? "9+" : alertCount}
                             </span>
                           )}
                         </div>
-                        {!isCollapsed && <span>{item.title}</span>}
+                        {!isCollapsed && <span className="font-medium">{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -226,9 +226,9 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-4">
         {!isCollapsed && (
-          <div className="glass rounded-xl p-3">
+          <div className="glass rounded-xl p-3 border border-border/30 hover:border-primary/30 transition-colors duration-300">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center shadow-sm">
                 <Users className="h-4 w-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
@@ -236,7 +236,7 @@ export function AppSidebar() {
                   <p className="text-sm font-medium truncate">{salesperson?.name || "Usuário"}</p>
                   <UserRoleBadge />
                 </div>
-                <p className="text-xs text-muted-foreground truncate">{salesperson?.email || ""}</p>
+                <p className="text-[10px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
               </div>
             </div>
           </div>

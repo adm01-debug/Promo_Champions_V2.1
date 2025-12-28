@@ -3,17 +3,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const cardVariants = cva(
-  "rounded-lg border text-card-foreground transition-all duration-200",
+  "rounded-xl border text-card-foreground transition-all duration-300",
   {
     variants: {
       variant: {
-        default: "bg-card border-border/60 shadow-sm",
-        elevated: "bg-card border-border/60 card-elevated hover:card-elevated",
-        floating: "bg-card border-border/40 card-floating",
-        glass: "glass glass-hover",
-        depth: "card-depth",
-        interactive: "bg-card border-border/60 card-elevated hover-lift cursor-pointer",
+        default: "bg-card border-border/50 shadow-sm hover:shadow-md",
+        elevated: "bg-card border-border/40 shadow-md hover:shadow-lg hover:-translate-y-0.5",
+        floating: "bg-card border-border/30 shadow-lg hover:shadow-xl hover:-translate-y-1",
+        glass: "glass glass-hover backdrop-blur-md",
+        depth: "card-depth bg-gradient-to-b from-card to-card/95",
+        interactive: "bg-card border-border/40 shadow-sm hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 cursor-pointer",
         ghost: "bg-transparent border-transparent shadow-none",
+        modern: "card-modern bg-card border-border/40",
+        glow: "bg-card border-border/40 shadow-sm hover:shadow-glow-primary hover:border-primary/40",
+        gradient: "bg-gradient-to-br from-card via-card to-muted/20 border-border/40 shadow-sm hover:shadow-md",
+        outlined: "bg-transparent border-2 border-border hover:border-primary/50",
+        success: "bg-card border-l-4 border-l-success border-border/40 shadow-sm hover:shadow-glow-success",
+        warning: "bg-card border-l-4 border-l-warning border-border/40 shadow-sm hover:shadow-glow-warning",
+        destructive: "bg-card border-l-4 border-l-destructive border-border/40 shadow-sm hover:shadow-glow-destructive",
+        primary: "bg-card border-l-4 border-l-primary border-border/40 shadow-sm hover:shadow-glow-primary",
       },
     },
     defaultVariants: {
@@ -24,13 +32,19 @@ const cardVariants = cva(
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
+    VariantProps<typeof cardVariants> {
+  hover?: boolean;
+}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, ...props }, ref) => (
+  ({ className, variant, hover = true, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn(cardVariants({ variant }), className)}
+      className={cn(
+        cardVariants({ variant }),
+        !hover && "hover:transform-none hover:shadow-none",
+        className
+      )}
       {...props}
     />
   )
@@ -56,7 +70,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "font-display text-2xl font-semibold leading-none tracking-tight",
+      "font-display text-xl font-semibold leading-none tracking-tight",
       className
     )}
     {...props}
