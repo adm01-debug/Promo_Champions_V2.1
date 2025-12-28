@@ -1,0 +1,185 @@
+// ===== CORE ENTITIES =====
+
+export interface Deal {
+  id: string;
+  title: string;
+  value: number;
+  client_id: string;
+  stage_id: string;
+  status: 'open' | 'won' | 'lost' | 'abandoned';
+  probability: number;
+  expected_close_date?: string;
+  closed_at?: string;
+  assigned_to: string;
+  created_at: string;
+  updated_at: string;
+  products?: DealProduct[];
+  activities?: Activity[];
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  website?: string;
+  region?: string;
+  segment?: 'enterprise' | 'mid-market' | 'smb' | 'startup';
+  industry?: string;
+  employee_count?: number;
+  annual_revenue?: number;
+  created_at: string;
+  updated_at: string;
+  last_contact_date?: string;
+  deals?: Deal[];
+}
+
+export interface Activity {
+  id: string;
+  type: 'call' | 'email' | 'meeting' | 'note' | 'whatsapp' | 'linkedin';
+  client_id: string;
+  deal_id?: string;
+  user_id: string;
+  duration_seconds?: number;
+  outcome?: 'successful' | 'no_answer' | 'callback' | 'not_interested' | 'meeting_scheduled';
+  notes?: string;
+  scheduled_at?: string;
+  completed_at?: string;
+  created_at: string;
+  metadata?: Record<string, any>;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
+  role: 'admin' | 'manager' | 'sales_rep' | 'sales_ops';
+  team_id?: string;
+  created_at: string;
+  is_active: boolean;
+  phone?: string;
+  timezone?: string;
+}
+
+export interface PipelineStage {
+  id: string;
+  name: string;
+  order: number;
+  probability: number;
+  pipeline_id: string;
+  color?: string;
+  created_at: string;
+}
+
+export interface Pipeline {
+  id: string;
+  name: string;
+  description?: string;
+  stages: PipelineStage[];
+  created_at: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  currency: string;
+  sku?: string;
+  category?: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DealProduct {
+  id: string;
+  deal_id: string;
+  product_id: string;
+  quantity: number;
+  unit_price: number;
+  discount?: number;
+  total: number;
+  created_at: string;
+}
+
+export interface Cadence {
+  id: string;
+  name: string;
+  description?: string;
+  steps: CadenceStep[];
+  active: boolean;
+  created_by: string;
+  created_at: string;
+}
+
+export interface CadenceStep {
+  id: string;
+  cadence_id: string;
+  order: number;
+  type: 'email' | 'call' | 'task' | 'linkedin' | 'whatsapp';
+  wait_days: number;
+  template?: string;
+  subject?: string;
+  created_at: string;
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  xp_reward: number;
+  category: 'sales' | 'activity' | 'streak' | 'team' | 'revenue';
+  requirement_type: 'count' | 'value' | 'streak' | 'percentage';
+  requirement_value: number;
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  created_at: string;
+}
+
+export interface Goal {
+  id: string;
+  user_id: string;
+  type: 'revenue' | 'deals' | 'calls' | 'meetings' | 'emails';
+  target_value: number;
+  current_value: number;
+  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  assigned_to: string;
+  created_by: string;
+  due_date?: string;
+  completed: boolean;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  client_id?: string;
+  deal_id?: string;
+  created_at: string;
+}
+
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
+
+export interface MetricData {
+  label: string;
+  value: number;
+  change?: number;
+  trend?: 'up' | 'down' | 'stable';
+}
+
+export type DealStatus = Deal['status'];
+export type ActivityType = Activity['type'];
+export type UserRole = User['role'];
