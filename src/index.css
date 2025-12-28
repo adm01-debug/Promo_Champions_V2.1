@@ -53,12 +53,19 @@
     --ring: 161 93% 30%;
 
     /* ===== ESTADOS ===== */
-    --success: 142 71% 45%;
+    --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 0%;
     --info: 200 85% 50%;
     --info-foreground: 0 0% 100%;
+
+    /* ===== LIVE/REAL-TIME INDICATORS ===== */
+    --live-pulse: 330 81% 60%;
+    --online: 142 76% 36%;
+    --offline: 215 16% 47%;
+    --busy: 0 84% 60%;
+    --critical: 0 84% 60%;
 
     /* ===== GAMIFICAÇÃO ===== */
     --xp: 280 85% 60%;
@@ -109,14 +116,17 @@
     --spacing-section-lg: 3rem;
 
     /* ===== SHADOWS ===== */
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-glow-primary: 0 0 20px hsl(252 87% 64% / 0.25);
+    --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
+    --shadow-glow-primary: 0 0 20px hsl(161 93% 30% / 0.3);
     --shadow-glow-secondary: 0 0 20px hsl(40 30% 92% / 0.3);
-    --shadow-glow-success: 0 0 20px hsl(142 71% 45% / 0.25);
+    --shadow-glow-success: 0 0 20px hsl(142 76% 36% / 0.3);
+    --shadow-glow-warning: 0 0 20px hsl(38 92% 50% / 0.3);
+    --shadow-glow-destructive: 0 0 20px hsl(0 84% 60% / 0.3);
+    --shadow-glow-live: 0 0 20px hsl(330 81% 60% / 0.4);
     --shadow-header: 0 1px 3px hsl(225 25% 12% / 0.05), 0 1px 2px hsl(225 25% 12% / 0.03);
 
     /* ===== GRADIENTS ===== */
@@ -188,12 +198,19 @@
     --ring: 158 64% 51%;
 
     /* ===== ESTADOS - Cores vibrantes ===== */
-    --success: 145 80% 42%;
+    --success: 142 76% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 95% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 0%;
     --info: 200 85% 55%;
     --info-foreground: 0 0% 100%;
+
+    /* ===== LIVE/REAL-TIME INDICATORS ===== */
+    --live-pulse: 330 81% 60%;
+    --online: 142 76% 42%;
+    --offline: 215 16% 55%;
+    --busy: 0 84% 60%;
+    --critical: 0 84% 60%;
 
     /* ===== GAMIFICAÇÃO ===== */
     --xp: 45 95% 50%;
@@ -237,16 +254,17 @@
     --sidebar-ring: 158 64% 51%;
 
     /* ===== SHADOWS ===== */
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-glow-primary: 0 0 30px hsl(24 95% 50% / 0.4);
+    --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.1);
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.15), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.15), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.2), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.25), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
+    --shadow-glow-primary: 0 0 30px hsl(158 64% 51% / 0.4);
     --shadow-glow-secondary: 0 0 25px hsl(270 60% 55% / 0.3);
-    --shadow-glow-success: 0 0 25px hsl(145 80% 42% / 0.35);
+    --shadow-glow-success: 0 0 25px hsl(142 76% 42% / 0.35);
     --shadow-glow-warning: 0 0 25px hsl(38 95% 50% / 0.35);
-    --shadow-glow-error: 0 0 25px hsl(0 85% 55% / 0.35);
+    --shadow-glow-destructive: 0 0 25px hsl(0 84% 60% / 0.35);
+    --shadow-glow-live: 0 0 25px hsl(330 81% 60% / 0.5);
     --shadow-header: 0 1px 3px hsl(240 50% 3% / 0.5), inset 0 1px 0 hsl(240 8% 20% / 0.3);
 
     /* ===== GRADIENTS ===== */
@@ -658,5 +676,226 @@
 
   .dark .border-glow:hover::after {
     opacity: 1;
+  }
+
+  /* ===== LIVE INDICATORS (Lalamove Style) ===== */
+  .live-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold;
+    background: hsl(var(--live-pulse) / 0.15);
+    color: hsl(var(--live-pulse));
+    border: 1px solid hsl(var(--live-pulse) / 0.3);
+  }
+
+  .live-badge-pulse {
+    @apply live-badge relative;
+  }
+
+  .live-badge-pulse::before {
+    content: '';
+    @apply absolute -left-0.5 w-2 h-2 rounded-full;
+    background: hsl(var(--live-pulse));
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .status-online {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium;
+    color: hsl(var(--online));
+  }
+
+  .status-online::before {
+    content: '';
+    @apply w-2 h-2 rounded-full;
+    background: hsl(var(--online));
+    box-shadow: 0 0 8px hsl(var(--online) / 0.6);
+  }
+
+  .status-offline {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium;
+    color: hsl(var(--offline));
+  }
+
+  .status-offline::before {
+    content: '';
+    @apply w-2 h-2 rounded-full;
+    background: hsl(var(--offline));
+  }
+
+  .status-busy {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium;
+    color: hsl(var(--busy));
+  }
+
+  .status-busy::before {
+    content: '';
+    @apply w-2 h-2 rounded-full;
+    background: hsl(var(--busy));
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* ===== ALERT ACTION CARDS ===== */
+  .alert-card {
+    @apply relative rounded-xl border p-4 transition-all duration-200;
+  }
+
+  .alert-card-critical {
+    @apply alert-card;
+    background: hsl(var(--destructive) / 0.08);
+    border-color: hsl(var(--destructive) / 0.3);
+  }
+
+  .alert-card-critical::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-l-xl;
+    background: hsl(var(--destructive));
+  }
+
+  .alert-card-warning {
+    @apply alert-card;
+    background: hsl(var(--warning) / 0.08);
+    border-color: hsl(var(--warning) / 0.3);
+  }
+
+  .alert-card-warning::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-l-xl;
+    background: hsl(var(--warning));
+  }
+
+  .alert-card-info {
+    @apply alert-card;
+    background: hsl(var(--info) / 0.08);
+    border-color: hsl(var(--info) / 0.3);
+  }
+
+  .alert-card-info::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-l-xl;
+    background: hsl(var(--info));
+  }
+
+  .alert-card-success {
+    @apply alert-card;
+    background: hsl(var(--success) / 0.08);
+    border-color: hsl(var(--success) / 0.3);
+  }
+
+  .alert-card-success::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-l-xl;
+    background: hsl(var(--success));
+  }
+
+  /* ===== METRIC CARD ENHANCEMENTS ===== */
+  .metric-card {
+    @apply bg-card rounded-xl border border-border p-5 transition-all duration-200;
+  }
+
+  .metric-card:hover {
+    @apply border-primary/20 shadow-md;
+    transform: translateY(-2px);
+  }
+
+  .metric-card-primary {
+    @apply metric-card;
+    border-left: 3px solid hsl(var(--primary));
+  }
+
+  .metric-card-success {
+    @apply metric-card;
+    border-left: 3px solid hsl(var(--success));
+  }
+
+  .metric-card-warning {
+    @apply metric-card;
+    border-left: 3px solid hsl(var(--warning));
+  }
+
+  .metric-card-destructive {
+    @apply metric-card;
+    border-left: 3px solid hsl(var(--destructive));
+  }
+
+  /* ===== EMPTY STATES ===== */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 px-6 text-center;
+  }
+
+  .empty-state-icon {
+    @apply w-12 h-12 mb-4 text-muted-foreground/50;
+  }
+
+  .empty-state-title {
+    @apply text-lg font-semibold text-foreground mb-2;
+  }
+
+  .empty-state-description {
+    @apply text-sm text-muted-foreground max-w-sm;
+  }
+
+  /* ===== SPARKLINE CONTAINER ===== */
+  .sparkline-container {
+    @apply h-10 w-full opacity-60 transition-opacity duration-200;
+  }
+
+  .metric-card:hover .sparkline-container {
+    @apply opacity-100;
+  }
+
+  /* ===== TREND INDICATORS ===== */
+  .trend-up {
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full;
+    background: hsl(var(--success) / 0.1);
+    color: hsl(var(--success));
+  }
+
+  .trend-down {
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full;
+    background: hsl(var(--destructive) / 0.1);
+    color: hsl(var(--destructive));
+  }
+
+  .trend-neutral {
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full;
+    background: hsl(var(--muted) / 0.3);
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* ===== PING ANIMATION FOR REAL-TIME ===== */
+  @keyframes ping-slow {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  .animate-ping-slow {
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* ===== HOVER SCALE WITH SHADOW ===== */
+  .hover-lift-shadow {
+    @apply transition-all duration-200;
+  }
+
+  .hover-lift-shadow:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* ===== MICRO-INTERACTIONS ===== */
+  .interactive-scale {
+    @apply transition-transform duration-150;
+  }
+
+  .interactive-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .interactive-scale:active {
+    transform: scale(0.98);
   }
 }
