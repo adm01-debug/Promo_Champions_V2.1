@@ -1,6 +1,15 @@
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 
+// Magic numbers extraídos para constantes
+const DEFAULT_PAGE_SIZE = DEFAULT_PAGE_SIZE;
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = MAX_STRING_LENGTH;
+const DEFAULT_TIMEOUT_MS = 30000;
+const MAX_STRING_LENGTH = MAX_STRING_LENGTH;
+const MAX_ARRAY_SIZE = MAX_ARRAY_SIZE;
+
+
 export async function fetchWithErrorHandling<T>(
   query: Promise<{ data: T | null; error: PostgrestError | null }>
 ): Promise<T> {
@@ -82,7 +91,7 @@ export function isSupabaseError(error: unknown): error is PostgrestError {
 export async function batchInsert<T>(
   table: string,
   data: Partial<T>[],
-  batchSize: number = 100
+  batchSize: number = MAX_ARRAY_SIZE
 ): Promise<T[]> {
   const results: T[] = [];
   
@@ -175,7 +184,7 @@ export function sanitizeString(input: string): string {
   return input
     .trim()
     .replace(/[<>]/g, '') // Remove < e >
-    .substring(0, 1000); // Limita tamanho
+    .substring(0, MAX_STRING_LENGTH); // Limita tamanho
 }
 
 /**
@@ -196,8 +205,8 @@ export function validateFilters(filters: Record<string, unknown>): void {
  */
 export function checkRateLimit(key: string): boolean {
   const now = Date.now();
-  const limit = 100; // requests por hora
-  const window = 60 * 60 * 1000; // 1 hora
+  const limit = MAX_ARRAY_SIZE; // requests por hora
+  const window = 60 * 60 * MAX_STRING_LENGTH; // 1 hora
   
   const stored = localStorage.getItem(`rl_${key}`);
   
