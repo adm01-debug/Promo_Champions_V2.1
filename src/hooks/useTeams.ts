@@ -8,5 +8,7 @@ export const useTeams = () => {
       const { data } = await supabase.from('teams').select('*');
       return data || [];
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
