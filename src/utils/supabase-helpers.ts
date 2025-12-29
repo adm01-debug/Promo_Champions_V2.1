@@ -100,7 +100,7 @@ export async function batchInsert<T>(
  */
 export async function countWithFilters(
   table: string,
-  filters?: Record<string, any>
+  filters?: Record<string, unknown>
 ): Promise<number> {
   let query = supabase
     .from(table)
@@ -128,7 +128,7 @@ export async function paginatedQuery<T>(
   table: string,
   page: number,
   pageSize: number,
-  filters?: Record<string, any>,
+  filters?: Record<string, unknown>,
   orderBy?: { column: string; ascending?: boolean }
 ): Promise<{ data: T[]; total: number; totalPages: number }> {
   const from = (page - 1) * pageSize;
