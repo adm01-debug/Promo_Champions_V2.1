@@ -10,5 +10,7 @@ export const useNotifications = (userId?: string) => {
       const { data } = await q;
       return data || [];
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
