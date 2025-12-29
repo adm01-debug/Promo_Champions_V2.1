@@ -14,15 +14,15 @@ export const useDeals = (filters?: UseDealsOptions) => {
     queryKey: ['deals', filters],
     queryFn: async (): Promise<Deal[]> => {
       let query = supabase.from('deals').select('*');
-      
+
       if (filters?.status) {
         query = query.eq('status', filters.status);
       }
-      
+
       if (filters?.userId) {
         query = query.eq('user_id', filters.userId);
       }
-      
+
       return fetchWithErrorHandling<Deal[]>(query);
     },
     staleTime: CACHE_TIMES.STALE_TIME, // 5 minutos
