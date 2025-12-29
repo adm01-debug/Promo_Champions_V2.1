@@ -18,5 +18,7 @@ export const useTasks = (userId?: string) => {
       
       return fetchWithErrorHandling(query);
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
