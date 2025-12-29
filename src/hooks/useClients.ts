@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import type { Client } from '@/types';
 import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
+import { CACHE_TIMES } from '@/constants';
+
 
 interface UseClientsOptions {
   segment?: string;
@@ -19,7 +21,7 @@ export const useClients = (filters?: UseClientsOptions) => {
       
       return fetchWithErrorHandling<Client[]>(query);
     },
-    staleTime: 5 * 60 * 1000, // 5 minutos
-    gcTime: 10 * 60 * 1000, // 10 minutos de cache
+    staleTime: CACHE_TIMES.STALE_TIME, // 5 minutos
+    gcTime: CACHE_TIMES.GC_TIME, // 10 minutos de cache
   });
 };
