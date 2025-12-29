@@ -13,11 +13,11 @@ export const useTasks = (userId?: string) => {
         .from('tasks')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (userId) {
         query = query.eq('assigned_to', userId);
       }
-      
+
       return fetchWithErrorHandling(query);
     }
   ,
