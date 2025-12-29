@@ -10,5 +10,7 @@ export const useProducts = () => {
       const query = supabase.from('products').select('*').eq('active', true);
       return fetchWithErrorHandling(query);
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
