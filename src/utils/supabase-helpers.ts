@@ -14,16 +14,16 @@ export async function fetchWithErrorHandling<T>(
   query: Promise<{ data: T | null; error: PostgrestError | null }>
 ): Promise<T> {
   const { data, error } = await query;
-  
+
   if (error) {
     console.error('[Supabase Error]', error);
     throw new Error(handleSupabaseError(error));
   }
-  
+
   if (!data) {
     throw new Error('Nenhum dado retornado da consulta');
   }
-  
+
   return data;
 }
 
@@ -37,7 +37,7 @@ export function handleSupabaseError(error: PostgrestError): string {
     '42703': 'Coluna não existe nesta tabela',
     '22P02': 'Formato de dados inválido',
   };
-  
+
   return errorMessages[error.code] || `Erro: ${error.message}`;
 }
 
@@ -47,17 +47,17 @@ export async function upsertWithErrorHandling<T>(
   options?: { onConflict?: string }
 ): Promise<T | T[]> {
   const isArray = Array.isArray(data);
-  
+
   let query = supabase
     .from(table)
-    .upsert(data as any, { 
+    .upsert(data, {
       onConflict: options?.onConflict || 'id'
     });
-  
+
   if (!isArray) {
     query = query.single();
   }
-  
+
   return fetchWithErrorHandling(query.select());
 }
 
@@ -69,7 +69,7 @@ export async function deleteWithErrorHandling(
     .from(table)
     .delete()
     .eq('id', id);
-  
+
   if (error) {
     throw new Error(handleSupabaseError(error));
   }
@@ -94,13 +94,13 @@ export async function batchInsert<T>(
   batchSize: number = MAX_ARRAY_SIZE
 ): Promise<T[]> {
   const results: T[] = [];
-  
+
   for (let i = 0; i < data.length; i += batchSize) {
     const batch = data.slice(i, i + batchSize);
     const inserted = await upsertWithErrorHandling<T>(table, batch);
     results.push(...(Array.isArray(inserted) ? inserted : [inserted]));
   }
-  
+
   return results;
 }
 
@@ -114,19 +114,19 @@ export async function countWithFilters(
   let query = supabase
     .from(table)
     .select('*', { count: 'exact', head: true });
-  
+
   if (filters) {
     Object.entries(filters).forEach(([key, value]) => {
       query = query.eq(key, value);
     });
   }
-  
+
   const { count, error } = await query;
-  
+
   if (error) {
     throw new Error(handleSupabaseError(error));
   }
-  
+
   return count || 0;
 }
 
@@ -142,28 +142,28 @@ export async function paginatedQuery<T>(
 ): Promise<{ data: T[]; total: number; totalPages: number }> {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
-  
+
   let query = supabase
     .from(table)
     .select('*', { count: 'exact' })
     .range(from, to);
-  
+
   if (filters) {
     Object.entries(filters).forEach(([key, value]) => {
       query = query.eq(key, value);
     });
   }
-  
+
   if (orderBy) {
     query = query.order(orderBy.column, { ascending: orderBy.ascending !== false });
   }
-  
+
   const { data, count, error } = await query;
-  
+
   if (error) {
     throw new Error(handleSupabaseError(error));
   }
-  
+
   return {
     data: (data || []) as T[],
     total: count || 0,
@@ -179,7 +179,7 @@ export function sanitizeString(input: string): string {
   if (typeof input !== 'string') {
     throw new Error('Input deve ser string');
   }
-  
+
   // Remove caracteres perigosos
   return input
     .trim()
@@ -192,7 +192,7 @@ export function sanitizeString(input: string): string {
  */
 export function validateFilters(filters: Record<string, unknown>): void {
   const allowedKeys = ['userId', 'clientId', 'status', 'segment', 'dateRange', 'teamId', 'stageId'];
-  
+
   Object.keys(filters).forEach(key => {
     if (!allowedKeys.includes(key)) {
       throw new Error(`Filtro inválido: ${key}`);
@@ -207,27 +207,27 @@ export function checkRateLimit(key: string): boolean {
   const now = Date.now();
   const limit = MAX_ARRAY_SIZE; // requests por hora
   const window = 60 * 60 * MAX_STRING_LENGTH; // 1 hora
-  
+
   const stored = localStorage.getItem(`rl_${key}`);
-  
+
   if (!stored) {
     localStorage.setItem(`rl_${key}`, JSON.stringify({ count: 1, start: now }));
     return true;
   }
-  
+
   const data = JSON.parse(stored);
-  
+
   if (now - data.start > window) {
     // Reset window
     localStorage.setItem(`rl_${key}`, JSON.stringify({ count: 1, start: now }));
     return true;
   }
-  
+
   if (data.count >= limit) {
     console.warn(`Rate limit atingido para ${key}`);
     return false;
   }
-  
+
   data.count++;
   localStorage.setItem(`rl_${key}`, JSON.stringify(data));
   return true;
