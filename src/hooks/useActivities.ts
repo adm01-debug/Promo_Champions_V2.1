@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Activity } from '@/types';
+import { supabase } from '@/lib/supabase';
+import type { Activity } from '@/types';
 import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
 
-export const useActivities = (filters?: { userId?: string; clientId?: string }) => {
+interface UseActivitiesOptions {
+  userId?: string;
+  clientId?: string;
+}
+
+export const useActivities = (filters?: UseActivitiesOptions) => {
   return useQuery<Activity[]>({
     queryKey: ['activities', filters],
     queryFn: async (): Promise<Activity[]> => {
-      let query = supabase
-        .from('activities')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let query = supabase.from('activities').select('*');
       
       if (filters?.userId) {
         query = query.eq('user_id', filters.userId);
@@ -20,9 +22,8 @@ export const useActivities = (filters?: { userId?: string; clientId?: string }) 
         query = query.eq('client_id', filters.clientId);
       }
       
-      return fetchWithErrorHandling(query);
-    }
-  },
+      return fetchWithErrorHandling<Activity[]>(query);
+    },
     staleTime: 5 * 60 * 1000, // 5 minutos
   });
 };
