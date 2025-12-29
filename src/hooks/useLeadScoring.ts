@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { CACHE_TIMES } from '@/constants';
+
 
 export const useLeadScoring = (clientId?: string) => {
   return useQuery({
@@ -7,7 +9,7 @@ export const useLeadScoring = (clientId?: string) => {
       return { score: 0, category: 'cold' };
     }
   ,
-    staleTime: 5 * 60 * 1000
-    gcTime: 10 * 60 * 1000,
+    staleTime: CACHE_TIMES.STALE_TIME
+    gcTime: CACHE_TIMES.GC_TIME,
   });
 };
