@@ -9,5 +9,7 @@ export const useMetrics = (userId?: string) => {
       // Implementação de métricas
       return [];
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
