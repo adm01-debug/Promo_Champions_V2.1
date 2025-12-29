@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Pipeline } from '@/types';
 import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
+import { CACHE_TIMES } from '@/constants';
+
 
 export const usePipeline = () => {
   return useQuery<Pipeline[]>({
@@ -11,7 +13,7 @@ export const usePipeline = () => {
       return fetchWithErrorHandling(query);
     }
   ,
-    staleTime: 5 * 60 * 1000
-    gcTime: 10 * 60 * 1000,
+    staleTime: CACHE_TIMES.STALE_TIME
+    gcTime: CACHE_TIMES.GC_TIME,
   });
 };
