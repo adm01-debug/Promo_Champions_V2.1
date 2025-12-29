@@ -180,6 +180,52 @@ export interface MetricData {
   trend?: 'up' | 'down' | 'stable';
 }
 
+
+// ===== FILTERS & PAGINATION =====
+
+export interface FilterOptions {
+  dateRange?: DateRange;
+  userId?: string;
+  teamId?: string;
+  stageId?: string;
+  status?: Deal['status'];
+  segment?: Client['segment'];
+  search?: string;
+}
+
+export interface PaginationParams {
+  page: number;
+  pageSize: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+// ===== API RESPONSES =====
+
+export interface ApiResponse<T> {
+  data: T;
+  error?: string;
+  metadata?: {
+    total?: number;
+    page?: number;
+    pageSize?: number;
+  };
+}
+
+export interface ApiError {
+  code: string;
+  message: string;
+  details?: Record<string, any>;
+}
+
 export type DealStatus = Deal['status'];
 export type ActivityType = Activity['type'];
 export type UserRole = User['role'];
