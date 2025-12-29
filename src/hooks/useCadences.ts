@@ -10,5 +10,7 @@ export const useCadences = () => {
       const query = supabase.from('cadences').select('*, steps(*)');
       return fetchWithErrorHandling(query);
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
