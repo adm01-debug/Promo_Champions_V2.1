@@ -6,9 +6,9 @@ interface RevenueChartProps {
   showProjection?: boolean;
 }
 
-export const RevenueChart: FC<RevenueChartProps> = ({ 
+export const RevenueChart: FC<RevenueChartProps> = ({
   period = 'month',
-  showProjection = false 
+  showProjection = false
 }) => {
   return (
     <Card className="p-6">
