@@ -47,7 +47,7 @@ export interface Activity {
   scheduled_at?: string;
   completed_at?: string;
   created_at: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface User {
@@ -223,7 +223,7 @@ export interface ApiResponse<T> {
 export interface ApiError {
   code: string;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export type DealStatus = Deal['status'];
