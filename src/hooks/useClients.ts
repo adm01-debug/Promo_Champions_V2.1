@@ -13,11 +13,11 @@ export const useClients = (filters?: UseClientsOptions) => {
     queryKey: ['clients', filters],
     queryFn: async (): Promise<Client[]> => {
       let query = supabase.from('clients').select('*');
-      
+
       if (filters?.segment) {
         query = query.eq('segment', filters.segment);
       }
-      
+
       return fetchWithErrorHandling<Client[]>(query);
     },
     staleTime: CACHE_TIMES.STALE_TIME, // 5 minutos
