@@ -2,12 +2,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 
 // Magic numbers extraídos para constantes
-const DEFAULT_PAGE_SIZE = DEFAULT_PAGE_SIZE;
+const DEFAULT_PAGE_SIZE = 20;
 const MAX_RETRY_ATTEMPTS = 3;
-const RETRY_DELAY_MS = MAX_STRING_LENGTH;
+const RETRY_DELAY_MS = 1000;
 const DEFAULT_TIMEOUT_MS = 30000;
-const MAX_STRING_LENGTH = MAX_STRING_LENGTH;
-const MAX_ARRAY_SIZE = MAX_ARRAY_SIZE;
+const MAX_STRING_LENGTH = 1000;
+const MAX_ARRAY_SIZE = 100;
 
 
 export async function fetchWithErrorHandling<T>(
