@@ -1,5 +1,8 @@
 // ===== CORE ENTITIES =====
 
+/**
+ * Representa uma oportunidade de negócio no pipeline de vendas
+ */
 export interface Deal {
   id: string;
   title: string;
@@ -17,6 +20,9 @@ export interface Deal {
   activities?: Activity[];
 }
 
+/**
+ * Representa um cliente/empresa no sistema
+ */
 export interface Client {
   id: string;
   name: string;
@@ -35,6 +41,9 @@ export interface Client {
   deals?: Deal[];
 }
 
+/**
+ * Representa uma atividade/interação com cliente ou lead
+ */
 export interface Activity {
   id: string;
   type: 'call' | 'email' | 'meeting' | 'note' | 'whatsapp' | 'linkedin';
@@ -96,6 +105,9 @@ export interface Product {
   updated_at: string;
 }
 
+/**
+ * Representa uma oportunidade de negócio no pipeline de vendas
+ */
 export interface DealProduct {
   id: string;
   deal_id: string;
@@ -200,6 +212,10 @@ export interface PaginationParams {
   sortOrder?: 'asc' | 'desc';
 }
 
+/**
+ * Response padrão para queries paginadas
+ * @template T - Tipo dos dados retornados
+ */
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
