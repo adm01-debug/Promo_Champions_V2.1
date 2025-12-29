@@ -20,5 +20,6 @@ export const useClients = (filters?: UseClientsOptions) => {
       return fetchWithErrorHandling<Client[]>(query);
     },
     staleTime: 5 * 60 * 1000, // 5 minutos
+    gcTime: 10 * 60 * 1000, // 10 minutos de cache
   });
 };
