@@ -14,15 +14,15 @@ export const useActivities = (filters?: UseActivitiesOptions) => {
     queryKey: ['activities', filters],
     queryFn: async (): Promise<Activity[]> => {
       let query = supabase.from('activities').select('*');
-      
+
       if (filters?.userId) {
         query = query.eq('user_id', filters.userId);
       }
-      
+
       if (filters?.clientId) {
         query = query.eq('client_id', filters.clientId);
       }
-      
+
       return fetchWithErrorHandling<Activity[]>(query);
     },
     staleTime: CACHE_TIMES.STALE_TIME, // 5 minutos
