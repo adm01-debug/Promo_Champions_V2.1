@@ -6,5 +6,7 @@ export const useAnalytics = () => {
     queryFn: async () => {
       return { revenue: 0, deals: 0, conversion: 0 };
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
