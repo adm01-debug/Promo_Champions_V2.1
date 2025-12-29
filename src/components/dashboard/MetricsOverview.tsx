@@ -9,7 +9,7 @@ interface MetricsOverviewProps {
 
 export const MetricsOverview: FC<MetricsOverviewProps> = ({ userId, period = 'month' }) => {
   const { data: metrics, isLoading, error } = useMetrics({ userId, period });
-  
+
   if (isLoading) {
     return (
       <Card className="p-6">
@@ -17,7 +17,7 @@ export const MetricsOverview: FC<MetricsOverviewProps> = ({ userId, period = 'mo
       </Card>
     );
   }
-  
+
   if (error) {
     return (
       <Card className="p-6 border-red-200">
@@ -28,7 +28,7 @@ export const MetricsOverview: FC<MetricsOverviewProps> = ({ userId, period = 'mo
       </Card>
     );
   }
-  
+
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Métricas Gerais</h3>
