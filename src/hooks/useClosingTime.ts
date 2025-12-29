@@ -1,5 +1,7 @@
 import {useQuery} from '@tanstack/react-query';
+import { CACHE_TIMES } from '@/constants';
+
 export const useClosingTime=()=>{return useQuery({queryKey:['closingTime'],queryFn:async()=>{return 0;},
-    staleTime: 5 * 60 * 1000
-    gcTime: 10 * 60 * 1000,
+    staleTime: CACHE_TIMES.STALE_TIME
+    gcTime: CACHE_TIMES.GC_TIME,
   });};
