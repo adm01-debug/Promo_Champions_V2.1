@@ -10,5 +10,7 @@ export const useAchievements = () => {
       const query = supabase.from('achievements').select('*');
       return fetchWithErrorHandling(query);
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
