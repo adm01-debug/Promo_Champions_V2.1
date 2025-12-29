@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 import type { Client } from '@/types';
-import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
 import { CACHE_TIMES } from '@/constants';
-
+import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
+import { supabase } from '@/lib/supabase';
+import { useQuery } from '@tanstack/react-query';
 
 interface UseClientsOptions {
   segment?: string;
