@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Goal } from '@/types';
 import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
+import { CACHE_TIMES } from '@/constants';
+
 
 export const useGoals = (userId?: string) => {
   return useQuery<Goal[]>({
@@ -19,7 +21,7 @@ export const useGoals = (userId?: string) => {
       return fetchWithErrorHandling(query);
     }
   ,
-    staleTime: 5 * 60 * 1000
-    gcTime: 10 * 60 * 1000, // 10 minutos de cache
+    staleTime: CACHE_TIMES.STALE_TIME
+    gcTime: CACHE_TIMES.GC_TIME, // 10 minutos de cache
   });
 };
