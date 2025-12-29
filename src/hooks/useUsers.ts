@@ -8,5 +8,7 @@ export const useUsers = () => {
       const { data } = await supabase.from('users').select('*');
       return data || [];
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
