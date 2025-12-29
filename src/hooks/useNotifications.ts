@@ -12,5 +12,6 @@ export const useNotifications = (userId?: string) => {
     }
   ,
     staleTime: 5 * 60 * 1000
+    gcTime: 10 * 60 * 1000,
   });
 };
