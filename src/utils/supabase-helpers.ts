@@ -161,3 +161,65 @@ export async function paginatedQuery<T>(
     totalPages: Math.ceil((count || 0) / pageSize)
   };
 }
+
+
+/**
+ * Valida e sanitiza string input
+ */
+export function sanitizeString(input: string): string {
+  if (typeof input !== 'string') {
+    throw new Error('Input deve ser string');
+  }
+  
+  // Remove caracteres perigosos
+  return input
+    .trim()
+    .replace(/[<>]/g, '') // Remove < e >
+    .substring(0, 1000); // Limita tamanho
+}
+
+/**
+ * Valida parâmetros de filtro
+ */
+export function validateFilters(filters: Record<string, unknown>): void {
+  const allowedKeys = ['userId', 'clientId', 'status', 'segment', 'dateRange', 'teamId', 'stageId'];
+  
+  Object.keys(filters).forEach(key => {
+    if (!allowedKeys.includes(key)) {
+      throw new Error(`Filtro inválido: ${key}`);
+    }
+  });
+}
+
+/**
+ * Rate limiting checker (cliente-side awareness)
+ */
+export function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const limit = 100; // requests por hora
+  const window = 60 * 60 * 1000; // 1 hora
+  
+  const stored = localStorage.getItem(`rl_${key}`);
+  
+  if (!stored) {
+    localStorage.setItem(`rl_${key}`, JSON.stringify({ count: 1, start: now }));
+    return true;
+  }
+  
+  const data = JSON.parse(stored);
+  
+  if (now - data.start > window) {
+    // Reset window
+    localStorage.setItem(`rl_${key}`, JSON.stringify({ count: 1, start: now }));
+    return true;
+  }
+  
+  if (data.count >= limit) {
+    console.warn(`Rate limit atingido para ${key}`);
+    return false;
+  }
+  
+  data.count++;
+  localStorage.setItem(`rl_${key}`, JSON.stringify(data));
+  return true;
+}
