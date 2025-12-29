@@ -10,5 +10,7 @@ export const usePipeline = () => {
       const query = supabase.from('pipelines').select('*, stages(*)');
       return fetchWithErrorHandling(query);
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
