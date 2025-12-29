@@ -22,5 +22,7 @@ export const useActivities = (filters?: { userId?: string; clientId?: string }) 
       
       return fetchWithErrorHandling(query);
     }
+  },
+    staleTime: 5 * 60 * 1000, // 5 minutos
   });
 };
