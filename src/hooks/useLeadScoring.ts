@@ -6,5 +6,7 @@ export const useLeadScoring = (clientId?: string) => {
     queryFn: async () => {
       return { score: 0, category: 'cold' };
     }
+  ,
+    staleTime: 5 * 60 * 1000
   });
 };
