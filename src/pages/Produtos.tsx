@@ -1,4 +1,4 @@
-import { Package, Search, Star, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Package, Search, Star, Loader2, Pencil, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
+import { EmptyStateProducts } from "@/components/shared/EmptyStateProducts";
 
 const statusColors: Record<string, string> = {
   ativo: "bg-status-success/20 text-status-success border-status-success/30",
@@ -239,15 +240,18 @@ const Produtos = () => {
                 itemsPerPageOptions={itemsPerPageOptions}
               />
             </div>
-          ) : (
+          ) : searchTerm || categoryFilter || statusFilter ? (
             <div className="glass rounded-xl p-12 text-center">
               <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
-              <p className="text-muted-foreground mb-4">
-                {searchTerm || categoryFilter || statusFilter 
-                  ? "Tente ajustar os filtros" 
-                  : "Adicione seu primeiro produto para começar"}
-              </p>
+              <p className="text-muted-foreground mb-4">Tente ajustar os filtros</p>
+              <Button variant="outline" onClick={() => { setSearchTerm(''); setCategoryFilter(''); setStatusFilter(''); }}>
+                Limpar Filtros
+              </Button>
+            </div>
+          ) : (
+            <div className="glass rounded-xl">
+              <EmptyStateProducts onAdd={() => document.querySelector<HTMLButtonElement>('[data-create-product]')?.click()} />
             </div>
           )}
         </div>

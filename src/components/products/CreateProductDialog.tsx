@@ -67,7 +67,7 @@ export const CreateProductDialog = () => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="gradient-primary text-primary-foreground">
+        <Button data-create-product className="gradient-primary text-primary-foreground">
           <Plus className="h-4 w-4 mr-2" />
           Novo Produto
         </Button>

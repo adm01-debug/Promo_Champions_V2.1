@@ -1,4 +1,4 @@
-import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -14,6 +14,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
+import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
@@ -207,13 +208,18 @@ const Clientes = () => {
                 itemsPerPageOptions={itemsPerPageOptions}
               />
             </div>
-          ) : (
+          ) : searchTerm ? (
             <div className="glass rounded-xl p-12 text-center">
               <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <h3 className="text-lg font-semibold mb-2">Nenhum cliente encontrado</h3>
-              <p className="text-muted-foreground mb-4">
-                {searchTerm ? "Tente uma busca diferente" : "Adicione seu primeiro cliente para começar"}
-              </p>
+              <p className="text-muted-foreground mb-4">Tente uma busca diferente</p>
+              <Button variant="outline" onClick={() => setSearchTerm('')}>
+                Limpar Busca
+              </Button>
+            </div>
+          ) : (
+            <div className="glass rounded-xl">
+              <EmptyStateClients onAdd={() => document.querySelector<HTMLButtonElement>('[data-create-client]')?.click()} />
             </div>
           )}
         </div>

@@ -1,12 +1,19 @@
 import { FC } from 'react';
 import { Package } from 'lucide-react';
+import { EmptyState } from './EmptyState';
 
-export const EmptyStateProducts: FC = () => {
+interface EmptyStateProductsProps {
+  onAdd?: () => void;
+}
+
+export const EmptyStateProducts: FC<EmptyStateProductsProps> = ({ onAdd }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <Package className="h-12 w-12 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-semibold">Nenhum produto</h3>
-      <p className="text-sm text-muted-foreground">Adicione produtos para começar</p>
-    </div>
+    <EmptyState
+      icon={Package}
+      title="Nenhum produto cadastrado"
+      description="Adicione produtos para começar a gerenciar seu catálogo e acompanhar vendas."
+      actionLabel={onAdd ? "Adicionar Produto" : undefined}
+      onAction={onAdd}
+    />
   );
 };

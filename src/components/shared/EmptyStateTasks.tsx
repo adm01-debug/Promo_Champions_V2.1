@@ -1,12 +1,19 @@
 import { FC } from 'react';
 import { CheckSquare } from 'lucide-react';
+import { EmptyState } from './EmptyState';
 
-export const EmptyStateTasks: FC = () => {
+interface EmptyStateTasksProps {
+  onAdd?: () => void;
+}
+
+export const EmptyStateTasks: FC<EmptyStateTasksProps> = ({ onAdd }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <CheckSquare className="h-12 w-12 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-semibold">Nenhuma tarefa</h3>
-      <p className="text-sm text-muted-foreground">Crie tarefas para organizar</p>
-    </div>
+    <EmptyState
+      icon={CheckSquare}
+      title="Nenhuma tarefa pendente"
+      description="Crie tarefas para organizar seu dia e não perder nenhum follow-up importante."
+      actionLabel={onAdd ? "Nova Tarefa" : undefined}
+      onAction={onAdd}
+    />
   );
 };

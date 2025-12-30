@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
+import { toast } from 'sonner';
 
 // Pipeline stage type for the kanban board
 export type PipelineStageId = 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed';
@@ -92,7 +93,44 @@ export const useMoveDeal = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    // Optimistic update for smooth drag & drop
+    onMutate: async ({ dealId, newStage }) => {
+      await queryClient.cancelQueries({ queryKey: ['pipeline-deals'] });
+      const previousDeals = queryClient.getQueryData<Record<PipelineStageId, Deal[]>>(['pipeline-deals']);
+      
+      if (previousDeals) {
+        const newDeals = { ...previousDeals };
+        let movedDeal: Deal | undefined;
+        
+        // Find and remove deal from its current stage
+        for (const stageId of Object.keys(newDeals) as PipelineStageId[]) {
+          const dealIndex = newDeals[stageId].findIndex(d => d.id === dealId);
+          if (dealIndex !== -1) {
+            [movedDeal] = newDeals[stageId].splice(dealIndex, 1);
+            break;
+          }
+        }
+        
+        // Add deal to new stage
+        if (movedDeal) {
+          movedDeal.status = newStage;
+          newDeals[newStage] = [movedDeal, ...newDeals[newStage]];
+        }
+        
+        queryClient.setQueryData(['pipeline-deals'], newDeals);
+      }
+      
+      return { previousDeals };
+    },
+    onSuccess: (_data, { newStage }) => {
+      const stageLabel = PIPELINE_STAGES.find(s => s.id === newStage)?.label || newStage;
+      toast.success(`Deal movido para ${stageLabel}`);
+    },
+    onError: (_err, _vars, context) => {
+      queryClient.setQueryData(['pipeline-deals'], context?.previousDeals);
+      toast.error('Erro ao mover deal');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['pipeline-deals'] });
       queryClient.invalidateQueries({ queryKey: ['sales'] });
     },
