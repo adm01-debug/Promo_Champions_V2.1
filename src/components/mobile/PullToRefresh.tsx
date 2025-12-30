@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, useRef, useEffect } from 'react';
+import { FC, ReactNode, useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';

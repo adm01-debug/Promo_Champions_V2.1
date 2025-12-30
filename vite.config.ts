@@ -7,8 +7,10 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: "/",
-  // Server config removed for Lovable compatibility
-  // Lovable manages its own dev server
+  server: {
+    port: 8080,
+    host: "::",
+  },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
