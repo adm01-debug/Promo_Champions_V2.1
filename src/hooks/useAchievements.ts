@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Achievement } from '@/types';
 import { CACHE_TIMES } from '@/constants';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import type { Json } from '@/integrations/supabase/types';
 
 // Extended achievement type matching database schema
 export interface AchievementRecord {
@@ -10,7 +10,7 @@ export interface AchievementRecord {
   salesperson_id: string;
   achievement_type: string;
   achievement_date: string;
-  details: Record<string, unknown> | null;
+  details: Json | null;
   created_at: string;
   salesperson?: {
     id: string;
@@ -195,7 +195,7 @@ export const useRecordAchievement = () => {
           salesperson_id: salespersonId,
           achievement_type: achievementType,
           achievement_date: today,
-          details: details || null,
+          details: (details || null) as Json,
         });
       
       if (error) throw error;
@@ -220,7 +220,7 @@ export const useRecordAchievement = () => {
             salesperson_id: salespersonId,
             achievement_type: `streak_${streakMilestone}`,
             achievement_date: today,
-            details: { streak_count: streakMilestone },
+            details: { streak_count: streakMilestone } as Json,
           });
       }
       

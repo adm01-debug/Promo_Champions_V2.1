@@ -1,7 +1,20 @@
-import type { Deal } from '@/types';
-import { CACHE_TIMES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE_TIMES } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
+
+// Deal interface matching sales table structure
+export interface DealRecord {
+  id: string;
+  client_name: string;
+  product_name: string;
+  amount: number;
+  status: string;
+  category: string;
+  salesperson_id: string | null;
+  source: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 interface UseDealsOptions {
   status?: string;
@@ -9,9 +22,9 @@ interface UseDealsOptions {
 }
 
 export const useDeals = (filters?: UseDealsOptions) => {
-  return useQuery<Deal[]>({
+  return useQuery<DealRecord[]>({
     queryKey: ['deals', filters],
-    queryFn: async (): Promise<Deal[]> => {
+    queryFn: async (): Promise<DealRecord[]> => {
       let query = supabase.from('sales').select('*');
 
       if (filters?.status) {
@@ -25,19 +38,7 @@ export const useDeals = (filters?: UseDealsOptions) => {
       const { data, error } = await query;
       if (error) throw error;
       
-      // Map sales to deals format
-      return (data || []).map(sale => ({
-        id: sale.id,
-        title: sale.product_name,
-        client_name: sale.client_name,
-        amount: sale.amount,
-        status: sale.status,
-        category: sale.category,
-        created_at: sale.created_at,
-        updated_at: sale.updated_at,
-        salesperson_id: sale.salesperson_id,
-        product_name: sale.product_name,
-      })) as Deal[];
+      return (data || []) as DealRecord[];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,

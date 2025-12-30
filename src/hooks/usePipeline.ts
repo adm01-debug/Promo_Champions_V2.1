@@ -1,21 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Pipeline, PipelineStage, Deal } from '@/types';
-import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
 import { CACHE_TIMES } from '@/constants';
 
-// Re-export types for components
-export type { Deal, PipelineStage } from '@/types';
+// Pipeline stage type for the kanban board
+export type PipelineStageId = 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed';
 
-export const PIPELINE_STAGES: PipelineStage[] = [
-  { id: 'lead', name: 'Lead', order: 1, probability: 10, pipeline_id: 'default', created_at: '' },
-  { id: 'qualified', name: 'Qualificado', order: 2, probability: 25, pipeline_id: 'default', created_at: '' },
-  { id: 'proposal', name: 'Proposta', order: 3, probability: 50, pipeline_id: 'default', created_at: '' },
-  { id: 'negotiation', name: 'Negociação', order: 4, probability: 75, pipeline_id: 'default', created_at: '' },
-  { id: 'closed', name: 'Fechado', order: 5, probability: 100, pipeline_id: 'default', created_at: '' },
+export interface PipelineStageConfig {
+  id: PipelineStageId;
+  label: string;
+  color: string;
+  order: number;
+  probability: number;
+}
+
+export const PIPELINE_STAGES: PipelineStageConfig[] = [
+  { id: 'lead', label: 'Lead', color: 'bg-blue-500', order: 1, probability: 10 },
+  { id: 'qualified', label: 'Qualificado', color: 'bg-yellow-500', order: 2, probability: 25 },
+  { id: 'proposal', label: 'Proposta', color: 'bg-orange-500', order: 3, probability: 50 },
+  { id: 'negotiation', label: 'Negociação', color: 'bg-purple-500', order: 4, probability: 75 },
+  { id: 'closed', label: 'Fechado', color: 'bg-green-500', order: 5, probability: 100 },
 ];
 
-export interface PipelineDeal {
+// Deal type for pipeline board
+export interface Deal {
   id: string;
   client_name: string;
   product_name: string;
@@ -28,28 +35,10 @@ export interface PipelineDeal {
   updated_at: string;
 }
 
-export const usePipeline = () => {
-  return useQuery<Pipeline[]>({
-    queryKey: ['pipeline'],
-    queryFn: async (): Promise<Pipeline[]> => {
-      // Return default pipeline since no pipelines table exists
-      return [{
-        id: 'default',
-        name: 'Pipeline Principal',
-        description: 'Pipeline de vendas principal',
-        stages: PIPELINE_STAGES,
-        created_at: new Date().toISOString(),
-      }];
-    },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
-  });
-};
-
 export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
-  return useQuery<PipelineDeal[]>({
+  return useQuery<Record<PipelineStageId, Deal[]>>({
     queryKey: ['pipeline-deals', filters],
-    queryFn: async (): Promise<PipelineDeal[]> => {
+    queryFn: async (): Promise<Record<PipelineStageId, Deal[]>> => {
       let query = supabase
         .from('sales')
         .select('*')
@@ -62,7 +51,26 @@ export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
       const { data, error } = await query;
       if (error) throw error;
       
-      return (data || []) as PipelineDeal[];
+      // Group deals by status
+      const dealsByStage: Record<PipelineStageId, Deal[]> = {
+        lead: [],
+        qualified: [],
+        proposal: [],
+        negotiation: [],
+        closed: [],
+      };
+      
+      (data || []).forEach((sale) => {
+        const status = sale.status as PipelineStageId;
+        if (dealsByStage[status]) {
+          dealsByStage[status].push(sale as Deal);
+        } else {
+          // Default to 'lead' if status doesn't match
+          dealsByStage.lead.push(sale as Deal);
+        }
+      });
+      
+      return dealsByStage;
     },
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
@@ -73,10 +81,10 @@ export const useMoveDeal = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ dealId, newStatus }: { dealId: string; newStatus: string }) => {
+    mutationFn: async ({ dealId, newStage }: { dealId: string; newStage: PipelineStageId }) => {
       const { data, error } = await supabase
         .from('sales')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .update({ status: newStage, updated_at: new Date().toISOString() })
         .eq('id', dealId)
         .select()
         .single();

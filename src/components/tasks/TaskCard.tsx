@@ -1,4 +1,4 @@
-import { Task, useCompleteTask } from '@/hooks/useTasks';
+import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,13 +30,13 @@ const typeConfig = {
 };
 
 interface TaskCardProps {
-  task: Task;
+  task: TaskRecord;
 }
 
 export function TaskCard({ task }: TaskCardProps) {
   const completeTask = useCompleteTask();
-  const priority = priorityConfig[task.priority];
-  const type = typeConfig[task.task_type];
+  const priority = priorityConfig[task.priority] || priorityConfig.medium;
+  const type = typeConfig[task.task_type] || typeConfig.other;
   const TypeIcon = type.icon;
 
   const handleComplete = () => {
@@ -78,8 +78,12 @@ export function TaskCard({ task }: TaskCardProps) {
           {task.sale && (
             <div className="mt-2.5 text-xs text-muted-foreground flex items-center gap-1.5">
               <span className="font-medium gradient-text">{task.sale.client_name}</span>
-              <span className="text-border">•</span>
-              <span className="text-muted-foreground/80">{task.sale.product_name}</span>
+              {task.sale.product_name && (
+                <>
+                  <span className="text-border">•</span>
+                  <span className="text-muted-foreground/80">{task.sale.product_name}</span>
+                </>
+              )}
             </div>
           )}
 
