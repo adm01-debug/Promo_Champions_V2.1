@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MainLayout } from "@/components/layout/MainLayout";
+// MainLayout is already applied at route level in App.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,7 @@ const AnimacoesDemo = () => {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="space-y-8 pb-12">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -553,7 +553,7 @@ const AnimacoesDemo = () => {
           </Card>
         </section>
       </div>
-    </MainLayout>
+    </>
   );
 };
 

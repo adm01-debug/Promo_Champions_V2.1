@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MainLayout } from '@/components/layout/MainLayout';
+// MainLayout is already applied at route level in App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -132,7 +132,7 @@ export default function RelatorioAtividades() {
   };
 
   return (
-    <MainLayout>
+    <>
       <SkeletonTransition
         isLoading={isLoading || trendLoading}
         skeleton={<RelatorioAtividadesLoadingSkeleton />}
@@ -222,6 +222,6 @@ export default function RelatorioAtividades() {
           </div>
         </div>
       </SkeletonTransition>
-    </MainLayout>
+    </>
   );
 }

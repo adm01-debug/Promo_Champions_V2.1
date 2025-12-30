@@ -1,10 +1,10 @@
-import { MainLayout } from '@/components/layout/MainLayout';
+// MainLayout is already applied at route level in App.tsx
 import { SalesAssistantChat } from '@/components/assistant/SalesAssistantChat';
 import { Sparkles } from 'lucide-react';
 
 export default function Assistente() {
   return (
-    <MainLayout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div className="animate-fade-in flex items-center gap-3">
@@ -24,6 +24,6 @@ export default function Assistente() {
           <SalesAssistantChat />
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

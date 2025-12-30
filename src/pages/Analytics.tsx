@@ -1,4 +1,4 @@
-import { MainLayout } from '@/components/layout/MainLayout';
+// Analytics page - MainLayout is applied at route level
 import { WinLossAnalysis } from '@/components/analytics/WinLossAnalysis';
 import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
 import { ConversionFunnel } from '@/components/analytics/ConversionFunnel';
@@ -21,7 +21,7 @@ export default function Analytics() {
   const { isLoading } = useWinLossAnalysis();
 
   return (
-    <MainLayout>
+    <>
       <SkeletonTransition
         isLoading={isLoading}
         skeleton={<AnalyticsPageLoadingSkeleton />}
@@ -213,6 +213,6 @@ export default function Analytics() {
           </div>
         </PageTransition>
       </SkeletonTransition>
-    </MainLayout>
+    </>
   );
 }
