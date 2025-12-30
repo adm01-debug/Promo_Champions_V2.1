@@ -12,7 +12,7 @@ import {
   DragOverEvent,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { useTodayTasks, Task, TaskPriority, useUpdateTask } from '@/hooks/useTasks';
+import { useTodayTasks, TaskRecord, TaskPriority, useUpdateTask } from '@/hooks/useTasks';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { PriorityColumn } from './PriorityColumn';
 import { DraggableTaskCard } from './DraggableTaskCard';
@@ -36,8 +36,8 @@ const PRIORITIES: TaskPriority[] = ['high', 'medium', 'low'];
 
 export function TaskQueue() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>('all');
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [rescheduleTask, setRescheduleTask] = useState<Task | null>(null);
+  const [activeTask, setActiveTask] = useState<TaskRecord | null>(null);
+  const [rescheduleTask, setRescheduleTask] = useState<TaskRecord | null>(null);
   const [viewMode, setViewMode] = useState<'columns' | 'list'>('columns');
 
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
@@ -63,14 +63,14 @@ export function TaskQueue() {
     acc[task.priority] = acc[task.priority] || [];
     acc[task.priority].push(task);
     return acc;
-  }, {} as Record<TaskPriority, Task[]>) || {} as Record<TaskPriority, Task[]>;
+  }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
 
   const highPriorityTasks = groupedTasks.high || [];
   const mediumPriorityTasks = groupedTasks.medium || [];
   const lowPriorityTasks = groupedTasks.low || [];
   const totalTasks = tasks?.length || 0;
 
-  const findTaskById = (id: string): Task | undefined => {
+  const findTaskById = (id: string): TaskRecord | undefined => {
     return tasks?.find(task => task.id === id);
   };
 

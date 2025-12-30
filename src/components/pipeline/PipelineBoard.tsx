@@ -9,7 +9,7 @@ import {
   useSensors,
   closestCorners,
 } from "@dnd-kit/core";
-import { usePipelineDeals, useMoveDeal, PIPELINE_STAGES, Deal, PipelineStage } from "@/hooks/usePipeline";
+import { usePipelineDeals, useMoveDeal, PIPELINE_STAGES, Deal, PipelineStageId } from "@/hooks/usePipeline";
 import { PipelineColumn } from "./PipelineColumn";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -76,32 +76,33 @@ export const PipelineBoard = () => {
     if (!over) return;
 
     const dealId = active.id as string;
-    const targetStage = over.id as PipelineStage;
-
+    const overId = over.id as string;
+    
     // Check if dropping on a valid stage
-    if (!PIPELINE_STAGES.some((s) => s.id === targetStage)) {
+    const targetStage = PIPELINE_STAGES.find(s => s.id === overId);
+    
+    if (targetStage) {
+      // Find current stage of the deal
+      let currentStageId: PipelineStageId | null = null;
+      for (const stage of PIPELINE_STAGES) {
+        if (dealsByStage?.[stage.id]?.some((d) => d.id === dealId)) {
+          currentStageId = stage.id;
+          break;
+        }
+      }
+
+      if (currentStageId && currentStageId !== targetStage.id) {
+        moveDeal.mutate({ dealId, newStage: targetStage.id });
+      }
+    } else {
       // Dropped on another deal, find its stage
       for (const stage of PIPELINE_STAGES) {
-        const dealInStage = dealsByStage?.[stage.id]?.find((d) => d.id === over.id);
+        const dealInStage = dealsByStage?.[stage.id]?.find((d) => d.id === overId);
         if (dealInStage) {
           moveDeal.mutate({ dealId, newStage: stage.id });
           return;
         }
       }
-      return;
-    }
-
-    // Find current stage of the deal
-    let currentStage: PipelineStage | null = null;
-    for (const stage of PIPELINE_STAGES) {
-      if (dealsByStage?.[stage.id]?.some((d) => d.id === dealId)) {
-        currentStage = stage.id;
-        break;
-      }
-    }
-
-    if (currentStage && currentStage !== targetStage) {
-      moveDeal.mutate({ dealId, newStage: targetStage });
     }
   };
 

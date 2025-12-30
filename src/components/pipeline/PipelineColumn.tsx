@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Deal, PIPELINE_STAGES, PipelineStage } from "@/hooks/usePipeline";
+import { Deal, PipelineStageConfig } from "@/hooks/usePipeline";
 import { DealCard } from "./DealCard";
 import { cn } from "@/lib/utils";
 import { ICPData } from "@/hooks/useICPData";
@@ -12,14 +12,8 @@ interface DealProbability {
 
 interface LeadScoreData {
   score: number;
-  factors: {
-    dealValue: number;
-    stageProgress: number;
-    timeInPipeline: number;
-    category: number;
-    recentActivity: number;
-    labels?: Record<string, string>;
-  };
+  category: 'hot' | 'warm' | 'cold';
+  factors: string[];
 }
 
 interface ActiveCadenceInfo {
@@ -29,7 +23,7 @@ interface ActiveCadenceInfo {
 }
 
 interface PipelineColumnProps {
-  stage: typeof PIPELINE_STAGES[number];
+  stage: PipelineStageConfig;
   deals: Deal[];
   probabilities?: Record<string, DealProbability>;
   leadScores?: Record<string, LeadScoreData>;

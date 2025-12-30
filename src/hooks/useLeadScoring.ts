@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface LeadScore {
   id: string;
   sale_id: string;
   score: number;
-  factors: Record<string, unknown>;
+  factors: Json;
   calculated_at: string;
 }
 
@@ -48,10 +49,12 @@ export const useLeadScores = (saleIds?: string[]) => {
         const category: 'hot' | 'warm' | 'cold' = 
           ls.score >= 70 ? 'hot' : ls.score >= 40 ? 'warm' : 'cold';
         
+        const factorsObj = ls.factors as Record<string, unknown> | null;
+        
         scores[ls.sale_id] = {
           score: ls.score,
           category,
-          factors: Object.keys(ls.factors || {}),
+          factors: factorsObj ? Object.keys(factorsObj) : [],
         };
       });
       
@@ -68,7 +71,7 @@ export const useCalculateLeadScores = () => {
   return useMutation({
     mutationFn: async (saleIds: string[]) => {
       // Calculate scores for each sale
-      const scores: { sale_id: string; score: number; factors: Record<string, unknown> }[] = [];
+      const scores: { sale_id: string; score: number; factors: Json }[] = [];
       
       for (const saleId of saleIds) {
         const { data: sale } = await supabase
@@ -97,23 +100,26 @@ export const useCalculateLeadScores = () => {
             factors.advanced_stage = 15;
           }
           
-          scores.push({ sale_id: saleId, score: Math.min(score, 100), factors });
+          scores.push({ 
+            sale_id: saleId, 
+            score: Math.min(score, 100), 
+            factors: factors as Json 
+          });
         }
       }
       
       // Upsert scores
       if (scores.length > 0) {
+        const upsertData = scores.map(s => ({
+          sale_id: s.sale_id,
+          score: s.score,
+          factors: s.factors,
+          calculated_at: new Date().toISOString(),
+        }));
+        
         const { error } = await supabase
           .from('lead_scores')
-          .upsert(
-            scores.map(s => ({
-              sale_id: s.sale_id,
-              score: s.score,
-              factors: s.factors,
-              calculated_at: new Date().toISOString(),
-            })),
-            { onConflict: 'sale_id' }
-          );
+          .upsert(upsertData, { onConflict: 'sale_id' });
         
         if (error) throw error;
       }
