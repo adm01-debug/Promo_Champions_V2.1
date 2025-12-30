@@ -5,7 +5,8 @@ import { useRecordAchievement } from './useAchievements';
 export function useCelebration() {
   const hasPlayedRef = useRef<Set<string>>(new Set());
   const { playSound } = useSoundSettings();
-  const recordAchievement = useRecordAchievement();
+  const recordAchievementMutation = useRecordAchievement();
+  
   // Request notification permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -137,7 +138,7 @@ export function useCelebration() {
 
     // Record achievement in database
     if (salespersonId) {
-      recordAchievement.mutate(
+      recordAchievementMutation.mutate(
         {
           salespersonId,
           achievementType: 'daily_goal',
@@ -153,7 +154,7 @@ export function useCelebration() {
                 setTimeout(() => playSound(), 300);
                 sendPushNotification(
                   '🎖️ Level Up!',
-                  `${salespersonName} subiu para o nível ${result.levelUpInfo.newLevel}!`
+                  `${salespersonName} subiu para o nível ${result.levelUpInfo!.newLevel}!`
                 );
               }, 600);
             }
@@ -174,7 +175,7 @@ export function useCelebration() {
               setTimeout(() => {
                 sendPushNotification(
                   '⚡ Quase lá!',
-                  `${salespersonName || 'Vendedor'} está a 1 dia de bater seu recorde de ${result.nearRecord.best} dias seguidos!`
+                  `${salespersonName || 'Vendedor'} está a 1 dia de bater seu recorde de ${result.nearRecord!.best} dias seguidos!`
                 );
               }, 800);
             }
@@ -195,7 +196,7 @@ export function useCelebration() {
         }
       );
     }
-  }, [playSound, triggerConfetti, triggerLevelUpConfetti, sendPushNotification, recordAchievement]);
+  }, [playSound, triggerConfetti, triggerLevelUpConfetti, sendPushNotification, recordAchievementMutation]);
 
   const celebrateLevelUp = useCallback((
     salespersonName: string,
