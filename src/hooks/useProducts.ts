@@ -6,6 +6,19 @@ import { CACHE_TIMES } from '@/constants';
 // Re-export Product type for components
 export type { Product } from '@/types';
 
+// Extended product interface with database fields
+export interface DBProduct {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  status: string;
+  rating: number;
+  sales_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useProducts = () => {
   return useQuery<Product[]>({
     queryKey: ['products'],
@@ -42,8 +55,8 @@ export interface TopProduct {
   sales_count: number;
   revenue: number;
   rating: number;
-  trend?: 'up' | 'down' | 'stable';
-  sales?: number;
+  trend: number;
+  sales: number;
 }
 
 export const useTopProducts = (limit: number = 10) => {
@@ -65,7 +78,7 @@ export const useTopProducts = (limit: number = 10) => {
         sales_count: p.sales_count,
         revenue: p.price * p.sales_count,
         rating: p.rating,
-        trend: 'stable' as const,
+        trend: 0,
         sales: p.sales_count,
       }));
     },
@@ -107,10 +120,20 @@ export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string; name?: string; price?: number; category?: string }) => {
+    mutationFn: async ({ id, name, price, category }: { 
+      id: string; 
+      name?: string; 
+      price?: number; 
+      category?: string;
+    }) => {
+      const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      if (name !== undefined) updates.name = name;
+      if (price !== undefined) updates.price = price;
+      if (category !== undefined) updates.category = category;
+
       const { data, error } = await supabase
         .from('products')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(updates)
         .eq('id', id)
         .select()
         .single();

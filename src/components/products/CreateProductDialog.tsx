@@ -24,7 +24,6 @@ const productSchema = z.object({
     const num = parseFloat(val);
     return !isNaN(num) && num >= 0;
   }, "Preço deve ser um valor válido"),
-  status: z.string().default("ativo"),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -39,7 +38,6 @@ export const CreateProductDialog = () => {
       name: "",
       category: "Assinatura",
       price: "",
-      status: "ativo",
     },
   });
 
@@ -49,7 +47,6 @@ export const CreateProductDialog = () => {
         name: data.name,
         category: data.category,
         price: parseFloat(data.price),
-        status: data.status,
       },
       {
         onSuccess: () => {
@@ -136,27 +133,6 @@ export const CreateProductDialog = () => {
                       placeholder="0.00"
                       className="bg-muted/50 border-border/50"
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="bg-muted/50 border-border/50">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ativo">Ativo</SelectItem>
-                        <SelectItem value="pausado">Pausado</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
