@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useCadences, useCadenceSteps, useEnrollInCadence } from "@/hooks/useCadences";
+import { useCadences, useCadenceSteps, useEnrollInCadence, Cadence } from "@/hooks/useCadences";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { CadenceCard } from "./CadenceCard";
 import { Play } from "lucide-react";
@@ -128,7 +128,7 @@ function CadenceCardWithSteps({
   isSelected, 
   onSelect 
 }: { 
-  cadence: any; 
+  cadence: Cadence; 
   isSelected: boolean; 
   onSelect: () => void;
 }) {

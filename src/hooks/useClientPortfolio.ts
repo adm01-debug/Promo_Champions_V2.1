@@ -125,7 +125,8 @@ export function usePortfolioStats(salespersonId?: string) {
         activeClients: data?.filter(item => item.status === 'active').length || 0,
         inactiveClients: data?.filter(item => item.status === 'inactive').length || 0,
         totalValue: data?.reduce((sum, item) => {
-          const value = (item.client as any)?.total_value || 0;
+          const clientData = item.client as { total_value?: number } | null;
+          const value = clientData?.total_value || 0;
           return sum + Number(value);
         }, 0) || 0,
         icpMatch,
@@ -217,7 +218,7 @@ export function useUpdatePortfolioStatus() {
       status: 'active' | 'inactive';
       lastPurchaseDate?: string;
     }) => {
-      const updateData: Record<string, any> = {
+      const updateData: Record<string, string | undefined> = {
         status,
         updated_at: new Date().toISOString(),
       };

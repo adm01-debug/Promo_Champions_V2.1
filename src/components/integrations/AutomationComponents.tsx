@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Zap, Clock, ArrowRight, Play, Pause, 
+  Zap, Clock, ArrowRight, 
   Trash2, Copy, MoreVertical, LucideIcon 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';

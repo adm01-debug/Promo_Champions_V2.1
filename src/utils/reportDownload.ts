@@ -2,10 +2,40 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+interface SaleRecord {
+  id: string;
+  client_name: string;
+  product_name: string;
+  amount: number;
+  status: string;
+  category: string;
+  source: string | null;
+  created_at: string;
+  salespeople?: { name: string } | null;
+}
+
+interface MetricRecord {
+  id: string;
+  date: string;
+  revenue: number;
+  total_sales: number;
+  new_clients: number;
+  avg_ticket: number;
+  conversion_rate: number;
+  revenue_goal: number;
+}
+
+interface CategoryRecord {
+  id: string;
+  date: string;
+  category: string;
+  percentage: number;
+}
+
 interface ReportData {
-  sales: any[];
-  metrics: any[];
-  categories: any[];
+  sales: SaleRecord[];
+  metrics: MetricRecord[];
+  categories: CategoryRecord[];
 }
 
 const fetchReportData = async (startDate: Date, endDate: Date): Promise<ReportData> => {
@@ -38,7 +68,7 @@ const fetchReportData = async (startDate: Date, endDate: Date): Promise<ReportDa
   };
 };
 
-const generateCSV = (data: any[], columns: { key: string; label: string }[]): string => {
+const generateCSV = (data: Record<string, unknown>[], columns: { key: string; label: string }[]): string => {
   const header = columns.map((c) => c.label).join(",");
   const rows = data.map((item) =>
     columns
