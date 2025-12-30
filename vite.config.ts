@@ -7,15 +7,20 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: "/",
-  server: {
-    host: "::",
-    port: 8080,
-  },
+  // Server config removed for Lovable compatibility
+  // Lovable manages its own dev server
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    // Optimized for Lovable deployment
+    target: "esnext",
+    outDir: "dist",
+    assetsDir: "assets",
+    sourcemap: mode === "development",
   },
   test: {
     globals: true,
