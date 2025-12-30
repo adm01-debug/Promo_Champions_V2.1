@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
+import { toast } from 'sonner';
 
 // Extended product interface with database fields
 export interface Product {
@@ -92,7 +93,7 @@ export const useCreateProduct = () => {
           name: input.name,
           price: input.price,
           category: input.category || 'Geral',
-          status: 'active',
+          status: 'ativo',
         })
         .select()
         .single();
@@ -102,6 +103,10 @@ export const useCreateProduct = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success('Produto criado com sucesso!');
+    },
+    onError: () => {
+      toast.error('Erro ao criar produto');
     },
   });
 };
@@ -133,7 +138,28 @@ export const useUpdateProduct = () => {
       if (error) throw error;
       return data;
     },
+    // Optimistic update
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ['products'] });
+      const previousProducts = queryClient.getQueryData(['products']);
+      
+      queryClient.setQueryData(['products'], (old: Product[] | undefined) => {
+        if (!old) return old;
+        return old.map(product => 
+          product.id === newData.id ? { ...product, ...newData } : product
+        );
+      });
+      
+      return { previousProducts };
+    },
     onSuccess: () => {
+      toast.success('Produto atualizado!');
+    },
+    onError: (_err, _vars, context) => {
+      queryClient.setQueryData(['products'], context?.previousProducts);
+      toast.error('Erro ao atualizar produto');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
@@ -151,7 +177,26 @@ export const useDeleteProduct = () => {
       
       if (error) throw error;
     },
+    // Optimistic update
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: ['products'] });
+      const previousProducts = queryClient.getQueryData(['products']);
+      
+      queryClient.setQueryData(['products'], (old: Product[] | undefined) => {
+        if (!old) return old;
+        return old.filter(product => product.id !== productId);
+      });
+      
+      return { previousProducts };
+    },
     onSuccess: () => {
+      toast.success('Produto excluído');
+    },
+    onError: (_err, _productId, context) => {
+      queryClient.setQueryData(['products'], context?.previousProducts);
+      toast.error('Erro ao excluir produto');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });

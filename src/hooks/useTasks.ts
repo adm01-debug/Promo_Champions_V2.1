@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
+import { toast } from 'sonner';
 
 // Task types matching database enums
 export type TaskPriority = 'low' | 'medium' | 'high';
@@ -131,6 +132,10 @@ export const useCreateTask = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast.success('Tarefa criada com sucesso!');
+    },
+    onError: () => {
+      toast.error('Erro ao criar tarefa');
     },
   });
 };
@@ -165,7 +170,25 @@ export const useUpdateTask = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    // Optimistic update
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData(['tasks']);
+      
+      queryClient.setQueryData(['tasks'], (old: TaskRecord[] | undefined) => {
+        if (!old) return old;
+        return old.map(task => 
+          task.id === newData.id ? { ...task, ...newData } : task
+        );
+      });
+      
+      return { previousTasks };
+    },
+    onError: (_err, _newData, context) => {
+      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      toast.error('Erro ao atualizar tarefa');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
@@ -190,7 +213,30 @@ export const useCompleteTask = () => {
       if (error) throw error;
       return data;
     },
+    // Optimistic update
+    onMutate: async (taskId) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData(['tasks']);
+      
+      queryClient.setQueryData(['tasks'], (old: TaskRecord[] | undefined) => {
+        if (!old) return old;
+        return old.map(task => 
+          task.id === taskId 
+            ? { ...task, status: 'completed' as TaskStatus, completed_at: new Date().toISOString() } 
+            : task
+        );
+      });
+      
+      return { previousTasks };
+    },
     onSuccess: () => {
+      toast.success('Tarefa concluída!');
+    },
+    onError: (_err, _taskId, context) => {
+      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      toast.error('Erro ao concluir tarefa');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
@@ -208,7 +254,26 @@ export const useDeleteTask = () => {
       
       if (error) throw error;
     },
+    // Optimistic update
+    onMutate: async (taskId) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData(['tasks']);
+      
+      queryClient.setQueryData(['tasks'], (old: TaskRecord[] | undefined) => {
+        if (!old) return old;
+        return old.filter(task => task.id !== taskId);
+      });
+      
+      return { previousTasks };
+    },
     onSuccess: () => {
+      toast.success('Tarefa excluída');
+    },
+    onError: (_err, _taskId, context) => {
+      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      toast.error('Erro ao excluir tarefa');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
