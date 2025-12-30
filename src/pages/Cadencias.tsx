@@ -1,4 +1,4 @@
-import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats } from "@/hooks/useCadences";
+import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord } from "@/hooks/useCadences";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
@@ -132,7 +132,7 @@ function CadenceCardWithSteps({
   cadence, 
   onDelete 
 }: { 
-  cadence: any; 
+  cadence: CadenceRecord; 
   onDelete: () => void;
 }) {
   const { data: steps } = useCadenceSteps(cadence.id);

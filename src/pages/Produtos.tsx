@@ -1,4 +1,4 @@
-import { Package, Search, Star, Loader2, Pencil, Trash2, Plus } from "lucide-react";
+import { Package, Search, Star, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

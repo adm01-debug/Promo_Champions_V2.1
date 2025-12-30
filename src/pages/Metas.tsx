@@ -4,7 +4,7 @@ import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
 import { CommissionCalculator } from "@/components/goals/CommissionCalculator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Target, TrendingUp, Users, Zap, RefreshCw, DollarSign } from "lucide-react";
+import { Target, TrendingUp, Users, Zap, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";

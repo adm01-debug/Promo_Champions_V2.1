@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { LucideIcon } from "lucide-react";
 import { 
   ArrowLeft, 
   DollarSign, 
@@ -124,7 +125,7 @@ const StatCard = ({
   title: string; 
   value: string; 
   change?: number; 
-  icon: any; 
+  icon: LucideIcon; 
   variant?: "default" | "primary" | "success";
 }) => {
   const isPositive = change && change > 0;

@@ -1,4 +1,4 @@
-import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, Plus } from "lucide-react";
+import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
