@@ -176,3 +176,25 @@ export const useAvailableClosers = () => {
     gcTime: CACHE_TIMES.GC_TIME,
   });
 };
+
+export const useDeleteTeam = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (teamId: string) => {
+      // Delete team closers first
+      await supabase.from('team_closers').delete().eq('team_id', teamId);
+      
+      // Then delete the team
+      const { error } = await supabase
+        .from('teams')
+        .delete()
+        .eq('id', teamId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+    },
+  });
+};

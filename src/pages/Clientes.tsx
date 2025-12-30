@@ -30,8 +30,7 @@ const Clientes = () => {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   
-  const { data: clientsData, isLoading } = useClients(searchTerm);
-  const clients = clientsData?.data || [];
+  const { data: clients = [], isLoading } = useClients();
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
 

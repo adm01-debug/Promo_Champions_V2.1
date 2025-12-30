@@ -1,6 +1,5 @@
 // src/routes/lazy-routes.tsx
 // Code Splitting - Lazy Loading de páginas pesadas
-// Data: 2024-12-28
 
 import { lazy, Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -71,7 +70,7 @@ const AssistenteSkeleton = () => (
 // ============================================================================
 
 interface LazyPageProps {
-  Component: React.LazyExoticComponent<any>;
+  Component: React.LazyExoticComponent<React.ComponentType<unknown>>;
   skeleton?: React.ReactNode;
 }
 
@@ -117,18 +116,18 @@ export const lazyRoutes = [
 // ============================================================================
 
 export const prefetchLazyRoutes = () => {
-  // Prefetch quando idle
+  // Prefetch quando idle - using dynamic imports
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => {
-      Analytics.preload();
-      BIGestor.preload();
-      Assistente.preload();
+      import('@/pages/Analytics');
+      import('@/pages/BIGestor');
+      import('@/pages/Assistente');
     });
   } else {
     // Fallback: prefetch após 2s
     setTimeout(() => {
-      Analytics.preload();
-      BIGestor.preload();
+      import('@/pages/Analytics');
+      import('@/pages/BIGestor');
     }, 2000);
   }
 };
@@ -145,18 +144,3 @@ export const LAZY_COMPONENTS = {
   previsaoDemanda: PrevisaoDemanda,
   relatorios: Relatorios,
 };
-
-// Uso no Router
-/*
-import { lazyRoutes, prefetchLazyRoutes } from './routes/lazy-routes';
-
-// Em App.tsx ou main.tsx
-useEffect(() => {
-  prefetchLazyRoutes();
-}, []);
-
-// No Router
-{lazyRoutes.map(route => (
-  <Route key={route.path} path={route.path} element={route.element} />
-))}
-*/

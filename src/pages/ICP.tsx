@@ -39,8 +39,7 @@ import {
 
 export default function ICP() {
   const { data: icpData, isLoading: isLoadingICP } = useICPData();
-  const { data: clientsData, isLoading: isLoadingClients } = useClients();
-  const clients = clientsData?.data || [];
+  const { data: clients = [], isLoading: isLoadingClients } = useClients();
   const updateICP = useUpdateICPData();
   
   const [searchTerm, setSearchTerm] = useState("");
