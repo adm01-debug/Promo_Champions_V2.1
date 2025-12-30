@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect, Children, cloneElement, isValidElement } from "react";
+import { ReactNode, useState, useEffect, Children, isValidElement, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface SkeletonTransitionProps {
@@ -109,16 +109,12 @@ export function SkeletonTransition({
 
 /** 
  * Wrapper for staggered section animation
+ * Uses forwardRef to properly handle refs passed from parent components
  */
-function StaggeredSection({ 
-  children, 
-  delay,
-  show,
-}: { 
-  children: ReactNode; 
-  delay: number;
-  show: boolean;
-}) {
+const StaggeredSection = forwardRef<
+  HTMLDivElement,
+  { children: ReactNode; delay: number; show: boolean }
+>(({ children, delay, show }, ref) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -132,6 +128,7 @@ function StaggeredSection({
 
   return (
     <div
+      ref={ref}
       className={cn(
         "transition-all duration-500 ease-out",
         isVisible 
@@ -142,7 +139,9 @@ function StaggeredSection({
       {children}
     </div>
   );
-}
+});
+
+StaggeredSection.displayName = "StaggeredSection";
 
 /** 
  * Simple fade wrapper for content that should fade in after loading
