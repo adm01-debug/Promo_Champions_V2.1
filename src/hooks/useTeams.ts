@@ -9,9 +9,8 @@ export const useTeams = () => {
     queryFn: async () => {
       const { data } = await supabase.from('teams').select('*');
       return data || [];
-    }
-  ,
-    staleTime: CACHE_TIMES.STALE_TIME
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
   });
 };

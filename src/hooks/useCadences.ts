@@ -11,9 +11,8 @@ export const useCadences = () => {
     queryFn: async (): Promise<Cadence[]> => {
       const query = supabase.from('cadences').select('*, steps(*)');
       return fetchWithErrorHandling(query);
-    }
-  ,
-    staleTime: CACHE_TIMES.STALE_TIME
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
   });
 };

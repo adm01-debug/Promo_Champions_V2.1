@@ -10,9 +10,8 @@ export const useMetrics = (userId?: string) => {
     queryFn: async (): Promise<MetricData[]> => {
       // Implementação de métricas
       return [];
-    }
-  ,
-    staleTime: CACHE_TIMES.STALE_TIME
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
   });
 };

@@ -11,9 +11,8 @@ export const useAchievements = () => {
     queryFn: async (): Promise<Achievement[]> => {
       const query = supabase.from('achievements').select('*');
       return fetchWithErrorHandling(query);
-    }
-  ,
-    staleTime: CACHE_TIMES.STALE_TIME
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
   });
 };

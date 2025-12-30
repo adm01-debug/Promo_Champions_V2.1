@@ -19,9 +19,8 @@ export const useGoals = (userId?: string) => {
       }
       
       return fetchWithErrorHandling(query);
-    }
-  ,
-    staleTime: CACHE_TIMES.STALE_TIME
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME, // 10 minutos de cache
   });
 };
