@@ -46,7 +46,7 @@ const Index = () => {
       duration={400}
     >
       <PageTransition>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background" suppressHydrationWarning>
           <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
             {/* Header */}
             <motion.div
