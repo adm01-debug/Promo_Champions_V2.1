@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Trophy, Lock, CheckCircle2, Star } from 'lucide-react';
+import { Lock, CheckCircle2, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProgressRing } from './ProgressRing';
 

@@ -1,5 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 import { CACHE_TIMES } from '@/constants';
 import { useState, useCallback } from 'react';
 
@@ -29,7 +28,6 @@ export interface Notification {
 const mockNotifications: Notification[] = [];
 
 export const useNotifications = (userId?: string) => {
-  const queryClient = useQueryClient();
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   
   const query = useQuery({

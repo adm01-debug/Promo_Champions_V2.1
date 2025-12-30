@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,8 +10,6 @@ import {
   AlertTriangle, 
   Package, 
   RefreshCw,
-  ArrowUpCircle,
-  ArrowDownCircle,
   BarChart3
 } from "lucide-react";
 import { useDemandForecast } from "@/hooks/useDemandForecast";

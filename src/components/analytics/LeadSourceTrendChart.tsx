@@ -27,19 +27,21 @@ export function LeadSourceTrendChart() {
   }
 
   // Transform data for stacked bar chart
-  const chartData = data?.map(month => ({
+  type ChartDataItem = { month: string } & Partial<Record<LeadSource, number>>;
+  
+  const chartData: ChartDataItem[] = data?.map(month => ({
     month: month.month,
     ...month.data,
   })) || [];
 
   // Get sources that have at least some data
   const activeSources = Object.keys(sourceLabels).filter(source => 
-    chartData.some(d => (d as any)[source] > 0)
+    chartData.some(d => (d[source as LeadSource] || 0) > 0)
   ) as LeadSource[];
 
   // Calculate total deals for badge
   const totalDeals = chartData.reduce((sum, month) => {
-    return sum + activeSources.reduce((monthSum, source) => monthSum + ((month as any)[source] || 0), 0);
+    return sum + activeSources.reduce((monthSum, source) => monthSum + (month[source] || 0), 0);
   }, 0);
 
   return (

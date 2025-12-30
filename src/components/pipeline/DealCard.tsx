@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { Building2, DollarSign, Calendar, Target, Zap, Users } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 

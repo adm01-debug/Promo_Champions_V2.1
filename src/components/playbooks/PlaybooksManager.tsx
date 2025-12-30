@@ -11,7 +11,6 @@ import {
   BookOpen, 
   Plus, 
   Trash2, 
-  CheckCircle2, 
   Circle,
   Star,
   Users,

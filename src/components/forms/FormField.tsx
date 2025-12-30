@@ -1,4 +1,4 @@
-import { FC, ReactNode, forwardRef, InputHTMLAttributes } from 'react';
+import { ReactNode, forwardRef, InputHTMLAttributes } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Check, Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';

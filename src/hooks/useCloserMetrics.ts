@@ -73,7 +73,7 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
       const currentSales = currentSalesResult.data?.filter(s => closerIds.includes(s.salesperson_id || '')) || [];
       const previousSales = previousSalesResult.data?.filter(s => closerIds.includes(s.salesperson_id || '')) || [];
 
-      const calculateMetrics = (sales: any[]): RoleMetrics => {
+      const calculateMetrics = (sales: Array<{ id: string; status: string; amount: number; salesperson_id: string | null }>): RoleMetrics => {
         const totalDeals = sales?.length || 0;
         const closedDeals = sales?.filter(s => s.status === "completed").length || 0;
         const totalValue = sales?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
