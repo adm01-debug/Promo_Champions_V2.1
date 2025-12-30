@@ -354,7 +354,7 @@ export function NotificationCenter() {
               </SelectContent>
             </Select>
 
-            <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as any)}>
+            <Select value={dateFilter} onValueChange={(v: "all" | "today" | "week" | "month") => setDateFilter(v)}>
               <SelectTrigger className="w-32">
                 <Calendar className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Período" />

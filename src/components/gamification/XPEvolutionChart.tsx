@@ -152,7 +152,7 @@ export function XPEvolutionChart({ salespersonId }: XPEvolutionChartProps) {
                 </SelectContent>
               </Select>
             )}
-            <Select value={period} onValueChange={(v) => setPeriod(v as any)}>
+            <Select value={period} onValueChange={(v: "7" | "14" | "30" | "90") => setPeriod(v)}>
               <SelectTrigger className="w-28">
                 <SelectValue />
               </SelectTrigger>

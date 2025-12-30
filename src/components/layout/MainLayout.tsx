@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useRef } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { ThemeToggle } from "./ThemeToggle";
-import { GlobalSearch, SearchTrigger } from "./GlobalSearch";
+import { GlobalSearch, GlobalSearchHandle, SearchTrigger } from "./GlobalSearch";
 import { useSecurityAlertNotifications } from "@/hooks/useSecurityAlertNotifications";
 import { useSDRAlertNotifications } from "@/hooks/useSDRAlertNotifications";
 import { CelebrationOverlayProvider } from "@/components/gamification/CelebrationOverlayProvider";
@@ -16,8 +16,8 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const [searchOpen, setSearchOpen] = useState(false);
   const isMobile = useIsMobile();
+  const searchRef = useRef<GlobalSearchHandle>(null);
   
   // Enable real-time security alert notifications for admins/managers
   useSecurityAlertNotifications();
@@ -51,11 +51,11 @@ export function MainLayout({ children }: MainLayoutProps) {
               <SidebarTrigger className="glass h-9 w-9 hover:bg-muted/50 hover-scale-lg hidden md:flex" />
             </div>
             <div className="flex items-center gap-2">
-              <SearchTrigger onClick={() => setSearchOpen(true)} />
+              <SearchTrigger onClick={() => searchRef.current?.open()} />
               <ThemeToggle />
             </div>
           </div>
-          <GlobalSearch />
+          <GlobalSearch ref={searchRef} />
           {children}
         </main>
         
