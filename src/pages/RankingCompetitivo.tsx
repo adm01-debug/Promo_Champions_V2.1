@@ -52,7 +52,17 @@ const RankingCompetitivo = () => {
   });
 
   // Fetch achievements
-  const { data: achievements } = useQuery({
+  interface AchievementWithSalesperson {
+    id: string;
+    salesperson_id: string;
+    achievement_type: string;
+    achievement_date: string;
+    details: { name?: string; streak?: number } | null;
+    created_at: string;
+    salespeople: { name: string; avatar_url: string | null } | null;
+  }
+  
+  const { data: achievements } = useQuery<AchievementWithSalesperson[]>({
     queryKey: ["all-achievements"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -65,7 +75,7 @@ const RankingCompetitivo = () => {
         .limit(20);
 
       if (error) throw error;
-      return data;
+      return data as AchievementWithSalesperson[];
     },
   });
 
@@ -532,13 +542,13 @@ const RankingCompetitivo = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarImage src={(achievement.salespeople as any)?.avatar_url || ""} />
+                            <AvatarImage src={achievement.salespeople?.avatar_url || ""} />
                             <AvatarFallback className="text-xs">
-                              {((achievement.salespeople as any)?.name || "?")[0]}
+                              {(achievement.salespeople?.name || "?")[0]}
                             </AvatarFallback>
                           </Avatar>
                           <span className="font-medium truncate">
-                            {(achievement.salespeople as any)?.name || "Vendedor"}
+                            {achievement.salespeople?.name || "Vendedor"}
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">

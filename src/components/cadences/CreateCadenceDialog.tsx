@@ -92,9 +92,9 @@ export function CreateCadenceDialog() {
     setSteps(steps.filter((_, i) => i !== index));
   };
 
-  const updateStep = (index: number, field: keyof StepInput, value: string | number) => {
+  const updateStep = <K extends keyof StepInput>(index: number, field: K, value: StepInput[K]) => {
     const updated = [...steps];
-    (updated[index] as any)[field] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setSteps(updated);
   };
 
@@ -230,7 +230,7 @@ export function CreateCadenceDialog() {
                       <FormLabel className="text-xs font-medium text-muted-foreground">Tipo de Ação</FormLabel>
                       <Select
                         value={s.action_type}
-                        onValueChange={(v) => updateStep(index, "action_type", v)}
+                        onValueChange={(v) => updateStep(index, "action_type", v as ActionType)}
                       >
                         <SelectTrigger className="h-8 text-sm bg-background/50 border-border/50 focus:border-primary transition-colors">
                           <SelectValue />

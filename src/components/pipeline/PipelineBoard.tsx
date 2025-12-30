@@ -46,7 +46,8 @@ export const PipelineBoard = () => {
     if (allDealIds.length > 0 && !leadScores) {
       calculateScores.mutate(allDealIds);
     }
-  }, [allDealIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allDealIds, leadScores]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
