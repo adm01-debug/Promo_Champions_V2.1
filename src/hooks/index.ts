@@ -23,3 +23,4 @@ export {
   useTouchDevice, 
   useReducedMotion 
 } from './useMediaQueryHooks';
+export { useHapticFeedback, useHapticButton } from './useHapticFeedback';
