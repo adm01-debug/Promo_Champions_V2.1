@@ -1,4 +1,5 @@
 import { Suspense, lazy } from "react";
+import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -94,7 +95,8 @@ const App = () => (
           <BrowserRouter>
             <AuthProvider>
             <Suspense fallback={<PageLoadingFallback />}>
-            <Routes>
+            <AnimatePresence mode="wait">
+        <Routes>
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route
@@ -103,7 +105,8 @@ const App = () => (
                   <MainLayout>
                     <ErrorBoundary>
                       <Suspense fallback={<PageLoadingFallback />}>
-                        <Routes>
+                        <AnimatePresence mode="wait">
+        <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/vendas" element={<Vendas />} />
                           <Route path="/clientes" element={<Clientes />} />
@@ -209,12 +212,14 @@ const App = () => (
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
+      </AnimatePresence>
                       </Suspense>
                     </ErrorBoundary>
                   </MainLayout>
                 }
               />
             </Routes>
+      </AnimatePresence>
             </Suspense>
           </AuthProvider>
           <QueryPerformancePanel />
