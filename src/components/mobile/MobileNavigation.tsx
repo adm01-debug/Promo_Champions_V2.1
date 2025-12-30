@@ -1,14 +1,16 @@
-import { FC } from 'react';
-import { useLocation } from 'react-router-dom';
+import { FC, useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Kanban, 
   ClipboardList, 
   Trophy,
-  User
+  Menu
 } from 'lucide-react';
 import { MobileBottomNav } from './MobileComponents';
+import { MobileDrawer } from './MobileDrawer';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 interface MobileNavigationProps {
   className?: string;
@@ -16,6 +18,10 @@ interface MobileNavigationProps {
 
 export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
+  if (!isMobile) return null;
   
   const navItems = [
     {
@@ -43,14 +49,24 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
       isActive: location.pathname === '/ranking'
     },
     {
-      icon: <User className="h-5 w-5" />,
-      label: 'Perfil',
-      href: '/configuracoes',
-      isActive: location.pathname === '/configuracoes'
+      icon: <Menu className="h-5 w-5" />,
+      label: 'Menu',
+      href: '#menu',
+      isActive: false,
+      onClick: () => setIsDrawerOpen(true)
     }
   ];
 
   return (
-    <MobileBottomNav items={navItems} className={className} />
+    <>
+      <MobileBottomNav 
+        items={navItems} 
+        className={className} 
+      />
+      <MobileDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+      />
+    </>
   );
 };

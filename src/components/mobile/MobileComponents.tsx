@@ -77,6 +77,7 @@ interface MobileBottomNavProps {
     href: string;
     isActive?: boolean;
     badge?: number;
+    onClick?: () => void;
   }[];
   className?: string;
 }
@@ -87,27 +88,42 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  const handleClick = (item: MobileBottomNavProps['items'][0]) => {
+    if (item.onClick) {
+      item.onClick();
+    } else {
+      navigate(item.href);
+    }
+  };
+
   return (
-    <nav className={cn(
-      "fixed bottom-0 left-0 right-0 z-50 md:hidden",
-      "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
-      "border-t border-border",
-      "safe-area-inset-bottom",
-      className
-    )}>
-      <div className="flex items-center justify-around h-16 px-2">
+    <nav 
+      className={cn(
+        "fixed bottom-0 left-0 right-0 z-50 md:hidden",
+        "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+        "border-t border-border",
+        "safe-area-inset-bottom",
+        className
+      )}
+      role="navigation"
+      aria-label="Navegação principal mobile"
+    >
+      <div className="flex items-center justify-around h-[72px] px-1">
         {items.map((item, index) => (
           <motion.button
             key={index}
             whileTap={{ scale: 0.9 }}
-            onClick={() => navigate(item.href)}
+            onClick={() => handleClick(item)}
             className={cn(
-              "flex flex-col items-center justify-center gap-0.5 px-3 py-2 rounded-lg",
-              "min-w-[64px] transition-colors",
+              "flex flex-col items-center justify-center gap-1 rounded-lg",
+              "min-w-[56px] min-h-[56px] w-[56px] h-[56px]",
+              "transition-colors touch-manipulation",
               item.isActive 
-                ? "text-primary" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-primary bg-primary/10" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
+            aria-current={item.isActive ? 'page' : undefined}
+            aria-label={item.label}
           >
             <div className="relative">
               {item.icon}
@@ -118,7 +134,7 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({
               )}
             </div>
             <span className={cn(
-              "text-[10px] font-medium",
+              "text-[10px] font-medium leading-none",
               item.isActive && "font-semibold"
             )}>
               {item.label}
