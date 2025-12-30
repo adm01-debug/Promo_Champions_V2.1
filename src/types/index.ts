@@ -7,9 +7,11 @@ export interface Deal {
   id: string;
   title: string;
   value: number;
+  amount?: number;
   client_id: string;
+  client_name?: string;
   stage_id: string;
-  status: 'open' | 'won' | 'lost' | 'abandoned';
+  status: 'open' | 'won' | 'lost' | 'abandoned' | 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed';
   probability: number;
   expected_close_date?: string;
   closed_at?: string;
@@ -35,6 +37,7 @@ export interface Client {
   industry?: string;
   employee_count?: number;
   annual_revenue?: number;
+  total_value?: number;
   created_at: string;
   updated_at: string;
   last_contact_date?: string;
@@ -77,6 +80,7 @@ export interface User {
 export interface PipelineStage {
   id: string;
   name: string;
+  label?: string;
   order: number;
   probability: number;
   pipeline_id: string;
@@ -173,11 +177,17 @@ export interface Task {
   assigned_to: string;
   created_by: string;
   due_date?: string;
+  due_time?: string;
   completed: boolean;
   priority: 'low' | 'medium' | 'high' | 'urgent';
+  task_type?: 'call' | 'email' | 'meeting' | 'follow_up' | 'other';
   client_id?: string;
   deal_id?: string;
+  sale_id?: string;
+  salesperson_id?: string;
   created_at: string;
+  sale?: { client_name: string };
+  salesperson?: { name: string; avatar_url?: string };
 }
 
 export interface DateRange {

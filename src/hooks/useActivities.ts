@@ -1,8 +1,37 @@
 import type { Activity } from '@/types';
 import { CACHE_TIMES } from '@/constants';
-import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
 import { supabase } from '@/lib/supabase';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+// Types matching database schema
+export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'other';
+export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified';
+
+export interface ActivityRecord {
+  id: string;
+  activity_type: ActivityType;
+  outcome: ActivityOutcome;
+  contact_name: string | null;
+  notes: string | null;
+  duration_minutes: number | null;
+  sale_id: string | null;
+  salesperson_id: string | null;
+  created_at: string;
+}
+
+export interface ActivityStats {
+  total: number;
+  byType: Record<ActivityType, number>;
+  byOutcome: Record<ActivityOutcome, number>;
+  avgDuration: number;
+  // Today stats for ActivityStats component
+  totalToday: number;
+  callsToday: number;
+  emailsToday: number;
+  meetingsToday: number;
+  connectedToday: number;
+  scheduledToday: number;
+}
 
 interface UseActivitiesOptions {
   userId?: string;
@@ -10,22 +39,146 @@ interface UseActivitiesOptions {
 }
 
 export const useActivities = (filters?: UseActivitiesOptions) => {
-  return useQuery<Activity[]>({
+  return useQuery<ActivityRecord[]>({
     queryKey: ['activities', filters],
-    queryFn: async (): Promise<Activity[]> => {
-      let query = supabase.from('activities').select('*');
+    queryFn: async (): Promise<ActivityRecord[]> => {
+      let query = supabase.from('activities').select('*').order('created_at', { ascending: false });
 
       if (filters?.userId) {
-        query = query.eq('user_id', filters.userId);
+        query = query.eq('salesperson_id', filters.userId);
       }
 
-      if (filters?.clientId) {
-        query = query.eq('client_id', filters.clientId);
-      }
-
-      return fetchWithErrorHandling<Activity[]>(query);
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data || []) as ActivityRecord[];
     },
-    staleTime: CACHE_TIMES.STALE_TIME, // 5 minutos
-    gcTime: CACHE_TIMES.GC_TIME, // 10 minutos de cache
+    staleTime: CACHE_TIMES.STALE_TIME,
+    gcTime: CACHE_TIMES.GC_TIME,
+  });
+};
+
+export const useRecentActivities = (limit: number = 100) => {
+  return useQuery<ActivityRecord[]>({
+    queryKey: ['activities', 'recent', limit],
+    queryFn: async (): Promise<ActivityRecord[]> => {
+      const { data, error } = await supabase
+        .from('activities')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      
+      if (error) throw error;
+      return (data || []) as ActivityRecord[];
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
+    gcTime: CACHE_TIMES.GC_TIME,
+  });
+};
+
+export const useActivityStats = (salespersonId?: string) => {
+  return useQuery<ActivityStats>({
+    queryKey: ['activity-stats', salespersonId],
+    queryFn: async (): Promise<ActivityStats> => {
+      const today = new Date().toISOString().split('T')[0];
+      
+      let query = supabase.from('activities').select('*');
+      
+      if (salespersonId) {
+        query = query.eq('salesperson_id', salespersonId);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      
+      const activities = (data || []) as ActivityRecord[];
+      const todayActivities = activities.filter(a => a.created_at.startsWith(today));
+      
+      const byType: Record<ActivityType, number> = {
+        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, other: 0
+      };
+      
+      const byOutcome: Record<ActivityOutcome, number> = {
+        connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
+        busy: 0, callback: 0, not_interested: 0, qualified: 0
+      };
+      
+      let totalDuration = 0;
+      let durationCount = 0;
+      
+      activities.forEach(a => {
+        if (a.activity_type in byType) {
+          byType[a.activity_type]++;
+        }
+        if (a.outcome in byOutcome) {
+          byOutcome[a.outcome]++;
+        }
+        if (a.duration_minutes) {
+          totalDuration += a.duration_minutes;
+          durationCount++;
+        }
+      });
+      
+      // Today stats
+      const todayByType: Record<ActivityType, number> = {
+        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, other: 0
+      };
+      const todayByOutcome: Record<ActivityOutcome, number> = {
+        connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
+        busy: 0, callback: 0, not_interested: 0, qualified: 0
+      };
+      
+      todayActivities.forEach(a => {
+        if (a.activity_type in todayByType) {
+          todayByType[a.activity_type]++;
+        }
+        if (a.outcome in todayByOutcome) {
+          todayByOutcome[a.outcome]++;
+        }
+      });
+      
+      return {
+        total: activities.length,
+        byType,
+        byOutcome,
+        avgDuration: durationCount > 0 ? totalDuration / durationCount : 0,
+        totalToday: todayActivities.length,
+        callsToday: todayByType.call,
+        emailsToday: todayByType.email,
+        meetingsToday: todayByType.meeting,
+        connectedToday: todayByOutcome.connected,
+        scheduledToday: todayByOutcome.scheduled,
+      };
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
+    gcTime: CACHE_TIMES.GC_TIME,
+  });
+};
+
+export const useCreateActivity = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (input: {
+      activity_type: ActivityType;
+      outcome: ActivityOutcome;
+      contact_name?: string;
+      notes?: string;
+      duration_minutes?: number;
+      sale_id?: string;
+      salesperson_id?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from('activities')
+        .insert(input)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
+    },
   });
 };

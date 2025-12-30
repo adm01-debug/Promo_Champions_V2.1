@@ -1,18 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Cadence } from '@/types';
-import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
-import { CACHE_TIMES } from '@/constants';
+// Re-export everything from cadences folder for backwards compatibility
+export * from './cadences/useCadenceQueries';
+export * from './cadences/useCadenceMutations';
+export * from './cadences/useProspectCadenceMutations';
+export * from './cadences/useCadenceTaskMutations';
 
-
-export const useCadences = () => {
-  return useQuery<Cadence[]>({
-    queryKey: ['cadences'],
-    queryFn: async (): Promise<Cadence[]> => {
-      const query = supabase.from('cadences').select('*, steps(*)');
-      return fetchWithErrorHandling(query);
-    },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
-  });
-};
+// Re-export Cadence type from types for components that import from here
+export type { Cadence } from '@/types';
