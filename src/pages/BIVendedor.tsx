@@ -16,16 +16,12 @@ import {
   Clock,
   Trophy,
   Flame,
-  Zap,
   Activity,
   Star,
   Calendar,
   Percent,
   Award,
-  Sparkles,
-  Users,
-  FileText,
-  CheckCircle
+  Sparkles
 } from "lucide-react";
 import {
   AreaChart,
@@ -37,14 +33,12 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell,
-  BarChart,
-  Bar
+  Cell
 } from "recharts";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { PageTransition, StaggeredContainer, MotionItem } from "@/components/transitions/PageTransition";
+import { PageTransition, StaggeredContainer } from "@/components/transitions/PageTransition";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 

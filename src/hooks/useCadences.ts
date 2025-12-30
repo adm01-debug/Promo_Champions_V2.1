@@ -4,5 +4,5 @@ export * from './cadences/useCadenceMutations';
 export * from './cadences/useProspectCadenceMutations';
 export * from './cadences/useCadenceTaskMutations';
 
-// Re-export Cadence type from types for components that import from here
-export type { Cadence } from '@/types';
+// Note: Cadence type from useCadenceQueries is the correct one for database operations
+// The Cadence type in @/types is a different interface for application-level usage
