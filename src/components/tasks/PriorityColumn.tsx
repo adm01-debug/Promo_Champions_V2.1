@@ -1,13 +1,13 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Task, TaskPriority } from '@/hooks/useTasks';
+import { TaskRecord, TaskPriority } from '@/hooks/useTasks';
 import { DraggableTaskCard } from './DraggableTaskCard';
 import { cn } from '@/lib/utils';
-import { Flame, ClipboardList, CheckCircle, type LucideIcon } from 'lucide-react';
+import { Flame, ClipboardList, CheckCircle, AlertTriangle, type LucideIcon } from 'lucide-react';
 
 interface PriorityColumnProps {
   priority: TaskPriority;
-  tasks: Task[];
+  tasks: TaskRecord[];
   activeId: string | null;
 }
 
@@ -18,6 +18,13 @@ const priorityConfig: Record<TaskPriority, {
   bgColor: string;
   borderColor: string;
 }> = {
+  urgent: {
+    label: 'Urgente',
+    icon: AlertTriangle,
+    color: 'text-destructive',
+    bgColor: 'bg-destructive/5',
+    borderColor: 'border-destructive/20'
+  },
   high: { 
     label: 'Prioridade Alta', 
     icon: Flame, 

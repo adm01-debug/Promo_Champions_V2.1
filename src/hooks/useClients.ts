@@ -1,7 +1,6 @@
 import { Client } from '@/types';
 import { CACHE_TIMES } from '@/constants';
-import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Re-export Client type for convenience
@@ -17,11 +16,9 @@ export const useClients = (filters?: UseClientsOptions) => {
     queryFn: async (): Promise<Client[]> => {
       let query = supabase.from('clients').select('*');
 
-      if (filters?.segment) {
-        query = query.eq('segment', filters.segment);
-      }
-
-      return fetchWithErrorHandling<Client[]>(query);
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data || []) as Client[];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
@@ -57,7 +54,21 @@ export const useUpdateClient = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Client> & { id: string }) => {
+    mutationFn: async ({ id, name, email, phone, company, total_value }: {
+      id: string;
+      name?: string;
+      email?: string | null;
+      phone?: string | null;
+      company?: string | null;
+      total_value?: number;
+    }) => {
+      const updates: Record<string, unknown> = {};
+      if (name !== undefined) updates.name = name;
+      if (email !== undefined) updates.email = email;
+      if (phone !== undefined) updates.phone = phone;
+      if (company !== undefined) updates.company = company;
+      if (total_value !== undefined) updates.total_value = total_value;
+
       const { data, error } = await supabase
         .from('clients')
         .update(updates)

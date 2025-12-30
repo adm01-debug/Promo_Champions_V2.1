@@ -28,15 +28,6 @@ const editProductSchema = z.object({
     .min(1, "Preço é obrigatório")
     .refine((val) => !isNaN(parseFloat(val)), "Preço inválido")
     .refine((val) => parseFloat(val) >= 0, "Preço deve ser positivo"),
-  status: z.string().default("ativo"),
-  rating: z
-    .string()
-    .refine((val) => !val || !isNaN(parseFloat(val)), "Avaliação inválida")
-    .refine((val) => !val || (parseFloat(val) >= 0 && parseFloat(val) <= 5), "Avaliação deve ser entre 0 e 5"),
-  sales_count: z
-    .string()
-    .refine((val) => !val || !isNaN(parseInt(val)), "Quantidade inválida")
-    .refine((val) => !val || parseInt(val) >= 0, "Quantidade deve ser positiva"),
 });
 
 type EditProductFormData = z.infer<typeof editProductSchema>;
@@ -56,9 +47,6 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
       name: "",
       category: "Assinatura",
       price: "0",
-      status: "ativo",
-      rating: "0",
-      sales_count: "0",
     },
   });
 
@@ -68,9 +56,6 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
         name: product.name || "",
         category: product.category || "Assinatura",
         price: product.price?.toString() || "0",
-        status: product.status || "ativo",
-        rating: product.rating?.toString() || "0",
-        sales_count: product.sales_count?.toString() || "0",
       });
     }
   }, [product, form]);
@@ -84,9 +69,6 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
         name: data.name,
         category: data.category,
         price: parseFloat(data.price),
-        status: data.status,
-        rating: parseFloat(data.rating) || 0,
-        sales_count: parseInt(data.sales_count) || 0,
       },
       {
         onSuccess: () => {
@@ -160,69 +142,6 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
                       className="bg-muted/50 border-border/50"
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="rating"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Avaliação</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max="5"
-                        placeholder="0.0"
-                        className="bg-muted/50 border-border/50"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="sales_count"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vendas</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        min="0"
-                        placeholder="0"
-                        className="bg-muted/50 border-border/50"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger className="bg-muted/50 border-border/50">
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="ativo">Ativo</SelectItem>
-                      <SelectItem value="pausado">Pausado</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

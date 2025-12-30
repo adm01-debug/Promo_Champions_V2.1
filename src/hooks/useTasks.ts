@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Task } from '@/types';
-import { fetchWithErrorHandling } from '@/utils/supabase-helpers';
 import { CACHE_TIMES } from '@/constants';
 
 // Re-export Task type for components
@@ -9,7 +8,7 @@ export type { Task } from '@/types';
 
 // Task types matching database enums
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
-export type TaskType = 'call' | 'email' | 'meeting' | 'follow_up' | 'other';
+export type TaskType = 'call' | 'email' | 'meeting' | 'follow_up' | 'other' | 'proposal';
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
 
 export interface TaskRecord {
@@ -36,6 +35,31 @@ export const useTasks = (userId?: string) => {
         .from('tasks')
         .select('*')
         .order('due_date', { ascending: true });
+
+      if (userId) {
+        query = query.eq('salesperson_id', userId);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data || []) as TaskRecord[];
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
+    gcTime: CACHE_TIMES.GC_TIME,
+  });
+};
+
+export const useTodayTasks = (userId?: string) => {
+  return useQuery<TaskRecord[]>({
+    queryKey: ['tasks', 'today', userId],
+    queryFn: async (): Promise<TaskRecord[]> => {
+      const today = new Date().toISOString().split('T')[0];
+      
+      let query = supabase
+        .from('tasks')
+        .select('*')
+        .eq('due_date', today)
+        .order('due_time', { ascending: true });
 
       if (userId) {
         query = query.eq('salesperson_id', userId);

@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Task, useCompleteTask } from '@/hooks/useTasks';
+import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,6 +18,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const priorityConfig = {
+  urgent: { label: 'Urgente', className: 'bg-destructive/20 text-destructive border-destructive/30' },
   high: { label: 'Alta', className: 'bg-status-error/20 text-status-error border-status-error/30' },
   medium: { label: 'Média', className: 'bg-status-warning/20 text-status-warning border-status-warning/30' },
   low: { label: 'Baixa', className: 'bg-status-success/20 text-status-success border-status-success/30' },
@@ -33,7 +34,7 @@ const typeConfig = {
 };
 
 interface DraggableTaskCardProps {
-  task: Task;
+  task: TaskRecord;
   isDragging?: boolean;
 }
 
@@ -47,8 +48,8 @@ export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) 
   } = useSortable({ id: task.id });
 
   const completeTask = useCompleteTask();
-  const priority = priorityConfig[task.priority];
-  const type = typeConfig[task.task_type];
+  const priority = priorityConfig[task.priority] || priorityConfig.medium;
+  const type = typeConfig[task.task_type] || typeConfig.other;
   const TypeIcon = type.icon;
 
   const style = {
@@ -105,14 +106,6 @@ export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) 
             </p>
           )}
 
-          {task.sale && (
-            <div className="mt-2 text-xs text-muted-foreground">
-              <span className="text-primary">{task.sale.client_name}</span>
-              <span className="mx-1">•</span>
-              <span>{task.sale.product_name}</span>
-            </div>
-          )}
-
           <div className="flex items-center justify-between mt-3">
             {task.due_time && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -121,18 +114,10 @@ export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) 
               </div>
             )}
 
-            {task.salesperson && (
-              <div className="flex items-center gap-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={task.salesperson.avatar_url || undefined} />
-                  <AvatarFallback className="text-xs bg-primary/20">
-                    {task.salesperson.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-xs text-muted-foreground">
-                  {task.salesperson.name}
-                </span>
-              </div>
+            {task.due_date && (
+              <span className="text-xs text-muted-foreground">
+                {new Date(task.due_date).toLocaleDateString('pt-BR')}
+              </span>
             )}
           </div>
         </div>

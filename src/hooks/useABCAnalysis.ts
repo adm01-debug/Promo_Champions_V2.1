@@ -9,6 +9,9 @@ export interface ABCProduct {
   revenue: number;
   quantity: number;
   abcClass: 'A' | 'B' | 'C';
+  percentage: number;
+  cumulativePercentage: number;
+  classification: 'A' | 'B' | 'C';
 }
 
 export interface ABCClient {
@@ -18,12 +21,19 @@ export interface ABCClient {
   revenue: number;
   dealsCount: number;
   abcClass: 'A' | 'B' | 'C';
+  percentage: number;
+  cumulativePercentage: number;
+  classification: 'A' | 'B' | 'C';
+  category: string;
+  quantity: number;
 }
 
 export interface ABCSummary {
   classA: { count: number; revenue: number; percentage: number };
   classB: { count: number; revenue: number; percentage: number };
   classC: { count: number; revenue: number; percentage: number };
+  products: Record<'A' | 'B' | 'C', number>;
+  clients: Record<'A' | 'B' | 'C', number>;
 }
 
 export interface ABCAnalysisData {
@@ -59,7 +69,8 @@ export const useABCAnalysis = () => {
       const abcProducts: ABCProduct[] = (products || []).map(p => {
         const revenue = p.price * p.sales_count;
         cumulativeProductRevenue += revenue;
-        const cumulativePercentage = (cumulativeProductRevenue / totalProductRevenue) * 100;
+        const percentage = totalProductRevenue > 0 ? (revenue / totalProductRevenue) * 100 : 0;
+        const cumulativePercentage = totalProductRevenue > 0 ? (cumulativeProductRevenue / totalProductRevenue) * 100 : 0;
         
         let abcClass: 'A' | 'B' | 'C' = 'C';
         if (cumulativePercentage <= 80) abcClass = 'A';
@@ -72,6 +83,9 @@ export const useABCAnalysis = () => {
           revenue,
           quantity: p.sales_count,
           abcClass,
+          percentage,
+          cumulativePercentage,
+          classification: abcClass,
         };
       });
       
@@ -81,6 +95,7 @@ export const useABCAnalysis = () => {
       
       const abcClients: ABCClient[] = (clients || []).map(c => {
         cumulativeClientRevenue += c.total_value || 0;
+        const percentage = totalClientRevenue > 0 ? ((c.total_value || 0) / totalClientRevenue) * 100 : 0;
         const cumulativePercentage = totalClientRevenue > 0 
           ? (cumulativeClientRevenue / totalClientRevenue) * 100 
           : 0;
@@ -94,8 +109,13 @@ export const useABCAnalysis = () => {
           name: c.name,
           company: c.company,
           revenue: c.total_value || 0,
-          dealsCount: 0, // Would need to join with sales table
+          dealsCount: 0,
           abcClass,
+          percentage,
+          cumulativePercentage,
+          classification: abcClass,
+          category: 'Cliente',
+          quantity: 1,
         };
       });
       
@@ -103,6 +123,10 @@ export const useABCAnalysis = () => {
       const classAProducts = abcProducts.filter(p => p.abcClass === 'A');
       const classBProducts = abcProducts.filter(p => p.abcClass === 'B');
       const classCProducts = abcProducts.filter(p => p.abcClass === 'C');
+      
+      const classAClients = abcClients.filter(c => c.abcClass === 'A');
+      const classBClients = abcClients.filter(c => c.abcClass === 'B');
+      const classCClients = abcClients.filter(c => c.abcClass === 'C');
       
       const summary: ABCSummary = {
         classA: {
@@ -125,6 +149,16 @@ export const useABCAnalysis = () => {
           percentage: totalProductRevenue > 0 
             ? (classCProducts.reduce((acc, p) => acc + p.revenue, 0) / totalProductRevenue) * 100 
             : 0,
+        },
+        products: {
+          A: classAProducts.length,
+          B: classBProducts.length,
+          C: classCProducts.length,
+        },
+        clients: {
+          A: classAClients.length,
+          B: classBClients.length,
+          C: classCClients.length,
         },
       };
       

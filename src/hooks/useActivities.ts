@@ -1,6 +1,6 @@
 import type { Activity } from '@/types';
 import { CACHE_TIMES } from '@/constants';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Types matching database schema
