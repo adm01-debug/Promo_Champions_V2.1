@@ -46,7 +46,7 @@ const Produtos = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   
-  const { data: products, isLoading } = useProducts(searchTerm);
+  const { data: products = [], isLoading } = useProducts();
   const deleteProduct = useDeleteProduct();
 
   const filteredAndSortedProducts = useMemo(() => {

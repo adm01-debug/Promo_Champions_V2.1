@@ -18,13 +18,6 @@ const priorityConfig: Record<TaskPriority, {
   bgColor: string;
   borderColor: string;
 }> = {
-  urgent: {
-    label: 'Urgente',
-    icon: AlertTriangle,
-    color: 'text-destructive',
-    bgColor: 'bg-destructive/5',
-    borderColor: 'border-destructive/20'
-  },
   high: { 
     label: 'Prioridade Alta', 
     icon: Flame, 

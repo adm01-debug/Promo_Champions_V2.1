@@ -1,13 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Product } from '@/types';
 import { CACHE_TIMES } from '@/constants';
 
-// Re-export Product type for components
-export type { Product } from '@/types';
-
 // Extended product interface with database fields
-export interface DBProduct {
+export interface Product {
   id: string;
   name: string;
   price: number;
@@ -19,29 +15,23 @@ export interface DBProduct {
   updated_at: string;
 }
 
-export const useProducts = () => {
+export const useProducts = (filters?: { category?: string }) => {
   return useQuery<Product[]>({
-    queryKey: ['products'],
+    queryKey: ['products', filters],
     queryFn: async (): Promise<Product[]> => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('products')
         .select('*')
-        .eq('status', 'active');
+        .order('name');
       
+      if (filters?.category) {
+        query = query.eq('category', filters.category);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       
-      return (data || []).map(p => ({
-        id: p.id,
-        name: p.name,
-        description: undefined,
-        price: p.price,
-        currency: 'BRL',
-        sku: undefined,
-        category: p.category,
-        active: p.status === 'active',
-        created_at: p.created_at,
-        updated_at: p.updated_at,
-      }));
+      return (data || []) as Product[];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
@@ -120,16 +110,18 @@ export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, name, price, category }: { 
+    mutationFn: async ({ id, name, price, category, status }: { 
       id: string; 
       name?: string; 
       price?: number; 
       category?: string;
+      status?: string;
     }) => {
       const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
       if (name !== undefined) updates.name = name;
       if (price !== undefined) updates.price = price;
       if (category !== undefined) updates.category = category;
+      if (status !== undefined) updates.status = status;
 
       const { data, error } = await supabase
         .from('products')
@@ -140,6 +132,24 @@ export const useUpdateProduct = () => {
       
       if (error) throw error;
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (productId: string) => {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId);
+      
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
