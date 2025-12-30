@@ -11,9 +11,8 @@ export const useProducts = () => {
     queryFn: async (): Promise<Product[]> => {
       const query = supabase.from('products').select('*').eq('active', true);
       return fetchWithErrorHandling(query);
-    }
-  ,
-    staleTime: CACHE_TIMES.STALE_TIME
+    },
+    staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
   });
 };
