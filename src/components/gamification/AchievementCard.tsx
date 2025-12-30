@@ -1,6 +1,262 @@
 import { FC } from 'react';
+import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
+import { Trophy, Lock, CheckCircle2, Star } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ProgressRing } from './ProgressRing';
 
-export const AchievementCard: FC = () => {
-  return <Card className="p-4"><span>🏆 Achievement</span></Card>;
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  emoji: string;
+  category: 'sales' | 'activities' | 'streak' | 'milestone' | 'special';
+  xpReward: number;
+  progress: number;
+  target: number;
+  unlocked: boolean;
+  unlockedAt?: Date;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+}
+
+interface AchievementCardProps {
+  achievement: Achievement;
+  compact?: boolean;
+  className?: string;
+}
+
+const categoryIcons = {
+  sales: '💰',
+  activities: '📞',
+  streak: '🔥',
+  milestone: '🎯',
+  special: '⭐'
+};
+
+const rarityStyles = {
+  common: {
+    border: 'border-slate-500/30',
+    bg: 'bg-slate-500/5',
+    text: 'text-slate-500',
+    glow: ''
+  },
+  rare: {
+    border: 'border-blue-500/30',
+    bg: 'bg-blue-500/5',
+    text: 'text-blue-500',
+    glow: 'shadow-blue-500/20'
+  },
+  epic: {
+    border: 'border-purple-500/30',
+    bg: 'bg-purple-500/5',
+    text: 'text-purple-500',
+    glow: 'shadow-purple-500/20'
+  },
+  legendary: {
+    border: 'border-amber-500/30',
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-500',
+    glow: 'shadow-amber-500/30'
+  }
+};
+
+export const AchievementCard: FC<AchievementCardProps> = ({
+  achievement,
+  compact = false,
+  className
+}) => {
+  const progress = Math.min((achievement.progress / achievement.target) * 100, 100);
+  const style = rarityStyles[achievement.rarity];
+
+  if (compact) {
+    return (
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        className={cn(
+          "flex items-center gap-3 p-3 rounded-lg border",
+          achievement.unlocked ? style.bg : 'bg-muted/50',
+          achievement.unlocked ? style.border : 'border-muted',
+          className
+        )}
+      >
+        <div className={cn(
+          "w-10 h-10 rounded-full flex items-center justify-center text-lg",
+          achievement.unlocked 
+            ? `bg-gradient-to-br ${achievement.rarity === 'legendary' ? 'from-amber-400 to-orange-500' : 
+               achievement.rarity === 'epic' ? 'from-purple-400 to-purple-600' :
+               achievement.rarity === 'rare' ? 'from-blue-400 to-blue-600' : 'from-slate-400 to-slate-600'}`
+            : 'bg-muted'
+        )}>
+          {achievement.unlocked ? achievement.emoji : <Lock size={16} className="text-muted-foreground" />}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className={cn(
+            "font-medium text-sm truncate",
+            !achievement.unlocked && "text-muted-foreground"
+          )}>
+            {achievement.title}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {achievement.progress}/{achievement.target}
+          </p>
+        </div>
+        {achievement.unlocked ? (
+          <CheckCircle2 size={18} className="text-green-500" />
+        ) : (
+          <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
+        )}
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      whileHover={{ y: -2 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <Card className={cn(
+        "relative overflow-hidden p-4",
+        achievement.unlocked && `shadow-lg ${style.glow}`,
+        style.border,
+        style.bg,
+        className
+      )}>
+        {/* Rarity indicator */}
+        <div className={cn(
+          "absolute top-0 right-0 px-2 py-0.5 text-xs font-medium rounded-bl capitalize",
+          style.text,
+          'bg-background/80'
+        )}>
+          {achievement.rarity}
+        </div>
+
+        <div className="flex gap-4">
+          {/* Achievement icon/progress */}
+          <div className="relative">
+            <ProgressRing
+              progress={progress}
+              size={64}
+              strokeWidth={4}
+              color={achievement.unlocked ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))'}
+              showPercent={false}
+            >
+              <span className={cn(
+                "text-2xl",
+                !achievement.unlocked && "grayscale opacity-50"
+              )}>
+                {achievement.emoji}
+              </span>
+            </ProgressRing>
+            {achievement.unlocked && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+              >
+                <CheckCircle2 size={14} className="text-white" />
+              </motion.div>
+            )}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h4 className={cn(
+                  "font-semibold",
+                  !achievement.unlocked && "text-muted-foreground"
+                )}>
+                  {achievement.title}
+                </h4>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {achievement.description}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>{categoryIcons[achievement.category]}</span>
+                <span>{achievement.progress} / {achievement.target}</span>
+              </div>
+              <div className="flex items-center gap-1 text-xs font-medium text-amber-500">
+                <Star size={12} className="fill-current" />
+                +{achievement.xpReward} XP
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            {!achievement.unlocked && (
+              <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  className="h-full bg-primary rounded-full"
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                />
+              </div>
+            )}
+
+            {achievement.unlocked && achievement.unlockedAt && (
+              <p className="text-xs text-green-500 mt-2">
+                ✓ Conquistado em {achievement.unlockedAt.toLocaleDateString('pt-BR')}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Legendary shimmer effect */}
+        {achievement.unlocked && achievement.rarity === 'legendary' && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
+          />
+        )}
+      </Card>
+    </motion.div>
+  );
+};
+
+interface AchievementListProps {
+  achievements: Achievement[];
+  showLocked?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+export const AchievementList: FC<AchievementListProps> = ({
+  achievements,
+  showLocked = true,
+  compact = false,
+  className
+}) => {
+  const sortedAchievements = [...achievements].sort((a, b) => {
+    if (a.unlocked !== b.unlocked) return a.unlocked ? -1 : 1;
+    const rarityOrder = { legendary: 0, epic: 1, rare: 2, common: 3 };
+    return rarityOrder[a.rarity] - rarityOrder[b.rarity];
+  });
+
+  const filtered = showLocked 
+    ? sortedAchievements 
+    : sortedAchievements.filter(a => a.unlocked);
+
+  return (
+    <div className={cn(
+      compact ? "space-y-2" : "grid gap-4 md:grid-cols-2",
+      className
+    )}>
+      {filtered.map((achievement, index) => (
+        <motion.div
+          key={achievement.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05 }}
+        >
+          <AchievementCard achievement={achievement} compact={compact} />
+        </motion.div>
+      ))}
+    </div>
+  );
 };
