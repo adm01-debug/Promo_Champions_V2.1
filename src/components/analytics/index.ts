@@ -27,3 +27,6 @@ export { WinLossAnalysis } from './WinLossAnalysis';
 // New KPI and Insight components
 export { KPICard, InsightCard, MetricComparison, ProgressMetric } from './KPIComponents';
 export { TrendAnalysis, QuickInsights, GoalProgressWidget } from './InsightComponents';
+export { TopProductsWidget, ProductPerformanceGrid } from './TopProductsWidget';
+export { SalesPerformanceCard, TeamPerformanceTable } from './SalesPerformanceCard';
+export { ConversionAnalysis, WinLossReasonChart } from './ConversionAnalysis';
