@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoginRateLimiter } from "@/hooks/useLoginRateLimiter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -9,8 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PasswordStrength } from "@/components/ui/password-strength";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { Crown, Swords, Trophy, Loader2, Mail } from "lucide-react";
+import { Crown, Swords, Trophy, Loader2, Mail, ShieldAlert } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -30,12 +32,53 @@ export default function Auth() {
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
+  
+  const { 
+    lockoutStatus, 
+    checkLoginAttempts, 
+    recordLoginAttempt, 
+    formatRemainingTime,
+    MAX_ATTEMPTS 
+  } = useLoginRateLimiter();
+
+  // Contador regressivo para o bloqueio
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
+
+  // Verificar status de bloqueio quando o email muda
+  useEffect(() => {
+    if (loginEmail && emailSchema.safeParse(loginEmail).success) {
+      checkLoginAttempts(loginEmail);
+    }
+  }, [loginEmail, checkLoginAttempts]);
+
+  // Atualizar countdown
+  useEffect(() => {
+    if (lockoutStatus.isLocked && lockoutStatus.remainingSeconds > 0) {
+      setCountdown(lockoutStatus.remainingSeconds);
+      
+      const interval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            // Verificar novamente após o countdown
+            if (loginEmail) {
+              checkLoginAttempts(loginEmail);
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [lockoutStatus.isLocked, lockoutStatus.remainingSeconds, loginEmail, checkLoginAttempts]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,17 +93,34 @@ export default function Auth() {
       }
     }
 
+    // Verificar bloqueio antes de tentar login
+    const { canAttempt } = await checkLoginAttempts(loginEmail);
+    if (!canAttempt) {
+      toast.error(`Conta temporariamente bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`);
+      return;
+    }
+
     setIsLoading(true);
     const { error } = await signIn(loginEmail, loginPassword);
     setIsLoading(false);
 
     if (error) {
+      // Registrar tentativa falhada
+      await recordLoginAttempt(loginEmail, false, error.message);
+      
       if (error.message.includes("Invalid login credentials")) {
-        toast.error("Email ou senha incorretos");
+        const attemptsLeft = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
+        if (attemptsLeft > 0) {
+          toast.error(`Email ou senha incorretos. ${attemptsLeft} tentativa${attemptsLeft !== 1 ? 's' : ''} restante${attemptsLeft !== 1 ? 's' : ''}.`);
+        } else {
+          toast.error("Email ou senha incorretos. Conta bloqueada temporariamente.");
+        }
       } else {
         toast.error(error.message);
       }
     } else {
+      // Registrar tentativa bem-sucedida
+      await recordLoginAttempt(loginEmail, true);
       toast.success("Bem-vindo de volta! 🚀");
       navigate("/");
     }
@@ -125,6 +185,8 @@ export default function Auth() {
     }
   };
 
+  const isLoginDisabled = isLoading || (lockoutStatus.isLocked && countdown > 0);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
       <div className="w-full max-w-md">
@@ -174,6 +236,27 @@ export default function Auth() {
 
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
+                  {/* Alerta de bloqueio */}
+                  {lockoutStatus.isLocked && countdown > 0 && (
+                    <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+                      <ShieldAlert className="h-4 w-4" />
+                      <AlertDescription className="text-sm">
+                        Conta bloqueada por múltiplas tentativas falhadas. 
+                        Aguarde <span className="font-bold">{formatRemainingTime(countdown)}</span> para tentar novamente.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Aviso de tentativas restantes */}
+                  {!lockoutStatus.isLocked && lockoutStatus.attempts > 0 && lockoutStatus.attempts < MAX_ATTEMPTS && (
+                    <Alert className="border-amber-500/50 bg-amber-500/10">
+                      <ShieldAlert className="h-4 w-4 text-amber-600" />
+                      <AlertDescription className="text-sm text-amber-600">
+                        {MAX_ATTEMPTS - lockoutStatus.attempts} tentativa{MAX_ATTEMPTS - lockoutStatus.attempts !== 1 ? 's' : ''} restante{MAX_ATTEMPTS - lockoutStatus.attempts !== 1 ? 's' : ''} antes do bloqueio.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email</Label>
                     <Input
@@ -183,6 +266,7 @@ export default function Auth() {
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       required
+                      disabled={isLoginDisabled}
                     />
                   </div>
                   <div className="space-y-2">
@@ -193,6 +277,7 @@ export default function Auth() {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       required
+                      disabled={isLoginDisabled}
                     />
                   </div>
                   
@@ -242,11 +327,16 @@ export default function Auth() {
                     </DialogContent>
                   </Dialog>
 
-                  <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+                  <Button type="submit" className="w-full gradient-primary" disabled={isLoginDisabled}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Entrando...
+                      </>
+                    ) : lockoutStatus.isLocked && countdown > 0 ? (
+                      <>
+                        <ShieldAlert className="mr-2 h-4 w-4" />
+                        Bloqueado ({formatRemainingTime(countdown)})
                       </>
                     ) : (
                       "Entrar na Arena"
