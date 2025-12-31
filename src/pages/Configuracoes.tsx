@@ -8,9 +8,11 @@ import { PortfolioSettings } from "@/components/settings/PortfolioSettings";
 import { PermissionMatrix } from "@/components/settings/PermissionMatrix";
 import { IPWhitelistManager } from "@/components/security/IPWhitelistManager";
 import { GeoBlockingManager } from "@/components/security/GeoBlockingManager";
+import { PasswordResetApproval } from "@/components/security/PasswordResetApproval";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function Configuracoes() {
   const { isAdmin } = useUserRoles();
@@ -28,44 +30,51 @@ export default function Configuracoes() {
       </div>
 
       <Tabs defaultValue="roles" className="w-full">
-        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-8' : 'grid-cols-3'} max-w-6xl`}>
-          <TabsTrigger value="roles" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Roles
-          </TabsTrigger>
-          <TabsTrigger value="sounds" className="flex items-center gap-2">
-            <Volume2 className="h-4 w-4" />
-            Sons
-          </TabsTrigger>
-          <TabsTrigger value="portfolio" className="flex items-center gap-2">
-            <Briefcase className="h-4 w-4" />
-            Portfólio
-          </TabsTrigger>
-          {isAdmin && (
-            <>
-              <TabsTrigger value="permissions" className="flex items-center gap-2">
-                <Key className="h-4 w-4" />
-                Permissões
-              </TabsTrigger>
-              <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                IP Whitelist
-              </TabsTrigger>
-              <TabsTrigger value="geo-blocking" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Geo Blocking
-              </TabsTrigger>
-              <TabsTrigger value="audit" className="flex items-center gap-2">
-                <FileWarning className="h-4 w-4" />
-                Auditoria
-              </TabsTrigger>
-              <TabsTrigger value="circuits" className="flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                Circuits
-              </TabsTrigger>
-            </>
-          )}
-        </TabsList>
+        <ScrollArea className="w-full whitespace-nowrap">
+          <TabsList className={`inline-flex w-max ${isAdmin ? '' : ''}`}>
+            <TabsTrigger value="roles" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Roles
+            </TabsTrigger>
+            <TabsTrigger value="sounds" className="flex items-center gap-2">
+              <Volume2 className="h-4 w-4" />
+              Sons
+            </TabsTrigger>
+            <TabsTrigger value="portfolio" className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              Portfólio
+            </TabsTrigger>
+            {isAdmin && (
+              <>
+                <TabsTrigger value="permissions" className="flex items-center gap-2">
+                  <Key className="h-4 w-4" />
+                  Permissões
+                </TabsTrigger>
+                <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  IP Whitelist
+                </TabsTrigger>
+                <TabsTrigger value="geo-blocking" className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Geo Blocking
+                </TabsTrigger>
+                <TabsTrigger value="password-reset" className="flex items-center gap-2">
+                  <KeyRound className="h-4 w-4" />
+                  Reset Senha
+                </TabsTrigger>
+                <TabsTrigger value="audit" className="flex items-center gap-2">
+                  <FileWarning className="h-4 w-4" />
+                  Auditoria
+                </TabsTrigger>
+                <TabsTrigger value="circuits" className="flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  Circuits
+                </TabsTrigger>
+              </>
+            )}
+          </TabsList>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <TabsContent value="roles" className="mt-6">
           <RoleManagement />
@@ -91,6 +100,10 @@ export default function Configuracoes() {
 
             <TabsContent value="geo-blocking" className="mt-6">
               <GeoBlockingManager />
+            </TabsContent>
+
+            <TabsContent value="password-reset" className="mt-6">
+              <PasswordResetApproval />
             </TabsContent>
             
             <TabsContent value="audit" className="mt-6 space-y-6">
