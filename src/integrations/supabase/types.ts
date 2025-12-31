@@ -85,6 +85,42 @@ export type Database = {
           },
         ]
       }
+      active_sessions: {
+        Row: {
+          created_at: string | null
+          device_info: Json | null
+          expires_at: string | null
+          id: string
+          ip_address: string | null
+          last_activity: string | null
+          session_token: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: Json | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: string | null
+          last_activity?: string | null
+          session_token?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: Json | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: string | null
+          last_activity?: string | null
+          session_token?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       activities: {
         Row: {
           activity_type: Database["public"]["Enums"]["activity_type"]
@@ -219,6 +255,45 @@ export type Database = {
           status?: string
           sync_type?: string
           triggered_by?: string | null
+        }
+        Relationships: []
+      }
+      blocked_ips: {
+        Row: {
+          block_count: number | null
+          blocked_at: string | null
+          blocked_by: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          ip_address: string
+          is_permanent: boolean | null
+          reason: string
+          updated_at: string | null
+        }
+        Insert: {
+          block_count?: number | null
+          blocked_at?: string | null
+          blocked_by?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address: string
+          is_permanent?: boolean | null
+          reason: string
+          updated_at?: string | null
+        }
+        Update: {
+          block_count?: number | null
+          blocked_at?: string | null
+          blocked_by?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: string
+          is_permanent?: boolean | null
+          reason?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1149,6 +1224,33 @@ export type Database = {
           },
         ]
       }
+      ip_whitelist: {
+        Row: {
+          added_by: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          ip_address: string
+          updated_at: string | null
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ip_address: string
+          updated_at?: string | null
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ip_address?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       lead_routing_log: {
         Row: {
           client_id: string | null
@@ -1238,6 +1340,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      login_attempts: {
+        Row: {
+          created_at: string | null
+          email: string
+          failure_reason: string | null
+          id: string
+          ip_address: string | null
+          success: boolean | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          failure_reason?: string | null
+          id?: string
+          ip_address?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          failure_reason?: string | null
+          id?: string
+          ip_address?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Relationships: []
       }
       notification_preferences: {
         Row: {
@@ -1702,6 +1834,75 @@ export type Database = {
           p256dh?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      rate_limit_logs: {
+        Row: {
+          action: string
+          blocked: boolean | null
+          created_at: string | null
+          id: string
+          identifier: string
+          identifier_type: string
+          request_count: number | null
+          window_end: string | null
+          window_start: string | null
+        }
+        Insert: {
+          action: string
+          blocked?: boolean | null
+          created_at?: string | null
+          id?: string
+          identifier: string
+          identifier_type?: string
+          request_count?: number | null
+          window_end?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          action?: string
+          blocked?: boolean | null
+          created_at?: string | null
+          id?: string
+          identifier?: string
+          identifier_type?: string
+          request_count?: number | null
+          window_end?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
+      rate_limit_settings: {
+        Row: {
+          action: string
+          block_duration_seconds: number
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          max_requests: number
+          updated_at: string | null
+          window_seconds: number
+        }
+        Insert: {
+          action: string
+          block_duration_seconds?: number
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_requests?: number
+          updated_at?: string | null
+          window_seconds?: number
+        }
+        Update: {
+          action?: string
+          block_duration_seconds?: number
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_requests?: number
+          updated_at?: string | null
+          window_seconds?: number
         }
         Relationships: []
       }
@@ -2507,6 +2708,18 @@ export type Database = {
         Args: { p_salesperson_id: string }
         Returns: number
       }
+      check_rate_limit: {
+        Args: { p_action: string; p_identifier: string }
+        Returns: {
+          allowed: boolean
+          remaining: number
+          reset_at: string
+        }[]
+      }
+      count_failed_login_attempts: {
+        Args: { check_email: string; check_ip: string; window_minutes?: number }
+        Returns: number
+      }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_user_role: {
@@ -2522,6 +2735,17 @@ export type Database = {
       }
       is_admin_or_manager: { Args: { _user_id: string }; Returns: boolean }
       is_authenticated: { Args: never; Returns: boolean }
+      is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
+      is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
+      log_rate_limit: {
+        Args: {
+          p_action: string
+          p_blocked?: boolean
+          p_identifier: string
+          p_identifier_type: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       activity_outcome:
