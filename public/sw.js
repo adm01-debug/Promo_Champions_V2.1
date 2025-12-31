@@ -143,12 +143,12 @@ self.addEventListener('push', (event) => {
   console.log('[Service Worker] Push received:', event);
   
   let notificationData = {
-    title: 'Nova Notificação',
-    body: 'Você tem uma nova notificação',
+    title: '🔒 Alerta de Segurança',
+    body: 'Você tem um novo alerta de segurança',
     icon: '/favicon.ico',
     badge: '/favicon.ico',
-    tag: 'default',
-    data: {}
+    tag: 'security-alert',
+    data: { url: '/dashboard/seguranca' }
   };
 
   if (event.data) {
@@ -160,10 +160,13 @@ self.addEventListener('push', (event) => {
         icon: data.icon || notificationData.icon,
         badge: data.badge || notificationData.badge,
         tag: data.tag || notificationData.tag,
-        data: data.data || {},
-        actions: data.actions || [],
+        data: data.data || notificationData.data,
+        actions: data.actions || [
+          { action: 'view', title: 'Ver Detalhes' },
+          { action: 'dismiss', title: 'Dispensar' }
+        ],
         vibrate: [200, 100, 200],
-        requireInteraction: data.requireInteraction || false
+        requireInteraction: data.requireInteraction !== false
       };
     } catch (e) {
       notificationData.body = event.data.text();

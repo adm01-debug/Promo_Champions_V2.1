@@ -203,6 +203,54 @@ const handler = async (req: Request): Promise<Response> => {
       metadata: { device: data.browser, os: data.os, ip: data.ip_address },
     });
 
+    // Send push notification to user
+    try {
+      console.log("Sending push notification for new device...");
+      
+      // Get user's push subscriptions
+      const { data: subscriptions } = await supabase
+        .from("push_subscriptions")
+        .select("*")
+        .eq("user_id", data.user_id);
+      
+      if (subscriptions && subscriptions.length > 0) {
+        // Invoke push notification function
+        const pushPayload = {
+          userId: data.user_id,
+          title: "🔒 Novo Dispositivo Detectado",
+          body: `Login de ${data.browser} em ${data.os} (IP: ${data.ip_address})`,
+          tag: "new-device-alert",
+          data: {
+            type: "new_device",
+            url: "/dashboard/seguranca",
+            device: data.device_fingerprint,
+          },
+          requireInteraction: true,
+        };
+        
+        // Call the send-push-notification function
+        const pushResponse = await fetch(
+          `${supabaseUrl}/functions/v1/send-push-notification`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${supabaseServiceKey}`,
+            },
+            body: JSON.stringify(pushPayload),
+          }
+        );
+        
+        const pushResult = await pushResponse.json();
+        console.log("Push notification result:", pushResult);
+      } else {
+        console.log("No push subscriptions found for user");
+      }
+    } catch (pushError) {
+      console.error("Error sending push notification:", pushError);
+      // Don't fail the request if push fails
+    }
+
     return new Response(
       JSON.stringify({ 
         message: "New device alert sent", 
