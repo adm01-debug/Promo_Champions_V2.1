@@ -5,8 +5,9 @@ import { SecurityAlertSettings } from "@/components/settings/SecurityAlertSettin
 import { SecurityAlertHistory } from "@/components/settings/SecurityAlertHistory";
 import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";
 import { PortfolioSettings } from "@/components/settings/PortfolioSettings";
+import { PermissionMatrix } from "@/components/settings/PermissionMatrix";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 
 export default function Configuracoes() {
@@ -25,7 +26,7 @@ export default function Configuracoes() {
       </div>
 
       <Tabs defaultValue="roles" className="w-full">
-        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-5' : 'grid-cols-3'} max-w-3xl`}>
+        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-6' : 'grid-cols-3'} max-w-4xl`}>
           <TabsTrigger value="roles" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Roles
@@ -40,6 +41,10 @@ export default function Configuracoes() {
           </TabsTrigger>
           {isAdmin && (
             <>
+              <TabsTrigger value="permissions" className="flex items-center gap-2">
+                <Key className="h-4 w-4" />
+                Permissões
+              </TabsTrigger>
               <TabsTrigger value="audit" className="flex items-center gap-2">
                 <FileWarning className="h-4 w-4" />
                 Auditoria
@@ -66,6 +71,10 @@ export default function Configuracoes() {
 
         {isAdmin && (
           <>
+            <TabsContent value="permissions" className="mt-6">
+              <PermissionMatrix />
+            </TabsContent>
+            
             <TabsContent value="audit" className="mt-6 space-y-6">
               <SecurityAlertSettings />
               <SecurityAlertHistory />

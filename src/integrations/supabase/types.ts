@@ -1595,6 +1595,33 @@ export type Database = {
           },
         ]
       }
+      permissions: {
+        Row: {
+          action: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          resource: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          resource: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          resource?: string
+        }
+        Relationships: []
+      }
       playbook_items: {
         Row: {
           content: string
@@ -2073,6 +2100,35 @@ export type Database = {
           verified_at?: string | null
         }
         Relationships: []
+      }
+      role_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          permission_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          permission_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          permission_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sales: {
         Row: {
@@ -3045,9 +3101,21 @@ export type Database = {
       generate_mfa_backup_codes: { Args: never; Returns: string[] }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
+      get_user_permissions: {
+        Args: never
+        Returns: {
+          action: string
+          permission_name: string
+          resource: string
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_permission: {
+        Args: { _action: string; _resource: string }
+        Returns: boolean
       }
       has_role: {
         Args: {
