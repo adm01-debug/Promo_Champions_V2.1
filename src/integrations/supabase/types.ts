@@ -1260,6 +1260,51 @@ export type Database = {
         }
         Relationships: []
       }
+      known_devices: {
+        Row: {
+          browser: string | null
+          created_at: string | null
+          device_fingerprint: string
+          device_name: string | null
+          first_seen_at: string | null
+          id: string
+          ip_address: string | null
+          is_trusted: boolean | null
+          last_seen_at: string | null
+          location: string | null
+          os: string | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string | null
+          device_fingerprint: string
+          device_name?: string | null
+          first_seen_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_trusted?: boolean | null
+          last_seen_at?: string | null
+          location?: string | null
+          os?: string | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string | null
+          device_fingerprint?: string
+          device_name?: string | null
+          first_seen_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_trusted?: boolean | null
+          last_seen_at?: string | null
+          location?: string | null
+          os?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       lead_routing_log: {
         Row: {
           client_id: string | null
@@ -1349,6 +1394,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      login_alerts: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          alert_type: string | null
+          browser: string | null
+          created_at: string | null
+          device_fingerprint: string
+          email_sent: boolean | null
+          email_sent_at: string | null
+          id: string
+          ip_address: string | null
+          location: string | null
+          os: string | null
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          alert_type?: string | null
+          browser?: string | null
+          created_at?: string | null
+          device_fingerprint: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          id?: string
+          ip_address?: string | null
+          location?: string | null
+          os?: string | null
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          alert_type?: string | null
+          browser?: string | null
+          created_at?: string | null
+          device_fingerprint?: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          id?: string
+          ip_address?: string | null
+          location?: string | null
+          os?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       login_attempts: {
         Row: {
@@ -2873,6 +2966,10 @@ export type Database = {
         Args: { check_email: string; check_ip: string; window_minutes?: number }
         Returns: number
       }
+      generate_device_fingerprint: {
+        Args: { p_ip_address: string; p_user_agent: string }
+        Returns: string
+      }
       generate_mfa_backup_codes: { Args: never; Returns: string[] }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
@@ -2891,6 +2988,10 @@ export type Database = {
       is_authenticated: { Args: never; Returns: boolean }
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
+      is_known_device: {
+        Args: { p_fingerprint: string; p_user_id: string }
+        Returns: boolean
+      }
       is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
       log_rate_limit: {
         Args: {
