@@ -4,6 +4,7 @@ export { BlockedIPsPanel } from './BlockedIPsPanel';
 export { IPWhitelistPanel } from './IPWhitelistPanel';
 export { IPWhitelistManager } from './IPWhitelistManager';
 export { GeoBlockingManager } from './GeoBlockingManager';
+export { PasswordResetApproval } from './PasswordResetApproval';
 export { MFASetup } from './MFASetup';
 export { MFAVerification } from './MFAVerification';
 export { ReauthDialog } from './ReauthDialog';
