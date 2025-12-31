@@ -7,8 +7,9 @@ import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashbo
 import { PortfolioSettings } from "@/components/settings/PortfolioSettings";
 import { PermissionMatrix } from "@/components/settings/PermissionMatrix";
 import { IPWhitelistManager } from "@/components/security/IPWhitelistManager";
+import { GeoBlockingManager } from "@/components/security/GeoBlockingManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 
 export default function Configuracoes() {
@@ -27,7 +28,7 @@ export default function Configuracoes() {
       </div>
 
       <Tabs defaultValue="roles" className="w-full">
-        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-7' : 'grid-cols-3'} max-w-5xl`}>
+        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-8' : 'grid-cols-3'} max-w-6xl`}>
           <TabsTrigger value="roles" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Roles
@@ -49,6 +50,10 @@ export default function Configuracoes() {
               <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
                 IP Whitelist
+              </TabsTrigger>
+              <TabsTrigger value="geo-blocking" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Geo Blocking
               </TabsTrigger>
               <TabsTrigger value="audit" className="flex items-center gap-2">
                 <FileWarning className="h-4 w-4" />
@@ -82,6 +87,10 @@ export default function Configuracoes() {
 
             <TabsContent value="ip-whitelist" className="mt-6">
               <IPWhitelistManager />
+            </TabsContent>
+
+            <TabsContent value="geo-blocking" className="mt-6">
+              <GeoBlockingManager />
             </TabsContent>
             
             <TabsContent value="audit" className="mt-6 space-y-6">

@@ -1139,6 +1139,81 @@ export type Database = {
         }
         Relationships: []
       }
+      geo_access_logs: {
+        Row: {
+          attempted_path: string | null
+          blocked: boolean | null
+          city: string | null
+          country_code: string | null
+          country_name: string | null
+          created_at: string
+          id: string
+          ip_address: string
+          region: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempted_path?: string | null
+          blocked?: boolean | null
+          city?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          created_at?: string
+          id?: string
+          ip_address: string
+          region?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempted_path?: string | null
+          blocked?: boolean | null
+          city?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string
+          region?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      geo_blocked_regions: {
+        Row: {
+          blocked_at: string | null
+          blocked_by: string | null
+          country_code: string
+          country_name: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          blocked_at?: string | null
+          blocked_by?: string | null
+          country_code: string
+          country_name: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          blocked_at?: string | null
+          blocked_by?: string | null
+          country_code?: string
+          country_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       icp_data: {
         Row: {
           bitrix_id: string | null
@@ -3126,6 +3201,10 @@ export type Database = {
       }
       is_admin_or_manager: { Args: { _user_id: string }; Returns: boolean }
       is_authenticated: { Args: never; Returns: boolean }
+      is_country_blocked: {
+        Args: { check_country_code: string }
+        Returns: boolean
+      }
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
       is_known_device: {
