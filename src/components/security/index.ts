@@ -8,3 +8,4 @@ export { ReauthDialog } from './ReauthDialog';
 export { SessionManager } from './SessionManager';
 export { KnownDevices } from './KnownDevices';
 export { PushNotificationSettings } from './PushNotificationSettings';
+export { PasskeySettings } from './PasskeySettings';

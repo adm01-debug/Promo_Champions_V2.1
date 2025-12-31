@@ -62,3 +62,6 @@ verify_jwt = false
 
 [functions.new-device-alert]
 verify_jwt = false
+
+[functions.webauthn]
+verify_jwt = false
