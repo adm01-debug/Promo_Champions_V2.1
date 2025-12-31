@@ -1,0 +1,300 @@
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+
+interface ActiveSession {
+  id: string;
+  user_id: string;
+  session_token: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  device_info: Record<string, any> | null;
+  last_activity: string;
+  created_at: string;
+  expires_at: string | null;
+  refresh_count: number;
+  last_refresh_at: string | null;
+  max_lifetime_hours: number;
+}
+
+const SESSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutos
+const REFRESH_THRESHOLD = 2 * 60 * 60 * 1000; // 2 horas antes de expirar
+
+export const useSessionManagement = () => {
+  const { user } = useAuth();
+  const [sessions, setSessions] = useState<ActiveSession[]>([]);
+  const [currentSession, setCurrentSession] = useState<ActiveSession | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Obter info do dispositivo
+  const getDeviceInfo = useCallback(() => {
+    const ua = navigator.userAgent;
+    let browser = 'Unknown';
+    let os = 'Unknown';
+
+    // Detectar browser
+    if (ua.includes('Firefox')) browser = 'Firefox';
+    else if (ua.includes('Chrome')) browser = 'Chrome';
+    else if (ua.includes('Safari')) browser = 'Safari';
+    else if (ua.includes('Edge')) browser = 'Edge';
+
+    // Detectar OS
+    if (ua.includes('Windows')) os = 'Windows';
+    else if (ua.includes('Mac')) os = 'Mac';
+    else if (ua.includes('Linux')) os = 'Linux';
+    else if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('iOS')) os = 'iOS';
+
+    return { browser, os, userAgent: ua };
+  }, []);
+
+  // Criar nova sessão
+  const createSession = useCallback(async (): Promise<string | null> => {
+    if (!user) return null;
+
+    try {
+      const deviceInfo = getDeviceInfo();
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+      const sessionToken = crypto.randomUUID();
+
+      const { data, error } = await supabase
+        .from('active_sessions')
+        .insert({
+          user_id: user.id,
+          session_token: sessionToken,
+          user_agent: navigator.userAgent,
+          device_info: deviceInfo,
+          expires_at: expiresAt.toISOString(),
+          last_activity: new Date().toISOString(),
+          max_lifetime_hours: 24,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCurrentSession(data as ActiveSession);
+      
+      // Salvar token no localStorage
+      localStorage.setItem('session_id', data.id);
+      
+      return data.id;
+    } catch (error) {
+      console.error('Error creating session:', error);
+      return null;
+    }
+  }, [user, getDeviceInfo]);
+
+  // Carregar sessões ativas
+  const fetchSessions = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('active_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gt('expires_at', new Date().toISOString())
+        .order('last_activity', { ascending: false });
+
+      if (error) throw error;
+      setSessions((data || []) as ActiveSession[]);
+
+      // Identificar sessão atual
+      const currentSessionId = localStorage.getItem('session_id');
+      if (currentSessionId) {
+        const current = data?.find(s => s.id === currentSessionId);
+        if (current) {
+          setCurrentSession(current as ActiveSession);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  // Atualizar atividade da sessão
+  const updateActivity = useCallback(async () => {
+    const sessionId = localStorage.getItem('session_id');
+    if (!sessionId || !user) return;
+
+    try {
+      await supabase
+        .from('active_sessions')
+        .update({ last_activity: new Date().toISOString() })
+        .eq('id', sessionId);
+    } catch (error) {
+      console.error('Error updating activity:', error);
+    }
+  }, [user]);
+
+  // Refresh da sessão
+  const refreshSession = useCallback(async (): Promise<boolean> => {
+    const sessionId = localStorage.getItem('session_id');
+    if (!sessionId) return false;
+
+    try {
+      const { data, error } = await supabase.rpc('refresh_session', { 
+        session_id: sessionId 
+      });
+
+      if (error) throw error;
+
+      if (data) {
+        await fetchSessions();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error refreshing session:', error);
+      return false;
+    }
+  }, [fetchSessions]);
+
+  // Validar sessão
+  const validateSession = useCallback(async (): Promise<{ valid: boolean; needsRefresh: boolean }> => {
+    const sessionId = localStorage.getItem('session_id');
+    if (!sessionId) return { valid: false, needsRefresh: false };
+
+    try {
+      const { data, error } = await supabase.rpc('validate_session', { 
+        session_id: sessionId 
+      });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const result = data[0];
+        return { valid: result.valid, needsRefresh: result.needs_refresh };
+      }
+      return { valid: false, needsRefresh: false };
+    } catch (error) {
+      console.error('Error validating session:', error);
+      return { valid: false, needsRefresh: false };
+    }
+  }, []);
+
+  // Encerrar sessão específica
+  const terminateSession = useCallback(async (sessionId: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase
+        .from('active_sessions')
+        .delete()
+        .eq('id', sessionId);
+
+      if (error) throw error;
+
+      // Se for a sessão atual, fazer logout
+      if (sessionId === localStorage.getItem('session_id')) {
+        localStorage.removeItem('session_id');
+        await supabase.auth.signOut();
+        toast.info('Sessão encerrada');
+      } else {
+        toast.success('Sessão encerrada');
+      }
+
+      await fetchSessions();
+      return true;
+    } catch (error) {
+      console.error('Error terminating session:', error);
+      toast.error('Erro ao encerrar sessão');
+      return false;
+    }
+  }, [fetchSessions]);
+
+  // Encerrar todas as outras sessões
+  const terminateOtherSessions = useCallback(async (): Promise<boolean> => {
+    if (!user) return false;
+
+    const currentSessionId = localStorage.getItem('session_id');
+
+    try {
+      const { error } = await supabase
+        .from('active_sessions')
+        .delete()
+        .eq('user_id', user.id)
+        .neq('id', currentSessionId || '');
+
+      if (error) throw error;
+
+      toast.success('Outras sessões encerradas');
+      await fetchSessions();
+      return true;
+    } catch (error) {
+      console.error('Error terminating other sessions:', error);
+      toast.error('Erro ao encerrar sessões');
+      return false;
+    }
+  }, [user, fetchSessions]);
+
+  // Verificação periódica da sessão
+  useEffect(() => {
+    if (!user) return;
+
+    const checkSession = async () => {
+      const { valid, needsRefresh } = await validateSession();
+
+      if (!valid) {
+        toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
+        localStorage.removeItem('session_id');
+        await supabase.auth.signOut();
+        return;
+      }
+
+      if (needsRefresh) {
+        const refreshed = await refreshSession();
+        if (refreshed) {
+          console.log('Session refreshed automatically');
+        }
+      }
+    };
+
+    // Verificar imediatamente
+    checkSession();
+
+    // Configurar intervalo
+    checkIntervalRef.current = setInterval(checkSession, SESSION_CHECK_INTERVAL);
+
+    // Atualizar atividade em interações
+    const handleActivity = () => updateActivity();
+    window.addEventListener('click', handleActivity);
+    window.addEventListener('keypress', handleActivity);
+
+    return () => {
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+      }
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('keypress', handleActivity);
+    };
+  }, [user, validateSession, refreshSession, updateActivity]);
+
+  // Carregar sessões ao montar
+  useEffect(() => {
+    fetchSessions();
+  }, [fetchSessions]);
+
+  // Criar sessão ao fazer login
+  useEffect(() => {
+    if (user && !localStorage.getItem('session_id')) {
+      createSession();
+    }
+  }, [user, createSession]);
+
+  return {
+    sessions,
+    currentSession,
+    isLoading,
+    createSession,
+    refreshSession,
+    validateSession,
+    terminateSession,
+    terminateOtherSessions,
+    updateActivity,
+    refetch: fetchSessions,
+  };
+};

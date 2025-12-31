@@ -93,6 +93,9 @@ export type Database = {
           id: string
           ip_address: string | null
           last_activity: string | null
+          last_refresh_at: string | null
+          max_lifetime_hours: number | null
+          refresh_count: number | null
           session_token: string | null
           user_agent: string | null
           user_id: string | null
@@ -104,6 +107,9 @@ export type Database = {
           id?: string
           ip_address?: string | null
           last_activity?: string | null
+          last_refresh_at?: string | null
+          max_lifetime_hours?: number | null
+          refresh_count?: number | null
           session_token?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -115,6 +121,9 @@ export type Database = {
           id?: string
           ip_address?: string | null
           last_activity?: string | null
+          last_refresh_at?: string | null
+          max_lifetime_hours?: number | null
+          refresh_count?: number | null
           session_token?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -1371,6 +1380,36 @@ export type Database = {
         }
         Relationships: []
       }
+      mfa_verification_attempts: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          method: string
+          success: boolean | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          method: string
+          success?: boolean | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          method?: string
+          success?: boolean | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           consecutive_days_threshold: number
@@ -1906,6 +1945,42 @@ export type Database = {
         }
         Relationships: []
       }
+      reauthentication_requests: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          expires_at: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+          verified: boolean | null
+          verified_at: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+          verified?: boolean | null
+          verified_at?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+          verified?: boolean | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       sales: {
         Row: {
           amount: number
@@ -2146,6 +2221,36 @@ export type Database = {
           spike_threshold?: number
           time_window_hours?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      sms_verification_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          expires_at: string
+          id: string
+          phone_number: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          phone_number: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          phone_number?: string
+          used_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -2595,6 +2700,54 @@ export type Database = {
           },
         ]
       }
+      user_mfa_settings: {
+        Row: {
+          backup_codes: string[] | null
+          backup_codes_generated_at: string | null
+          created_at: string | null
+          id: string
+          phone_number: string | null
+          phone_verified_at: string | null
+          preferred_method: string | null
+          sms_enabled: boolean | null
+          totp_enabled: boolean | null
+          totp_secret: string | null
+          totp_verified_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          backup_codes_generated_at?: string | null
+          created_at?: string | null
+          id?: string
+          phone_number?: string | null
+          phone_verified_at?: string | null
+          preferred_method?: string | null
+          sms_enabled?: boolean | null
+          totp_enabled?: boolean | null
+          totp_secret?: string | null
+          totp_verified_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          backup_codes_generated_at?: string | null
+          created_at?: string | null
+          id?: string
+          phone_number?: string | null
+          phone_verified_at?: string | null
+          preferred_method?: string | null
+          sms_enabled?: boolean | null
+          totp_enabled?: boolean | null
+          totp_secret?: string | null
+          totp_verified_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2720,6 +2873,7 @@ export type Database = {
         Args: { check_email: string; check_ip: string; window_minutes?: number }
         Returns: number
       }
+      generate_mfa_backup_codes: { Args: never; Returns: string[] }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_user_role: {
@@ -2737,6 +2891,7 @@ export type Database = {
       is_authenticated: { Args: never; Returns: boolean }
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
+      is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
       log_rate_limit: {
         Args: {
           p_action: string
@@ -2745,6 +2900,15 @@ export type Database = {
           p_identifier_type: string
         }
         Returns: undefined
+      }
+      refresh_session: { Args: { session_id: string }; Returns: boolean }
+      validate_session: {
+        Args: { session_id: string }
+        Returns: {
+          needs_refresh: boolean
+          reason: string
+          valid: boolean
+        }[]
       }
     }
     Enums: {
