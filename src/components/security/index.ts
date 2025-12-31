@@ -2,3 +2,9 @@ export { RoleManager, PermissionGrid, AccessControl, SecurityAlerts } from './Ro
 export { RateLimitDashboard } from './RateLimitDashboard';
 export { BlockedIPsPanel } from './BlockedIPsPanel';
 export { IPWhitelistPanel } from './IPWhitelistPanel';
+export { MFASetup } from './MFASetup';
+export { MFAVerification } from './MFAVerification';
+export { ReauthDialog } from './ReauthDialog';
+export { SessionManager } from './SessionManager';
+export { KnownDevices } from './KnownDevices';
+export { PushNotificationSettings } from './PushNotificationSettings';
