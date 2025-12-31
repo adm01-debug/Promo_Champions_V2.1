@@ -6,8 +6,9 @@ import { SecurityAlertHistory } from "@/components/settings/SecurityAlertHistory
 import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";
 import { PortfolioSettings } from "@/components/settings/PortfolioSettings";
 import { PermissionMatrix } from "@/components/settings/PermissionMatrix";
+import { IPWhitelistManager } from "@/components/security/IPWhitelistManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 
 export default function Configuracoes() {
@@ -26,7 +27,7 @@ export default function Configuracoes() {
       </div>
 
       <Tabs defaultValue="roles" className="w-full">
-        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-6' : 'grid-cols-3'} max-w-4xl`}>
+        <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-7' : 'grid-cols-3'} max-w-5xl`}>
           <TabsTrigger value="roles" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Roles
@@ -45,13 +46,17 @@ export default function Configuracoes() {
                 <Key className="h-4 w-4" />
                 Permissões
               </TabsTrigger>
+              <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                IP Whitelist
+              </TabsTrigger>
               <TabsTrigger value="audit" className="flex items-center gap-2">
                 <FileWarning className="h-4 w-4" />
                 Auditoria
               </TabsTrigger>
               <TabsTrigger value="circuits" className="flex items-center gap-2">
                 <Activity className="h-4 w-4" />
-                Circuit Breakers
+                Circuits
               </TabsTrigger>
             </>
           )}
@@ -73,6 +78,10 @@ export default function Configuracoes() {
           <>
             <TabsContent value="permissions" className="mt-6">
               <PermissionMatrix />
+            </TabsContent>
+
+            <TabsContent value="ip-whitelist" className="mt-6">
+              <IPWhitelistManager />
             </TabsContent>
             
             <TabsContent value="audit" className="mt-6 space-y-6">
