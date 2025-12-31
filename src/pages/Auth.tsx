@@ -7,13 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { PasswordStrength } from "@/components/ui/password-strength";
 import { toast } from "sonner";
 import { Crown, Swords, Trophy, Loader2, Mail } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.string().email("Email inválido");
-const passwordSchema = z.string().min(6, "Senha deve ter pelo menos 6 caracteres");
+const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
 const nameSchema = z.string().min(2, "Nome deve ter pelo menos 2 caracteres");
 
 export default function Auth() {
@@ -283,11 +284,12 @@ export default function Auth() {
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="Mínimo 6 caracteres"
+                      placeholder="Crie uma senha forte"
                       value={signupPassword}
                       onChange={(e) => setSignupPassword(e.target.value)}
                       required
                     />
+                    <PasswordStrength password={signupPassword} />
                   </div>
                   <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
                     {isLoading ? (
