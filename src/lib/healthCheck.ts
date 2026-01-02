@@ -1,3 +1,6 @@
+import { supabase } from '@/integrations/supabase/client';
+import { bitrix24 } from './bitrix24';
+
 export interface HealthCheckResult {
   service: string;
   status: 'healthy' | 'unhealthy';
@@ -8,7 +11,7 @@ export interface HealthCheckResult {
 export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
   const start = Date.now();
   try {
-    const { error } = await supabase.from('users').select('id').limit(1);
+    const { error } = await supabase.from('deals').select('id').limit(1);
     if (error) throw error;
     
     return {
@@ -42,4 +45,13 @@ export async function checkBitrix24Health(): Promise<HealthCheckResult> {
       error: error.message,
     };
   }
+}
+
+export async function checkSystemHealth(): Promise<HealthCheckResult[]> {
+  const checks = await Promise.all([
+    checkSupabaseHealth(),
+    checkBitrix24Health(),
+  ]);
+  
+  return checks;
 }
