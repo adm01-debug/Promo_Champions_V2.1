@@ -1,7 +1,9 @@
+import React from 'react';
+
 export function highlightText(text: string, query: string): string {
   if (!query) return text;
   
-  const regex = new RegExp(`(${query})`, 'gi');
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\]/g, '\\$&')})`, 'gi');
   return text.replace(regex, '<mark>$1</mark>');
 }
 
