@@ -7,8 +7,8 @@ export interface MockDetectionResult {
 }
 
 export const mockPatterns = {
-  hardcodedArrays: /const \w+ = \[[\s\S]*?\];/g,
-  loremIpsum: /lorem|ipsum|dolor|sit amet/gi,
+  hardcodedArrays: /const\s+\w+\s*=\s*\[[\s\S]*?\];/g,
+  loremIpsum: /lorem|ipsum|dolor|sit\s+amet/gi,
   placeholder: /placeholder|example|demo|test/gi,
   fakeEmails: /@example\.com|@test\.com/gi,
   mockFunctions: /mock\w+|fake\w+/gi,
