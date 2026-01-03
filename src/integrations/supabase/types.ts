@@ -2371,6 +2371,41 @@ export type Database = {
         }
         Relationships: []
       }
+      salesperson_preferences: {
+        Row: {
+          ai_assistant_avatar: string | null
+          ai_assistant_name: string
+          created_at: string
+          id: string
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          ai_assistant_avatar?: string | null
+          ai_assistant_name?: string
+          created_at?: string
+          id?: string
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          ai_assistant_avatar?: string | null
+          ai_assistant_name?: string
+          created_at?: string
+          id?: string
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_preferences_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       salesperson_xp: {
         Row: {
           created_at: string
