@@ -33,8 +33,8 @@ const Index = () => {
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
   
-  // Subscribe to real-time sales notifications
-  useSalesRealtime(salesperson?.id);
+  // Subscribe to real-time sales notifications (segmented by role)
+  useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;

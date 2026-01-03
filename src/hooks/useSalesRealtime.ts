@@ -6,6 +6,7 @@ import { useSoundSettings } from "./useSoundSettings";
 import { useSystemSoundSettings } from "./useSystemSoundSettings";
 import { XP_REWARDS, calculateLevelFromXP, getLevelInfo } from "./useSalespersonXP";
 import { useCelebration } from "./useCelebration";
+import { useUserRoles } from "./useUserRoles";
 
 interface SalePayload {
   id: string;
@@ -16,23 +17,50 @@ interface SalePayload {
   created_at: string;
 }
 
+type SalespersonRole = "sdr" | "closer" | "hybrid";
+
 const RANK_TITLES = {
   1: { title: "Lenda", emoji: "👑", color: "text-yellow-400" },
   2: { title: "Elite", emoji: "⚔️", color: "text-purple-400" },
   3: { title: "Veterano", emoji: "🏆", color: "text-amber-500" },
 };
 
-export function useSalesRealtime(currentSalespersonId?: string) {
+export function useSalesRealtime(currentSalespersonId?: string, currentSalespersonRole?: SalespersonRole) {
   const queryClient = useQueryClient();
   const { playSound } = useSoundSettings();
   const { playSoundForCategory } = useSystemSoundSettings();
   const { celebrateLevelUp, triggerLevelUpConfetti } = useCelebration();
+  const { isAdmin, isManager } = useUserRoles();
   const celebrationRef = useRef({ celebrateLevelUp, triggerLevelUpConfetti });
 
   // Keep refs updated
   useEffect(() => {
     celebrationRef.current = { celebrateLevelUp, triggerLevelUpConfetti };
   }, [celebrateLevelUp, triggerLevelUpConfetti]);
+
+  // Check if current user should receive notifications for a given seller's role
+  const shouldReceiveNotification = useCallback((sellerRole: SalespersonRole | null): boolean => {
+    // Admins and managers see ALL notifications
+    if (isAdmin || isManager) return true;
+    
+    // If seller role is unknown, show to everyone
+    if (!sellerRole || !currentSalespersonRole) return true;
+    
+    // Hybrid sellers see both SDR and Closer notifications
+    if (currentSalespersonRole === "hybrid") return true;
+    
+    // SDRs only see SDR and hybrid seller notifications
+    if (currentSalespersonRole === "sdr") {
+      return sellerRole === "sdr" || sellerRole === "hybrid";
+    }
+    
+    // Closers only see Closer and hybrid seller notifications
+    if (currentSalespersonRole === "closer") {
+      return sellerRole === "closer" || sellerRole === "hybrid";
+    }
+    
+    return true;
+  }, [isAdmin, isManager, currentSalespersonRole]);
 
   const triggerConfetti = useCallback(async (saleAmount: number) => {
     const confetti = (await import('canvas-confetti')).default;
@@ -144,73 +172,83 @@ export function useSalesRealtime(currentSalespersonId?: string) {
           // Only notify for completed sales
           if (newSale.status !== "completed") return;
 
-          // Get salesperson info
+          // Get salesperson info including their role
           if (newSale.salesperson_id) {
             const { data: salesperson } = await supabase
               .from("salespeople")
-              .select("name, avatar_url")
+              .select("name, avatar_url, role")
               .eq("id", newSale.salesperson_id)
               .single();
 
-            if (salesperson) {
-              const formattedAmount = new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(newSale.amount);
+            if (!salesperson) return;
+            
+            // Check if current user should receive this notification based on seller's role
+            const sellerRole = salesperson.role as SalespersonRole | null;
+            if (!shouldReceiveNotification(sellerRole)) {
+              // Still invalidate queries to refresh data even if we don't show notification
+              queryClient.invalidateQueries({ queryKey: ["sales"] });
+              queryClient.invalidateQueries({ queryKey: ["goals-dashboard"] });
+              queryClient.invalidateQueries({ queryKey: ["salespeople-ranking"] });
+              return;
+            }
+            
+            const formattedAmount = new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(newSale.amount);
 
-              // Play celebration sound and confetti based on sale value
-              playSound();
-              playSoundForCategory('newSale');
-              triggerConfetti(newSale.amount);
+            // Play celebration sound and confetti based on sale value
+            playSound();
+            playSoundForCategory('newSale');
+            triggerConfetti(newSale.amount);
 
-              // Award XP for the sale and check for level up
-              const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
-              if (xpFromSale > 0) {
-                const levelUpResult = await awardSaleXP(
-                  newSale.salesperson_id, 
-                  xpFromSale, 
-                  newSale.id, 
-                  newSale.amount,
-                  salesperson.name
-                );
-
-                // Trigger level up celebration if leveled up
-                if (levelUpResult?.leveledUp) {
-                  const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
-                  
-                  // Delay level up celebration to not overlap with sale celebration
-                  setTimeout(() => {
-                    celebrationRef.current.celebrateLevelUp(
-                      salesperson.name,
-                      levelUpResult.newLevel,
-                      newLevelInfo.title,
-                      newLevelInfo.emoji
-                    );
-                  }, 1500);
-                }
-              }
-
-              // Show toast notification
-              toast.success(
-                `🔥 ${salesperson.name} fechou uma venda!`,
-                {
-                  description: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
-                  duration: 8000,
-                }
+            // Award XP for the sale and check for level up
+            const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
+            if (xpFromSale > 0) {
+              const levelUpResult = await awardSaleXP(
+                newSale.salesperson_id, 
+                xpFromSale, 
+                newSale.id, 
+                newSale.amount,
+                salesperson.name
               );
 
-              // Send push notification if not the current user
-              if (
-                currentSalespersonId !== newSale.salesperson_id &&
-                "Notification" in window &&
-                Notification.permission === "granted"
-              ) {
-                new Notification(`🔥 ${salesperson.name} fechou uma venda!`, {
-                  body: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
-                  icon: salesperson.avatar_url || "/placeholder.svg",
-                  tag: `sale-${newSale.id}`,
-                });
+              // Trigger level up celebration if leveled up
+              if (levelUpResult?.leveledUp) {
+                const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
+                
+                // Delay level up celebration to not overlap with sale celebration
+                setTimeout(() => {
+                  celebrationRef.current.celebrateLevelUp(
+                    salesperson.name,
+                    levelUpResult.newLevel,
+                    newLevelInfo.title,
+                    newLevelInfo.emoji
+                  );
+                }, 1500);
               }
+            }
+
+            // Show toast notification
+            toast.success(
+              `🔥 ${salesperson.name} fechou uma venda!`,
+              {
+                description: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
+                duration: 8000,
+              }
+            );
+
+            // Send push notification if not the current user
+            if (
+              currentSalespersonId !== newSale.salesperson_id &&
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              new Notification(`🔥 ${salesperson.name} fechou uma venda!`, {
+                body: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
+                icon: salesperson.avatar_url || "/placeholder.svg",
+                tag: `sale-${newSale.id}`,
+              });
             }
           }
 
@@ -227,7 +265,7 @@ export function useSalesRealtime(currentSalespersonId?: string) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentSalespersonId, queryClient, playSound, triggerConfetti]);
+  }, [currentSalespersonId, currentSalespersonRole, isAdmin, isManager, queryClient, playSound, triggerConfetti, shouldReceiveNotification]);
 }
 
 // Helper function to award XP for sales
