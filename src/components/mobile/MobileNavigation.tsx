@@ -5,7 +5,8 @@ import {
   Kanban, 
   ClipboardList, 
   Trophy,
-  Menu
+  Menu,
+  Bot
 } from 'lucide-react';
 import { MobileBottomNav } from './MobileComponents';
 import { MobileDrawer } from './MobileDrawer';
@@ -26,7 +27,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
   const navItems = [
     {
       icon: <LayoutDashboard className="h-5 w-5" />,
-      label: 'Dashboard',
+      label: 'Home',
       href: '/',
       isActive: location.pathname === '/'
     },
@@ -43,10 +44,10 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
       isActive: location.pathname === '/tarefas'
     },
     {
-      icon: <Trophy className="h-5 w-5" />,
-      label: 'Ranking',
-      href: '/ranking',
-      isActive: location.pathname === '/ranking'
+      icon: <Bot className="h-5 w-5" />,
+      label: 'IA',
+      href: '/assistente',
+      isActive: location.pathname === '/assistente'
     },
     {
       icon: <Menu className="h-5 w-5" />,
@@ -61,7 +62,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
     <>
       <MobileBottomNav 
         items={navItems} 
-        className={className} 
+        className={cn("safe-area-inset-bottom", className)} 
       />
       <MobileDrawer 
         isOpen={isDrawerOpen} 

@@ -77,14 +77,15 @@ export const StatCard = ({
         <TooltipTrigger asChild>
           <span
             className={cn(
-              "inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full cursor-help transition-all duration-200",
+              "inline-flex items-center gap-0.5 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full cursor-help transition-all duration-200",
               isPositive && "bg-success/15 text-success",
               isNegative && "bg-destructive/15 text-destructive",
               !isPositive && !isNegative && "bg-muted/30 text-muted-foreground"
             )}
           >
-            <TrendIcon className="h-3 w-3" />
-            {Math.abs(change)}%
+            <TrendIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+            <span className="hidden sm:inline">{Math.abs(change)}%</span>
+            <span className="sm:hidden">{Math.abs(change)}</span>
           </span>
         </TooltipTrigger>
         <TooltipContent side="top" className="glass border-border/40 shadow-lg">
@@ -102,7 +103,7 @@ export const StatCard = ({
   return (
     <motion.div
       className={cn(
-        "glass rounded-xl p-5 cursor-pointer group border border-border/40 relative overflow-hidden",
+        "glass rounded-xl p-3 sm:p-4 lg:p-5 cursor-pointer group border border-border/40 relative overflow-hidden",
         styles.border,
         styles.glow
       )}
@@ -117,15 +118,15 @@ export const StatCard = ({
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none", styles.gradient)} />
       
       <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <div className={cn("p-2.5 rounded-xl shadow-sm transition-all duration-200 group-hover:scale-110", styles.iconBg)}>
-            <Icon className={cn("h-5 w-5 transition-colors", styles.iconColor)} />
+        <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
+          <div className={cn("p-1.5 sm:p-2 lg:p-2.5 rounded-lg sm:rounded-xl shadow-sm transition-all duration-200 group-hover:scale-110", styles.iconBg)}>
+            <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5 transition-colors", styles.iconColor)} />
           </div>
           {changeElement}
         </div>
-        <p className="text-muted-foreground text-xs uppercase tracking-widest mb-1.5 font-medium">{title}</p>
+        <p className="text-muted-foreground text-[10px] sm:text-xs uppercase tracking-wider sm:tracking-widest mb-0.5 sm:mb-1.5 font-medium truncate">{title}</p>
         <p className={cn(
-          "text-2xl font-bold font-display",
+          "text-lg sm:text-xl lg:text-2xl font-bold font-display truncate",
           variant === "primary" ? "gradient-text" : "text-foreground"
         )}>
           {value}

@@ -47,7 +47,8 @@ const Index = () => {
     >
       <PageTransition>
         <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
+          {/* Mobile-optimized padding */}
+          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -57,25 +58,26 @@ const Index = () => {
               <DashboardHeader />
             </motion.div>
 
-            {/* Competitive Status Bar */}
+            {/* Competitive Status Bar - Hidden on very small screens */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
+              className="hidden sm:block"
             >
               <CompetitiveStatusBar />
             </motion.div>
 
-            {/* Stats Row */}
+            {/* Stats Row - 2 columns on mobile, 4 on desktop */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
               <motion.div variants={itemVariants}>
                 <StatCard
-                  title="Faturamento Total"
+                  title="Faturamento"
                   value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
                   change={kpis?.changes.revenue ?? 0}
                   previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
@@ -85,7 +87,7 @@ const Index = () => {
               </motion.div>
               <motion.div variants={itemVariants}>
                 <StatCard
-                  title="Vendas Realizadas"
+                  title="Vendas"
                   value={String(kpis?.current.totalSales ?? 0)}
                   change={kpis?.changes.sales ?? 0}
                   previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
@@ -94,7 +96,7 @@ const Index = () => {
               </motion.div>
               <motion.div variants={itemVariants}>
                 <StatCard
-                  title="Novos Clientes"
+                  title="Clientes"
                   value={String(kpis?.current.newClients ?? 0)}
                   change={kpis?.changes.clients ?? 0}
                   previousValue={kpis ? String(kpis.previous.newClients) : undefined}
@@ -103,7 +105,7 @@ const Index = () => {
               </motion.div>
               <motion.div variants={itemVariants}>
                 <StatCard
-                  title="Taxa de Conversão"
+                  title="Conversão"
                   value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
                   change={kpis?.changes.conversion ?? 0}
                   previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
@@ -112,20 +114,20 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Main Grid */}
+            {/* Main Grid - Stacked on mobile */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              {/* Left Column - Chart */}
-              <div className="lg:col-span-2">
+              {/* Chart - Full width on mobile */}
+              <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px]">
                 <SalesChart />
               </div>
 
-              {/* Right Column - Goal */}
-              <div>
+              {/* Goal Progress */}
+              <div className="min-h-[200px]">
                 <GoalProgress 
                   current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
                   goal={goalsData?.totalGoal || 0} 
@@ -133,9 +135,9 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Second Row */}
+            {/* Second Row - 2 columns on mobile */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -146,25 +148,25 @@ const Index = () => {
               <motion.div variants={itemVariants}>
                 <SalesForecast />
               </motion.div>
-              <motion.div variants={itemVariants}>
+              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
                 <KPIGrid />
               </motion.div>
-              <motion.div variants={itemVariants}>
+              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
                 <AlertsPanel />
               </motion.div>
             </motion.div>
 
-            {/* Third Row - Responsive Grid */}
+            {/* Third Row - Scrollable on mobile or stacked */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
-              <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+              <motion.div variants={itemVariants} className="sm:col-span-1">
                 <RecentDeals />
               </motion.div>
-              <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+              <motion.div variants={itemVariants} className="sm:col-span-1">
                 <TopProducts />
               </motion.div>
               <motion.div variants={itemVariants}>
