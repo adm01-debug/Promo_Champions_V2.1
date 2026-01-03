@@ -20,12 +20,13 @@ import {
   ChevronLeft,
   Search,
   X,
+  Volume2,
 } from 'lucide-react';
 import { useSalesAssistant, ChatMessage, ConversationWithMatches, DealContext } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
 import { useDealChatHistory, QuestionType, QUESTION_TYPES } from '@/hooks/useDealChatHistory';
-import { useSalespersonPreferences } from '@/hooks/useSalespersonPreferences';
+import { useSalespersonPreferences, ResponseMode } from '@/hooks/useSalespersonPreferences';
 import { VoiceControls } from './VoiceControls';
 import { DealContextSelector } from './DealContextSelector';
 import { DealPreviewCard } from './DealPreviewCard';
@@ -89,9 +90,22 @@ function detectQuestionType(text: string): QuestionType {
 interface MessageBubbleProps {
   message: ChatMessage;
   salespersonAvatar?: string;
+  aiName?: string;
+  showAudioButton?: boolean;
+  onPlayAudio?: (text: string) => void;
+  isSpeaking?: boolean;
+  isLoadingTTS?: boolean;
 }
 
-function MessageBubble({ message, salespersonAvatar }: MessageBubbleProps) {
+function MessageBubble({ 
+  message, 
+  salespersonAvatar, 
+  aiName,
+  showAudioButton,
+  onPlayAudio,
+  isSpeaking,
+  isLoadingTTS,
+}: MessageBubbleProps) {
   const isUser = message.role === 'user';
 
   return (
@@ -119,8 +133,28 @@ function MessageBubble({ message, salespersonAvatar }: MessageBubbleProps) {
         )}
       >
         <div className="whitespace-pre-wrap">{message.content || '...'}</div>
-        <div className={cn('text-[10px] mt-1 opacity-60', isUser ? 'text-right' : '')}>
-          {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+        <div className={cn('flex items-center gap-2 mt-1', isUser ? 'justify-end' : 'justify-between')}>
+          <span className={cn('text-[10px] opacity-60')}>
+            {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+          </span>
+          {!isUser && showAudioButton && message.content && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'h-5 w-5 opacity-60 hover:opacity-100 transition-opacity',
+                isSpeaking && 'text-primary opacity-100'
+              )}
+              onClick={() => onPlayAudio?.(message.content)}
+              disabled={isLoadingTTS}
+            >
+              {isLoadingTTS ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Volume2 className="h-3 w-3" />
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -153,7 +187,6 @@ export function SalesAssistantChat() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | 'auto'>('auto');
-  const [isTTSEnabled, setIsTTSEnabled] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -161,7 +194,12 @@ export function SalesAssistantChat() {
   const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
-  const { aiAssistantName } = useSalespersonPreferences();
+  const { aiAssistantName, responseMode, voiceId: savedVoiceId } = useSalespersonPreferences();
+  
+  // Determine if TTS should be enabled based on user preferences
+  const isTTSEnabled = responseMode === 'audio' || responseMode === 'both';
+  
+  const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
   
   const { 
     messages, 
@@ -177,14 +215,12 @@ export function SalesAssistantChat() {
     searchConversations,
     dealContext,
     setDealContext,
-  } = useSalesAssistant(selectedSalesperson, aiAssistantName);
+  } = useSalesAssistant(selectedSalesperson, aiAssistantName, selectedPerson?.name);
 
   // Deal chat history
   const { addEntry: addChatHistoryEntry } = useDealChatHistory(dealContext?.dealId || null);
 
-  const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
-
-  // ElevenLabs Voice Hook
+  // ElevenLabs Voice Hook with saved voice preference
   const {
     speak,
     stopSpeaking,
@@ -201,6 +237,7 @@ export function SalesAssistantChat() {
     useBrowserFallback,
     setUseBrowserFallback,
   } = useElevenLabsVoice({
+    defaultVoiceId: savedVoiceId,
     onSpeakStart: () => {},
     onSpeakEnd: () => {},
     onError: (error) => {
@@ -298,19 +335,13 @@ export function SalesAssistantChat() {
     }
   }, [isListening, startListening, stopListening, toast]);
 
-  const handleToggleTTS = useCallback(() => {
-    const newState = !isTTSEnabled;
-    setIsTTSEnabled(newState);
-    
-    if (!newState) {
+  const handleManualSpeak = useCallback((text: string) => {
+    if (isSpeaking) {
       stopSpeaking();
-    } else {
-      toast({
-        title: 'Leitura ativada',
-        description: isApiConfigured ? 'Usando voz ElevenLabs' : 'Usando voz do navegador',
-      });
+    } else if (text) {
+      speak(text);
     }
-  }, [isTTSEnabled, stopSpeaking, isApiConfigured, toast]);
+  }, [isSpeaking, stopSpeaking, speak]);
 
   const handleSelectConversation = (conversationId: string) => {
     loadConversation(conversationId);
@@ -694,6 +725,11 @@ export function SalesAssistantChat() {
                   key={message.id}
                   message={message}
                   salespersonAvatar={selectedPerson?.avatar_url || undefined}
+                  aiName={aiAssistantName}
+                  showAudioButton={responseMode === 'audio' || responseMode === 'both'}
+                  onPlayAudio={handleManualSpeak}
+                  isSpeaking={isSpeaking}
+                  isLoadingTTS={isLoadingTTS}
                 />
               ))}
               {isLoading && messages[messages.length - 1]?.role === 'assistant' && !messages[messages.length - 1]?.content && (
@@ -751,18 +787,11 @@ export function SalesAssistantChat() {
               />
               <div className="absolute right-2 bottom-2">
                 <VoiceControls
-                  isTTSEnabled={isTTSEnabled}
-                  onToggleTTS={handleToggleTTS}
-                  isSpeaking={isSpeaking}
-                  isLoadingTTS={isLoadingTTS}
                   isListening={isListening}
                   onToggleListening={handleToggleListening}
                   isProcessingSTT={isProcessingSTT}
-                  voiceId={voiceId}
-                  onVoiceChange={setVoiceId}
+                  responseMode={responseMode}
                   isApiConfigured={isApiConfigured}
-                  useBrowserFallback={useBrowserFallback}
-                  onFallbackChange={setUseBrowserFallback}
                 />
               </div>
             </div>
