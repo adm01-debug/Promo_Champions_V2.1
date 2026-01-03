@@ -171,8 +171,8 @@ export function AppSidebar() {
   };
 
   // Definir quais seções mostrar baseado no tipo de usuário
-  const showSDRSection = ['sdr', 'admin', 'manager'].includes(userType);
-  const showCloserSection = ['closer', 'admin', 'manager', 'salesperson'].includes(userType);
+  const showSDRSection = ['sdr', 'closer', 'admin', 'manager'].includes(userType);
+  const showCloserSection = ['closer', 'admin', 'manager'].includes(userType);
   const showManagementSection = ['admin', 'manager'].includes(userType);
   const showReportsSection = ['admin', 'manager'].includes(userType);
 
