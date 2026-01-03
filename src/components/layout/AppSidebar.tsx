@@ -1,12 +1,11 @@
+import { useState } from "react";
 import { 
   LayoutDashboard, 
   ShoppingCart, 
   Users, 
-  Package, 
   BarChart3, 
   Bell,
   Trophy,
-  PieChart,
   Kanban,
   ClipboardList,
   BookOpen,
@@ -18,7 +17,6 @@ import {
   Crosshair,
   Bot,
   Swords,
-  Sparkles,
   TrendingUp,
   Settings,
   Link2,
@@ -30,16 +28,13 @@ import {
   Zap,
   UserCheck,
   Search,
-  Mail,
-  Calendar,
   FileText,
-  DollarSign,
-  Percent,
   Users2,
   Building2,
-  Clock,
-  CheckCircle,
-  AlertCircle
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  PieChart
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -47,12 +42,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -65,77 +63,64 @@ interface MenuItem {
   title: string;
   url: string;
   icon: LucideIcon;
-  roles?: ('admin' | 'manager' | 'sdr' | 'closer' | 'salesperson')[];
-  badge?: string;
 }
 
-// ============================================
-// SDR - Foco em Prospecção e Qualificação
-// ============================================
-const sdrItems: MenuItem[] = [
-  { title: "SDR Dashboard", url: "/sdr", icon: Phone, roles: ['sdr', 'admin', 'manager'] },
-  { title: "BI SDR", url: "/bi-sdr", icon: LineChart, roles: ['sdr', 'admin', 'manager'] },
-  { title: "Pipeline", url: "/pipeline", icon: Kanban, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
-  { title: "Cadências", url: "/cadencias", icon: GitBranch, roles: ['sdr', 'closer', 'admin', 'manager'] },
-  { title: "Atividades", url: "/atividades", icon: Activity, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
-  { title: "Metas Atividades", url: "/metas-atividades", icon: Crosshair, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
-  { title: "Clientes", url: "/clientes", icon: Users, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
-  { title: "Tarefas", url: "/tarefas", icon: ClipboardList, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
-];
+type ViewMode = 'sdr' | 'closer' | 'gestao';
 
 // ============================================
-// CLOSER - Foco em Fechamento
+// ITENS POR CONTEXTO
 // ============================================
-const closerItems: MenuItem[] = [
-  { title: "Closer Dashboard", url: "/closer", icon: Handshake, roles: ['closer', 'admin', 'manager'] },
-  { title: "BI Closer", url: "/bi-closer", icon: LineChart, roles: ['closer', 'admin', 'manager'] },
-  { title: "Vendas", url: "/vendas", icon: ShoppingCart, roles: ['closer', 'salesperson', 'admin', 'manager'] },
-  { title: "Assinatura Digital", url: "/assinatura-digital", icon: FileText, roles: ['closer', 'admin', 'manager'] },
+
+const sdrContextItems: MenuItem[] = [
+  { title: "Dashboard SDR", url: "/sdr", icon: Phone },
+  { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
+  { title: "Pipeline", url: "/pipeline", icon: Kanban },
+  { title: "Cadências", url: "/cadencias", icon: GitBranch },
+  { title: "Atividades", url: "/atividades", icon: Activity },
+  { title: "Clientes", url: "/clientes", icon: Users },
+  { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
 ];
 
-// ============================================
-// GAMIFICAÇÃO - Comum a todos
-// ============================================
+const closerContextItems: MenuItem[] = [
+  { title: "Dashboard Closer", url: "/closer", icon: Handshake },
+  { title: "BI Closer", url: "/bi-closer", icon: LineChart },
+  { title: "Pipeline", url: "/pipeline", icon: Kanban },
+  { title: "Vendas", url: "/vendas", icon: ShoppingCart },
+  { title: "Atividades", url: "/atividades", icon: Activity },
+  { title: "Clientes", url: "/clientes", icon: Users },
+  { title: "Assinatura Digital", url: "/assinatura-digital", icon: FileText },
+  { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
+];
+
+const gestaoContextItems: MenuItem[] = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "BI Gestão", url: "/bi-gestor", icon: BarChart2 },
+  { title: "Vendedores", url: "/vendedores", icon: Users2 },
+  { title: "Times", url: "/times", icon: Building2 },
+  { title: "Metas", url: "/metas", icon: Target },
+  { title: "Metas Atividades", url: "/metas-atividades", icon: Crosshair },
+  { title: "Portfólio", url: "/portfolio", icon: Briefcase },
+  { title: "ICP", url: "/icp", icon: UserCheck },
+  { title: "Playbooks", url: "/playbooks", icon: BookOpen },
+  { title: "Fonte de Leads", url: "/fonte-leads", icon: Search },
+  { title: "Analytics", url: "/analytics", icon: PieChart },
+  { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
+];
+
 const gamificationItems: MenuItem[] = [
   { title: "Ranking", url: "/ranking", icon: Swords },
-  { title: "Desafios Semanais", url: "/desafios", icon: Trophy },
-  { title: "Desafios Diários", url: "/desafios-diarios", icon: Zap },
+  { title: "Desafios", url: "/desafios", icon: Trophy },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
 
-// ============================================
-// GESTÃO - Admin e Manager
-// ============================================
-const managementItems: MenuItem[] = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard, roles: ['admin', 'manager'] },
-  { title: "BI Gestão", url: "/bi-gestor", icon: BarChart2, roles: ['admin', 'manager'] },
-  { title: "Vendedores", url: "/vendedores", icon: Users2, roles: ['admin', 'manager'] },
-  { title: "Times", url: "/times", icon: Building2, roles: ['admin', 'manager'] },
-  { title: "Metas", url: "/metas", icon: Target, roles: ['admin', 'manager'] },
-  { title: "Portfólio", url: "/portfolio", icon: Briefcase, roles: ['admin', 'manager'] },
-  { title: "ICP", url: "/icp", icon: UserCheck, roles: ['admin', 'manager'] },
-  { title: "Playbooks", url: "/playbooks", icon: BookOpen, roles: ['admin', 'manager'] },
-  { title: "Fonte de Leads", url: "/fonte-leads", icon: Search, roles: ['admin', 'manager'] },
-];
-
-// ============================================
-// RELATÓRIOS - Admin e Manager
-// ============================================
-const reportItems: MenuItem[] = [
-  { title: "Analytics", url: "/analytics", icon: PieChart, roles: ['admin', 'manager'] },
-  { title: "Relatórios", url: "/relatorios", icon: BarChart3, roles: ['admin', 'manager'] },
-  { title: "Relatório Atividades", url: "/relatorio-atividades", icon: Activity, roles: ['admin', 'manager'] },
-  { title: "Previsão Demanda", url: "/previsao-demanda", icon: TrendingUp, roles: ['admin', 'manager'] },
-];
-
-// ============================================
-// SISTEMA - Configurações
-// ============================================
 const systemItems: MenuItem[] = [
-  { title: "Admin", url: "/admin", icon: ShieldCheck, roles: ['admin'] },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
-  { title: "Bitrix24", url: "/bitrix24", icon: Link2, roles: ['admin', 'manager'] },
   { title: "Notificações", url: "/notificacoes", icon: Bell },
+];
+
+const adminOnlyItems: MenuItem[] = [
+  { title: "Admin", url: "/admin", icon: ShieldCheck },
+  { title: "Bitrix24", url: "/bitrix24", icon: Link2 },
 ];
 
 export function AppSidebar() {
@@ -144,15 +129,14 @@ export function AppSidebar() {
   const { data: alerts } = useAlerts();
   const alertCount = alerts?.length || 0;
   const { salesperson } = useAuth();
-  const { currentUserRole, isAdminOrManager, isLoadingCurrentRole } = useUserRoles();
+  const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
 
-  // Determinar o tipo de usuário baseado no role ou nome
+  // Determinar o tipo de usuário
   const getUserType = (): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
     if (role === 'admin') return 'admin';
     if (role === 'manager') return 'manager';
     
-    // Verificar pelo nome do salesperson (pode ser customizado)
     const name = salesperson?.name?.toLowerCase() || '';
     if (name.includes('sdr')) return 'sdr';
     if (name.includes('closer')) return 'closer';
@@ -161,193 +145,264 @@ export function AppSidebar() {
   };
 
   const userType = getUserType();
+  const isAdminOrManager = ['admin', 'manager'].includes(userType);
 
-  // Filtrar items baseado no tipo de usuário
-  const filterItems = (items: MenuItem[]) => {
-    if (isLoadingCurrentRole) return [];
-    return items.filter(item => {
-      if (!item.roles) return true; // Item visível para todos
-      return item.roles.includes(userType);
-    });
+  // Para admin/manager: modo de visualização selecionável
+  // Para outros: fixo no seu contexto
+  const getDefaultViewMode = (): ViewMode => {
+    if (userType === 'sdr') return 'sdr';
+    if (userType === 'closer') return 'closer';
+    return 'gestao'; // admin/manager começam em gestão
   };
 
-  // Definir quais seções mostrar baseado no tipo de usuário
-  const showSDRSection = ['sdr', 'closer', 'admin', 'manager'].includes(userType);
-  const showCloserSection = ['closer', 'admin', 'manager'].includes(userType);
-  const showManagementSection = ['admin', 'manager'].includes(userType);
-  const showReportsSection = ['admin', 'manager'].includes(userType);
+  const [viewMode, setViewMode] = useState<ViewMode>(getDefaultViewMode());
 
-  const visibleSdrItems = filterItems(sdrItems);
-  const visibleCloserItems = filterItems(closerItems);
-  const visibleGamificationItems = gamificationItems;
-  const visibleManagementItems = filterItems(managementItems);
-  const visibleReportItems = filterItems(reportItems);
-  const visibleSystemItems = filterItems(systemItems);
-
-  const renderMenuSection = (
-    label: string, 
-    items: MenuItem[], 
-    icon?: LucideIcon,
-    accentColor?: string
-  ) => {
-    if (items.length === 0) return null;
-
-    const Icon = icon;
-
-    return (
-      <SidebarGroup>
-        <SidebarGroupLabel className={cn(
-          "text-muted-foreground/60 uppercase text-[10px] tracking-widest font-medium mb-2 flex items-center gap-2",
-          accentColor
-        )}>
-          {Icon && <Icon className="h-3 w-3" />}
-          {label}
-        </SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu className="space-y-1">
-            {items.map((item) => {
-              const isNotifications = item.title === "Notificações";
-              const hasAlerts = isNotifications && alertCount > 0;
-              
-              return (
-                <SidebarMenuItem key={item.title + item.url}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
-                      activeClassName="bg-primary/10 text-primary border-l-2 border-primary shadow-sm"
-                    >
-                      <div className="relative">
-                        <item.icon className={cn(
-                          "h-4 w-4 flex-shrink-0 transition-all duration-200 group-hover/item:scale-110",
-                          hasAlerts && "text-warning animate-bounce"
-                        )} />
-                        {hasAlerts && (
-                          <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center shadow-sm animate-pulse">
-                            {alertCount > 9 ? "9+" : alertCount}
-                          </span>
-                        )}
-                      </div>
-                      {!isCollapsed && (
-                        <span className="font-medium flex-1">{item.title}</span>
-                      )}
-                      {!isCollapsed && item.badge && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-medium">
-                          {item.badge}
-                        </span>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              );
-            })}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    );
-  };
-
-  // Determinar o dashboard inicial baseado no tipo de usuário
-  const getHomeDashboard = () => {
-    switch (userType) {
-      case 'sdr': return { title: "SDR Home", url: "/sdr", icon: Phone };
-      case 'closer': return { title: "Closer Home", url: "/closer", icon: Handshake };
-      case 'admin':
-      case 'manager': return { title: "Dashboard", url: "/", icon: LayoutDashboard };
-      default: return { title: "Meu BI", url: "/bi-vendedor", icon: LineChart };
+  // Obter itens baseado no modo de visualização
+  const getContextItems = (): MenuItem[] => {
+    switch (viewMode) {
+      case 'sdr': return sdrContextItems;
+      case 'closer': return closerContextItems;
+      case 'gestao': return gestaoContextItems;
     }
   };
 
-  const homeDashboard = getHomeDashboard();
+  const contextItems = getContextItems();
+
+  // View mode tabs config
+  const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
+    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-blue-400 bg-blue-400/10' },
+    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-green-400 bg-green-400/10' },
+    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-purple-400 bg-purple-400/10' },
+  ];
+
+  const currentViewConfig = viewModes.find(v => v.mode === viewMode)!;
+
+  const renderMenuItem = (item: MenuItem, showNotificationBadge = false) => {
+    const isNotifications = item.title === "Notificações";
+    const hasAlerts = isNotifications && alertCount > 0;
+    
+    return (
+      <SidebarMenuItem key={item.title + item.url}>
+        <SidebarMenuButton asChild tooltip={item.title}>
+          <NavLink 
+            to={item.url} 
+            end 
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
+            activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
+          >
+            <div className="relative">
+              <item.icon className={cn(
+                "h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover/item:scale-110",
+                hasAlerts && "text-warning"
+              )} />
+              {hasAlerts && (
+                <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground flex items-center justify-center">
+                  {alertCount > 9 ? "9+" : alertCount}
+                </span>
+              )}
+            </div>
+            {!isCollapsed && (
+              <span className="text-sm font-medium truncate">{item.title}</span>
+            )}
+          </NavLink>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  };
+
+  if (isLoadingCurrentRole) {
+    return (
+      <Sidebar collapsible="icon" className="border-r-0 bg-sidebar">
+        <SidebarContent className="flex items-center justify-center">
+          <div className="animate-pulse space-y-3 p-4 w-full">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-8 bg-muted rounded-lg" />
+            ))}
+          </div>
+        </SidebarContent>
+      </Sidebar>
+    );
+  }
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0 bg-gradient-to-b from-sidebar to-sidebar/95">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3 group">
-          <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0 shadow-md group-hover:shadow-glow-primary transition-shadow duration-300">
-            <TrendingUp className="h-5 w-5 text-primary-foreground" />
+    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
+      {/* Header com Logo */}
+      <SidebarHeader className="p-3 border-b border-border/50">
+        <div className="flex items-center gap-2">
+          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 shadow-sm">
+            <TrendingUp className="h-4 w-4 text-primary-foreground" />
           </div>
           {!isCollapsed && (
-            <div className="flex flex-col">
-              <span className="text-lg font-bold gradient-text">SalesPro</span>
+            <div className="flex flex-col min-w-0">
+              <span className="text-base font-bold text-foreground">SalesPro</span>
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                {userType === 'sdr' ? 'SDR' : 
-                 userType === 'closer' ? 'Closer' : 
-                 userType === 'admin' ? 'Admin' : 
-                 userType === 'manager' ? 'Gestão' : 'Vendas'}
+                {currentViewConfig.label}
               </span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
-        {/* Home Dashboard */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={homeDashboard.title}>
-                  <NavLink 
-                    to={homeDashboard.url} 
-                    end 
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
-                    activeClassName="bg-primary/10 text-primary border-l-2 border-primary shadow-sm"
+      {/* View Mode Switcher - Apenas para Admin/Manager */}
+      {isAdminOrManager && !isCollapsed && (
+        <div className="p-2 border-b border-border/50">
+          <div className="flex gap-1 p-1 bg-muted/50 rounded-lg">
+            {viewModes.map((vm) => (
+              <TooltipProvider key={vm.mode}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setViewMode(vm.mode)}
+                      className={cn(
+                        "flex-1 h-8 text-xs font-medium transition-all",
+                        viewMode === vm.mode 
+                          ? "bg-background shadow-sm text-foreground" 
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <vm.icon className="h-3.5 w-3.5 mr-1.5" />
+                      {vm.label}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>Ver como {vm.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Collapsed View Mode Indicator */}
+      {isAdminOrManager && isCollapsed && (
+        <div className="p-2 flex flex-col gap-1">
+          {viewModes.map((vm) => (
+            <TooltipProvider key={vm.mode}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setViewMode(vm.mode)}
+                    className={cn(
+                      "h-8 w-8",
+                      viewMode === vm.mode && "bg-muted"
+                    )}
                   >
-                    <homeDashboard.icon className="h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover/item:scale-110" />
-                    {!isCollapsed && <span className="font-medium">{homeDashboard.title}</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                    <vm.icon className={cn(
+                      "h-4 w-4",
+                      viewMode === vm.mode ? "text-primary" : "text-muted-foreground"
+                    )} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{vm.label}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ))}
+        </div>
+      )}
 
-        {/* SDR Section */}
-        {showSDRSection && renderMenuSection("Prospecção", visibleSdrItems, Search, "text-blue-400")}
+      <SidebarContent className="px-2">
+        <ScrollArea className="flex-1">
+          {/* Contexto Principal */}
+          <SidebarGroup>
+            <div className={cn(
+              "text-[10px] uppercase tracking-widest font-medium px-3 py-2 flex items-center gap-2",
+              currentViewConfig.color.split(' ')[0]
+            )}>
+              <currentViewConfig.icon className="h-3 w-3" />
+              {!isCollapsed && currentViewConfig.label}
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-0.5">
+                {contextItems.map(item => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-        {/* Closer Section */}
-        {showCloserSection && renderMenuSection("Fechamento", visibleCloserItems, Handshake, "text-green-400")}
+          {/* Gamificação - Sempre visível */}
+          <SidebarGroup className="mt-4">
+            <div className="text-[10px] uppercase tracking-widest font-medium px-3 py-2 text-yellow-400 flex items-center gap-2">
+              <Trophy className="h-3 w-3" />
+              {!isCollapsed && "Gamificação"}
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-0.5">
+                {gamificationItems.map(item => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-        {/* Gamification - All users */}
-        {renderMenuSection("Gamificação", visibleGamificationItems, Trophy, "text-yellow-400")}
-
-        {/* Management - Admin/Manager only */}
-        {showManagementSection && renderMenuSection("Gestão", visibleManagementItems, Building2, "text-purple-400")}
-
-        {/* Reports - Admin/Manager only */}
-        {showReportsSection && renderMenuSection("Relatórios", visibleReportItems, BarChart3, "text-orange-400")}
-
-        {/* System */}
-        {renderMenuSection("Sistema", visibleSystemItems, Settings)}
+          {/* Sistema */}
+          <SidebarGroup className="mt-4">
+            <div className="text-[10px] uppercase tracking-widest font-medium px-3 py-2 text-muted-foreground/60 flex items-center gap-2">
+              <Settings className="h-3 w-3" />
+              {!isCollapsed && "Sistema"}
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-0.5">
+                {systemItems.map(item => renderMenuItem(item, item.title === "Notificações"))}
+                {userType === 'admin' && adminOnlyItems.map(item => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </ScrollArea>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
-        {!isCollapsed && (
-          <div className="glass rounded-xl p-3 border border-border/30 hover:border-primary/30 transition-colors duration-300">
-            <div className="flex items-center gap-3">
-              <div className={cn(
-                "h-9 w-9 rounded-lg flex items-center justify-center shadow-sm",
-                userType === 'sdr' ? "bg-blue-500/20" :
-                userType === 'closer' ? "bg-green-500/20" :
-                userType === 'admin' ? "bg-red-500/20" :
-                userType === 'manager' ? "bg-purple-500/20" :
-                "bg-primary/20"
-              )}>
-                {userType === 'sdr' ? <Phone className="h-4 w-4 text-blue-500" /> :
-                 userType === 'closer' ? <Handshake className="h-4 w-4 text-green-500" /> :
-                 userType === 'admin' ? <ShieldCheck className="h-4 w-4 text-red-500" /> :
-                 userType === 'manager' ? <Building2 className="h-4 w-4 text-purple-500" /> :
-                 <Users className="h-4 w-4 text-primary" />}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium truncate">{salesperson?.name || "Usuário"}</p>
-                  <UserRoleBadge />
+      {/* Footer com usuário */}
+      <SidebarFooter className="p-2 border-t border-border/50">
+        {isCollapsed ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className={cn(
+                  "h-9 w-9 rounded-lg flex items-center justify-center mx-auto cursor-default",
+                  userType === 'sdr' ? "bg-blue-500/20" :
+                  userType === 'closer' ? "bg-green-500/20" :
+                  userType === 'admin' ? "bg-red-500/20" :
+                  userType === 'manager' ? "bg-purple-500/20" :
+                  "bg-primary/20"
+                )}>
+                  {userType === 'sdr' ? <Phone className="h-4 w-4 text-blue-500" /> :
+                   userType === 'closer' ? <Handshake className="h-4 w-4 text-green-500" /> :
+                   userType === 'admin' ? <ShieldCheck className="h-4 w-4 text-red-500" /> :
+                   userType === 'manager' ? <Building2 className="h-4 w-4 text-purple-500" /> :
+                   <Users className="h-4 w-4 text-primary" />}
                 </div>
-                <p className="text-[10px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p className="font-medium">{salesperson?.name || "Usuário"}</p>
+                <p className="text-xs text-muted-foreground">{salesperson?.email}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <div className={cn(
+              "h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0",
+              userType === 'sdr' ? "bg-blue-500/20" :
+              userType === 'closer' ? "bg-green-500/20" :
+              userType === 'admin' ? "bg-red-500/20" :
+              userType === 'manager' ? "bg-purple-500/20" :
+              "bg-primary/20"
+            )}>
+              {userType === 'sdr' ? <Phone className="h-3.5 w-3.5 text-blue-500" /> :
+               userType === 'closer' ? <Handshake className="h-3.5 w-3.5 text-green-500" /> :
+               userType === 'admin' ? <ShieldCheck className="h-3.5 w-3.5 text-red-500" /> :
+               userType === 'manager' ? <Building2 className="h-3.5 w-3.5 text-purple-500" /> :
+               <Users className="h-3.5 w-3.5 text-primary" />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-medium truncate">{salesperson?.name || "Usuário"}</p>
+                <UserRoleBadge />
               </div>
+              <p className="text-[10px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
             </div>
           </div>
         )}
