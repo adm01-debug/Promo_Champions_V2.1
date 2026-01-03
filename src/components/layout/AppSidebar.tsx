@@ -74,7 +74,7 @@ interface MenuItem {
 // ============================================
 const sdrItems: MenuItem[] = [
   { title: "SDR Dashboard", url: "/sdr", icon: Phone, roles: ['sdr', 'admin', 'manager'] },
-  { title: "Meu BI", url: "/bi-vendedor", icon: LineChart, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
+  { title: "BI SDR", url: "/bi-sdr", icon: LineChart, roles: ['sdr', 'admin', 'manager'] },
   { title: "Pipeline", url: "/pipeline", icon: Kanban, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
   { title: "Cadências", url: "/cadencias", icon: GitBranch, roles: ['sdr', 'closer', 'admin', 'manager'] },
   { title: "Atividades", url: "/atividades", icon: Activity, roles: ['sdr', 'closer', 'salesperson', 'admin', 'manager'] },
@@ -88,6 +88,7 @@ const sdrItems: MenuItem[] = [
 // ============================================
 const closerItems: MenuItem[] = [
   { title: "Closer Dashboard", url: "/closer", icon: Handshake, roles: ['closer', 'admin', 'manager'] },
+  { title: "BI Closer", url: "/bi-closer", icon: LineChart, roles: ['closer', 'admin', 'manager'] },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart, roles: ['closer', 'salesperson', 'admin', 'manager'] },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: FileText, roles: ['closer', 'admin', 'manager'] },
 ];
