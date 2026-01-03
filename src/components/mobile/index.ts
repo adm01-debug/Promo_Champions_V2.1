@@ -8,6 +8,8 @@ export {
 } from './MobileComponents';
 export { MobileNavigation } from './MobileNavigation';
 export { MobileDrawer } from './MobileDrawer';
+export { MobilePageHeader } from './MobilePageHeader';
+export { MobileCardWrapper, MobileGrid, MobileStack, MobileContainer } from './MobileCardWrapper';
 export { FloatingActionButton } from './FloatingActionButton';
 export { ResponsiveDialog, useResponsiveDialog } from './ResponsiveDialog';
 export { ResponsiveTable } from './ResponsiveTable';
