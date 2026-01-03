@@ -1,5 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import { bitrix24 } from './bitrix24';
 
 export interface HealthCheckResult {
   service: string;
@@ -11,7 +10,7 @@ export interface HealthCheckResult {
 export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
   const start = Date.now();
   try {
-    const { error } = await supabase.from('deals').select('id').limit(1);
+    const { error } = await supabase.from('salespeople').select('id').limit(1);
     if (error) throw error;
     
     return {
@@ -19,30 +18,11 @@ export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
       status: 'healthy',
       latency: Date.now() - start,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       service: 'supabase',
       status: 'unhealthy',
-      error: error.message,
-    };
-  }
-}
-
-export async function checkBitrix24Health(): Promise<HealthCheckResult> {
-  const start = Date.now();
-  try {
-    await bitrix24.call('user.current');
-    
-    return {
-      service: 'bitrix24',
-      status: 'healthy',
-      latency: Date.now() - start,
-    };
-  } catch (error: any) {
-    return {
-      service: 'bitrix24',
-      status: 'unhealthy',
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -50,7 +30,6 @@ export async function checkBitrix24Health(): Promise<HealthCheckResult> {
 export async function checkSystemHealth(): Promise<HealthCheckResult[]> {
   const checks = await Promise.all([
     checkSupabaseHealth(),
-    checkBitrix24Health(),
   ]);
   
   return checks;

@@ -1,28 +1,12 @@
-/**
- * FINANCE HUB - Hook para Busca Fulltext
- * 
- * @module hooks/useSearch
- * @description Busca em múltiplas colunas com debounce
- */
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-// ============================================
-// TIPOS
-// ============================================
-
 export interface SearchOptions {
-  /** Colunas para buscar */
   columns: string[];
-  /** Mínimo de caracteres para iniciar busca */
   minChars?: number;
-  /** Tempo de debounce em ms */
   debounceMs?: number;
-  /** Limite de resultados */
   limit?: number;
-  /** Ordenação */
   orderBy?: {
     column: string;
     ascending?: boolean;
@@ -38,10 +22,6 @@ interface UseSearchResult<T> {
   clearSearch: () => void;
   hasResults: boolean;
 }
-
-// ============================================
-// HOOK DE DEBOUNCE
-// ============================================
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -59,9 +39,9 @@ function useDebouncedValue<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-// ============================================
-// HOOK PRINCIPAL
-// ============================================
+const getTable = (tableName: string) => {
+  return (supabase as any).from(tableName);
+};
 
 export function useSearch<T extends Record<string, unknown>>(
   tableName: string,
@@ -85,13 +65,11 @@ export function useSearch<T extends Record<string, unknown>>(
     queryFn: async () => {
       if (!shouldSearch) return [];
 
-      // Construir query OR para múltiplas colunas
       const orConditions = columns
         .map((col) => `${col}.ilike.%${debouncedTerm}%`)
         .join(',');
 
-      let query = supabase
-        .from(tableName)
+      let query = getTable(tableName)
         .select('*')
         .or(orConditions)
         .limit(limit);
@@ -106,7 +84,7 @@ export function useSearch<T extends Record<string, unknown>>(
       return data as T[];
     },
     enabled: shouldSearch,
-    staleTime: 1000 * 60, // 1 minuto
+    staleTime: 1000 * 60,
   });
 
   const clearSearch = useCallback(() => {
@@ -125,10 +103,6 @@ export function useSearch<T extends Record<string, unknown>>(
     hasResults: results.length > 0,
   };
 }
-
-// ============================================
-// HOOK PARA BUSCA LOCAL (em memória)
-// ============================================
 
 export function useLocalSearch<T extends Record<string, unknown>>(
   data: T[],

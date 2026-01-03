@@ -13,38 +13,26 @@ export interface Version {
   change_summary: string | null;
 }
 
-export function useVersions(entityType: string, entityId: string) {
+// Stub implementation - table doesn't exist yet
+export function useVersions(_entityType: string, entityId: string) {
   const queryClient = useQueryClient();
-  const queryKey = ['versions', entityType, entityId];
+  const queryKey = ['versions', _entityType, entityId];
 
   const { data: versions = [], isLoading } = useQuery({
     queryKey,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('entity_versions')
-        .select('*')
-        .eq('entity_type', entityType)
-        .eq('entity_id', entityId)
-        .order('version_number', { ascending: false });
-      if (error) throw error;
-      return data as Version[];
+    queryFn: async (): Promise<Version[]> => {
+      // Table doesn't exist yet, return empty array
+      return [];
     },
     enabled: !!entityId,
   });
 
   const restoreMutation = useMutation({
-    mutationFn: async (versionId: string) => {
-      const version = versions.find(v => v.id === versionId);
-      if (!version) throw new Error('Versão não encontrada');
-      const { error } = await supabase
-        .from(entityType)
-        .update(version.data)
-        .eq('id', entityId);
-      if (error) throw error;
+    mutationFn: async (_versionId: string) => {
+      toast.info('Versionamento não está disponível ainda');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      toast.success('Versão restaurada!');
     },
   });
 
