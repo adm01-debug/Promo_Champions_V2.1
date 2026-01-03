@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+const getTable = (tableName: string) => {
+  return (supabase as any).from(tableName);
+};
+
 export function useBuscaFulltext<T>(
   tabela: string,
   searchTerm: string,
@@ -11,8 +15,7 @@ export function useBuscaFulltext<T>(
     queryFn: async () => {
       if (searchTerm.length < 2) return [];
       
-      const { data, error } = await supabase
-        .from(tabela)
+      const { data, error } = await getTable(tabela)
         .select(colunas.join(','))
         .or(
           colunas

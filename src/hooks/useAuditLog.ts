@@ -1,26 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 
 interface AuditEntry {
   id: string;
   action: string;
-  old_data: any;
-  new_data: any;
+  old_data: unknown;
+  new_data: unknown;
   created_at: string;
 }
 
-export function useAuditLog(tableName: string, recordId: string) {
+// Stub implementation - table doesn't exist yet
+export function useAuditLog(_tableName: string, recordId: string) {
   return useQuery({
-    queryKey: ['audit', tableName, recordId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('audit_log')
-        .select('*')
-        .eq('table_name', tableName)
-        .eq('record_id', recordId)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data as AuditEntry[];
+    queryKey: ['audit', _tableName, recordId],
+    queryFn: async (): Promise<AuditEntry[]> => {
+      // Table doesn't exist yet, return empty array
+      return [];
     },
     enabled: !!recordId,
   });
