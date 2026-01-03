@@ -63,21 +63,32 @@ const useMonthlySalesData = () => {
   });
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="glass rounded-xl p-4 border border-border/50 shadow-lg">
-        <p className="text-sm font-semibold font-display text-foreground mb-2">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} className="text-xs flex items-center gap-2" style={{ color: entry.color }}>
-            <span className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
-            {entry.name}: <span className="font-semibold">R$ {entry.value.toLocaleString("pt-BR")}</span>
-          </p>
-        ))}
-      </div>
-    );
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    color: string;
+    name: string;
+    value: number;
+  }>;
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+  if (!active || !payload || payload.length === 0) {
+    return null;
   }
-  return null;
+  
+  return (
+    <div className="glass rounded-xl p-4 border border-border/50 shadow-lg">
+      <p className="text-sm font-semibold font-display text-foreground mb-2">{label}</p>
+      {payload.map((entry, index) => (
+        <p key={index} className="text-xs flex items-center gap-2" style={{ color: entry.color }}>
+          <span className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
+          {entry.name}: <span className="font-semibold">R$ {entry.value.toLocaleString("pt-BR")}</span>
+        </p>
+      ))}
+    </div>
+  );
 };
 
 export const SalesChart = () => {

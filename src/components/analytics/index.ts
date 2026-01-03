@@ -30,3 +30,12 @@ export { TrendAnalysis, QuickInsights, GoalProgressWidget } from './InsightCompo
 export { TopProductsWidget, ProductPerformanceGrid } from './TopProductsWidget';
 export { SalesPerformanceCard, TeamPerformanceTable } from './SalesPerformanceCard';
 export { ConversionAnalysis, WinLossReasonChart } from './ConversionAnalysis';
+
+// New advanced analytics components
+export { SalesVelocityCard } from './SalesVelocityCard';
+export { PredictiveScoringCard } from './PredictiveScoringCard';
+export { WinLossAnalysisCard } from './WinLossAnalysisCard';
+export { ForecastAccuracyCard } from './ForecastAccuracyCard';
+export { RevenueIntelligenceCard } from './RevenueIntelligenceCard';
+export { CustomerHealthCard } from './CustomerHealthCard';
+export { CompetitiveWinRateCard } from './CompetitiveWinRateCard';
