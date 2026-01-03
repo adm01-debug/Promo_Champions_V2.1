@@ -135,7 +135,7 @@ const Index = () => {
 
             {/* Second Row */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -154,17 +154,17 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Third Row */}
+            {/* Third Row - Responsive Grid */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-6 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
-              <motion.div variants={itemVariants}>
+              <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
                 <RecentDeals />
               </motion.div>
-              <motion.div variants={itemVariants}>
+              <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
                 <TopProducts />
               </motion.div>
               <motion.div variants={itemVariants}>

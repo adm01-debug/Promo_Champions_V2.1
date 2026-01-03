@@ -39,3 +39,4 @@ export { ForecastAccuracyCard } from './ForecastAccuracyCard';
 export { RevenueIntelligenceCard } from './RevenueIntelligenceCard';
 export { CustomerHealthCard } from './CustomerHealthCard';
 export { CompetitiveWinRateCard } from './CompetitiveWinRateCard';
+export { TerritoryManagementCard } from './TerritoryManagementCard';
