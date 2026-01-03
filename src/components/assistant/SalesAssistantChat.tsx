@@ -25,6 +25,7 @@ import { useSalesAssistant, ChatMessage, ConversationWithMatches, DealContext } 
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
 import { useDealChatHistory, QuestionType, QUESTION_TYPES } from '@/hooks/useDealChatHistory';
+import { useSalespersonPreferences } from '@/hooks/useSalespersonPreferences';
 import { VoiceControls } from './VoiceControls';
 import { DealContextSelector } from './DealContextSelector';
 import { DealPreviewCard } from './DealPreviewCard';
@@ -160,6 +161,8 @@ export function SalesAssistantChat() {
   const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
+  const { aiAssistantName } = useSalespersonPreferences();
+  
   const { 
     messages, 
     isLoading, 
@@ -174,7 +177,7 @@ export function SalesAssistantChat() {
     searchConversations,
     dealContext,
     setDealContext,
-  } = useSalesAssistant(selectedSalesperson);
+  } = useSalesAssistant(selectedSalesperson, aiAssistantName);
 
   // Deal chat history
   const { addEntry: addChatHistoryEntry } = useDealChatHistory(dealContext?.dealId || null);
@@ -537,9 +540,9 @@ export function SalesAssistantChat() {
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-lg">Coach de Vendas IA</CardTitle>
+              <CardTitle className="text-lg">{aiAssistantName}</CardTitle>
               <p className="text-xs text-muted-foreground">
-                Tire dúvidas, receba dicas e motivação
+                Seu coach de vendas pessoal
               </p>
             </div>
           </div>

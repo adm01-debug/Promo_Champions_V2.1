@@ -29,7 +29,7 @@ export interface DealContext {
   status: string;
 }
 
-export function useSalesAssistant(salespersonId: string | null) {
+export function useSalesAssistant(salespersonId: string | null, aiAssistantName?: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -256,6 +256,7 @@ export function useSalesAssistant(salespersonId: string | null) {
             message: content,
             salespersonId,
             conversationHistory,
+            aiAssistantName,
             dealContext: dealContext ? {
               dealId: dealContext.dealId,
               clientName: dealContext.clientName,

@@ -9,8 +9,9 @@ import { PermissionMatrix } from "@/components/settings/PermissionMatrix";
 import { IPWhitelistManager } from "@/components/security/IPWhitelistManager";
 import { GeoBlockingManager } from "@/components/security/GeoBlockingManager";
 import { PasswordResetApproval } from "@/components/security/PasswordResetApproval";
+import { AIAssistantSettings } from "@/components/settings/AIAssistantSettings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -39,6 +40,10 @@ export default function Configuracoes() {
             <TabsTrigger value="sounds" className="flex items-center gap-2">
               <Volume2 className="h-4 w-4" />
               Sons
+            </TabsTrigger>
+            <TabsTrigger value="ai-assistant" className="flex items-center gap-2">
+              <Bot className="h-4 w-4" />
+              Assistente IA
             </TabsTrigger>
             <TabsTrigger value="portfolio" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
@@ -82,6 +87,10 @@ export default function Configuracoes() {
 
         <TabsContent value="sounds" className="mt-6">
           <SoundSettingsTabs />
+        </TabsContent>
+
+        <TabsContent value="ai-assistant" className="mt-6">
+          <AIAssistantSettings />
         </TabsContent>
 
         <TabsContent value="portfolio" className="mt-6">

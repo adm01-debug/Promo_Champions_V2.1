@@ -12,11 +12,14 @@ serve(async (req) => {
   }
 
   try {
-    const { message, salespersonId, conversationHistory = [], dealContext } = await req.json();
+    const { message, salespersonId, conversationHistory = [], dealContext, aiAssistantName } = await req.json();
 
     if (!message) {
       throw new Error("Message is required");
     }
+
+    // Use custom AI name if provided, otherwise default
+    const assistantName = aiAssistantName || "Coach IA";
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -241,7 +244,7 @@ ${dealActivities?.map(a => `  - ${a.activity_type} (${a.outcome}): ${new Date(a.
       }
     }
 
-    const systemPrompt = `Você é um Coach de Vendas IA especializado e motivador. Seu papel é:
+    const systemPrompt = `Você é ${assistantName}, um Coach de Vendas IA especializado e motivador. Seu papel é:
 
 1. TIRAR DÚVIDAS sobre técnicas de vendas, negociação, qualificação de leads, fechamento
 2. DAR DICAS práticas e acionáveis baseadas no contexto do vendedor
@@ -250,6 +253,10 @@ ${dealActivities?.map(a => `  - ${a.activity_type} (${a.outcome}): ${new Date(a.
 5. SUGERIR próximos passos baseados na situação atual
 6. ANALISAR deals específicos quando o contexto de um deal for fornecido
 7. FORNECER sugestões proativas baseadas na análise de performance
+
+SEU NOME É: ${assistantName}
+- Use seu nome quando for apropriado (ex: "Olá, sou ${assistantName}!")
+- Mantenha uma personalidade consistente com esse nome
 
 ${salespersonContext}
 ${dealContextStr}
