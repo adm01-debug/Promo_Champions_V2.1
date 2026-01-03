@@ -29,7 +29,7 @@ export interface DealContext {
   status: string;
 }
 
-export function useSalesAssistant(salespersonId: string | null, aiAssistantName?: string) {
+export function useSalesAssistant(salespersonId: string | null, aiAssistantName?: string, salespersonName?: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -257,6 +257,7 @@ export function useSalesAssistant(salespersonId: string | null, aiAssistantName?
             salespersonId,
             conversationHistory,
             aiAssistantName,
+            salespersonName,
             dealContext: dealContext ? {
               dealId: dealContext.dealId,
               clientName: dealContext.clientName,
@@ -336,7 +337,7 @@ export function useSalesAssistant(salespersonId: string | null, aiAssistantName?
     } finally {
       setIsLoading(false);
     }
-  }, [messages, salespersonId, currentConversationId, createConversation, saveMessage, dealContext]);
+  }, [messages, salespersonId, currentConversationId, createConversation, saveMessage, dealContext, aiAssistantName, salespersonName]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);

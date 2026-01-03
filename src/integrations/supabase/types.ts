@@ -2377,24 +2377,33 @@ export type Database = {
           ai_assistant_name: string
           created_at: string
           id: string
+          response_mode: string
           salesperson_id: string
           updated_at: string
+          voice_id: string | null
+          voice_name: string | null
         }
         Insert: {
           ai_assistant_avatar?: string | null
           ai_assistant_name?: string
           created_at?: string
           id?: string
+          response_mode?: string
           salesperson_id: string
           updated_at?: string
+          voice_id?: string | null
+          voice_name?: string | null
         }
         Update: {
           ai_assistant_avatar?: string | null
           ai_assistant_name?: string
           created_at?: string
           id?: string
+          response_mode?: string
           salesperson_id?: string
           updated_at?: string
+          voice_id?: string | null
+          voice_name?: string | null
         }
         Relationships: [
           {
