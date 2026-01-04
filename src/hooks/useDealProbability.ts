@@ -1,29 +1,53 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-interface DealProbability {
-  probability: number;
-  factors: string[];
-}
-
-export const useDealProbabilities = (dealIds: string[]) => {
-  return useQuery({
-    queryKey: ["deal-probabilities", dealIds],
+export const useDealProbability = (dealId: string) => {
+  return useQuery<{ probability: number; factors: Record<string, number> }>({
+    queryKey: ['deal-probability', dealId],
     queryFn: async () => {
-      if (dealIds.length === 0) return {};
+      const { data: deal } = await supabase
+        .from('deals')
+        .select('*, client:clients(*), activities(*)')
+        .eq('id', dealId)
+        .single();
 
-      const { data, error } = await supabase.functions.invoke("deal-probability", {
-        body: { dealIds },
-      });
+      if (!deal) throw new Error('Deal not found');
 
-      if (error) {
-        console.error("Error fetching deal probabilities:", error);
-        throw error;
-      }
+      const factors = {
+        stage: calculateStageScore(deal.stage),
+        value: calculateValueScore(deal.value),
+        time: calculateTimeScore(deal.created_at),
+        engagement: calculateEngagementScore(deal.activities || []),
+      };
 
-      return data.probabilities as Record<string, DealProbability>;
+      const probability = Object.values(factors).reduce((a, b) => a + b, 0) / Object.keys(factors).length;
+
+      return { probability: Math.round(probability), factors };
     },
-    enabled: dealIds.length > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!dealId,
   });
 };
+
+function calculateStageScore(stage: string): number {
+  const scores: Record<string, number> = {
+    'Lead': 10,
+    'Qualified': 30,
+    'Proposal': 50,
+    'Negotiation': 75,
+    'Closed Won': 100,
+  };
+  return scores[stage] || 0;
+}
+
+function calculateValueScore(value: number): number {
+  return Math.min(value / 1000, 100);
+}
+
+function calculateTimeScore(createdAt: string): number {
+  const days = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24);
+  return Math.max(100 - days * 2, 0);
+}
+
+function calculateEngagementScore(activities: any[]): number {
+  return Math.min(activities.length * 5, 100);
+}
