@@ -1,170 +1,130 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { CACHE_TIMES } from '@/constants';
 
-export interface ABCProduct {
+interface ClientData {
   id: string;
   name: string;
-  category: string;
-  revenue: number;
-  quantity: number;
-  abcClass: 'A' | 'B' | 'C';
+  email?: string;
+  company?: string;
+  total_revenue: number;
+  deals_count: number;
+  last_deal_date?: string;
+}
+
+interface ABCCategory {
+  category: 'A' | 'B' | 'C';
+  clients: ClientData[];
+  totalRevenue: number;
   percentage: number;
-  cumulativePercentage: number;
-  classification: 'A' | 'B' | 'C';
+  description: string;
 }
 
-export interface ABCClient {
-  id: string;
-  name: string;
-  company: string | null;
-  revenue: number;
-  dealsCount: number;
-  abcClass: 'A' | 'B' | 'C';
-  percentage: number;
-  cumulativePercentage: number;
-  classification: 'A' | 'B' | 'C';
-  category: string;
-  quantity: number;
+interface ABCAnalysisResult {
+  categories: ABCCategory[];
+  totalClients: number;
+  totalRevenue: number;
+  classificationDate: Date;
 }
 
-export interface ABCSummary {
-  classA: { count: number; revenue: number; percentage: number };
-  classB: { count: number; revenue: number; percentage: number };
-  classC: { count: number; revenue: number; percentage: number };
-  products: Record<'A' | 'B' | 'C', number>;
-  clients: Record<'A' | 'B' | 'C', number>;
-}
-
-export interface ABCAnalysisData {
-  products: ABCProduct[];
-  clients: ABCClient[];
-  summary: ABCSummary;
-}
-
+/**
+ * Hook for ABC Analysis of clients (Pareto 80/20 principle)
+ * Classifies clients into A (80% revenue), B (15% revenue), C (5% revenue)
+ */
 export const useABCAnalysis = () => {
-  return useQuery<ABCAnalysisData>({
+  return useQuery<ABCAnalysisResult>({
     queryKey: ['abc-analysis'],
-    queryFn: async (): Promise<ABCAnalysisData> => {
-      // Get products with sales data
-      const { data: products, error: prodError } = await supabase
-        .from('products')
-        .select('*')
-        .order('sales_count', { ascending: false });
-      
-      if (prodError) throw prodError;
-      
-      // Get clients with their total value
-      const { data: clients, error: clientError } = await supabase
+    queryFn: async (): Promise<ABCAnalysisResult> => {
+      // Fetch clients with aggregated revenue
+      const { data: clients, error } = await supabase
         .from('clients')
-        .select('*')
-        .order('total_value', { ascending: false });
-      
-      if (clientError) throw clientError;
-      
-      // Calculate ABC classification for products
-      const totalProductRevenue = (products || []).reduce((acc, p) => acc + (p.price * p.sales_count), 0);
-      let cumulativeProductRevenue = 0;
-      
-      const abcProducts: ABCProduct[] = (products || []).map(p => {
-        const revenue = p.price * p.sales_count;
-        cumulativeProductRevenue += revenue;
-        const percentage = totalProductRevenue > 0 ? (revenue / totalProductRevenue) * 100 : 0;
-        const cumulativePercentage = totalProductRevenue > 0 ? (cumulativeProductRevenue / totalProductRevenue) * 100 : 0;
-        
-        let abcClass: 'A' | 'B' | 'C' = 'C';
-        if (cumulativePercentage <= 80) abcClass = 'A';
-        else if (cumulativePercentage <= 95) abcClass = 'B';
-        
+        .select(`
+          id,
+          name,
+          email,
+          company,
+          deals!inner(value, status)
+        `)
+        .eq('deals.status', 'won');
+
+      if (error) throw error;
+
+      // Calculate total revenue per client
+      const clientsWithRevenue: ClientData[] = clients.map(client => {
+        const totalRevenue = client.deals?.reduce(
+          (sum: number, deal: any) => sum + (deal.value || 0),
+          0
+        ) || 0;
+
         return {
-          id: p.id,
-          name: p.name,
-          category: p.category,
-          revenue,
-          quantity: p.sales_count,
-          abcClass,
-          percentage,
-          cumulativePercentage,
-          classification: abcClass,
+          id: client.id,
+          name: client.name,
+          email: client.email,
+          company: client.company,
+          total_revenue: totalRevenue,
+          deals_count: client.deals?.length || 0,
         };
+      }).filter(c => c.total_revenue > 0);
+
+      // Sort by revenue descending
+      clientsWithRevenue.sort((a, b) => b.total_revenue - a.total_revenue);
+
+      const totalRevenue = clientsWithRevenue.reduce(
+        (sum, c) => sum + c.total_revenue,
+        0
+      );
+
+      // ABC Classification
+      let accumulatedRevenue = 0;
+      let categoryA: ClientData[] = [];
+      let categoryB: ClientData[] = [];
+      let categoryC: ClientData[] = [];
+
+      clientsWithRevenue.forEach(client => {
+        accumulatedRevenue += client.total_revenue;
+        const percentage = (accumulatedRevenue / totalRevenue) * 100;
+
+        if (percentage <= 80) {
+          categoryA.push(client);
+        } else if (percentage <= 95) {
+          categoryB.push(client);
+        } else {
+          categoryC.push(client);
+        }
       });
-      
-      // Calculate ABC classification for clients
-      const totalClientRevenue = (clients || []).reduce((acc, c) => acc + (c.total_value || 0), 0);
-      let cumulativeClientRevenue = 0;
-      
-      const abcClients: ABCClient[] = (clients || []).map(c => {
-        cumulativeClientRevenue += c.total_value || 0;
-        const percentage = totalClientRevenue > 0 ? ((c.total_value || 0) / totalClientRevenue) * 100 : 0;
-        const cumulativePercentage = totalClientRevenue > 0 
-          ? (cumulativeClientRevenue / totalClientRevenue) * 100 
-          : 0;
-        
-        let abcClass: 'A' | 'B' | 'C' = 'C';
-        if (cumulativePercentage <= 80) abcClass = 'A';
-        else if (cumulativePercentage <= 95) abcClass = 'B';
-        
-        return {
-          id: c.id,
-          name: c.name,
-          company: c.company,
-          revenue: c.total_value || 0,
-          dealsCount: 0,
-          abcClass,
-          percentage,
-          cumulativePercentage,
-          classification: abcClass,
-          category: 'Cliente',
-          quantity: 1,
-        };
-      });
-      
-      // Calculate summary
-      const classAProducts = abcProducts.filter(p => p.abcClass === 'A');
-      const classBProducts = abcProducts.filter(p => p.abcClass === 'B');
-      const classCProducts = abcProducts.filter(p => p.abcClass === 'C');
-      
-      const classAClients = abcClients.filter(c => c.abcClass === 'A');
-      const classBClients = abcClients.filter(c => c.abcClass === 'B');
-      const classCClients = abcClients.filter(c => c.abcClass === 'C');
-      
-      const summary: ABCSummary = {
-        classA: {
-          count: classAProducts.length,
-          revenue: classAProducts.reduce((acc, p) => acc + p.revenue, 0),
-          percentage: totalProductRevenue > 0 
-            ? (classAProducts.reduce((acc, p) => acc + p.revenue, 0) / totalProductRevenue) * 100 
-            : 0,
-        },
-        classB: {
-          count: classBProducts.length,
-          revenue: classBProducts.reduce((acc, p) => acc + p.revenue, 0),
-          percentage: totalProductRevenue > 0 
-            ? (classBProducts.reduce((acc, p) => acc + p.revenue, 0) / totalProductRevenue) * 100 
-            : 0,
-        },
-        classC: {
-          count: classCProducts.length,
-          revenue: classCProducts.reduce((acc, p) => acc + p.revenue, 0),
-          percentage: totalProductRevenue > 0 
-            ? (classCProducts.reduce((acc, p) => acc + p.revenue, 0) / totalProductRevenue) * 100 
-            : 0,
-        },
-        products: {
-          A: classAProducts.length,
-          B: classBProducts.length,
-          C: classCProducts.length,
-        },
-        clients: {
-          A: classAClients.length,
-          B: classBClients.length,
-          C: classCClients.length,
-        },
+
+      const revenueA = categoryA.reduce((sum, c) => sum + c.total_revenue, 0);
+      const revenueB = categoryB.reduce((sum, c) => sum + c.total_revenue, 0);
+      const revenueC = categoryC.reduce((sum, c) => sum + c.total_revenue, 0);
+
+      return {
+        categories: [
+          {
+            category: 'A',
+            clients: categoryA,
+            totalRevenue: revenueA,
+            percentage: (revenueA / totalRevenue) * 100,
+            description: 'Top clients - High priority',
+          },
+          {
+            category: 'B',
+            clients: categoryB,
+            totalRevenue: revenueB,
+            percentage: (revenueB / totalRevenue) * 100,
+            description: 'Medium clients - Growth opportunity',
+          },
+          {
+            category: 'C',
+            clients: categoryC,
+            totalRevenue: revenueC,
+            percentage: (revenueC / totalRevenue) * 100,
+            description: 'Small clients - Nurture or automate',
+          },
+        ],
+        totalClients: clientsWithRevenue.length,
+        totalRevenue,
+        classificationDate: new Date(),
       };
-      
-      return { products: abcProducts, clients: abcClients, summary };
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 1000 * 60 * 30, // 30 minutes
   });
 };
