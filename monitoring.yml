@@ -1,0 +1,55 @@
+# Monitoring Configuration
+
+## Sentry Configuration
+sentry:
+  dsn: \${SENTRY_DSN}
+  environment: \${NODE_ENV}
+  tracesSampleRate: 1.0
+  replaysSessionSampleRate: 0.1
+  replaysOnErrorSampleRate: 1.0
+
+## Google Analytics
+analytics:
+  trackingId: \${GA_TRACKING_ID}
+  anonymizeIp: true
+  events:
+    - page_view
+    - deal_created
+    - deal_won
+    - login
+    - signup
+
+## Health Checks
+healthChecks:
+  interval: 60000  # 1 minute
+  endpoints:
+    - name: API
+      url: \${API_URL}/health
+      timeout: 5000
+    - name: Database
+      type: postgres
+      connection: \${DATABASE_URL}
+    - name: Supabase
+      url: \${SUPABASE_URL}/rest/v1/
+
+## Alerts
+alerts:
+  - type: error_rate
+    threshold: 10  # per minute
+    notification: slack
+    
+  - type: response_time
+    threshold: 2000  # ms
+    notification: email
+    
+  - type: uptime
+    threshold: 99.5  # percentage
+    notification: pagerduty
+
+## Logs
+logging:
+  level: info
+  outputs:
+    - console
+    - file: ./logs/app.log
+    - sentry
