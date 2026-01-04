@@ -1,0 +1,1 @@
+export function Skeleton({width, height, className}: any) { return <div className={`bg-gray-200 animate-pulse rounded ${className}`} style={{width, height}} />; }
