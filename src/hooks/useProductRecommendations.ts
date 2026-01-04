@@ -1,70 +1,43 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-}
-
-interface ProductRecommendation {
-  product: Product;
-  score: number;
-  reason: string;
-}
-
 export const useProductRecommendations = (clientId: string) => {
-  return useQuery<ProductRecommendation[]>({
-    queryKey: ['product-recommendations', clientId],
-    queryFn: async (): Promise<ProductRecommendation[]> => {
-      // Buscar histórico de compras do cliente
-      const { data: purchases, error: purchasesError } = await supabase
-        .from('deal_products')
-        .select('product_id, products(*)')
-        .eq('client_id', clientId);
+  return useQuery({
+    queryKey: ['productRecommendations', clientId],
+    queryFn: async () => {
+      // Get client's past purchases
+      const { data: pastDeals, error: dealsError } = await supabase
+        .from('deals')
+        .select('products(*)')
+        .eq('client_id', clientId)
+        .eq('status', 'won');
       
-      if (purchasesError) throw purchasesError;
+      if (dealsError) throw dealsError;
       
-      // Buscar todos produtos
-      const { data: allProducts, error: productsError } = await supabase
+      const purchasedProductIds = pastDeals
+        .flatMap(d => d.products || [])
+        .map(p => p.id);
+      
+      // Get client industry
+      const { data: client, error: clientError } = await supabase
+        .from('clients')
+        .select('industry')
+        .eq('id', clientId)
+        .single();
+      
+      if (clientError) throw clientError;
+      
+      // Recommend complementary products
+      const { data: recommendations, error: recsError } = await supabase
         .from('products')
-        .select('*');
+        .select('*')
+        .not('id', 'in', `(${purchasedProductIds.join(',')})`)
+        .contains('tags', [client.industry])
+        .limit(5);
       
-      if (productsError) throw productsError;
-      if (!allProducts) return [];
+      if (recsError) throw recsError;
       
-      const purchasedIds = new Set((purchases || []).map(p => p.product_id));
-      const purchasedCategories = new Set(
-        (purchases || [])
-          .map(p => p.products?.category)
-          .filter(Boolean)
-      );
-      
-      const recommendations: ProductRecommendation[] = [];
-      
-      allProducts.forEach((product: Product) => {
-        if (purchasedIds.has(product.id)) return;
-        
-        let score = 50; // Base score
-        let reason = 'Popular product';
-        
-        if (purchasedCategories.has(product.category)) {
-          score += 30;
-          reason = `Similar to previous purchases in ${product.category}`;
-        }
-        
-        recommendations.push({
-          product,
-          score,
-          reason
-        });
-      });
-      
-      return recommendations
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 5);
+      return recommendations;
     },
-    enabled: !!clientId
   });
 };
