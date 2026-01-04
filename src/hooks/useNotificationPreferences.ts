@@ -1,107 +1,53 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-interface NotificationPreferences {
-  id: string;
+export interface NotificationPreferences {
   user_id: string;
-  email_notifications: boolean;
-  push_notifications: boolean;
-  sms_notifications: boolean;
+  email_enabled: boolean;
+  push_enabled: boolean;
+  sms_enabled: boolean;
   deal_updates: boolean;
   task_reminders: boolean;
-  achievement_alerts: boolean;
-  weekly_summary: boolean;
-  created_at: string;
-  updated_at: string;
+  team_mentions: boolean;
+  daily_digest: boolean;
+  quiet_hours_start?: string;
+  quiet_hours_end?: string;
 }
 
-interface UpdatePreferencesInput {
-  email_notifications?: boolean;
-  push_notifications?: boolean;
-  sms_notifications?: boolean;
-  deal_updates?: boolean;
-  task_reminders?: boolean;
-  achievement_alerts?: boolean;
-  weekly_summary?: boolean;
-}
-
-export const useNotificationPreferences = () => {
-  const queryClient = useQueryClient();
-  
-  const { data: preferences, isLoading, error } = useQuery<NotificationPreferences>({
-    queryKey: ['notification-preferences'],
-    queryFn: async (): Promise<NotificationPreferences> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-      
+export const useNotificationPreferences = (userId: string) => {
+  return useQuery({
+    queryKey: ['notificationPreferences', userId],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('notification_preferences')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .single();
       
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-      
-      // Se não existir, criar com defaults
-      if (!data) {
-        const defaultPrefs = {
-          user_id: user.id,
-          email_notifications: true,
-          push_notifications: true,
-          sms_notifications: false,
-          deal_updates: true,
-          task_reminders: true,
-          achievement_alerts: true,
-          weekly_summary: true
-        };
-        
-        const { data: newData, error: insertError } = await supabase
-          .from('notification_preferences')
-          .insert(defaultPrefs)
-          .select()
-          .single();
-        
-        if (insertError) throw insertError;
-        return newData as NotificationPreferences;
-      }
-      
-      return data as NotificationPreferences;
-    }
+      if (error && error.code !== 'PGRST116') throw error;
+      return data as NotificationPreferences | null;
+    },
   });
+};
+
+export const useUpdateNotificationPreferences = () => {
+  const queryClient = useQueryClient();
   
-  const updatePreferences = useMutation({
-    mutationFn: async (updates: UpdatePreferencesInput): Promise<NotificationPreferences> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-      
+  return useMutation({
+    mutationFn: async (preferences: Partial<NotificationPreferences>) => {
       const { data, error } = await supabase
         .from('notification_preferences')
-        .update(updates)
-        .eq('user_id', user.id)
+        .upsert(preferences)
         .select()
         .single();
       
       if (error) throw error;
-      return data as NotificationPreferences;
+      return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notification-preferences'] });
-    }
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ 
+        queryKey: ['notificationPreferences', data.user_id] 
+      });
+    },
   });
-  
-  return {
-    preferences,
-    isLoading,
-    error,
-    updatePreferences: updatePreferences.mutate,
-    isUpdating: updatePreferences.isPending
-  };
 };
