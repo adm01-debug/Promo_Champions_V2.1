@@ -1,41 +1,47 @@
-// Rate Limiting System
 interface RateLimitConfig {
   maxRequests: number;
   windowMs: number;
 }
 
-const limiters = new Map<string, { count: number; resetAt: number }>();
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
-export function rateLimit(key: string, config: RateLimitConfig): boolean {
+export const checkRateLimit = (
+  key: string,
+  config: RateLimitConfig = { maxRequests: 100, windowMs: 60000 }
+): { allowed: boolean; remaining: number; resetAt: number } => {
   const now = Date.now();
-  const limiter = limiters.get(key);
+  const record = rateLimitStore.get(key);
 
-  if (!limiter || now > limiter.resetAt) {
-    limiters.set(key, {
-      count: 1,
-      resetAt: now + config.windowMs
-    });
-    return true;
+  if (!record || now > record.resetAt) {
+    const resetAt = now + config.windowMs;
+    rateLimitStore.set(key, { count: 1, resetAt });
+    return { allowed: true, remaining: config.maxRequests - 1, resetAt };
   }
 
-  if (limiter.count >= config.maxRequests) {
-    return false;
+  if (record.count >= config.maxRequests) {
+    return { allowed: false, remaining: 0, resetAt: record.resetAt };
   }
 
-  limiter.count++;
-  return true;
-}
+  record.count++;
+  rateLimitStore.set(key, record);
 
-export function checkRateLimit(userId: string, endpoint: string): boolean {
-  return rateLimit(`${userId}:${endpoint}`, {
-    maxRequests: 100,
-    windowMs: 60000 // 1 minute
-  });
-}
+  return {
+    allowed: true,
+    remaining: config.maxRequests - record.count,
+    resetAt: record.resetAt,
+  };
+};
 
-export function checkIPRateLimit(ip: string): boolean {
-  return rateLimit(`ip:${ip}`, {
-    maxRequests: 1000,
-    windowMs: 60000
-  });
-}
+export const resetRateLimit = (key: string): void => {
+  rateLimitStore.delete(key);
+};
+
+// Cleanup old entries
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of rateLimitStore.entries()) {
+    if (now > record.resetAt) {
+      rateLimitStore.delete(key);
+    }
+  }
+}, 60000); // Every minute
