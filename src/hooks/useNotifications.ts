@@ -1,73 +1,82 @@
-import { useQuery } from '@tanstack/react-query';
-import { CACHE_TIMES } from '@/constants';
-import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-export type NotificationType = 
-  | 'achievement' 
-  | 'xp_gain' 
-  | 'level_up' 
-  | 'streak' 
-  | 'goal_complete' 
-  | 'goal_warning' 
-  | 'task_reminder' 
-  | 'team_update' 
-  | 'performance' 
-  | 'system';
-
-export interface Notification {
+interface Notification {
   id: string;
-  type: NotificationType;
+  user_id: string;
   title: string;
   message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
   read: boolean;
-  createdAt: Date;
-  metadata?: Record<string, unknown>;
+  action_url?: string;
+  created_at: string;
 }
 
-// Mock notifications for now since there's no notifications table in the schema
-const mockNotifications: Notification[] = [];
-
-export const useNotifications = (userId?: string) => {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+export const useNotifications = () => {
+  const queryClient = useQueryClient();
   
-  const query = useQuery({
-    queryKey: ['notifications', userId],
-    queryFn: async () => {
-      // Return mock data since notifications table doesn't exist
-      return notifications;
+  const { data: notifications = [], isLoading, error } = useQuery<Notification[]>({
+    queryKey: ['notifications'],
+    queryFn: async (): Promise<Notification[]> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) return [];
+      
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      
+      if (error) throw error;
+      return (data || []) as Notification[];
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    refetchInterval: 30000 // Refetch a cada 30 segundos
+  });
+  
+  const markAsRead = useMutation({
+    mutationFn: async (notificationId: string): Promise<void> => {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('id', notificationId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    }
+  });
+  
+  const markAllAsRead = useMutation({
+    mutationFn: async (): Promise<void> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) throw new Error('Not authenticated');
+      
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('user_id', user.id)
+        .eq('read', false);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    }
   });
   
   const unreadCount = notifications.filter(n => !n.read).length;
   
-  const markAsRead = useCallback((id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
-  }, []);
-  
-  const markAllAsRead = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  }, []);
-  
-  const deleteNotification = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  }, []);
-  
-  const clearAll = useCallback(() => {
-    setNotifications([]);
-  }, []);
-  
   return {
-    ...query,
     notifications,
     unreadCount,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    clearAll,
-    isLoading: query.isLoading,
+    isLoading,
+    error,
+    markAsRead: markAsRead.mutate,
+    markAllAsRead: markAllAsRead.mutate,
+    isMarking: markAsRead.isPending || markAllAsRead.isPending
   };
 };
