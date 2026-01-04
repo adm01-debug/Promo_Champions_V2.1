@@ -1,84 +1,178 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { CACHE_TIMES } from '@/constants';
 
-export interface ChurnPrediction {
-  clientId: string;
-  clientName: string;
-  churnProbability: number;
-  riskLevel: 'low' | 'medium' | 'high';
-  lastActivityDate: string | null;
-  daysSinceLastActivity: number;
-  factors: string[];
+interface ChurnIndicators {
+  engagementDecline: number; // 0-100
+  renewalDelay: number; // 0-100
+  negativeFeedback: number; // 0-100
+  usageDecline: number; // 0-100
 }
 
-export const useChurnPrediction = (clientId?: string) => {
-  return useQuery<ChurnPrediction[]>({
-    queryKey: ['churn-prediction', clientId],
-    queryFn: async (): Promise<ChurnPrediction[]> => {
-      // Get clients with their last activity
-      let query = supabase
+interface ChurnRisk {
+  clientId: string;
+  clientName: string;
+  riskScore: number; // 0-100
+  riskLevel: 'Critical' | 'High' | 'Medium' | 'Low';
+  indicators: ChurnIndicators;
+  recommendations: string[];
+  lastContact?: Date;
+  daysUntilRenewal?: number;
+}
+
+/**
+ * Hook for predicting client churn
+ * Analyzes engagement, renewals, feedback, and usage patterns
+ */
+export const useChurnPrediction = () => {
+  return useQuery<ChurnRisk[]>({
+    queryKey: ['churn-prediction'],
+    queryFn: async (): Promise<ChurnRisk[]> => {
+      const { data: clients, error } = await supabase
         .from('clients')
-        .select('*')
-        .order('updated_at', { ascending: false });
-      
-      if (clientId) {
-        query = query.eq('id', clientId);
-      }
-      
-      const { data: clients, error } = await query;
+        .select(`
+          id,
+          name,
+          status,
+          created_at,
+          activities(created_at, type, sentiment),
+          deals(renewal_date, status)
+        `)
+        .eq('status', 'customer');
+
       if (error) throw error;
-      
-      const predictions: ChurnPrediction[] = [];
-      
-      for (const client of clients || []) {
-        // Calculate days since last update
-        const lastUpdate = new Date(client.updated_at);
-        const now = new Date();
-        const daysSince = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        // Simple churn probability based on inactivity
-        let churnProbability = 0;
-        let riskLevel: 'low' | 'medium' | 'high' = 'low';
-        const factors: string[] = [];
-        
-        if (daysSince > 90) {
-          churnProbability = 0.8;
-          riskLevel = 'high';
-          factors.push('Inativo há mais de 90 dias');
-        } else if (daysSince > 60) {
-          churnProbability = 0.5;
-          riskLevel = 'medium';
-          factors.push('Inativo há mais de 60 dias');
-        } else if (daysSince > 30) {
-          churnProbability = 0.3;
-          riskLevel = 'medium';
-          factors.push('Inativo há mais de 30 dias');
-        } else {
-          churnProbability = 0.1;
-          riskLevel = 'low';
-        }
-        
-        if (client.total_value === 0) {
-          churnProbability = Math.min(churnProbability + 0.2, 1);
-          factors.push('Nenhuma compra registrada');
-        }
-        
-        predictions.push({
+
+      return clients.map(client => {
+        // Engagement Decline (0-100)
+        const engagementScore = calculateEngagementDecline(client.activities || []);
+
+        // Renewal Delay (0-100)
+        const renewalScore = calculateRenewalDelay(client.deals || []);
+
+        // Negative Feedback (0-100)
+        const feedbackScore = calculateNegativeFeedback(client.activities || []);
+
+        // Usage Decline (0-100)
+        const usageScore = calculateUsageDecline(client.activities || []);
+
+        const indicators: ChurnIndicators = {
+          engagementDecline: engagementScore,
+          renewalDelay: renewalScore,
+          negativeFeedback: feedbackScore,
+          usageDecline: usageScore,
+        };
+
+        // Calculate overall risk score (weighted average)
+        const riskScore = Math.round(
+          (engagementScore * 0.3) +
+          (renewalScore * 0.3) +
+          (feedbackScore * 0.25) +
+          (usageScore * 0.15)
+        );
+
+        const riskLevel: 'Critical' | 'High' | 'Medium' | 'Low' =
+          riskScore >= 75 ? 'Critical' :
+          riskScore >= 50 ? 'High' :
+          riskScore >= 25 ? 'Medium' : 'Low';
+
+        const recommendations = generateRecommendations(riskLevel, indicators);
+
+        const lastActivity = client.activities?.[0];
+        const nextRenewal = client.deals?.find(d => d.renewal_date);
+
+        return {
           clientId: client.id,
           clientName: client.name,
-          churnProbability,
+          riskScore,
           riskLevel,
-          lastActivityDate: client.updated_at,
-          daysSinceLastActivity: daysSince,
-          factors,
-        });
-      }
-      
-      // Sort by churn probability descending
-      return predictions.sort((a, b) => b.churnProbability - a.churnProbability);
+          indicators,
+          recommendations,
+          lastContact: lastActivity ? new Date(lastActivity.created_at) : undefined,
+          daysUntilRenewal: nextRenewal
+            ? Math.ceil((new Date(nextRenewal.renewal_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+            : undefined,
+        };
+      }).sort((a, b) => b.riskScore - a.riskScore);
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 1000 * 60 * 60, // 1 hour
   });
 };
+
+function calculateEngagementDecline(activities: any[]): number {
+  const last30 = activities.filter(a => {
+    const date = new Date(a.created_at);
+    const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+    return daysAgo <= 30;
+  }).length;
+
+  const prev30 = activities.filter(a => {
+    const date = new Date(a.created_at);
+    const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+    return daysAgo > 30 && daysAgo <= 60;
+  }).length;
+
+  if (prev30 === 0) return 0;
+  
+  const decline = ((prev30 - last30) / prev30) * 100;
+  return Math.max(0, Math.min(100, decline));
+}
+
+function calculateRenewalDelay(deals: any[]): number {
+  const renewal = deals.find(d => d.renewal_date);
+  if (!renewal) return 0;
+
+  const daysUntil = (new Date(renewal.renewal_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+  
+  if (daysUntil < 0) return 100; // Overdue
+  if (daysUntil < 30) return 75; // Less than 30 days
+  if (daysUntil < 60) return 50;
+  return 0;
+}
+
+function calculateNegativeFeedback(activities: any[]): number {
+  const feedbackActivities = activities.filter(a =>
+    a.type === 'feedback' || a.type === 'call' || a.type === 'meeting'
+  );
+
+  if (feedbackActivities.length === 0) return 0;
+
+  const negative = feedbackActivities.filter(a =>
+    a.sentiment === 'negative'
+  ).length;
+
+  return (negative / feedbackActivities.length) * 100;
+}
+
+function calculateUsageDecline(activities: any[]): number {
+  // Similar to engagement but focused on product usage
+  return calculateEngagementDecline(activities) * 0.8;
+}
+
+function generateRecommendations(
+  level: string,
+  indicators: ChurnIndicators
+): string[] {
+  const recommendations: string[] = [];
+
+  if (level === 'Critical' || level === 'High') {
+    recommendations.push('Schedule immediate check-in call');
+    recommendations.push('Review account health and usage');
+  }
+
+  if (indicators.engagementDecline > 50) {
+    recommendations.push('Increase touchpoints and engagement');
+  }
+
+  if (indicators.renewalDelay > 50) {
+    recommendations.push('Proactively discuss renewal terms');
+  }
+
+  if (indicators.negativeFeedback > 50) {
+    recommendations.push('Address concerns and gather feedback');
+  }
+
+  if (indicators.usageDecline > 50) {
+    recommendations.push('Provide training or product updates');
+  }
+
+  return recommendations;
+}
