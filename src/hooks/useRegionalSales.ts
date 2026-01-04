@@ -1,61 +1,57 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-interface RegionSales {
+export interface RegionalData {
   region: string;
-  totalRevenue: number;
-  dealsCount: number;
+  totalDeals: number;
+  wonDeals: number;
+  totalValue: number;
   avgDealSize: number;
-  topSalesperson: string;
+  winRate: number;
 }
 
 export const useRegionalSales = () => {
-  return useQuery<RegionSales[]>({
-    queryKey: ['regional-sales'],
-    queryFn: async (): Promise<RegionSales[]> => {
+  return useQuery({
+    queryKey: ['regionalSales'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('deals')
-        .select('*, clients(region), salespeople(name)')
-        .eq('status', 'won');
+        .select('region, value, status');
       
       if (error) throw error;
-      if (!data) return [];
       
-      const regionMap = new Map<string, {
-        revenue: number;
-        count: number;
-        salespeople: Map<string, number>;
-      }>();
+      const regionMap = new Map<string, RegionalData>();
       
-      data.forEach((deal: { clients: { region?: string }; value: number; salespeople: { name: string } }) => {
-        const region = deal.clients?.region || 'Unknown';
-        const current = regionMap.get(region) || {
-          revenue: 0,
-          count: 0,
-          salespeople: new Map()
-        };
+      data.forEach(deal => {
+        const region = deal.region || 'Unknown';
         
-        current.revenue += deal.value;
-        current.count += 1;
+        if (!regionMap.has(region)) {
+          regionMap.set(region, {
+            region,
+            totalDeals: 0,
+            wonDeals: 0,
+            totalValue: 0,
+            avgDealSize: 0,
+            winRate: 0,
+          });
+        }
         
-        const spRevenue = current.salespeople.get(deal.salespeople.name) || 0;
-        current.salespeople.set(deal.salespeople.name, spRevenue + deal.value);
+        const regionData = regionMap.get(region)!;
+        regionData.totalDeals++;
         
-        regionMap.set(region, current);
+        if (deal.status === 'won') {
+          regionData.wonDeals++;
+          regionData.totalValue += deal.value || 0;
+        }
       });
       
-      return Array.from(regionMap.entries()).map(([region, stats]) => {
-        const topSP = Array.from(stats.salespeople.entries())
-          .sort((a, b) => b[1] - a[1])[0];
-        
-        return {
-          region,
-          totalRevenue: stats.revenue,
-          dealsCount: stats.count,
-          avgDealSize: stats.revenue / stats.count,
-          topSalesperson: topSP ? topSP[0] : 'N/A'
-        };
-      }).sort((a, b) => b.totalRevenue - a.totalRevenue);
-    }
+      const result = Array.from(regionMap.values()).map(r => ({
+        ...r,
+        avgDealSize: r.wonDeals > 0 ? r.totalValue / r.wonDeals : 0,
+        winRate: r.totalDeals > 0 ? (r.wonDeals / r.totalDeals) * 100 : 0,
+      }));
+      
+      return result.sort((a, b) => b.totalValue - a.totalValue);
+    },
   });
 };
