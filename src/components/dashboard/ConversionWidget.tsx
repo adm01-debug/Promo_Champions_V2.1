@@ -1,0 +1,1 @@
+export function ConversionWidget({rate}: any) { return <div className="bg-white p-4 rounded shadow"><h3 className="text-sm text-gray-600">Taxa de Conversão</h3><p className="text-3xl font-bold mt-2">{rate}%</p><div className="w-full bg-gray-200 rounded h-2 mt-4"><div className="bg-green-500 h-2 rounded" style={{width: rate+'%'}} /></div></div>; }
