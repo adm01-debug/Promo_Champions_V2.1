@@ -1,20 +1,15 @@
-import { FC } from 'react';
-import { Card } from '@/components/ui/card';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-interface RevenueChartProps {
-  period?: 'day' | 'week' | 'month' | 'year';
-  showProjection?: boolean;
-}
-
-export const RevenueChart: FC<RevenueChartProps> = ({
-  period = 'month',
-  showProjection = false
-}) => {
+export function RevenueChart({ data }: { data: any[] }) {
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Receita por Período</h3>
-      <p className="text-sm text-muted-foreground">Período: {period}</p>
-      {showProjection && <p className="text-xs mt-2">Com projeção</p>}
-    </Card>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
+      </LineChart>
+    </ResponsiveContainer>
   );
-};
+}
