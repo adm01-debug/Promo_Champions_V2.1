@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useEffect } from 'react';
 
-interface Notification {
+export interface Notification {
   id: string;
   user_id: string;
   title: string;
@@ -12,31 +13,55 @@ interface Notification {
   created_at: string;
 }
 
-export const useNotifications = () => {
+export const useNotifications = (userId: string) => {
   const queryClient = useQueryClient();
   
-  const { data: notifications = [], isLoading, error } = useQuery<Notification[]>({
-    queryKey: ['notifications'],
-    queryFn: async (): Promise<Notification[]> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return [];
-      
+  const query = useQuery({
+    queryKey: ['notifications', userId],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(50);
       
       if (error) throw error;
-      return (data || []) as Notification[];
+      return data as Notification[];
     },
-    refetchInterval: 30000 // Refetch a cada 30 segundos
   });
   
-  const markAsRead = useMutation({
-    mutationFn: async (notificationId: string): Promise<void> => {
+  // Realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['notifications', userId] });
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, queryClient]);
+  
+  return query;
+};
+
+export const useMarkNotificationRead = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (notificationId: string) => {
       const { error } = await supabase
         .from('notifications')
         .update({ read: true })
@@ -46,37 +71,25 @@ export const useNotifications = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    }
+    },
   });
+};
+
+export const useMarkAllRead = () => {
+  const queryClient = useQueryClient();
   
-  const markAllAsRead = useMutation({
-    mutationFn: async (): Promise<void> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) throw new Error('Not authenticated');
-      
+  return useMutation({
+    mutationFn: async (userId: string) => {
       const { error } = await supabase
         .from('notifications')
         .update({ read: true })
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .eq('read', false);
       
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    }
+    },
   });
-  
-  const unreadCount = notifications.filter(n => !n.read).length;
-  
-  return {
-    notifications,
-    unreadCount,
-    isLoading,
-    error,
-    markAsRead: markAsRead.mutate,
-    markAllAsRead: markAllAsRead.mutate,
-    isMarking: markAsRead.isPending || markAllAsRead.isPending
-  };
 };
