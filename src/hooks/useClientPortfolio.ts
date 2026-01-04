@@ -1,298 +1,117 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-export interface ClientPortfolioItem {
+interface Client {
   id: string;
-  client_id: string;
-  salesperson_id: string;
-  status: 'active' | 'inactive';
-  last_purchase_date: string | null;
-  assigned_at: string;
-  assigned_by: string | null;
-  source: string | null;
-  created_at: string;
-  updated_at: string;
-  client: {
-    id: string;
-    name: string;
-    email: string | null;
-    phone: string | null;
-    company: string | null;
-    total_value: number;
-  } | null;
-  salesperson: {
-    id: string;
-    name: string;
-    role: string;
-  } | null;
+  name: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  total_revenue: number;
+  deals_count: number;
+  last_contact_date?: string;
 }
 
-export interface PortfolioStats {
+interface ABCCategory {
+  category: 'A' | 'B' | 'C';
+  clients: Client[];
+  totalRevenue: number;
+  percentage: number;
+}
+
+interface ClientPortfolioData {
   totalClients: number;
-  activeClients: number;
-  inactiveClients: number;
-  totalValue: number;
-  icpMatch: number;
-  icpPartial: number;
-  icpNone: number;
+  totalRevenue: number;
+  avgRevenuePerClient: number;
+  categories: ABCCategory[];
 }
 
-export function useClientPortfolio(salespersonId?: string) {
-  return useQuery({
-    queryKey: ["client-portfolio", salespersonId],
-    queryFn: async () => {
-      let query = supabase
-        .from("client_portfolio")
+export const useClientPortfolio = () => {
+  return useQuery<ClientPortfolioData>({
+    queryKey: ['client-portfolio'],
+    queryFn: async (): Promise<ClientPortfolioData> => {
+      const { data, error } = await supabase
+        .from('clients')
         .select(`
-          *,
-          client:clients(id, name, email, phone, company, total_value)
-        `)
-        .order("assigned_at", { ascending: false });
-
-      if (salespersonId) {
-        query = query.eq("salesperson_id", salespersonId);
-      }
-
-      const { data: portfolioData, error } = await query;
-
-      if (error) throw error;
-
-      // Fetch salespeople separately to avoid relationship hint issues
-      const salespersonIds = [...new Set(portfolioData?.map(p => p.salesperson_id) || [])];
-      const { data: salespeopleData } = await supabase
-        .from("salespeople")
-        .select("id, name, role")
-        .in("id", salespersonIds);
-
-      const salespeopleMap = new Map(salespeopleData?.map(sp => [sp.id, sp]) || []);
-
-      return portfolioData?.map(item => ({
-        ...item,
-        salesperson: salespeopleMap.get(item.salesperson_id) || null,
-      })) as ClientPortfolioItem[];
-    },
-  });
-}
-
-export function usePortfolioStats(salespersonId?: string) {
-  return useQuery({
-    queryKey: ["portfolio-stats", salespersonId],
-    queryFn: async () => {
-      let query = supabase
-        .from("client_portfolio")
-        .select(`
-          status,
-          client_id,
-          client:clients(total_value)
+          id,
+          name,
+          email,
+          phone,
+          company,
+          deals(value, status)
         `);
-
-      if (salespersonId) {
-        query = query.eq("salesperson_id", salespersonId);
-      }
-
-      const { data, error } = await query;
-
+      
       if (error) throw error;
-
-      // Get ICP data for these clients
-      const clientIds = data?.map(item => item.client_id).filter(Boolean) || [];
-      const { data: icpData } = await supabase
-        .from("icp_data")
-        .select("client_id, is_icp_match, ramo_atividade, grupo_nicho")
-        .in("client_id", clientIds);
-
-      const icpMap = new Map(icpData?.map(icp => [icp.client_id, icp]) || []);
-
-      // Calculate ICP stats
-      let icpMatch = 0;
-      let icpPartial = 0;
-      let icpNone = 0;
-
-      data?.forEach(item => {
-        const icp = icpMap.get(item.client_id);
-        if (icp?.is_icp_match) {
-          icpMatch++;
-        } else if (icp?.ramo_atividade || icp?.grupo_nicho) {
-          icpPartial++;
+      if (!data) throw new Error('No data returned');
+      
+      const clients: Client[] = data.map(client => {
+        const wonDeals = (client.deals || []).filter((d: { status: string }) => d.status === 'won');
+        const totalRevenue = wonDeals.reduce((sum: number, d: { value: number }) => sum + d.value, 0);
+        
+        return {
+          id: client.id,
+          name: client.name,
+          email: client.email,
+          phone: client.phone,
+          company: client.company,
+          total_revenue: totalRevenue,
+          deals_count: wonDeals.length
+        };
+      }).filter(c => c.total_revenue > 0);
+      
+      clients.sort((a, b) => b.total_revenue - a.total_revenue);
+      
+      const totalRevenue = clients.reduce((sum, c) => sum + c.total_revenue, 0);
+      
+      // Classificação ABC
+      let accumulated = 0;
+      const aClients: Client[] = [];
+      const bClients: Client[] = [];
+      const cClients: Client[] = [];
+      
+      clients.forEach(client => {
+        accumulated += client.total_revenue;
+        const percentage = (accumulated / totalRevenue) * 100;
+        
+        if (percentage <= 80) {
+          aClients.push(client);
+        } else if (percentage <= 95) {
+          bClients.push(client);
         } else {
-          icpNone++;
+          cClients.push(client);
         }
       });
-
-      const stats: PortfolioStats = {
-        totalClients: data?.length || 0,
-        activeClients: data?.filter(item => item.status === 'active').length || 0,
-        inactiveClients: data?.filter(item => item.status === 'inactive').length || 0,
-        totalValue: data?.reduce((sum, item) => {
-          const clientData = item.client as { total_value?: number } | null;
-          const value = clientData?.total_value || 0;
-          return sum + Number(value);
-        }, 0) || 0,
-        icpMatch,
-        icpPartial,
-        icpNone,
+      
+      const aRevenue = aClients.reduce((sum, c) => sum + c.total_revenue, 0);
+      const bRevenue = bClients.reduce((sum, c) => sum + c.total_revenue, 0);
+      const cRevenue = cClients.reduce((sum, c) => sum + c.total_revenue, 0);
+      
+      return {
+        totalClients: clients.length,
+        totalRevenue,
+        avgRevenuePerClient: totalRevenue / clients.length,
+        categories: [
+          {
+            category: 'A',
+            clients: aClients,
+            totalRevenue: aRevenue,
+            percentage: (aRevenue / totalRevenue) * 100
+          },
+          {
+            category: 'B',
+            clients: bClients,
+            totalRevenue: bRevenue,
+            percentage: (bRevenue / totalRevenue) * 100
+          },
+          {
+            category: 'C',
+            clients: cClients,
+            totalRevenue: cRevenue,
+            percentage: (cRevenue / totalRevenue) * 100
+          }
+        ]
       };
-
-      return stats;
     },
+    staleTime: 10 * 60 * 1000
   });
-}
-
-export function useAssignClient() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      clientId,
-      salespersonId,
-      source = 'manual',
-    }: {
-      clientId: string;
-      salespersonId: string;
-      source?: string;
-    }) => {
-      // Check if client is already assigned
-      const { data: existing } = await supabase
-        .from("client_portfolio")
-        .select("id")
-        .eq("client_id", clientId)
-        .single();
-
-      if (existing) {
-        // Update existing assignment
-        const { error } = await supabase
-          .from("client_portfolio")
-          .update({
-            salesperson_id: salespersonId,
-            source,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("client_id", clientId);
-
-        if (error) throw error;
-      } else {
-        // Create new assignment
-        const { error } = await supabase
-          .from("client_portfolio")
-          .insert({
-            client_id: clientId,
-            salesperson_id: salespersonId,
-            status: 'inactive',
-            source,
-          });
-
-        if (error) throw error;
-      }
-
-      // Log the routing
-      await supabase.from("lead_routing_log").insert({
-        client_id: clientId,
-        to_salesperson_id: salespersonId,
-        routing_reason: source === 'manual' ? 'Manual assignment' : source,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["client-portfolio"] });
-      queryClient.invalidateQueries({ queryKey: ["portfolio-stats"] });
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Cliente atribuído com sucesso!");
-    },
-    onError: (error) => {
-      console.error("Error assigning client:", error);
-      toast.error("Erro ao atribuir cliente");
-    },
-  });
-}
-
-export function useUpdatePortfolioStatus() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      portfolioId,
-      status,
-      lastPurchaseDate,
-    }: {
-      portfolioId: string;
-      status: 'active' | 'inactive';
-      lastPurchaseDate?: string;
-    }) => {
-      const updateData: Record<string, string | undefined> = {
-        status,
-        updated_at: new Date().toISOString(),
-      };
-
-      if (lastPurchaseDate) {
-        updateData.last_purchase_date = lastPurchaseDate;
-      }
-
-      const { error } = await supabase
-        .from("client_portfolio")
-        .update(updateData)
-        .eq("id", portfolioId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["client-portfolio"] });
-      queryClient.invalidateQueries({ queryKey: ["portfolio-stats"] });
-      toast.success("Status atualizado!");
-    },
-    onError: (error) => {
-      console.error("Error updating status:", error);
-      toast.error("Erro ao atualizar status");
-    },
-  });
-}
-
-export function useRemoveFromPortfolio() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (portfolioId: string) => {
-      const { error } = await supabase
-        .from("client_portfolio")
-        .delete()
-        .eq("id", portfolioId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["client-portfolio"] });
-      queryClient.invalidateQueries({ queryKey: ["portfolio-stats"] });
-      toast.success("Cliente removido do portfólio!");
-    },
-    onError: (error) => {
-      console.error("Error removing from portfolio:", error);
-      toast.error("Erro ao remover cliente");
-    },
-  });
-}
-
-export function useUnassignedClients() {
-  return useQuery({
-    queryKey: ["unassigned-clients"],
-    queryFn: async () => {
-      // Get all clients
-      const { data: clients, error: clientsError } = await supabase
-        .from("clients")
-        .select("id, name, email, phone, company, total_value")
-        .order("name");
-
-      if (clientsError) throw clientsError;
-
-      // Get assigned client IDs
-      const { data: assigned, error: assignedError } = await supabase
-        .from("client_portfolio")
-        .select("client_id");
-
-      if (assignedError) throw assignedError;
-
-      const assignedIds = new Set(assigned?.map(a => a.client_id) || []);
-
-      // Filter unassigned clients
-      return clients?.filter(client => !assignedIds.has(client.id)) || [];
-    },
-  });
-}
+};
