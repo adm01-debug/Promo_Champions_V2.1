@@ -1,79 +1,104 @@
+// Offline Support System
 import { useEffect, useState } from 'react';
 
-export function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+export interface OfflineConfig {
+  enableSync: boolean;
+  syncInterval: number;
+  cacheDuration: number;
+}
 
+class OfflineManager {
+  private syncQueue: Array<{ action: string; data: any; timestamp: number }> = [];
+  private isOnline: boolean = navigator.onLine;
+  
+  constructor() {
+    this.initializeListeners();
+    this.registerServiceWorker();
+  }
+  
+  private initializeListeners() {
+    window.addEventListener('online', () => {
+      this.isOnline = true;
+      this.processSyncQueue();
+    });
+    
+    window.addEventListener('offline', () => {
+      this.isOnline = false;
+    });
+  }
+  
+  private async registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker registered');
+      } catch (error) {
+        console.error('SW registration failed:', error);
+      }
+    }
+  }
+  
+  queueAction(action: string, data: any) {
+    this.syncQueue.push({
+      action,
+      data,
+      timestamp: Date.now(),
+    });
+    
+    localStorage.setItem('offlineQueue', JSON.stringify(this.syncQueue));
+    
+    if (this.isOnline) {
+      this.processSyncQueue();
+    }
+  }
+  
+  private async processSyncQueue() {
+    const queue = [...this.syncQueue];
+    this.syncQueue = [];
+    
+    for (const item of queue) {
+      try {
+        // Process each queued action
+        await this.executeAction(item);
+      } catch (error) {
+        // Re-queue if failed
+        this.syncQueue.push(item);
+      }
+    }
+    
+    localStorage.setItem('offlineQueue', JSON.stringify(this.syncQueue));
+  }
+  
+  private async executeAction(item: any) {
+    // Implementation of action execution
+    console.log('Executing offline action:', item);
+  }
+  
+  getStatus() {
+    return {
+      isOnline: this.isOnline,
+      queuedActions: this.syncQueue.length,
+    };
+  }
+}
+
+export const offlineManager = new OfflineManager();
+
+export const useOfflineStatus = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
+    
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
+    
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-
-  return isOnline;
-}
-
-interface QueuedAction {
-  id: string;
-  type: string;
-  data: any;
-  timestamp: number;
-}
-
-class SyncQueue {
-  private queue: QueuedAction[] = [];
-  private processing = false;
-
-  async addToQueue(type: string, data: any) {
-    const action: QueuedAction = {
-      id: crypto.randomUUID(),
-      type,
-      data,
-      timestamp: Date.now(),
-    };
-    
-    this.queue.push(action);
-    
-    if (navigator.onLine && !this.processing) {
-      this.processQueue();
-    }
-  }
-
-  async processQueue() {
-    if (this.queue.length === 0 || this.processing) return;
-    
-    this.processing = true;
-    
-    while (this.queue.length > 0) {
-      const action = this.queue[0];
-      
-      try {
-        // Processar ação
-        console.log('Processing queued action:', action);
-        
-        // Remover da fila após sucesso
-        this.queue.shift();
-      } catch (error) {
-        console.error('Error processing queue:', error);
-        break;
-      }
-    }
-    
-    this.processing = false;
-  }
-}
-
-export const syncQueue = new SyncQueue();
-
-// Processar fila quando voltar online
-if (typeof window !== 'undefined') {
-  window.addEventListener('online', () => {
-    syncQueue.processQueue();
-  });
-}
+  
+  return { isOnline, queuedActions: offlineManager.getStatus().queuedActions };
+};
