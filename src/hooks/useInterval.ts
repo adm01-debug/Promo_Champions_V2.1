@@ -1,0 +1,1 @@
+import { useEffect, useRef } from 'react'; export function useInterval(cb: () => void, delay: number | null) { const savedCb = useRef(cb); useEffect(() => { savedCb.current = cb; }, [cb]); useEffect(() => { if (delay === null) return; const i = setInterval(() => savedCb.current(), delay); return () => clearInterval(i); }, [delay]); }
