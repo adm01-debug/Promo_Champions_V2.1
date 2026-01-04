@@ -1,143 +1,127 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
-interface Use2FAReturn {
-  setupStatus: 'not_setup' | 'setup' | 'loading';
-  setup: () => Promise<{ secret: string; qrCode: string }>;
-  verify: (token: string) => Promise<boolean>;
-  disable: () => Promise<boolean>;
-  backupCodes: string[];
-  generateBackupCodes: () => Promise<string[]>;
+interface TwoFactorConfig {
+  enabled: boolean;
+  secret?: string;
+  qrCode?: string;
+  backupCodes?: string[];
 }
 
-export function use2FA(): Use2FAReturn {
-  const [setupStatus, setSetupStatus] = useState<'not_setup' | 'setup' | 'loading'>('loading');
-  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+export const use2FA = () => {
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    checkStatus();
-  }, []);
+  const getStatus = useQuery<TwoFactorConfig>({
+    queryKey: ['2fa-status'],
+    queryFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
 
-  async function checkStatus() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setSetupStatus('not_setup');
-        return;
-      }
-
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('user_2fa')
         .select('enabled')
-        .eq('user_id', user.id)
+        .eq('user_id', user.user.id)
         .single();
 
-      setSetupStatus(data?.enabled ? 'setup' : 'not_setup');
-    } catch (error) {
-      console.error('Error checking 2FA status:', error);
-      setSetupStatus('not_setup');
-    }
-  }
+      if (error && error.code !== 'PGRST116') throw error;
 
-  async function setup() {
-    setSetupStatus('loading');
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+      return {
+        enabled: data?.enabled || false,
+      };
+    },
+  });
 
-    // Generate secret (simplified - in production use speakeasy)
-    const secret = generateSecret();
-    const qrCode = await generateQRCode(user.email!, secret);
+  const setup = useMutation({
+    mutationFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
 
-    await supabase.from('user_2fa').upsert({
-      user_id: user.id,
-      secret: secret,
-      enabled: false
-    });
+      // Generate secret (would use library like otpauth)
+      const secret = generateSecret();
+      const qrCode = generateQRCode(user.user.email!, secret);
 
-    return { secret, qrCode };
-  }
-
-  async function verify(token: string) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-
-    const { data } = await supabase
-      .from('user_2fa')
-      .select('secret')
-      .eq('user_id', user.id)
-      .single();
-
-    if (!data) return false;
-
-    const verified = verifyToken(data.secret, token);
-
-    if (verified) {
-      await supabase
+      const { error } = await supabase
         .from('user_2fa')
-        .update({ enabled: true })
-        .eq('user_id', user.id);
-      
-      setSetupStatus('setup');
-      toast.success('2FA ativado com sucesso!');
-    }
+        .upsert({
+          user_id: user.user.id,
+          secret: secret,
+          enabled: false,
+        });
 
-    return verified;
-  }
+      if (error) throw error;
 
-  async function disable() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+      return { secret, qrCode };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['2fa-status'] });
+    },
+  });
 
-    await supabase
-      .from('user_2fa')
-      .update({ enabled: false })
-      .eq('user_id', user.id);
+  const verify = useMutation({
+    mutationFn: async (token: string) => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
 
-    setSetupStatus('not_setup');
-    toast.success('2FA desativado');
-    return true;
-  }
+      const { data: config } = await supabase
+        .from('user_2fa')
+        .select('secret')
+        .eq('user_id', user.user.id)
+        .single();
 
-  async function generateBackupCodes() {
-    const codes = Array.from({ length: 10 }, () =>
-      Math.random().toString(36).substring(2, 10).toUpperCase()
-    );
+      if (!config) throw new Error('2FA not setup');
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+      const isValid = verifyToken(config.secret, token);
 
-    await supabase
-      .from('user_2fa')
-      .update({ backup_codes: codes })
-      .eq('user_id', user.id);
+      if (isValid) {
+        await supabase
+          .from('user_2fa')
+          .update({ enabled: true, verified_at: new Date().toISOString() })
+          .eq('user_id', user.user.id);
+      }
 
-    setBackupCodes(codes);
-    return codes;
-  }
+      return isValid;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['2fa-status'] });
+    },
+  });
+
+  const disable = useMutation({
+    mutationFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('user_2fa')
+        .update({ enabled: false })
+        .eq('user_id', user.user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['2fa-status'] });
+    },
+  });
 
   return {
-    setupStatus,
+    status: getStatus.data,
+    isLoading: getStatus.isLoading,
     setup,
     verify,
     disable,
-    backupCodes,
-    generateBackupCodes
   };
-}
+};
 
+// Helper functions (simplified - would use proper libraries)
 function generateSecret(): string {
-  return Array.from({ length: 32 }, () => 
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[Math.floor(Math.random() * 32)]
-  ).join('');
+  return Math.random().toString(36).substring(2, 15);
 }
 
-async function generateQRCode(email: string, secret: string): Promise<string> {
-  const otpauth = `otpauth://totp/SalesPro:${email}?secret=${secret}&issuer=SalesPro`;
-  return `data:image/png;base64,${btoa(otpauth)}`;
+function generateQRCode(email: string, secret: string): string {
+  return `otpauth://totp/SalesPro:${email}?secret=${secret}&issuer=SalesPro`;
 }
 
 function verifyToken(secret: string, token: string): boolean {
-  // Simplified verification - in production use speakeasy.totp.verify
-  return token.length === 6 && /^\d{6}$/.test(token);
+  // Would use proper TOTP verification
+  return token.length === 6;
 }
