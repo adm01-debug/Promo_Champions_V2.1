@@ -1,81 +1,113 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+// Permissions & RBAC System
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useUser } from '@/hooks/useUser';
 
-export interface Permission {
-  permission_name: string;
-  resource: string;
-  action: string;
+export type Role = 'admin' | 'manager' | 'sales' | 'viewer';
+export type Permission = 'read' | 'create' | 'update' | 'delete' | 'manage';
+export type Resource = 'clients' | 'deals' | 'products' | 'team' | 'reports' | 'settings';
+
+interface UserPermissions {
+  role: Role;
+  permissions: Record<Resource, Permission[]>;
 }
 
-export interface PermissionCheck {
-  resource: string;
-  action: string;
-}
+const ROLE_PERMISSIONS: Record<Role, Record<Resource, Permission[]>> = {
+  admin: {
+    clients: ['read', 'create', 'update', 'delete', 'manage'],
+    deals: ['read', 'create', 'update', 'delete', 'manage'],
+    products: ['read', 'create', 'update', 'delete', 'manage'],
+    team: ['read', 'create', 'update', 'delete', 'manage'],
+    reports: ['read', 'create', 'update', 'delete', 'manage'],
+    settings: ['read', 'create', 'update', 'delete', 'manage'],
+  },
+  manager: {
+    clients: ['read', 'create', 'update', 'delete'],
+    deals: ['read', 'create', 'update', 'delete'],
+    products: ['read', 'create', 'update'],
+    team: ['read', 'update'],
+    reports: ['read', 'create'],
+    settings: ['read'],
+  },
+  sales: {
+    clients: ['read', 'create', 'update'],
+    deals: ['read', 'create', 'update'],
+    products: ['read'],
+    team: ['read'],
+    reports: ['read'],
+    settings: ['read'],
+  },
+  viewer: {
+    clients: ['read'],
+    deals: ['read'],
+    products: ['read'],
+    team: ['read'],
+    reports: ['read'],
+    settings: [],
+  },
+};
 
-export function usePermissions() {
-  const { user } = useAuth();
-
-  const { data: permissions, isLoading, error } = useQuery({
-    queryKey: ["user-permissions", user?.id],
+export const usePermissions = () => {
+  const { user } = useUser();
+  
+  const { data: userRole } = useQuery({
+    queryKey: ['userRole', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
+      if (!user?.id) return null;
       
-      const { data, error } = await supabase.rpc("get_user_permissions");
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
       
-      if (error) {
-        console.error("Error fetching permissions:", error);
-        return [];
-      }
-      
-      return data as Permission[];
+      if (error) return 'viewer' as Role;
+      return (data.role as Role) || 'viewer';
     },
     enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   });
-
-  const hasPermission = (resource: string, action: string): boolean => {
-    if (!permissions) return false;
-    return permissions.some(
-      (p) => p.resource === resource && p.action === action
-    );
-  };
-
-  const hasAnyPermission = (checks: PermissionCheck[]): boolean => {
-    if (!permissions) return false;
-    return checks.some((check) => hasPermission(check.resource, check.action));
-  };
-
-  const hasAllPermissions = (checks: PermissionCheck[]): boolean => {
-    if (!permissions) return false;
-    return checks.every((check) => hasPermission(check.resource, check.action));
-  };
-
-  const canView = (resource: string): boolean => hasPermission(resource, "view");
-  const canCreate = (resource: string): boolean => hasPermission(resource, "create");
-  const canUpdate = (resource: string): boolean => hasPermission(resource, "update");
-  const canDelete = (resource: string): boolean => hasPermission(resource, "delete");
-  const canManage = (resource: string): boolean => hasPermission(resource, "manage");
-
-  return {
-    permissions,
-    isLoading,
-    error,
-    hasPermission,
-    hasAnyPermission,
-    hasAllPermissions,
-    canView,
-    canCreate,
-    canUpdate,
-    canDelete,
-    canManage,
-  };
-}
-
-// Standalone hook for checking a single permission
-export function useHasPermission(resource: string, action: string): boolean {
-  const { hasPermission, isLoading } = usePermissions();
   
-  if (isLoading) return false;
-  return hasPermission(resource, action);
-}
+  const role = userRole || 'viewer';
+  const permissions = ROLE_PERMISSIONS[role];
+  
+  const can = (permission: Permission, resource: Resource): boolean => {
+    return permissions[resource]?.includes(permission) || false;
+  };
+  
+  const hasRole = (requiredRole: Role): boolean => {
+    const roleHierarchy: Role[] = ['viewer', 'sales', 'manager', 'admin'];
+    const userRoleIndex = roleHierarchy.indexOf(role);
+    const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
+    return userRoleIndex >= requiredRoleIndex;
+  };
+  
+  const canAccess = (resource: Resource): boolean => {
+    return permissions[resource]?.length > 0;
+  };
+  
+  return {
+    role,
+    permissions,
+    can,
+    hasRole,
+    canAccess,
+  };
+};
+
+// HOC for permission-gated components
+export const withPermission = (
+  Component: React.ComponentType,
+  permission: Permission,
+  resource: Resource,
+  Fallback?: React.ComponentType
+) => {
+  return (props: any) => {
+    const { can } = usePermissions();
+    
+    if (!can(permission, resource)) {
+      return Fallback ? <Fallback {...props} /> : null;
+    }
+    
+    return <Component {...props} />;
+  };
+};
