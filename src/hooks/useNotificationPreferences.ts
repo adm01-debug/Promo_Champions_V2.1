@@ -1,107 +1,107 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-export interface NotificationPreference {
+interface NotificationPreferences {
   id: string;
-  email: string;
-  is_active: boolean;
-  frequency: "realtime" | "daily" | "weekly";
-  notify_stagnant_deals: boolean;
-  notify_inactive_clients: boolean;
-  notify_at_risk_goals: boolean;
-  stagnant_threshold_days: number;
-  inactive_threshold_days: number;
-  consecutive_days_threshold: number;
-  preferred_time: string;
+  user_id: string;
+  email_notifications: boolean;
+  push_notifications: boolean;
+  sms_notifications: boolean;
+  deal_updates: boolean;
+  task_reminders: boolean;
+  achievement_alerts: boolean;
+  weekly_summary: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export type NotificationPreferenceInsert = Omit<NotificationPreference, "id" | "created_at" | "updated_at">;
+interface UpdatePreferencesInput {
+  email_notifications?: boolean;
+  push_notifications?: boolean;
+  sms_notifications?: boolean;
+  deal_updates?: boolean;
+  task_reminders?: boolean;
+  achievement_alerts?: boolean;
+  weekly_summary?: boolean;
+}
 
 export const useNotificationPreferences = () => {
-  return useQuery({
-    queryKey: ["notification-preferences"],
-    queryFn: async (): Promise<NotificationPreference[]> => {
-      const { data, error } = await supabase
-        .from("notification_preferences")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data as NotificationPreference[];
-    },
-  });
-};
-
-export const useCreateNotificationPreference = () => {
   const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (preference: NotificationPreferenceInsert) => {
+  
+  const { data: preferences, isLoading, error } = useQuery<NotificationPreferences>({
+    queryKey: ['notification-preferences'],
+    queryFn: async (): Promise<NotificationPreferences> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      
       const { data, error } = await supabase
-        .from("notification_preferences")
-        .insert(preference)
-        .select()
+        .from('notification_preferences')
+        .select('*')
+        .eq('user_id', user.id)
         .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification-preferences"] });
-      toast.success("Preferência de notificação criada com sucesso");
-    },
-    onError: (error: any) => {
-      toast.error("Erro ao criar preferência: " + error.message);
-    },
+      
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      // Se não existir, criar com defaults
+      if (!data) {
+        const defaultPrefs = {
+          user_id: user.id,
+          email_notifications: true,
+          push_notifications: true,
+          sms_notifications: false,
+          deal_updates: true,
+          task_reminders: true,
+          achievement_alerts: true,
+          weekly_summary: true
+        };
+        
+        const { data: newData, error: insertError } = await supabase
+          .from('notification_preferences')
+          .insert(defaultPrefs)
+          .select()
+          .single();
+        
+        if (insertError) throw insertError;
+        return newData as NotificationPreferences;
+      }
+      
+      return data as NotificationPreferences;
+    }
   });
-};
-
-export const useUpdateNotificationPreference = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<NotificationPreference> & { id: string }) => {
+  
+  const updatePreferences = useMutation({
+    mutationFn: async (updates: UpdatePreferencesInput): Promise<NotificationPreferences> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      
       const { data, error } = await supabase
-        .from("notification_preferences")
+        .from('notification_preferences')
         .update(updates)
-        .eq("id", id)
+        .eq('user_id', user.id)
         .select()
         .single();
-
+      
       if (error) throw error;
-      return data;
+      return data as NotificationPreferences;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification-preferences"] });
-      toast.success("Preferência atualizada com sucesso");
-    },
-    onError: (error: any) => {
-      toast.error("Erro ao atualizar preferência: " + error.message);
-    },
+      queryClient.invalidateQueries({ queryKey: ['notification-preferences'] });
+    }
   });
-};
-
-export const useDeleteNotificationPreference = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("notification_preferences")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification-preferences"] });
-      toast.success("Preferência removida com sucesso");
-    },
-    onError: (error: any) => {
-      toast.error("Erro ao remover preferência: " + error.message);
-    },
-  });
+  
+  return {
+    preferences,
+    isLoading,
+    error,
+    updatePreferences: updatePreferences.mutate,
+    isUpdating: updatePreferences.isPending
+  };
 };
