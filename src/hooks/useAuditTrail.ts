@@ -1,104 +1,94 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface AuditEvent {
+interface AuditLog {
   id: string;
   user_id: string;
   action: string;
-  resource_type: string;
-  resource_id: string;
+  table_name: string;
+  record_id: string;
   old_values?: any;
   new_values?: any;
-  ip_address?: string;
-  user_agent?: string;
   created_at: string;
+  user?: {
+    email: string;
+    full_name?: string;
+  };
 }
 
-interface UseAuditTrailOptions {
+interface AuditFilters {
   userId?: string;
+  tableName?: string;
   action?: string;
-  resourceType?: string;
   startDate?: Date;
   endDate?: Date;
-  page?: number;
-  pageSize?: number;
+  recordId?: string;
 }
 
-export function useAuditTrail(options: UseAuditTrailOptions = {}) {
-  const { userId, action, resourceType, startDate, endDate, page = 1, pageSize = 50 } = options;
-
-  return useQuery({
-    queryKey: ['audit-trail', options],
+export const useAuditTrail = (filters?: AuditFilters) => {
+  return useQuery<AuditLog[]>({
+    queryKey: ['audit-trail', filters],
     queryFn: async () => {
       let query = supabase
         .from('audit_log')
-        .select('*', { count: 'exact' })
+        .select(`
+          *,
+          user:users(email, full_name)
+        `)
         .order('created_at', { ascending: false })
-        .range((page - 1) * pageSize, page * pageSize - 1);
+        .limit(100);
 
-      if (userId) {
-        query = query.eq('user_id', userId);
+      if (filters?.userId) {
+        query = query.eq('user_id', filters.userId);
       }
 
-      if (action) {
-        query = query.eq('action', action);
+      if (filters?.tableName) {
+        query = query.eq('table_name', filters.tableName);
       }
 
-      if (resourceType) {
-        query = query.eq('resource_type', resourceType);
+      if (filters?.action) {
+        query = query.eq('action', filters.action);
       }
 
-      if (startDate) {
-        query = query.gte('created_at', startDate.toISOString());
+      if (filters?.recordId) {
+        query = query.eq('record_id', filters.recordId);
       }
 
-      if (endDate) {
-        query = query.lte('created_at', endDate.toISOString());
+      if (filters?.startDate) {
+        query = query.gte('created_at', filters.startDate.toISOString());
       }
 
-      const { data, error, count } = await query;
+      if (filters?.endDate) {
+        query = query.lte('created_at', filters.endDate.toISOString());
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
-      return {
-        events: data as AuditEvent[],
-        total: count || 0,
-        page,
-        pageSize,
-        totalPages: Math.ceil((count || 0) / pageSize)
-      };
-    }
+      return data as AuditLog[];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
-}
+};
 
-export async function logAuditEvent(
-  action: string,
-  resourceType: string,
-  resourceId: string,
-  oldValues?: any,
-  newValues?: any
-) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+export const useRecordHistory = (recordId: string, tableName: string) => {
+  return useQuery<AuditLog[]>({
+    queryKey: ['record-history', recordId, tableName],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('audit_log')
+        .select(`
+          *,
+          user:users(email, full_name)
+        `)
+        .eq('record_id', recordId)
+        .eq('table_name', tableName)
+        .order('created_at', { ascending: false });
 
-  await supabase.from('audit_log').insert({
-    user_id: user.id,
-    action,
-    resource_type: resourceType,
-    resource_id: resourceId,
-    old_values: oldValues,
-    new_values: newValues,
-    ip_address: await getClientIP(),
-    user_agent: navigator.userAgent
+      if (error) throw error;
+
+      return data as AuditLog[];
+    },
   });
-}
-
-async function getClientIP(): Promise<string> {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch {
-    return 'unknown';
-  }
-}
+};
