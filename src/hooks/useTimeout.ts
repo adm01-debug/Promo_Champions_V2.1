@@ -1,0 +1,1 @@
+import { useEffect, useRef } from 'react'; export function useTimeout(cb: () => void, delay: number) { const savedCb = useRef(cb); useEffect(() => { savedCb.current = cb; }, [cb]); useEffect(() => { const t = setTimeout(() => savedCb.current(), delay); return () => clearTimeout(t); }, [delay]); }
