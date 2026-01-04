@@ -1,61 +1,51 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Challenge {
+export interface DailyChallenge {
   id: string;
-  title: string;
-  description: string;
-  type: 'daily' | 'weekly' | 'monthly';
-  target_value: number;
-  current_progress: number;
-  reward_xp: number;
-  reward_coins?: number;
+  user_id: string;
+  challenge_type: 'calls' | 'meetings' | 'demos' | 'proposals';
+  target: number;
+  progress: number;
+  date: string;
   completed: boolean;
-  expires_at: string;
 }
 
-interface DailyChallengesData {
-  challenges: Challenge[];
-  completedToday: number;
-  totalXpEarned: number;
-  totalCoinsEarned: number;
-}
-
-export const useDailyChallenges = () => {
-  return useQuery<DailyChallengesData>({
-    queryKey: ['daily-challenges'],
-    queryFn: async (): Promise<DailyChallengesData> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) throw new Error('Not authenticated');
-      
-      const today = new Date().toISOString().split('T')[0];
-      
+export const useDailyChallenges = (userId: string) => {
+  const today = new Date().toISOString().split('T')[0];
+  
+  return useQuery({
+    queryKey: ['dailyChallenges', userId, today],
+    queryFn: async () => {
       const { data, error } = await supabase
-        .from('user_challenges')
+        .from('daily_challenges')
         .select('*')
-        .eq('user_id', user.id)
-        .gte('expires_at', today)
-        .order('created_at', { ascending: false });
+        .eq('user_id', userId)
+        .eq('date', today);
       
       if (error) throw error;
-      
-      const challenges = (data || []) as Challenge[];
-      const completedToday = challenges.filter(c => c.completed).length;
-      const totalXpEarned = challenges
-        .filter(c => c.completed)
-        .reduce((sum, c) => sum + c.reward_xp, 0);
-      const totalCoinsEarned = challenges
-        .filter(c => c.completed)
-        .reduce((sum, c) => sum + (c.reward_coins || 0), 0);
-      
-      return {
-        challenges,
-        completedToday,
-        totalXpEarned,
-        totalCoinsEarned
-      };
+      return data as DailyChallenge[];
     },
-    refetchInterval: 60000 // Refetch a cada minuto
+  });
+};
+
+export const useUpdateChallengeProgress = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ id, progress }: { id: string; progress: number }) => {
+      const { data, error } = await supabase
+        .from('daily_challenges')
+        .update({ progress, completed: progress >= 100 })
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyChallenges'] });
+    },
   });
 };
