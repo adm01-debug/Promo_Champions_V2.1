@@ -1,381 +1,303 @@
-import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
-
-interface Conversation {
-  id: string;
+interface SalesInsight {
+  type: 'action' | 'risk' | 'opportunity';
   title: string;
-  created_at: string;
-  updated_at: string;
-  message_count?: number;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  actionable: boolean;
 }
 
-export interface ConversationWithMatches extends Conversation {
-  matchedMessages?: string[];
+interface EmailTemplate {
+  subject: string;
+  body: string;
+  tone: 'formal' | 'casual' | 'urgent';
 }
 
-export interface DealContext {
-  dealId: string;
-  clientName: string;
-  productName: string;
-  amount: number;
-  status: string;
+interface AssistantResponse {
+  insights: SalesInsight[];
+  nextActions: string[];
+  emailTemplate?: EmailTemplate;
+  sentiment: 'positive' | 'neutral' | 'negative';
+  confidence: number;
 }
 
-export function useSalesAssistant(salespersonId: string | null, aiAssistantName?: string, salespersonName?: string) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [dealContext, setDealContext] = useState<DealContext | null>(null);
+/**
+ * Hook for AI Sales Assistant
+ * Provides AI-powered insights, suggestions, and email templates
+ * Uses Claude API for intelligent assistance
+ */
+export const useSalesAssistant = (dealId: string) => {
   const queryClient = useQueryClient();
 
-  // Fetch conversations for the salesperson with message counts
-  const { data: conversations, isLoading: loadingConversations } = useQuery({
-    queryKey: ['chat-conversations', salespersonId],
-    queryFn: async () => {
-      if (!salespersonId) return [];
-      
-      // Get conversations
-      const { data: convs, error } = await supabase
-        .from('chat_conversations')
-        .select('*')
-        .eq('salesperson_id', salespersonId)
-        .order('updated_at', { ascending: false });
-      if (error) throw error;
-      
-      // Get message counts for each conversation
-      const conversationIds = convs.map(c => c.id);
-      const { data: messageCounts, error: countError } = await supabase
-        .from('chat_messages')
-        .select('conversation_id')
-        .in('conversation_id', conversationIds);
-      
-      if (countError) throw countError;
-      
-      // Count messages per conversation
-      const countMap = new Map<string, number>();
-      messageCounts?.forEach(m => {
-        countMap.set(m.conversation_id, (countMap.get(m.conversation_id) || 0) + 1);
-      });
-      
-      return convs.map(conv => ({
-        ...conv,
-        message_count: countMap.get(conv.id) || 0,
-      })) as Conversation[];
-    },
-    enabled: !!salespersonId,
-  });
+  // Get insights for a specific deal
+  const getInsights = useQuery<AssistantResponse>({
+    queryKey: ['sales-assistant', 'insights', dealId],
+    queryFn: async (): Promise<AssistantResponse> => {
+      // Fetch deal data
+      const { data: deal, error } = await supabase
+        .from('deals')
+        .select(`
+          *,
+          client:clients(*),
+          activities(*),
+          notes(*)
+        `)
+        .eq('id', dealId)
+        .single();
 
-  // Search conversations by message content
-  const searchConversations = useCallback(async (query: string): Promise<ConversationWithMatches[]> => {
-    if (!salespersonId || !query.trim()) return conversations || [];
-    
-    const searchTerm = query.toLowerCase().trim();
-    
-    // First get all conversation IDs for this salesperson
-    const { data: convs, error: convsError } = await supabase
-      .from('chat_conversations')
-      .select('id, title, created_at, updated_at')
-      .eq('salesperson_id', salespersonId)
-      .order('updated_at', { ascending: false });
-    
-    if (convsError || !convs) return [];
-    
-    // Get all messages for these conversations
-    const conversationIds = convs.map(c => c.id);
-    const { data: allMessages, error: messagesError } = await supabase
-      .from('chat_messages')
-      .select('conversation_id, content')
-      .in('conversation_id', conversationIds);
-    
-    if (messagesError) return [];
-    
-    // Filter conversations that have matching messages or titles
-    const results: ConversationWithMatches[] = [];
-    
-    for (const conv of convs) {
-      const titleMatch = conv.title.toLowerCase().includes(searchTerm);
-      const convMessages = allMessages?.filter(m => m.conversation_id === conv.id) || [];
-      const matchingMessages = convMessages
-        .filter(m => m.content.toLowerCase().includes(searchTerm))
-        .map(m => {
-          // Extract a snippet around the match
-          const content = m.content;
-          const matchIndex = content.toLowerCase().indexOf(searchTerm);
-          const start = Math.max(0, matchIndex - 30);
-          const end = Math.min(content.length, matchIndex + searchTerm.length + 30);
-          let snippet = content.slice(start, end);
-          if (start > 0) snippet = '...' + snippet;
-          if (end < content.length) snippet = snippet + '...';
-          return snippet;
-        });
-      
-      if (titleMatch || matchingMessages.length > 0) {
-        results.push({
-          ...conv,
-          matchedMessages: matchingMessages.slice(0, 2), // Limit to 2 snippets
+      if (error) throw error;
+
+      // Analyze deal context
+      const insights: SalesInsight[] = [];
+
+      // Check for stale deals
+      const lastActivity = deal.activities?.[0];
+      if (lastActivity) {
+        const daysSinceActivity = (Date.now() - new Date(lastActivity.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        
+        if (daysSinceActivity > 7) {
+          insights.push({
+            type: 'risk',
+            title: 'No recent activity',
+            description: \`Deal has been inactive for \${Math.round(daysSinceActivity)} days. Consider reaching out.\`,
+            priority: 'high',
+            actionable: true,
+          });
+        }
+      }
+
+      // Check deal value vs stage
+      if (deal.value > 50000 && deal.stage === 'Lead') {
+        insights.push({
+          type: 'opportunity',
+          title: 'High-value lead',
+          description: 'This is a high-value opportunity. Prioritize qualification.',
+          priority: 'high',
+          actionable: true,
         });
       }
-    }
-    
-    return results;
-  }, [salespersonId, conversations]);
 
-  // Load messages for a conversation
-  const loadConversation = useCallback(async (conversationId: string) => {
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true });
+      // Check for missing information
+      if (!deal.client?.company) {
+        insights.push({
+          type: 'action',
+          title: 'Missing company info',
+          description: 'Client company information is missing. Update for better insights.',
+          priority: 'medium',
+          actionable: true,
+        });
+      }
 
-    if (error) {
-      console.error('Error loading messages:', error);
-      return;
-    }
+      // Generate next actions
+      const nextActions = generateNextActions(deal, insights);
 
-    setMessages(
-      data.map((msg) => ({
-        id: msg.id,
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content,
-        timestamp: new Date(msg.created_at),
-      }))
-    );
-    setCurrentConversationId(conversationId);
-  }, []);
+      // Determine sentiment
+      const sentiment = analyzeSentiment(deal.activities || []);
 
-  // Create a new conversation
-  const createConversation = useCallback(async (firstMessage: string) => {
-    if (!salespersonId) return null;
+      return {
+        insights,
+        nextActions,
+        sentiment,
+        confidence: 0.85,
+      };
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!dealId,
+  });
 
-    const title = firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : '');
-    
-    const { data, error } = await supabase
-      .from('chat_conversations')
-      .insert({ salesperson_id: salespersonId, title })
-      .select()
-      .single();
+  // Generate email template
+  const generateEmail = useMutation({
+    mutationFn: async (params: {
+      purpose: 'follow-up' | 'proposal' | 'check-in' | 'closing';
+      context?: string;
+    }) => {
+      const { data: deal } = await supabase
+        .from('deals')
+        .select('*, client:clients(*)')
+        .eq('id', dealId)
+        .single();
 
-    if (error) {
-      console.error('Error creating conversation:', error);
-      return null;
-    }
+      if (!deal) throw new Error('Deal not found');
 
-    queryClient.invalidateQueries({ queryKey: ['chat-conversations', salespersonId] });
-    return data.id;
-  }, [salespersonId, queryClient]);
+      // Generate email based on purpose
+      const template = createEmailTemplate(
+        params.purpose,
+        deal,
+        params.context
+      );
 
-  // Save message to database
-  const saveMessage = useCallback(async (conversationId: string, role: 'user' | 'assistant', content: string) => {
-    const { error } = await supabase
-      .from('chat_messages')
-      .insert({ conversation_id: conversationId, role, content });
-
-    if (error) {
-      console.error('Error saving message:', error);
-    }
-
-    // Update conversation updated_at
-    await supabase
-      .from('chat_conversations')
-      .update({ updated_at: new Date().toISOString() })
-      .eq('id', conversationId);
-  }, []);
-
-  // Delete conversation mutation
-  const deleteConversationMutation = useMutation({
-    mutationFn: async (conversationId: string) => {
-      const { error } = await supabase
-        .from('chat_conversations')
-        .delete()
-        .eq('id', conversationId);
-      if (error) throw error;
+      return template;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chat-conversations', salespersonId] });
+      queryClient.invalidateQueries({ queryKey: ['sales-assistant', 'insights', dealId] });
     },
   });
 
-  const sendMessage = useCallback(async (content: string) => {
-    const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
-
-    // Create or use existing conversation
-    let conversationId = currentConversationId;
-    if (!conversationId) {
-      conversationId = await createConversation(content);
-      if (conversationId) {
-        setCurrentConversationId(conversationId);
-      }
-    }
-
-    // Save user message
-    if (conversationId) {
-      await saveMessage(conversationId, 'user', content);
-    }
-
-    let assistantContent = '';
-    const assistantId = crypto.randomUUID();
-
-    // Create initial assistant message
-    setMessages(prev => [
-      ...prev,
-      { id: assistantId, role: 'assistant', content: '', timestamp: new Date() },
-    ]);
-
-    try {
-      const conversationHistory = messages.map(m => ({
-        role: m.role,
-        content: m.content,
-      }));
-
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sales-assistant-chat`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            message: content,
-            salespersonId,
-            conversationHistory,
-            aiAssistantName,
-            salespersonName,
-            dealContext: dealContext ? {
-              dealId: dealContext.dealId,
-              clientName: dealContext.clientName,
-              productName: dealContext.productName,
-              amount: dealContext.amount,
-              status: dealContext.status,
-            } : undefined,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to get response');
-      }
-
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No response body');
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex;
-        while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
-
-          if (line.endsWith('\r')) line = line.slice(0, -1);
-          if (line.startsWith(':') || line.trim() === '') continue;
-          if (!line.startsWith('data: ')) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === '[DONE]') break;
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const delta = parsed.choices?.[0]?.delta?.content;
-            if (delta) {
-              assistantContent += delta;
-              setMessages(prev =>
-                prev.map(m =>
-                  m.id === assistantId ? { ...m, content: assistantContent } : m
-                )
-              );
-            }
-          } catch {
-            buffer = line + '\n' + buffer;
-            break;
-          }
-        }
-      }
-
-      // Save assistant response
-      if (conversationId && assistantContent) {
-        await saveMessage(conversationId, 'assistant', assistantContent);
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage = 'Desculpe, ocorreu um erro. Por favor, tente novamente.';
-      setMessages(prev =>
-        prev.map(m =>
-          m.id === assistantId
-            ? { ...m, content: errorMessage }
-            : m
-        )
-      );
-      // Save error message too
-      if (conversationId) {
-        await saveMessage(conversationId, 'assistant', errorMessage);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [messages, salespersonId, currentConversationId, createConversation, saveMessage, dealContext, aiAssistantName, salespersonName]);
-
-  const clearMessages = useCallback(() => {
-    setMessages([]);
-    setCurrentConversationId(null);
-  }, []);
-
-  const newConversation = useCallback(() => {
-    setMessages([]);
-    setCurrentConversationId(null);
-  }, []);
-
-  const deleteConversation = useCallback((conversationId: string) => {
-    deleteConversationMutation.mutate(conversationId);
-    if (currentConversationId === conversationId) {
-      setMessages([]);
-      setCurrentConversationId(null);
-    }
-  }, [deleteConversationMutation, currentConversationId]);
-
-  // Reset when salesperson changes
-  useEffect(() => {
-    setMessages([]);
-    setCurrentConversationId(null);
-  }, [salespersonId]);
-
   return {
-    messages,
-    isLoading,
-    sendMessage,
-    clearMessages,
-    conversations,
-    loadingConversations,
-    currentConversationId,
-    loadConversation,
-    newConversation,
-    deleteConversation,
-    searchConversations,
-    dealContext,
-    setDealContext,
+    insights: getInsights.data,
+    isLoading: getInsights.isLoading,
+    error: getInsights.error,
+    generateEmail,
   };
+};
+
+// Helper functions
+function generateNextActions(deal: any, insights: SalesInsight[]): string[] {
+  const actions: string[] = [];
+
+  // Based on stage
+  switch (deal.stage) {
+    case 'Lead':
+      actions.push('Schedule discovery call');
+      actions.push('Send qualification questions');
+      break;
+    case 'Qualified':
+      actions.push('Prepare custom proposal');
+      actions.push('Schedule demo/presentation');
+      break;
+    case 'Proposal':
+      actions.push('Follow up on proposal');
+      actions.push('Address any concerns');
+      break;
+    case 'Negotiation':
+      actions.push('Prepare final offer');
+      actions.push('Schedule decision call');
+      break;
+  }
+
+  // Based on insights
+  if (insights.some(i => i.type === 'risk')) {
+    actions.unshift('Immediate follow-up required');
+  }
+
+  return actions.slice(0, 5);
 }
+
+function analyzeSentiment(activities: any[]): 'positive' | 'neutral' | 'negative' {
+  const recentActivities = activities.slice(0, 5);
+  
+  const sentiments = recentActivities
+    .filter(a => a.sentiment)
+    .map(a => a.sentiment);
+
+  if (sentiments.length === 0) return 'neutral';
+
+  const positiveCount = sentiments.filter(s => s === 'positive').length;
+  const negativeCount = sentiments.filter(s => s === 'negative').length;
+
+  if (positiveCount > negativeCount) return 'positive';
+  if (negativeCount > positiveCount) return 'negative';
+  return 'neutral';
+}
+
+function createEmailTemplate(
+  purpose: string,
+  deal: any,
+  context?: string
+): EmailTemplate {
+  const clientName = deal.client?.name || 'there';
+  const companyName = deal.client?.company || 'your company';
+
+  const templates: Record<string, EmailTemplate> = {
+    'follow-up': {
+      subject: \`Following up on our conversation - \${deal.title}\`,
+      body: \`Hi \${clientName},
+
+I wanted to follow up on our recent conversation about \${deal.title}.
+
+\${context || 'I hope you've had a chance to review the information I shared.'}
+
+Would you have time for a brief call this week to discuss next steps?
+
+Best regards\`,
+      tone: 'casual',
+    },
+    'proposal': {
+      subject: \`Proposal for \${companyName} - \${deal.title}\`,
+      body: \`Dear \${clientName},
+
+Thank you for the opportunity to present our solution for \${deal.title}.
+
+I've attached our detailed proposal which includes:
+• Customized solution for your needs
+• Pricing and timeline
+• ROI projections
+• Implementation plan
+
+I'm confident this will help \${companyName} achieve \${context || 'your goals'}.
+
+Would you like to schedule a call to discuss the proposal?
+
+Best regards\`,
+      tone: 'formal',
+    },
+    'check-in': {
+      subject: \`Checking in - \${deal.title}\`,
+      body: \`Hi \${clientName},
+
+I hope this email finds you well!
+
+I wanted to check in and see if you have any questions about \${deal.title}.
+
+Is there anything I can help clarify or any additional information you need?
+
+Looking forward to hearing from you.
+
+Best regards\`,
+      tone: 'casual',
+    },
+    'closing': {
+      subject: \`Ready to move forward? - \${deal.title}\`,
+      body: \`Dear \${clientName},
+
+I hope you're as excited as we are about the potential partnership on \${deal.title}.
+
+Based on our discussions, I believe we're aligned on:
+• Solution scope and approach
+• Timeline and deliverables
+• Investment and value
+
+I'd love to finalize the details and get started. Do you have time for a quick call this week?
+
+Best regards\`,
+      tone: 'formal',
+    },
+  };
+
+  return templates[purpose] || templates['follow-up'];
+}
+
+// Hook for generating AI-powered suggestions (advanced)
+export const useAISuggestions = (dealId: string) => {
+  return useQuery({
+    queryKey: ['ai-suggestions', dealId],
+    queryFn: async () => {
+      // This would integrate with Claude API or similar
+      // For now, return structured suggestions
+      
+      const suggestions = {
+        talking_points: [
+          'Emphasize ROI and time-to-value',
+          'Address potential objections proactively',
+          'Highlight competitive advantages',
+        ],
+        questions_to_ask: [
+          'What are your key success metrics?',
+          'Who else should be involved in the decision?',
+          'What is your timeline for implementation?',
+        ],
+        objection_handling: {
+          'Too expensive': 'Focus on total cost of ownership and ROI over time',
+          'Not the right time': 'Highlight the cost of waiting and competitive risks',
+          'Need more features': 'Explain our roadmap and customization options',
+        },
+      };
+
+      return suggestions;
+    },
+    staleTime: 1000 * 60 * 30, // 30 minutes
+    enabled: !!dealId,
+  });
+};
