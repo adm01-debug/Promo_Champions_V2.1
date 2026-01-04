@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+  postgres:
+    image: supabase/postgres:15
+    ports:
+      - "54322:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=salespro
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  supabase:
+    image: supabase/supabase:latest
+    ports:
+      - "54321:8000"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=salespro
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
