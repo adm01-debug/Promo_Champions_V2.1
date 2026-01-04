@@ -1,69 +1,99 @@
+// Feature Flags System
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface FeatureFlags {
-  enableRealtime: boolean;
-  enableAnalytics: boolean;
-  enableGamification: boolean;
-  enableAI: boolean;
-  enableVoice: boolean;
-  enableCollaboration: boolean;
-  enableAdvancedFilters: boolean;
-  enableBulkActions: boolean;
-  enableExport: boolean;
-  enable2FA: boolean;
+export interface FeatureFlag {
+  key: string;
+  enabled: boolean;
+  description: string;
+  rolloutPercentage?: number;
 }
 
-interface FeatureFlagsStore extends FeatureFlags {
-  setFlag: (flag: keyof FeatureFlags, value: boolean) => void;
-  isEnabled: (flag: keyof FeatureFlags) => boolean;
+interface FeatureFlagsStore {
+  flags: Record<string, FeatureFlag>;
+  setFlag: (key: string, enabled: boolean) => void;
+  isEnabled: (key: string) => boolean;
+  loadFlags: (flags: FeatureFlag[]) => void;
 }
 
 export const useFeatureFlags = create<FeatureFlagsStore>()(
   persist(
     (set, get) => ({
-      // Default values
-      enableRealtime: true,
-      enableAnalytics: true,
-      enableGamification: true,
-      enableAI: true,
-      enableVoice: false,
-      enableCollaboration: false,
-      enableAdvancedFilters: true,
-      enableBulkActions: true,
-      enableExport: true,
-      enable2FA: false,
-
-      setFlag: (flag, value) =>
+      flags: {},
+      
+      setFlag: (key, enabled) =>
         set((state) => ({
-          ...state,
-          [flag]: value,
+          flags: {
+            ...state.flags,
+            [key]: { ...state.flags[key], enabled },
+          },
         })),
-
-      isEnabled: (flag) => get()[flag],
+      
+      isEnabled: (key) => {
+        const flag = get().flags[key];
+        if (!flag) return false;
+        
+        // Gradual rollout
+        if (flag.rolloutPercentage !== undefined) {
+          const userId = localStorage.getItem('userId') || '';
+          const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+          const userPercentage = hash % 100;
+          return userPercentage < flag.rolloutPercentage && flag.enabled;
+        }
+        
+        return flag.enabled;
+      },
+      
+      loadFlags: (flags) =>
+        set({
+          flags: flags.reduce(
+            (acc, flag) => ({ ...acc, [flag.key]: flag }),
+            {}
+          ),
+        }),
     }),
-    {
-      name: 'feature-flags-storage',
-    }
+    { name: 'feature-flags' }
   )
 );
 
-// Hook helper
-export function useFeatureFlag(flag: keyof FeatureFlags) {
-  const isEnabled = useFeatureFlags((state) => state.isEnabled(flag));
-  return isEnabled;
-}
+// Default flags
+export const defaultFlags: FeatureFlag[] = [
+  {
+    key: 'offline-mode',
+    enabled: true,
+    description: 'Enable offline support',
+  },
+  {
+    key: 'ai-assistant',
+    enabled: false,
+    description: 'AI Voice Assistant',
+    rolloutPercentage: 10,
+  },
+  {
+    key: 'collaboration',
+    enabled: true,
+    description: 'Real-time collaboration',
+  },
+  {
+    key: 'advanced-analytics',
+    enabled: true,
+    description: 'Advanced analytics features',
+  },
+];
 
-// Component wrapper
-export function FeatureFlag({
-  flag,
-  children,
-  fallback = null,
-}: {
-  flag: keyof FeatureFlags;
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-}) {
-  const isEnabled = useFeatureFlag(flag);
-  return isEnabled ? <>{children}</> : <>{fallback}</>;
-}
+// HOC for feature-gated components
+export const withFeatureFlag = (
+  Component: React.ComponentType,
+  flagKey: string,
+  Fallback?: React.ComponentType
+) => {
+  return (props: any) => {
+    const isEnabled = useFeatureFlags((state) => state.isEnabled(flagKey));
+    
+    if (!isEnabled) {
+      return Fallback ? <Fallback {...props} /> : null;
+    }
+    
+    return <Component {...props} />;
+  };
+};
