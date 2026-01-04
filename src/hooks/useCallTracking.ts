@@ -1,73 +1,59 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-interface CallActivity {
+export interface CallTracking {
   id: string;
-  client_id: string;
-  client_name: string;
-  duration_seconds: number;
-  outcome: 'answered' | 'voicemail' | 'no_answer' | 'busy';
+  user_id: string;
+  client_id?: string;
+  duration: number;
+  outcome: 'answered' | 'no_answer' | 'voicemail' | 'busy';
+  recording_url?: string;
   notes?: string;
   created_at: string;
 }
 
-interface CallTrackingStats {
-  calls: CallActivity[];
-  totalCalls: number;
-  totalMinutes: number;
-  avgCallDuration: number;
-  answerRate: number;
-  callsToday: number;
-}
-
-export const useCallTracking = () => {
-  return useQuery<CallTrackingStats>({
-    queryKey: ['call-tracking'],
-    queryFn: async (): Promise<CallTrackingStats> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+export const useCallTracking = (userId?: string) => {
+  return useQuery({
+    queryKey: ['callTracking', userId],
+    queryFn: async () => {
+      let query = supabase
+        .from('call_tracking')
+        .select('*')
+        .order('created_at', { ascending: false });
       
-      const { data, error } = await supabase
-        .from('activities')
-        .select('*, clients(name)')
-        .eq('type', 'call')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(100);
+      if (userId) {
+        query = query.eq('user_id', userId);
+      }
+      
+      const { data, error } = await query;
       
       if (error) throw error;
-      if (!data) return {
-        calls: [],
-        totalCalls: 0,
-        totalMinutes: 0,
-        avgCallDuration: 0,
-        answerRate: 0,
-        callsToday: 0
-      };
+      return data as CallTracking[];
+    },
+  });
+};
+
+export const useCallStats = (userId: string) => {
+  return useQuery({
+    queryKey: ['callStats', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('call_tracking')
+        .select('outcome, duration')
+        .eq('user_id', userId);
       
-      const calls: CallActivity[] = data.map(activity => ({
-        id: activity.id,
-        client_id: activity.client_id,
-        client_name: activity.clients?.name || 'Unknown',
-        duration_seconds: activity.duration_seconds || 0,
-        outcome: activity.outcome || 'no_answer',
-        notes: activity.notes,
-        created_at: activity.created_at
-      }));
+      if (error) throw error;
       
-      const totalSeconds = calls.reduce((sum, c) => sum + c.duration_seconds, 0);
-      const answeredCalls = calls.filter(c => c.outcome === 'answered').length;
-      const today = new Date().toISOString().split('T')[0];
-      const callsToday = calls.filter(c => c.created_at.startsWith(today)).length;
+      const total = data.length;
+      const answered = data.filter(c => c.outcome === 'answered').length;
+      const avgDuration = data.reduce((acc, c) => acc + c.duration, 0) / total;
       
       return {
-        calls,
-        totalCalls: calls.length,
-        totalMinutes: Math.round(totalSeconds / 60),
-        avgCallDuration: calls.length > 0 ? Math.round(totalSeconds / calls.length) : 0,
-        answerRate: calls.length > 0 ? (answeredCalls / calls.length) * 100 : 0,
-        callsToday
+        total,
+        answered,
+        answerRate: (answered / total) * 100,
+        avgDuration,
       };
-    }
+    },
   });
 };
