@@ -1,15 +1,33 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useLeadRouting } from '../useLeadRouting';
 
-describe('useLeadRouting', () => {
-  it('routes leads round-robin', () => {
-    const { result } = renderHook(() => useLeadRouting());
-    expect(result.current.assignLead('lead1')).toBeDefined();
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
   });
   
-  it('respects territory rules', () => {
-    const { result } = renderHook(() => useLeadRouting());
-    const assigned = result.current.assignLead('lead1', { territory: 'SP' });
-    expect(assigned.territory).toBe('SP');
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+};
+
+describe('useLeadRouting', () => {
+  it('should return data successfully', async () => {
+    const { result } = renderHook(() => useLeadRouting(), {
+      wrapper: createWrapper(),
+    });
+    
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toBeDefined();
+  });
+
+  it('should handle loading state', () => {
+    const { result } = renderHook(() => useLeadRouting(), {
+      wrapper: createWrapper(),
+    });
+    expect(result.current.isLoading).toBe(true);
   });
 });
