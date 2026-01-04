@@ -1,0 +1,1 @@
+export function RecentDealsWidget({deals}: any) { return <div className="bg-white p-4 rounded shadow"><h3 className="font-bold mb-4">Negócios Recentes</h3><div className="space-y-3">{deals.map((d: any) => <div key={d.id} className="border-l-4 border-blue-500 pl-3"><p className="font-medium">{d.title}</p><p className="text-sm text-gray-600">{d.value}</p></div>)}</div></div>; }
