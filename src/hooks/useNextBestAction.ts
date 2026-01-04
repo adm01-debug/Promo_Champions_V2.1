@@ -1,43 +1,60 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
-export interface ActionSuggestion {
-  title: string;
-  description: string;
+interface NextAction {
+  action: string;
   priority: 'high' | 'medium' | 'low';
-  dealClient: string | null;
-  actionType: 'call' | 'meeting' | 'email' | 'follow_up' | 'proposal' | 'other';
+  reason: string;
+  dueDate?: Date;
 }
 
-export interface NextBestActionResult {
-  suggestions: ActionSuggestion[];
-  insight: string;
-}
+export const useNextBestAction = (dealId: string) => {
+  return useQuery<NextAction[]>({
+    queryKey: ['next-best-action', dealId],
+    queryFn: async () => {
+      const { data: deal } = await supabase
+        .from('deals')
+        .select('*, client:clients(*), activities(*)')
+        .eq('id', dealId)
+        .single();
 
-export function useNextBestAction() {
-  const { toast } = useToast();
+      if (!deal) throw new Error('Deal not found');
 
-  return useMutation({
-    mutationFn: async (salespersonId: string): Promise<NextBestActionResult> => {
-      const { data, error } = await supabase.functions.invoke('next-best-action', {
-        body: { salespersonId }
-      });
+      const actions: NextAction[] = [];
 
-      if (error) throw error;
-      
-      if (data.error) {
-        throw new Error(data.error);
+      // Inactivity check
+      const lastActivity = deal.activities?.[0];
+      if (lastActivity) {
+        const daysSince = (Date.now() - new Date(lastActivity.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        if (daysSince > 7) {
+          actions.push({
+            action: 'Follow up with client',
+            priority: 'high',
+            reason: \`No activity for \${Math.round(daysSince)} days\`,
+            dueDate: new Date(Date.now() + 86400000),
+          });
+        }
       }
-      
-      return data as NextBestActionResult;
+
+      // Stage-based actions
+      if (deal.stage === 'Lead') {
+        actions.push({
+          action: 'Schedule qualification call',
+          priority: 'high',
+          reason: 'Lead needs to be qualified',
+        });
+      }
+
+      if (deal.stage === 'Qualified') {
+        actions.push({
+          action: 'Send proposal',
+          priority: 'medium',
+          reason: 'Move to next stage',
+        });
+      }
+
+      return actions;
     },
-    onError: (error: Error) => {
-      toast({
-        title: 'Erro ao gerar sugestões',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
+    enabled: !!dealId,
   });
-}
+};
