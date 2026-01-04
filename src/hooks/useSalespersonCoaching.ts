@@ -1,48 +1,47 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface CoachingData {
-  salesperson: {
-    id: string;
-    name: string;
-    avatar_url: string | null;
-  };
-  metrics: {
-    totalDeals: number;
-    wins: number;
-    losses: number;
-    winRate: number;
-    teamWinRate: number;
-    comparisonToTeam: number;
-    avgDealValue: number;
-    topLossReasons: { reason: string; count: number; percentage: string }[];
-    topWinReasons: { reason: string; count: number; percentage: string }[];
-  };
-  coaching: {
-    summary: string;
-    strengths: { title: string; description: string }[];
-    improvements: { title: string; description: string; priority: 'alta' | 'média' | 'baixa' }[];
-    actions: { action: string; timeline: string; expectedImpact: string }[];
-  };
-  generatedAt: string;
+interface CoachingInsight {
+  area: string;
+  score: number;
+  benchmark: number;
+  recommendation: string;
 }
 
-export function useSalespersonCoaching(salespersonId: string | null) {
-  return useQuery({
-    queryKey: ['salesperson-coaching', salespersonId],
-    queryFn: async (): Promise<CoachingData> => {
-      if (!salespersonId) throw new Error('No salesperson selected');
+export const useSalespersonCoaching = (userId: string) => {
+  return useQuery<CoachingInsight[]>({
+    queryKey: ['salesperson-coaching', userId],
+    queryFn: async () => {
+      const { data: performance } = await supabase
+        .from('deals')
+        .select('*')
+        .eq('assigned_to', userId);
 
-      const { data, error } = await supabase.functions.invoke('salesperson-coaching', {
-        body: { salespersonId }
+      if (!performance) return [];
+
+      const insights: CoachingInsight[] = [];
+
+      // Win rate
+      const won = performance.filter(d => d.status === 'won').length;
+      const winRate = (won / performance.length) * 100;
+      insights.push({
+        area: 'Win Rate',
+        score: winRate,
+        benchmark: 30,
+        recommendation: winRate < 30 ? 'Focus on qualification and objection handling' : 'Great job! Keep it up',
       });
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      // Average deal size
+      const avgSize = performance.reduce((sum, d) => sum + (d.value || 0), 0) / performance.length;
+      insights.push({
+        area: 'Deal Size',
+        score: avgSize,
+        benchmark: 50000,
+        recommendation: avgSize < 50000 ? 'Pursue larger opportunities' : 'Strong deal sizing',
+      });
 
-      return data;
+      return insights;
     },
-    enabled: !!salespersonId,
-    staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+    enabled: !!userId,
   });
-}
+};
