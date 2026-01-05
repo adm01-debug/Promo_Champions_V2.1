@@ -1,82 +1,114 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { authenticator } from 'otplib';
+import QRCode from 'qrcode';
 import { supabase } from '@/integrations/supabase/client';
 
-interface TwoFactorConfig {
+interface TwoFactorSetup {
+  secret: string;
+  qrCode: string;
+  backupCodes: string[];
+}
+
+interface TwoFactorStatus {
   enabled: boolean;
-  secret?: string;
-  qrCode?: string;
-  backupCodes?: string[];
+  lastVerified?: Date;
 }
 
 export const use2FA = () => {
   const queryClient = useQueryClient();
 
-  const getStatus = useQuery<TwoFactorConfig>({
+  const { data: status, isLoading } = useQuery<TwoFactorStatus>({
     queryKey: ['2fa-status'],
     queryFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('Not authenticated');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
       const { data, error } = await supabase
         .from('user_2fa')
-        .select('enabled')
-        .eq('user_id', user.user.id)
+        .select('enabled, verified_at')
+        .eq('user_id', user.id)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
 
       return {
         enabled: data?.enabled || false,
+        lastVerified: data?.verified_at ? new Date(data.verified_at) : undefined,
       };
     },
   });
 
-  const setup = useMutation({
-    mutationFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('Not authenticated');
+  const setupMutation = useMutation({
+    mutationFn: async (): Promise<TwoFactorSetup> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-      // Generate secret (would use library like otpauth)
-      const secret = generateSecret();
-      const qrCode = generateQRCode(user.user.email!, secret);
+      const secret = authenticator.generateSecret();
+      const otpauth = authenticator.keyuri(user.email!, 'SalesPro', secret);
+      const qrCode = await QRCode.toDataURL(otpauth);
+
+      const backupCodes = Array.from({ length: 10 }, () =>
+        Math.random().toString(36).substring(2, 10).toUpperCase()
+      );
 
       const { error } = await supabase
         .from('user_2fa')
-        .upsert({
-          user_id: user.user.id,
-          secret: secret,
-          enabled: false,
-        });
+        .upsert({ user_id: user.id, secret, enabled: false });
 
       if (error) throw error;
 
-      return { secret, qrCode };
+      await Promise.all(
+        backupCodes.map((code) =>
+          supabase.from('user_2fa_backup_codes').insert({
+            user_id: user.id,
+            code,
+          })
+        )
+      );
+
+      return { secret, qrCode, backupCodes };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['2fa-status'] });
     },
   });
 
-  const verify = useMutation({
-    mutationFn: async (token: string) => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('Not authenticated');
+  const verifyMutation = useMutation({
+    mutationFn: async (token: string): Promise<boolean> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
       const { data: config } = await supabase
         .from('user_2fa')
         .select('secret')
-        .eq('user_id', user.user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (!config) throw new Error('2FA not setup');
 
-      const isValid = verifyToken(config.secret, token);
+      const isValid = authenticator.verify({
+        token,
+        secret: config.secret,
+      });
 
       if (isValid) {
         await supabase
           .from('user_2fa')
-          .update({ enabled: true, verified_at: new Date().toISOString() })
-          .eq('user_id', user.user.id);
+          .update({
+            enabled: true,
+            verified_at: new Date().toISOString(),
+          })
+          .eq('user_id', user.id);
+
+        await supabase.from('user_2fa_log').insert({
+          user_id: user.id,
+          success: true,
+        });
+      } else {
+        await supabase.from('user_2fa_log').insert({
+          user_id: user.id,
+          success: false,
+        });
       }
 
       return isValid;
@@ -86,17 +118,15 @@ export const use2FA = () => {
     },
   });
 
-  const disable = useMutation({
+  const disableMutation = useMutation({
     mutationFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('Not authenticated');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-      const { error } = await supabase
+      await supabase
         .from('user_2fa')
         .update({ enabled: false })
-        .eq('user_id', user.user.id);
-
-      if (error) throw error;
+        .eq('user_id', user.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['2fa-status'] });
@@ -104,24 +134,10 @@ export const use2FA = () => {
   });
 
   return {
-    status: getStatus.data,
-    isLoading: getStatus.isLoading,
-    setup,
-    verify,
-    disable,
+    status,
+    isLoading,
+    setup: setupMutation,
+    verify: verifyMutation,
+    disable: disableMutation,
   };
 };
-
-// Helper functions (simplified - would use proper libraries)
-function generateSecret(): string {
-  return Math.random().toString(36).substring(2, 15);
-}
-
-function generateQRCode(email: string, secret: string): string {
-  return `otpauth://totp/SalesPro:${email}?secret=${secret}&issuer=SalesPro`;
-}
-
-function verifyToken(secret: string, token: string): boolean {
-  // Would use proper TOTP verification
-  return token.length === 6;
-}
