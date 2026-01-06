@@ -107,7 +107,7 @@ export default function AssinaturaDigital() {
   return (
     <>
       <Helmet>
-        <title>Assinatura Digital | SalesPro</title>
+        <title>Assinatura Digital | Sales Arena</title>
         <meta name="description" content="Gerencie documentos e assinaturas digitais" />
       </Helmet>
       

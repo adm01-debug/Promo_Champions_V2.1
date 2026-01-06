@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
-const ONBOARDING_KEY = 'salespro_onboarding_completed';
-const ONBOARDING_STEP_KEY = 'salespro_onboarding_step';
+const ONBOARDING_KEY = 'sales_arena_onboarding_completed';
+const ONBOARDING_STEP_KEY = 'sales_arena_onboarding_step';
 
 export function useOnboarding() {
+  const { user, loading: authLoading } = useAuth();
+  
   const [isCompleted, setIsCompleted] = useState<boolean>(() => {
     return localStorage.getItem(ONBOARDING_KEY) === 'true';
   });
@@ -13,7 +16,17 @@ export function useOnboarding() {
     return saved ? parseInt(saved, 10) : 0;
   });
 
-  const [showOnboarding, setShowOnboarding] = useState(!isCompleted);
+  // Only show onboarding if user is logged in and hasn't completed it
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Wait for auth to finish loading
+    if (authLoading) return;
+    
+    // Only show if user is logged in and hasn't completed onboarding
+    const shouldShow = !!user && !isCompleted;
+    setShowOnboarding(shouldShow);
+  }, [user, authLoading, isCompleted]);
 
   useEffect(() => {
     localStorage.setItem(ONBOARDING_STEP_KEY, String(currentStep));

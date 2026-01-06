@@ -1,5 +1,5 @@
 /**
- * Constantes do sistema SalesPro
+ * Constantes do sistema Sales Arena
  * Centraliza valores mágicos e configurações
  */
 

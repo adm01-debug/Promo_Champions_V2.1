@@ -1,84 +1,319 @@
-import React from 'react';
-import { FileX, Users, DollarSign, Activity, Search, Inbox } from 'lucide-react';
+import React, { FC, ReactNode } from 'react';
+import { motion } from 'framer-motion';
+import { LucideIcon, FileX, Users, DollarSign, Activity, Search, Inbox, Target, Zap, Bell, Calendar, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+type EmptyStateType = 
+  | 'generic'
+  | 'search'
+  | 'data'
+  | 'clients'
+  | 'sales'
+  | 'goals'
+  | 'activities'
+  | 'notifications'
+  | 'tasks'
+  | 'deals'
+  | 'inbox'
+  | 'custom';
 
 interface EmptyStateProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
+  type?: EmptyStateType;
+  title?: string;
+  description?: string;
+  icon?: ReactNode | LucideIcon;
   action?: {
     label: string;
     onClick: () => void;
+    variant?: 'default' | 'outline' | 'ghost';
   };
+  secondaryAction?: {
+    label: string;
+    onClick: () => void;
+  };
+  illustration?: ReactNode;
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon,
+const presets: Record<EmptyStateType, { icon: LucideIcon; title: string; description: string; color: string }> = {
+  generic: {
+    icon: Inbox,
+    title: 'Nenhum item encontrado',
+    description: 'Não há dados para exibir no momento.',
+    color: 'text-muted-foreground'
+  },
+  search: {
+    icon: Search,
+    title: 'Nenhum resultado',
+    description: 'Tente ajustar os filtros ou termos de busca.',
+    color: 'text-blue-500'
+  },
+  data: {
+    icon: FileX,
+    title: 'Sem dados disponíveis',
+    description: 'Não há dados para exibir. Verifique seus filtros ou tente novamente.',
+    color: 'text-purple-500'
+  },
+  clients: {
+    icon: Users,
+    title: 'Nenhum cliente',
+    description: 'Adicione seu primeiro cliente para começar a vender!',
+    color: 'text-green-500'
+  },
+  sales: {
+    icon: ShoppingCart,
+    title: 'Nenhuma venda',
+    description: 'Suas vendas aparecerão aqui. Que tal prospectar novos clientes?',
+    color: 'text-primary'
+  },
+  goals: {
+    icon: Target,
+    title: 'Sem metas definidas',
+    description: 'Defina suas metas para acompanhar seu progresso.',
+    color: 'text-orange-500'
+  },
+  activities: {
+    icon: Zap,
+    title: 'Nenhuma atividade',
+    description: 'Registre suas atividades para ganhar XP e subir no ranking!',
+    color: 'text-yellow-500'
+  },
+  notifications: {
+    icon: Bell,
+    title: 'Tudo em dia!',
+    description: 'Você não tem novas notificações.',
+    color: 'text-blue-500'
+  },
+  tasks: {
+    icon: Calendar,
+    title: 'Sem tarefas pendentes',
+    description: 'Ótimo trabalho! Você está em dia com suas tarefas.',
+    color: 'text-green-500'
+  },
+  deals: {
+    icon: DollarSign,
+    title: 'Nenhum deal encontrado',
+    description: 'Comece criando seu primeiro deal e acompanhe suas oportunidades.',
+    color: 'text-primary'
+  },
+  inbox: {
+    icon: Inbox,
+    title: 'Caixa de entrada vazia',
+    description: 'Parabéns! Você está em dia com todas as suas tarefas.',
+    color: 'text-green-500'
+  },
+  custom: {
+    icon: Inbox,
+    title: '',
+    description: '',
+    color: 'text-muted-foreground'
+  }
+};
+
+export const EmptyState: FC<EmptyStateProps> = ({
+  type = 'generic',
   title,
   description,
+  icon,
   action,
-}) => (
-  <div className="flex flex-col items-center justify-center py-16 px-4">
-    <div className="text-gray-400 mb-4">{icon}</div>
-    <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
-    <p className="text-gray-600 mb-6 text-center max-w-md">{description}</p>
-    {action && (
-      <button
-        onClick={action.onClick}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-      >
-        {action.label}
-      </button>
-    )}
-  </div>
-);
+  secondaryAction,
+  illustration,
+  className,
+  size = 'md'
+}) => {
+  const preset = presets[type];
+  const displayTitle = title || preset.title;
+  const displayDescription = description || preset.description;
 
+  const sizeClasses = {
+    sm: {
+      container: 'py-8 px-4',
+      icon: 'h-10 w-10',
+      iconContainer: 'h-16 w-16',
+      title: 'text-base',
+      description: 'text-xs',
+      buttonSize: 'sm' as const
+    },
+    md: {
+      container: 'py-12 px-6',
+      icon: 'h-12 w-12',
+      iconContainer: 'h-20 w-20',
+      title: 'text-lg',
+      description: 'text-sm',
+      buttonSize: 'default' as const
+    },
+    lg: {
+      container: 'py-16 px-8',
+      icon: 'h-16 w-16',
+      iconContainer: 'h-24 w-24',
+      title: 'text-xl',
+      description: 'text-base',
+      buttonSize: 'lg' as const
+    }
+  };
+
+  const s = sizeClasses[size];
+
+  // Handle both ReactNode icon and LucideIcon
+  const renderIcon = () => {
+    if (illustration) return illustration;
+    
+    if (icon) {
+      // If icon is a React element (passed as <Icon />)
+      if (React.isValidElement(icon)) {
+        return icon;
+      }
+      // If icon is a LucideIcon component
+      const IconComponent = icon as LucideIcon;
+      return <IconComponent className={cn(s.icon, preset.color)} strokeWidth={1.5} />;
+    }
+    
+    const PresetIcon = preset.icon;
+    return <PresetIcon className={cn(s.icon, preset.color)} strokeWidth={1.5} />;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={cn(
+        'flex flex-col items-center justify-center text-center',
+        s.container,
+        className
+      )}
+    >
+      <motion.div
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+        className={cn(
+          'rounded-full bg-muted/50 flex items-center justify-center mb-4',
+          s.iconContainer
+        )}
+      >
+        {renderIcon()}
+      </motion.div>
+
+      <motion.h3
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+        className={cn('font-semibold text-foreground mb-2', s.title)}
+      >
+        {displayTitle}
+      </motion.h3>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className={cn('text-muted-foreground max-w-sm mb-6', s.description)}
+      >
+        {displayDescription}
+      </motion.p>
+
+      {(action || secondaryAction) && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="flex items-center gap-3"
+        >
+          {action && (
+            <Button
+              onClick={action.onClick}
+              variant={action.variant || 'default'}
+              size={s.buttonSize}
+              className="gap-2"
+            >
+              {action.label}
+            </Button>
+          )}
+          {secondaryAction && (
+            <Button
+              onClick={secondaryAction.onClick}
+              variant="ghost"
+              size={s.buttonSize}
+            >
+              {secondaryAction.label}
+            </Button>
+          )}
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
+// Legacy exports for backward compatibility
 export const NoDeals: React.FC<{ onCreate?: () => void }> = ({ onCreate }) => (
   <EmptyState
-    icon={<DollarSign size={64} />}
-    title="Nenhum deal encontrado"
-    description="Comece criando seu primeiro deal e acompanhe suas oportunidades de vendas de perto."
+    type="deals"
     action={onCreate ? { label: 'Criar Deal', onClick: onCreate } : undefined}
   />
 );
 
 export const NoClients: React.FC<{ onCreate?: () => void }> = ({ onCreate }) => (
   <EmptyState
-    icon={<Users size={64} />}
-    title="Nenhum cliente cadastrado"
-    description="Adicione seus primeiros clientes para começar a gerenciar seu pipeline de vendas."
+    type="clients"
     action={onCreate ? { label: 'Adicionar Cliente', onClick: onCreate } : undefined}
   />
 );
 
 export const NoActivities: React.FC = () => (
-  <EmptyState
-    icon={<Activity size={64} />}
-    title="Nenhuma atividade registrada"
-    description="Suas atividades de vendas aparecerão aqui. Registre ligações, reuniões e follow-ups."
-  />
+  <EmptyState type="activities" />
 );
 
 export const NoSearchResults: React.FC<{ onClear?: () => void }> = ({ onClear }) => (
   <EmptyState
-    icon={<Search size={64} />}
-    title="Nenhum resultado encontrado"
-    description="Tente ajustar seus filtros ou usar termos de busca diferentes."
-    action={onClear ? { label: 'Limpar Filtros', onClick: onClear } : undefined}
+    type="search"
+    action={onClear ? { label: 'Limpar Filtros', onClick: onClear, variant: 'outline' } : undefined}
   />
 );
 
 export const EmptyInbox: React.FC = () => (
-  <EmptyState
-    icon={<Inbox size={64} />}
-    title="Caixa de entrada vazia"
-    description="Parabéns! Você está em dia com todas as suas tarefas e notificações."
-  />
+  <EmptyState type="inbox" />
 );
 
 export const NoData: React.FC = () => (
+  <EmptyState type="data" />
+);
+
+// New exports for more specific use cases
+export const EmptyClients: FC<{ onAdd: () => void }> = ({ onAdd }) => (
   <EmptyState
-    icon={<FileX size={64} />}
-    title="Sem dados disponíveis"
-    description="Não há dados para exibir no momento. Verifique seus filtros ou tente novamente mais tarde."
+    type="clients"
+    action={{ label: 'Adicionar Cliente', onClick: onAdd }}
   />
+);
+
+export const EmptySales: FC<{ onAdd: () => void }> = ({ onAdd }) => (
+  <EmptyState
+    type="sales"
+    action={{ label: 'Nova Venda', onClick: onAdd }}
+  />
+);
+
+export const EmptySearch: FC<{ onClear: () => void }> = ({ onClear }) => (
+  <EmptyState
+    type="search"
+    action={{ label: 'Limpar Filtros', onClick: onClear, variant: 'outline' }}
+  />
+);
+
+export const EmptyActivities: FC<{ onAdd: () => void }> = ({ onAdd }) => (
+  <EmptyState
+    type="activities"
+    action={{ label: 'Registrar Atividade', onClick: onAdd }}
+  />
+);
+
+export const EmptyNotifications: FC = () => (
+  <EmptyState type="notifications" size="sm" />
+);
+
+export const EmptyTasks: FC = () => (
+  <EmptyState type="tasks" />
 );
