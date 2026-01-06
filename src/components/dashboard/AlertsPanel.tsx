@@ -99,7 +99,7 @@ interface AlertsPanelProps {
   showAll?: boolean;
 }
 
-export const AlertsPanel = ({ compact = false, showAll = false }: AlertsPanelProps = {}) => {
+export const AlertsPanel = ({ compact = false, showAll = false }: AlertsPanelProps) => {
   const { data: alerts, isLoading } = useAlerts();
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
   const [isSending, setIsSending] = useState(false);
