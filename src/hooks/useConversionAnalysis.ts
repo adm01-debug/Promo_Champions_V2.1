@@ -17,7 +17,7 @@ export const useConversionAnalysis = (timeframe: number = 90) => {
       startDate.setDate(startDate.getDate() - timeframe);
 
       const { data: stages } = await supabase
-        .from('pipeline_stage_histories')
+        .from('deal_stage_history')
         .select('*')
         .gte('entered_at', startDate.toISOString());
 
@@ -28,7 +28,7 @@ export const useConversionAnalysis = (timeframe: number = 90) => {
       stages.forEach((stage, idx) => {
         if (idx < stages.length - 1) {
           const next = stages[idx + 1];
-          const key = \`\${stage.stage}->\${next.stage}\`;
+          const key = `${stage.stage}->${next.stage}`;
           
           if (!conversions.has(key)) {
             conversions.set(key, {

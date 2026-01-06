@@ -1,3 +1,5 @@
+import React from 'react';
+
 // Image Optimization Utilities
 export function optimizeImage(url: string, width?: number, quality = 80) {
   // Se for Cloudinary, Imgix ou similar
@@ -25,15 +27,13 @@ export function LazyImage({
   height?: number;
   className?: string;
 }) {
-  return (
-    <img
-      src={optimizeImage(src, width)}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      loading="lazy"
-      decoding="async"
-    />
-  );
+  return React.createElement('img', {
+    src: optimizeImage(src, width),
+    alt,
+    width,
+    height,
+    className,
+    loading: 'lazy',
+    decoding: 'async',
+  });
 }

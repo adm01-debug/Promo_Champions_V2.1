@@ -4,6 +4,8 @@ import 'jspdf-autotable';
 
 export const exportData = {
   toCSV: (data: any[], filename: string) => {
+    if (!data || data.length === 0) return;
+    
     const headers = Object.keys(data[0]);
     const csv = [
       headers.join(','),
@@ -11,18 +13,17 @@ export const exportData = {
         headers.map(header => {
           const value = row[header];
           if (typeof value === 'string' && value.includes(',')) {
-            return \`"\${value}"\`;
+            return `"${value}"`;
           }
           return value;
         }).join(',')
       ),
-    ].join('
-');
+    ].join('\n');
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = \`\${filename}.csv\`;
+    link.download = `${filename}.csv`;
     link.click();
   },
   
@@ -30,10 +31,12 @@ export const exportData = {
     const worksheet = utils.json_to_sheet(data);
     const workbook = utils.book_new();
     utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    writeFile(workbook, \`\${filename}.xlsx\`);
+    writeFile(workbook, `${filename}.xlsx`);
   },
   
   toPDF: (data: any[], filename: string, title = 'Relatório') => {
+    if (!data || data.length === 0) return;
+    
     const doc = new jsPDF();
     
     doc.setFontSize(18);
@@ -48,6 +51,6 @@ export const exportData = {
       startY: 30,
     });
     
-    doc.save(\`\${filename}.pdf\`);
+    doc.save(`${filename}.pdf`);
   },
 };
