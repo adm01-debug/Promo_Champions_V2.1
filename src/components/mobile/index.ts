@@ -15,3 +15,4 @@ export { ResponsiveDialog, useResponsiveDialog } from './ResponsiveDialog';
 export { ResponsiveTable } from './ResponsiveTable';
 export { SwipeableCard, SwipeActions } from './SwipeableCard';
 export { PullToRefresh, usePullToRefresh } from './PullToRefresh';
+export { TouchFeedback, TouchTarget } from './TouchFeedback';
