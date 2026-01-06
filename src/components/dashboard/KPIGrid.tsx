@@ -13,7 +13,11 @@ const iconMap: Record<string, LucideIcon> = {
   Wallet,
 };
 
-export const KPIGrid = () => {
+interface KPIGridProps {
+  compact?: boolean;
+}
+
+export const KPIGrid = ({ compact = false }: KPIGridProps = {}) => {
   const { data: kpis, isLoading } = useDetailedKPIs();
 
   if (isLoading) {
