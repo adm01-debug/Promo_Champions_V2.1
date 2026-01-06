@@ -11,6 +11,7 @@ import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 import { SkipLinks } from "@/components/a11y/SkipLinks";
+import { FocusModeToggle, FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
 import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
@@ -66,6 +67,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               <SidebarTrigger className="glass h-9 w-9 hover:bg-muted/50 hover-scale-lg" />
             </div>
             <div className="flex items-center gap-2">
+              <FocusModeToggle />
               <SearchTrigger onClick={() => searchRef.current?.open()} />
               <ThemeToggle />
             </div>
@@ -84,6 +86,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* Global celebration overlays */}
         <CelebrationOverlayProvider />
+        
+        {/* Focus mode break reminder */}
+        <FocusModeBreakReminder />
       </div>
     </SidebarProvider>
   );
