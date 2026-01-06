@@ -5,9 +5,11 @@ import { ptBR } from "date-fns/locale";
 interface GoalProgressProps {
   current: number;
   goal: number;
+  label?: string;
+  compact?: boolean;
 }
 
-export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
+export const GoalProgress = ({ current, goal, label, compact = false }: GoalProgressProps) => {
   const now = new Date();
   const monthEnd = endOfMonth(now);
   const daysLeft = Math.max(0, differenceInDays(monthEnd, now));

@@ -94,7 +94,12 @@ const AlertItem = ({ alert, onDismiss }: AlertItemProps) => {
   );
 };
 
-export const AlertsPanel = () => {
+interface AlertsPanelProps {
+  compact?: boolean;
+  showAll?: boolean;
+}
+
+export const AlertsPanel = ({ compact = false, showAll = false }: AlertsPanelProps = {}) => {
   const { data: alerts, isLoading } = useAlerts();
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
   const [isSending, setIsSending] = useState(false);

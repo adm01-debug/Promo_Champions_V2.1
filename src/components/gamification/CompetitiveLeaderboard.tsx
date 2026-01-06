@@ -21,7 +21,11 @@ const roleLabels: Record<string, { label: string; color: string }> = {
   hybrid: { label: "Híbrido", color: "bg-rank-gold/20 text-rank-gold" },
 };
 
-export function CompetitiveLeaderboard() {
+interface CompetitiveLeaderboardProps {
+  showAll?: boolean;
+}
+
+export function CompetitiveLeaderboard({ showAll = false }: CompetitiveLeaderboardProps = {}) {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
   const { data: xpData } = useAllSalespeopleXP();
