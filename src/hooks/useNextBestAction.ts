@@ -8,13 +8,15 @@ interface NextAction {
   dueDate?: Date;
 }
 
-export const useNextBestAction = (dealId: string) => {
+export const useNextBestAction = (dealId?: string) => {
   return useQuery<NextAction[]>({
     queryKey: ['next-best-action', dealId],
     queryFn: async () => {
+      if (!dealId) return [];
+
       const { data: deal } = await supabase
-        .from('deals')
-        .select('*, client:clients(*), activities(*)')
+        .from('sales')
+        .select('*, activities(*)')
         .eq('id', dealId)
         .single();
 
@@ -30,14 +32,14 @@ export const useNextBestAction = (dealId: string) => {
           actions.push({
             action: 'Follow up with client',
             priority: 'high',
-            reason: \`No activity for \${Math.round(daysSince)} days\`,
+            reason: `No activity for ${Math.round(daysSince)} days`,
             dueDate: new Date(Date.now() + 86400000),
           });
         }
       }
 
       // Stage-based actions
-      if (deal.stage === 'Lead') {
+      if (deal.status === 'Lead' || deal.status === 'lead') {
         actions.push({
           action: 'Schedule qualification call',
           priority: 'high',
@@ -45,7 +47,7 @@ export const useNextBestAction = (dealId: string) => {
         });
       }
 
-      if (deal.stage === 'Qualified') {
+      if (deal.status === 'Qualified' || deal.status === 'qualified') {
         actions.push({
           action: 'Send proposal',
           priority: 'medium',

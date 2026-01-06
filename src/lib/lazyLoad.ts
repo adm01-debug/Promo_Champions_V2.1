@@ -1,25 +1,30 @@
-// Lazy Loading Utilities
-import { lazy, ComponentType } from 'react';
+import React, { lazy, ComponentType, Suspense, useState, useEffect, useRef, RefObject } from 'react';
 
-export const lazyLoad = <T extends ComponentType<any>>(
-  factory: () => Promise<{ default: T }>,
+type LazyComponentFactory<T extends ComponentType<unknown>> = () => Promise<{ default: T }>;
+
+export function lazyLoad<T extends ComponentType<unknown>>(
+  factory: LazyComponentFactory<T>,
   fallback?: React.ReactNode
-) => {
+): React.FC<React.ComponentProps<T>> {
   const LazyComponent = lazy(factory);
   
-  return (props: React.ComponentProps<T>) => (
-    <React.Suspense fallback={fallback || <div>Loading...</div>}>
-      <LazyComponent {...props} />
-    </React.Suspense>
-  );
-};
+  const LazyWrapper: React.FC<React.ComponentProps<T>> = (props) => {
+    return React.createElement(
+      Suspense,
+      { fallback: fallback || React.createElement('div', null, 'Loading...') },
+      React.createElement(LazyComponent, props as any)
+    );
+  };
+
+  return LazyWrapper;
+}
 
 // Image lazy loading
 export const useLazyImage = (src: string) => {
-  const [imageSrc, setImageSrc] = React.useState<string | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  React.useEffect(() => {
+  useEffect(() => {
     const img = new Image();
     img.src = src;
     
@@ -36,23 +41,29 @@ export const useLazyImage = (src: string) => {
   return { imageSrc, isLoading };
 };
 
+interface UseInViewResult {
+  ref: RefObject<HTMLElement>;
+  isInView: boolean;
+}
+
 // Intersection Observer for lazy loading
-export const useInView = (options?: IntersectionObserverInit) => {
-  const ref = React.useRef<HTMLElement>(null);
-  const [isInView, setIsInView] = React.useState(false);
+export const useInView = (options?: IntersectionObserverInit): UseInViewResult => {
+  const ref = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(false);
   
-  React.useEffect(() => {
+  useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       setIsInView(entry.isIntersecting);
     }, options);
     
-    if (ref.current) {
-      observer.observe(ref.current);
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
     
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, [options]);

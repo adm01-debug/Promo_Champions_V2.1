@@ -26,7 +26,6 @@ interface AssistantResponse {
 /**
  * Hook for AI Sales Assistant
  * Provides AI-powered insights, suggestions, and email templates
- * Uses Claude API for intelligent assistance
  */
 export const useSalesAssistant = (dealId: string) => {
   const queryClient = useQueryClient();
@@ -37,12 +36,10 @@ export const useSalesAssistant = (dealId: string) => {
     queryFn: async (): Promise<AssistantResponse> => {
       // Fetch deal data
       const { data: deal, error } = await supabase
-        .from('deals')
+        .from('sales')
         .select(`
           *,
-          client:clients(*),
-          activities(*),
-          notes(*)
+          activities(*)
         `)
         .eq('id', dealId)
         .single();
@@ -61,7 +58,7 @@ export const useSalesAssistant = (dealId: string) => {
           insights.push({
             type: 'risk',
             title: 'No recent activity',
-            description: \`Deal has been inactive for \${Math.round(daysSinceActivity)} days. Consider reaching out.\`,
+            description: `Deal has been inactive for ${Math.round(daysSinceActivity)} days. Consider reaching out.`,
             priority: 'high',
             actionable: true,
           });
@@ -69,23 +66,12 @@ export const useSalesAssistant = (dealId: string) => {
       }
 
       // Check deal value vs stage
-      if (deal.value > 50000 && deal.stage === 'Lead') {
+      if (deal.amount > 50000 && deal.status === 'Lead') {
         insights.push({
           type: 'opportunity',
           title: 'High-value lead',
           description: 'This is a high-value opportunity. Prioritize qualification.',
           priority: 'high',
-          actionable: true,
-        });
-      }
-
-      // Check for missing information
-      if (!deal.client?.company) {
-        insights.push({
-          type: 'action',
-          title: 'Missing company info',
-          description: 'Client company information is missing. Update for better insights.',
-          priority: 'medium',
           actionable: true,
         });
       }
@@ -114,8 +100,8 @@ export const useSalesAssistant = (dealId: string) => {
       context?: string;
     }) => {
       const { data: deal } = await supabase
-        .from('deals')
-        .select('*, client:clients(*)')
+        .from('sales')
+        .select('*')
         .eq('id', dealId)
         .single();
 
@@ -138,7 +124,9 @@ export const useSalesAssistant = (dealId: string) => {
   return {
     insights: getInsights.data,
     isLoading: getInsights.isLoading,
+    isSuccess: getInsights.isSuccess,
     error: getInsights.error,
+    data: getInsights.data,
     generateEmail,
   };
 };
@@ -148,20 +136,24 @@ function generateNextActions(deal: any, insights: SalesInsight[]): string[] {
   const actions: string[] = [];
 
   // Based on stage
-  switch (deal.stage) {
+  switch (deal.status) {
     case 'Lead':
+    case 'lead':
       actions.push('Schedule discovery call');
       actions.push('Send qualification questions');
       break;
     case 'Qualified':
+    case 'qualified':
       actions.push('Prepare custom proposal');
       actions.push('Schedule demo/presentation');
       break;
     case 'Proposal':
+    case 'proposal':
       actions.push('Follow up on proposal');
       actions.push('Address any concerns');
       break;
     case 'Negotiation':
+    case 'negotiation':
       actions.push('Prepare final offer');
       actions.push('Schedule decision call');
       break;
@@ -179,13 +171,13 @@ function analyzeSentiment(activities: any[]): 'positive' | 'neutral' | 'negative
   const recentActivities = activities.slice(0, 5);
   
   const sentiments = recentActivities
-    .filter(a => a.sentiment)
-    .map(a => a.sentiment);
+    .filter(a => a.outcome)
+    .map(a => a.outcome);
 
   if (sentiments.length === 0) return 'neutral';
 
-  const positiveCount = sentiments.filter(s => s === 'positive').length;
-  const negativeCount = sentiments.filter(s => s === 'negative').length;
+  const positiveCount = sentiments.filter(s => s === 'positive' || s === 'success').length;
+  const negativeCount = sentiments.filter(s => s === 'negative' || s === 'failed').length;
 
   if (positiveCount > negativeCount) return 'positive';
   if (negativeCount > positiveCount) return 'negative';
@@ -197,28 +189,27 @@ function createEmailTemplate(
   deal: any,
   context?: string
 ): EmailTemplate {
-  const clientName = deal.client?.name || 'there';
-  const companyName = deal.client?.company || 'your company';
+  const clientName = deal.client_name || 'there';
 
   const templates: Record<string, EmailTemplate> = {
     'follow-up': {
-      subject: \`Following up on our conversation - \${deal.title}\`,
-      body: \`Hi \${clientName},
+      subject: `Following up on our conversation - ${deal.product_name}`,
+      body: `Hi ${clientName},
 
-I wanted to follow up on our recent conversation about \${deal.title}.
+I wanted to follow up on our recent conversation about ${deal.product_name}.
 
-\${context || 'I hope you've had a chance to review the information I shared.'}
+${context || 'I hope you\'ve had a chance to review the information I shared.'}
 
 Would you have time for a brief call this week to discuss next steps?
 
-Best regards\`,
+Best regards`,
       tone: 'casual',
     },
     'proposal': {
-      subject: \`Proposal for \${companyName} - \${deal.title}\`,
-      body: \`Dear \${clientName},
+      subject: `Proposal for ${deal.product_name}`,
+      body: `Dear ${clientName},
 
-Thank you for the opportunity to present our solution for \${deal.title}.
+Thank you for the opportunity to present our solution for ${deal.product_name}.
 
 I've attached our detailed proposal which includes:
 • Customized solution for your needs
@@ -226,33 +217,33 @@ I've attached our detailed proposal which includes:
 • ROI projections
 • Implementation plan
 
-I'm confident this will help \${companyName} achieve \${context || 'your goals'}.
+I'm confident this will help you achieve ${context || 'your goals'}.
 
 Would you like to schedule a call to discuss the proposal?
 
-Best regards\`,
+Best regards`,
       tone: 'formal',
     },
     'check-in': {
-      subject: \`Checking in - \${deal.title}\`,
-      body: \`Hi \${clientName},
+      subject: `Checking in - ${deal.product_name}`,
+      body: `Hi ${clientName},
 
 I hope this email finds you well!
 
-I wanted to check in and see if you have any questions about \${deal.title}.
+I wanted to check in and see if you have any questions about ${deal.product_name}.
 
 Is there anything I can help clarify or any additional information you need?
 
 Looking forward to hearing from you.
 
-Best regards\`,
+Best regards`,
       tone: 'casual',
     },
     'closing': {
-      subject: \`Ready to move forward? - \${deal.title}\`,
-      body: \`Dear \${clientName},
+      subject: `Ready to move forward? - ${deal.product_name}`,
+      body: `Dear ${clientName},
 
-I hope you're as excited as we are about the potential partnership on \${deal.title}.
+I hope you're as excited as we are about the potential partnership on ${deal.product_name}.
 
 Based on our discussions, I believe we're aligned on:
 • Solution scope and approach
@@ -261,7 +252,7 @@ Based on our discussions, I believe we're aligned on:
 
 I'd love to finalize the details and get started. Do you have time for a quick call this week?
 
-Best regards\`,
+Best regards`,
       tone: 'formal',
     },
   };
@@ -274,7 +265,7 @@ export const useAISuggestions = (dealId: string) => {
   return useQuery({
     queryKey: ['ai-suggestions', dealId],
     queryFn: async () => {
-      // This would integrate with Claude API or similar
+      // This would integrate with AI API
       // For now, return structured suggestions
       
       const suggestions = {

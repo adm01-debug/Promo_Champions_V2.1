@@ -1,74 +1,42 @@
-import { lazy, Suspense, ComponentType } from 'react';
+import React, { lazy, Suspense, ComponentType } from 'react';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
-/**
- * Enhanced lazy loading with error boundaries and loading states
- */
-export const lazyLoad = <T extends ComponentType<any>>(
-  importFunc: () => Promise<{ default: T }>,
+type LazyComponentFactory<T extends ComponentType<unknown>> = () => Promise<{ default: T }>;
+
+export function lazyLoad<T extends ComponentType<unknown>>(
+  importFunc: LazyComponentFactory<T>,
   fallback?: React.ReactNode
-) => {
+): React.FC<React.ComponentProps<T>> {
   const LazyComponent = lazy(importFunc);
 
-  return (props: React.ComponentProps<T>) => (
-    <Suspense fallback={fallback || <LoadingSpinner />}>
-      <LazyComponent {...props} />
-    </Suspense>
-  );
-};
+  const LazyWrapper: React.FC<React.ComponentProps<T>> = (props) => {
+    return React.createElement(
+      Suspense,
+      { fallback: fallback || React.createElement(LoadingSpinner) },
+      React.createElement(LazyComponent, props as any)
+    );
+  };
+
+  return LazyWrapper;
+}
 
 // Preload function for hover/mouseenter
-export const preloadComponent = (importFunc: () => Promise<any>) => {
+export const preloadComponent = (importFunc: () => Promise<unknown>): void => {
   importFunc();
 };
 
-// Route-based code splitting
-export const Routes = {
-  // Auth
-  Login: lazyLoad(() => import('@/pages/Login')),
-  SignUp: lazyLoad(() => import('@/pages/SignUp')),
-
-  // Dashboard
-  Dashboard: lazyLoad(() => import('@/pages/Dashboard')),
-  SDRDashboard: lazyLoad(() => import('@/pages/SDRDashboard')),
-  CloserDashboard: lazyLoad(() => import('@/pages/CloserDashboard')),
-
-  // CRM
-  Clients: lazyLoad(() => import('@/pages/Clients')),
-  ClientDetail: lazyLoad(() => import('@/pages/ClientDetail')),
-  Deals: lazyLoad(() => import('@/pages/Deals')),
-  DealDetail: lazyLoad(() => import('@/pages/DealDetail')),
-  Activities: lazyLoad(() => import('@/pages/Activities')),
-  Tasks: lazyLoad(() => import('@/pages/Tasks')),
-
-  // Sales
-  Pipeline: lazyLoad(() => import('@/pages/Pipeline')),
-  Leads: lazyLoad(() => import('@/pages/Leads')),
-  Cadences: lazyLoad(() => import('@/pages/Cadences')),
-  Playbooks: lazyLoad(() => import('@/pages/Playbooks')),
-
-  // Analytics
-  Reports: lazyLoad(() => import('@/pages/Reports')),
-  Analytics: lazyLoad(() => import('@/pages/Analytics')),
-  Performance: lazyLoad(() => import('@/pages/Performance')),
-  Forecast: lazyLoad(() => import('@/pages/Forecast')),
-
-  // Settings
-  Settings: lazyLoad(() => import('@/pages/Settings')),
-  Profile: lazyLoad(() => import('@/pages/Profile')),
-  Team: lazyLoad(() => import('@/pages/Team')),
-  Integrations: lazyLoad(() => import('@/pages/Integrations')),
-
-  // Gamification
-  Leaderboard: lazyLoad(() => import('@/pages/Leaderboard')),
-  Achievements: lazyLoad(() => import('@/pages/Achievements')),
-  Challenges: lazyLoad(() => import('@/pages/Challenges')),
-};
-
-// Component-based code splitting
-export const Components = {
-  DataTable: lazyLoad(() => import('@/components/shared/DataTable')),
-  Chart: lazyLoad(() => import('@/components/charts/Chart')),
-  RichTextEditor: lazyLoad(() => import('@/components/editors/RichTextEditor')),
-  FileUploader: lazyLoad(() => import('@/components/uploads/FileUploader')),
+// Route-based code splitting configurations
+export const RouteImports = {
+  Login: () => import('@/pages/Login'),
+  SignUp: () => import('@/pages/SignUp'),
+  Dashboard: () => import('@/pages/Dashboard'),
+  SDRDashboard: () => import('@/pages/SDRDashboard'),
+  CloserDashboard: () => import('@/pages/CloserDashboard'),
+  Clients: () => import('@/pages/Clients'),
+  ClientDetail: () => import('@/pages/ClientDetail'),
+  Settings: () => import('@/pages/Settings'),
+  Profile: () => import('@/pages/Profile'),
+  Leaderboard: () => import('@/pages/Leaderboard'),
+  Achievements: () => import('@/pages/Achievements'),
+  Challenges: () => import('@/pages/Challenges'),
 };

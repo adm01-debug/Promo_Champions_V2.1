@@ -1,4 +1,4 @@
-import { format, parse, addDays, subDays, startOfDay, endOfDay, isAfter, isBefore } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export const dateUtils = {
@@ -14,13 +14,13 @@ export const dateUtils = {
     const diffInMinutes = Math.floor(diffInMs / 60000);
     
     if (diffInMinutes < 1) return 'agora';
-    if (diffInMinutes < 60) return \`há \${diffInMinutes} minuto\${diffInMinutes > 1 ? 's' : ''}\`;
+    if (diffInMinutes < 60) return `há ${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''}`;
     
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return \`há \${diffInHours} hora\${diffInHours > 1 ? 's' : ''}\`;
+    if (diffInHours < 24) return `há ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
     
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return \`há \${diffInDays} dia\${diffInDays > 1 ? 's' : ''}\`;
+    if (diffInDays < 7) return `há ${diffInDays} dia${diffInDays > 1 ? 's' : ''}`;
     
     return dateUtils.format(d);
   },

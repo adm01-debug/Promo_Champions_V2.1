@@ -1,3 +1,5 @@
+import React, { useEffect, ComponentType } from 'react';
+
 // Performance Monitoring
 export interface PerformanceMetrics {
   name: string;
@@ -111,15 +113,15 @@ export const perfMonitor = new PerformanceMonitor();
 
 // HOC for performance monitoring
 export const withPerformanceTracking = <P extends object>(
-  Component: React.ComponentType<P>,
+  Component: ComponentType<P>,
   name: string
 ) => {
-  return (props: P) => {
-    React.useEffect(() => {
+  return function PerformanceTrackedComponent(props: P) {
+    useEffect(() => {
       perfMonitor.startMeasure(`${name}-render`);
       return () => perfMonitor.endMeasure(`${name}-render`);
     }, []);
     
-    return <Component {...props} />;
+    return React.createElement(Component, props);
   };
 };
