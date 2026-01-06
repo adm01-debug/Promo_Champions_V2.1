@@ -25,7 +25,7 @@ interface CompetitiveLeaderboardProps {
   showAll?: boolean;
 }
 
-export function CompetitiveLeaderboard({ showAll = false }: CompetitiveLeaderboardProps = {}) {
+export function CompetitiveLeaderboard({ showAll = false }: CompetitiveLeaderboardProps) {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
   const { data: xpData } = useAllSalespeopleXP();

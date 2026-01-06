@@ -4,11 +4,9 @@ import { StatCard } from "../StatCard";
 import { AlertsPanel } from "../AlertsPanel";
 import { KPIGrid } from "../KPIGrid";
 import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
-import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
-import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { itemVariants, containerVariants } from "@/components/transitions/PageTransition";
 import { 
