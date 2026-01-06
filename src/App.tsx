@@ -13,6 +13,8 @@ import { QueryPerformancePanel } from "@/components/debug/QueryPerformancePanel"
 import { PageErrorBoundary } from "@/components/errors/PageErrorBoundary";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
+import { XPToastProvider } from "@/components/gamification/XPToast";
+import { OnboardingFlow } from "@/components/onboarding";
 
 // Generic page loading fallback
 const PageLoadingFallback = () => (
@@ -92,12 +94,14 @@ const App = () => (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-            <Suspense fallback={<PageLoadingFallback />}>
-            <AnimatePresence mode="wait">
+          <XPToastProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AuthProvider>
+                <OnboardingFlow />
+                <Suspense fallback={<PageLoadingFallback />}>
+                  <AnimatePresence mode="wait">
         <Routes>
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -223,13 +227,14 @@ const App = () => (
                 }
               />
             </Routes>
-      </AnimatePresence>
-            </Suspense>
-          </AuthProvider>
-          <QueryPerformancePanel />
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+                  </AnimatePresence>
+                </Suspense>
+              </AuthProvider>
+              <QueryPerformancePanel />
+            </BrowserRouter>
+          </XPToastProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
     </HelmetProvider>
   </PageErrorBoundary>
 );
