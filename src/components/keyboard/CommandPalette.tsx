@@ -1,5 +1,4 @@
-import { FC, useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { FC, useState, useEffect, useCallback, createContext, useContext, ReactNode, useMemo } from 'react';
 import { 
   Search, 
   Home, 
@@ -8,13 +7,19 @@ import {
   BarChart3, 
   Settings, 
   Plus,
-  FileText,
   Calendar,
-  Bell,
-  LogOut,
   Moon,
   Sun,
-  Command
+  Command,
+  Zap,
+  Target,
+  Trophy,
+  Clock,
+  Star,
+  TrendingUp,
+  Phone,
+  Mail,
+  MessageSquare
 } from 'lucide-react';
 import {
   CommandDialog,
@@ -27,15 +32,25 @@ import {
 } from '@/components/ui/command';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from 'next-themes';
+import { Badge } from '@/components/ui/badge';
 
 interface CommandItem {
   id: string;
   label: string;
+  description?: string;
   icon?: React.ComponentType<{ className?: string }>;
   shortcut?: string[];
   action: () => void;
   group: string;
   keywords?: string[];
+  priority?: number;
+}
+
+interface RecentItem {
+  id: string;
+  label: string;
+  path: string;
+  timestamp: number;
 }
 
 interface CommandPaletteContextValue {
@@ -45,34 +60,69 @@ interface CommandPaletteContextValue {
   toggle: () => void;
   registerCommand: (command: CommandItem) => void;
   unregisterCommand: (id: string) => void;
+  addRecent: (item: Omit<RecentItem, 'timestamp'>) => void;
 }
 
 const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(null);
 
+const RECENT_KEY = 'command-palette-recent';
+const MAX_RECENT = 5;
+
 export const CommandPaletteProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [commands, setCommands] = useState<CommandItem[]>([]);
+  const [recents, setRecents] = useState<RecentItem[]>([]);
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
-  // Default commands
-  const defaultCommands: CommandItem[] = [
+  // Load recents from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(RECENT_KEY);
+    if (stored) {
+      try {
+        setRecents(JSON.parse(stored));
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }, []);
+
+  const addRecent = useCallback((item: Omit<RecentItem, 'timestamp'>) => {
+    setRecents(prev => {
+      const filtered = prev.filter(r => r.id !== item.id);
+      const updated = [{ ...item, timestamp: Date.now() }, ...filtered].slice(0, MAX_RECENT);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  // Default commands with enhanced metadata
+  const defaultCommands: CommandItem[] = useMemo(() => [
+    // Quick Actions (high priority)
+    { id: 'action-new-deal', label: 'Criar Deal', description: 'Adicionar novo negócio ao pipeline', icon: Plus, shortcut: ['⌘', 'D'], action: () => { navigate('/pipeline?new=true'); addRecent({ id: 'action-new-deal', label: 'Criar Deal', path: '/pipeline?new=true' }); }, group: 'Ações Rápidas', keywords: ['criar', 'adicionar', 'negocio', 'venda'], priority: 1 },
+    { id: 'action-new-task', label: 'Criar Tarefa', description: 'Adicionar nova tarefa', icon: Calendar, shortcut: ['⌘', 'T'], action: () => { navigate('/tarefas?new=true'); addRecent({ id: 'action-new-task', label: 'Criar Tarefa', path: '/tarefas?new=true' }); }, group: 'Ações Rápidas', keywords: ['tarefa', 'todo', 'atividade'], priority: 1 },
+    { id: 'action-log-call', label: 'Registrar Ligação', description: 'Registrar atividade de ligação', icon: Phone, action: () => { navigate('/atividades?type=call'); }, group: 'Ações Rápidas', keywords: ['ligacao', 'telefone', 'call'], priority: 1 },
+    { id: 'action-log-email', label: 'Registrar E-mail', description: 'Registrar atividade de e-mail', icon: Mail, action: () => { navigate('/atividades?type=email'); }, group: 'Ações Rápidas', keywords: ['email', 'mensagem'], priority: 1 },
+    { id: 'action-log-meeting', label: 'Registrar Reunião', description: 'Registrar atividade de reunião', icon: MessageSquare, action: () => { navigate('/atividades?type=meeting'); }, group: 'Ações Rápidas', keywords: ['reuniao', 'meeting'], priority: 1 },
+    
     // Navigation
-    { id: 'nav-home', label: 'Ir para Dashboard', icon: Home, action: () => navigate('/'), group: 'Navegação', keywords: ['home', 'inicio'] },
-    { id: 'nav-clients', label: 'Ir para Clientes', icon: Users, action: () => navigate('/clientes'), group: 'Navegação' },
-    { id: 'nav-pipeline', label: 'Ir para Pipeline', icon: ShoppingCart, action: () => navigate('/pipeline'), group: 'Navegação' },
-    { id: 'nav-analytics', label: 'Ir para Analytics', icon: BarChart3, action: () => navigate('/analytics'), group: 'Navegação' },
-    { id: 'nav-tasks', label: 'Ir para Tarefas', icon: Calendar, action: () => navigate('/tarefas'), group: 'Navegação' },
-    { id: 'nav-settings', label: 'Ir para Configurações', icon: Settings, action: () => navigate('/configuracoes'), group: 'Navegação' },
+    { id: 'nav-home', label: 'Dashboard', description: 'Visão geral do seu desempenho', icon: Home, action: () => { navigate('/'); addRecent({ id: 'nav-home', label: 'Dashboard', path: '/' }); }, group: 'Navegação', keywords: ['home', 'inicio', 'principal'] },
+    { id: 'nav-pipeline', label: 'Pipeline', description: 'Gerenciar deals e oportunidades', icon: ShoppingCart, action: () => { navigate('/pipeline'); addRecent({ id: 'nav-pipeline', label: 'Pipeline', path: '/pipeline' }); }, group: 'Navegação', keywords: ['kanban', 'deals', 'vendas'] },
+    { id: 'nav-clients', label: 'Clientes', description: 'Base de clientes e contatos', icon: Users, action: () => { navigate('/clientes'); addRecent({ id: 'nav-clients', label: 'Clientes', path: '/clientes' }); }, group: 'Navegação' },
+    { id: 'nav-tasks', label: 'Tarefas', description: 'Gerenciar suas atividades', icon: Calendar, action: () => { navigate('/tarefas'); addRecent({ id: 'nav-tasks', label: 'Tarefas', path: '/tarefas' }); }, group: 'Navegação' },
+    { id: 'nav-analytics', label: 'Analytics', description: 'Relatórios e métricas', icon: BarChart3, action: () => { navigate('/analytics'); addRecent({ id: 'nav-analytics', label: 'Analytics', path: '/analytics' }); }, group: 'Navegação' },
+    { id: 'nav-ranking', label: 'Ranking', description: 'Competição e gamificação', icon: Trophy, action: () => { navigate('/ranking'); addRecent({ id: 'nav-ranking', label: 'Ranking', path: '/ranking' }); }, group: 'Navegação', keywords: ['competicao', 'leaderboard'] },
+    { id: 'nav-goals', label: 'Metas', description: 'Acompanhar objetivos', icon: Target, action: () => { navigate('/metas'); }, group: 'Navegação' },
+    { id: 'nav-settings', label: 'Configurações', description: 'Preferências do sistema', icon: Settings, action: () => { navigate('/configuracoes'); }, group: 'Navegação' },
     
-    // Actions
-    { id: 'action-new-deal', label: 'Novo Deal', icon: Plus, shortcut: ['cmd', 'n'], action: () => { /* trigger modal */ }, group: 'Ações', keywords: ['criar', 'adicionar'] },
-    { id: 'action-new-client', label: 'Novo Cliente', icon: Plus, action: () => navigate('/clientes?new=true'), group: 'Ações' },
-    { id: 'action-new-task', label: 'Nova Tarefa', icon: Plus, action: () => navigate('/tarefas?new=true'), group: 'Ações' },
+    // Gamification
+    { id: 'game-challenges', label: 'Desafios', description: 'Ver desafios diários e semanais', icon: Zap, action: () => { navigate('/desafios'); }, group: 'Gamificação', keywords: ['missao', 'xp', 'pontos'] },
+    { id: 'game-achievements', label: 'Conquistas', description: 'Ver suas conquistas', icon: Star, action: () => { navigate('/conquistas'); }, group: 'Gamificação', keywords: ['medalhas', 'badges'] },
+    { id: 'game-rewards', label: 'Recompensas', description: 'Loja de recompensas', icon: TrendingUp, action: () => { navigate('/loja-recompensas'); }, group: 'Gamificação' },
     
-    // Theme
-    { id: 'theme-toggle', label: theme === 'dark' ? 'Modo Claro' : 'Modo Escuro', icon: theme === 'dark' ? Sun : Moon, action: () => setTheme(theme === 'dark' ? 'light' : 'dark'), group: 'Preferências' },
-  ];
+    // Preferences
+    { id: 'theme-toggle', label: theme === 'dark' ? 'Ativar Modo Claro' : 'Ativar Modo Escuro', description: 'Alternar tema do sistema', icon: theme === 'dark' ? Sun : Moon, shortcut: ['⌘', 'J'], action: () => setTheme(theme === 'dark' ? 'light' : 'dark'), group: 'Preferências' },
+  ], [navigate, theme, setTheme, addRecent]);
 
   const allCommands = [...defaultCommands, ...commands];
 
@@ -105,7 +155,8 @@ export const CommandPaletteProvider: FC<{ children: ReactNode }> = ({ children }
         close: () => setIsOpen(false),
         toggle: () => setIsOpen(o => !o),
         registerCommand,
-        unregisterCommand
+        unregisterCommand,
+        addRecent,
       }}
     >
       {children}
@@ -113,6 +164,7 @@ export const CommandPaletteProvider: FC<{ children: ReactNode }> = ({ children }
         open={isOpen} 
         onOpenChange={setIsOpen} 
         commands={allCommands}
+        recents={recents}
       />
     </CommandPaletteContext.Provider>
   );
@@ -131,9 +183,12 @@ interface CommandPaletteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   commands: CommandItem[];
+  recents: RecentItem[];
 }
 
-const CommandPaletteDialog: FC<CommandPaletteDialogProps> = ({ open, onOpenChange, commands }) => {
+const CommandPaletteDialog: FC<CommandPaletteDialogProps> = ({ open, onOpenChange, commands, recents }) => {
+  const navigate = useNavigate();
+
   // Group commands
   const groups = commands.reduce((acc, cmd) => {
     if (!acc[cmd.group]) acc[cmd.group] = [];
@@ -141,18 +196,60 @@ const CommandPaletteDialog: FC<CommandPaletteDialogProps> = ({ open, onOpenChang
     return acc;
   }, {} as Record<string, CommandItem[]>);
 
+  // Sort groups by priority
+  const groupOrder = ['Ações Rápidas', 'Navegação', 'Gamificação', 'Preferências'];
+  const sortedGroups = Object.entries(groups).sort(([a], [b]) => {
+    const aIndex = groupOrder.indexOf(a);
+    const bIndex = groupOrder.indexOf(b);
+    return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+  });
+
   const runCommand = (command: CommandItem) => {
     command.action();
     onOpenChange(false);
   };
 
+  const runRecent = (recent: RecentItem) => {
+    navigate(recent.path);
+    onOpenChange(false);
+  };
+
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder="Digite um comando ou busque..." />
-      <CommandList>
-        <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+      <CommandInput placeholder="O que você quer fazer? Busque comandos, páginas..." />
+      <CommandList className="max-h-[400px]">
+        <CommandEmpty>
+          <div className="flex flex-col items-center py-6 text-muted-foreground">
+            <Search className="h-8 w-8 mb-2 opacity-50" />
+            <p>Nenhum resultado encontrado</p>
+            <p className="text-xs mt-1">Tente buscar por "deal", "tarefa" ou "pipeline"</p>
+          </div>
+        </CommandEmpty>
         
-        {Object.entries(groups).map(([group, items], groupIndex) => (
+        {/* Recents */}
+        {recents.length > 0 && (
+          <>
+            <CommandGroup heading="Recentes">
+              {recents.map((recent) => (
+                <CommandItem
+                  key={recent.id}
+                  value={recent.label}
+                  onSelect={() => runRecent(recent)}
+                  className="flex items-center gap-2"
+                >
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>{recent.label}</span>
+                  <Badge variant="secondary" className="ml-auto text-[10px]">
+                    recente
+                  </Badge>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+          </>
+        )}
+        
+        {sortedGroups.map(([group, items], groupIndex) => (
           <div key={group}>
             {groupIndex > 0 && <CommandSeparator />}
             <CommandGroup heading={group}>
@@ -161,19 +258,29 @@ const CommandPaletteDialog: FC<CommandPaletteDialogProps> = ({ open, onOpenChang
                 return (
                   <CommandItem
                     key={command.id}
-                    value={`${command.label} ${command.keywords?.join(' ') || ''}`}
+                    value={`${command.label} ${command.description || ''} ${command.keywords?.join(' ') || ''}`}
                     onSelect={() => runCommand(command)}
+                    className="flex items-center gap-3 py-3"
                   >
-                    {Icon && <Icon className="mr-2 h-4 w-4" />}
-                    <span>{command.label}</span>
+                    {Icon && (
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-muted/50">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium">{command.label}</span>
+                      {command.description && (
+                        <p className="text-xs text-muted-foreground truncate">{command.description}</p>
+                      )}
+                    </div>
                     {command.shortcut && (
-                      <div className="ml-auto flex items-center gap-1">
+                      <div className="flex items-center gap-1">
                         {command.shortcut.map((key, i) => (
                           <kbd
                             key={i}
-                            className="px-1.5 py-0.5 bg-muted rounded text-xs font-mono"
+                            className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono border border-border/50"
                           >
-                            {key === 'cmd' ? '⌘' : key.toUpperCase()}
+                            {key}
                           </kbd>
                         ))}
                       </div>
@@ -185,6 +292,25 @@ const CommandPaletteDialog: FC<CommandPaletteDialogProps> = ({ open, onOpenChang
           </div>
         ))}
       </CommandList>
+      
+      {/* Footer */}
+      <div className="flex items-center justify-between px-3 py-2 border-t border-border/50 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0.5 bg-muted rounded font-mono">↑↓</kbd> navegar
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0.5 bg-muted rounded font-mono">↵</kbd> selecionar
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0.5 bg-muted rounded font-mono">esc</kbd> fechar
+          </span>
+        </div>
+        <span className="flex items-center gap-1">
+          <Command className="h-3 w-3" />
+          Sales Arena
+        </span>
+      </div>
     </CommandDialog>
   );
 };
@@ -199,12 +325,12 @@ export const CommandPaletteTrigger: FC<{ className?: string }> = ({ className })
       className={`
         flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground
         bg-muted/50 hover:bg-muted rounded-lg border border-border
-        transition-colors ${className}
+        transition-all hover:border-primary/30 hover:shadow-sm ${className}
       `}
     >
       <Search className="w-4 h-4" />
-      <span>Buscar...</span>
-      <kbd className="ml-auto px-1.5 py-0.5 bg-background rounded text-xs font-mono">
+      <span className="hidden sm:inline">Buscar...</span>
+      <kbd className="ml-auto px-1.5 py-0.5 bg-background rounded text-xs font-mono border border-border/50">
         ⌘K
       </kbd>
     </button>
