@@ -1370,4 +1370,69 @@
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* ===== FOCUS MODE ===== */
+  .focus-mode {
+    /* Base focus mode active */
+  }
+
+  .focus-hide-sidebar [data-sidebar] {
+    display: none !important;
+  }
+
+  .focus-hide-sidebar .md\:block[aria-label="Navegação principal"] {
+    display: none !important;
+  }
+
+  .focus-hide-notifications [data-notification],
+  .focus-hide-notifications .notification-badge {
+    display: none !important;
+  }
+
+  .focus-hide-gamification [data-gamification],
+  .focus-hide-gamification .xp-indicator,
+  .focus-hide-gamification .level-badge,
+  .focus-hide-gamification .streak-badge {
+    display: none !important;
+  }
+
+  .focus-dim-inactive header:not(:focus-within),
+  .focus-dim-inactive aside:not(:focus-within) {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+  }
+
+  .focus-dim-inactive header:hover,
+  .focus-dim-inactive aside:hover,
+  .focus-dim-inactive header:focus-within,
+  .focus-dim-inactive aside:focus-within {
+    opacity: 1;
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  .reduce-motion *,
+  .reduce-motion *::before,
+  .reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* ===== HIGH CONTRAST ===== */
+  .high-contrast {
+    --foreground: 0 0% 0%;
+    --background: 0 0% 100%;
+    --border: 0 0% 0%;
+  }
+
+  .dark.high-contrast {
+    --foreground: 0 0% 100%;
+    --background: 0 0% 0%;
+    --border: 0 0% 100%;
+  }
+
+  .high-contrast * {
+    border-color: currentColor !important;
+  }
 }
