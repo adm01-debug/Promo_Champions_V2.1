@@ -16,7 +16,7 @@ interface OnboardingStep {
 const onboardingSteps: OnboardingStep[] = [
   {
     icon: Rocket,
-    title: "Bem-vindo ao SalesPro!",
+    title: "Bem-vindo ao Sales Arena!",
     description: "Sua plataforma completa para gestão de vendas e performance.",
     color: "from-blue-500 to-cyan-500"
   },

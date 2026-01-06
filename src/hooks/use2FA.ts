@@ -44,7 +44,7 @@ export const use2FA = () => {
       if (!user) throw new Error('Not authenticated');
 
       const secret = authenticator.generateSecret();
-      const otpauth = authenticator.keyuri(user.email!, 'SalesPro', secret);
+      const otpauth = authenticator.keyuri(user.email!, 'Sales Arena', secret);
       const qrCode = await QRCode.toDataURL(otpauth);
 
       const backupCodes = Array.from({ length: 10 }, () =>

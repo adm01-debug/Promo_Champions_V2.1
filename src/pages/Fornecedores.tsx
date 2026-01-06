@@ -101,7 +101,7 @@ export default function Fornecedores() {
   return (
     <>
       <Helmet>
-        <title>Fornecedores | SalesPro</title>
+        <title>Fornecedores | Sales Arena</title>
         <meta name="description" content="Gestão de fornecedores, preços e análise de risco" />
       </Helmet>
       
