@@ -15,6 +15,7 @@ import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { XPToastProvider } from "@/components/gamification/XPToast";
 import { OnboardingFlow } from "@/components/onboarding";
+import { CommandPalette } from "@/components/command/CommandPalette";
 
 // Generic page loading fallback
 const PageLoadingFallback = () => (
@@ -99,6 +100,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <AuthProvider>
+                <CommandPalette />
                 <OnboardingFlow />
                 <Suspense fallback={<PageLoadingFallback />}>
                   <AnimatePresence mode="wait">

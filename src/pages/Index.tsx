@@ -74,6 +74,7 @@ const Index = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
+              data-tour="stats"
             >
               <motion.div variants={itemVariants}>
                 <StatCard
@@ -127,7 +128,7 @@ const Index = () => {
               </div>
 
               {/* Goal Progress */}
-              <div className="min-h-[200px]">
+              <div className="min-h-[200px]" data-tour="goals">
                 <GoalProgress 
                   current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
                   goal={goalsData?.totalGoal || 0} 
@@ -162,6 +163,7 @@ const Index = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
+              data-tour="gamification"
             >
               <motion.div variants={itemVariants} className="sm:col-span-1">
                 <RecentDeals />

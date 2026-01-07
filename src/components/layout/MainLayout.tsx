@@ -12,8 +12,11 @@ import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 import { SkipLinks } from "@/components/a11y/SkipLinks";
 import { FocusModeToggle, FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
+import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
+import { NotificationBadge } from "@/components/ui/NotificationBadge";
+import { Bell } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-
 interface MainLayoutProps {
   children: React.ReactNode;
 }
@@ -68,12 +71,21 @@ export function MainLayout({ children }: MainLayoutProps) {
             </div>
             <div className="flex items-center gap-2">
               <FocusModeToggle />
+              <Link to="/notificacoes" className="relative glass h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/50 transition-colors">
+                <Bell className="h-4 w-4" />
+                <NotificationBadge count={3} position="top-right" size="sm" pulse />
+              </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
               <ThemeToggle />
             </div>
           </div>
           
           <GlobalSearch ref={searchRef} />
+          
+          {/* Breadcrumbs - Desktop only */}
+          <div className="hidden md:block pt-16 px-4 lg:px-8">
+            <Breadcrumbs />
+          </div>
           
           {/* Main content area */}
           <div className="flex-1">
