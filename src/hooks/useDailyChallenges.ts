@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useCurrentSalesperson } from './useCurrentSalesperson';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useDailyChallenges = () => {
-  const { data: salesperson } = useCurrentSalesperson();
+  const { salesperson } = useAuth();
   
   return useQuery({
     queryKey: ['daily-challenges', salesperson?.id],
@@ -33,9 +33,40 @@ export const useDailyChallenges = () => {
   });
 };
 
+export const useDailyChallengesWithProgress = (salespersonId?: string) => {
+  return useQuery({
+    queryKey: ['daily-challenges-with-progress', salespersonId],
+    queryFn: async () => {
+      if (!salespersonId) return [];
+      
+      const today = new Date().toISOString().split('T')[0];
+      
+      const { data: challenges } = await supabase
+        .from('daily_challenges')
+        .select('*')
+        .eq('challenge_date', today)
+        .eq('is_active', true);
+
+      if (!challenges) return [];
+
+      const { data: progress } = await supabase
+        .from('daily_challenge_progress')
+        .select('*')
+        .eq('salesperson_id', salespersonId)
+        .in('challenge_id', challenges.map(c => c.id));
+
+      return challenges.map(challenge => ({
+        ...challenge,
+        progress: progress?.find(p => p.challenge_id === challenge.id) || null,
+      }));
+    },
+    enabled: !!salespersonId,
+  });
+};
+
 export const useClaimDailyChallengeReward = () => {
   const queryClient = useQueryClient();
-  const { data: salesperson } = useCurrentSalesperson();
+  const { salesperson } = useAuth();
 
   return useMutation({
     mutationFn: async (challengeId: string) => {
