@@ -23,10 +23,12 @@ const patterns: HapticPatterns = {
 };
 
 export const useHapticFeedback = () => {
-  const isSupported = 'vibrate' in navigator;
+  const isSupported = typeof navigator !== 'undefined' && 'vibrate' in navigator;
+  const isMobile = typeof window !== 'undefined' && 
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const trigger = useCallback((pattern: HapticPattern = 'light') => {
-    if (!isSupported) return false;
+    if (!isSupported || !isMobile) return false;
     
     try {
       navigator.vibrate(patterns[pattern]);
@@ -35,10 +37,10 @@ export const useHapticFeedback = () => {
       console.warn('Haptic feedback failed:', error);
       return false;
     }
-  }, [isSupported]);
+  }, [isSupported, isMobile]);
 
   const customVibrate = useCallback((pattern: number[]) => {
-    if (!isSupported) return false;
+    if (!isSupported || !isMobile) return false;
     
     try {
       navigator.vibrate(pattern);
@@ -47,18 +49,30 @@ export const useHapticFeedback = () => {
       console.warn('Haptic feedback failed:', error);
       return false;
     }
-  }, [isSupported]);
+  }, [isSupported, isMobile]);
 
   const stop = useCallback(() => {
     if (!isSupported) return;
     navigator.vibrate(0);
   }, [isSupported]);
 
+  // Create haptic-enabled handler wrapper
+  const withHaptic = useCallback(<T extends (...args: unknown[]) => unknown>(
+    handler: T,
+    pattern: HapticPattern = 'light'
+  ) => {
+    return (...args: Parameters<T>) => {
+      trigger(pattern);
+      return handler(...args);
+    };
+  }, [trigger]);
+
   return {
-    isSupported,
+    isSupported: isSupported && isMobile,
     trigger,
     customVibrate,
     stop,
+    withHaptic,
     // Convenience methods
     light: () => trigger('light'),
     medium: () => trigger('medium'),

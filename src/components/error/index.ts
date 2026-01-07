@@ -6,3 +6,5 @@ export {
   SuccessMessage, 
   InfoMessage 
 } from './ErrorStates';
+
+export { ErrorBoundary } from './ErrorBoundary';
