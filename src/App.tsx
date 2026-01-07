@@ -16,6 +16,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { XPToastProvider } from "@/components/gamification/XPToast";
 import { OnboardingFlow } from "@/components/onboarding";
 import { CommandPalette } from "@/components/command/CommandPalette";
+import { EducationalTooltipsProvider } from "@/components/tooltips";
+import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
+import { InteractiveTour } from "@/components/onboarding/InteractiveTour";
 
 // Generic page loading fallback
 const PageLoadingFallback = () => (
@@ -96,14 +99,17 @@ const App = () => (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <XPToastProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AuthProvider>
-                <CommandPalette />
-                <OnboardingFlow />
-                <Suspense fallback={<PageLoadingFallback />}>
-                  <AnimatePresence mode="wait">
+            <EducationalTooltipsProvider>
+              <KeyboardShortcutsProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AuthProvider>
+                    <CommandPalette />
+                    <OnboardingFlow />
+                    <InteractiveTour />
+                    <Suspense fallback={<PageLoadingFallback />}>
+                      <AnimatePresence mode="wait">
         <Routes>
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -231,9 +237,11 @@ const App = () => (
             </Routes>
                   </AnimatePresence>
                 </Suspense>
-              </AuthProvider>
-              <QueryPerformancePanel />
-            </BrowserRouter>
+                  </AuthProvider>
+                  <QueryPerformancePanel />
+                </BrowserRouter>
+              </KeyboardShortcutsProvider>
+            </EducationalTooltipsProvider>
           </XPToastProvider>
         </TooltipProvider>
       </QueryClientProvider>
