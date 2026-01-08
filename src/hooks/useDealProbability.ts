@@ -28,6 +28,24 @@ export const useDealProbability = (dealId: string) => {
   });
 };
 
+// Alias for batch probability calculation
+export const useDealProbabilities = () => {
+  return useQuery({
+    queryKey: ['deal-probabilities'],
+    queryFn: async () => {
+      const { data: deals } = await supabase
+        .from('sales')
+        .select('id, status, amount, created_at')
+        .in('status', ['pending', 'in_progress', 'negotiation', 'proposal']);
+      
+      return (deals || []).reduce((acc, deal) => {
+        acc[deal.id] = Math.round(calculateStageScore(deal.status));
+        return acc;
+      }, {} as Record<string, number>);
+    },
+  });
+};
+
 function calculateStageScore(stage: string): number {
   const scores: Record<string, number> = {
     'Lead': 10,
