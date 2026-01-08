@@ -18,7 +18,6 @@ import { OnboardingFlow } from "@/components/onboarding";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { EducationalTooltipsProvider } from "@/components/tooltips";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
-import { InteractiveTour } from "@/components/onboarding/InteractiveTour";
 
 // Generic page loading fallback
 const PageLoadingFallback = () => (
@@ -83,12 +82,12 @@ const AssinaturaDigital = lazy(() => import("./pages/AssinaturaDigital"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 2, // 2 minutes - data considered fresh
-      gcTime: 1000 * 60 * 10, // 10 minutes - cache retention
-      refetchOnWindowFocus: false, // Don't refetch on tab focus
-      refetchOnReconnect: true, // Refetch on network reconnect
-      retry: 1, // Single retry on failure
-      refetchInterval: false, // Disable automatic refetching by default
+      staleTime: 1000 * 60 * 2,
+      gcTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      retry: 1,
+      refetchInterval: false,
     },
   },
 });
@@ -100,147 +99,146 @@ const App = () => (
         <TooltipProvider>
           <XPToastProvider>
             <EducationalTooltipsProvider>
-              <KeyboardShortcutsProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                {/* KeyboardShortcutsProvider MUST be inside BrowserRouter because it uses useNavigate */}
+                <KeyboardShortcutsProvider>
                   <AuthProvider>
                     <CommandPalette />
                     <OnboardingFlow />
-                    <InteractiveTour />
                     <Suspense fallback={<PageLoadingFallback />}>
                       <AnimatePresence mode="wait">
-        <Routes>
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route
-                path="/*"
-                element={
-                  <MainLayout>
-                    <ErrorBoundary>
-                      <Suspense fallback={<PageLoadingFallback />}>
-                        <AnimatePresence mode="wait">
-        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/vendas" element={<Vendas />} />
-                          <Route path="/clientes" element={<Clientes />} />
-                          <Route path="/produtos" element={<Produtos />} />
-                          <Route path="/relatorios" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Relatorios />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/vendedores" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Vendedores />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/vendedor/:id" element={<VendedorDashboard />} />
-                          <Route path="/analytics" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Analytics />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/notificacoes" element={<Notificacoes />} />
-                          <Route path="/pipeline" element={<Pipeline />} />
-                          <Route path="/tarefas" element={<Tarefas />} />
-                          <Route path="/playbooks" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Playbooks />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/sdr" element={<SDRDashboard />} />
-                          <Route path="/closer" element={<CloserDashboard />} />
-                          <Route path="/atividades" element={<Atividades />} />
-                          <Route path="/cadencias" element={<Cadencias />} />
-                          <Route path="/metas" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Metas />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/fonte-leads" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <FonteLeads />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/relatorio-atividades" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <RelatorioAtividades />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/metas-atividades" element={<MetasAtividades />} />
-                          <Route path="/ranking" element={<RankingCompetitivo />} />
-                          <Route path="/configuracoes" element={<Configuracoes />} />
-                          <Route path="/animacoes" element={<AnimacoesDemo />} />
-                          <Route path="/times" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Times />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/bitrix24" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Bitrix24 />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/acesso-negado" element={<AccessDenied />} />
-                          <Route path="/portfolio" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Portfolio />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/icp" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <ICP />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/admin" element={<AdminDashboard />} />
-                          <Route path="/assistente" element={<Assistente />} />
-                          <Route path="/bi-vendedor" element={<BIVendedor />} />
-                          <Route path="/bi-sdr" element={<BISDR />} />
-                          <Route path="/bi-closer" element={<BICloser />} />
-                          <Route path="/bi-gestor" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <BIGestor />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/desafios" element={<DesafiosSemanais />} />
-                          <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
-                          <Route path="/previsao-demanda" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <PrevisaoDemanda />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/fornecedores" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <Fornecedores />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/comparador-precos" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <ComparadorPrecos />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="/assinatura-digital" element={
-                            <ProtectedRoute requireAdminOrManager>
-                              <AssinaturaDigital />
-                            </ProtectedRoute>
-                          } />
-                          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                          <Route path="*" element={<NotFound />} />
+                        <Routes>
+                          <Route path="/auth" element={<Auth />} />
+                          <Route path="/reset-password" element={<ResetPassword />} />
+                          <Route
+                            path="/*"
+                            element={
+                              <MainLayout>
+                                <ErrorBoundary>
+                                  <Suspense fallback={<PageLoadingFallback />}>
+                                    <AnimatePresence mode="wait">
+                                      <Routes>
+                                        <Route path="/" element={<Index />} />
+                                        <Route path="/vendas" element={<Vendas />} />
+                                        <Route path="/clientes" element={<Clientes />} />
+                                        <Route path="/produtos" element={<Produtos />} />
+                                        <Route path="/relatorios" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Relatorios />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/vendedores" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Vendedores />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/vendedor/:id" element={<VendedorDashboard />} />
+                                        <Route path="/analytics" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Analytics />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/notificacoes" element={<Notificacoes />} />
+                                        <Route path="/pipeline" element={<Pipeline />} />
+                                        <Route path="/tarefas" element={<Tarefas />} />
+                                        <Route path="/playbooks" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Playbooks />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/sdr" element={<SDRDashboard />} />
+                                        <Route path="/closer" element={<CloserDashboard />} />
+                                        <Route path="/atividades" element={<Atividades />} />
+                                        <Route path="/cadencias" element={<Cadencias />} />
+                                        <Route path="/metas" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Metas />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/fonte-leads" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <FonteLeads />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/relatorio-atividades" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <RelatorioAtividades />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/metas-atividades" element={<MetasAtividades />} />
+                                        <Route path="/ranking" element={<RankingCompetitivo />} />
+                                        <Route path="/configuracoes" element={<Configuracoes />} />
+                                        <Route path="/animacoes" element={<AnimacoesDemo />} />
+                                        <Route path="/times" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Times />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/bitrix24" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Bitrix24 />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/acesso-negado" element={<AccessDenied />} />
+                                        <Route path="/portfolio" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Portfolio />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/icp" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <ICP />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/admin" element={<AdminDashboard />} />
+                                        <Route path="/assistente" element={<Assistente />} />
+                                        <Route path="/bi-vendedor" element={<BIVendedor />} />
+                                        <Route path="/bi-sdr" element={<BISDR />} />
+                                        <Route path="/bi-closer" element={<BICloser />} />
+                                        <Route path="/bi-gestor" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <BIGestor />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/desafios" element={<DesafiosSemanais />} />
+                                        <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
+                                        <Route path="/previsao-demanda" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <PrevisaoDemanda />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/fornecedores" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <Fornecedores />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/comparador-precos" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <ComparadorPrecos />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="/assinatura-digital" element={
+                                          <ProtectedRoute requireAdminOrManager>
+                                            <AssinaturaDigital />
+                                          </ProtectedRoute>
+                                        } />
+                                        <Route path="*" element={<NotFound />} />
+                                      </Routes>
+                                    </AnimatePresence>
+                                  </Suspense>
+                                </ErrorBoundary>
+                              </MainLayout>
+                            }
+                          />
                         </Routes>
-      </AnimatePresence>
-                      </Suspense>
-                    </ErrorBoundary>
-                  </MainLayout>
-                }
-              />
-            </Routes>
-                  </AnimatePresence>
-                </Suspense>
+                      </AnimatePresence>
+                    </Suspense>
                   </AuthProvider>
                   <QueryPerformancePanel />
-                </BrowserRouter>
-              </KeyboardShortcutsProvider>
+                </KeyboardShortcutsProvider>
+              </BrowserRouter>
             </EducationalTooltipsProvider>
           </XPToastProvider>
         </TooltipProvider>

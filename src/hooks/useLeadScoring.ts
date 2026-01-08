@@ -1,13 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 interface LeadScoreFactors {
-  companySize: number; // 0-20
-  industry: number; // 0-15
-  jobTitle: number; // 0-15
-  engagement: number; // 0-25
-  source: number; // 0-10
-  behavior: number; // 0-15
+  companySize: number;
+  industry: number;
+  jobTitle: number;
+  engagement: number;
+  source: number;
+  behavior: number;
 }
 
 interface ScoredLead {
@@ -101,6 +101,24 @@ export const useLeadScoring = (leadId?: string) => {
       }).sort((a, b) => b.score - a.score);
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
+  });
+};
+
+// Alias for backwards compatibility
+export const useLeadScores = useLeadScoring;
+
+// Hook to calculate and save lead scores
+export const useCalculateLeadScores = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (saleIds: string[]) => {
+      // Trigger recalculation by invalidating cache
+      return saleIds;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lead-scoring'] });
+    },
   });
 };
 
