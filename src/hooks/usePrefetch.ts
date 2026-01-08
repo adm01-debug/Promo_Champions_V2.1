@@ -71,11 +71,27 @@ export const usePrefetch = () => {
     });
   };
 
+  const prefetchForRoute = (route: string) => {
+    // Prefetch based on route
+    switch (route) {
+      case '/':
+      case '/dashboard':
+        prefetchDashboard();
+        break;
+      case '/pipeline':
+        prefetchPipeline();
+        break;
+      default:
+        break;
+    }
+  };
+
   return {
     prefetchDeal,
     prefetchClient,
     prefetchPipeline,
     prefetchDashboard,
+    prefetchForRoute,
   };
 };
 
