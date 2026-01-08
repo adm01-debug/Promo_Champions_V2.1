@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    // Ensure a single React instance to avoid invalid hook call/useContext null errors
+    dedupe: ["react", "react-dom"],
   },
   build: {
     // Optimized for Lovable deployment
