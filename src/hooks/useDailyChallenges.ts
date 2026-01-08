@@ -66,22 +66,28 @@ export const useDailyChallengesWithProgress = (salespersonId?: string) => {
 
 export const useClaimDailyChallengeReward = () => {
   const queryClient = useQueryClient();
-  const { salesperson } = useAuth();
 
   return useMutation({
-    mutationFn: async (challengeId: string) => {
-      if (!salesperson?.id) throw new Error('User not found');
+    mutationFn: async ({ challengeId, salespersonId, xpReward }: { 
+      challengeId: string; 
+      salespersonId: string; 
+      xpReward: number 
+    }) => {
+      if (!salespersonId) throw new Error('User not found');
 
       const { error } = await supabase
         .from('daily_challenge_progress')
         .update({ xp_claimed: true })
         .eq('challenge_id', challengeId)
-        .eq('salesperson_id', salesperson.id);
+        .eq('salesperson_id', salespersonId);
 
       if (error) throw error;
+      
+      return { challengeId, salespersonId, xpReward };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['daily-challenges'] });
+      queryClient.invalidateQueries({ queryKey: ['daily-challenges-with-progress'] });
     },
   });
 };

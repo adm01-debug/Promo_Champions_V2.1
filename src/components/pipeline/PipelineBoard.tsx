@@ -35,8 +35,8 @@ export const PipelineBoard = () => {
     );
   }, [dealsByStage]);
 
-  const { data: probabilities } = useDealProbabilities(allDealIds);
-  const { data: leadScores } = useLeadScores(allDealIds);
+  const { data: probabilities } = useDealProbabilities();
+  const { data: leadScores } = useLeadScores();
   const { data: activeCadences } = useActiveCadencesBySaleIds(allDealIds);
   const { data: icpByClientName } = useICPByClientName();
   const calculateScores = useCalculateLeadScores();
