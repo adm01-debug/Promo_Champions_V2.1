@@ -37,21 +37,21 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Skip Links for Accessibility */}
       <SkipLinks />
       
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-background">
         {/* Hide sidebar on mobile */}
         <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
           <AppSidebar />
         </nav>
         
-        <main 
-          id="main-content" 
-          className={cn(
-            "flex-1 relative flex flex-col",
-            isMobile && "pb-20"
-          )}
-          role="main"
-          aria-label="Conteúdo principal"
-        >
+          <main 
+            id="main-content" 
+            className={cn(
+              "flex-1 relative flex flex-col bg-background",
+              isMobile && "pb-20"
+            )}
+            role="main"
+            aria-label="Conteúdo principal"
+          >
           {/* Mobile Header with back navigation */}
           <MobilePageHeader 
             title={currentPageInfo.title}
