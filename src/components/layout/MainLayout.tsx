@@ -43,15 +43,15 @@ export function MainLayout({ children }: MainLayoutProps) {
           <AppSidebar />
         </nav>
         
-          <main 
-            id="main-content" 
-            className={cn(
-              "flex-1 relative flex flex-col bg-background",
-              isMobile && "pb-20"
-            )}
-            role="main"
-            aria-label="Conteúdo principal"
-          >
+        <main 
+          id="main-content" 
+          className={cn(
+            "flex-1 relative flex flex-col bg-background",
+            isMobile && "pb-20"
+          )}
+          role="main"
+          aria-label="Conteúdo principal"
+        >
           {/* Mobile Header with back navigation */}
           <MobilePageHeader 
             title={currentPageInfo.title}
