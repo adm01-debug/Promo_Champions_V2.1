@@ -1,1 +1,0 @@
-import { useState, useEffect } from 'react'; export function useAsync<T>(fn: () => Promise<T>) { const [s, setS] = useState<{data?: T; error?: Error; loading: boolean}>({loading: true}); useEffect(() => { fn().then(data => setS({data, loading: false})).catch(error => setS({error, loading: false})); }, []); return s; }
