@@ -18,19 +18,13 @@ export default defineConfig(({ mode }) => ({
     },
     dedupe: [
       "react", 
-      "react-dom", 
-      "@tanstack/react-query",
-      "@radix-ui/react-tooltip",
-      "@radix-ui/react-context",
-      "framer-motion",
+      "react-dom",
     ],
   },
   optimizeDeps: {
     include: [
       "react",
       "react-dom",
-      "react-dom/client",
-      "@tanstack/react-query",
     ],
   },
   build: {
@@ -38,14 +32,6 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     assetsDir: "assets",
     sourcemap: mode === "development",
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom"],
-          "query-vendor": ["@tanstack/react-query"],
-        },
-      },
-    },
   },
   test: {
     globals: true,
