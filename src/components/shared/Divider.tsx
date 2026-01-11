@@ -1,1 +1,0 @@
-export function Divider({text}: any) { if (text) return <div className="flex items-center gap-4 my-4"><div className="flex-1 border-t" /><span className="text-sm text-gray-500">{text}</span><div className="flex-1 border-t" /></div>; return <hr className="my-4" />; }

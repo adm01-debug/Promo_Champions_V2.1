@@ -1,1 +1,0 @@
-import { Star } from 'lucide-react'; export function Rating({value, max = 5, onChange}: any) { return <div className="flex gap-1">{[...Array(max)].map((_, i) => <Star key={i} className={`w-5 h-5 cursor-pointer ${i < value ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} onClick={() => onChange?.(i + 1)} />)}</div>; }
