@@ -1,1 +1,0 @@
-export function RadioGroup({options, value, onChange}: any) { return <div className="space-y-2">{options.map((opt: any) => <label key={opt.value} className="flex items-center gap-2 cursor-pointer"><input type="radio" checked={value === opt.value} onChange={() => onChange(opt.value)} className="w-4 h-4" /><span>{opt.label}</span></label>)}</div>; }
