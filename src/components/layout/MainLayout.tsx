@@ -10,7 +10,7 @@ import { MobileNavigation } from "@/components/mobile/MobileNavigation";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
-import { SkipLinks } from "@/components/a11y/SkipLinks";
+import { SkipLinks } from "@/components/accessibility/SkipLinks";
 import { FocusModeToggle, FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";

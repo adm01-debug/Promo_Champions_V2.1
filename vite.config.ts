@@ -15,23 +15,37 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force single React instance to prevent "Cannot read properties of null" errors
+      "react": path.resolve(__dirname, "node_modules/react"),
+      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
     },
     dedupe: [
       "react", 
       "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "@tanstack/react-query",
+      "framer-motion",
     ],
   },
   optimizeDeps: {
     include: [
       "react",
       "react-dom",
+      "react/jsx-runtime",
+      "@tanstack/react-query",
     ],
+    // Force re-optimization to clear any cached duplicates
+    force: true,
   },
   build: {
     target: "esnext",
     outDir: "dist",
     assetsDir: "assets",
     sourcemap: mode === "development",
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
   test: {
     globals: true,
