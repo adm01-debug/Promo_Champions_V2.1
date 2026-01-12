@@ -231,7 +231,9 @@ export const useMFA = () => {
         });
 
       // Em produção, enviar SMS via Twilio/etc
-      console.log('SMS code (dev only):', code);
+      if (import.meta.env.DEV) {
+        console.log('SMS code (dev only):', code);
+      }
       toast.info(`Código enviado para ${phoneNumber}`);
       
       return true;
