@@ -50,7 +50,9 @@ export const KnownDevices = () => {
       if (error) throw error;
       setDevices(data || []);
     } catch (error) {
-      console.error("Error fetching devices:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error fetching devices:", error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +74,9 @@ export const KnownDevices = () => {
       toast.success(currentTrust ? "Dispositivo removido dos confiáveis" : "Dispositivo marcado como confiável");
       fetchDevices();
     } catch (error) {
-      console.error("Error updating device:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error updating device:", error);
+      }
       toast.error("Erro ao atualizar dispositivo");
     }
   };
@@ -89,7 +93,9 @@ export const KnownDevices = () => {
       toast.success("Dispositivo removido");
       fetchDevices();
     } catch (error) {
-      console.error("Error removing device:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error removing device:", error);
+      }
       toast.error("Erro ao remover dispositivo");
     }
   };

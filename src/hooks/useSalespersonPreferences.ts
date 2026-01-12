@@ -39,7 +39,9 @@ export function useSalespersonPreferences() {
         .maybeSingle();
 
       if (error) {
-        console.error('Error fetching preferences:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error fetching preferences:', error);
+        }
         return null;
       }
 
@@ -90,7 +92,9 @@ export function useSalespersonPreferences() {
       toast.success('Preferências atualizadas!');
     },
     onError: (error) => {
-      console.error('Error updating preferences:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error updating preferences:', error);
+      }
       toast.error('Erro ao atualizar preferências');
     },
   });

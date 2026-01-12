@@ -247,7 +247,7 @@ export const useSessionManagement = () => {
 
       if (needsRefresh) {
         const refreshed = await refreshSession();
-        if (refreshed) {
+        if (refreshed && import.meta.env.DEV) {
           console.log('Session refreshed automatically');
         }
       }

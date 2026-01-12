@@ -31,7 +31,9 @@ export function useCircuitBreakerHistory(circuitName?: string, limit = 50) {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching circuit breaker history:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching circuit breaker history:", error);
+        }
         throw error;
       }
 
@@ -64,7 +66,9 @@ export function useLogCircuitBreakerEvent() {
       }]);
 
       if (error) {
-        console.error("Error logging circuit breaker event:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error logging circuit breaker event:", error);
+        }
         throw error;
       }
     },
@@ -89,7 +93,9 @@ export function useDeleteOldCircuitBreakerEvents() {
         .lt("created_at", cutoffDate.toISOString());
 
       if (error) {
-        console.error("Error deleting old circuit breaker events:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error deleting old circuit breaker events:", error);
+        }
         throw error;
       }
     },
@@ -113,7 +119,9 @@ export function useCircuitBreakerStats() {
         .gte("created_at", oneDayAgo.toISOString());
 
       if (error) {
-        console.error("Error fetching circuit breaker stats:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching circuit breaker stats:", error);
+        }
         throw error;
       }
 
@@ -166,7 +174,9 @@ export function useCircuitBreakerTrends(days = 7, circuitFilter?: string) {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching circuit breaker trends:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching circuit breaker trends:", error);
+        }
         throw error;
       }
 
@@ -248,7 +258,9 @@ export function useCircuitBreakerNames(days = 30) {
         .gte("created_at", startDate.toISOString());
 
       if (error) {
-        console.error("Error fetching circuit names:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching circuit names:", error);
+        }
         throw error;
       }
 

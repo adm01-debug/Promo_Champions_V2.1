@@ -34,10 +34,14 @@ export function usePushNotifications() {
       const registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/'
       });
-      console.log('Service Worker registered:', registration);
+      if (import.meta.env.DEV) {
+        console.log('Service Worker registered:', registration);
+      }
       return registration;
     } catch (error) {
-      console.error('Service Worker registration failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Service Worker registration failed:', error);
+      }
       return null;
     }
   }, []);
@@ -52,7 +56,9 @@ export function usePushNotifications() {
       if (error) throw error;
       return data.vapidPublicKey;
     } catch (error) {
-      console.error('Failed to get VAPID key:', error);
+      if (import.meta.env.DEV) {
+        console.error('Failed to get VAPID key:', error);
+      }
       return null;
     }
   }, []);
@@ -137,7 +143,9 @@ export function usePushNotifications() {
       setState(prev => ({ ...prev, isSubscribed: true, isLoading: false }));
       return true;
     } catch (error) {
-      console.error('Push subscription failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Push subscription failed:', error);
+      }
       // Fall back to browser notifications
       if (Notification.permission === 'granted') {
         toast.success('Notificações do navegador ativadas');
@@ -176,7 +184,9 @@ export function usePushNotifications() {
       setState(prev => ({ ...prev, isSubscribed: false, isLoading: false }));
       return true;
     } catch (error) {
-      console.error('Push unsubscribe failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Push unsubscribe failed:', error);
+      }
       toast.error('Erro ao desativar notificações');
       setState(prev => ({ ...prev, isLoading: false }));
       return false;

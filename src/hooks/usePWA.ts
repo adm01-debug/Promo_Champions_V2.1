@@ -127,7 +127,9 @@ export function usePWA(): UsePWAReturn {
       
       return false;
     } catch (error) {
-      console.error('Install failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Install failed:', error);
+      }
       return false;
     }
   }, [deferredPrompt]);
@@ -143,7 +145,11 @@ export function usePWA(): UsePWAReturn {
   // Check for updates
   const checkForUpdates = useCallback(() => {
     if (registration) {
-      registration.update().catch(console.error);
+      registration.update().catch((error) => {
+        if (import.meta.env.DEV) {
+          console.error('Update check failed:', error);
+        }
+      });
     }
   }, [registration]);
 
