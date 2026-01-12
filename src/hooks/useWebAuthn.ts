@@ -76,7 +76,9 @@ export function useWebAuthn(): UseWebAuthnReturn {
       if (error) throw error;
       setCredentials(data.credentials || []);
     } catch (error) {
-      console.error('Error loading credentials:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error loading credentials:', error);
+      }
     }
   }, [user?.id]);
 
@@ -162,7 +164,9 @@ export function useWebAuthn(): UseWebAuthnReturn {
       await loadCredentials();
       return true;
     } catch (error: any) {
-      console.error('Passkey registration error:', error);
+      if (import.meta.env.DEV) {
+        console.error('Passkey registration error:', error);
+      }
       
       if (error.name === 'NotAllowedError') {
         toast.error('Registro cancelado pelo usuário');
@@ -257,7 +261,9 @@ export function useWebAuthn(): UseWebAuthnReturn {
           });
           
           if (signInError) {
-            console.error('Sign in error:', signInError);
+            if (import.meta.env.DEV) {
+              console.error('Sign in error:', signInError);
+            }
             // Try alternative sign in method
           }
         }
@@ -266,7 +272,9 @@ export function useWebAuthn(): UseWebAuthnReturn {
       toast.success('Login com passkey realizado!');
       return true;
     } catch (error: any) {
-      console.error('Passkey login error:', error);
+      if (import.meta.env.DEV) {
+        console.error('Passkey login error:', error);
+      }
       
       if (error.name === 'NotAllowedError') {
         toast.error('Autenticação cancelada pelo usuário');
@@ -303,7 +311,9 @@ export function useWebAuthn(): UseWebAuthnReturn {
       await loadCredentials();
       return true;
     } catch (error: any) {
-      console.error('Error deleting passkey:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error deleting passkey:', error);
+      }
       toast.error(error.message || 'Erro ao remover passkey');
       return false;
     } finally {

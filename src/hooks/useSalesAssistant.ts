@@ -177,7 +177,9 @@ export const useSalesAssistant = (
       .order('created_at', { ascending: true });
     
     if (error) {
-      console.error('Error loading conversation:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error loading conversation:', error);
+      }
       return;
     }
     
@@ -208,7 +210,9 @@ export const useSalesAssistant = (
       .single();
     
     if (error) {
-      console.error('Error creating conversation:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error creating conversation:', error);
+      }
       return null;
     }
     
@@ -232,7 +236,9 @@ export const useSalesAssistant = (
       });
     
     if (error) {
-      console.error('Error saving message:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error saving message:', error);
+      }
     }
     
     // Update conversation timestamp
@@ -337,7 +343,9 @@ export const useSalesAssistant = (
       .ilike('content', `%${query}%`);
     
     if (msgError) {
-      console.error('Error searching messages:', msgError);
+      if (import.meta.env.DEV) {
+        console.error('Error searching messages:', msgError);
+      }
       return [];
     }
     
@@ -375,7 +383,9 @@ export const useSalesAssistant = (
       .order('updated_at', { ascending: false });
     
     if (convError) {
-      console.error('Error fetching conversations:', convError);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching conversations:', convError);
+      }
       return [];
     }
     

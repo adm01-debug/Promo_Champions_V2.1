@@ -96,7 +96,9 @@ export default function HistoricoDesafiosDiarios() {
       queryClient.invalidateQueries({ queryKey: ['daily-challenges'] });
       queryClient.invalidateQueries({ queryKey: ['daily-challenges-history'] });
     } catch (error) {
-      console.error('Error generating daily challenges:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error generating daily challenges:', error);
+      }
       toast.error('Erro ao gerar desafios', {
         description: 'Tente novamente mais tarde'
       });

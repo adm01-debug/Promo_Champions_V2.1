@@ -33,7 +33,9 @@ async function checkLeakedPassword(password: string): Promise<{ leaked: boolean;
     });
 
     if (!response.ok) {
-      console.error('HIBP API error:', response.status);
+      if (import.meta.env.DEV) {
+        console.error('HIBP API error:', response.status);
+      }
       return { leaked: false, count: 0 };
     }
 
@@ -50,7 +52,9 @@ async function checkLeakedPassword(password: string): Promise<{ leaked: boolean;
 
     return { leaked: false, count: 0 };
   } catch (error) {
-    console.error('Error checking leaked password:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error checking leaked password:', error);
+    }
     return { leaked: false, count: 0 };
   }
 }

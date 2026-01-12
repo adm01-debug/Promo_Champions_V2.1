@@ -32,7 +32,9 @@ export function useUserRoles() {
         .maybeSingle();
 
       if (error) {
-        console.error("Error fetching user role:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching user role:", error);
+        }
         return null;
       }
 
@@ -51,7 +53,9 @@ export function useUserRoles() {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching all user roles:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching all user roles:", error);
+        }
         return [];
       }
 
@@ -79,7 +83,9 @@ export function useUserRoles() {
       toast.success("Role atualizada com sucesso");
     },
     onError: (error) => {
-      console.error("Error updating role:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error updating role:", error);
+      }
       toast.error("Erro ao atualizar role. Apenas admins podem fazer isso.");
     },
   });

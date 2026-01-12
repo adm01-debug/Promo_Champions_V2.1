@@ -92,7 +92,9 @@ export const useCreateSale = () => {
         playSoundForCategory('newSale');
       },
       onError: (error) => {
-        console.error("Error creating sale:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error creating sale:", error);
+        }
         toast.error("Erro ao criar venda após múltiplas tentativas");
       },
     }

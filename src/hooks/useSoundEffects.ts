@@ -149,7 +149,9 @@ export function useSoundEffects(options: UseSoundEffectsOptions = {}) {
       }, totalDuration * 1000);
 
     } catch (error) {
-      console.warn('Sound effect failed:', error);
+      if (import.meta.env.DEV) {
+        console.warn('Sound effect failed:', error);
+      }
       isPlayingRef.current = false;
     }
   }, []);

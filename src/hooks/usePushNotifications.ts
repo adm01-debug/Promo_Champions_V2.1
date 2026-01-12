@@ -238,7 +238,9 @@ export function usePushNotifications() {
             isSubscribed = !!subscription;
           }
         } catch (error) {
-          console.error('Error checking subscription:', error);
+          if (import.meta.env.DEV) {
+            console.error('Error checking subscription:', error);
+          }
         }
       }
 

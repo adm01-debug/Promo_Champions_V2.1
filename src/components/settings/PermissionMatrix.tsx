@@ -127,7 +127,9 @@ export function PermissionMatrix() {
       toast.success("Permissão atualizada");
     },
     onError: (error) => {
-      console.error("Error toggling permission:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error toggling permission:", error);
+      }
       toast.error("Erro ao atualizar permissão");
     },
   });
@@ -159,7 +161,9 @@ export function PermissionMatrix() {
       toast.success("Permissões atualizadas");
     },
     onError: (error) => {
-      console.error("Error bulk toggling:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error bulk toggling:", error);
+      }
       toast.error("Erro ao atualizar permissões");
     },
   });

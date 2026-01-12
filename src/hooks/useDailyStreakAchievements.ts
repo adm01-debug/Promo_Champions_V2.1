@@ -32,7 +32,9 @@ export function useCurrentStreak(salespersonId?: string) {
         .rpc('calculate_daily_challenge_streak', { p_salesperson_id: salespersonId });
       
       if (error) {
-        console.error('Error calculating streak:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error calculating streak:', error);
+        }
         return 0;
       }
       
@@ -165,7 +167,9 @@ export function useCheckAndAwardStreakMilestone() {
       queryClient.invalidateQueries({ queryKey: ['xp-history'] });
     },
     onError: (error) => {
-      console.error('Error checking streak milestones:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error checking streak milestones:', error);
+      }
     },
   });
 }
