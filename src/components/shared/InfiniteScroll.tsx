@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef, useCallback, useState } from 'react';
+import { FC, ReactNode, useEffect, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { useIntersection } from '@/hooks/useIntersection';
@@ -31,8 +31,7 @@ export const InfiniteScroll: FC<InfiniteScrollProps> = ({
   emptyMessage,
   isEmpty = false,
 }) => {
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const { isIntersecting } = useIntersection(sentinelRef, {
+  const [sentinelRef, isIntersecting] = useIntersection<HTMLDivElement>({
     threshold,
     rootMargin,
   });
