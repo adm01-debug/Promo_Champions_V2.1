@@ -1,1 +1,0 @@
-export function PendingTasksWidget({tasks}: any) { return <div className="bg-white p-4 rounded shadow"><h3 className="font-bold mb-4">Tarefas Pendentes</h3><div className="space-y-2">{tasks.map((t: any) => <div key={t.id} className="flex items-center gap-2"><input type="checkbox" /><span className="text-sm">{t.title}</span></div>)}</div></div>; }
