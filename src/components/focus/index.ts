@@ -1,1 +1,1 @@
-export { FocusModeToggle } from './FocusModeToggle';
+export { FocusModeToggle, FocusModeBreakReminder } from './FocusModeToggle';
