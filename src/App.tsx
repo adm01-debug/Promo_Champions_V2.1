@@ -93,9 +93,9 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <PageErrorBoundary>
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <PageErrorBoundary>
         <TooltipProvider>
           <XPToastProvider>
             <EducationalTooltipsProvider>
@@ -242,9 +242,9 @@ const App = () => (
             </EducationalTooltipsProvider>
           </XPToastProvider>
         </TooltipProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
-  </PageErrorBoundary>
+      </PageErrorBoundary>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
