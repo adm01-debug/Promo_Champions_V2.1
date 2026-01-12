@@ -77,7 +77,9 @@ export function useUndoable<T = void>(options: UseUndoableOptions = {}) {
       setPendingAction(null);
       return true;
     } catch (error) {
-      console.error('Undo failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Undo failed:', error);
+      }
       return false;
     }
   }, [pendingAction]);

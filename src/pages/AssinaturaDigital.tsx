@@ -14,6 +14,16 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { 
   Table, 
   TableBody, 
@@ -48,6 +58,8 @@ export default function AssinaturaDigital() {
   } = useDigitalSignatures();
   
   const [isOpen, setIsOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
   const [newDoc, setNewDoc] = useState({
     title: '',
     description: '',
@@ -77,9 +89,16 @@ export default function AssinaturaDigital() {
   };
 
   const handleDeleteDocument = (docId: string) => {
-    if (confirm('Tem certeza que deseja excluir este documento?')) {
-      deleteDocument.mutate(docId);
+    setDocumentToDelete(docId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteDocument = () => {
+    if (documentToDelete) {
+      deleteDocument.mutate(documentToDelete);
     }
+    setDeleteDialogOpen(false);
+    setDocumentToDelete(null);
   };
 
   const getStatusBadge = (status: string) => {
@@ -388,6 +407,29 @@ export default function AssinaturaDigital() {
           </Card>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir documento?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este documento? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDocumentToDelete(null)}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteDocument}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
