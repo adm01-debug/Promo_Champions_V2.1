@@ -74,7 +74,9 @@ export const useMFA = () => {
       if (error) throw error;
       setSettings(data as MFASettings | null);
     } catch (error) {
-      console.error('Error fetching MFA settings:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching MFA settings:', error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +97,9 @@ export const useMFA = () => {
       if (error) throw error;
       setAttempts((data || []) as MFAVerificationAttempt[]);
     } catch (error) {
-      console.error('Error fetching MFA attempts:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching MFA attempts:', error);
+      }
     }
   }, [user]);
 
@@ -131,7 +135,9 @@ export const useMFA = () => {
       
       return { secret, qrUrl };
     } catch (error) {
-      console.error('Error initializing TOTP:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error initializing TOTP:', error);
+      }
       toast.error('Erro ao inicializar TOTP');
       return null;
     }
@@ -196,7 +202,9 @@ export const useMFA = () => {
       toast.success('TOTP desativado');
       return true;
     } catch (error) {
-      console.error('Error disabling TOTP:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error disabling TOTP:', error);
+      }
       toast.error('Erro ao desativar TOTP');
       return false;
     }
@@ -238,7 +246,9 @@ export const useMFA = () => {
       
       return true;
     } catch (error) {
-      console.error('Error setting up SMS:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error setting up SMS:', error);
+      }
       toast.error('Erro ao configurar SMS');
       return false;
     }
@@ -299,7 +309,9 @@ export const useMFA = () => {
         return false;
       }
     } catch (error) {
-      console.error('Error verifying SMS:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error verifying SMS:', error);
+      }
       toast.error('Erro ao verificar SMS');
       return false;
     }
@@ -325,7 +337,9 @@ export const useMFA = () => {
       toast.success('SMS desativado');
       return true;
     } catch (error) {
-      console.error('Error disabling SMS:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error disabling SMS:', error);
+      }
       toast.error('Erro ao desativar SMS');
       return false;
     }
@@ -415,7 +429,9 @@ export const useMFA = () => {
       toast.success('Códigos de backup regenerados');
       return backupCodes;
     } catch (error) {
-      console.error('Error regenerating backup codes:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error regenerating backup codes:', error);
+      }
       toast.error('Erro ao regenerar códigos');
       return null;
     }
@@ -437,7 +453,9 @@ export const useMFA = () => {
       toast.success(`Método preferido: ${method.toUpperCase()}`);
       return true;
     } catch (error) {
-      console.error('Error setting preferred method:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error setting preferred method:', error);
+      }
       return false;
     }
   }, [user, fetchSettings]);

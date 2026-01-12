@@ -42,7 +42,9 @@ export function useLoginRateLimiter() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao verificar tentativas de login:", error);
+      if (import.meta.env.DEV) {
+        console.error("Erro ao verificar tentativas de login:", error);
+      }
       return { canAttempt: true, lockoutStatus: { isLocked: false, remainingSeconds: 0, attempts: 0 } };
     }
 
