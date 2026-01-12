@@ -17,6 +17,7 @@ import { NotificationBadge } from "@/components/ui/NotificationBadge";
 import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { InstallPrompt, UpdatePrompt, OfflineIndicator } from "@/components/pwa";
 interface MainLayoutProps {
   children: React.ReactNode;
 }
@@ -34,9 +35,11 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <SidebarProvider>
+      {/* Offline indicator at top */}
+      <OfflineIndicator />
+      
       {/* Skip Links for Accessibility */}
       <SkipLinks />
-      
       <div className="min-h-screen flex w-full bg-background">
         {/* Hide sidebar on mobile */}
         <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
@@ -101,6 +104,12 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* Focus mode break reminder */}
         <FocusModeBreakReminder />
+        
+        {/* PWA Install Prompt */}
+        <InstallPrompt variant="card" />
+        
+        {/* PWA Update Prompt */}
+        <UpdatePrompt />
       </div>
     </SidebarProvider>
   );
