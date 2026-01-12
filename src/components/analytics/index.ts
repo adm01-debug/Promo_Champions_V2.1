@@ -18,25 +18,8 @@ export { LeadSourceTrendChart } from './LeadSourceTrendChart';
 export { ObjectionsLibrary } from './ObjectionsLibrary';
 export { PerformanceComparison } from './PerformanceComparison';
 export { ProductMix } from './ProductMix';
-export { RevenueChart } from './RevenueChart';
 export { SalesForecast } from './SalesForecast';
 export { SalespersonActivityTable } from './SalespersonActivityTable';
 export { SalespersonCoaching } from './SalespersonCoaching';
 export { WinLossAnalysis } from './WinLossAnalysis';
-
-// New KPI and Insight components
-export { KPICard, InsightCard, MetricComparison, ProgressMetric } from './KPIComponents';
-export { TrendAnalysis, QuickInsights, GoalProgressWidget } from './InsightComponents';
-export { TopProductsWidget, ProductPerformanceGrid } from './TopProductsWidget';
-export { SalesPerformanceCard, TeamPerformanceTable } from './SalesPerformanceCard';
 export { ConversionAnalysis, WinLossReasonChart } from './ConversionAnalysis';
-
-// New advanced analytics components
-export { SalesVelocityCard } from './SalesVelocityCard';
-export { PredictiveScoringCard } from './PredictiveScoringCard';
-export { WinLossAnalysisCard } from './WinLossAnalysisCard';
-export { ForecastAccuracyCard } from './ForecastAccuracyCard';
-export { RevenueIntelligenceCard } from './RevenueIntelligenceCard';
-export { CustomerHealthCard } from './CustomerHealthCard';
-export { CompetitiveWinRateCard } from './CompetitiveWinRateCard';
-export { TerritoryManagementCard } from './TerritoryManagementCard';
