@@ -9,13 +9,15 @@ import { cn } from '@/lib/utils';
 
 interface KPICardProps {
   title: string;
-  value: number;
+  value: number | string;
   previousValue?: number;
+  change?: number;
+  progress?: number;
   format?: 'number' | 'currency' | 'percentage';
   currency?: string;
   icon?: LucideIcon;
   sparklineData?: number[];
-  trend?: {
+  trend?: 'up' | 'down' | 'neutral' | {
     value: number;
     label?: string;
   };
@@ -34,6 +36,8 @@ export const KPICard: FC<KPICardProps> = ({
   title,
   value,
   previousValue,
+  change,
+  progress,
   format = 'number',
   currency = 'R$',
   icon: Icon,
@@ -83,7 +87,10 @@ export const KPICard: FC<KPICardProps> = ({
   const styles = variantStyles[variant];
   const sizes = sizeStyles[size];
 
+  const numericValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) || 0 : value;
+
   const formatValue = () => {
+    if (typeof value === 'string') return value;
     switch (format) {
       case 'currency':
         return `${currency} ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
@@ -94,7 +101,9 @@ export const KPICard: FC<KPICardProps> = ({
     }
   };
 
-  const targetProgress = target ? (value / target.value) * 100 : null;
+  const targetProgress = target ? (numericValue / target.value) * 100 : progress ?? null;
+  
+  const trendValue = typeof trend === 'object' ? trend.value : change;
 
   return (
     <motion.div
@@ -136,15 +145,13 @@ export const KPICard: FC<KPICardProps> = ({
 
           {/* Value */}
           <div className="flex items-baseline gap-2 mb-2">
-            <AnimatedCounter
-              value={value}
-              formatter={() => formatValue()}
-              className={cn('font-bold', sizes.value)}
-            />
+            <span className={cn('font-bold', sizes.value)}>
+              {formatValue()}
+            </span>
             
-            {(trend || previousValue !== undefined) && (
+            {(trendValue !== undefined || previousValue !== undefined) && (
               <TrendIndicator
-                value={trend?.value ?? value}
+                value={trendValue ?? numericValue}
                 previousValue={previousValue}
                 size="sm"
               />
