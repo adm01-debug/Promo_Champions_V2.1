@@ -54,7 +54,9 @@ export function AccessDeniedLogs() {
         });
       }
     } catch (error: any) {
-      console.error("Error testing alert:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error testing alert:", error);
+      }
       toast({
         title: "Erro ao testar alerta",
         description: error.message || "Não foi possível executar o teste.",

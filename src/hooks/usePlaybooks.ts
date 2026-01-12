@@ -143,7 +143,9 @@ export const useTogglePlaybookItem = () => {
       queryClient.invalidateQueries({ queryKey: ["playbook-progress", variables.saleId] });
     },
     onError: (error) => {
-      console.error("Error toggling playbook item:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error toggling playbook item:", error);
+      }
       toast.error("Erro ao atualizar checklist");
     },
   });
@@ -168,7 +170,9 @@ export const useCreatePlaybook = () => {
       toast.success("Playbook criado com sucesso");
     },
     onError: (error) => {
-      console.error("Error creating playbook:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error creating playbook:", error);
+      }
       toast.error("Erro ao criar playbook");
     },
   });
@@ -198,7 +202,9 @@ export const useCreatePlaybookItem = () => {
       toast.success("Item adicionado ao playbook");
     },
     onError: (error) => {
-      console.error("Error creating playbook item:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error creating playbook item:", error);
+      }
       toast.error("Erro ao adicionar item");
     },
   });
@@ -221,7 +227,9 @@ export const useDeletePlaybookItem = () => {
       toast.success("Item removido do playbook");
     },
     onError: (error) => {
-      console.error("Error deleting playbook item:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error deleting playbook item:", error);
+      }
       toast.error("Erro ao remover item");
     },
   });

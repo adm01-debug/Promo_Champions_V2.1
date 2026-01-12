@@ -90,7 +90,9 @@ export function GamificationExportButton({
       exportGamificationToCSV(exportData);
       toast.success("Relatório exportado com sucesso!");
     } catch (error) {
-      console.error("Export error:", error);
+      if (import.meta.env.DEV) {
+        console.error("Export error:", error);
+      }
       toast.error("Erro ao exportar relatório");
     } finally {
       setIsExporting(false);
@@ -122,7 +124,9 @@ export function GamificationExportButton({
       exportFullGamificationReport(exportData, "Todos os tempos");
       toast.success("Relatório completo exportado!");
     } catch (error) {
-      console.error("Export error:", error);
+      if (import.meta.env.DEV) {
+        console.error("Export error:", error);
+      }
       toast.error("Erro ao exportar relatório");
     } finally {
       setIsExporting(false);
@@ -147,7 +151,9 @@ export function GamificationExportButton({
       exportXPHistoryToCSV(salespersonName || "Vendedor", exportData);
       toast.success("Histórico de XP exportado!");
     } catch (error) {
-      console.error("Export error:", error);
+      if (import.meta.env.DEV) {
+        console.error("Export error:", error);
+      }
       toast.error("Erro ao exportar histórico");
     } finally {
       setIsExporting(false);
@@ -171,7 +177,9 @@ export function GamificationExportButton({
       exportAchievementsToCSV(salespersonName || "Vendedor", exportData);
       toast.success("Conquistas exportadas!");
     } catch (error) {
-      console.error("Export error:", error);
+      if (import.meta.env.DEV) {
+        console.error("Export error:", error);
+      }
       toast.error("Erro ao exportar conquistas");
     } finally {
       setIsExporting(false);

@@ -46,7 +46,9 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
       queryClient.invalidateQueries({ queryKey: ['daily-challenges'] });
       queryClient.invalidateQueries({ queryKey: ['daily-challenge-progress'] });
     } catch (error) {
-      console.error('Error generating daily challenges:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error generating daily challenges:', error);
+      }
       toast.error('Erro ao gerar desafios', {
         description: 'Tente novamente mais tarde'
       });

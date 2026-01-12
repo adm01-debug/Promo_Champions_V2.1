@@ -203,7 +203,9 @@ export function useSmartSuggestions(options: UseSmartSuggestionsOptions = {}) {
 
       setSuggestions(sortedSuggestions);
     } catch (err) {
-      console.error('Error generating suggestions:', err);
+      if (import.meta.env.DEV) {
+        console.error('Error generating suggestions:', err);
+      }
       setError('Erro ao carregar sugestões');
     } finally {
       setIsLoading(false);

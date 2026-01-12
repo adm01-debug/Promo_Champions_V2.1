@@ -180,7 +180,9 @@ export function useUpsertActivityGoal() {
     },
     onError: (error) => {
       toast.error("Erro ao salvar metas");
-      console.error("Error saving activity goals:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error saving activity goals:", error);
+      }
     },
   });
 }

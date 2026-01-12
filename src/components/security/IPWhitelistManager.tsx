@@ -106,7 +106,9 @@ export function IPWhitelistManager() {
       setValidationError(null);
     },
     onError: (error: any) => {
-      console.error("Error adding IP:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error adding IP:", error);
+      }
       if (error.code === "23505") {
         toast.error("Este IP já está no whitelist");
       } else {
@@ -126,7 +128,9 @@ export function IPWhitelistManager() {
       toast.success("IP removido do whitelist");
     },
     onError: (error) => {
-      console.error("Error removing IP:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error removing IP:", error);
+      }
       toast.error("Erro ao remover IP");
     },
   });

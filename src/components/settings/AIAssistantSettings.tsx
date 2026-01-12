@@ -93,7 +93,9 @@ export function AIAssistantSettings() {
         await audio.play();
       }
     } catch (error) {
-      console.error('Error testing voice:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error testing voice:', error);
+      }
       toast({
         title: 'Erro ao testar voz',
         description: 'Não foi possível reproduzir o áudio de teste.',
