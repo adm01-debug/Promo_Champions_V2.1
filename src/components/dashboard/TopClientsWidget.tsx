@@ -1,1 +1,0 @@
-export function TopClientsWidget({clients}: any) { return <div className="bg-white p-4 rounded shadow"><h3 className="font-bold mb-4">Top Clientes</h3><div className="space-y-2">{clients.map((c: any) => <div key={c.id} className="flex justify-between"><span>{c.name}</span><span className="font-bold">{c.revenue}</span></div>)}</div></div>; }

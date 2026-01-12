@@ -1,1 +1,0 @@
-export function ActivityWidget({count, change}: any) { return <div className="bg-white p-4 rounded shadow"><h3 className="text-sm text-gray-600">Atividades</h3><p className="text-3xl font-bold mt-2">{count}</p><p className={`text-sm mt-1 ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>{change > 0 ? '↑' : '↓'} {Math.abs(change)}%</p></div>; }
