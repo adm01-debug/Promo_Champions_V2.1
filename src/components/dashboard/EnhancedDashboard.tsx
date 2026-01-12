@@ -188,10 +188,10 @@ export const EnhancedDashboard: FC<EnhancedDashboardProps> = ({
             </div>
             <SparklineChart 
               data={sparklineData}
-              color="primary"
+              color="hsl(var(--primary))"
               height={80}
               showArea
-              animated
+              animate
             />
           </Card>
         </StaggerItem>
