@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef, useCallback } from 'react';
+import { FC, ReactNode, useEffect, useRef, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { useIntersection } from '@/hooks/useIntersection';
@@ -146,4 +146,4 @@ export const usePaginatedInfiniteScroll = <T,>(
   };
 };
 
-import { useState } from 'react';
+

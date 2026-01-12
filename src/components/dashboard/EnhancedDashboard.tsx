@@ -139,8 +139,8 @@ export const EnhancedDashboard: FC<EnhancedDashboardProps> = ({
               value={goalProgress} 
               max={100} 
               size="md"
-              label={`${goalProgress}%`}
-              color={goalProgress >= 80 ? 'success' : goalProgress >= 50 ? 'warning' : 'error'}
+              showValue
+              thresholds={{ warning: 50, danger: 80 }}
             />
           </Card>
         </StaggerItem>
@@ -155,7 +155,7 @@ export const EnhancedDashboard: FC<EnhancedDashboardProps> = ({
               value={conversionRate} 
               max={100}
               size="md"
-              showLabel
+              showValue
               label={`${conversionRate}%`}
             />
           </Card>
@@ -173,9 +173,8 @@ export const EnhancedDashboard: FC<EnhancedDashboardProps> = ({
               value={activitiesCompleted} 
               max={activitiesTotal}
               size="md"
-              showLabel
-              color="primary"
-              trackWidth={6}
+              showValue
+              color="hsl(var(--primary))"
               strokeWidth={8}
             />
           </Card>
