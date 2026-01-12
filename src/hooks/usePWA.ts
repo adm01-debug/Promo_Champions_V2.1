@@ -88,7 +88,9 @@ export function usePWA(): UsePWAReturn {
           });
         })
         .catch((error) => {
-          console.warn('Service Worker registration failed:', error);
+          if (import.meta.env.DEV) {
+            console.warn('Service Worker registration failed:', error);
+          }
         });
     }
   }, []);
@@ -110,7 +112,9 @@ export function usePWA(): UsePWAReturn {
   // Install app
   const installApp = useCallback(async (): Promise<boolean> => {
     if (!deferredPrompt) {
-      console.warn('No install prompt available');
+      if (import.meta.env.DEV) {
+        console.warn('No install prompt available');
+      }
       return false;
     }
 

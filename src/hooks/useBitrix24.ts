@@ -41,7 +41,9 @@ export function useBitrix24() {
       const { data, error } = await supabase.functions.invoke("bitrix24-oauth");
       
       if (error) {
-        console.error("Error checking Bitrix24 status:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error checking Bitrix24 status:", error);
+        }
         return { connected: false, needsReauth: false, domain: "" };
       }
       
@@ -60,7 +62,9 @@ export function useBitrix24() {
         .limit(20);
       
       if (error) {
-        console.error("Error fetching sync logs:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching sync logs:", error);
+        }
         return [];
       }
       
@@ -102,7 +106,9 @@ export function useBitrix24() {
       // Stop polling after 2 minutes
       setTimeout(() => clearInterval(pollInterval), 120000);
     } catch (error) {
-      console.error("Error getting auth URL:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error getting auth URL:", error);
+      }
       toast.error("Erro ao iniciar autorização");
     }
   };
