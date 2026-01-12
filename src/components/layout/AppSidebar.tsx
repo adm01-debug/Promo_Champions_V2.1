@@ -22,7 +22,7 @@ import {
   MoreHorizontal,
   ChevronDown
 } from "lucide-react";
-import { NavLink } from "@/components/NavLink";
+import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
