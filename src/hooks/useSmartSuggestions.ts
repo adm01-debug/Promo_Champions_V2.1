@@ -73,8 +73,17 @@ export function useSmartSuggestions(options: UseSmartSuggestionsOptions = {}) {
 
       if (goals && goals.length > 0) {
         const goal = goals[0];
-        const progressPercent = goal.target_value > 0 
-          ? (goal.current_value / goal.target_value) * 100 
+        
+        // Fetch current revenue for this month
+        const { data: salesData } = await supabase
+          .from('sales')
+          .select('amount')
+          .eq('status', 'completed')
+          .gte('created_at', currentMonth);
+        
+        const currentRevenue = salesData?.reduce((sum, s) => sum + (s.amount || 0), 0) || 0;
+        const progressPercent = goal.goal_amount > 0 
+          ? (currentRevenue / goal.goal_amount) * 100 
           : 0;
         
         const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
