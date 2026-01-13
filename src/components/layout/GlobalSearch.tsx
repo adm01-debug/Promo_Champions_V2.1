@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, User, Briefcase } from "lucide-react";
+import Fuse from "fuse.js";
 import { supabase } from "@/integrations/supabase/client";
 import {
   CommandDialog,
@@ -11,7 +12,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
-
 interface SearchResult {
   id: string;
   type: "deal" | "client";
@@ -28,13 +28,33 @@ export interface GlobalSearchHandle {
 export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [allData, setAllData] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useImperativeHandle(ref, () => ({
     open: () => setOpen(true),
   }));
+
+  // Fuse.js instance for fuzzy search
+  const fuse = useMemo(() => {
+    return new Fuse(allData, {
+      keys: ['title', 'subtitle'],
+      threshold: 0.4,
+      includeScore: true,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [allData]);
+
+  // Fuzzy search results
+  const results = useMemo(() => {
+    if (!query.trim()) {
+      return allData.slice(0, 15);
+    }
+    const fuseResults = fuse.search(query, { limit: 15 });
+    return fuseResults.map((result) => result.item);
+  }, [query, fuse, allData]);
 
   // Keyboard shortcut: Ctrl/Cmd + K
   useEffect(() => {
@@ -48,20 +68,14 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // Search logic
-  const performSearch = useCallback(async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      return;
-    }
-
+  // Load all searchable data when dialog opens
+  const loadSearchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const { data: sales, error } = await supabase
         .from("sales")
         .select("id, client_name, product_name, status, amount")
-        .or(`client_name.ilike.%${searchQuery}%,product_name.ilike.%${searchQuery}%`)
-        .limit(10);
+        .limit(100);
 
       if (error) throw error;
 
@@ -90,7 +104,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
         }
       });
 
-      setResults([...Array.from(clientsMap.values()), ...deals]);
+      setAllData([...Array.from(clientsMap.values()), ...deals]);
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error("Search error:", error);
@@ -100,12 +114,13 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     }
   }, []);
 
+  // Load data when dialog opens
   useEffect(() => {
-    const timer = setTimeout(() => {
-      performSearch(query);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [query, performSearch]);
+    if (open && allData.length === 0) {
+      loadSearchData();
+    }
+  }, [open, allData.length, loadSearchData]);
+
 
   const handleSelect = (result: SearchResult) => {
     setOpen(false);
