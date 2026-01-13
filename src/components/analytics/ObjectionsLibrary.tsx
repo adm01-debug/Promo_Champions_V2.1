@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import Fuse from 'fuse.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,10 +44,23 @@ export function ObjectionsLibrary() {
   const incrementUsage = useIncrementObjectionUsage();
   const deleteObjection = useDeleteObjection();
 
-  const filteredObjections = objections?.filter(obj => 
-    obj.objection.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    obj.response.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!objections || objections.length === 0) return null;
+    return new Fuse(objections, {
+      keys: ['objection', 'response', 'category'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [objections]);
+
+  const filteredObjections = useMemo(() => {
+    if (!objections) return [];
+    if (!searchTerm.trim()) return objections;
+    if (!fuse) return objections;
+    return fuse.search(searchTerm).map(result => result.item);
+  }, [objections, fuse, searchTerm]);
 
   const handleCopyResponse = async (id: string, response: string) => {
     await navigator.clipboard.writeText(response);

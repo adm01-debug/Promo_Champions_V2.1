@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProdutosLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
+import Fuse from "fuse.js";
 import { useProducts, useDeleteProduct, Product } from "@/hooks/useProducts";
 import { CreateProductDialog } from "@/components/products/CreateProductDialog";
 import { EditProductDialog } from "@/components/products/EditProductDialog";
@@ -13,7 +14,6 @@ import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { EmptyStateProducts } from "@/components/shared/EmptyStateProducts";
-
 const statusColors: Record<string, string> = {
   ativo: "bg-status-success/20 text-status-success border-status-success/30",
   pausado: "bg-warning/20 text-warning border-warning/30",
@@ -50,10 +50,24 @@ const Produtos = () => {
   const { data: products = [], isLoading } = useProducts();
   const deleteProduct = useDeleteProduct();
 
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!products || products.length === 0) return null;
+    return new Fuse(products, {
+      keys: ['name', 'category'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [products]);
+
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
     
-    let filtered = [...products];
+    // Apply fuzzy search
+    let filtered = searchTerm.trim() && fuse
+      ? fuse.search(searchTerm).map(result => result.item)
+      : [...products];
     
     // Apply category filter
     if (categoryFilter) {
@@ -84,7 +98,7 @@ const Produtos = () => {
           return 0;
       }
     });
-  }, [products, sortBy, categoryFilter, statusFilter]);
+  }, [products, fuse, searchTerm, sortBy, categoryFilter, statusFilter]);
 
   const {
     paginatedItems,

@@ -4,12 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
+import Fuse from "fuse.js";
 import { useSalesData } from "@/hooks/useSalesData";
 import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
-
 const statusColors: Record<string, string> = {
   concluída: "bg-status-success/20 text-status-success border-status-success/30",
   pendente: "bg-warning/20 text-warning border-warning/30",
@@ -37,12 +37,26 @@ const Vendas = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date_desc");
   const [statusFilter, setStatusFilter] = useState("");
-  const { data: sales, isLoading } = useSalesData(searchTerm);
+  const { data: sales, isLoading } = useSalesData("");
+
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!sales) return null;
+    return new Fuse(sales, {
+      keys: ['cliente', 'produto', 'id'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [sales]);
 
   const filteredAndSortedSales = useMemo(() => {
     if (!sales) return [];
     
-    let filtered = [...sales];
+    // Apply fuzzy search
+    let filtered = searchTerm.trim() && fuse
+      ? fuse.search(searchTerm).map(result => result.item)
+      : [...sales];
     
     // Apply status filter
     if (statusFilter) {
@@ -68,7 +82,7 @@ const Vendas = () => {
           return 0;
       }
     });
-  }, [sales, sortBy, statusFilter]);
+  }, [sales, fuse, searchTerm, sortBy, statusFilter]);
 
   const {
     paginatedItems,

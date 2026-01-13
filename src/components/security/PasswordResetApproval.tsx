@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Fuse from "fuse.js";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -152,11 +153,30 @@ export function PasswordResetApproval() {
   const approvedRequests = requests?.filter(r => r.status === "approved") || [];
   const rejectedRequests = requests?.filter(r => r.status === "rejected") || [];
 
-  const filteredRequests = requests?.filter(request => {
-    const matchesSearch = request.user_email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  }) || [];
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!requests || requests.length === 0) return null;
+    return new Fuse(requests, {
+      keys: ['user_email', 'ip_address'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [requests]);
+
+  const filteredRequests = useMemo(() => {
+    if (!requests) return [];
+    
+    let filtered = searchTerm.trim() && fuse
+      ? fuse.search(searchTerm).map(result => result.item)
+      : requests;
+    
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(r => r.status === statusFilter);
+    }
+    
+    return filtered;
+  }, [requests, fuse, searchTerm, statusFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
