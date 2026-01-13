@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Fuse from "fuse.js";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -186,11 +187,23 @@ export function PermissionMatrix() {
     return { total: resourcePerms.length, granted };
   };
 
-  const filteredPermissions = permissions?.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.resource.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!permissions || permissions.length === 0) return null;
+    return new Fuse(permissions, {
+      keys: ['name', 'description', 'resource', 'action'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [permissions]);
+
+  const filteredPermissions = useMemo(() => {
+    if (!permissions) return [];
+    if (!searchTerm.trim()) return permissions;
+    if (!fuse) return permissions;
+    return fuse.search(searchTerm).map(result => result.item);
+  }, [permissions, fuse, searchTerm]);
 
   const groupedPermissions = filteredPermissions?.reduce((acc, perm) => {
     if (!acc[perm.resource]) {

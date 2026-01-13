@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ClientesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
+import Fuse from "fuse.js";
 import { useClients, useDeleteClient, Client } from "@/hooks/useClients";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
@@ -35,10 +36,26 @@ const Clientes = () => {
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
 
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!clients || clients.length === 0) return null;
+    return new Fuse(clients, {
+      keys: ['name', 'company', 'email', 'phone'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [clients]);
+
   const sortedClients = useMemo(() => {
     if (!clients || clients.length === 0) return [];
     
-    return [...clients].sort((a, b) => {
+    // Apply fuzzy search
+    let filtered = searchTerm.trim() && fuse
+      ? fuse.search(searchTerm).map(result => result.item)
+      : [...clients];
+    
+    return filtered.sort((a, b) => {
       switch (sortBy) {
         case "name_asc":
           return a.name.localeCompare(b.name);
@@ -56,7 +73,7 @@ const Clientes = () => {
           return 0;
       }
     });
-  }, [clients, sortBy]);
+  }, [clients, fuse, searchTerm, sortBy]);
 
   const {
     paginatedItems,

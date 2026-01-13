@@ -13,6 +13,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { useState, useMemo, useEffect } from "react";
+import Fuse from "fuse.js";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -115,19 +116,25 @@ export function ActivityList({
     setStartDate(undefined);
     setEndDate(undefined);
   };
+
+  // Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    if (!activities || activities.length === 0) return null;
+    return new Fuse(activities, {
+      keys: ['contact_name', 'notes'],
+      threshold: 0.4,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }, [activities]);
+
   const filteredAndSortedActivities = useMemo(() => {
     if (!activities) return [];
     
-    let filtered = [...activities];
-
-    // Apply search filter
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      filtered = filtered.filter(a => 
-        (a.contact_name?.toLowerCase().includes(search)) ||
-        (a.notes?.toLowerCase().includes(search))
-      );
-    }
+    // Apply fuzzy search
+    let filtered = searchTerm.trim() && fuse
+      ? fuse.search(searchTerm).map(result => result.item)
+      : [...activities];
     
     // Apply type filter
     if (typeFilter) {
@@ -165,7 +172,7 @@ export function ActivityList({
           return 0;
       }
     });
-  }, [activities, sortBy, typeFilter, outcomeFilter, salespersonFilter, searchTerm, startDate, endDate]);
+  }, [activities, fuse, sortBy, typeFilter, outcomeFilter, salespersonFilter, searchTerm, startDate, endDate]);
 
   // Statistics for filtered activities
   const stats = useMemo(() => {
