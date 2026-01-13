@@ -33,3 +33,4 @@ export { useIdleDetection, formatIdleTime } from './useIdleDetection';
 export { useScrollPosition, useScrollTrigger } from './useScrollPosition';
 export { useCountdown, useStopwatch } from './useTimer';
 export { useDragAndDrop, useSortableList } from './useDragAndDrop';
+export { useFuzzySearch, fuzzySearch } from './useFuzzySearch';
