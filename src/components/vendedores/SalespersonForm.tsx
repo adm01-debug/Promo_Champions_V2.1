@@ -119,7 +119,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
     createMutation.mutate(data);
   };
 
-  const selectedRole = form.watch("role");
+  const _selectedRole = form.watch("role");
 
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) form.reset(); }}>

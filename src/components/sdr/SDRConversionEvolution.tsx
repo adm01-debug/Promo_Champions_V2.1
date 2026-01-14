@@ -23,7 +23,7 @@ const COLORS = [
   'hsl(var(--chart-5))',
 ];
 
-interface SDR {
+interface _SDR {
   id: string;
   name: string;
 }
