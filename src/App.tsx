@@ -91,8 +91,8 @@ const queryClient = new QueryClient({
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
-      <PageErrorBoundary>
-        <TooltipProvider>
+      <TooltipProvider delayDuration={0}>
+        <PageErrorBoundary>
           <XPToastProvider>
             <Toaster />
             <Sonner />
@@ -233,8 +233,8 @@ const App = () => (
               </KeyboardShortcutsProvider>
             </BrowserRouter>
           </XPToastProvider>
-        </TooltipProvider>
-      </PageErrorBoundary>
+        </PageErrorBoundary>
+      </TooltipProvider>
     </QueryClientProvider>
   </HelmetProvider>
 );
