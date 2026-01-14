@@ -1,7 +1,8 @@
 // Service Worker for Offline Support
 // Version incremented to force cache invalidation
-const CACHE_NAME = 'salespro-v2';
-const RUNTIME_CACHE = 'salespro-runtime-v2';
+const CACHE_VERSION = 3;
+const CACHE_NAME = `salespro-v${CACHE_VERSION}`;
+const RUNTIME_CACHE = `salespro-runtime-v${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [
   '/',
