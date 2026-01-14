@@ -23,10 +23,7 @@ const COLORS = [
   'hsl(var(--chart-5))',
 ];
 
-interface _SDR {
-  id: string;
-  name: string;
-}
+// SDR interface is defined inline in the query result
 
 interface SDRDetails {
   meetings: number;
