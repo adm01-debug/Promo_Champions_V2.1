@@ -26,8 +26,6 @@ import {
   Mail,
   Calendar,
   Trophy,
-  Flame,
-  Target,
   TrendingUp,
   Sparkles,
   Zap
@@ -45,9 +43,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  FunnelChart,
-  Funnel,
-  LabelList
 } from "recharts";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -62,7 +57,7 @@ const BISDR = () => {
     dateRange: filters.dateRange 
   });
 
-  const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
+  
 
   return (
     <SkeletonTransition
@@ -402,7 +397,7 @@ const BISDR = () => {
                 <CardContent>
                   {data?.conversionFunnel && (
                     <div className="space-y-3">
-                      {data.conversionFunnel.map((stage, idx) => (
+                      {data.conversionFunnel.map((stage) => (
                         <div key={stage.stage} className="space-y-1">
                           <div className="flex justify-between text-sm">
                             <span className="font-medium">{stage.stage}</span>
