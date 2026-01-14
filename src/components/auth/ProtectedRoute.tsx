@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useRef } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { useAuth } from "@/contexts/AuthContext";

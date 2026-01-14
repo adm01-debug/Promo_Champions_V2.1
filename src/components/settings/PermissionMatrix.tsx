@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { toast } from "sonner";
 import { Shield, Check, X, Search, Users, Crown, UserCheck, CheckCircle2, XCircle, ToggleLeft, ToggleRight } from "lucide-react";
 
@@ -293,7 +293,6 @@ export function PermissionMatrix() {
             {Object.entries(groupedPermissions).map(([resource, perms]) => {
               const { total, granted } = getResourcePermissionCount(selectedRole, resource);
               const allEnabled = granted === total;
-              const someEnabled = granted > 0 && granted < total;
               
               return (
                 <Card key={resource} className="border">
