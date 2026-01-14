@@ -13,16 +13,9 @@ interface SalespersonData {
 interface SalesChartProps {
   salespeople: SalespersonData[];
 }
-
-const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--secondary))",
-  "hsl(var(--accent))",
-  "hsl(var(--status-success))",
-  "hsl(var(--status-warning))",
-];
-
-const CustomTooltip = ({ active, payload }: any) => {
+// Chart gradient colors are defined in the SVG defs below
+// Custom tooltip content component (not using forwardRef since Recharts Tooltip handles the wrapper)
+const CustomTooltipContent = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -98,7 +91,7 @@ export function SalesChart({ salespeople }: SalesChartProps) {
                 tickLine={false}
                 tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: "hsl(var(--muted))", opacity: 0.2 }} />
+              <Tooltip content={CustomTooltipContent} cursor={{ fill: "hsl(var(--muted))", opacity: 0.2 }} />
               <Bar 
                 dataKey="totalSales" 
                 radius={[8, 8, 0, 0]}
