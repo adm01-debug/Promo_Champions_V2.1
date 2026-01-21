@@ -1,7 +1,7 @@
 # Sales CRM - Sistema de Gestão de Vendas
 
-![E2E Tests](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/e2e-tests.yml/badge.svg)
-![PR Checks](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/pr-checks.yml/badge.svg)
+![E2E Tests](https://github.com/adm01-debug/salespro/actions/workflows/e2e-tests.yml/badge.svg)
+![PR Checks](https://github.com/adm01-debug/salespro/actions/workflows/pr-checks.yml/badge.svg)
 
 Sistema completo de CRM para equipes de vendas com SDRs e Closers, incluindo pipeline visual, gamificação, analytics avançados e IA para coaching.
 
