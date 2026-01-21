@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+dist/
+build/
+
+# Generated files
+*.min.js
+*.bundle.js
+
+# Test files (if any exist)
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+**/__tests__/
+**/test/
+**/tests/
+
+# Config files
+vite.config.ts
+vitest.config.ts
+
+# Build artifacts
+.next/
+.nuxt/
+.cache/
+
+# IDE
+.vscode/
+.idea/
