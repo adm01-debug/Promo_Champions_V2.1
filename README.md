@@ -1,5 +1,26 @@
 # Sales CRM - Sistema de Gestão de Vendas
 
+
+## 🔗 Links Rápidos
+
+- 📋 [Issues](https://github.com/adm01-debug/salespro/issues) - Bugs e features
+- 🎯 [Milestones](https://github.com/adm01-debug/salespro/milestones) - Roadmap
+- 📊 [Projects](https://github.com/adm01-debug/salespro/projects) - Kanban board
+- 📝 [Pull Requests](https://github.com/adm01-debug/salespro/pulls) - Code review
+- 🏷️ [Labels](https://github.com/adm01-debug/salespro/labels) - Categorização
+
+---
+
+## 📚 Documentação
+
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Como contribuir
+- [ARCHITECTURE.md](./docs/ARCHITECTURE.md) - Arquitetura do projeto
+- [CHANGELOG.md](./CHANGELOG.md) - Histórico de mudanças
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - Código de conduta
+- [SECURITY.md](./SECURITY.md) - Política de segurança
+
+---
+
 ![E2E Tests](https://github.com/adm01-debug/salespro/actions/workflows/e2e-tests.yml/badge.svg)
 ![PR Checks](https://github.com/adm01-debug/salespro/actions/workflows/pr-checks.yml/badge.svg)
 
