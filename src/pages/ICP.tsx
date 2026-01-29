@@ -23,7 +23,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { TableSkeleton, HeaderSkeleton, StatCardSkeleton } from "@/components/skeletons/DashboardSkeletons";
+import { TableSkeleton, PageHeaderSkeleton, SkeletonCard } from "@/components/skeletons/PageLoadingSkeleton";
 import { 
   Target, 
   Search, 
@@ -142,11 +142,11 @@ export default function ICP() {
         isLoading={isLoading}
         skeleton={
           <div className="space-y-6">
-            <HeaderSkeleton />
+            <PageHeaderSkeleton />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <StatCardSkeleton />
-              <StatCardSkeleton />
-              <StatCardSkeleton />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
             </div>
             <TableSkeleton rows={6} />
           </div>
