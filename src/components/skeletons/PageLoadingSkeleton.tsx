@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 // Generic skeleton card
-const SkeletonCard: FC<{ className?: string }> = ({ className }) => (
+export const SkeletonCard: FC<{ className?: string }> = ({ className }) => (
   <Card className={className}>
     <CardHeader className="pb-2">
       <Skeleton className="h-5 w-1/3" />
@@ -37,7 +37,7 @@ const ChartSkeleton: FC = () => (
 );
 
 // Table skeleton
-const TableSkeleton: FC<{ rows?: number }> = ({ rows = 5 }) => (
+export const TableSkeleton: FC<{ rows?: number }> = ({ rows = 5 }) => (
   <Card>
     <CardContent className="pt-6">
       <div className="space-y-3">
@@ -51,7 +51,7 @@ const TableSkeleton: FC<{ rows?: number }> = ({ rows = 5 }) => (
 );
 
 // Page header skeleton
-const PageHeaderSkeleton: FC = () => (
+export const PageHeaderSkeleton: FC = () => (
   <div className="flex items-center justify-between mb-6">
     <div className="space-y-2">
       <Skeleton className="h-8 w-48" />
