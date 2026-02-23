@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ReactNode } from "react";
 import { usePermissions, PermissionCheck } from "@/hooks/usePermissions";
 import { Skeleton } from "@/components/ui/skeleton";

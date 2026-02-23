@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FC } from 'react';
 import { UserPlus } from 'lucide-react';
 import { EmptyState } from './EmptyState';

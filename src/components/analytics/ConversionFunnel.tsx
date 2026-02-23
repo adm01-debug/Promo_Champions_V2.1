@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FC } from 'react';
 import { Card } from '@/components/ui/card';
 

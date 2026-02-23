@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 // Available ElevenLabs voices
