@@ -19,8 +19,6 @@ import {
   LineChart,
   Building2,
   Sparkles,
-  MoreHorizontal,
-  ChevronDown
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -44,13 +42,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
+  Separator
+} from "@/components/ui/separator";
 
 interface MenuItem {
   title: string;
@@ -286,76 +279,48 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* Botão "Mais" com dropdown */}
-          <SidebarGroup className="mt-2">
+          {/* Ferramentas */}
+          <Separator className="my-2 bg-border/30" />
+          <SidebarGroup>
+            <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+              Ferramentas
+            </p>
             <SidebarGroupContent>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    className={cn(
-                      "w-full justify-start gap-3 rounded-xl px-3 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/50 h-auto",
-                      isCollapsed && "justify-center px-0"
-                    )}
-                  >
-                    <MoreHorizontal className="h-5 w-5 flex-shrink-0" />
-                    {!isCollapsed && (
-                      <>
-                        <span className="text-sm font-medium">Mais</span>
-                        <ChevronDown className="h-4 w-4 ml-auto" />
-                      </>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56">
-                  <DropdownMenuLabel className="text-xs text-muted-foreground">
-                    Ferramentas
-                  </DropdownMenuLabel>
-                  {moreItems.map((item) => (
-                    <DropdownMenuItem key={item.url} asChild>
-                      <NavLink to={item.url} className="flex items-center gap-2 cursor-pointer">
-                        <item.icon className="h-4 w-4" />
-                        {item.title}
-                      </NavLink>
-                    </DropdownMenuItem>
-                  ))}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel className="text-xs text-muted-foreground">
-                    Sistema
-                  </DropdownMenuLabel>
-                  {systemItems.map((item) => (
-                    <DropdownMenuItem key={item.url} asChild>
-                      <NavLink to={item.url} className="flex items-center gap-2 cursor-pointer">
-                        <item.icon className="h-4 w-4" />
-                        {item.title}
-                        {item.title === "Notificações" && alertCount > 0 && (
-                          <span className="ml-auto h-5 w-5 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
-                            {alertCount > 9 ? "9+" : alertCount}
-                          </span>
-                        )}
-                      </NavLink>
-                    </DropdownMenuItem>
-                  ))}
-                  {userType === 'admin' && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="text-xs text-muted-foreground">
-                        Administração
-                      </DropdownMenuLabel>
-                      {adminOnlyItems.map((item) => (
-                        <DropdownMenuItem key={item.url} asChild>
-                          <NavLink to={item.url} className="flex items-center gap-2 cursor-pointer">
-                            <item.icon className="h-4 w-4" />
-                            {item.title}
-                          </NavLink>
-                        </DropdownMenuItem>
-                      ))}
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <SidebarMenu className="space-y-1">
+                {moreItems.map(item => renderMenuItem(item))}
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+
+          {/* Sistema */}
+          <Separator className="my-2 bg-border/30" />
+          <SidebarGroup>
+            <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+              Sistema
+            </p>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1">
+                {systemItems.map(item => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {/* Admin */}
+          {userType === 'admin' && (
+            <>
+              <Separator className="my-2 bg-border/30" />
+              <SidebarGroup>
+                <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+                  Administração
+                </p>
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-1">
+                    {adminOnlyItems.map(item => renderMenuItem(item))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </>
+          )}
         </ScrollArea>
       </SidebarContent>
 
