@@ -185,6 +185,15 @@ export const MetasLoadingSkeleton: FC = () => (
   </div>
 );
 
+// Metas Atividades skeleton
+export const MetasAtividadesLoadingSkeleton: FC = () => (
+  <div className="space-y-6 p-6">
+    <PageHeaderSkeleton />
+    <StatsGridSkeleton count={4} />
+    <ChartSkeleton />
+  </div>
+);
+
 // Playbooks skeleton
 export const PlaybooksLoadingSkeleton: FC = () => (
   <div className="space-y-6 p-6">
