@@ -291,6 +291,16 @@ export const RelatoriosLoadingSkeleton: FC = () => (
   </div>
 );
 
+// Relatorio Atividades skeleton
+export const RelatorioAtividadesLoadingSkeleton: FC = () => (
+  <div className="space-y-6 p-6">
+    <PageHeaderSkeleton />
+    <StatsGridSkeleton count={4} />
+    <ChartSkeleton />
+    <TableSkeleton rows={8} />
+  </div>
+);
+
 // Atividades skeleton
 export const AtividadesLoadingSkeleton: FC = () => (
   <div className="space-y-6 p-6">
