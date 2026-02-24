@@ -60,6 +60,21 @@ function getLoadBasedSalesperson(salespeople: any[]): string {
   ).id;
 }
 
+export const useRoutingHistory = () => {
+  return useQuery({
+    queryKey: ['routing_history'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lead_routing_log')
+        .select('*, client:clients(name, company), from_salesperson:salespeople!lead_routing_log_from_salesperson_id_fkey(name), to_salesperson:salespeople!lead_routing_log_to_salesperson_id_fkey(name)')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data;
+    },
+  });
+};
+
 export const useSalespersonPerformance = () => {
   return useQuery({
     queryKey: ['salesperson_performance'],
