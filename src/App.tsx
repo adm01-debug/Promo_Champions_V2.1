@@ -74,6 +74,7 @@ const PrevisaoDemanda = lazy(() => import("./pages/PrevisaoDemanda"));
 const Fornecedores = lazy(() => import("./pages/Fornecedores"));
 const ComparadorPrecos = lazy(() => import("./pages/ComparadorPrecos"));
 const AssinaturaDigital = lazy(() => import("./pages/AssinaturaDigital"));
+const Orcamentos = lazy(() => import("./pages/Orcamentos"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -218,6 +219,7 @@ const App = () => (
                                           <AssinaturaDigital />
                                         </ProtectedRoute>
                                       } />
+                                      <Route path="/orcamentos" element={<Orcamentos />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                   </AnimatePresence>

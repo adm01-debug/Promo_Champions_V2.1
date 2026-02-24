@@ -2119,6 +2119,81 @@ export type Database = {
         }
         Relationships: []
       }
+      quotes: {
+        Row: {
+          approved_at: string | null
+          client_name: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          external_reference: string | null
+          id: string
+          notes: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          sale_id: string | null
+          sent_at: string | null
+          status: string
+          title: string
+          total_value: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          client_name: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          external_reference?: string | null
+          id?: string
+          notes?: string | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          sale_id?: string | null
+          sent_at?: string | null
+          status?: string
+          title: string
+          total_value?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          client_name?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          external_reference?: string | null
+          id?: string
+          notes?: string | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          sale_id?: string | null
+          sent_at?: string | null
+          status?: string
+          title?: string
+          total_value?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rate_limit_logs: {
         Row: {
           action: string

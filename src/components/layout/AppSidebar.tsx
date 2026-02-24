@@ -19,6 +19,7 @@ import {
   LineChart,
   Building2,
   Sparkles,
+  FileText,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -68,9 +69,9 @@ const sdrMainItems: MenuItem[] = [
 const closerMainItems: MenuItem[] = [
   { title: "Dashboard", url: "/closer", icon: LayoutDashboard },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
+  { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
   { title: "Clientes", url: "/clientes", icon: Users },
-  { title: "Ranking", url: "/ranking", icon: Trophy },
 ];
 
 const gestaoMainItems: MenuItem[] = [
