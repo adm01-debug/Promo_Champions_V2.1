@@ -225,17 +225,17 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar/95 backdrop-blur-sm">
       {/* Header com Logo */}
-      <SidebarHeader className="p-4 border-b border-border/30">
+      <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary via-primary/90 to-primary/70 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">
             <TrendingUp className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <span className="text-lg font-bold text-foreground">
                 Sales Arena
               </span>
-              <span className={cn("text-[10px] uppercase tracking-wider font-semibold", currentViewConfig.color)}>
+              <span className={cn("text-[10px] uppercase tracking-widest font-bold", currentViewConfig.color)}>
                 {currentViewConfig.label}
               </span>
             </div>
@@ -243,10 +243,10 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      {/* View Mode Switcher - Apenas para Admin/Manager */}
+      {/* View Mode Switcher */}
       {isAdminOrManager && !isCollapsed && (
-        <div className="px-3 py-2 border-b border-border/30">
-          <div className="flex gap-1 p-1 bg-muted/30 rounded-xl">
+        <div className="px-3 pb-3">
+          <div className="flex gap-0.5 p-1 bg-muted/40 rounded-full border border-border/20">
             {viewModes.map((vm) => (
               <Button
                 key={vm.mode}
@@ -254,19 +254,21 @@ export function AppSidebar() {
                 size="sm"
                 onClick={() => setViewMode(vm.mode)}
                 className={cn(
-                  "flex-1 h-9 text-xs font-semibold rounded-lg transition-all",
+                  "flex-1 h-8 text-xs font-semibold rounded-full transition-all duration-200 gap-1.5 px-3",
                   viewMode === vm.mode 
-                    ? "bg-background shadow-sm text-foreground" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+                    ? "bg-background shadow-md text-foreground border border-border/30" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-transparent border border-transparent"
                 )}
               >
-                <vm.icon className="h-4 w-4 mr-1.5" />
+                <vm.icon className={cn("h-3.5 w-3.5", viewMode === vm.mode && vm.color)} />
                 {vm.label}
               </Button>
             ))}
           </div>
         </div>
       )}
+      
+      {(isAdminOrManager || true) && <Separator className="bg-border/30" />}
 
       <SidebarContent className="px-3 py-2">
         <ScrollArea className="flex-1">
