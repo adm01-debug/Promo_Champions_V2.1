@@ -66,13 +66,13 @@ function mapQuoteStatus(externalStatus: string): string {
 // ── Pipeline stage mapping based on quote status ───────────────────────
 function mapToPipelineStatus(quoteStatus: string): string {
   const mapping: Record<string, string> = {
-    draft: "prospecting",
+    draft: "lead",
     sent: "proposal",
-    approved: "won",
-    rejected: "lost",
-    expired: "lost",
+    approved: "closed",
+    rejected: "cancelled",
+    expired: "cancelled",
   };
-  return mapping[quoteStatus] || "prospecting";
+  return mapping[quoteStatus] || "lead";
 }
 
 Deno.serve(async (req) => {
