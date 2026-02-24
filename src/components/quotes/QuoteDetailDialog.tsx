@@ -62,10 +62,19 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   {expirationDays < 0 ? "Expirado" : `Expira em ${expirationDays}d`}
                 </Badge>
               )}
-              <Button size="sm" variant="outline" className="gap-1" onClick={() => generateQuotePDF(quote, items)}>
-                <FileDown className="h-4 w-4" />
-                PDF
-              </Button>
+              {(quote as any).pdf_url ? (
+                <Button size="sm" variant="outline" className="gap-1" asChild>
+                  <a href={(quote as any).pdf_url} target="_blank" rel="noopener noreferrer">
+                    <FileDown className="h-4 w-4" />
+                    PDF Original
+                  </a>
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" className="gap-1" onClick={() => generateQuotePDF(quote, items)}>
+                  <FileDown className="h-4 w-4" />
+                  Gerar PDF
+                </Button>
+              )}
             </div>
           </div>
         </DialogHeader>
