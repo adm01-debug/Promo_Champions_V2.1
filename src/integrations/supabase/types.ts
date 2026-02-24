@@ -2169,6 +2169,7 @@ export type Database = {
           items: Json | null
           last_synced_at: string | null
           notes: string | null
+          pdf_url: string | null
           quote_number: string | null
           rejected_at: string | null
           rejection_reason: string | null
@@ -2201,6 +2202,7 @@ export type Database = {
           items?: Json | null
           last_synced_at?: string | null
           notes?: string | null
+          pdf_url?: string | null
           quote_number?: string | null
           rejected_at?: string | null
           rejection_reason?: string | null
@@ -2233,6 +2235,7 @@ export type Database = {
           items?: Json | null
           last_synced_at?: string | null
           notes?: string | null
+          pdf_url?: string | null
           quote_number?: string | null
           rejected_at?: string | null
           rejection_reason?: string | null

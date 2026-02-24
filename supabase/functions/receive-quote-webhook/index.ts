@@ -29,6 +29,7 @@ interface IncomingQuote {
   valid_until?: string;
   items: IncomingQuoteItem[];
   created_at: string;
+  pdf_base64?: string; // PDF file as base64 string
 }
 
 interface IncomingQuoteItem {
@@ -188,6 +189,44 @@ Deno.serve(async (req) => {
         if (insertErr) throw insertErr;
         quoteId = newQuote.id;
         console.log(`[receive-quote-webhook] Created new quote ${quoteId}`);
+      }
+
+      // ── Upload PDF if provided ──────────────────────────────────────
+      if (quote.pdf_base64) {
+        try {
+          const binaryStr = atob(quote.pdf_base64);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+          }
+
+          const pdfPath = `proposta-${quote.quote_number.replace(/\//g, "-")}.pdf`;
+
+          const { error: uploadErr } = await supabase.storage
+            .from("quote-pdfs")
+            .upload(pdfPath, bytes, {
+              contentType: "application/pdf",
+              upsert: true,
+            });
+
+          if (uploadErr) {
+            console.error("[receive-quote-webhook] PDF upload error:", uploadErr);
+          } else {
+            const { data: urlData } = supabase.storage
+              .from("quote-pdfs")
+              .getPublicUrl(pdfPath);
+
+            if (urlData?.publicUrl) {
+              await supabase
+                .from("quotes")
+                .update({ pdf_url: urlData.publicUrl })
+                .eq("id", quoteId);
+              console.log(`[receive-quote-webhook] PDF saved: ${urlData.publicUrl}`);
+            }
+          }
+        } catch (pdfErr) {
+          console.error("[receive-quote-webhook] PDF processing error:", pdfErr);
+        }
       }
 
       // ── Upsert pipeline entry (sales table) ────────────────────────
