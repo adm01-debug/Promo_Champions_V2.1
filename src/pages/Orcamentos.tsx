@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useQuotes, useQuoteSummary, useCreateQuote, useUpdateQuoteStatus, useDeleteQuote, QUOTE_STATUSES, type QuoteStatus } from "@/hooks/useQuotes";
+import { useQuotes, useQuoteSummary, useCreateQuote, useUpdateQuoteStatus, useDeleteQuote, QUOTE_STATUSES, type QuoteStatus, type Quote } from "@/hooks/useQuotes";
 import { useAuth } from "@/contexts/AuthContext";
-import { FileText, Plus, Send, CheckCircle2, XCircle, Clock, AlertTriangle, Trash2, Link2 } from "lucide-react";
+import { FileText, Plus, Send, CheckCircle2, XCircle, Clock, AlertTriangle, Trash2, Link2, Eye } from "lucide-react";
+import { QuoteDetailDialog } from "@/components/quotes/QuoteDetailDialog";
 import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
 export default function Orcamentos() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const { salesperson } = useAuth();
 
   const { data: quotes, isLoading } = useQuotes(statusFilter);
@@ -258,6 +260,15 @@ export default function Orcamentos() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-1 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1 text-xs"
+                        onClick={() => setSelectedQuote(quote as Quote)}
+                      >
+                        <Eye className="h-3 w-3" />
+                        Detalhes
+                      </Button>
                       {quote.status === 'draft' && (
                         <Button
                           size="sm"
@@ -319,6 +330,11 @@ export default function Orcamentos() {
             })
           )}
         </motion.div>
+        <QuoteDetailDialog
+          quote={selectedQuote}
+          open={!!selectedQuote}
+          onOpenChange={(open) => !open && setSelectedQuote(null)}
+        />
       </div>
     </PageTransition>
   );
