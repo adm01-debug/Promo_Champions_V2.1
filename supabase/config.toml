@@ -68,3 +68,6 @@ verify_jwt = false
 
 [functions.send-password-reset]
 verify_jwt = true
+
+[functions.receive-quote-webhook]
+verify_jwt = false

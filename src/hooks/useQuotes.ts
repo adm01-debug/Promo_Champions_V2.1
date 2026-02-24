@@ -20,9 +20,42 @@ export interface Quote {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // New fields from GIFT STORE integration
+  quote_number: string | null;
+  subtotal: number | null;
+  discount_amount: number | null;
+  items: string | null; // JSONB stored as string
+  external_quote_id: string | null;
+  sync_status: string | null;
   // joined
   salespeople?: { name: string } | null;
   sales?: { client_name: string; product_name: string; status: string } | null;
+}
+
+export interface QuoteItem {
+  product_id: string;
+  product_name: string;
+  product_sku?: string;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+  color_name?: string;
+  personalizations: {
+    technique_name: string;
+    colors_count: number;
+    positions_count: number;
+    total_cost: number;
+  }[];
+}
+
+/** Parse the items JSON string into typed array */
+export function parseQuoteItems(itemsJson: string | null): QuoteItem[] {
+  if (!itemsJson) return [];
+  try {
+    return JSON.parse(itemsJson) as QuoteItem[];
+  } catch {
+    return [];
+  }
 }
 
 export type QuoteStatus = 'draft' | 'sent' | 'approved' | 'rejected' | 'expired';
