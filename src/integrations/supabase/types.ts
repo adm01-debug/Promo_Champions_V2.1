@@ -2119,21 +2119,67 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_sync_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          external_quote_id: string | null
+          id: string
+          quote_number: string | null
+          status: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          external_quote_id?: string | null
+          id?: string
+          quote_number?: string | null
+          status?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          external_quote_id?: string | null
+          id?: string
+          quote_number?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       quotes: {
         Row: {
           approved_at: string | null
+          client_email: string | null
           client_name: string
+          client_phone: string | null
           created_at: string
           created_by: string | null
           description: string | null
+          discount_amount: number | null
+          discount_percent: number | null
+          external_quote_id: string | null
           external_reference: string | null
           id: string
+          items: Json | null
+          last_synced_at: string | null
           notes: string | null
+          quote_number: string | null
           rejected_at: string | null
           rejection_reason: string | null
           sale_id: string | null
+          seller_name: string | null
           sent_at: string | null
+          source: string | null
           status: string
+          subtotal: number | null
+          sync_status: string | null
+          synced_from_external: boolean | null
           title: string
           total_value: number
           updated_at: string
@@ -2141,18 +2187,31 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          client_email?: string | null
           client_name: string
+          client_phone?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
+          external_quote_id?: string | null
           external_reference?: string | null
           id?: string
+          items?: Json | null
+          last_synced_at?: string | null
           notes?: string | null
+          quote_number?: string | null
           rejected_at?: string | null
           rejection_reason?: string | null
           sale_id?: string | null
+          seller_name?: string | null
           sent_at?: string | null
+          source?: string | null
           status?: string
+          subtotal?: number | null
+          sync_status?: string | null
+          synced_from_external?: boolean | null
           title: string
           total_value?: number
           updated_at?: string
@@ -2160,18 +2219,31 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          client_email?: string | null
           client_name?: string
+          client_phone?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
+          external_quote_id?: string | null
           external_reference?: string | null
           id?: string
+          items?: Json | null
+          last_synced_at?: string | null
           notes?: string | null
+          quote_number?: string | null
           rejected_at?: string | null
           rejection_reason?: string | null
           sale_id?: string | null
+          seller_name?: string | null
           sent_at?: string | null
+          source?: string | null
           status?: string
+          subtotal?: number | null
+          sync_status?: string | null
+          synced_from_external?: boolean | null
           title?: string
           total_value?: number
           updated_at?: string
