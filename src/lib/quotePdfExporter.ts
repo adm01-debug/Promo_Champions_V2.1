@@ -67,7 +67,7 @@ export function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
           fmt(item.subtotal),
         ];
       }),
-      headStyles: { fillColor: [234, 88, 12], fontSize: 9 },
+      headStyles: { fillColor: [16, 185, 129], fontSize: 9 },
       styles: { fontSize: 8, cellPadding: 3 },
       columnStyles: {
         0: { cellWidth: 60 },
