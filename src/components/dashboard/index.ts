@@ -7,4 +7,3 @@ export { TimeRangePicker, ComparisonPeriod, type TimeRange } from './TimeRangePi
 export { GoalProgressCard, GoalsSummary } from './GoalProgressCard';
 export { ClientInfoCard } from './ClientInfoCard';
 export { ActivityItem, ActivityList } from './ActivityItem';
-export { EnhancedDashboard } from './EnhancedDashboard';
