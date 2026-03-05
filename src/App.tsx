@@ -53,7 +53,6 @@ const RelatorioAtividades = lazy(() => import("./pages/RelatorioAtividades"));
 const MetasAtividades = lazy(() => import("./pages/MetasAtividades"));
 const RankingCompetitivo = lazy(() => import("./pages/RankingCompetitivo"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
-const AnimacoesDemo = lazy(() => import("./pages/AnimacoesDemo"));
 const Times = lazy(() => import("./pages/Times"));
 const Bitrix24 = lazy(() => import("./pages/Bitrix24"));
 const Auth = lazy(() => import("./pages/Auth"));
