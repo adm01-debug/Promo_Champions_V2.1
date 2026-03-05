@@ -1,3 +1,0 @@
-# E2E Test Authentication State
-# These files contain session tokens and should not be committed
-*.json
