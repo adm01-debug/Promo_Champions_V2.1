@@ -101,7 +101,12 @@ export function ActivityList({
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [showStats, setShowStats] = useState(() => {
     const saved = localStorage.getItem('activityListShowStats');
-    return saved !== null ? JSON.parse(saved) : true;
+    if (saved === null) return true;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return true;
+    }
   });
 
   useEffect(() => {
