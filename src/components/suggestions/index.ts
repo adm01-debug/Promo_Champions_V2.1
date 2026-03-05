@@ -1,1 +1,0 @@
-export { SmartSuggestions } from './SmartSuggestions';
