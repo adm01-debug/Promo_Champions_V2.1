@@ -24,8 +24,6 @@ export { XPProgressBar } from './XPProgressBar';
 export { XPHistoryTimeline } from './XPHistoryTimeline';
 export { RealtimeXPRanking } from './RealtimeXPRanking';
 export { StreakAchievementsCard } from './StreakAchievementsCard';
-export { GamificationExportButton } from './GamificationExportButton';
-export { GamificationProfileModal } from './GamificationProfileModal';
 export { EpicXPToast } from './EpicXPToast';
 export { CelebrationTestButtons } from './CelebrationTestButtons';
 export { CreateChallengeDialog } from './CreateChallengeDialog';
