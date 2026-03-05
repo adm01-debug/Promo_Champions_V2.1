@@ -164,7 +164,6 @@ const App = () => (
                                       <Route path="/metas-atividades" element={<MetasAtividades />} />
                                       <Route path="/ranking" element={<RankingCompetitivo />} />
                                       <Route path="/configuracoes" element={<Configuracoes />} />
-                                      <Route path="/animacoes" element={<AnimacoesDemo />} />
                                       <Route path="/times" element={
                                         <ProtectedRoute requireAdminOrManager>
                                           <Times />
