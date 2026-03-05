@@ -267,34 +267,3 @@ export function useAddXP() {
     },
   });
 }
-
-// Hook to handle level up celebration
-export function useLevelUpCelebration() {
-  const addXPMutation = useAddXP();
-
-  const addXPWithCelebration = async (
-    params: {
-      salespersonId: string;
-      xpAmount: number;
-      sourceType: string;
-      sourceId?: string;
-      description?: string;
-      salespersonName?: string;
-    },
-    onLevelUp?: (newLevel: number, levelTitle: string, levelEmoji: string) => void
-  ) => {
-    const result = await addXPMutation.mutateAsync(params);
-
-    if (result.leveledUp && onLevelUp) {
-      const newLevelInfo = getLevelInfo(result.newLevel);
-      onLevelUp(result.newLevel, newLevelInfo.title, newLevelInfo.emoji);
-    }
-
-    return result;
-  };
-
-  return {
-    addXPWithCelebration,
-    isLoading: addXPMutation.isPending,
-  };
-}
