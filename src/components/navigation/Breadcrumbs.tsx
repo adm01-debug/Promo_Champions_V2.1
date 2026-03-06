@@ -46,7 +46,7 @@ const routeLabels: Record<string, string> = {
   'vendedor': 'Vendedor Dashboard',
 };
 
-export const Breadcrumbs: FC = () => {
+export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, ref) {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   
