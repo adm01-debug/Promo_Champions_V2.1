@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Zap, Trophy, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,14 +12,14 @@ interface LevelUpOverlayProps {
   onComplete?: () => void;
 }
 
-export function LevelUpOverlay({
+export const LevelUpOverlay = forwardRef<HTMLDivElement, LevelUpOverlayProps>(function LevelUpOverlay({
   isVisible,
   level,
   levelTitle,
   levelEmoji,
   salespersonName,
   onComplete,
-}: LevelUpOverlayProps) {
+}, ref) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -158,7 +158,8 @@ export function LevelUpOverlay({
       )}
     </AnimatePresence>
   );
-}
+});
+LevelUpOverlay.displayName = "LevelUpOverlay";
 
 // Streak milestone overlay
 interface StreakMilestoneOverlayProps {
