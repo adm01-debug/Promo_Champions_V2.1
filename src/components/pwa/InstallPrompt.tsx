@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Smartphone, Zap, Wifi } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,11 @@ interface InstallPromptProps {
   onDismiss?: () => void;
 }
 
-export function InstallPrompt({ 
+export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({ 
   className, 
   variant = 'banner',
   onDismiss 
-}: InstallPromptProps) {
+}, ref) => {
   const { isInstallable, isInstalled, installApp } = usePWA();
   const [isDismissed, setIsDismissed] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
