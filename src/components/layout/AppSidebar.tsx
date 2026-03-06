@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SidebarXPBar } from "@/components/layout/SidebarXPBar";
 import { 
   LayoutDashboard, 
   ShoppingCart, 
@@ -326,6 +327,9 @@ export function AppSidebar() {
           )}
         </ScrollArea>
       </SidebarContent>
+
+      {/* XP Bar */}
+      <SidebarXPBar isCollapsed={isCollapsed} />
 
       {/* Footer com usuário */}
       <SidebarFooter className="p-3 border-t border-border/30">

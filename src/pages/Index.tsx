@@ -10,6 +10,7 @@ import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
+import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
@@ -106,6 +107,7 @@ const Index = () => {
                     change={kpis?.changes.sales ?? 0}
                     previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
                     icon={ShoppingBag}
+                    variant="info"
                   />
                 ) : (
                   <DashboardEmptyState type="sales" />
@@ -120,6 +122,7 @@ const Index = () => {
                     change={kpis?.changes.clients ?? 0}
                     previousValue={kpis ? String(kpis.previous.newClients) : undefined}
                     icon={Users}
+                    variant="warning"
                   />
                 ) : (
                   <DashboardEmptyState type="clients" />
@@ -134,6 +137,7 @@ const Index = () => {
                     change={kpis?.changes.conversion ?? 0}
                     previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
                     icon={TrendingUp}
+                    variant="purple"
                   />
                 ) : (
                   <DashboardEmptyState type="conversion" />
@@ -206,6 +210,15 @@ const Index = () => {
               <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
               </motion.div>
+            </motion.div>
+
+            {/* Onboarding Checklist - shown for new users */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+            >
+              <OnboardingChecklist />
             </motion.div>
           </div>
         </div>
