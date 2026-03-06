@@ -113,7 +113,9 @@ export const FocusModeToggle = forwardRef<HTMLDivElement, FocusModeToggleProps>(
       </AnimatePresence>
     </motion.div>
   );
-}
+});
+
+FocusModeToggle.displayName = "FocusModeToggle";
 
 export function FocusModeBreakReminder() {
   const { shouldShowBreakReminder, dismissBreakReminder, config } = useFocusMode();
