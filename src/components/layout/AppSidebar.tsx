@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SidebarXPBar } from "@/components/layout/SidebarXPBar";
 import { 
   LayoutDashboard, 
   ShoppingCart, 
