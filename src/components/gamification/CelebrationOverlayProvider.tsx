@@ -264,4 +264,4 @@ export const CelebrationOverlayProvider = forwardRef<HTMLDivElement>(function Ce
       />
     </>
   );
-}
+});
