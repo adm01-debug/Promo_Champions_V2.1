@@ -104,4 +104,6 @@ export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, 
       </ol>
     </nav>
   );
-};
+});
+
+Breadcrumbs.displayName = "Breadcrumbs";
