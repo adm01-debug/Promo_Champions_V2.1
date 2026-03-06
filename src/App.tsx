@@ -102,7 +102,6 @@ const App = () => (
                 <AuthProvider>
                   <CommandPalette />
                   <Suspense fallback={<PageLoadingFallback />}>
-                    <AnimatePresence mode="wait">
                       <Routes>
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
