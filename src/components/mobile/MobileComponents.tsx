@@ -20,7 +20,7 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) 
   return (
     <nav className={cn(
       "fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border",
-      "flex items-center justify-around h-16 px-2",
+      "flex items-center justify-around h-16 px-1",
       className
     )}>
       {items.map((item, index) => {
@@ -34,15 +34,15 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) 
             key={index}
             {...props}
             className={cn(
-              "flex flex-col items-center justify-center flex-1 py-2 px-1",
-              "text-xs transition-colors",
+              "flex flex-col items-center justify-center min-w-[44px] min-h-[44px] py-1.5 px-2",
+              "text-xs transition-colors touch-manipulation",
               item.isActive 
                 ? "text-primary" 
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground active:text-foreground"
             )}
           >
             {item.icon}
-            <span className="mt-1 truncate">{item.label}</span>
+            <span className="mt-0.5 text-[10px] font-medium leading-tight">{item.label}</span>
           </Component>
         );
       })}

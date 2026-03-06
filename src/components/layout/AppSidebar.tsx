@@ -21,6 +21,8 @@ import {
   Building2,
   Sparkles,
   FileText,
+  ChevronDown,
+  MoreHorizontal,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -46,6 +48,11 @@ import {
 import {
   Separator
 } from "@/components/ui/separator";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface MenuItem {
   title: string;
@@ -56,7 +63,7 @@ interface MenuItem {
 type ViewMode = 'sdr' | 'closer' | 'gestao';
 
 // ============================================
-// ITENS PRINCIPAIS (5-6 por contexto)
+// ITENS PRINCIPAIS (5 por contexto)
 // ============================================
 
 const sdrMainItems: MenuItem[] = [
@@ -83,9 +90,9 @@ const gestaoMainItems: MenuItem[] = [
   { title: "Relatórios", url: "/relatorios", icon: LineChart },
 ];
 
-// Itens secundários acessíveis via "Mais"
+// Progressive disclosure: "Mais ferramentas" (collapsed by default)
 const sdrMoreItems: MenuItem[] = [
-  { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
+  { title: "BI", url: "/bi", icon: LineChart },
   { title: "Cadências", url: "/cadencias", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
@@ -93,7 +100,7 @@ const sdrMoreItems: MenuItem[] = [
 ];
 
 const closerMoreItems: MenuItem[] = [
-  { title: "BI Closer", url: "/bi-closer", icon: LineChart },
+  { title: "BI", url: "/bi", icon: LineChart },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
@@ -101,7 +108,7 @@ const closerMoreItems: MenuItem[] = [
 ];
 
 const gestaoMoreItems: MenuItem[] = [
-  { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+  { title: "BI", url: "/bi", icon: LineChart },
   { title: "Times", url: "/times", icon: Building2 },
   { title: "Portfólio", url: "/portfolio", icon: Target },
   { title: "ICP", url: "/icp", icon: Users },
@@ -126,6 +133,7 @@ export function AppSidebar() {
   const alertCount = alerts?.length || 0;
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const getUserType = (): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
@@ -274,7 +282,7 @@ export function AppSidebar() {
 
       <SidebarContent className="px-3 py-2">
         <ScrollArea className="flex-1">
-          {/* Menu Principal - 5 itens */}
+          {/* Menu Principal - Top 5 */}
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
@@ -283,18 +291,38 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* Ferramentas */}
+          {/* Progressive Disclosure: "Mais ferramentas" */}
           <Separator className="my-2 bg-border/30" />
-          <SidebarGroup>
-            <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
-              Ferramentas
-            </p>
-            <SidebarGroupContent>
-              <SidebarMenu className="space-y-1">
-                {moreItems.map(item => renderMenuItem(item))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          {!isCollapsed ? (
+            <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
+              <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 group/more">
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+                  Ferramentas
+                </span>
+                <ChevronDown className={cn(
+                  "h-3.5 w-3.5 text-muted-foreground/40 transition-transform duration-200",
+                  moreOpen && "rotate-180"
+                )} />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="animate-in slide-in-from-top-2 duration-200">
+                <SidebarGroup>
+                  <SidebarGroupContent>
+                    <SidebarMenu className="space-y-1">
+                      {moreItems.map(item => renderMenuItem(item))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </CollapsibleContent>
+            </Collapsible>
+          ) : (
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  {moreItems.map(item => renderMenuItem(item))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
 
           {/* Sistema */}
           <Separator className="my-2 bg-border/30" />
