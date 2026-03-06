@@ -1,10 +1,12 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
-import { Crown, Swords, Trophy, TrendingUp, Target, Users } from "lucide-react";
+import { Crown, Swords, Trophy, TrendingUp, Target, AlertTriangle, Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const RANK_ICONS: Record<number, React.ElementType> = {
   1: Crown,
@@ -17,6 +19,35 @@ export function CompetitiveStatusBar() {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const navigate = useNavigate();
 
+  // Fetch contextual action data
+  const { data: actionData } = useQuery({
+    queryKey: ["action-card-data", salesperson?.id],
+    queryFn: async () => {
+      if (!salesperson?.id) return null;
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { count: stagnantDeals } = await supabase
+        .from("sales")
+        .select("*", { count: "exact", head: true })
+        .eq("salesperson_id", salesperson.id)
+        .not("status", "in", '("ganho","perdido","won","lost")')
+        .lt("updated_at", sevenDaysAgo.toISOString());
+
+      const { count: hotDeals } = await supabase
+        .from("sales")
+        .select("*", { count: "exact", head: true })
+        .eq("salesperson_id", salesperson.id)
+        .in("status", ["proposta", "negociação", "negotiation", "proposal"]);
+
+      return { stagnantDeals: stagnantDeals || 0, hotDeals: hotDeals || 0 };
+    },
+    enabled: !!salesperson?.id,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Not logged in: show contextual action card instead of generic "login to compete"
   if (!salesperson) {
     return (
       <div 
@@ -25,12 +56,12 @@ export function CompetitiveStatusBar() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/30">
-              <Users className="h-5 w-5 text-muted-foreground" />
+            <div className="p-2.5 rounded-xl gradient-primary shadow-md">
+              <Target className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <p className="text-sm font-display font-semibold">Faça login para competir</p>
-              <p className="text-xs text-muted-foreground">Entre na arena e conquiste seu lugar</p>
+              <p className="text-sm font-display font-semibold">Entre e comece a vender</p>
+              <p className="text-xs text-muted-foreground">Acompanhe deals, metas e conquiste o ranking</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors">
@@ -63,7 +94,41 @@ export function CompetitiveStatusBar() {
 
   const myRanking = ranking?.find(r => r.id === salesperson.id);
   
-  if (!myRanking) return null;
+  if (!myRanking) {
+    // Show action card when no ranking data
+    return (
+      <div className="glass rounded-xl p-4 border border-border/40 dark:border-glow card-elevated">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-status-warning/15">
+              <Flame className="h-5 w-5 text-status-warning" />
+            </div>
+            <div>
+              <p className="text-sm font-display font-semibold">
+                {actionData?.stagnantDeals && actionData.stagnantDeals > 0
+                  ? `${actionData.stagnantDeals} deal${actionData.stagnantDeals > 1 ? 's' : ''} parado${actionData.stagnantDeals > 1 ? 's' : ''} há 7+ dias`
+                  : "Comece adicionando deals ao pipeline"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {actionData?.stagnantDeals && actionData.stagnantDeals > 0
+                  ? "Atualize seus deals para manter o pipeline saudável"
+                  : "Registre sua primeira venda e suba no ranking"}
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
+            onClick={() => navigate("/pipeline")}
+          >
+            <Target className="h-4 w-4 mr-1" />
+            Ver Pipeline
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const RankIcon = RANK_ICONS[myRanking.rank] || TrendingUp;
   const isTopThree = myRanking.rank <= 3;
@@ -120,6 +185,16 @@ export function CompetitiveStatusBar() {
             </p>
           </div>
         </div>
+
+        {/* Contextual action alert */}
+        {actionData?.stagnantDeals && actionData.stagnantDeals > 0 && (
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 border border-destructive/20">
+            <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+            <span className="text-xs font-medium text-destructive">
+              {actionData.stagnantDeals} deal{actionData.stagnantDeals > 1 ? 's' : ''} parado{actionData.stagnantDeals > 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
 
         {/* Stats rápidas */}
         <div className="flex items-center gap-4">
