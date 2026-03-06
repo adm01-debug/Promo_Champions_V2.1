@@ -19,6 +19,7 @@ import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { InstallPrompt, UpdatePrompt, OfflineIndicator } from "@/components/pwa";
+import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 interface MainLayoutProps {
   children: React.ReactNode;
 }

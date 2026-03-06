@@ -8,8 +8,9 @@ import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
+import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
+import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
-import { CompetitiveLeaderboard } from "@/components/gamification/CompetitiveLeaderboard";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
 import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
@@ -33,11 +34,15 @@ const Index = () => {
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
   
-  // Subscribe to real-time sales notifications (segmented by role)
   useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+
+  const hasRevenue = (kpis?.current.totalRevenue ?? 0) > 0;
+  const hasSales = (kpis?.current.totalSales ?? 0) > 0;
+  const hasClients = (kpis?.current.newClients ?? 0) > 0;
+  const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
 
   return (
     <SkeletonTransition
@@ -47,7 +52,6 @@ const Index = () => {
     >
       <PageTransition>
         <div className="min-h-screen bg-background" suppressHydrationWarning>
-          {/* Mobile-optimized padding */}
           <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Header */}
             <motion.div
@@ -58,7 +62,7 @@ const Index = () => {
               <DashboardHeader />
             </motion.div>
 
-            {/* Competitive Status Bar - Hidden on very small screens */}
+            {/* Competitive Status Bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -68,66 +72,85 @@ const Index = () => {
               <CompetitiveStatusBar />
             </motion.div>
 
-            {/* Stats Row - 2 columns on mobile, 4 on desktop */}
+            {/* Hero Faturamento + Stats Row */}
             <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
+              className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
               data-tour="stats"
             >
-              <motion.div variants={itemVariants}>
-                <StatCard
-                  title="Faturamento"
-                  value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
-                  change={kpis?.changes.revenue ?? 0}
-                  previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
-                  icon={DollarSign}
-                  variant="primary"
-                />
+              {/* Hero: Faturamento (spans 2 cols) */}
+              <motion.div variants={itemVariants} className="col-span-2">
+                {hasRevenue ? (
+                  <StatCard
+                    title="Faturamento"
+                    value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
+                    numericValue={kpis?.current.totalRevenue ?? 0}
+                    change={kpis?.changes.revenue ?? 0}
+                    previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
+                    icon={DollarSign}
+                    variant="primary"
+                    hero
+                  />
+                ) : (
+                  <DashboardEmptyState type="revenue" />
+                )}
               </motion.div>
               <motion.div variants={itemVariants}>
-                <StatCard
-                  title="Vendas"
-                  value={String(kpis?.current.totalSales ?? 0)}
-                  change={kpis?.changes.sales ?? 0}
-                  previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
-                  icon={ShoppingBag}
-                />
+                {hasSales ? (
+                  <StatCard
+                    title="Vendas"
+                    value={String(kpis?.current.totalSales ?? 0)}
+                    numericValue={kpis?.current.totalSales ?? 0}
+                    change={kpis?.changes.sales ?? 0}
+                    previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
+                    icon={ShoppingBag}
+                  />
+                ) : (
+                  <DashboardEmptyState type="sales" />
+                )}
               </motion.div>
               <motion.div variants={itemVariants}>
-                <StatCard
-                  title="Clientes"
-                  value={String(kpis?.current.newClients ?? 0)}
-                  change={kpis?.changes.clients ?? 0}
-                  previousValue={kpis ? String(kpis.previous.newClients) : undefined}
-                  icon={Users}
-                />
+                {hasClients ? (
+                  <StatCard
+                    title="Clientes"
+                    value={String(kpis?.current.newClients ?? 0)}
+                    numericValue={kpis?.current.newClients ?? 0}
+                    change={kpis?.changes.clients ?? 0}
+                    previousValue={kpis ? String(kpis.previous.newClients) : undefined}
+                    icon={Users}
+                  />
+                ) : (
+                  <DashboardEmptyState type="clients" />
+                )}
               </motion.div>
               <motion.div variants={itemVariants}>
-                <StatCard
-                  title="Conversão"
-                  value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
-                  change={kpis?.changes.conversion ?? 0}
-                  previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
-                  icon={TrendingUp}
-                />
+                {hasConversion ? (
+                  <StatCard
+                    title="Conversão"
+                    value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                    numericValue={kpis?.current.conversionRate ?? 0}
+                    change={kpis?.changes.conversion ?? 0}
+                    previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
+                    icon={TrendingUp}
+                  />
+                ) : (
+                  <DashboardEmptyState type="conversion" />
+                )}
               </motion.div>
             </motion.div>
 
-            {/* Main Grid - Stacked on mobile */}
+            {/* Main Grid */}
             <motion.div 
               className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              {/* Chart - Full width on mobile */}
               <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px]">
                 <SalesChart />
               </div>
-
-              {/* Goal Progress */}
               <div className="min-h-[200px]" data-tour="goals">
                 <GoalProgress 
                   current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
@@ -136,7 +159,7 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Second Row - 2 columns on mobile */}
+            {/* Second Row */}
             <motion.div 
               className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
               variants={containerVariants}
@@ -157,7 +180,7 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Third Row - Scrollable on mobile or stacked */}
+            {/* Third Row - with Mini Leaderboard */}
             <motion.div 
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
               variants={containerVariants}
@@ -172,7 +195,7 @@ const Index = () => {
                 <TopProducts />
               </motion.div>
               <motion.div variants={itemVariants}>
-                <CompetitiveLeaderboard />
+                <MiniLeaderboard />
               </motion.div>
               <motion.div variants={itemVariants}>
                 <StreakWidget salespersonId={salesperson?.id} />
