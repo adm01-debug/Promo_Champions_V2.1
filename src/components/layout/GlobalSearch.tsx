@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, User, Briefcase } from "lucide-react";
+import { Search, User, Briefcase, Plus, Kanban, ShoppingCart, Users, BarChart3, Target, FileText, Zap } from "lucide-react";
 import Fuse from "fuse.js";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -10,8 +10,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
+
 interface SearchResult {
   id: string;
   type: "deal" | "client";
@@ -19,6 +21,15 @@ interface SearchResult {
   subtitle?: string;
   status?: string;
   amount?: number;
+}
+
+interface QuickAction {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: React.ElementType;
+  action: () => void;
+  keywords: string[];
 }
 
 export interface GlobalSearchHandle {
@@ -36,6 +47,69 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     open: () => setOpen(true),
   }));
 
+  // Quick actions
+  const quickActions: QuickAction[] = useMemo(() => [
+    {
+      id: "new-sale",
+      title: "Nova Venda",
+      subtitle: "Registrar uma nova venda",
+      icon: Plus,
+      action: () => navigate("/vendas"),
+      keywords: ["nova", "venda", "registrar", "criar", "new", "sale"],
+    },
+    {
+      id: "new-client",
+      title: "Novo Cliente",
+      subtitle: "Cadastrar um novo cliente",
+      icon: Users,
+      action: () => navigate("/clientes"),
+      keywords: ["novo", "cliente", "cadastrar", "criar", "new", "client"],
+    },
+    {
+      id: "pipeline",
+      title: "Ver Pipeline",
+      subtitle: "Abrir o pipeline de vendas",
+      icon: Kanban,
+      action: () => navigate("/pipeline"),
+      keywords: ["pipeline", "kanban", "funil", "deals"],
+    },
+    {
+      id: "new-quote",
+      title: "Novo Orçamento",
+      subtitle: "Criar um orçamento",
+      icon: FileText,
+      action: () => navigate("/orcamentos"),
+      keywords: ["orçamento", "orcamento", "proposta", "quote"],
+    },
+    {
+      id: "ranking",
+      title: "Ver Ranking",
+      subtitle: "Conferir ranking de vendedores",
+      icon: Target,
+      action: () => navigate("/ranking"),
+      keywords: ["ranking", "placar", "leaderboard", "competição"],
+    },
+    {
+      id: "analytics",
+      title: "Analytics",
+      subtitle: "Visualizar métricas e relatórios",
+      icon: BarChart3,
+      action: () => navigate("/analytics"),
+      keywords: ["analytics", "métricas", "relatório", "bi", "dashboard"],
+    },
+  ], [navigate]);
+
+  // Filter quick actions by query
+  const filteredActions = useMemo(() => {
+    if (!query.trim()) return quickActions;
+    const q = query.toLowerCase();
+    return quickActions.filter(a => 
+      a.title.toLowerCase().includes(q) || 
+      a.subtitle.toLowerCase().includes(q) ||
+      a.keywords.some(k => k.includes(q))
+    );
+  }, [query, quickActions]);
+
   // Fuse.js instance for fuzzy search
   const fuse = useMemo(() => {
     return new Fuse(allData, {
@@ -50,9 +124,9 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   // Fuzzy search results
   const results = useMemo(() => {
     if (!query.trim()) {
-      return allData.slice(0, 15);
+      return allData.slice(0, 10);
     }
-    const fuseResults = fuse.search(query, { limit: 15 });
+    const fuseResults = fuse.search(query, { limit: 10 });
     return fuseResults.map((result) => result.item);
   }, [query, fuse, allData]);
 
@@ -79,12 +153,10 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
 
       if (error) throw error;
 
-      // Group by unique clients and deals
       const clientsMap = new Map<string, SearchResult>();
       const deals: SearchResult[] = [];
 
       (sales || []).forEach((sale) => {
-        // Add as deal
         deals.push({
           id: sale.id,
           type: "deal",
@@ -94,7 +166,6 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
           amount: sale.amount,
         });
 
-        // Track unique clients
         if (!clientsMap.has(sale.client_name)) {
           clientsMap.set(sale.client_name, {
             id: sale.client_name,
@@ -114,13 +185,11 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     }
   }, []);
 
-  // Load data when dialog opens
   useEffect(() => {
     if (open && allData.length === 0) {
       loadSearchData();
     }
   }, [open, allData.length, loadSearchData]);
-
 
   const handleSelect = (result: SearchResult) => {
     setOpen(false);
@@ -130,6 +199,12 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     } else {
       navigate("/clientes");
     }
+  };
+
+  const handleQuickAction = (action: QuickAction) => {
+    setOpen(false);
+    setQuery("");
+    action.action();
   };
 
   const formatCurrency = (value: number) =>
@@ -150,7 +225,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
-        placeholder="Buscar deals e clientes... (Ctrl+K)"
+        placeholder="Buscar ou executar ação... (⌘K)"
         value={query}
         onValueChange={setQuery}
       />
@@ -158,6 +233,29 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
         <CommandEmpty>
           {isLoading ? "Buscando..." : "Nenhum resultado encontrado."}
         </CommandEmpty>
+
+        {/* Quick Actions */}
+        {filteredActions.length > 0 && (
+          <CommandGroup heading="⚡ Ações Rápidas">
+            {filteredActions.map((action) => (
+              <CommandItem
+                key={action.id}
+                onSelect={() => handleQuickAction(action)}
+                className="cursor-pointer"
+              >
+                <action.icon className="mr-2 h-4 w-4 text-primary" />
+                <div className="flex-1">
+                  <span className="font-medium">{action.title}</span>
+                  <span className="text-muted-foreground ml-2 text-sm">
+                    {action.subtitle}
+                  </span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
+
+        {(clients.length > 0 || deals.length > 0) && <CommandSeparator />}
 
         {clients.length > 0 && (
           <CommandGroup heading="Clientes">

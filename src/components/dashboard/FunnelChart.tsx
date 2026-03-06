@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Filter } from "lucide-react";
+import { Filter, Info } from "lucide-react";
+import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const funnelData = [
   { stage: "Leads", value: 100, color: "bg-primary" },
@@ -9,16 +11,34 @@ const funnelData = [
 ];
 
 export const FunnelChart = () => {
+  const { data: kpis } = useDashboardKPIs();
+  const hasRealData = (kpis?.current.totalSales ?? 0) > 0;
+
   return (
-    <Card className="h-full">
+    <Card className="h-full relative">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
           <Filter className="h-4 w-4 text-primary" />
           Funil
+          {!hasRealData && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-muted text-muted-foreground">
+                    <Info className="h-2.5 w-2.5" />
+                    Demo
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Dados de demonstração. Registre vendas para ver dados reais.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        {funnelData.map((item, index) => (
+        {funnelData.map((item) => (
           <div key={item.stage} className="space-y-1">
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">{item.stage}</span>
@@ -33,6 +53,10 @@ export const FunnelChart = () => {
           </div>
         ))}
       </CardContent>
+      {/* Subtle overlay for demo data */}
+      {!hasRealData && (
+        <div className="absolute inset-0 bg-background/5 rounded-lg pointer-events-none" />
+      )}
     </Card>
   );
 };
