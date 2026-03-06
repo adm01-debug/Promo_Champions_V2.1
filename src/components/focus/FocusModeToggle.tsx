@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Focus, X, Coffee, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,8 @@ interface FocusModeToggleProps {
   className?: string;
 }
 
-export function FocusModeToggle({ variant = "icon", className }: FocusModeToggleProps) {
+export const FocusModeToggle = forwardRef<HTMLDivElement, FocusModeToggleProps>(
+  function FocusModeToggle({ variant = "icon", className }, ref) {
   const { isEnabled, formattedTime, toggleFocusMode } = useFocusMode();
 
   if (variant === "icon") {
@@ -111,7 +113,9 @@ export function FocusModeToggle({ variant = "icon", className }: FocusModeToggle
       </AnimatePresence>
     </motion.div>
   );
-}
+});
+
+FocusModeToggle.displayName = "FocusModeToggle";
 
 export function FocusModeBreakReminder() {
   const { shouldShowBreakReminder, dismissBreakReminder, config } = useFocusMode();

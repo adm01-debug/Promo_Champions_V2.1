@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { AnimatePresence } from "framer-motion";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -102,7 +102,6 @@ const App = () => (
                 <AuthProvider>
                   <CommandPalette />
                   <Suspense fallback={<PageLoadingFallback />}>
-                    <AnimatePresence mode="wait">
                       <Routes>
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
@@ -112,7 +111,6 @@ const App = () => (
                             <MainLayout>
                               <ErrorBoundary>
                                 <Suspense fallback={<PageLoadingFallback />}>
-                                  <AnimatePresence mode="wait">
                                     <Routes>
                                       <Route path="/" element={<Index />} />
                                       <Route path="/vendas" element={<Vendas />} />
@@ -220,14 +218,12 @@ const App = () => (
                                       <Route path="/orcamentos" element={<Orcamentos />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
-                                  </AnimatePresence>
                                 </Suspense>
                               </ErrorBoundary>
                             </MainLayout>
                           }
                         />
                       </Routes>
-                    </AnimatePresence>
                   </Suspense>
                 </AuthProvider>
               </KeyboardShortcutsProvider>

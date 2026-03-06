@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { forwardRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -46,7 +46,7 @@ const routeLabels: Record<string, string> = {
   'vendedor': 'Vendedor Dashboard',
 };
 
-export const Breadcrumbs: FC = () => {
+export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, ref) {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   
@@ -65,6 +65,7 @@ export const Breadcrumbs: FC = () => {
 
   return (
     <nav 
+      ref={ref}
       aria-label="Breadcrumb" 
       className="flex items-center gap-1 text-sm text-muted-foreground mb-4"
     >
@@ -103,4 +104,6 @@ export const Breadcrumbs: FC = () => {
       </ol>
     </nav>
   );
-};
+});
+
+Breadcrumbs.displayName = "Breadcrumbs";
