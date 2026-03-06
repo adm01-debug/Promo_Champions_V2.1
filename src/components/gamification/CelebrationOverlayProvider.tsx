@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { calculateLevelFromXP, getLevelInfo } from '@/hooks/useSalespersonXP';
 import { useLevelUpCelebration } from '@/hooks/useLevelUpCelebration';
