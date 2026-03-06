@@ -65,6 +65,7 @@ export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, 
 
   return (
     <nav 
+      ref={ref}
       aria-label="Breadcrumb" 
       className="flex items-center gap-1 text-sm text-muted-foreground mb-4"
     >
