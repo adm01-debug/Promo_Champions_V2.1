@@ -69,6 +69,7 @@ const BIVendedor = lazy(() => import("./pages/BIVendedor"));
 const BIGestor = lazy(() => import("./pages/BIGestor"));
 const BISDR = lazy(() => import("./pages/BISDR"));
 const BICloser = lazy(() => import("./pages/BICloser"));
+const BI = lazy(() => import("./pages/BI"));
 const DesafiosSemanais = lazy(() => import("./pages/DesafiosSemanais"));
 const HistoricoDesafiosDiarios = lazy(() => import("./pages/HistoricoDesafiosDiarios"));
 const PrevisaoDemanda = lazy(() => import("./pages/PrevisaoDemanda"));
