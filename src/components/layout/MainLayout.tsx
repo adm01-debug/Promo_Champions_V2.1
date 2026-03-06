@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { InstallPrompt, UpdatePrompt, OfflineIndicator } from "@/components/pwa";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
+import { KeyboardShortcuts } from "@/components/navigation/KeyboardShortcuts";
 interface MainLayoutProps {
   children: React.ReactNode;
 }
