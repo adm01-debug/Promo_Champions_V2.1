@@ -16,7 +16,8 @@ import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
 // Generic page loading fallback
-const PageLoadingFallback = () => (
+import { forwardRef } from "react";
+const PageLoadingFallback = forwardRef<HTMLDivElement>((_, ref) => (
   <div className="min-h-screen bg-background flex items-center justify-center" suppressHydrationWarning>
     <div className="space-y-4 w-full max-w-md p-8">
       <Skeleton className="h-8 w-3/4 mx-auto" />
