@@ -10,6 +10,7 @@ import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
+import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
