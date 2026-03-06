@@ -29,7 +29,8 @@ const PageLoadingFallback = forwardRef<HTMLDivElement>((_, ref) => (
       <Skeleton className="h-64 rounded-xl mt-4" />
     </div>
   </div>
-);
+));
+PageLoadingFallback.displayName = "PageLoadingFallback";
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));

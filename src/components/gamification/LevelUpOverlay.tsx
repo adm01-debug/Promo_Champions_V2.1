@@ -158,7 +158,8 @@ export const LevelUpOverlay = forwardRef<HTMLDivElement, LevelUpOverlayProps>(fu
       )}
     </AnimatePresence>
   );
-}
+});
+LevelUpOverlay.displayName = "LevelUpOverlay";
 
 // Streak milestone overlay
 interface StreakMilestoneOverlayProps {
