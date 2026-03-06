@@ -10,7 +10,7 @@ interface StatCardProps {
   change?: number;
   previousValue?: string;
   icon: LucideIcon;
-  variant?: "default" | "primary" | "success" | "warning";
+  variant?: "default" | "primary" | "success" | "warning" | "info" | "purple";
   hero?: boolean;
 }
 
