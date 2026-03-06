@@ -136,6 +136,7 @@ const Index = () => {
                     change={kpis?.changes.conversion ?? 0}
                     previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
                     icon={TrendingUp}
+                    variant="purple"
                   />
                 ) : (
                   <DashboardEmptyState type="conversion" />

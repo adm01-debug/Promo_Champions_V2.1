@@ -32,19 +32,23 @@ export const StatCard = ({
     enabled: numericValue !== undefined,
   });
 
-  const variantStyles = {
+  const variantStyles: Record<string, string> = {
     default: "bg-card border-border/40",
     primary: "bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30",
     success: "bg-gradient-to-br from-success/10 to-success/5 border-success/30",
     warning: "bg-gradient-to-br from-warning/10 to-warning/5 border-warning/30",
+    info: "bg-gradient-to-br from-status-info/10 to-status-info/5 border-status-info/30",
+    purple: "bg-gradient-to-br from-status-purple/10 to-status-purple/5 border-status-purple/30",
   };
 
   // Semantic icon colors per variant
-  const iconColors = {
+  const iconColors: Record<string, string> = {
     default: "bg-muted/60 text-muted-foreground",
     primary: "bg-success/15 text-success",         // green for revenue
     success: "bg-success/15 text-success",
-    warning: "bg-warning/15 text-warning",
+    warning: "bg-status-warning/15 text-status-warning",  // orange for clients
+    info: "bg-status-info/15 text-status-info",           // blue for sales
+    purple: "bg-status-purple/15 text-status-purple",     // purple for conversion
   };
 
   const getDisplayValue = () => {
