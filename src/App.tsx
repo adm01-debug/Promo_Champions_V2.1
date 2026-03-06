@@ -218,7 +218,6 @@ const App = () => (
                                       <Route path="/orcamentos" element={<Orcamentos />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
-                                  </AnimatePresence>
                                 </Suspense>
                               </ErrorBoundary>
                             </MainLayout>
