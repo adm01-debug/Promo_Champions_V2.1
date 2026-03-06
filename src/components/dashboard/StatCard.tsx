@@ -26,7 +26,6 @@ export const StatCard = ({
 }: StatCardProps) => {
   const isPositive = change >= 0;
 
-  // Count-up animation for numeric values
   const animatedNum = useCountUp(numericValue ?? 0, {
     duration: 1400,
     decimals: value.includes("%") ? 1 : 0,
@@ -34,20 +33,20 @@ export const StatCard = ({
   });
 
   const variantStyles = {
-    default: "bg-card",
-    primary: "bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20",
-    success: "bg-gradient-to-br from-success/10 to-success/5 border-success/20",
-    warning: "bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20",
+    default: "bg-card border-border/40",
+    primary: "bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30",
+    success: "bg-gradient-to-br from-success/10 to-success/5 border-success/30",
+    warning: "bg-gradient-to-br from-warning/10 to-warning/5 border-warning/30",
   };
 
+  // Semantic icon colors per variant
   const iconColors = {
-    default: "bg-muted/50 text-muted-foreground",
-    primary: "bg-primary/15 text-primary",
+    default: "bg-muted/60 text-muted-foreground",
+    primary: "bg-success/15 text-success",         // green for revenue
     success: "bg-success/15 text-success",
     warning: "bg-warning/15 text-warning",
   };
 
-  // Format animated value to match the original format
   const getDisplayValue = () => {
     if (numericValue === undefined) return value;
     if (value.startsWith("R$")) {
@@ -61,7 +60,7 @@ export const StatCard = ({
 
   return (
     <Card className={cn(
-      "hover-lift transition-all duration-200",
+      "hover-lift transition-all duration-200 border",
       variantStyles[variant],
       hero && "lg:col-span-2 relative overflow-hidden"
     )}>
@@ -69,7 +68,7 @@ export const StatCard = ({
         <div className="flex items-start justify-between">
           <div className={cn("space-y-1 sm:space-y-2", hero && "space-y-2 sm:space-y-3")}>
             <p className={cn(
-              "text-xs sm:text-sm text-muted-foreground font-medium",
+              "text-xs sm:text-sm text-muted-foreground font-medium uppercase tracking-wide",
               hero && "text-sm sm:text-base"
             )}>
               {title}
@@ -116,7 +115,6 @@ export const StatCard = ({
             )} />
           </div>
         </div>
-        {/* Hero decorative element */}
         {hero && (
           <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
         )}
