@@ -121,6 +121,7 @@ const Index = () => {
                     change={kpis?.changes.clients ?? 0}
                     previousValue={kpis ? String(kpis.previous.newClients) : undefined}
                     icon={Users}
+                    variant="warning"
                   />
                 ) : (
                   <DashboardEmptyState type="clients" />
