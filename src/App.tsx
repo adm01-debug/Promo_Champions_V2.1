@@ -111,7 +111,6 @@ const App = () => (
                             <MainLayout>
                               <ErrorBoundary>
                                 <Suspense fallback={<PageLoadingFallback />}>
-                                  <AnimatePresence mode="wait">
                                     <Routes>
                                       <Route path="/" element={<Index />} />
                                       <Route path="/vendas" element={<Vendas />} />
