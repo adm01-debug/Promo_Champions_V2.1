@@ -19,6 +19,7 @@ import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { InstallPrompt, UpdatePrompt, OfflineIndicator } from "@/components/pwa";
+import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 interface MainLayoutProps {
   children: React.ReactNode;
 }
@@ -27,6 +28,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
+  const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   
   // Enable real-time security alert notifications for admins/managers
   useSecurityAlertNotifications();
@@ -77,7 +79,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               <FocusModeToggle />
               <Link to="/notificacoes" className="relative glass h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/50 transition-colors">
                 <Bell className="h-4 w-4" />
-                <NotificationBadge count={3} position="top-right" size="sm" pulse />
+                <NotificationBadge count={unreadCount} position="top-right" size="sm" pulse />
               </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
               <ThemeToggle />
