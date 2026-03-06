@@ -199,6 +199,7 @@ const App = () => {
                                       } />
                                       <Route path="/admin" element={<AdminDashboard />} />
                                       <Route path="/assistente" element={<Assistente />} />
+                                      <Route path="/bi" element={<BI />} />
                                       <Route path="/bi-vendedor" element={<BIVendedor />} />
                                       <Route path="/bi-sdr" element={<BISDR />} />
                                       <Route path="/bi-closer" element={<BICloser />} />
