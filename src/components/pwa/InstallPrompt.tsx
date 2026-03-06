@@ -181,4 +181,6 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
       </motion.div>
     </AnimatePresence>
   );
-}
+});
+
+InstallPrompt.displayName = 'InstallPrompt';
