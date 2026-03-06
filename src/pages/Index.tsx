@@ -106,6 +106,7 @@ const Index = () => {
                     change={kpis?.changes.sales ?? 0}
                     previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
                     icon={ShoppingBag}
+                    variant="info"
                   />
                 ) : (
                   <DashboardEmptyState type="sales" />
