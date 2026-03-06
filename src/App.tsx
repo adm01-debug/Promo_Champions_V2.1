@@ -224,7 +224,6 @@ const App = () => (
                           }
                         />
                       </Routes>
-                    </AnimatePresence>
                   </Suspense>
                 </AuthProvider>
               </KeyboardShortcutsProvider>
