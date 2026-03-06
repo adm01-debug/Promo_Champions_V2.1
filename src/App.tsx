@@ -88,7 +88,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
+const App = () => {
+  // Global safety net for unhandled async errors
+  useEffect(() => {
+    const handler = (event: PromiseRejectionEvent) => {
+      console.error("Unhandled rejection:", event.reason);
+      event.preventDefault();
+    };
+    window.addEventListener("unhandledrejection", handler);
+    return () => window.removeEventListener("unhandledrejection", handler);
+  }, []);
+
+  return (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={0}>
