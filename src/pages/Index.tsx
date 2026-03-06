@@ -211,6 +211,15 @@ const Index = () => {
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
               </motion.div>
             </motion.div>
+
+            {/* Onboarding Checklist - shown for new users */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+            >
+              <OnboardingChecklist />
+            </motion.div>
           </div>
         </div>
       </PageTransition>
