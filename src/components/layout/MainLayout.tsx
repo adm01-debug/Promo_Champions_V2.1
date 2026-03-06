@@ -114,6 +114,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* PWA Update Prompt */}
         <UpdatePrompt />
+        
+        {/* Keyboard shortcuts tooltip */}
+        <KeyboardShortcuts />
       </div>
     </SidebarProvider>
   );
