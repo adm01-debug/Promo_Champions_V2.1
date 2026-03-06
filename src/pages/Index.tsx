@@ -223,6 +223,7 @@ const Index = () => {
             </motion.div>
           </div>
         </div>
+        <ProductTour />
       </PageTransition>
     </SkeletonTransition>
   );
