@@ -354,42 +354,44 @@ SidebarGroup.displayName = "SidebarGroup";
 
 const SidebarGroupLabel = React.forwardRef<HTMLDivElement, React.ComponentProps<"div"> & { asChild?: boolean }>(
   ({ className, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "div";
+    const sharedProps = {
+      "data-sidebar": "group-label",
+      className: cn(
+        "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
+        className,
+      ),
+      ...props,
+    };
 
-    return (
-      <Comp
-        ref={ref}
-        data-sidebar="group-label"
-        className={cn(
-          "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
-          "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
-          className,
-        )}
-        {...props}
-      />
-    );
+    if (asChild) {
+      return <Slot {...sharedProps} />;
+    }
+
+    return <div ref={ref} {...sharedProps} />;
   },
 );
 SidebarGroupLabel.displayName = "SidebarGroupLabel";
 
 const SidebarGroupAction = React.forwardRef<HTMLButtonElement, React.ComponentProps<"button"> & { asChild?: boolean }>(
   ({ className, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
+    const sharedProps = {
+      "data-sidebar": "group-action",
+      className: cn(
+        "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        // Increases the hit area of the button on mobile.
+        "after:absolute after:-inset-2 after:md:hidden",
+        "group-data-[collapsible=icon]:hidden",
+        className,
+      ),
+      ...props,
+    };
 
-    return (
-      <Comp
-        ref={ref}
-        data-sidebar="group-action"
-        className={cn(
-          "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
-          // Increases the hit area of the button on mobile.
-          "after:absolute after:-inset-2 after:md:hidden",
-          "group-data-[collapsible=icon]:hidden",
-          className,
-        )}
-        {...props}
-      />
-    );
+    if (asChild) {
+      return <Slot {...sharedProps} />;
+    }
+
+    return <button ref={ref} {...sharedProps} />;
   },
 );
 SidebarGroupAction.displayName = "SidebarGroupAction";
