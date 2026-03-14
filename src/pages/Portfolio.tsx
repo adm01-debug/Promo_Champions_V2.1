@@ -132,7 +132,7 @@ export default function Portfolio() {
   return (
     <>
       <Helmet>
-        <title>Portfólio de Clientes | Sales Arena</title>
+        <title>Portfólio de Clientes | SALES ARENA</title>
         <meta
           name="description"
           content="Gerencie o portfólio de clientes por vendedor"

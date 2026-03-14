@@ -242,8 +242,11 @@ export function AppSidebar() {
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-lg font-bold text-foreground">
-                Sales Arena
+              <span className="text-lg font-bold text-foreground leading-tight">
+                SALES ARENA
+              </span>
+              <span className="text-[8px] text-muted-foreground tracking-wide">
+                By Promo Brindes
               </span>
               <span className={cn("text-[10px] uppercase tracking-widest font-bold", currentViewConfig.color)}>
                 {currentViewConfig.label}
