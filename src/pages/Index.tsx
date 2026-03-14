@@ -23,13 +23,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion } from "framer-motion";
-import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import {
   DollarSign,
   ShoppingBag,
   Users,
   TrendingUp,
 } from "lucide-react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, delay: i * 0.06, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
 
 const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
@@ -45,6 +54,7 @@ const Index = () => {
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;
   const hasClients = (kpis?.current.newClients ?? 0) > 0;
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
+  const hasAnyData = hasRevenue || hasSales || hasClients || hasConversion;
 
   return (
     <SkeletonTransition
@@ -53,45 +63,24 @@ const Index = () => {
       duration={400}
     >
       <PageTransition>
-        <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
-            {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            >
+        <div className="min-h-screen bg-background">
+          <div className="max-w-[1400px] mx-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 space-y-5 sm:space-y-6">
+            
+            {/* ── Header + Status Bar ── */}
+            <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="space-y-4">
               <DashboardHeader />
-            </motion.div>
-
-            {/* Competitive Status Bar - visible on all screens */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
               <CompetitiveStatusBar />
             </motion.div>
 
-            {/* Onboarding Checklist - at the top for new users */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.15 }}
-            >
+            {/* ── Onboarding (only for new users) ── */}
+            <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible">
               <OnboardingChecklist />
             </motion.div>
 
-            {/* Hero Faturamento + Stats Row */}
-            <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              data-tour="stats"
-            >
-              {/* Hero: Faturamento (spans 2 cols) */}
-              <motion.div variants={itemVariants} className="col-span-2">
+            {/* ── KPI Cards Row ── */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" data-tour="stats">
+              {/* Hero Faturamento */}
+              <motion.div custom={2} variants={fadeUp} initial="hidden" animate="visible" className="col-span-2 lg:col-span-1">
                 {hasRevenue ? (
                   <StatCard
                     title="Faturamento"
@@ -107,7 +96,7 @@ const Index = () => {
                   <DashboardEmptyState type="revenue" />
                 )}
               </motion.div>
-              <motion.div variants={itemVariants}>
+              <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
                 {hasSales ? (
                   <StatCard
                     title="Vendas"
@@ -122,7 +111,7 @@ const Index = () => {
                   <DashboardEmptyState type="sales" />
                 )}
               </motion.div>
-              <motion.div variants={itemVariants}>
+              <motion.div custom={4} variants={fadeUp} initial="hidden" animate="visible">
                 {hasClients ? (
                   <StatCard
                     title="Clientes"
@@ -137,7 +126,7 @@ const Index = () => {
                   <DashboardEmptyState type="clients" />
                 )}
               </motion.div>
-              <motion.div variants={itemVariants}>
+              <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible">
                 {hasConversion ? (
                   <StatCard
                     title="Conversão"
@@ -152,19 +141,17 @@ const Index = () => {
                   <DashboardEmptyState type="conversion" />
                 )}
               </motion.div>
-            </motion.div>
+            </div>
 
-            {/* Main Grid */}
+            {/* ── Main Content: Chart + Goal ── */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              custom={6} variants={fadeUp} initial="hidden" animate="visible"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5"
             >
-              <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px]">
+              <div className="lg:col-span-2 min-h-[280px]">
                 <SalesChart />
               </div>
-              <div className="min-h-[200px]" data-tour="goals">
+              <div className="min-h-[280px]" data-tour="goals">
                 <GoalProgress 
                   current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
                   goal={goalsData?.totalGoal || 0} 
@@ -172,53 +159,38 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Second Row */}
+            {/* ── Secondary Grid: Funnel + Forecast + KPIs + Alerts ── */}
             <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+              custom={7} variants={fadeUp} initial="hidden" animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
             >
-              <motion.div variants={itemVariants}>
-                <FunnelChart />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <SalesForecast />
-              </motion.div>
-              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
-                <KPIGrid />
-              </motion.div>
-              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
-                <AlertsPanel />
-              </motion.div>
+              <FunnelChart />
+              <SalesForecast />
+              <KPIGrid />
+              <AlertsPanel />
             </motion.div>
 
-            {/* Third Row - with Mini Leaderboard */}
+            {/* ── Bottom Grid: Activity + Gamification ── */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+              custom={8} variants={fadeUp} initial="hidden" animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
               data-tour="gamification"
             >
-              <motion.div variants={itemVariants} className="sm:col-span-1">
+              {/* Left column: Deals + Products stacked */}
+              <div className="space-y-4 sm:space-y-5">
                 <RecentDeals />
-              </motion.div>
-              <motion.div variants={itemVariants} className="sm:col-span-1">
                 <TopProducts />
-              </motion.div>
-              <motion.div variants={itemVariants}>
+              </div>
+              {/* Center: Leaderboard + Streak */}
+              <div className="space-y-4 sm:space-y-5">
                 <MiniLeaderboard />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <StreakWidget salespersonId={salesperson?.id} />
-              </motion.div>
-              <motion.div variants={itemVariants}>
+              </div>
+              {/* Right: Challenges */}
+              <div className="space-y-4 sm:space-y-5 sm:col-span-2 lg:col-span-1">
                 <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
-              </motion.div>
+              </div>
             </motion.div>
 
           </div>
