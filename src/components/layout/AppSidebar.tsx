@@ -264,11 +264,11 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      {/* View Mode Switcher */}
-      {isAdminOrManager && !isCollapsed && (
+      {/* View Mode Switcher - only show if multiple modes available */}
+      {showViewSwitcher && !isCollapsed && (
         <div className="px-3 pb-3">
           <div className="flex gap-0.5 p-1 bg-muted/40 rounded-full border border-border/20">
-            {viewModes.map((vm) => (
+            {availableViewModes.map((vm) => (
               <Button
                 key={vm.mode}
                 variant="ghost"
