@@ -111,9 +111,15 @@ export const SalesChart = () => {
       <CardContent className="pb-4">
         {isLoading ? (
           <Skeleton className="h-[200px] w-full rounded-lg" />
-        ) : !chartData || chartData.length === 0 ? (
-          <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">
-            Nenhum dado de vendas no período selecionado
+        ) : !chartData || chartData.every(d => d.value === 0) ? (
+          <div className="h-[200px] flex flex-col items-center justify-center gap-3">
+            <div className="p-3 rounded-2xl bg-primary/10">
+              <TrendingUp className="h-6 w-6 text-primary/50" />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Sem vendas no período</p>
+              <p className="text-xs text-muted-foreground/60">Registre sua primeira venda para ver a evolução</p>
+            </div>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={200}>

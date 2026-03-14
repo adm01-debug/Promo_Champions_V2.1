@@ -64,14 +64,22 @@ const Index = () => {
               <DashboardHeader />
             </motion.div>
 
-            {/* Competitive Status Bar */}
+            {/* Competitive Status Bar - visible on all screens */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="hidden sm:block"
             >
               <CompetitiveStatusBar />
+            </motion.div>
+
+            {/* Onboarding Checklist - at the top for new users */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+            >
+              <OnboardingChecklist />
             </motion.div>
 
             {/* Hero Faturamento + Stats Row */}
@@ -213,14 +221,6 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Onboarding Checklist - shown for new users */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
-            >
-              <OnboardingChecklist />
-            </motion.div>
           </div>
         </div>
         <ProductTour />
