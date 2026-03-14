@@ -1,9 +1,10 @@
+import { type ElementType } from "react";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { Badge } from "@/components/ui/badge";
 import { Crown, ShieldCheck, User, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; color: string; description: string }> = {
+const roleConfig: Record<AppRole, { label: string; icon: ElementType; color: string; description: string }> = {
   admin: {
     label: "Admin",
     icon: Crown,
