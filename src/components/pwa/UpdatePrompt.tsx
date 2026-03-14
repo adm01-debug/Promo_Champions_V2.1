@@ -9,7 +9,7 @@ interface UpdatePromptProps {
   className?: string;
 }
 
-export function UpdatePrompt({ className }: UpdatePromptProps) {
+export const UpdatePrompt = forwardRef<HTMLDivElement, UpdatePromptProps>(function UpdatePrompt({ className }, _ref) {
   const { isUpdateAvailable, updateApp } = usePWA();
 
   if (!isUpdateAvailable) {
