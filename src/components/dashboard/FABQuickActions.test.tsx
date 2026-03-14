@@ -8,8 +8,13 @@ vi.mock("@/hooks/useMediaQuery", () => ({
   useIsMobile: () => false,
 }));
 
+const routerFutureConfig = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 const renderWithRouter = (ui: React.ReactElement) =>
-  render(<BrowserRouter>{ui}</BrowserRouter>);
+  render(<BrowserRouter future={routerFutureConfig}>{ui}</BrowserRouter>);
 
 describe("FABQuickActions", () => {
   it("renders the FAB button", () => {

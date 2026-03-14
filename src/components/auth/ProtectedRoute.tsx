@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,26 +23,44 @@ export function ProtectedRoute({
   const location = useLocation();
   const hasLoggedRef = useRef(false);
 
-  // Log access denied attempt
-  const logAccessDenied = async (requiredRoleLabel: string) => {
-    if (!user || hasLoggedRef.current) return;
-    hasLoggedRef.current = true;
-    
-    try {
-      await supabase.from("access_denied_logs").insert({
-        user_id: user.id,
-        user_email: user.email,
-        attempted_path: location.pathname,
-        user_role: currentUserRole?.role || "unknown",
-        required_role: requiredRoleLabel,
-        user_agent: navigator.userAgent,
-      });
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error("Failed to log access denied:", error);
+  const roles = requiredRole ? (Array.isArray(requiredRole) ? requiredRole : [requiredRole]) : [];
+  const hasRequiredRole = roles.length === 0 || roles.some((role) => currentUserRole?.role === role);
+
+  const deniedReason = requireAdminOrManager && !isAdminOrManager
+    ? "admin ou manager"
+    : !hasRequiredRole
+      ? roles.join(" ou ")
+      : null;
+
+  // Reset logging guard when route/user changes
+  useEffect(() => {
+    hasLoggedRef.current = false;
+  }, [location.pathname, user?.id]);
+
+  // Log access denied attempt as side effect
+  useEffect(() => {
+    const logAccessDenied = async () => {
+      if (!user || !deniedReason || hasLoggedRef.current) return;
+      hasLoggedRef.current = true;
+
+      try {
+        await supabase.from("access_denied_logs").insert({
+          user_id: user.id,
+          user_email: user.email,
+          attempted_path: location.pathname,
+          user_role: currentUserRole?.role || "unknown",
+          required_role: deniedReason,
+          user_agent: navigator.userAgent,
+        });
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error("Failed to log access denied:", error);
+        }
       }
-    }
-  };
+    };
+
+    void logAccessDenied();
+  }, [deniedReason, user, currentUserRole?.role, location.pathname]);
 
   // Show loading state while checking auth and roles
   if (isAuthLoading || isLoadingCurrentRole) {
@@ -62,21 +80,8 @@ export function ProtectedRoute({
     return <Navigate to="/auth" replace />;
   }
 
-  // Check for admin or manager requirement
-  if (requireAdminOrManager && !isAdminOrManager) {
-    logAccessDenied("admin ou manager");
+  if (deniedReason) {
     return <Navigate to={fallbackPath} replace />;
-  }
-
-  // Check for specific role requirement
-  if (requiredRole) {
-    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-    const hasRequiredRole = roles.some(role => currentUserRole?.role === role);
-    
-    if (!hasRequiredRole) {
-      logAccessDenied(roles.join(" ou "));
-      return <Navigate to={fallbackPath} replace />;
-    }
   }
 
   return <>{children}</>;

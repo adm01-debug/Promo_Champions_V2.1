@@ -3,8 +3,13 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { GoalProgress } from "./GoalProgress";
 
+const routerFutureConfig = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 const renderWithRouter = (ui: React.ReactElement) =>
-  render(<BrowserRouter>{ui}</BrowserRouter>);
+  render(<BrowserRouter future={routerFutureConfig}>{ui}</BrowserRouter>);
 
 describe("GoalProgress", () => {
   it("shows inline config UI when goal is 0", () => {
