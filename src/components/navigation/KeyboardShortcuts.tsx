@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/useMediaQuery";
@@ -30,11 +29,12 @@ export function KeyboardShortcuts() {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <DialogTrigger asChild>
-              <button className="fixed bottom-4 right-4 z-30 h-8 w-8 rounded-full bg-muted/80 backdrop-blur-sm border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all shadow-sm hover:shadow-md">
-                <Keyboard className="h-3.5 w-3.5" />
-              </button>
-            </DialogTrigger>
+            <button
+              onClick={() => setOpen(true)}
+              className="fixed bottom-4 right-4 z-30 h-8 w-8 rounded-full bg-muted/80 backdrop-blur-sm border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all shadow-sm hover:shadow-md"
+            >
+              <Keyboard className="h-3.5 w-3.5" />
+            </button>
           </TooltipTrigger>
           <TooltipContent side="left">
             <p className="text-xs">Atalhos de teclado (?)</p>

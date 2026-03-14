@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus, ShoppingCart, Users, Kanban, Activity, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 
@@ -27,45 +27,42 @@ export function FABQuickActions() {
       "fixed z-40",
       isMobile ? "bottom-[5.5rem] right-4" : "bottom-6 right-6"
     )}>
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-background/60 backdrop-blur-sm z-30"
-              onClick={() => setIsOpen(false)}
-            />
-            
-            {/* Actions */}
-            <div className="absolute bottom-16 right-0 z-40 flex flex-col-reverse gap-3 items-end">
-              {actions.map((action, i) => (
-                <motion.button
-                  key={action.label}
-                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.8 }}
-                  transition={{ delay: i * 0.05, duration: 0.2 }}
-                  onClick={() => handleAction(action.route)}
-                  className="flex items-center gap-3 group"
-                >
-                  <span className="bg-card border border-border/50 shadow-lg rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap opacity-90 group-hover:opacity-100 transition-opacity">
-                    {action.label}
-                  </span>
-                  <div className={cn(
-                    "h-11 w-11 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110",
-                    action.color
-                  )}>
-                    <action.icon className="h-5 w-5" />
-                  </div>
-                </motion.button>
-              ))}
-            </div>
-          </>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/60 backdrop-blur-sm z-30"
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Actions */}
+          <div className="absolute bottom-16 right-0 z-40 flex flex-col-reverse gap-3 items-end">
+            {actions.map((action, i) => (
+              <motion.button
+                key={action.label}
+                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: i * 0.05, duration: 0.2 }}
+                onClick={() => handleAction(action.route)}
+                className="flex items-center gap-3 group"
+              >
+                <span className="bg-card border border-border/50 shadow-lg rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap opacity-90 group-hover:opacity-100 transition-opacity">
+                  {action.label}
+                </span>
+                <div className={cn(
+                  "h-11 w-11 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110",
+                  action.color
+                )}>
+                  <action.icon className="h-5 w-5" />
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Main FAB */}
       <motion.button
