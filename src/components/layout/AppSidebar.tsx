@@ -126,7 +126,7 @@ const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
 ];
 
-export function AppSidebar() {
+export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props, _ref) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
