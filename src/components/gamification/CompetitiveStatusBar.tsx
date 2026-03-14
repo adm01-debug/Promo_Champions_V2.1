@@ -181,7 +181,7 @@ export function CompetitiveStatusBar() {
         {/* Quick stats */}
         <div className="flex items-center gap-3">
           {actionData?.stagnantDeals && actionData.stagnantDeals > 0 && (
-            <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-destructive/10 border border-destructive/15">
+            <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-destructive/10 border border-destructive/20">
               <AlertTriangle className="h-3 w-3 text-destructive" />
               <span className="text-[11px] font-medium text-destructive">
                 {actionData.stagnantDeals} parado{actionData.stagnantDeals > 1 ? 's' : ''}

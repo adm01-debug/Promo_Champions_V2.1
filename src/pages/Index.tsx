@@ -78,9 +78,9 @@ const Index = () => {
             </motion.div>
 
             {/* ── KPI Cards Row ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" data-tour="stats">
-              {/* Hero Faturamento */}
-              <motion.div custom={2} variants={fadeUp} initial="hidden" animate="visible" className="col-span-2 lg:col-span-1">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" data-tour="stats">
+              {/* Hero Faturamento — spans 2 cols */}
+              <motion.div custom={2} variants={fadeUp} initial="hidden" animate="visible" className="col-span-2">
                 {hasRevenue ? (
                   <StatCard
                     title="Faturamento"

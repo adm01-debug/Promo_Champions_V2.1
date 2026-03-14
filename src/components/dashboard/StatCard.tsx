@@ -64,9 +64,9 @@ export const StatCard = ({
 
   return (
     <Card className={cn(
-      "hover-lift transition-all duration-200 border",
+      "hover-lift transition-all duration-200 border h-full",
       variantStyles[variant],
-      hero && "lg:col-span-2 relative overflow-hidden"
+      hero && "relative overflow-hidden"
     )}>
       <CardContent className={cn("p-4 sm:p-6", hero && "sm:p-8")}>
         <div className="flex items-start justify-between">
