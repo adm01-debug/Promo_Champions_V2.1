@@ -17,9 +17,7 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { NotificationPopover } from "@/components/layout/NotificationPopover";
 import { cn } from "@/lib/utils";
 import { FABQuickActions } from "@/components/dashboard/FABQuickActions";
-import { cn } from "@/lib/utils";
 import { InstallPrompt, UpdatePrompt, OfflineIndicator } from "@/components/pwa";
-import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import { KeyboardShortcuts } from "@/components/navigation/KeyboardShortcuts";
 interface MainLayoutProps {
   children: React.ReactNode;
