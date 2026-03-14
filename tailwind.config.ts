@@ -29,7 +29,6 @@ export default {
 			],
 			display: [
 				'Sora',
-				'Space Grotesk',
 				'system-ui',
 				'sans-serif'
 			],
