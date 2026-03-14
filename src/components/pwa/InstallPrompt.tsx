@@ -74,47 +74,44 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
 
   if (variant === 'card') {
     return (
-      <AnimatePresence>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          className={cn(
-            "fixed bottom-20 md:bottom-4 right-4 w-72",
-            "bg-card/95 backdrop-blur-lg border border-border/50 rounded-xl shadow-xl p-3.5",
-            "z-40",
-            className
-          )}
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={cn(
+          "fixed bottom-20 md:bottom-4 right-4 w-72",
+          "bg-card/95 backdrop-blur-lg border border-border/50 rounded-xl shadow-xl p-3.5",
+          "z-40",
+          className
+        )}
+      >
+        <button
+          onClick={handleDismiss}
+          className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
         >
-          <button
-            onClick={handleDismiss}
-            className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
-          >
-            <X className="h-3.5 w-3.5 text-muted-foreground" />
-          </button>
+          <X className="h-3.5 w-3.5 text-muted-foreground" />
+        </button>
 
-          <div className="flex items-center gap-2.5 mb-2.5">
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Download className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold">Instalar SalesPro</h3>
-              <p className="text-[11px] text-muted-foreground">Acesso rápido ao app</p>
-            </div>
+        <div className="flex items-center gap-2.5 mb-2.5">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Download className="h-4 w-4 text-primary" />
           </div>
+          <div>
+            <h3 className="text-sm font-semibold">Instalar SalesPro</h3>
+            <p className="text-[11px] text-muted-foreground">Acesso rápido ao app</p>
+          </div>
+        </div>
 
-          <Button 
-            onClick={handleInstall}
-            disabled={isInstalling}
-            size="sm"
-            className="w-full gap-2 h-8 text-xs"
-          >
-            <Download className="h-3.5 w-3.5" />
-            {isInstalling ? 'Instalando...' : 'Instalar Agora'}
-          </Button>
-        </motion.div>
-      </AnimatePresence>
+        <Button 
+          onClick={handleInstall}
+          disabled={isInstalling}
+          size="sm"
+          className="w-full gap-2 h-8 text-xs"
+        >
+          <Download className="h-3.5 w-3.5" />
+          {isInstalling ? 'Instalando...' : 'Instalar Agora'}
+        </Button>
+      </motion.div>
     );
   }
 

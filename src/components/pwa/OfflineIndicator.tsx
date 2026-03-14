@@ -31,12 +31,11 @@ export function OfflineIndicator({
   }, [isOnline, wasOffline, showOnlineMessage]);
 
   return (
-    <AnimatePresence>
+    <>
       {!isOnline && (
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -50 }}
           className={cn(
             "fixed top-0 left-0 right-0 z-[100]",
             "bg-amber-500 text-amber-950",
@@ -55,7 +54,6 @@ export function OfflineIndicator({
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -50 }}
           className={cn(
             "fixed top-0 left-0 right-0 z-[100]",
             "bg-green-500 text-white",
@@ -69,6 +67,6 @@ export function OfflineIndicator({
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
