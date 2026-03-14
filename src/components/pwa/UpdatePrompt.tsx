@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ interface UpdatePromptProps {
   className?: string;
 }
 
-export function UpdatePrompt({ className }: UpdatePromptProps) {
+export const UpdatePrompt = forwardRef<HTMLDivElement, UpdatePromptProps>(function UpdatePrompt({ className }, _ref) {
   const { isUpdateAvailable, updateApp } = usePWA();
 
   if (!isUpdateAvailable) {
@@ -51,4 +52,5 @@ export function UpdatePrompt({ className }: UpdatePromptProps) {
       </div>
     </motion.div>
   );
-}
+});
+UpdatePrompt.displayName = "UpdatePrompt";
