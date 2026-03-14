@@ -172,7 +172,7 @@ interface StreakMilestoneOverlayProps {
   onComplete?: () => void;
 }
 
-export function StreakMilestoneOverlay({
+export const StreakMilestoneOverlay = forwardRef<HTMLDivElement, StreakMilestoneOverlayProps>(function StreakMilestoneOverlay({
   isVisible,
   streakDays,
   salespersonName,
@@ -180,7 +180,7 @@ export function StreakMilestoneOverlay({
   milestoneIcon = '🔥',
   xpReward = 0,
   onComplete,
-}: StreakMilestoneOverlayProps) {
+}, _ref) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
