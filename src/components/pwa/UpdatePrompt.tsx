@@ -52,4 +52,5 @@ export const UpdatePrompt = forwardRef<HTMLDivElement, UpdatePromptProps>(functi
       </div>
     </motion.div>
   );
-}
+});
+UpdatePrompt.displayName = "UpdatePrompt";

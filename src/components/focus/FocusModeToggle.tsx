@@ -155,4 +155,5 @@ export const FocusModeBreakReminder = forwardRef<HTMLDivElement>(function FocusM
       )}
     </AnimatePresence>
   );
-}
+});
+FocusModeBreakReminder.displayName = "FocusModeBreakReminder";

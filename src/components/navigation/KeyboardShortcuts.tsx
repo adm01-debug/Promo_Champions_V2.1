@@ -69,4 +69,5 @@ export const KeyboardShortcuts = forwardRef<HTMLDivElement>(function KeyboardSho
       </DialogContent>
     </Dialog>
   );
-}
+});
+KeyboardShortcuts.displayName = "KeyboardShortcuts";

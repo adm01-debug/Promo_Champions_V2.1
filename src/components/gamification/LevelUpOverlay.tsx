@@ -364,4 +364,5 @@ export const StreakMilestoneOverlay = forwardRef<HTMLDivElement, StreakMilestone
       )}
     </AnimatePresence>
   );
-}
+});
+StreakMilestoneOverlay.displayName = "StreakMilestoneOverlay";

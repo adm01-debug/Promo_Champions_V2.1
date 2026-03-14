@@ -79,4 +79,5 @@ export const FABQuickActions = forwardRef<HTMLDivElement>(function FABQuickActio
       </motion.button>
     </div>
   );
-}
+});
+FABQuickActions.displayName = "FABQuickActions";
