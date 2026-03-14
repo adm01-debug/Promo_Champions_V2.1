@@ -1,0 +1,127 @@
+/* ===== ANIMATIONS & KEYFRAMES ===== */
+/* All animation keyframes defined in utilities layer */
+
+@layer utilities {
+  /* ===== PING ANIMATION FOR REAL-TIME ===== */
+  @keyframes ping-slow {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  .animate-ping-slow {
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* ===== FADE IN UP ===== */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+  }
+
+  /* ===== STAGGER ANIMATION DELAYS ===== */
+  .stagger-1 { animation-delay: 50ms; }
+  .stagger-2 { animation-delay: 100ms; }
+  .stagger-3 { animation-delay: 150ms; }
+  .stagger-4 { animation-delay: 200ms; }
+  .stagger-5 { animation-delay: 250ms; }
+  .stagger-6 { animation-delay: 300ms; }
+  .stagger-7 { animation-delay: 350ms; }
+  .stagger-8 { animation-delay: 400ms; }
+
+  /* ===== XP Bar Shimmer ===== */
+  .animate-xp-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--xp)) 0%,
+      hsl(var(--xp) / 0.7) 50%,
+      hsl(var(--xp)) 100%
+    );
+    background-size: 200% 100%;
+    animation: xp-shimmer 2s ease-in-out infinite;
+  }
+
+  /* ===== Streak Fire Pulse ===== */
+  .animate-streak-fire {
+    animation: streak-fire 0.8s ease-in-out infinite;
+  }
+
+  /* ===== Coin Shine ===== */
+  .animate-coin-shine {
+    animation: coin-shine 2s ease-in-out infinite;
+  }
+
+  /* ===== Level Up Flash ===== */
+  .animate-level-up {
+    animation: level-up 0.6s ease-out;
+  }
+
+  /* ===== Pulse Glow ===== */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* ===== Floating Animation ===== */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* ===== ANIMATED BACKGROUNDS ===== */
+  .bg-animated-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.1) 0%,
+      hsl(var(--accent) / 0.1) 25%,
+      hsl(var(--primary) / 0.05) 50%,
+      hsl(var(--accent) / 0.1) 75%,
+      hsl(var(--primary) / 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* ===== ANIMATED BORDER ===== */
+  .border-animated {
+    @apply relative rounded-xl overflow-hidden;
+  }
+
+  .border-animated::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)));
+    background-size: 200% 100%;
+    animation: border-slide 3s linear infinite;
+    z-index: -1;
+    margin: -1px;
+  }
+
+  @keyframes border-slide {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes progress-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
