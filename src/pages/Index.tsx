@@ -195,7 +195,7 @@ const Index = () => {
 
           </div>
         </div>
-        <ProductTour />
+        
       </PageTransition>
     </SkeletonTransition>
   );
