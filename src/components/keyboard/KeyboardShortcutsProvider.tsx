@@ -36,7 +36,11 @@ interface KeyboardShortcutsProviderProps {
 
 export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProviderProps) {
   const [shortcutsDialogOpen, setShortcutsDialogOpen] = useState(false);
-  const { setTheme, theme } = useTheme();
+  const { config, setMode } = useCustomTheme();
+  const theme = config.mode === "system"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : config.mode;
+  const setTheme = (t: "light" | "dark") => setMode(t);
   const { formatShortcut, isMac } = useKeyboardShortcutHint();
 
   // Handler refs for dynamic registration
