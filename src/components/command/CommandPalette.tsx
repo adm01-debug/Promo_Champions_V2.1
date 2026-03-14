@@ -29,7 +29,7 @@ import {
   Sun,
   Keyboard,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 interface CommandItem {
   id: string;
@@ -43,7 +43,11 @@ interface CommandItem {
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
+  const { config, setMode } = useCustomTheme();
+  const theme = config.mode === "system"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : config.mode;
+  const setTheme = (t: "light" | "dark") => setMode(t);
 
   // Keyboard shortcut to open
   useEffect(() => {
