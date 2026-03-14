@@ -158,6 +158,17 @@ export function AppSidebar() {
 
   const [viewMode, setViewMode] = useState<ViewMode>(getDefaultViewMode());
 
+  // Filter available view modes based on role
+  const getAvailableViewModes = () => {
+    if (isAdminOrManager) return viewModes; // Admin/Manager see all
+    if (userType === 'sdr') return viewModes.filter(v => v.mode === 'sdr');
+    if (userType === 'closer') return viewModes.filter(v => v.mode === 'closer');
+    return viewModes;
+  };
+
+  const availableViewModes = getAvailableViewModes();
+  const showViewSwitcher = availableViewModes.length > 1;
+
   const getMainItems = (): MenuItem[] => {
     switch (viewMode) {
       case 'sdr': return sdrMainItems;
