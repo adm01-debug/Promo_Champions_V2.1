@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface SkeletonTransitionProps {
@@ -8,22 +8,27 @@ interface SkeletonTransitionProps {
   duration?: number;
 }
 
-export const SkeletonTransition: FC<SkeletonTransitionProps> = ({
-  isLoading,
-  skeleton,
-  children,
-  duration = 300
-}) => {
-  const content = isLoading ? skeleton : children;
+export const SkeletonTransition = forwardRef<HTMLDivElement, SkeletonTransitionProps>(
+  function SkeletonTransition({
+    isLoading,
+    skeleton,
+    children,
+    duration = 300
+  }, ref) {
+    const content = isLoading ? skeleton : children;
 
-  return (
-    <motion.div
-      key={isLoading ? "skeleton" : "content"}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: duration / 1000 }}
-    >
-      {content}
-    </motion.div>
-  );
-};
+    return (
+      <motion.div
+        ref={ref}
+        key={isLoading ? "skeleton" : "content"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: duration / 1000 }}
+      >
+        {content}
+      </motion.div>
+    );
+  }
+);
+
+SkeletonTransition.displayName = "SkeletonTransition";
