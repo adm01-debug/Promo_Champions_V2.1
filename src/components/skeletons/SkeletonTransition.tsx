@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface SkeletonTransitionProps {
   isLoading: boolean;
@@ -14,29 +14,16 @@ export const SkeletonTransition: FC<SkeletonTransitionProps> = ({
   children,
   duration = 300
 }) => {
+  const content = isLoading ? skeleton : children;
+
   return (
-    <AnimatePresence mode="wait">
-      {isLoading ? (
-        <motion.div
-          key="skeleton"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: duration / 1000 }}
-        >
-          {skeleton}
-        </motion.div>
-      ) : (
-        <motion.div
-          key="content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: duration / 1000 }}
-        >
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <motion.div
+      key={isLoading ? "skeleton" : "content"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: duration / 1000 }}
+    >
+      {content}
+    </motion.div>
   );
 };
