@@ -134,7 +134,7 @@ export default function ICP() {
   return (
     <>
       <Helmet>
-        <title>ICP - Perfil Ideal de Cliente | Sales Arena</title>
+        <title>ICP - Perfil Ideal de Cliente | SALES ARENA</title>
         <meta name="description" content="Gerencie critérios de perfil ideal de clientes" />
       </Helmet>
 
