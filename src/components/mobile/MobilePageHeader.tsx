@@ -14,14 +14,14 @@ interface MobilePageHeaderProps {
   onMenuClick?: () => void;
 }
 
-export const MobilePageHeader: FC<MobilePageHeaderProps> = ({
+export const MobilePageHeader = forwardRef<HTMLElement, MobilePageHeaderProps>(function MobilePageHeader({
   title,
   subtitle,
   showBack = true,
   rightAction,
   className,
   onMenuClick
-}) => {
+}, _ref) {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
