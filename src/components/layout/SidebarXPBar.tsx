@@ -59,4 +59,5 @@ export const SidebarXPBar = forwardRef<HTMLDivElement, SidebarXPBarProps>(functi
       </div>
     </div>
   );
-}
+});
+SidebarXPBar.displayName = "SidebarXPBar";

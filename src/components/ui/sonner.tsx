@@ -26,6 +26,7 @@ const Toaster = forwardRef<HTMLDivElement, ToasterProps>(function Toaster({ ...p
       {...props}
     />
   );
-};
+});
+Toaster.displayName = "SonnerToaster";
 
 export { Toaster, toast };

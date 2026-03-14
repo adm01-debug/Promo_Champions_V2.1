@@ -42,7 +42,8 @@ export const XPToastProvider = forwardRef<HTMLDivElement, { children: ReactNode 
       <XPToastContainer notifications={notifications} />
     </XPToastContext.Provider>
   );
-}
+});
+XPToastProvider.displayName = "XPToastProvider";
 
 function XPToastContainer({ notifications }: { notifications: XPNotification[] }) {
   return (

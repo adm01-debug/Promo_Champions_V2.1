@@ -420,4 +420,5 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
       </SidebarFooter>
     </Sidebar>
   );
-}
+});
+AppSidebar.displayName = "AppSidebar";

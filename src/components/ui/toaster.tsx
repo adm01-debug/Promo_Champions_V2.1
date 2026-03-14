@@ -22,4 +22,5 @@ export const Toaster = forwardRef<HTMLDivElement>(function Toaster(_props, _ref)
       <ToastViewport />
     </ToastProvider>
   );
-}
+});
+Toaster.displayName = "Toaster";
