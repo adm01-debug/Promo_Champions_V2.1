@@ -1,10 +1,11 @@
+import { forwardRef } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
 
-export function ThemeToggle() {
+export const ThemeToggle = forwardRef<HTMLButtonElement>(function ThemeToggle(_props, ref) {
   const { config, setMode } = useCustomTheme();
 
   const resolvedTheme =
@@ -20,6 +21,7 @@ export function ThemeToggle() {
 
   return (
     <Button
+      ref={ref}
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
@@ -44,4 +46,5 @@ export function ThemeToggle() {
       <span className="sr-only">Alternar tema</span>
     </Button>
   );
-}
+});
+ThemeToggle.displayName = "ThemeToggle";
