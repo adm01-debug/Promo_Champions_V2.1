@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import { useState, useEffect, createContext, useContext, useCallback, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback, ReactNode, forwardRef } from 'react';
 
 interface XPNotification {
   id: string;

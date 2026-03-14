@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSalespersonXP, calculateLevelFromXP, getLevelInfo } from "@/hooks/useSalespersonXP";
 import { cn } from "@/lib/utils";
