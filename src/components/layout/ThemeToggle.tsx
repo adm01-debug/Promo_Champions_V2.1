@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/hooks/useTheme";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +9,15 @@ import {
 } from "@/components/ui/tooltip";
 
 export const ThemeToggle = forwardRef<HTMLDivElement>(function ThemeToggle(_props, ref) {
-  const { theme, toggleTheme } = useTheme();
+  const { config, setMode } = useCustomTheme();
+  
+  const resolvedTheme = config.mode === "system"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : config.mode;
+
+  const toggleTheme = () => {
+    setMode(resolvedTheme === "dark" ? "light" : "dark");
+  };
 
   return (
     <div ref={ref}>
@@ -23,14 +31,14 @@ export const ThemeToggle = forwardRef<HTMLDivElement>(function ThemeToggle(_prop
           >
             <Sun 
               className={`h-4 w-4 absolute transition-all duration-300 ${
-                theme === "dark" 
+                resolvedTheme === "dark" 
                   ? "rotate-0 scale-100 opacity-100" 
                   : "rotate-90 scale-0 opacity-0"
               }`} 
             />
             <Moon 
               className={`h-4 w-4 absolute transition-all duration-300 ${
-                theme === "dark" 
+                resolvedTheme === "dark" 
                   ? "-rotate-90 scale-0 opacity-0" 
                   : "rotate-0 scale-100 opacity-100"
               }`} 
@@ -39,7 +47,7 @@ export const ThemeToggle = forwardRef<HTMLDivElement>(function ThemeToggle(_prop
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{theme === "dark" ? "Modo claro" : "Modo escuro"}</p>
+          <p>{resolvedTheme === "dark" ? "Modo claro" : "Modo escuro"}</p>
         </TooltipContent>
       </Tooltip>
     </div>
