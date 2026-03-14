@@ -68,8 +68,12 @@ export default {
   				foreground: 'hsl(var(--warning-foreground))'
   			},
   			info: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: 'hsl(var(--info))',
+  				foreground: 'hsl(var(--info-foreground))'
+  			},
+  			tertiary: {
+  				DEFAULT: 'hsl(var(--tertiary))',
+  				foreground: 'hsl(var(--tertiary-foreground))'
   			},
   			muted: {
   				DEFAULT: 'hsl(var(--muted))',
