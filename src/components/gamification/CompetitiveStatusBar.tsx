@@ -190,7 +190,7 @@ export function CompetitiveStatusBar() {
           )}
           
           <div className="flex items-center gap-2">
-            <div className="text-center px-3 py-1.5 rounded-lg bg-primary/8 border border-primary/15">
+            <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vendas</p>
               <p className="font-display font-bold text-sm">{formatCurrency(myRanking.totalSales)}</p>
             </div>
@@ -199,7 +199,7 @@ export function CompetitiveStatusBar() {
               <p className="font-display font-bold text-sm">{myRanking.dealsCount}</p>
             </div>
             {myRanking.rank > 1 && !isMobile && (
-              <div className="text-center px-3 py-1.5 rounded-lg bg-status-warning/8 border border-status-warning/15">
+              <div className="text-center px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Para subir</p>
                 <p className="font-display font-semibold text-sm text-status-warning">+{formatCurrency(myRanking.gapToNext)}</p>
               </div>
