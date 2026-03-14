@@ -95,7 +95,9 @@ const App = () => {
   // Global safety net for unhandled async errors
   useEffect(() => {
     const handler = (event: PromiseRejectionEvent) => {
-      console.error("Unhandled rejection:", event.reason);
+      if (import.meta.env.DEV) {
+        console.error("Unhandled rejection:", event.reason);
+      }
       event.preventDefault();
     };
     window.addEventListener("unhandledrejection", handler);
