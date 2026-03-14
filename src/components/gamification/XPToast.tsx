@@ -23,7 +23,7 @@ export function useXPToast() {
   return context;
 }
 
-export function XPToastProvider({ children }: { children: ReactNode }) {
+export const XPToastProvider = forwardRef<HTMLDivElement, { children: ReactNode }>(function XPToastProvider({ children }, _ref) {
   const [notifications, setNotifications] = useState<XPNotification[]>([]);
 
   const showXP = useCallback((amount: number, reason: string, type: 'xp' | 'streak' | 'level_up' = 'xp') => {
