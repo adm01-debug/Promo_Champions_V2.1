@@ -72,7 +72,7 @@ export function CommandPalette() {
     { id: "metas", label: "Metas", icon: Target, action: () => navigate("/metas"), group: "navigation" },
     { id: "analytics", label: "Analytics", icon: BarChart3, action: () => navigate("/analytics"), group: "navigation" },
     { id: "ranking", label: "Ranking Competitivo", icon: Trophy, action: () => navigate("/ranking"), group: "navigation" },
-    { id: "desafios", label: "Desafios Semanais", icon: Trophy, action: () => navigate("/desafios-semanais"), group: "navigation" },
+    { id: "desafios", label: "Desafios Semanais", icon: Trophy, action: () => navigate("/desafios"), group: "navigation" },
     { id: "atividades", label: "Atividades", icon: Calendar, action: () => navigate("/atividades"), group: "navigation" },
     { id: "assistente", label: "Assistente IA", icon: MessageSquare, action: () => navigate("/assistente"), group: "navigation" },
     { id: "notificacoes", label: "Notificações", icon: Bell, action: () => navigate("/notificacoes"), group: "navigation" },
