@@ -27,7 +27,6 @@ export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
-  const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   
   // Enable real-time security alert notifications for admins/managers
   useSecurityAlertNotifications();
