@@ -144,6 +144,45 @@ export function CompetitiveStatusBar() {
     }).format(value);
   };
 
+  // Mobile compact view
+  if (isMobile) {
+    return (
+      <div className={`glass rounded-xl p-3 border transition-all ${
+        isTopThree ? "border-primary/40 glow-primary" : "border-border/40"
+      }`}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className={`p-2 rounded-lg shadow ${
+              myRanking.color ? `bg-gradient-to-br ${myRanking.color}` : "bg-muted"
+            }`}>
+              <RankIcon className={`h-4 w-4 ${isTopThree ? "text-primary-foreground" : "text-muted-foreground"}`} />
+            </div>
+            <div>
+              <span className="font-display font-bold text-sm">
+                {myRanking.emoji} #{myRanking.rank}
+              </span>
+              <p className="text-[11px] text-muted-foreground">{formatCurrency(myRanking.totalSales)}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {myRanking.rank > 1 && (
+              <div className="text-right">
+                <p className="text-[10px] text-muted-foreground">Para subir</p>
+                <p className="text-xs font-semibold text-status-warning">+{formatCurrency(myRanking.gapToNext)}</p>
+              </div>
+            )}
+            {actionData?.stagnantDeals && actionData.stagnantDeals > 0 && (
+              <div className="flex items-center gap-1 px-2 py-1 rounded bg-destructive/10">
+                <AlertTriangle className="h-3 w-3 text-destructive" />
+                <span className="text-[10px] font-medium text-destructive">{actionData.stagnantDeals}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       className={`glass rounded-xl p-4 border transition-all card-elevated ${
