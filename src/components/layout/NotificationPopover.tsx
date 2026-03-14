@@ -45,7 +45,7 @@ export function NotificationPopover() {
       <PopoverTrigger asChild>
         <button className="relative glass h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/50 transition-colors">
           <Bell className="h-4 w-4" />
-          <NotificationBadge count={unreadCount} position="top-right" size="sm" pulse />
+          <NotificationBadge count={unreadCount} size="sm" pulse className="absolute -top-1 -right-1" />
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end" sideOffset={8}>
