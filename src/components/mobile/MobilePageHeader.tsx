@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Menu, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
