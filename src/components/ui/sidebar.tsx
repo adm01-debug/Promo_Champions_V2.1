@@ -466,9 +466,11 @@ const SidebarMenuButton = React.forwardRef<
     };
   }
 
+  const trigger = asChild ? <span className="block w-full">{button}</span> : button;
+
   return (
     <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipTrigger asChild>{trigger}</TooltipTrigger>
       <TooltipContent side="right" align="center" hidden={state !== "collapsed" || isMobile} {...tooltip} />
     </Tooltip>
   );
