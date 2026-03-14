@@ -1,5 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 import { Crown, Swords, Trophy, TrendingUp, Target, AlertTriangle, Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
