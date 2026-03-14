@@ -51,27 +51,24 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
 
   if (variant === 'minimal') {
     return (
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          className={cn(
-            "fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto",
-            "z-40",
-            className
-          )}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={cn(
+          "fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto",
+          "z-40",
+          className
+        )}
+      >
+        <Button 
+          onClick={handleInstall}
+          disabled={isInstalling}
+          className="w-full md:w-auto gap-2 shadow-lg"
         >
-          <Button 
-            onClick={handleInstall}
-            disabled={isInstalling}
-            className="w-full md:w-auto gap-2 shadow-lg"
-          >
-            <Download className="h-4 w-4" />
-            {isInstalling ? 'Instalando...' : 'Instalar App'}
-          </Button>
-        </motion.div>
-      </AnimatePresence>
+          <Download className="h-4 w-4" />
+          {isInstalling ? 'Instalando...' : 'Instalar App'}
+        </Button>
+      </motion.div>
     );
   }
 
