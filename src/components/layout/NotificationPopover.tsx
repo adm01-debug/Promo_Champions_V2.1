@@ -15,7 +15,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export function NotificationPopover() {
+export const NotificationPopover = forwardRef<HTMLDivElement>(function NotificationPopover(_props, _ref) {
   const { salesperson } = useAuth();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
 
