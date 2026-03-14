@@ -12,7 +12,7 @@ const actions = [
   { icon: Activity, label: "Atividade", route: "/atividades", color: "bg-status-warning text-primary-foreground" },
 ];
 
-export function FABQuickActions() {
+export const FABQuickActions = forwardRef<HTMLDivElement>(function FABQuickActions(_props, _ref) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
