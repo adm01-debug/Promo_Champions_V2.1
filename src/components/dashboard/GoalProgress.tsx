@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, Flame, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Target, Flame, Trophy, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface GoalProgressProps {
   current: number;
@@ -10,6 +14,7 @@ interface GoalProgressProps {
 }
 
 export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
+  const navigate = useNavigate();
   const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
   const remaining = Math.max(goal - current, 0);
   const animatedPercentage = useCountUp(percentage, { duration: 1600, decimals: 0 });
@@ -22,7 +27,7 @@ export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
   };
 
   const getMotivationalText = () => {
-    if (goal === 0) return "Configure sua meta mensal para acompanhar seu progresso";
+    if (goal === 0) return null;
     if (percentage >= 100) return "🎉 Meta batida! Você é um campeão!";
     if (percentage >= 75) return "Quase lá! Falta pouco para bater a meta!";
     if (percentage >= 50) return "Bom progresso! Continue assim!";
@@ -37,6 +42,49 @@ export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
   };
 
   const ProgressIcon = getIcon();
+
+  // Inline config when no goal is set
+  if (goal === 0) {
+    return (
+      <Card className="h-full border-dashed border-2 border-primary/30">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Meta do Mês
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center gap-4 py-6">
+          <motion.div
+            className="p-4 rounded-2xl bg-primary/10 relative"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Settings2 className="h-8 w-8 text-primary" />
+            <motion.div
+              className="absolute inset-0 rounded-2xl border-2 border-primary/30"
+              animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0, 0.5] }}
+              transition={{ duration: 2.5, repeat: Infinity }}
+            />
+          </motion.div>
+          <div className="text-center space-y-1.5">
+            <p className="text-sm font-semibold">Defina sua meta mensal</p>
+            <p className="text-xs text-muted-foreground max-w-[220px]">
+              Configure sua meta de vendas para acompanhar seu progresso em tempo real
+            </p>
+          </div>
+          <Button 
+            onClick={() => navigate("/metas")}
+            size="sm"
+            className="gap-2 shadow-md"
+          >
+            <Target className="h-3.5 w-3.5" />
+            Configurar Meta
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="h-full">
