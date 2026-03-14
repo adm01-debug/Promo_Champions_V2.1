@@ -363,7 +363,7 @@ export function SalesAssistantChat() {
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all');
   const [searchResults, setSearchResults] = useState<ConversationWithMatches[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Debounced full-text search
   useEffect(() => {
