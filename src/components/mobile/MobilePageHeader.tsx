@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Menu, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,14 +14,14 @@ interface MobilePageHeaderProps {
   onMenuClick?: () => void;
 }
 
-export const MobilePageHeader: FC<MobilePageHeaderProps> = ({
+export const MobilePageHeader = forwardRef<HTMLElement, MobilePageHeaderProps>(function MobilePageHeader({
   title,
   subtitle,
   showBack = true,
   rightAction,
   className,
   onMenuClick
-}) => {
+}, _ref) {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -89,4 +89,5 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = ({
       </div>
     </header>
   );
-};
+});
+MobilePageHeader.displayName = "MobilePageHeader";

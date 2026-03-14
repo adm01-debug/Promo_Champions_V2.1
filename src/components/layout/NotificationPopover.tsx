@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Bell, Check, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +15,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export function NotificationPopover() {
+export const NotificationPopover = forwardRef<HTMLDivElement>(function NotificationPopover(_props, _ref) {
   const { salesperson } = useAuth();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
 
@@ -102,4 +103,5 @@ export function NotificationPopover() {
       </PopoverContent>
     </Popover>
   );
-}
+});
+NotificationPopover.displayName = "NotificationPopover";

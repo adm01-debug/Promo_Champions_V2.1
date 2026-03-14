@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSalespersonXP, calculateLevelFromXP, getLevelInfo } from "@/hooks/useSalespersonXP";
 import { cn } from "@/lib/utils";
@@ -7,7 +8,7 @@ interface SidebarXPBarProps {
   isCollapsed: boolean;
 }
 
-export function SidebarXPBar({ isCollapsed }: SidebarXPBarProps) {
+export const SidebarXPBar = forwardRef<HTMLDivElement, SidebarXPBarProps>(function SidebarXPBar({ isCollapsed }, _ref) {
   const { salesperson } = useAuth();
   const { data: xpData } = useSalespersonXP(salesperson?.id);
 
@@ -58,4 +59,5 @@ export function SidebarXPBar({ isCollapsed }: SidebarXPBarProps) {
       </div>
     </div>
   );
-}
+});
+SidebarXPBar.displayName = "SidebarXPBar";

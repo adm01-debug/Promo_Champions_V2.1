@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import { useState, useEffect, createContext, useContext, useCallback, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback, ReactNode, forwardRef } from 'react';
 
 interface XPNotification {
   id: string;
@@ -23,7 +23,7 @@ export function useXPToast() {
   return context;
 }
 
-export function XPToastProvider({ children }: { children: ReactNode }) {
+export const XPToastProvider = forwardRef<HTMLDivElement, { children: ReactNode }>(function XPToastProvider({ children }, _ref) {
   const [notifications, setNotifications] = useState<XPNotification[]>([]);
 
   const showXP = useCallback((amount: number, reason: string, type: 'xp' | 'streak' | 'level_up' = 'xp') => {
@@ -42,7 +42,8 @@ export function XPToastProvider({ children }: { children: ReactNode }) {
       <XPToastContainer notifications={notifications} />
     </XPToastContext.Provider>
   );
-}
+});
+XPToastProvider.displayName = "XPToastProvider";
 
 function XPToastContainer({ notifications }: { notifications: XPNotification[] }) {
   return (

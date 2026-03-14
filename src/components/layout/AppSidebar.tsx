@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { SidebarXPBar } from "@/components/layout/SidebarXPBar";
 import { 
   LayoutDashboard, 
@@ -126,7 +126,7 @@ const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
 ];
 
-export function AppSidebar() {
+export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props, _ref) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
@@ -420,4 +420,5 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+});
+AppSidebar.displayName = "AppSidebar";
