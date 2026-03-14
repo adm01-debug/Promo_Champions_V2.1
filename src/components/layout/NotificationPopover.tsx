@@ -103,4 +103,5 @@ export const NotificationPopover = forwardRef<HTMLDivElement>(function Notificat
       </PopoverContent>
     </Popover>
   );
-}
+});
+NotificationPopover.displayName = "NotificationPopover";

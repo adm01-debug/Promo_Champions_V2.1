@@ -89,4 +89,5 @@ export const MobilePageHeader = forwardRef<HTMLElement, MobilePageHeaderProps>(f
       </div>
     </header>
   );
-};
+});
+MobilePageHeader.displayName = "MobilePageHeader";
