@@ -17,7 +17,7 @@ const shortcuts = [
   { keys: ["?"], description: "Atalhos de teclado" },
 ];
 
-export function KeyboardShortcuts() {
+export const KeyboardShortcuts = forwardRef<HTMLDivElement>(function KeyboardShortcuts(_props, _ref) {
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
 
