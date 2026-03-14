@@ -3,8 +3,13 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 
+const routerFutureConfig = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 const renderWithRouter = (ui: React.ReactElement) =>
-  render(<BrowserRouter>{ui}</BrowserRouter>);
+  render(<BrowserRouter future={routerFutureConfig}>{ui}</BrowserRouter>);
 
 describe("DashboardEmptyState", () => {
   it("renders revenue empty state", () => {

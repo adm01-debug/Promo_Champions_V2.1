@@ -8,10 +8,15 @@ vi.mock("@/hooks/useMediaQuery", () => ({
   useIsMobile: () => false,
 }));
 
+const routerFutureConfig = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 describe("KeyboardShortcuts", () => {
   it("renders keyboard button on desktop", () => {
     const { container } = render(
-      <BrowserRouter>
+      <BrowserRouter future={routerFutureConfig}>
         <KeyboardShortcuts />
       </BrowserRouter>
     );
@@ -30,7 +35,7 @@ describe("KeyboardShortcuts on mobile", () => {
     // Dynamic import to pick up the new mock
     const { KeyboardShortcuts: MobileKS } = await import("./KeyboardShortcuts");
     const { container } = render(
-      <BrowserRouter>
+      <BrowserRouter future={routerFutureConfig}>
         <MobileKS />
       </BrowserRouter>
     );
