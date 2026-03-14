@@ -117,47 +117,44 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
 
   // Banner variant - top bar, less intrusive
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -50 }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-40",
-          "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground",
-          "px-4 py-2.5",
-          className
-        )}
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Download className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">
-              Instale o SalesPro para acesso rápido
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="secondary"
-              size="sm"
-              onClick={handleInstall}
-              disabled={isInstalling}
-              className="gap-1 h-7 text-xs"
-            >
-              <Download className="h-3.5 w-3.5" />
-              {isInstalling ? 'Instalando...' : 'Instalar'}
-            </Button>
-            <button
-              onClick={handleDismiss}
-              className="p-1 rounded-full hover:bg-white/10 transition-colors"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
+    <motion.div
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-40",
+        "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground",
+        "px-4 py-2.5",
+        className
+      )}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Download className="h-4 w-4 shrink-0" />
+          <p className="text-sm font-medium">
+            Instale o SalesPro para acesso rápido
+          </p>
         </div>
-      </motion.div>
-    </AnimatePresence>
+
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="secondary"
+            size="sm"
+            onClick={handleInstall}
+            disabled={isInstalling}
+            className="gap-1 h-7 text-xs"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {isInstalling ? 'Instalando...' : 'Instalar'}
+          </Button>
+          <button
+            onClick={handleDismiss}
+            className="p-1 rounded-full hover:bg-white/10 transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 });
 
