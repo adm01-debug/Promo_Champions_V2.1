@@ -158,15 +158,16 @@ export function AppSidebar() {
 
   const [viewMode, setViewMode] = useState<ViewMode>(getDefaultViewMode());
 
-  // Filter available view modes based on role
-  const getAvailableViewModes = () => {
-    if (isAdminOrManager) return viewModes; // Admin/Manager see all
-    if (userType === 'sdr') return viewModes.filter(v => v.mode === 'sdr');
-    if (userType === 'closer') return viewModes.filter(v => v.mode === 'closer');
-    return viewModes;
-  };
+  const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
+    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-blue-400' },
+    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-green-400' },
+    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-purple-400' },
+  ];
 
-  const availableViewModes = getAvailableViewModes();
+  // Filter available view modes based on role
+  const availableViewModes = isAdminOrManager
+    ? viewModes
+    : viewModes.filter(v => v.mode === (userType === 'sdr' ? 'sdr' : userType === 'closer' ? 'closer' : v.mode));
   const showViewSwitcher = availableViewModes.length > 1;
 
   const getMainItems = (): MenuItem[] => {
@@ -187,12 +188,6 @@ export function AppSidebar() {
 
   const mainItems = getMainItems();
   const moreItems = getMoreItems();
-
-  const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
-    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-blue-400' },
-    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-green-400' },
-    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-purple-400' },
-  ];
 
   const currentViewConfig = viewModes.find(v => v.mode === viewMode)!;
 
