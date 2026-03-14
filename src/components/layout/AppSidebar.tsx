@@ -248,9 +248,6 @@ export function AppSidebar() {
               <span className="text-[8px] text-muted-foreground tracking-wide">
                 By Promo Brindes
               </span>
-              <span className={cn("text-[10px] uppercase tracking-widest font-bold", currentViewConfig.color)}>
-                {currentViewConfig.label}
-              </span>
             </div>
           )}
         </div>
