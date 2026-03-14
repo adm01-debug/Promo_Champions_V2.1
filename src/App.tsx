@@ -112,7 +112,7 @@ const App = () => {
           <XPToastProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <BrowserRouter>
               {/* KeyboardShortcutsProvider MUST be inside BrowserRouter because it uses useNavigate */}
               <KeyboardShortcutsProvider>
                 <AuthProvider>

@@ -1,10 +1,10 @@
-import { forwardRef } from "react";
+import { type ElementType } from "react";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { Badge } from "@/components/ui/badge";
 import { Crown, ShieldCheck, User, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; color: string; description: string }> = {
+const roleConfig: Record<AppRole, { label: string; icon: ElementType; color: string; description: string }> = {
   admin: {
     label: "Admin",
     icon: Crown,
@@ -25,7 +25,7 @@ const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; colo
   },
 };
 
-export const UserRoleBadge = forwardRef<HTMLDivElement>(function UserRoleBadge(_props, ref) {
+export function UserRoleBadge() {
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
 
   if (isLoadingCurrentRole) {
@@ -37,12 +37,17 @@ export const UserRoleBadge = forwardRef<HTMLDivElement>(function UserRoleBadge(_
   }
 
   const config = roleConfig[currentUserRole.role];
+
+  if (!config) {
+    return null;
+  }
+
   const Icon = config.icon;
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Badge ref={ref} variant="outline" className={`${config.color} cursor-help`}>
+        <Badge variant="outline" className={`${config.color} cursor-help`}>
           <Icon className="h-3 w-3 mr-1" />
           {config.label}
         </Badge>
@@ -52,6 +57,4 @@ export const UserRoleBadge = forwardRef<HTMLDivElement>(function UserRoleBadge(_
       </TooltipContent>
     </Tooltip>
   );
-});
-
-UserRoleBadge.displayName = "UserRoleBadge";
+}
