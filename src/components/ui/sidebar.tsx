@@ -453,7 +453,8 @@ const SidebarMenuButton = React.forwardRef<
     ...props,
   };
 
-  const button = asChild ? <Slot {...sharedProps} /> : <button ref={ref} {...sharedProps} />;
+  const Comp = asChild ? Slot : "button";
+  const button = <Comp ref={ref} {...sharedProps} />;
 
   if (!tooltip) {
     return button;
