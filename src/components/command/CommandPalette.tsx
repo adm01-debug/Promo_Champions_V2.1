@@ -29,7 +29,7 @@ import {
   Sun,
   Keyboard,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 interface CommandItem {
   id: string;
