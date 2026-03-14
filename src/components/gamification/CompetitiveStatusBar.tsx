@@ -19,6 +19,7 @@ export function CompetitiveStatusBar() {
   const { salesperson } = useAuth();
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Fetch contextual action data
   const { data: actionData } = useQuery({
