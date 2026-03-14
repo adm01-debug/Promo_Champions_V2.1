@@ -106,8 +106,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         {/* Focus mode break reminder */}
         <FocusModeBreakReminder />
         
-        {/* PWA Install Prompt */}
-        <InstallPrompt variant="card" />
+        {/* PWA Install Prompt - banner style, less intrusive */}
+        <InstallPrompt variant="banner" />
+        
+        {/* FAB Quick Actions */}
+        <FABQuickActions />
         
         {/* PWA Update Prompt */}
         <UpdatePrompt />
