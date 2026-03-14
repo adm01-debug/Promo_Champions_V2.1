@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, Smartphone, Zap, Wifi } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePWA } from '@/hooks/usePWA';
 import { cn } from '@/lib/utils';
