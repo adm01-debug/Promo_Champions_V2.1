@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useRef } from "react";
 import { useGlobalKeyboardShortcuts, useKeyboardShortcutHint } from "@/hooks/useGlobalKeyboardShortcuts";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 import {
   Dialog,
   DialogContent,
