@@ -359,5 +359,4 @@ export function StreakMilestoneOverlay({
       )}
     </AnimatePresence>
   );
-});
-StreakMilestoneOverlay.displayName = "StreakMilestoneOverlay";
+}

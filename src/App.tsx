@@ -15,9 +15,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
-// Generic page loading fallback
-import { forwardRef } from "react";
-const PageLoadingFallback = forwardRef<HTMLDivElement>((_, ref) => (
+
+const PageLoadingFallback = () => (
   <div className="min-h-screen bg-background flex items-center justify-center" suppressHydrationWarning>
     <div className="space-y-4 w-full max-w-md p-8">
       <Skeleton className="h-8 w-3/4 mx-auto" />
@@ -29,8 +28,7 @@ const PageLoadingFallback = forwardRef<HTMLDivElement>((_, ref) => (
       <Skeleton className="h-64 rounded-xl mt-4" />
     </div>
   </div>
-));
-PageLoadingFallback.displayName = "PageLoadingFallback";
+);
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
