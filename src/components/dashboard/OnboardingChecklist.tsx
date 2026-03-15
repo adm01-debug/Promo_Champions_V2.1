@@ -88,6 +88,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>(function Onboardin
   return (
     <AnimatePresence>
       <motion.div
+        ref={ref}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
