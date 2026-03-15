@@ -21,12 +21,12 @@ const priorityConfig = {
 };
 
 const typeConfig = {
-  call: { label: 'Ligação', icon: Phone, color: 'text-status-info' },
-  meeting: { label: 'Reunião', icon: Users, color: 'text-accent' },
-  follow_up: { label: 'Follow-up', icon: Clock, color: 'text-streak' },
-  email: { label: 'E-mail', icon: Mail, color: 'text-secondary' },
-  proposal: { label: 'Proposta', icon: FileText, color: 'text-primary' },
-  other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
+  call: { label: 'Ligação', icon: Phone, color: 'text-status-info', bgClass: 'bg-status-info/15' },
+  meeting: { label: 'Reunião', icon: Users, color: 'text-accent', bgClass: 'bg-accent/15' },
+  follow_up: { label: 'Follow-up', icon: Clock, color: 'text-streak', bgClass: 'bg-streak/15' },
+  email: { label: 'E-mail', icon: Mail, color: 'text-secondary', bgClass: 'bg-secondary/15' },
+  proposal: { label: 'Proposta', icon: FileText, color: 'text-primary', bgClass: 'bg-primary/15' },
+  other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground', bgClass: 'bg-muted/40' },
 };
 
 interface TaskCardProps {
@@ -58,7 +58,7 @@ export function TaskCard({ task }: TaskCardProps) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className={cn("p-1.5 rounded-md transition-all duration-200 group-hover:scale-110", `bg-${type.color.replace('text-', '')}/15`)}>
+            <div className={cn("p-1.5 rounded-md transition-all duration-200 group-hover:scale-110", type.bgClass)}>
               <TypeIcon className={cn("h-3.5 w-3.5 transition-colors", type.color)} />
             </div>
             <span className={cn("text-xs font-medium transition-colors", type.color)}>{type.label}</span>

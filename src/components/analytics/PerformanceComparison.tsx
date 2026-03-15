@@ -22,6 +22,7 @@ import {
   PolarRadiusAxis,
   Radar,
   Legend,
+  Cell,
 } from "recharts";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -389,7 +390,7 @@ export function PerformanceComparison() {
                   />
                   <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
                     {revenueChartData.map((entry, index) => (
-                      <rect key={index} fill={entry.fill} />
+                      <Cell key={index} fill={entry.fill} />
                     ))}
                   </Bar>
                 </BarChart>

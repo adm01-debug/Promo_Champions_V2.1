@@ -16,19 +16,22 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
       title: "Total de Clientes",
       value: stats?.totalClients || 0,
       icon: Users,
-      color: "primary",
+      iconWrapperClass: "bg-primary/10",
+      iconClass: "text-primary",
     },
     {
       title: "Clientes Ativos",
       value: stats?.activeClients || 0,
       icon: UserCheck,
-      color: "success",
+      iconWrapperClass: "bg-status-success/10",
+      iconClass: "text-status-success",
     },
     {
       title: "Clientes Inativos",
       value: stats?.inactiveClients || 0,
       icon: UserX,
-      color: "warning",
+      iconWrapperClass: "bg-status-warning/10",
+      iconClass: "text-status-warning",
     },
     {
       title: "Valor Total",
@@ -37,7 +40,8 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
         currency: "BRL",
       }).format(stats?.totalValue || 0),
       icon: DollarSign,
-      color: "accent",
+      iconWrapperClass: "bg-accent/10",
+      iconClass: "text-accent",
       isValue: true,
     },
   ];
@@ -76,19 +80,15 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {card.title}
-                    </p>
+                    <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
                     {isLoading ? (
                       <Skeleton className="h-8 w-24 mt-1" />
                     ) : (
-                      <p className={`text-2xl font-bold ${card.isValue ? 'gradient-text' : ''}`}>
-                        {card.value}
-                      </p>
+                      <p className={`text-2xl font-bold ${card.isValue ? "gradient-text" : ""}`}>{card.value}</p>
                     )}
                   </div>
-                  <div className={`h-12 w-12 rounded-xl bg-${card.color}/10 flex items-center justify-center`}>
-                    <card.icon className={`h-6 w-6 text-${card.color}`} />
+                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${card.iconWrapperClass}`}>
+                    <card.icon className={`h-6 w-6 ${card.iconClass}`} />
                   </div>
                 </div>
               </CardContent>
@@ -104,35 +104,39 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
                 <Card className="glass hover-lift cursor-help border-border/40">
                   <CardContent className="pt-4 pb-4">
                     <div className="flex items-center gap-4">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                        card.color === "success" 
-                          ? "bg-status-success/20" 
-                          : card.color === "warning" 
-                            ? "bg-status-warning/20" 
+                      <div
+                        className={`h-10 w-10 rounded-lg flex items-center justify-center ${
+                          card.color === "success"
+                            ? "bg-status-success/20"
+                            : card.color === "warning"
+                            ? "bg-status-warning/20"
                             : "bg-muted/50"
-                      }`}>
-                        <card.icon className={`h-5 w-5 ${
-                          card.color === "success" 
-                            ? "text-status-success" 
-                            : card.color === "warning" 
-                              ? "text-status-warning" 
+                        }`}
+                      >
+                        <card.icon
+                          className={`h-5 w-5 ${
+                            card.color === "success"
+                              ? "text-status-success"
+                              : card.color === "warning"
+                              ? "text-status-warning"
                               : "text-muted-foreground"
-                        }`} />
+                          }`}
+                        />
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs font-medium text-muted-foreground">
-                          {card.title}
-                        </p>
+                        <p className="text-xs font-medium text-muted-foreground">{card.title}</p>
                         {isLoading ? (
                           <Skeleton className="h-6 w-12 mt-1" />
                         ) : (
-                          <p className={`text-xl font-bold ${
-                            card.color === "success" 
-                              ? "text-status-success" 
-                              : card.color === "warning" 
-                                ? "text-status-warning" 
+                          <p
+                            className={`text-xl font-bold ${
+                              card.color === "success"
+                                ? "text-status-success"
+                                : card.color === "warning"
+                                ? "text-status-warning"
                                 : "text-muted-foreground"
-                          }`}>
+                            }`}
+                          >
                             {card.value}
                           </p>
                         )}
