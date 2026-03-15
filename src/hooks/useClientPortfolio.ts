@@ -118,6 +118,6 @@ export const useAssignClient = () => {
       queryClient.invalidateQueries({ queryKey: ['unassigned_clients'] });
       toast.success('Cliente atribuído com sucesso!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };

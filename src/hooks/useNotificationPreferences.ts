@@ -72,6 +72,6 @@ export const useDeleteNotificationPreference = () => {
       queryClient.invalidateQueries({ queryKey: ['notificationpreferences'] });
       toast.success('Configuração removida!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
