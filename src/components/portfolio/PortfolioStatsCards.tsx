@@ -45,7 +45,48 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
       isValue: true,
     },
   ];
-...
+
+  const icpCards = [
+    {
+      title: "ICP Match",
+      value: stats?.icpMatch || 0,
+      icon: Target,
+      color: "success",
+      tooltip: "Clientes que atendem todos os critérios do ICP",
+    },
+    {
+      title: "ICP Parcial",
+      value: stats?.icpPartial || 0,
+      icon: AlertCircle,
+      color: "warning",
+      tooltip: "Clientes com dados ICP incompletos",
+    },
+    {
+      title: "Sem ICP",
+      value: stats?.icpNone || 0,
+      icon: CircleSlash,
+      color: "muted",
+      tooltip: "Clientes sem dados de ICP cadastrados",
+    },
+  ];
+
+  return (
+    <TooltipProvider>
+      <div className="space-y-4">
+        {/* Main Stats */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {cards.map((card) => (
+            <Card key={card.title} className="glass hover-lift">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
+                    {isLoading ? (
+                      <Skeleton className="h-8 w-24 mt-1" />
+                    ) : (
+                      <p className={`text-2xl font-bold ${card.isValue ? "gradient-text" : ""}`}>{card.value}</p>
+                    )}
+                  </div>
                   <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${card.iconWrapperClass}`}>
                     <card.icon className={`h-6 w-6 ${card.iconClass}`} />
                   </div>
@@ -63,35 +104,39 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
                 <Card className="glass hover-lift cursor-help border-border/40">
                   <CardContent className="pt-4 pb-4">
                     <div className="flex items-center gap-4">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                        card.color === "success" 
-                          ? "bg-status-success/20" 
-                          : card.color === "warning" 
-                            ? "bg-status-warning/20" 
+                      <div
+                        className={`h-10 w-10 rounded-lg flex items-center justify-center ${
+                          card.color === "success"
+                            ? "bg-status-success/20"
+                            : card.color === "warning"
+                            ? "bg-status-warning/20"
                             : "bg-muted/50"
-                      }`}>
-                        <card.icon className={`h-5 w-5 ${
-                          card.color === "success" 
-                            ? "text-status-success" 
-                            : card.color === "warning" 
-                              ? "text-status-warning" 
+                        }`}
+                      >
+                        <card.icon
+                          className={`h-5 w-5 ${
+                            card.color === "success"
+                              ? "text-status-success"
+                              : card.color === "warning"
+                              ? "text-status-warning"
                               : "text-muted-foreground"
-                        }`} />
+                          }`}
+                        />
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs font-medium text-muted-foreground">
-                          {card.title}
-                        </p>
+                        <p className="text-xs font-medium text-muted-foreground">{card.title}</p>
                         {isLoading ? (
                           <Skeleton className="h-6 w-12 mt-1" />
                         ) : (
-                          <p className={`text-xl font-bold ${
-                            card.color === "success" 
-                              ? "text-status-success" 
-                              : card.color === "warning" 
-                                ? "text-status-warning" 
+                          <p
+                            className={`text-xl font-bold ${
+                              card.color === "success"
+                                ? "text-status-success"
+                                : card.color === "warning"
+                                ? "text-status-warning"
                                 : "text-muted-foreground"
-                          }`}>
+                            }`}
+                          >
                             {card.value}
                           </p>
                         )}
