@@ -57,7 +57,7 @@ export const useUpdateNotificationPreference = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notificationpreferences'] });
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
