@@ -6,6 +6,9 @@ interface SalespersonPerformance {
   name: string;
   totalSales: number;
   activeClientsCount: number;
+  rank?: number;
+  conversionRate?: number;
+  dealsCount?: number;
 }
 import { Crown, Medal, Trophy, TrendingUp, Users, Percent } from "lucide-react";
 
