@@ -35,7 +35,7 @@ export function AIAssistantSettings() {
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [responseMode, setResponseMode] = useState<ResponseMode>('text');
-  const [voiceId, setVoiceId] = useState<VoiceId>('CwhRBWXzGAHq8TQ4Fs17');
+  const [voiceId, setVoiceId] = useState<string>('CwhRBWXzGAHq8TQ4Fs17');
   const [isTestingVoice, setIsTestingVoice] = useState(false);
 
   useEffect(() => {
