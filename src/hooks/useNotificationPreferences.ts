@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -43,7 +42,7 @@ export const useCreateNotificationPreference = () => {
       queryClient.invalidateQueries({ queryKey: ['notificationpreferences'] });
       toast.success('Configuração criada!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
@@ -58,7 +57,7 @@ export const useUpdateNotificationPreference = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notificationpreferences'] });
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
@@ -73,6 +72,6 @@ export const useDeleteNotificationPreference = () => {
       queryClient.invalidateQueries({ queryKey: ['notificationpreferences'] });
       toast.success('Configuração removida!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };

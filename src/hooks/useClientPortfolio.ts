@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -36,7 +35,7 @@ export const useUpdatePortfolioStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ portfolioId, status, lastPurchaseDate }: { portfolioId: string; status: string; lastPurchaseDate?: string }) => {
-      const updates: any = { status };
+      const updates: Record<string, string> = { status };
       if (lastPurchaseDate) updates.last_purchase_date = lastPurchaseDate;
       const { error } = await supabase.from('client_portfolio').update(updates).eq('id', portfolioId);
       if (error) throw error;
@@ -45,7 +44,7 @@ export const useUpdatePortfolioStatus = () => {
       queryClient.invalidateQueries({ queryKey: ['client_portfolio'] });
       toast.success('Status atualizado!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
@@ -60,7 +59,7 @@ export const useRemoveFromPortfolio = () => {
       queryClient.invalidateQueries({ queryKey: ['client_portfolio'] });
       toast.success('Cliente removido do portfólio!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
@@ -119,6 +118,6 @@ export const useAssignClient = () => {
       queryClient.invalidateQueries({ queryKey: ['unassigned_clients'] });
       toast.success('Cliente atribuído com sucesso!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };

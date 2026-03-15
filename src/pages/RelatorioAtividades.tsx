@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 // MainLayout is already applied at route level in App.tsx
 import { Card, CardContent } from "@/components/ui/card";

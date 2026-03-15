@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { FC, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';

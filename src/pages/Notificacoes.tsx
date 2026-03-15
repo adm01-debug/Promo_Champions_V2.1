@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 import { Bell, Plus, Trash2, Mail, Clock, AlertTriangle, Users, Target, Loader2, TrendingDown, Check, X, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -141,8 +140,9 @@ export default function Notificacoes() {
       } else {
         toast.success(`${data.alertsSent} alerta(s) enviado(s) para ${pref.email}`);
       }
-    } catch (error: any) {
-      toast.error("Erro ao enviar: " + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro desconhecido';
+      toast.error("Erro ao enviar: " + message);
     } finally {
       setIsTesting(null);
     }
