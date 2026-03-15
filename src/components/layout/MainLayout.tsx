@@ -1,4 +1,4 @@
-// @ts-nocheck
+// MainLayout - primary layout wrapper
 import { useRef } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";

@@ -17,13 +17,19 @@ export interface ClientPortfolioItem {
   salesperson?: { name: string };
 }
 
-export const useClientPortfolio = () => {
+export const useClientPortfolio = (salespersonId?: string) => {
   const { data, isLoading } = useQuery({
-    queryKey: ['client_portfolio'],
+    queryKey: ['client_portfolio', salespersonId],
     queryFn: async () => {
-      const { data } = await supabase
+      let query = supabase
         .from('client_portfolio')
         .select('*, client:clients(name, email, phone, company), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
+      
+      if (salespersonId) {
+        query = query.eq('salesperson_id', salespersonId);
+      }
+      
+      const { data } = await query;
       return (data || []) as unknown as ClientPortfolioItem[];
     },
   });
@@ -68,20 +74,40 @@ export interface PortfolioStats {
   active: number;
   inactive: number;
   unassigned: number;
+  // Aliases for component compatibility
+  totalClients: number;
+  activeClients: number;
+  inactiveClients: number;
+  totalValue: number;
+  icpMatch: number;
+  icpPartial: number;
+  icpNone: number;
 }
 
-export const usePortfolioStats = () => {
-  const { data: portfolio } = useClientPortfolio();
+export const usePortfolioStats = (salespersonId?: string) => {
+  const { data: portfolio } = useClientPortfolio(salespersonId);
   const { data: unassigned } = useUnassignedClients();
 
+  const total = portfolio?.length || 0;
+  const active = portfolio?.filter(p => p.status === 'active').length || 0;
+  const inactive = portfolio?.filter(p => p.status === 'inactive').length || 0;
+  const unassignedCount = unassigned?.length || 0;
+
   const stats: PortfolioStats = {
-    total: portfolio?.length || 0,
-    active: portfolio?.filter(p => p.status === 'active').length || 0,
-    inactive: portfolio?.filter(p => p.status === 'inactive').length || 0,
-    unassigned: unassigned?.length || 0,
+    total,
+    active,
+    inactive,
+    unassigned: unassignedCount,
+    totalClients: total,
+    activeClients: active,
+    inactiveClients: inactive,
+    totalValue: 0,
+    icpMatch: 0,
+    icpPartial: 0,
+    icpNone: 0,
   };
 
-  return stats;
+  return { data: stats, isLoading: false };
 };
 
 export const useUnassignedClients = () => {
