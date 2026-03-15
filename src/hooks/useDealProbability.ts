@@ -1,61 +1,71 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export const useDealProbability = (dealId: string) => {
+export const useDealProbability = (saleId: string) => {
   return useQuery<{ probability: number; factors: Record<string, number> }>({
-    queryKey: ['deal-probability', dealId],
+    queryKey: ['deal-probability', saleId],
     queryFn: async () => {
-      const { data: deal } = await supabase
-        .from('deals')
-        .select('*, client:clients(*), activities(*)')
-        .eq('id', dealId)
+      const { data: sale } = await supabase
+        .from('sales')
+        .select('id, status, amount, created_at, salesperson_id')
+        .eq('id', saleId)
         .single();
 
-      if (!deal) throw new Error('Deal not found');
+      if (!sale) throw new Error('Deal not found');
+
+      // Get activities count for engagement score
+      const { count: activityCount } = await supabase
+        .from('activities')
+        .select('id', { count: 'exact', head: true })
+        .eq('sale_id', saleId);
 
       const factors = {
-        stage: calculateStageScore(deal.stage),
-        value: calculateValueScore(deal.value),
-        time: calculateTimeScore(deal.created_at),
-        engagement: calculateEngagementScore(deal.activities || []),
+        stage: calculateStageScore(sale.status),
+        value: calculateValueScore(sale.amount),
+        time: calculateTimeScore(sale.created_at),
+        engagement: calculateEngagementScore(activityCount || 0),
       };
 
       const probability = Object.values(factors).reduce((a, b) => a + b, 0) / Object.keys(factors).length;
 
       return { probability: Math.round(probability), factors };
     },
-    enabled: !!dealId,
+    enabled: !!saleId,
   });
 };
 
-// Alias for batch probability calculation
+// Batch probability calculation
 export const useDealProbabilities = () => {
   return useQuery({
     queryKey: ['deal-probabilities'],
     queryFn: async () => {
-      const { data: deals } = await supabase
+      const { data: sales } = await supabase
         .from('sales')
         .select('id, status, amount, created_at')
-        .in('status', ['pending', 'in_progress', 'negotiation', 'proposal']);
-      
-      return (deals || []).reduce((acc, deal) => {
-        acc[deal.id] = Math.round(calculateStageScore(deal.status));
+        .in('status', ['pending', 'completed']);
+
+      return (sales || []).reduce((acc, sale) => {
+        acc[sale.id] = Math.round(calculateStageScore(sale.status));
         return acc;
       }, {} as Record<string, number>);
     },
   });
 };
 
-function calculateStageScore(stage: string): number {
+function calculateStageScore(status: string): number {
   const scores: Record<string, number> = {
-    'Lead': 10,
-    'Qualified': 30,
-    'Proposal': 50,
-    'Negotiation': 75,
-    'Closed Won': 100,
+    'pending': 30,
+    'completed': 100,
+    'cancelled': 0,
+    'lead': 10,
+    'prospecting': 20,
+    'qualified': 40,
+    'proposal': 60,
+    'negotiation': 75,
+    'won': 100,
+    'lost': 0,
   };
-  return scores[stage] || 0;
+  return scores[status] || 20;
 }
 
 function calculateValueScore(value: number): number {
@@ -67,6 +77,6 @@ function calculateTimeScore(createdAt: string): number {
   return Math.max(100 - days * 2, 0);
 }
 
-function calculateEngagementScore(activities: any[]): number {
-  return Math.min(activities.length * 5, 100);
+function calculateEngagementScore(activityCount: number): number {
+  return Math.min(activityCount * 5, 100);
 }
