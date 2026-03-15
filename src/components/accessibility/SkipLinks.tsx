@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { FC } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SkipLink {
@@ -17,15 +17,14 @@ const defaultLinks: SkipLink[] = [
   { href: '#search', label: 'Pular para a busca' },
 ];
 
-export const SkipLinks = forwardRef<HTMLElement, SkipLinksProps>(function SkipLinks(
-  { links = defaultLinks, className },
-  ref,
-) {
+export const SkipLinks: FC<SkipLinksProps> = ({ 
+  links = defaultLinks,
+  className 
+}) => {
   return (
-    <nav
-      ref={ref}
+    <nav 
       aria-label="Atalhos de navegação"
-      className={cn('sr-only focus-within:not-sr-only', className)}
+      className={cn("sr-only focus-within:not-sr-only", className)}
     >
       <ul className="fixed top-0 left-0 z-[100] flex flex-col gap-1 p-2 bg-background">
         {links.map((link) => (
@@ -33,10 +32,10 @@ export const SkipLinks = forwardRef<HTMLElement, SkipLinksProps>(function SkipLi
             <a
               href={link.href}
               className={cn(
-                'block px-4 py-2 text-sm font-medium rounded-md',
-                'bg-primary text-primary-foreground',
-                'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-                'sr-only focus:not-sr-only',
+                "block px-4 py-2 text-sm font-medium rounded-md",
+                "bg-primary text-primary-foreground",
+                "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                "sr-only focus:not-sr-only"
               )}
             >
               {link.label}
@@ -46,6 +45,4 @@ export const SkipLinks = forwardRef<HTMLElement, SkipLinksProps>(function SkipLi
       </ul>
     </nav>
   );
-});
-
-SkipLinks.displayName = 'SkipLinks';
+};

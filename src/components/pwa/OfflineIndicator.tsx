@@ -1,18 +1,18 @@
-import { forwardRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { WifiOff, Wifi } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 interface OfflineIndicatorProps {
   className?: string;
   showOnlineMessage?: boolean;
 }
 
-export const OfflineIndicator = forwardRef<HTMLDivElement, OfflineIndicatorProps>(function OfflineIndicator(
-  { className, showOnlineMessage = true },
-  ref,
-) {
+export function OfflineIndicator({ 
+  className,
+  showOnlineMessage = true 
+}: OfflineIndicatorProps) {
   const { isOnline } = usePWA();
   const [showOnlineNotification, setShowOnlineNotification] = useState(false);
   const [wasOffline, setWasOffline] = useState(false);
@@ -31,16 +31,16 @@ export const OfflineIndicator = forwardRef<HTMLDivElement, OfflineIndicatorProps
   }, [isOnline, wasOffline, showOnlineMessage]);
 
   return (
-    <div ref={ref}>
+    <>
       {!isOnline && (
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           className={cn(
-            'fixed top-0 left-0 right-0 z-[100]',
-            'bg-warning text-warning-foreground',
-            'px-4 py-2 text-center',
-            className,
+            "fixed top-0 left-0 right-0 z-[100]",
+            "bg-amber-500 text-amber-950",
+            "px-4 py-2 text-center",
+            className
           )}
         >
           <div className="flex items-center justify-center gap-2 text-sm font-medium">
@@ -55,10 +55,10 @@ export const OfflineIndicator = forwardRef<HTMLDivElement, OfflineIndicatorProps
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           className={cn(
-            'fixed top-0 left-0 right-0 z-[100]',
-            'bg-success text-success-foreground',
-            'px-4 py-2 text-center',
-            className,
+            "fixed top-0 left-0 right-0 z-[100]",
+            "bg-green-500 text-white",
+            "px-4 py-2 text-center",
+            className
           )}
         >
           <div className="flex items-center justify-center gap-2 text-sm font-medium">
@@ -67,8 +67,6 @@ export const OfflineIndicator = forwardRef<HTMLDivElement, OfflineIndicatorProps
           </div>
         </motion.div>
       )}
-    </div>
+    </>
   );
-});
-
-OfflineIndicator.displayName = 'OfflineIndicator';
+}

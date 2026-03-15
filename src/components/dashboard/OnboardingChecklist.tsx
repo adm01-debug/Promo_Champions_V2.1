@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,7 +18,7 @@ interface Step {
   checkFn: () => Promise<boolean>;
 }
 
-export const OnboardingChecklist = forwardRef<HTMLDivElement>(function OnboardingChecklist(_props, ref) {
+export function OnboardingChecklist() {
   const { salesperson } = useAuth();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
@@ -88,7 +88,6 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>(function Onboardin
   return (
     <AnimatePresence>
       <motion.div
-        ref={ref}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
@@ -169,4 +168,4 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>(function Onboardin
       </motion.div>
     </AnimatePresence>
   );
-});
+}
