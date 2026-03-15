@@ -8,6 +8,28 @@ export interface CoachingInsight {
   recommendation: string;
 }
 
+// Extended type used by edge function responses (CoachingComparison, SalespersonCoaching)
+export interface EdgeFunctionCoachingData {
+  salesperson: { id: string; name: string; avatar_url: string | null };
+  metrics: {
+    totalDeals: number;
+    wins: number;
+    losses: number;
+    winRate: number;
+    comparisonToTeam: number;
+    avgDealValue: number;
+    topLossReasons: Array<{ reason: string; count: number; percentage: number }>;
+  };
+  coaching: {
+    summary: string;
+    strengths: Array<{ title: string; description: string }>;
+    improvements: Array<{ title: string; description: string; priority: string }>;
+    actions: Array<{ action: string; timeline: string; expectedImpact: string }>;
+  };
+  generatedAt: string;
+}
+
+// Simple type for hook-based coaching
 export interface CoachingData {
   insights: CoachingInsight[];
   salespersonName: string;
