@@ -156,8 +156,7 @@ export function LevelUpOverlay({
       )}
     </AnimatePresence>
   );
-});
-LevelUpOverlay.displayName = "LevelUpOverlay";
+}
 
 // Streak milestone overlay
 interface StreakMilestoneOverlayProps {
@@ -170,7 +169,7 @@ interface StreakMilestoneOverlayProps {
   onComplete?: () => void;
 }
 
-export const StreakMilestoneOverlay = forwardRef<HTMLDivElement, StreakMilestoneOverlayProps>(function StreakMilestoneOverlay({
+export function StreakMilestoneOverlay({
   isVisible,
   streakDays,
   salespersonName,
@@ -178,7 +177,7 @@ export const StreakMilestoneOverlay = forwardRef<HTMLDivElement, StreakMilestone
   milestoneIcon = '🔥',
   xpReward = 0,
   onComplete,
-}, _ref) {
+}: StreakMilestoneOverlayProps) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
