@@ -18,7 +18,7 @@ interface Step {
   checkFn: () => Promise<boolean>;
 }
 
-export function OnboardingChecklist() {
+export const OnboardingChecklist = forwardRef<HTMLDivElement>(function OnboardingChecklist(_props, ref) {
   const { salesperson } = useAuth();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
