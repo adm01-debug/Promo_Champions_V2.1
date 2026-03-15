@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import { useState, useEffect, createContext, useContext, useCallback, ReactNode, forwardRef } from 'react';
+import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
 
 interface XPNotification {
   id: string;
@@ -23,16 +23,15 @@ export function useXPToast() {
   return context;
 }
 
-export const XPToastProvider = forwardRef<HTMLDivElement, { children: ReactNode }>(function XPToastProvider({ children }, _ref) {
+export function XPToastProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<XPNotification[]>([]);
 
   const showXP = useCallback((amount: number, reason: string, type: 'xp' | 'streak' | 'level_up' = 'xp') => {
     const id = Math.random().toString(36).substring(2, 9);
-    setNotifications(prev => [...prev, { id, amount, reason, type }]);
+    setNotifications((prev) => [...prev, { id, amount, reason, type }]);
 
-    // Auto-remove after animation
     setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
     }, 3000);
   }, []);
 
@@ -42,13 +41,12 @@ export const XPToastProvider = forwardRef<HTMLDivElement, { children: ReactNode 
       <XPToastContainer notifications={notifications} />
     </XPToastContext.Provider>
   );
-});
-XPToastProvider.displayName = "XPToastProvider";
+}
 
 function XPToastContainer({ notifications }: { notifications: XPNotification[] }) {
   return (
     <div className="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {notifications.map((notification) => (
           <XPToastItem key={notification.id} notification={notification} />
         ))}
@@ -60,9 +58,9 @@ function XPToastContainer({ notifications }: { notifications: XPNotification[] }
 function XPToastItem({ notification }: { notification: XPNotification }) {
   const { amount, reason, type } = notification;
 
-  const bgColor = type === 'level_up' 
-    ? 'from-yellow-500/90 to-amber-600/90' 
-    : type === 'streak' 
+  const bgColor = type === 'level_up'
+    ? 'from-yellow-500/90 to-amber-600/90'
+    : type === 'streak'
       ? 'from-orange-500/90 to-red-500/90'
       : 'from-primary/90 to-primary/70';
 
@@ -106,27 +104,21 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
           </motion.p>
         </div>
 
-        {/* Sparkle particles */}
         <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none">
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={i}
-              initial={{ 
-                x: '50%', 
-                y: '50%', 
-                scale: 0,
-                opacity: 1 
-              }}
-              animate={{ 
-                x: `${Math.random() * 100}%`, 
+              initial={{ x: '50%', y: '50%', scale: 0, opacity: 1 }}
+              animate={{
+                x: `${Math.random() * 100}%`,
                 y: `${Math.random() * 100}%`,
                 scale: [0, 1, 0],
-                opacity: [1, 1, 0]
+                opacity: [1, 1, 0],
               }}
-              transition={{ 
+              transition={{
                 duration: 0.8,
                 delay: 0.1 + i * 0.05,
-                ease: 'easeOut'
+                ease: 'easeOut',
               }}
               className="absolute w-1 h-1 bg-white rounded-full"
             />
