@@ -226,8 +226,8 @@ export function createMockRanking(count = 5) {
 // RENDER HELPERS
 // ==========================================
 
-export function createWrapper() {
-  const { QueryClient, QueryClientProvider } = require('@tanstack/react-query');
+export async function createWrapper() {
+  const { QueryClient, QueryClientProvider } = await import('@tanstack/react-query');
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false, gcTime: 0, staleTime: 0 },
