@@ -110,7 +110,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
                   </span>
                   <span className="flex items-center gap-1">
                     <Percent className="h-3 w-3" />
-                    {sp.conversionRate.toFixed(0)}%
+                    {(sp.conversionRate ?? 0).toFixed(0)}%
                   </span>
                   <span className="flex items-center gap-1">
                     <Users className="h-3 w-3" />
