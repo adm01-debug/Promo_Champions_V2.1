@@ -1,9 +1,8 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 type Permission = string;
-type Role = 'admin' | 'manager' | 'user' | 'viewer';
+type Role = 'admin' | 'manager' | 'salesperson';
 
 interface UserPermissions {
   role: Role;
@@ -18,15 +17,10 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'activities:read', 'activities:write',
     'users:read', 'reports:read',
   ],
-  user: [
+  salesperson: [
     'deals:read', 'deals:write',
     'clients:read', 'clients:write',
     'activities:read', 'activities:write',
-  ],
-  viewer: [
-    'deals:read',
-    'clients:read',
-    'activities:read',
   ],
 };
 
@@ -37,14 +31,16 @@ export const usePermissions = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data: userData } = await supabase
-        .from('users')
+      const { data: roleData } = await supabase
+        .from('user_roles')
         .select('role')
-        .eq('id', user.id)
-        .single();
+        .eq('user_id', user.id)
+        .order('role')
+        .limit(1)
+        .maybeSingle();
 
-      const role = (userData?.role || 'user') as Role;
-      const perms = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.user;
+      const role = (roleData?.role || 'salesperson') as Role;
+      const perms = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.salesperson;
 
       return {
         role,
@@ -55,9 +51,7 @@ export const usePermissions = () => {
 
   const hasPermission = (permission: Permission): boolean => {
     if (!permissions) return false;
-    
     if (permissions.permissions.includes('*')) return true;
-    
     return permissions.permissions.includes(permission);
   };
 

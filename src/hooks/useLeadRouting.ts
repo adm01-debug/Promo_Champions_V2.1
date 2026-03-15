@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -9,54 +8,87 @@ export const useLeadRouting = (strategy: RoutingStrategy = 'round-robin') => {
 
   return useMutation({
     mutationFn: async (leadId: string) => {
+      // Query salespeople table (correct table) with active client count
       const { data: salespeople } = await supabase
-        .from('users')
-        .select('id, full_name, territory, expertise, active_deals:deals(count)')
-        .eq('role', 'salesperson')
-        .eq('active', true);
+        .from('salespeople')
+        .select('id, name')
+        .eq('is_active', true);
 
       if (!salespeople || salespeople.length === 0) {
         throw new Error('No available salespeople');
+      }
+
+      // Get active client counts for load-based routing
+      let enrichedSalespeople = salespeople.map(sp => ({ ...sp, activeCount: 0 }));
+      
+      if (strategy === 'load-based') {
+        const counts = await Promise.all(
+          salespeople.map(async (sp) => {
+            const { count } = await supabase
+              .from('client_portfolio')
+              .select('*', { count: 'exact', head: true })
+              .eq('salesperson_id', sp.id)
+              .eq('status', 'active');
+            return { id: sp.id, activeCount: count || 0 };
+          })
+        );
+        enrichedSalespeople = salespeople.map(sp => ({
+          ...sp,
+          activeCount: counts.find(c => c.id === sp.id)?.activeCount || 0,
+        }));
       }
 
       let assignedTo: string;
 
       switch (strategy) {
         case 'round-robin':
-          assignedTo = getRoundRobinSalesperson(salespeople);
+          assignedTo = getRoundRobinSalesperson(enrichedSalespeople);
           break;
         case 'load-based':
-          assignedTo = getLoadBasedSalesperson(salespeople);
+          assignedTo = getLoadBasedSalesperson(enrichedSalespeople);
           break;
         default:
-          assignedTo = salespeople[0].id;
+          assignedTo = enrichedSalespeople[0].id;
       }
 
+      // Insert into client_portfolio instead of updating non-existent assigned_to column
       const { error } = await supabase
-        .from('clients')
-        .update({ assigned_to: assignedTo })
-        .eq('id', leadId);
+        .from('client_portfolio')
+        .insert({
+          client_id: leadId,
+          salesperson_id: assignedTo,
+          source: strategy,
+          status: 'active',
+        });
 
       if (error) throw error;
+
+      // Log the routing
+      await supabase.from('lead_routing_log').insert({
+        client_id: leadId,
+        to_salesperson_id: assignedTo,
+        routing_reason: `Auto-routing: ${strategy}`,
+      });
 
       return { assignedTo };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ['client_portfolio'] });
     },
   });
 };
 
-function getRoundRobinSalesperson(salespeople: any[]): string {
+function getRoundRobinSalesperson(salespeople: Array<{ id: string }>): string {
   const lastAssigned = parseInt(localStorage.getItem('lastAssignedIndex') || '0');
   const nextIndex = (lastAssigned + 1) % salespeople.length;
   localStorage.setItem('lastAssignedIndex', nextIndex.toString());
   return salespeople[nextIndex].id;
 }
 
-function getLoadBasedSalesperson(salespeople: any[]): string {
+function getLoadBasedSalesperson(salespeople: Array<{ id: string; activeCount: number }>): string {
   return salespeople.reduce((min, person) =>
-    person.active_deals[0].count < min.active_deals[0].count ? person : min
+    person.activeCount < min.activeCount ? person : min
   ).id;
 }
 
