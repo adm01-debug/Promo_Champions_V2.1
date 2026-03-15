@@ -271,15 +271,15 @@ export function useWebAuthn(): UseWebAuthnReturn {
 
       toast.success('Login com passkey realizado!');
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error('Passkey login error:', error);
       }
-      
-      if (error.name === 'NotAllowedError') {
+      const err = error instanceof Error ? error : new Error('Unknown error');
+      if (err.name === 'NotAllowedError') {
         toast.error('Autenticação cancelada pelo usuário');
       } else {
-        toast.error(error.message || 'Erro ao fazer login com passkey');
+        toast.error(err.message || 'Erro ao fazer login com passkey');
       }
       return false;
     } finally {
