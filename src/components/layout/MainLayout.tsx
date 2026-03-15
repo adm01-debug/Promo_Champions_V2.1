@@ -1,4 +1,4 @@
-// @ts-nocheck
+// MainLayout - primary layout wrapper
 import { useRef } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
@@ -79,7 +79,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               <FocusModeToggle />
               <Link to="/notificacoes" className="relative glass h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/50 transition-colors">
                 <Bell className="h-4 w-4" />
-                <NotificationBadge count={unreadCount} position="top-right" size="sm" pulse />
+                <NotificationBadge count={unreadCount} size="sm" pulse className="absolute -top-1 -right-1" />
               </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
               <ThemeToggle />

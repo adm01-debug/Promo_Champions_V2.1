@@ -1,4 +1,4 @@
-// @ts-nocheck
+// Portfolio page
 import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";

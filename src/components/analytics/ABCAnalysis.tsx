@@ -1,4 +1,4 @@
-// @ts-nocheck — Deep structural mismatch: component uses products/clients/summary but hook returns categories[]. Requires component rewrite.
+// ABCAnalysis - Pareto analysis component
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';

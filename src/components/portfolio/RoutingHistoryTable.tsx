@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -11,8 +10,17 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RoutingLogEntry } from "@/hooks/useLeadRouting";
 import { ArrowRight, User, Building2, Zap, RotateCcw, UserPlus } from "lucide-react";
+
+interface RoutingLogEntry {
+  id: string;
+  created_at: string;
+  routing_reason: string;
+  notes: string | null;
+  client?: { name: string; company?: string | null } | null;
+  from_salesperson?: { name: string } | null;
+  to_salesperson?: { name: string } | null;
+}
 
 interface RoutingHistoryTableProps {
   data: RoutingLogEntry[] | undefined;
