@@ -30,9 +30,9 @@ export function TestSDRAlertButton() {
 
       // Invalidate history to show new entry
       queryClient.invalidateQueries({ queryKey: ["sdr-alert-history"] });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Erro ao testar alertas", {
-        description: error.message,
+        description: error instanceof Error ? error.message : 'Erro desconhecido',
       });
     } finally {
       setIsTesting(false);

@@ -105,7 +105,7 @@ export function IPWhitelistManager() {
       setNewDescription("");
       setValidationError(null);
     },
-    onError: (error: any) => {
+    onError: (error: Error & { code?: string }) => {
       if (import.meta.env.DEV) {
         console.error("Error adding IP:", error);
       }

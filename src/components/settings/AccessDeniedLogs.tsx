@@ -53,13 +53,14 @@ export function AccessDeniedLogs() {
           description: data?.message || "Não há picos de acesso negado no momento.",
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error("Error testing alert:", error);
       }
+      const message = error instanceof Error ? error.message : "Não foi possível executar o teste.";
       toast({
         title: "Erro ao testar alerta",
-        description: error.message || "Não foi possível executar o teste.",
+        description: message,
         variant: "destructive",
       });
     } finally {

@@ -190,10 +190,11 @@ export function AtRiskDealsPanel() {
       const result = await analyzeMutation.mutateAsync(dealId);
       toast.success("Análise concluída");
       return result;
-    } catch (error: any) {
-      if (error.message?.includes("429")) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '';
+      if (message.includes("429")) {
         toast.error("Limite de requisições atingido. Tente novamente em alguns minutos.");
-      } else if (error.message?.includes("402")) {
+      } else if (message.includes("402")) {
         toast.error("Créditos de IA esgotados.");
       } else {
         toast.error("Erro ao analisar deal");

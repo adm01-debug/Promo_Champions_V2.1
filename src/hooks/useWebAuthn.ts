@@ -163,17 +163,17 @@ export function useWebAuthn(): UseWebAuthnReturn {
       toast.success('Passkey registrada com sucesso!');
       await loadCredentials();
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error('Passkey registration error:', error);
       }
-      
-      if (error.name === 'NotAllowedError') {
+      const err = error instanceof Error ? error : new Error('Unknown error');
+      if (err.name === 'NotAllowedError') {
         toast.error('Registro cancelado pelo usuário');
-      } else if (error.name === 'InvalidStateError') {
+      } else if (err.name === 'InvalidStateError') {
         toast.error('Esta passkey já está registrada');
       } else {
-        toast.error(error.message || 'Erro ao registrar passkey');
+        toast.error(err.message || 'Erro ao registrar passkey');
       }
       return false;
     } finally {
@@ -271,15 +271,15 @@ export function useWebAuthn(): UseWebAuthnReturn {
 
       toast.success('Login com passkey realizado!');
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error('Passkey login error:', error);
       }
-      
-      if (error.name === 'NotAllowedError') {
+      const err = error instanceof Error ? error : new Error('Unknown error');
+      if (err.name === 'NotAllowedError') {
         toast.error('Autenticação cancelada pelo usuário');
       } else {
-        toast.error(error.message || 'Erro ao fazer login com passkey');
+        toast.error(err.message || 'Erro ao fazer login com passkey');
       }
       return false;
     } finally {
@@ -310,11 +310,11 @@ export function useWebAuthn(): UseWebAuthnReturn {
       toast.success('Passkey removida com sucesso');
       await loadCredentials();
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error('Error deleting passkey:', error);
       }
-      toast.error(error.message || 'Erro ao remover passkey');
+      toast.error(error instanceof Error ? error.message : 'Erro ao remover passkey');
       return false;
     } finally {
       setIsLoading(false);
