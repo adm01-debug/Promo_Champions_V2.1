@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Gamification components barrel export
 export { XPBar } from './XPBar';
 export { ProgressRing } from './ProgressRing';

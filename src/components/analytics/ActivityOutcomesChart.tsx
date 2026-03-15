@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Target } from "lucide-react";

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { useNextBestAction, ActionSuggestion } from '@/hooks/useNextBestAction';
 import { useSalespeople } from '@/hooks/useSalespeople';
