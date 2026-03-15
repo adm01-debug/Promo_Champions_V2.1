@@ -310,11 +310,11 @@ export function useWebAuthn(): UseWebAuthnReturn {
       toast.success('Passkey removida com sucesso');
       await loadCredentials();
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error('Error deleting passkey:', error);
       }
-      toast.error(error.message || 'Erro ao remover passkey');
+      toast.error(error instanceof Error ? error.message : 'Erro ao remover passkey');
       return false;
     } finally {
       setIsLoading(false);
