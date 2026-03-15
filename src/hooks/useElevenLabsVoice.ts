@@ -36,7 +36,8 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
   const [useBrowserFallback, setUseBrowserFallback] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const recognitionRef = useRef<ReturnType<typeof window.webkitSpeechRecognition> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
