@@ -163,17 +163,17 @@ export function useWebAuthn(): UseWebAuthnReturn {
       toast.success('Passkey registrada com sucesso!');
       await loadCredentials();
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (import.meta.env.DEV) {
         console.error('Passkey registration error:', error);
       }
-      
-      if (error.name === 'NotAllowedError') {
+      const err = error instanceof Error ? error : new Error('Unknown error');
+      if (err.name === 'NotAllowedError') {
         toast.error('Registro cancelado pelo usuário');
-      } else if (error.name === 'InvalidStateError') {
+      } else if (err.name === 'InvalidStateError') {
         toast.error('Esta passkey já está registrada');
       } else {
-        toast.error(error.message || 'Erro ao registrar passkey');
+        toast.error(err.message || 'Erro ao registrar passkey');
       }
       return false;
     } finally {
