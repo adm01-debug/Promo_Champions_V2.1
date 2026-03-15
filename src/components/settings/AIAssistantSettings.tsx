@@ -236,7 +236,7 @@ export function AIAssistantSettings() {
                   {VOICE_OPTIONS.map((voice) => (
                     <SelectItem key={voice.id} value={voice.id}>
                       <div className="flex items-center gap-2">
-                        <span>{voice.gender === 'Masculino' ? '👨' : '👩'}</span>
+                        <span>{voice.gender === 'male' ? '👨' : '👩'}</span>
                         <span>{voice.name}</span>
                         <span className="text-muted-foreground text-xs">({voice.gender})</span>
                       </div>

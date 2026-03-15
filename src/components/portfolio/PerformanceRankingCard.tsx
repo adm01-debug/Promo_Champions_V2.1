@@ -121,7 +121,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
 
               <div className="text-right">
                 <p className="text-lg font-bold gradient-text">
-                  {sp.dealsCount}
+                  {sp.dealsCount ?? 0}
                 </p>
                 <p className="text-xs text-muted-foreground">vendas</p>
               </div>
