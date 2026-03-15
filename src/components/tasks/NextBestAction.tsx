@@ -67,6 +67,9 @@ export function NextBestAction() {
     createTask.mutate({
       title: suggestion.title,
       description: suggestion.description,
+      due_date: new Date().toISOString().split('T')[0],
+      task_type: (suggestion.actionType as 'call' | 'email' | 'meeting' | 'follow_up' | 'other') || 'other',
+      priority: suggestion.priority === 'high' ? 'high' : suggestion.priority === 'medium' ? 'medium' : 'low',
     });
   };
 
