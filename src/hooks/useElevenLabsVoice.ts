@@ -240,17 +240,9 @@ export default useElevenLabsVoice;
 // Type declarations for browser APIs
 declare global {
   interface Window {
-    SpeechRecognition: new () => SpeechRecognitionInstance;
-    webkitSpeechRecognition: new () => SpeechRecognitionInstance;
-  }
-  interface SpeechRecognitionInstance {
-    continuous: boolean;
-    interimResults: boolean;
-    lang: string;
-    onresult: ((event: SpeechRecognitionEvent) => void) | null;
-    onerror: ((event: Event) => void) | null;
-    onend: (() => void) | null;
-    start: () => void;
-    stop: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SpeechRecognition: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    webkitSpeechRecognition: any;
   }
 }
