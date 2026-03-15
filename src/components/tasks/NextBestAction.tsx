@@ -1,4 +1,4 @@
-// @ts-nocheck — Deep structural mismatch: component expects mutation with .mutate() and ActionSuggestion type, but hook returns useQuery with NextAction[]. Requires full rewrite.
+// NextBestAction - AI-powered action suggestions
 import { useState } from 'react';
 import { useNextBestAction } from '@/hooks/useNextBestAction';
 import { useSalespeople } from '@/hooks/useSalespeople';

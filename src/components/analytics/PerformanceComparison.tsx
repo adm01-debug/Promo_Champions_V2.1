@@ -1,4 +1,5 @@
-// @ts-nocheck — Deep structural mismatch: component expects role-grouped benchmarks, hook returns flat SalespersonPerformance[]. Requires refactoring.
+// PerformanceComparison - role-grouped performance benchmarks
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

@@ -1,5 +1,6 @@
-// @ts-nocheck — Deep structural mismatch: component expects stages/totalChange/etc, hook returns stageVelocities/overallAverage. Requires refactoring.
+// DealVelocityChart - visualizes deal pipeline velocity
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDealVelocity } from '@/hooks/useDealVelocity';
 import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
