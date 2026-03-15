@@ -23,8 +23,8 @@ export const useClientPortfolio = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('client_portfolio')
-        .select('*, client:clients(name, email, phone, company), salesperson:salespeople(name)');
-      return (data || []) as ClientPortfolioItem[];
+        .select('*, client:clients(name, email, phone, company), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
+      return (data || []) as unknown as ClientPortfolioItem[];
     },
   });
 
