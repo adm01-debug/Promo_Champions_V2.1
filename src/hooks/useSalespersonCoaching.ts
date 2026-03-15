@@ -8,7 +8,10 @@ export interface CoachingInsight {
   recommendation: string;
 }
 
-// Extended type used by edge function responses (CoachingComparison, SalespersonCoaching)
+/**
+ * Full coaching data structure used by SalespersonCoaching and CoachingComparison components.
+ * Combines metrics analysis with actionable coaching recommendations.
+ */
 export interface EdgeFunctionCoachingData {
   salesperson: { id: string; name: string; avatar_url: string | null };
   metrics: {
@@ -29,14 +32,11 @@ export interface EdgeFunctionCoachingData {
   generatedAt: string;
 }
 
-// Simple type for hook-based coaching
-export interface CoachingData {
-  insights: CoachingInsight[];
-  salespersonName: string;
-}
+// Keep simple type as alias for backwards compatibility
+export type CoachingData = EdgeFunctionCoachingData;
 
 export const useSalespersonCoaching = (salespersonId: string | null) => {
-  return useQuery<CoachingData | null>({
+  return useQuery<EdgeFunctionCoachingData | null>({
     queryKey: ['salesperson-coaching', salespersonId],
     queryFn: async () => {
       if (!salespersonId) return null;
@@ -44,9 +44,11 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
       // Get salesperson info
       const { data: sp } = await supabase
         .from('salespeople')
-        .select('name')
+        .select('id, name, avatar_url')
         .eq('id', salespersonId)
         .single();
+
+      if (!sp) return null;
 
       // Get their sales
       const { data: sales } = await supabase
@@ -54,76 +56,153 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
         .select('id, amount, status, created_at')
         .eq('salesperson_id', salespersonId);
 
-      // Get their deal outcomes
+      // Get deal outcomes
       const { data: outcomes } = await supabase
         .from('deal_outcomes')
         .select('outcome, reason')
         .eq('salesperson_id', salespersonId);
 
-      // Get their activities
+      // Get activities
       const { data: activities } = await supabase
         .from('activities')
         .select('id, activity_type, outcome')
         .eq('salesperson_id', salespersonId);
 
+      // Get team average for comparison
+      const { data: allTeamSales } = await supabase
+        .from('sales')
+        .select('amount, status, salesperson_id');
+      
+      const { data: allTeamOutcomes } = await supabase
+        .from('deal_outcomes')
+        .select('outcome, salesperson_id');
+
       const allSales = sales || [];
       const allOutcomes = outcomes || [];
       const allActivities = activities || [];
-      const completed = allSales.filter(s => s.status === 'completed');
+
       const wins = allOutcomes.filter(o => o.outcome === 'won').length;
-      const insights: CoachingInsight[] = [];
+      const losses = allOutcomes.filter(o => o.outcome === 'lost').length;
+      const totalOutcomes = allOutcomes.length;
+      const winRate = totalOutcomes > 0 ? (wins / totalOutcomes) * 100 : 0;
 
-      // Win rate
-      const winRate = allOutcomes.length > 0 ? (wins / allOutcomes.length) * 100 : 0;
-      insights.push({
-        area: 'Taxa de Conversão',
-        score: Math.round(winRate),
-        benchmark: 30,
-        recommendation: winRate < 30
-          ? 'Foque em qualificação e tratamento de objeções'
-          : 'Excelente taxa! Continue assim',
-      });
+      // Team average win rate
+      const teamOutcomes = allTeamOutcomes || [];
+      const teamWins = teamOutcomes.filter(o => o.outcome === 'won').length;
+      const teamWinRate = teamOutcomes.length > 0 ? (teamWins / teamOutcomes.length) * 100 : 0;
+      const comparisonToTeam = teamWinRate > 0 ? winRate - teamWinRate : 0;
 
-      // Average deal size
-      const avgSize = completed.length > 0
-        ? completed.reduce((sum, s) => sum + (s.amount || 0), 0) / completed.length
-        : 0;
-      insights.push({
-        area: 'Ticket Médio',
-        score: Math.round(avgSize),
-        benchmark: 50000,
-        recommendation: avgSize < 50000
-          ? 'Busque oportunidades de maior valor'
-          : 'Ótimo ticket médio mantido',
-      });
+      // Average deal value
+      const completedSales = allSales.filter(s => s.status === 'completed');
+      const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
+      const avgDealValue = completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
 
-      // Activity volume
-      const activityScore = Math.min(allActivities.length * 2, 100);
-      insights.push({
-        area: 'Volume de Atividades',
-        score: activityScore,
-        benchmark: 60,
-        recommendation: activityScore < 60
-          ? 'Aumente o volume de atividades diárias'
-          : 'Bom ritmo de atividades',
-      });
+      // Top loss reasons
+      const lossReasons = allOutcomes
+        .filter(o => o.outcome === 'lost' && o.reason)
+        .reduce((acc, o) => {
+          acc[o.reason] = (acc[o.reason] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
 
-      // Connected calls ratio
-      const calls = allActivities.filter(a => a.activity_type === 'call');
-      const connected = calls.filter(a => a.outcome === 'connected');
-      const connectRate = calls.length > 0 ? (connected.length / calls.length) * 100 : 0;
-      insights.push({
-        area: 'Taxa de Conexão',
-        score: Math.round(connectRate),
-        benchmark: 40,
-        recommendation: connectRate < 40
-          ? 'Melhore o timing e abordagem das ligações'
-          : 'Boa taxa de conexão',
-      });
+      const topLossReasons = Object.entries(lossReasons)
+        .map(([reason, count]) => ({
+          reason,
+          count,
+          percentage: losses > 0 ? (count / losses) * 100 : 0,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+      // Generate coaching insights
+      const strengths: Array<{ title: string; description: string }> = [];
+      const improvements: Array<{ title: string; description: string; priority: string }> = [];
+      const actions: Array<{ action: string; timeline: string; expectedImpact: string }> = [];
+
+      // Analyze and generate recommendations
+      if (winRate >= 40) {
+        strengths.push({
+          title: 'Boa taxa de conversão',
+          description: `Taxa de ${winRate.toFixed(1)}% está acima da média. Continue mantendo a qualidade no processo.`,
+        });
+      } else if (totalOutcomes > 0) {
+        improvements.push({
+          title: 'Taxa de conversão abaixo do esperado',
+          description: `Taxa de ${winRate.toFixed(1)}% pode ser melhorada com melhor qualificação de leads.`,
+          priority: 'alta',
+        });
+        actions.push({
+          action: 'Revisar critérios de qualificação de leads',
+          timeline: 'Próximas 2 semanas',
+          expectedImpact: 'Aumento de 10-15% na taxa de conversão',
+        });
+      }
+
+      if (avgDealValue > 50000) {
+        strengths.push({
+          title: 'Ticket médio alto',
+          description: `Média de R$ ${avgDealValue.toFixed(0)} por deal demonstra foco em oportunidades de valor.`,
+        });
+      } else if (completedSales.length > 0) {
+        improvements.push({
+          title: 'Oportunidade de aumentar ticket médio',
+          description: `Ticket atual de R$ ${avgDealValue.toFixed(0)}. Explore upsell e cross-sell.`,
+          priority: 'média',
+        });
+        actions.push({
+          action: 'Implementar estratégia de upsell nos deals existentes',
+          timeline: 'Próximo mês',
+          expectedImpact: 'Aumento de 20% no ticket médio',
+        });
+      }
+
+      if (allActivities.length >= 50) {
+        strengths.push({
+          title: 'Alto volume de atividades',
+          description: `${allActivities.length} atividades registradas demonstram consistência e disciplina.`,
+        });
+      } else {
+        improvements.push({
+          title: 'Aumentar volume de atividades',
+          description: `${allActivities.length} atividades registradas. Recomenda-se aumentar a cadência.`,
+          priority: allActivities.length < 20 ? 'alta' : 'baixa',
+        });
+      }
+
+      if (comparisonToTeam < -10) {
+        actions.push({
+          action: 'Sessão de coaching com top performer da equipe',
+          timeline: 'Esta semana',
+          expectedImpact: 'Alinhamento com melhores práticas do time',
+        });
+      }
+
+      const summary = winRate >= 40
+        ? `${sp.name} demonstra bom desempenho com taxa de conversão de ${winRate.toFixed(1)}%. Foco em manter consistência e escalar resultados.`
+        : `${sp.name} tem oportunidades de melhoria na conversão (${winRate.toFixed(1)}%). Recomenda-se foco em qualificação e tratamento de objeções.`;
 
       return {
-        insights,
-        salespersonName: sp?.name || 'Vendedor',
+        salesperson: {
+          id: sp.id,
+          name: sp.name,
+          avatar_url: sp.avatar_url,
+        },
+        metrics: {
+          totalDeals: allSales.length,
+          wins,
+          losses,
+          winRate,
+          comparisonToTeam: Math.round(comparisonToTeam * 10) / 10,
+          avgDealValue: Math.round(avgDealValue),
+          topLossReasons,
+        },
+        coaching: {
+          summary,
+          strengths,
+          improvements,
+          actions,
+        },
+        generatedAt: new Date().toISOString(),
       };
     },
     enabled: !!salespersonId,
