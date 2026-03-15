@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -20,8 +19,7 @@ interface FunnelAnalysis {
 }
 
 /**
- * Hook for sales funnel analysis
- * Calculates conversion rates, drop-offs, and time per stage
+ * Hook for sales funnel analysis using the sales table
  */
 export const useFunnelData = (timeframe: number = 30) => {
   return useQuery<FunnelAnalysis>({
@@ -30,95 +28,86 @@ export const useFunnelData = (timeframe: number = 30) => {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - timeframe);
 
-      const { data: deals, error } = await supabase
-        .from('deals')
-        .select(`
-          id,
-          value,
-          stage,
-          created_at,
-          updated_at
-        `)
+      // Get stage history to understand funnel flow
+      const { data: stageHistory, error: shError } = await supabase
+        .from('deal_stage_history')
+        .select('sale_id, stage, entered_at, exited_at')
+        .gte('entered_at', startDate.toISOString());
+
+      if (shError) throw shError;
+
+      // Also get current sales for value data
+      const { data: sales, error: sError } = await supabase
+        .from('sales')
+        .select('id, amount, status, created_at, updated_at')
         .gte('created_at', startDate.toISOString());
 
-      if (error) throw error;
+      if (sError) throw sError;
 
       // Define funnel stages in order
-      const stageOrder = [
-        'Lead',
-        'Qualified',
-        'Proposal',
-        'Negotiation',
-        'Closed Won',
-        'Closed Lost',
-      ];
+      const stageOrder = ['lead', 'prospecting', 'qualified', 'proposal', 'negotiation'];
 
-      // Group deals by stage
-      const stageGroups = new Map<string, any[]>();
-      stageOrder.forEach(stage => stageGroups.set(stage, []));
+      // Count unique sales per stage from history
+      const stageGroups = new Map<string, Set<string>>();
+      stageOrder.forEach(stage => stageGroups.set(stage, new Set()));
 
-      deals.forEach(deal => {
-        if (stageGroups.has(deal.stage)) {
-          stageGroups.get(deal.stage)!.push(deal);
+      (stageHistory || []).forEach(record => {
+        const normalizedStage = record.stage.toLowerCase();
+        if (stageGroups.has(normalizedStage)) {
+          stageGroups.get(normalizedStage)!.add(record.sale_id || '');
         }
       });
 
-      const totalDeals = deals.length;
-      let previousCount = totalDeals;
+      // Build sale amount map
+      const saleAmountMap = new Map<string, number>();
+      (sales || []).forEach(s => saleAmountMap.set(s.id, s.amount || 0));
 
-      const stages: FunnelStage[] = stageOrder.slice(0, -1).map((stage, index) => {
-        const stageDeals = stageGroups.get(stage) || [];
-        const count = stageDeals.length;
-        const value = stageDeals.reduce((sum, d) => sum + (d.value || 0), 0);
+      const totalDeals = (sales || []).length;
+      let previousCount = totalDeals || 1;
 
-        const conversionRate = previousCount > 0
-          ? (count / previousCount) * 100
-          : 0;
+      const stages: FunnelStage[] = stageOrder.map((stage) => {
+        const saleIds = stageGroups.get(stage) || new Set();
+        const count = saleIds.size || 0;
+        const value = Array.from(saleIds).reduce((sum, id) => sum + (saleAmountMap.get(id) || 0), 0);
 
-        const dropOffRate = 100 - conversionRate;
-
-        const avgTime = stageDeals.length > 0
-          ? stageDeals.reduce((sum, d) => {
-              const created = new Date(d.created_at);
-              const updated = new Date(d.updated_at);
-              return sum + (updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
-            }, 0) / stageDeals.length
-          : 0;
+        const conversionRate = previousCount > 0 ? (count / previousCount) * 100 : 0;
+        const dropOffRate = Math.max(0, 100 - conversionRate);
 
         const result = {
-          stage,
+          stage: stage.charAt(0).toUpperCase() + stage.slice(1),
           count,
           value,
-          conversionRate,
-          averageTime: Math.round(avgTime),
-          dropOffRate,
+          conversionRate: Math.round(conversionRate * 10) / 10,
+          averageTime: 0,
+          dropOffRate: Math.round(dropOffRate * 10) / 10,
         };
 
-        previousCount = count;
+        if (count > 0) previousCount = count;
         return result;
       });
 
-      const wonDeals = stageGroups.get('Closed Won') || [];
+      const wonSales = (sales || []).filter(s => s.status === 'completed');
       const overallConversion = totalDeals > 0
-        ? (wonDeals.length / totalDeals) * 100
+        ? (wonSales.length / totalDeals) * 100
         : 0;
 
-      const totalValue = wonDeals.reduce((sum, d) => sum + (d.value || 0), 0);
-      const avgDealSize = wonDeals.length > 0 ? totalValue / wonDeals.length : 0;
+      const totalValue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
+      const avgDealSize = wonSales.length > 0 ? totalValue / wonSales.length : 0;
 
-      // Find stage with highest drop-off
-      const topDropOffStage = stages.reduce((max, stage) =>
-        stage.dropOffRate > max.dropOffRate ? stage : max
-      , stages[0] || { stage: 'N/A', dropOffRate: 0 }).stage;
+      const topDropOffStage = stages.length > 0
+        ? stages.reduce((max, stage) =>
+            stage.dropOffRate > max.dropOffRate ? stage : max
+          , stages[0]).stage
+        : 'N/A';
 
       return {
         stages,
-        overallConversion,
+        overallConversion: Math.round(overallConversion * 10) / 10,
         totalValue,
-        avgDealSize,
+        avgDealSize: Math.round(avgDealSize),
         topDropOffStage,
       };
     },
-    staleTime: 1000 * 60 * 30, // 30 minutes
+    staleTime: 1000 * 60 * 30,
   });
 };
