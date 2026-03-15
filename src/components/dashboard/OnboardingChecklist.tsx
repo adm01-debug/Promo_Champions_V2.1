@@ -169,4 +169,4 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>(function Onboardin
       </motion.div>
     </AnimatePresence>
   );
-}
+});
