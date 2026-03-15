@@ -1,4 +1,4 @@
-// @ts-nocheck — Deep structural mismatch: component uses edge function response shape, hook exports different type. Requires refactoring.
+// CoachingComparison - side-by-side coaching comparison
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

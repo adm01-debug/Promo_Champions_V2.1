@@ -1,4 +1,4 @@
-// @ts-nocheck — Component expects EdgeFunctionCoachingData shape (salesperson/metrics/coaching) but hook returns CoachingData (insights/salespersonName). Requires component rewrite.
+// SalespersonCoaching - AI coaching insights for salespeople
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

@@ -1,4 +1,4 @@
-// @ts-nocheck — Deep structural mismatch: component expects mutation with .mutate() and ActionSuggestion type, but hook returns useQuery with NextAction[]. Requires full rewrite.
+// NextBestAction - AI-powered action suggestions
 import { useState } from 'react';
 import { useNextBestAction } from '@/hooks/useNextBestAction';
 import { useSalespeople } from '@/hooks/useSalespeople';
@@ -67,6 +67,9 @@ export function NextBestAction() {
     createTask.mutate({
       title: suggestion.title,
       description: suggestion.description,
+      due_date: new Date().toISOString().split('T')[0],
+      task_type: (suggestion.actionType as 'call' | 'email' | 'meeting' | 'follow_up' | 'other') || 'other',
+      priority: suggestion.priority === 'high' ? 'high' : suggestion.priority === 'medium' ? 'medium' : 'low',
     });
   };
 

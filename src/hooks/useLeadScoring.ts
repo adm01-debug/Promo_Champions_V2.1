@@ -1,4 +1,3 @@
-// @ts-nocheck — Queries non-existent columns (industry, company_size, source, status on clients). Requires schema alignment.
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -23,58 +22,81 @@ interface ScoredLead {
 }
 
 /**
- * Hook for automatic lead scoring based on multiple criteria
- * Score range: 0-100
- * Hot: 80+, Warm: 50-79, Cold: <50
+ * Hook for automatic lead scoring based on client data and activities.
+ * Uses clients table with available columns (name, email, company, total_value)
+ * and lead_scores table for persisted scores.
  */
 export const useLeadScoring = (leadId?: string) => {
   return useQuery<ScoredLead[]>({
     queryKey: ['lead-scoring', leadId],
     queryFn: async (): Promise<ScoredLead[]> => {
-      let query = supabase
+      // Get clients with their portfolio and ICP data
+      let clientQuery = supabase
         .from('clients')
-        .select(`
-          id,
-          name,
-          email,
-          company,
-          industry,
-          company_size,
-          source,
-          activities(created_at, type),
-          deals(created_at, value)
-        `)
-        .eq('status', 'lead');
+        .select('id, name, email, company, total_value');
 
       if (leadId) {
-        query = query.eq('id', leadId);
+        clientQuery = clientQuery.eq('id', leadId);
       }
 
-      const { data: leads, error } = await query;
-
+      const { data: clients, error } = await clientQuery;
       if (error) throw error;
+      if (!clients || clients.length === 0) return [];
 
-      return leads.map(lead => {
-        // Company Size Score (0-20)
-        const companySizeScore = calculateCompanySizeScore(lead.company_size);
+      const clientIds = clients.map(c => c.id);
 
-        // Industry Score (0-15)
-        const industryScore = calculateIndustryScore(lead.industry);
+      // Get activities for engagement scoring
+      const { data: activities } = await supabase
+        .from('activities')
+        .select('sale_id, activity_type, outcome, created_at')
+        .order('created_at', { ascending: false });
 
-        // Job Title Score (0-15) - would need job_title field
+      // Get sales linked to clients for behavior scoring
+      const { data: sales } = await supabase
+        .from('sales')
+        .select('id, client_name, amount, status, created_at')
+        .order('created_at', { ascending: false });
+
+      // Get ICP data for enrichment
+      const { data: icpData } = await supabase
+        .from('icp_data')
+        .select('client_id, is_icp_match, num_colaboradores, capital_social, ramo_atividade')
+        .in('client_id', clientIds.length > 0 ? clientIds : ['none']);
+
+      const icpMap = new Map((icpData || []).map(d => [d.client_id, d]));
+
+      // Get existing lead scores
+      const { data: existingScores } = await supabase
+        .from('lead_scores')
+        .select('sale_id, score, factors');
+
+      return clients.map(client => {
+        const icp = icpMap.get(client.id);
+        const clientSales = (sales || []).filter(s => 
+          s.client_name?.toLowerCase() === client.name?.toLowerCase()
+        );
+
+        // Company Size Score (0-20) based on ICP data
+        const companySizeScore = calculateCompanySizeScore(icp?.num_colaboradores);
+
+        // Industry Score (0-15) based on ICP ramo_atividade
+        const industryScore = icp?.is_icp_match ? 15 : (icp?.ramo_atividade ? 10 : 5);
+
+        // Job Title Score (0-15)
         const jobTitleScore = 10; // Default mid-range
 
-        // Engagement Score (0-25)
-        const engagementScore = calculateEngagementScore(lead.activities || []);
+        // Engagement Score (0-25) based on activities linked to client's sales
+        const clientSaleIds = clientSales.map(s => s.id);
+        const clientActivities = (activities || []).filter(a => 
+          a.sale_id && clientSaleIds.includes(a.sale_id)
+        );
+        const engagementScore = calculateEngagementScore(clientActivities);
 
-        // Source Score (0-10)
-        const sourceScore = calculateSourceScore(lead.source);
+        // Source Score (0-10) based on total value
+        const sourceScore = client.total_value > 100000 ? 10 : client.total_value > 50000 ? 7 : 5;
 
         // Behavior Score (0-15)
-        const behaviorScore = calculateBehaviorScore(
-          lead.activities || [],
-          lead.deals || []
-        );
+        const behaviorScore = calculateBehaviorScore(clientActivities, clientSales);
 
         const factors: LeadScoreFactors = {
           companySize: companySizeScore,
@@ -87,34 +109,35 @@ export const useLeadScoring = (leadId?: string) => {
 
         const totalScore = Object.values(factors).reduce((sum, val) => sum + val, 0);
 
+        const lastActivity = clientActivities.length > 0
+          ? new Date(clientActivities[0].created_at)
+          : undefined;
+
         return {
-          id: lead.id,
-          name: lead.name,
-          email: lead.email,
-          company: lead.company,
+          id: client.id,
+          name: client.name,
+          email: client.email || '',
+          company: client.company || undefined,
           score: Math.round(totalScore),
-          category: totalScore >= 80 ? 'Hot' : totalScore >= 50 ? 'Warm' : 'Cold',
+          category: totalScore >= 80 ? 'Hot' as const : totalScore >= 50 ? 'Warm' as const : 'Cold' as const,
           factors,
-          lastActivity: lead.activities?.[0]?.created_at
-            ? new Date(lead.activities[0].created_at)
-            : undefined,
+          lastActivity,
         };
       }).sort((a, b) => b.score - a.score);
     },
-    staleTime: 1000 * 60 * 15, // 15 minutes
+    staleTime: 1000 * 60 * 15,
   });
 };
 
 // Alias for backwards compatibility
 export const useLeadScores = useLeadScoring;
 
-// Hook to calculate and save lead scores
+// Hook to trigger recalculation
 export const useCalculateLeadScores = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
     mutationFn: async (saleIds: string[]) => {
-      // Trigger recalculation by invalidating cache
       return saleIds;
     },
     onSuccess: () => {
@@ -124,30 +147,15 @@ export const useCalculateLeadScores = () => {
 };
 
 // Scoring helper functions
-function calculateCompanySizeScore(size?: string): number {
-  const sizeMap: Record<string, number> = {
-    'enterprise': 20,
-    'large': 15,
-    'medium': 10,
-    'small': 5,
-    'startup': 3,
-  };
-  return sizeMap[size?.toLowerCase() || ''] || 5;
-}
-
-function calculateIndustryScore(industry?: string): number {
-  // High-value industries
-  const highValue = ['technology', 'finance', 'healthcare', 'manufacturing'];
-  const mediumValue = ['retail', 'education', 'real estate'];
-  
-  if (!industry) return 5;
-  
-  if (highValue.some(i => industry.toLowerCase().includes(i))) return 15;
-  if (mediumValue.some(i => industry.toLowerCase().includes(i))) return 10;
+function calculateCompanySizeScore(numColaboradores?: number | null): number {
+  if (!numColaboradores) return 5;
+  if (numColaboradores > 500) return 20;
+  if (numColaboradores > 100) return 15;
+  if (numColaboradores > 20) return 10;
   return 5;
 }
 
-function calculateEngagementScore(activities: any[]): number {
+function calculateEngagementScore(activities: Array<{ created_at: string }>): number {
   const last30Days = new Date();
   last30Days.setDate(last30Days.getDate() - 30);
 
@@ -155,33 +163,22 @@ function calculateEngagementScore(activities: any[]): number {
     a => new Date(a.created_at) > last30Days
   );
 
-  // 1 point per activity, max 25
   return Math.min(recentActivities.length * 2, 25);
 }
 
-function calculateSourceScore(source?: string): number {
-  const sourceMap: Record<string, number> = {
-    'referral': 10,
-    'direct': 8,
-    'organic': 7,
-    'paid': 6,
-    'social': 5,
-    'other': 3,
-  };
-  return sourceMap[source?.toLowerCase() || 'other'] || 3;
-}
-
-function calculateBehaviorScore(activities: any[], deals: any[]): number {
+function calculateBehaviorScore(
+  activities: Array<{ activity_type: string }>,
+  sales: Array<{ status: string }>
+): number {
   let score = 0;
 
-  // Has active deals: +10
-  if (deals.length > 0) score += 10;
+  // Has active sales: +10
+  const activeDeals = sales.filter(s => s.status !== 'completed' && s.status !== 'lost');
+  if (activeDeals.length > 0) score += 10;
 
-  // Recent demo request: +5
-  const hasDemo = activities.some(
-    a => a.type === 'demo' || a.type === 'meeting'
-  );
-  if (hasDemo) score += 5;
+  // Has meetings: +5
+  const hasMeeting = activities.some(a => a.activity_type === 'meeting');
+  if (hasMeeting) score += 5;
 
   return Math.min(score, 15);
 }
