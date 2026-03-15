@@ -26,7 +26,7 @@ export const useSessionManagement = () => {
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
   const [currentSession, setCurrentSession] = useState<ActiveSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Obter info do dispositivo
   const getDeviceInfo = useCallback(() => {

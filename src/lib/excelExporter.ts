@@ -1,8 +1,24 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
-export function exportToExcel<T extends Record<string, any>>(data: T[], filename: string, sheetName: string = 'Dados') {
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  XLSX.writeFile(wb, `${filename}.xlsx`);
+export async function exportToExcel<T extends Record<string, any>>(data: T[], filename: string, sheetName: string = 'Dados') {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet(sheetName);
+
+  if (data.length > 0) {
+    worksheet.columns = Object.keys(data[0]).map(key => ({
+      header: key,
+      key,
+      width: 20,
+    }));
+    data.forEach(row => worksheet.addRow(row));
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}.xlsx`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
