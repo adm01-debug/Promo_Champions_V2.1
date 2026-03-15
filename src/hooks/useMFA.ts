@@ -39,7 +39,7 @@ const generateTOTPSecret = (): string => {
   return secret;
 };
 
-const generateOTPAuthURL = (secret: string, email: string, issuer: string = 'SALES ARENA'): string => {
+const generateOTPAuthURL = (secret: string, email: string, issuer: string = 'Sales Arena'): string => {
   return `otpauth://totp/${issuer}:${email}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
 };
 

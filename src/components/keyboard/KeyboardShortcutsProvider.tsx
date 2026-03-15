@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useRef } from "react";
 import { useGlobalKeyboardShortcuts, useKeyboardShortcutHint } from "@/hooks/useGlobalKeyboardShortcuts";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { useTheme } from "next-themes";
 import {
   Dialog,
   DialogContent,
@@ -36,11 +36,7 @@ interface KeyboardShortcutsProviderProps {
 
 export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProviderProps) {
   const [shortcutsDialogOpen, setShortcutsDialogOpen] = useState(false);
-  const { config, setMode } = useCustomTheme();
-  const theme = config.mode === "system"
-    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-    : config.mode;
-  const setTheme = (t: "light" | "dark") => setMode(t);
+  const { setTheme, theme } = useTheme();
   const { formatShortcut, isMac } = useKeyboardShortcutHint();
 
   // Handler refs for dynamic registration

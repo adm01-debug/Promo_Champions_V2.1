@@ -1,5 +1,5 @@
-import { ReactNode, forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { FC, ReactNode } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SkeletonTransitionProps {
   isLoading: boolean;
@@ -8,27 +8,35 @@ interface SkeletonTransitionProps {
   duration?: number;
 }
 
-export const SkeletonTransition = forwardRef<HTMLDivElement, SkeletonTransitionProps>(
-  function SkeletonTransition({
-    isLoading,
-    skeleton,
-    children,
-    duration = 300
-  }, ref) {
-    const content = isLoading ? skeleton : children;
-
-    return (
-      <motion.div
-        ref={ref}
-        key={isLoading ? "skeleton" : "content"}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: duration / 1000 }}
-      >
-        {content}
-      </motion.div>
-    );
-  }
-);
-
-SkeletonTransition.displayName = "SkeletonTransition";
+export const SkeletonTransition: FC<SkeletonTransitionProps> = ({
+  isLoading,
+  skeleton,
+  children,
+  duration = 300
+}) => {
+  return (
+    <AnimatePresence mode="wait">
+      {isLoading ? (
+        <motion.div
+          key="skeleton"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: duration / 1000 }}
+        >
+          {skeleton}
+        </motion.div>
+      ) : (
+        <motion.div
+          key="content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: duration / 1000 }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};

@@ -93,63 +93,65 @@ export function LevelUpOverlay({
               </motion.div>
 
               {/* Level up text */}
-              {showContent && (
-                <>
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex items-center justify-center gap-2 text-xp mb-2"
-                  >
-                    <Zap className="h-5 w-5" />
-                    <span className="font-display font-bold uppercase tracking-wider">Level Up!</span>
-                    <Zap className="h-5 w-5" />
-                  </motion.div>
+              <AnimatePresence>
+                {showContent && (
+                  <>
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="flex items-center justify-center gap-2 text-xp mb-2"
+                    >
+                      <Zap className="h-5 w-5" />
+                      <span className="font-display font-bold uppercase tracking-wider">Level Up!</span>
+                      <Zap className="h-5 w-5" />
+                    </motion.div>
 
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.4, type: "spring", bounce: 0.5 }}
-                    className="text-6xl mb-2"
-                  >
-                    {levelEmoji}
-                  </motion.div>
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.4, type: "spring", bounce: 0.5 }}
+                      className="text-6xl mb-2"
+                    >
+                      {levelEmoji}
+                    </motion.div>
 
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <div className="text-4xl font-display font-bold gradient-text mb-1">
-                      Nível {level}
-                    </div>
-                    <div className="text-lg text-muted-foreground font-medium">
-                      {levelTitle}
-                    </div>
-                  </motion.div>
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      <div className="text-4xl font-display font-bold gradient-text mb-1">
+                        Nível {level}
+                      </div>
+                      <div className="text-lg text-muted-foreground font-medium">
+                        {levelTitle}
+                      </div>
+                    </motion.div>
 
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className="mt-4 pt-4 border-t border-border/30"
-                  >
-                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                      <Trophy className="h-4 w-4 text-coins" />
-                      <span>{salespersonName}</span>
-                    </div>
-                  </motion.div>
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.8 }}
+                      className="mt-4 pt-4 border-t border-border/30"
+                    >
+                      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <Trophy className="h-4 w-4 text-coins" />
+                        <span>{salespersonName}</span>
+                      </div>
+                    </motion.div>
 
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2 }}
-                    className="text-xs text-muted-foreground mt-4"
-                  >
-                    Clique para continuar
-                  </motion.p>
-                </>
-              )}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.2 }}
+                      className="text-xs text-muted-foreground mt-4"
+                    >
+                      Clique para continuar
+                    </motion.p>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </motion.div>
@@ -275,84 +277,86 @@ export function StreakMilestoneOverlay({
                 ⭐
               </motion.div>
 
-              {showContent && (
-                <>
-                  {/* Main icon with pulsing effect */}
-                  <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{
-                      scale: [1, 1.15, 1],
-                      rotate: 0
-                    }}
-                    transition={{
-                      scale: { duration: 0.8, repeat: Infinity, repeatDelay: 0.5 },
-                      rotate: { duration: 0.5, type: "spring" }
-                    }}
-                    className="text-7xl mb-4 drop-shadow-lg"
-                  >
-                    {milestoneIcon}
-                  </motion.div>
-
-                  {/* Title */}
-                  <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="mb-3"
-                  >
-                    <span className="text-2xl font-display font-bold bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400 bg-clip-text text-transparent uppercase tracking-wider">
-                      {milestoneTitle}
-                    </span>
-                  </motion.div>
-
-                  {/* Streak count with animation */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.4, type: "spring", bounce: 0.6 }}
-                    className="relative mb-2"
-                  >
-                    <span className="text-6xl font-display font-bold bg-gradient-to-b from-orange-400 to-red-500 bg-clip-text text-transparent">
-                      {streakDays}
-                    </span>
-                    <span className="text-2xl font-bold text-orange-400 ml-2">dias</span>
-                  </motion.div>
-
-                  {/* XP reward badge */}
-                  {xpReward > 0 && (
+              <AnimatePresence>
+                {showContent && (
+                  <>
+                    {/* Main icon with pulsing effect */}
                     <motion.div
-                      initial={{ scale: 0, y: 20 }}
-                      animate={{ scale: 1, y: 0 }}
-                      transition={{ delay: 0.6, type: "spring" }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 mb-3"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ 
+                        scale: [1, 1.15, 1],
+                        rotate: 0
+                      }}
+                      transition={{ 
+                        scale: { duration: 0.8, repeat: Infinity, repeatDelay: 0.5 },
+                        rotate: { duration: 0.5, type: "spring" }
+                      }}
+                      className="text-7xl mb-4 drop-shadow-lg"
                     >
-                      <Zap className="h-5 w-5 text-amber-400" />
-                      <span className="text-lg font-bold text-amber-400">+{xpReward} XP</span>
+                      {milestoneIcon}
                     </motion.div>
-                  )}
 
-                  {/* Salesperson name */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className="flex items-center justify-center gap-2 text-muted-foreground mt-3"
-                  >
-                    <Trophy className="h-4 w-4 text-amber-500" />
-                    <span className="font-medium">{salespersonName}</span>
-                  </motion.div>
+                    {/* Title */}
+                    <motion.div
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="mb-3"
+                    >
+                      <span className="text-2xl font-display font-bold bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400 bg-clip-text text-transparent uppercase tracking-wider">
+                        {milestoneTitle}
+                      </span>
+                    </motion.div>
 
-                  {/* Continue hint */}
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 0.5, 1] }}
-                    transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
-                    className="text-xs text-muted-foreground mt-5"
-                  >
-                    Clique para continuar
-                  </motion.p>
-                </>
-              )}
+                    {/* Streak count with animation */}
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.4, type: "spring", bounce: 0.6 }}
+                      className="relative mb-2"
+                    >
+                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-orange-400 to-red-500 bg-clip-text text-transparent">
+                        {streakDays}
+                      </span>
+                      <span className="text-2xl font-bold text-orange-400 ml-2">dias</span>
+                    </motion.div>
+
+                    {/* XP reward badge */}
+                    {xpReward > 0 && (
+                      <motion.div
+                        initial={{ scale: 0, y: 20 }}
+                        animate={{ scale: 1, y: 0 }}
+                        transition={{ delay: 0.6, type: "spring" }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 mb-3"
+                      >
+                        <Zap className="h-5 w-5 text-amber-400" />
+                        <span className="text-lg font-bold text-amber-400">+{xpReward} XP</span>
+                      </motion.div>
+                    )}
+
+                    {/* Salesperson name */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.8 }}
+                      className="flex items-center justify-center gap-2 text-muted-foreground mt-3"
+                    >
+                      <Trophy className="h-4 w-4 text-amber-500" />
+                      <span className="font-medium">{salespersonName}</span>
+                    </motion.div>
+
+                    {/* Continue hint */}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 1, 0.5, 1] }}
+                      transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
+                      className="text-xs text-muted-foreground mt-5"
+                    >
+                      Clique para continuar
+                    </motion.p>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </motion.div>

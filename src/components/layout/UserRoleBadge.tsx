@@ -1,31 +1,30 @@
-import { forwardRef } from "react";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { Badge } from "@/components/ui/badge";
 import { Crown, ShieldCheck, User, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; color: string; description: string }> = {
-  admin: {
-    label: "Admin",
-    icon: Crown,
-    color: "bg-warning/15 text-warning border-warning/30",
+  admin: { 
+    label: "Admin", 
+    icon: Crown, 
+    color: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30",
     description: "Acesso total ao sistema"
   },
-  manager: {
-    label: "Gerente",
-    icon: ShieldCheck,
-    color: "bg-info/15 text-info border-info/30",
+  manager: { 
+    label: "Gerente", 
+    icon: ShieldCheck, 
+    color: "bg-blue-500/20 text-blue-500 border-blue-500/30",
     description: "Gerenciamento de equipe e relatórios"
   },
-  salesperson: {
-    label: "Vendedor",
-    icon: User,
+  salesperson: { 
+    label: "Vendedor", 
+    icon: User, 
     color: "bg-muted text-muted-foreground border-border",
     description: "Acesso às próprias vendas e atividades"
   },
 };
 
-export const UserRoleBadge = forwardRef<HTMLDivElement>(function UserRoleBadge(_props, ref) {
+export function UserRoleBadge() {
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
 
   if (isLoadingCurrentRole) {
@@ -42,7 +41,7 @@ export const UserRoleBadge = forwardRef<HTMLDivElement>(function UserRoleBadge(_
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Badge ref={ref} variant="outline" className={`${config.color} cursor-help`}>
+        <Badge variant="outline" className={`${config.color} cursor-help`}>
           <Icon className="h-3 w-3 mr-1" />
           {config.label}
         </Badge>
@@ -52,6 +51,4 @@ export const UserRoleBadge = forwardRef<HTMLDivElement>(function UserRoleBadge(_
       </TooltipContent>
     </Tooltip>
   );
-});
-
-UserRoleBadge.displayName = "UserRoleBadge";
+}

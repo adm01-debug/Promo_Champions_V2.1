@@ -1,5 +1,4 @@
-import { useState, forwardRef } from "react";
-import { SidebarXPBar } from "@/components/layout/SidebarXPBar";
+import { useState } from "react";
 import { 
   LayoutDashboard, 
   ShoppingCart, 
@@ -21,8 +20,6 @@ import {
   Building2,
   Sparkles,
   FileText,
-  ChevronDown,
-  MoreHorizontal,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -48,11 +45,6 @@ import {
 import {
   Separator
 } from "@/components/ui/separator";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 interface MenuItem {
   title: string;
@@ -63,7 +55,7 @@ interface MenuItem {
 type ViewMode = 'sdr' | 'closer' | 'gestao';
 
 // ============================================
-// ITENS PRINCIPAIS (5 por contexto)
+// ITENS PRINCIPAIS (5-6 por contexto)
 // ============================================
 
 const sdrMainItems: MenuItem[] = [
@@ -90,9 +82,9 @@ const gestaoMainItems: MenuItem[] = [
   { title: "Relatórios", url: "/relatorios", icon: LineChart },
 ];
 
-// Progressive disclosure: "Mais ferramentas" (collapsed by default)
+// Itens secundários acessíveis via "Mais"
 const sdrMoreItems: MenuItem[] = [
-  { title: "BI", url: "/bi", icon: LineChart },
+  { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
   { title: "Cadências", url: "/cadencias", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
@@ -100,7 +92,7 @@ const sdrMoreItems: MenuItem[] = [
 ];
 
 const closerMoreItems: MenuItem[] = [
-  { title: "BI", url: "/bi", icon: LineChart },
+  { title: "BI Closer", url: "/bi-closer", icon: LineChart },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
@@ -108,7 +100,7 @@ const closerMoreItems: MenuItem[] = [
 ];
 
 const gestaoMoreItems: MenuItem[] = [
-  { title: "BI", url: "/bi", icon: LineChart },
+  { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
   { title: "Times", url: "/times", icon: Building2 },
   { title: "Portfólio", url: "/portfolio", icon: Target },
   { title: "ICP", url: "/icp", icon: Users },
@@ -126,14 +118,13 @@ const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
 ];
 
-export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props, _ref) {
+export function AppSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
   const alertCount = alerts?.length || 0;
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
-  const [moreOpen, setMoreOpen] = useState(false);
 
   const getUserType = (): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
@@ -158,18 +149,6 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
 
   const [viewMode, setViewMode] = useState<ViewMode>(getDefaultViewMode());
 
-  const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
-    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-blue-400' },
-    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-green-400' },
-    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-purple-400' },
-  ];
-
-  // Filter available view modes based on role
-  const availableViewModes = isAdminOrManager
-    ? viewModes
-    : viewModes.filter(v => v.mode === (userType === 'sdr' ? 'sdr' : userType === 'closer' ? 'closer' : v.mode));
-  const showViewSwitcher = availableViewModes.length > 1;
-
   const getMainItems = (): MenuItem[] => {
     switch (viewMode) {
       case 'sdr': return sdrMainItems;
@@ -188,6 +167,12 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
 
   const mainItems = getMainItems();
   const moreItems = getMoreItems();
+
+  const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
+    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-blue-400' },
+    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-green-400' },
+    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-purple-400' },
+  ];
 
   const currentViewConfig = viewModes.find(v => v.mode === viewMode)!;
 
@@ -248,22 +233,22 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-lg font-bold text-foreground leading-tight">
-                SALES ARENA
+              <span className="text-lg font-bold text-foreground">
+                Sales Arena
               </span>
-              <span className="text-[8px] text-muted-foreground tracking-wide">
-                By Promo Brindes
+              <span className={cn("text-[10px] uppercase tracking-widest font-bold", currentViewConfig.color)}>
+                {currentViewConfig.label}
               </span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      {/* View Mode Switcher - only show if multiple modes available */}
-      {showViewSwitcher && !isCollapsed && (
+      {/* View Mode Switcher */}
+      {isAdminOrManager && !isCollapsed && (
         <div className="px-3 pb-3">
           <div className="flex gap-0.5 p-1 bg-muted/40 rounded-full border border-border/20">
-            {availableViewModes.map((vm) => (
+            {viewModes.map((vm) => (
               <Button
                 key={vm.mode}
                 variant="ghost"
@@ -284,11 +269,11 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
         </div>
       )}
       
-      <Separator className="bg-border/30" />
+      {(isAdminOrManager || true) && <Separator className="bg-border/30" />}
 
       <SidebarContent className="px-3 py-2">
         <ScrollArea className="flex-1">
-          {/* Menu Principal - Top 5 */}
+          {/* Menu Principal - 5 itens */}
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
@@ -297,38 +282,18 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* Progressive Disclosure: "Mais ferramentas" */}
+          {/* Ferramentas */}
           <Separator className="my-2 bg-border/30" />
-          {!isCollapsed ? (
-            <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
-              <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 group/more">
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
-                  Ferramentas
-                </span>
-                <ChevronDown className={cn(
-                  "h-3.5 w-3.5 text-muted-foreground/40 transition-transform duration-200",
-                  moreOpen && "rotate-180"
-                )} />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="animate-in slide-in-from-top-2 duration-200">
-                <SidebarGroup>
-                  <SidebarGroupContent>
-                    <SidebarMenu className="space-y-1">
-                      {moreItems.map(item => renderMenuItem(item))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </CollapsibleContent>
-            </Collapsible>
-          ) : (
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  {moreItems.map(item => renderMenuItem(item))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
+          <SidebarGroup>
+            <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+              Ferramentas
+            </p>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1">
+                {moreItems.map(item => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
           {/* Sistema */}
           <Separator className="my-2 bg-border/30" />
@@ -361,9 +326,6 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
           )}
         </ScrollArea>
       </SidebarContent>
-
-      {/* XP Bar */}
-      <SidebarXPBar isCollapsed={isCollapsed} />
 
       {/* Footer com usuário */}
       <SidebarFooter className="p-3 border-t border-border/30">
@@ -420,5 +382,4 @@ export const AppSidebar = forwardRef<HTMLDivElement>(function AppSidebar(_props,
       </SidebarFooter>
     </Sidebar>
   );
-});
-AppSidebar.displayName = "AppSidebar";
+}

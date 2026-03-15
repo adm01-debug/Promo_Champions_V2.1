@@ -13,14 +13,14 @@ export const DashboardHeader = () => {
     return "Boa noite";
   };
 
-  const firstName = salesperson?.name?.split(" ")[0] || "Usuário";
-
   return (
-    <div className="space-y-0.5">
-      <h1 className="text-2xl sm:text-3xl font-bold font-display text-foreground">
-        {getGreeting()}, {firstName} 👋
-      </h1>
-      <p className="text-sm text-muted-foreground capitalize">{today}</p>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold gradient-text">
+          {getGreeting()}, {salesperson?.name?.split(" ")[0] || "Usuário"}! 👋
+        </h1>
+        <p className="text-muted-foreground capitalize">{today}</p>
+      </div>
     </div>
   );
 };

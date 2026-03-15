@@ -10,7 +10,7 @@ interface StatCardProps {
   change?: number;
   previousValue?: string;
   icon: LucideIcon;
-  variant?: "default" | "primary" | "success" | "warning" | "info" | "purple";
+  variant?: "default" | "primary" | "success" | "warning";
   hero?: boolean;
 }
 
@@ -26,31 +26,28 @@ export const StatCard = ({
 }: StatCardProps) => {
   const isPositive = change >= 0;
 
+  // Count-up animation for numeric values
   const animatedNum = useCountUp(numericValue ?? 0, {
     duration: 1400,
     decimals: value.includes("%") ? 1 : 0,
     enabled: numericValue !== undefined,
   });
 
-  const variantStyles: Record<string, string> = {
-    default: "bg-card border-border/40",
-    primary: "bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30",
-    success: "bg-gradient-to-br from-success/10 to-success/5 border-success/30",
-    warning: "bg-gradient-to-br from-warning/10 to-warning/5 border-warning/30",
-    info: "bg-gradient-to-br from-status-info/10 to-status-info/5 border-status-info/30",
-    purple: "bg-gradient-to-br from-status-purple/10 to-status-purple/5 border-status-purple/30",
+  const variantStyles = {
+    default: "bg-card",
+    primary: "bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20",
+    success: "bg-gradient-to-br from-success/10 to-success/5 border-success/20",
+    warning: "bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20",
   };
 
-  // Semantic icon colors per variant
-  const iconColors: Record<string, string> = {
-    default: "bg-muted/60 text-muted-foreground",
-    primary: "bg-success/15 text-success",         // green for revenue
+  const iconColors = {
+    default: "bg-muted/50 text-muted-foreground",
+    primary: "bg-primary/15 text-primary",
     success: "bg-success/15 text-success",
-    warning: "bg-status-warning/15 text-status-warning",  // orange for clients
-    info: "bg-status-info/15 text-status-info",           // blue for sales
-    purple: "bg-status-purple/15 text-status-purple",     // purple for conversion
+    warning: "bg-warning/15 text-warning",
   };
 
+  // Format animated value to match the original format
   const getDisplayValue = () => {
     if (numericValue === undefined) return value;
     if (value.startsWith("R$")) {
@@ -64,15 +61,15 @@ export const StatCard = ({
 
   return (
     <Card className={cn(
-      "hover-lift transition-all duration-200 border h-full",
+      "hover-lift transition-all duration-200",
       variantStyles[variant],
-      hero && "relative overflow-hidden"
+      hero && "lg:col-span-2 relative overflow-hidden"
     )}>
       <CardContent className={cn("p-4 sm:p-6", hero && "sm:p-8")}>
         <div className="flex items-start justify-between">
           <div className={cn("space-y-1 sm:space-y-2", hero && "space-y-2 sm:space-y-3")}>
             <p className={cn(
-              "text-xs sm:text-sm text-muted-foreground font-medium uppercase tracking-wide",
+              "text-xs sm:text-sm text-muted-foreground font-medium",
               hero && "text-sm sm:text-base"
             )}>
               {title}
@@ -119,6 +116,7 @@ export const StatCard = ({
             )} />
           </div>
         </div>
+        {/* Hero decorative element */}
         {hero && (
           <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
         )}

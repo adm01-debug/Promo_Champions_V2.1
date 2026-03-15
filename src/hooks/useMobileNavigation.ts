@@ -71,7 +71,7 @@ export function useMobileNavigation() {
     }
     
     // Fallback
-    return { title: 'SALES ARENA' };
+    return { title: 'Sales Arena' };
   }, [location.pathname]);
 
   const goBack = useCallback(() => {

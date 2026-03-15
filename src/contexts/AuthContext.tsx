@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -29,167 +29,100 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [salesperson, setSalesperson] = useState<Salesperson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchSalesperson = useCallback(async (authUserId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("salespeople")
-        .select("id, name, email, avatar_url, role, commission_rate")
-        .eq("auth_user_id", authUserId)
-        .maybeSingle();
-
-      if (error) {
-        if (import.meta.env.DEV) {
-          console.error("Failed to fetch salesperson:", error);
-        }
-        setSalesperson(null);
-        return;
-      }
-
-      setSalesperson(data ?? null);
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error("Unexpected error fetching salesperson:", error);
-      }
-      setSalesperson(null);
-    }
-  }, []);
-
   useEffect(() => {
-    let isMounted = true;
-
     // Set up auth state listener FIRST
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      if (!isMounted) return;
-
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-
-      if (nextSession?.user) {
-        setTimeout(() => {
-          void fetchSalesperson(nextSession.user.id);
-        }, 0);
-      } else {
-        setSalesperson(null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Fetch salesperson data after auth state changes
+        if (session?.user) {
+          setTimeout(() => {
+            fetchSalesperson(session.user.id);
+          }, 0);
+        } else {
+          setSalesperson(null);
+        }
       }
-    });
+    );
 
     // THEN check for existing session
-    void supabase.auth
-      .getSession()
-      .then(({ data: { session: existingSession }, error }) => {
-        if (!isMounted) return;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchSalesperson(session.user.id);
+      }
+      setIsLoading(false);
+    });
 
-        if (error) {
-          if (import.meta.env.DEV) {
-            console.error("Failed to get session:", error);
-          }
-          setSession(null);
-          setUser(null);
-          setSalesperson(null);
-          return;
-        }
+    return () => subscription.unsubscribe();
+  }, []);
 
-        setSession(existingSession);
-        setUser(existingSession?.user ?? null);
+  const fetchSalesperson = async (authUserId: string) => {
+    const { data, error } = await supabase
+      .from("salespeople")
+      .select("*")
+      .eq("auth_user_id", authUserId)
+      .maybeSingle();
 
-        if (existingSession?.user) {
-          void fetchSalesperson(existingSession.user.id);
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
-  }, [fetchSalesperson]);
+    if (!error && data) {
+      setSalesperson(data);
+    }
+  };
 
   const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error: error ? new Error(error.message) : null };
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error("Unexpected sign-in error:", error);
-      }
-      return { error: new Error("Falha inesperada ao entrar.") };
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    try {
-      const redirectUrl = `${window.location.origin}/`;
-
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: { name },
-        },
-      });
-
-      if (authError) {
-        return { error: new Error(authError.message) };
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: { name }
       }
+    });
 
-      if (authData.user) {
-        const { data: existingSp, error: existingSpError } = await supabase
+    if (authError) return { error: authError };
+
+    // Link or create salesperson record
+    if (authData.user) {
+      // First try to find existing salesperson by email
+      const { data: existingSp } = await supabase
+        .from("salespeople")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (existingSp) {
+        // Link existing salesperson to auth user
+        await supabase
           .from("salespeople")
-          .select("id")
-          .eq("email", email)
-          .maybeSingle();
-
-        if (existingSpError) {
-          return { error: new Error(existingSpError.message) };
-        }
-
-        if (existingSp) {
-          const { error: updateError } = await supabase
-            .from("salespeople")
-            .update({ auth_user_id: authData.user.id })
-            .eq("id", existingSp.id);
-
-          if (updateError) {
-            return { error: new Error(updateError.message) };
-          }
-        } else {
-          const { error: insertError } = await supabase.from("salespeople").insert({
-            name,
-            email,
-            auth_user_id: authData.user.id,
-            is_active: true,
-            role: "hybrid",
-          });
-
-          if (insertError) {
-            return { error: new Error(insertError.message) };
-          }
-        }
+          .update({ auth_user_id: authData.user.id })
+          .eq("id", existingSp.id);
+      } else {
+        // Create new salesperson
+        await supabase.from("salespeople").insert({
+          name,
+          email,
+          auth_user_id: authData.user.id,
+          is_active: true,
+          role: "hybrid"
+        });
       }
-
-      return { error: null };
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error("Unexpected sign-up error:", error);
-      }
-      return { error: new Error("Falha inesperada ao criar a conta.") };
     }
+
+    return { error: null };
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error && import.meta.env.DEV) {
-      console.error("Sign-out error:", error);
-    }
-
+    await supabase.auth.signOut();
     setSalesperson(null);
   };
 

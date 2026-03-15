@@ -10,8 +10,6 @@ import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
-import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
-
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
@@ -23,22 +21,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion } from "framer-motion";
-import { PageTransition } from "@/components/transitions/PageTransition";
+import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import {
   DollarSign,
   ShoppingBag,
   Users,
   TrendingUp,
 } from "lucide-react";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, delay: i * 0.06, ease: "easeOut" as const },
-  }),
-};
 
 const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
@@ -54,7 +43,6 @@ const Index = () => {
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;
   const hasClients = (kpis?.current.newClients ?? 0) > 0;
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
-  
 
   return (
     <SkeletonTransition
@@ -63,24 +51,37 @@ const Index = () => {
       duration={400}
     >
       <PageTransition>
-        <div className="min-h-screen bg-background">
-          <div className="max-w-[1400px] mx-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 space-y-5 sm:space-y-6">
-            
-            {/* ── Header + Status Bar ── */}
-            <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible" className="space-y-4">
+        <div className="min-h-screen bg-background" suppressHydrationWarning>
+          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
               <DashboardHeader />
+            </motion.div>
+
+            {/* Competitive Status Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="hidden sm:block"
+            >
               <CompetitiveStatusBar />
             </motion.div>
 
-            {/* ── Onboarding (only for new users) ── */}
-            <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible">
-              <OnboardingChecklist />
-            </motion.div>
-
-            {/* ── KPI Cards Row ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" data-tour="stats">
-              {/* Hero Faturamento — spans 2 cols */}
-              <motion.div custom={2} variants={fadeUp} initial="hidden" animate="visible" className="col-span-2">
+            {/* Hero Faturamento + Stats Row */}
+            <motion.div 
+              className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              data-tour="stats"
+            >
+              {/* Hero: Faturamento (spans 2 cols) */}
+              <motion.div variants={itemVariants} className="col-span-2">
                 {hasRevenue ? (
                   <StatCard
                     title="Faturamento"
@@ -96,7 +97,7 @@ const Index = () => {
                   <DashboardEmptyState type="revenue" />
                 )}
               </motion.div>
-              <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
+              <motion.div variants={itemVariants}>
                 {hasSales ? (
                   <StatCard
                     title="Vendas"
@@ -105,13 +106,12 @@ const Index = () => {
                     change={kpis?.changes.sales ?? 0}
                     previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
                     icon={ShoppingBag}
-                    variant="info"
                   />
                 ) : (
                   <DashboardEmptyState type="sales" />
                 )}
               </motion.div>
-              <motion.div custom={4} variants={fadeUp} initial="hidden" animate="visible">
+              <motion.div variants={itemVariants}>
                 {hasClients ? (
                   <StatCard
                     title="Clientes"
@@ -120,13 +120,12 @@ const Index = () => {
                     change={kpis?.changes.clients ?? 0}
                     previousValue={kpis ? String(kpis.previous.newClients) : undefined}
                     icon={Users}
-                    variant="warning"
                   />
                 ) : (
                   <DashboardEmptyState type="clients" />
                 )}
               </motion.div>
-              <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible">
+              <motion.div variants={itemVariants}>
                 {hasConversion ? (
                   <StatCard
                     title="Conversão"
@@ -135,23 +134,24 @@ const Index = () => {
                     change={kpis?.changes.conversion ?? 0}
                     previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
                     icon={TrendingUp}
-                    variant="purple"
                   />
                 ) : (
                   <DashboardEmptyState type="conversion" />
                 )}
               </motion.div>
-            </div>
+            </motion.div>
 
-            {/* ── Main Content: Chart + Goal ── */}
+            {/* Main Grid */}
             <motion.div 
-              custom={6} variants={fadeUp} initial="hidden" animate="visible"
-              className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <div className="lg:col-span-2 min-h-[280px]">
+              <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px]">
                 <SalesChart />
               </div>
-              <div className="min-h-[280px]" data-tour="goals">
+              <div className="min-h-[200px]" data-tour="goals">
                 <GoalProgress 
                   current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
                   goal={goalsData?.totalGoal || 0} 
@@ -159,43 +159,56 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* ── Secondary Grid: Funnel + Forecast + KPIs + Alerts ── */}
+            {/* Second Row */}
             <motion.div 
-              custom={7} variants={fadeUp} initial="hidden" animate="visible"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
             >
-              <FunnelChart />
-              <SalesForecast />
-              <KPIGrid />
-              <AlertsPanel />
+              <motion.div variants={itemVariants}>
+                <FunnelChart />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <SalesForecast />
+              </motion.div>
+              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
+                <KPIGrid />
+              </motion.div>
+              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
+                <AlertsPanel />
+              </motion.div>
             </motion.div>
 
-            {/* ── Bottom Grid: Activity + Gamification ── */}
+            {/* Third Row - with Mini Leaderboard */}
             <motion.div 
-              custom={8} variants={fadeUp} initial="hidden" animate="visible"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
               data-tour="gamification"
             >
-              {/* Left column: Deals + Products stacked */}
-              <div className="space-y-4 sm:space-y-5">
+              <motion.div variants={itemVariants} className="sm:col-span-1">
                 <RecentDeals />
+              </motion.div>
+              <motion.div variants={itemVariants} className="sm:col-span-1">
                 <TopProducts />
-              </div>
-              {/* Center: Leaderboard + Streak */}
-              <div className="space-y-4 sm:space-y-5">
+              </motion.div>
+              <motion.div variants={itemVariants}>
                 <MiniLeaderboard />
+              </motion.div>
+              <motion.div variants={itemVariants}>
                 <StreakWidget salespersonId={salesperson?.id} />
-              </div>
-              {/* Right: Challenges */}
-              <div className="space-y-4 sm:space-y-5 sm:col-span-2 lg:col-span-1">
+              </motion.div>
+              <motion.div variants={itemVariants}>
                 <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
+              </motion.div>
+              <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
-              </div>
+              </motion.div>
             </motion.div>
-
           </div>
         </div>
-        
       </PageTransition>
     </SkeletonTransition>
   );

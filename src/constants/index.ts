@@ -1,5 +1,5 @@
 /**
- * Constantes do sistema SALES ARENA By Promo Brindes
+ * Constantes do sistema Sales Arena
  * Centraliza valores mágicos e configurações
  */
 

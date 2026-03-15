@@ -16,7 +16,7 @@ export function ExportButton({ data, filename }: { data: any[]; filename: string
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => exportToCSV(data, filename)}>CSV</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => void exportToExcel(data, filename)}>Excel</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportToExcel(data, filename)}>Excel</DropdownMenuItem>
         <DropdownMenuItem onClick={() => exportToPDF(data, filename, filename)}>PDF</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

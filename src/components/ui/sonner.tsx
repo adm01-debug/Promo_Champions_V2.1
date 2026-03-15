@@ -1,14 +1,10 @@
-import { forwardRef } from "react";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { useTheme } from "next-themes";
 import { Toaster as Sonner, toast } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
-const Toaster = forwardRef<HTMLDivElement, ToasterProps>(function Toaster({ ...props }, _ref) {
-  const { config } = useCustomTheme();
-  const theme = config.mode === "system"
-    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-    : config.mode;
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme();
 
   return (
     <Sonner
@@ -26,7 +22,6 @@ const Toaster = forwardRef<HTMLDivElement, ToasterProps>(function Toaster({ ...p
       {...props}
     />
   );
-});
-Toaster.displayName = "SonnerToaster";
+};
 
 export { Toaster, toast };

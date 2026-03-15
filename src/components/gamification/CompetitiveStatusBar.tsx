@@ -1,14 +1,10 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
-import { useIsMobile } from "@/hooks/useMediaQuery";
-import { Crown, Swords, Trophy, TrendingUp, Target, AlertTriangle, Flame } from "lucide-react";
+import { Crown, Swords, Trophy, TrendingUp, Target, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
 
 const RANK_ICONS: Record<number, React.ElementType> = {
   1: Crown,
@@ -20,66 +16,45 @@ export function CompetitiveStatusBar() {
   const { salesperson } = useAuth();
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-
-  const { data: actionData } = useQuery({
-    queryKey: ["action-card-data", salesperson?.id],
-    queryFn: async () => {
-      if (!salesperson?.id) return null;
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-      const { count: stagnantDeals } = await supabase
-        .from("sales")
-        .select("*", { count: "exact", head: true })
-        .eq("salesperson_id", salesperson.id)
-        .not("status", "in", '("ganho","perdido","won","lost")')
-        .lt("updated_at", sevenDaysAgo.toISOString());
-
-      const { count: hotDeals } = await supabase
-        .from("sales")
-        .select("*", { count: "exact", head: true })
-        .eq("salesperson_id", salesperson.id)
-        .in("status", ["proposta", "negociação", "negotiation", "proposal"]);
-
-      return { stagnantDeals: stagnantDeals || 0, hotDeals: hotDeals || 0 };
-    },
-    enabled: !!salesperson?.id,
-    staleTime: 1000 * 60 * 5,
-  });
 
   if (!salesperson) {
     return (
-      <button 
+      <div 
+        className="glass rounded-xl p-4 border border-border/40 dark:border-glow cursor-pointer hover:border-primary/50 hover-lift transition-all card-elevated"
         onClick={() => navigate("/auth")}
-        className="w-full rounded-xl bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 border border-primary/20 p-3.5 flex items-center justify-between gap-3 hover:border-primary/40 transition-all group"
       >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/15">
-            <Target className="h-4 w-4 text-primary" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/30">
+              <Users className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="text-sm font-display font-semibold">Faça login para competir</p>
+              <p className="text-xs text-muted-foreground">Entre na arena e conquiste seu lugar</p>
+            </div>
           </div>
-          <div className="text-left">
-            <p className="text-sm font-semibold font-display">Entre e comece a vender</p>
-            <p className="text-xs text-muted-foreground">Acompanhe deals, metas e conquiste o ranking</p>
-          </div>
+          <Button variant="outline" size="sm" className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors">
+            Entrar
+          </Button>
         </div>
-        <span className="text-xs font-medium text-primary group-hover:underline">Entrar →</span>
-      </button>
+      </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-border/30 bg-card/50 p-3.5">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-10 w-10 rounded-lg" />
-          <div className="space-y-1.5 flex-1">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-3 w-44" />
+      <div className="glass rounded-xl p-4 border border-border/40">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-11 w-11 rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-48" />
+            </div>
           </div>
-          <div className="hidden sm:flex gap-3">
-            <Skeleton className="h-10 w-20 rounded-lg" />
-            <Skeleton className="h-10 w-20 rounded-lg" />
+          <div className="flex gap-4">
+            <Skeleton className="h-10 w-20" />
+            <Skeleton className="h-10 w-20" />
           </div>
         </div>
       </div>
@@ -88,124 +63,106 @@ export function CompetitiveStatusBar() {
 
   const myRanking = ranking?.find(r => r.id === salesperson.id);
   
-  if (!myRanking) {
-    const hasStagnant = actionData?.stagnantDeals && actionData.stagnantDeals > 0;
-    return (
-      <div className="rounded-xl border border-border/30 bg-card/50 p-3.5 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3">
-          <div className={cn("p-2 rounded-lg", hasStagnant ? "bg-status-warning/10" : "bg-primary/10")}>
-            {hasStagnant ? (
-              <Flame className="h-4 w-4 text-status-warning" />
-            ) : (
-              <Target className="h-4 w-4 text-primary" />
-            )}
-          </div>
-          <div>
-            <p className="text-sm font-semibold font-display">
-              {hasStagnant
-                ? `${actionData.stagnantDeals} deal${actionData.stagnantDeals > 1 ? 's' : ''} parado${actionData.stagnantDeals > 1 ? 's' : ''} há 7+ dias`
-                : "Comece adicionando deals ao pipeline"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {hasStagnant
-                ? "Atualize para manter o pipeline saudável"
-                : "Registre vendas e suba no ranking"}
-            </p>
-          </div>
-        </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="text-xs h-8"
-          onClick={() => navigate("/pipeline")}
-        >
-          <Target className="h-3.5 w-3.5 mr-1.5" />
-          Ver Pipeline
-        </Button>
-      </div>
-    );
-  }
+  if (!myRanking) return null;
 
   const RankIcon = RANK_ICONS[myRanking.rank] || TrendingUp;
   const isTopThree = myRanking.rank <= 3;
   
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
+  };
 
   return (
-    <div className={cn(
-      "rounded-xl border p-3.5 transition-all",
-      isTopThree 
-        ? "bg-gradient-to-r from-primary/5 via-transparent to-accent/5 border-primary/25" 
-        : "bg-card/50 border-border/30"
-    )}>
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        {/* Rank */}
+    <div 
+      className={`glass rounded-xl p-4 border transition-all card-elevated ${
+        isTopThree 
+          ? "border-primary/40 dark:border-glow glow-primary" 
+          : "border-border/40 dark:border-glow"
+      }`}
+    >
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* Rank e título */}
         <div className="flex items-center gap-3">
-          <div className={cn(
-            "p-2.5 rounded-xl",
-            myRanking.color 
-              ? `bg-gradient-to-br ${myRanking.color}` 
-              : "bg-muted"
-          )}>
-            <RankIcon className={cn("h-5 w-5", isTopThree ? "text-primary-foreground" : "text-muted-foreground")} />
+          <div 
+            className={`p-2.5 rounded-xl shadow-lg ${
+              myRanking.color 
+                ? `bg-gradient-to-br ${myRanking.color}` 
+                : "bg-gradient-to-br from-muted to-muted/50"
+            }`}
+          >
+            <RankIcon className={`h-5 w-5 ${isTopThree ? "text-primary-foreground" : "text-muted-foreground"}`} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-display font-bold text-base sm:text-lg">
+              <span className="font-display font-bold text-lg">
                 {myRanking.emoji} #{myRanking.rank}
               </span>
               {myRanking.title && (
                 <Badge 
                   variant="outline" 
-                  className={cn("text-[10px] h-5", myRanking.color && `bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0`)}
+                  className={`bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0 shadow-sm`}
                 >
                   {myRanking.title}
                 </Badge>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
+              Olá, <span className="font-medium text-foreground">{salesperson.name}</span>! 
               {myRanking.rank === 1 
-                ? "Você é o líder! 👑"
-                : `Falta ${formatCurrency(myRanking.gapToFirst)} para o 1º lugar`
+                ? " Você é o líder! 👑"
+                : ` Falta ${formatCurrency(myRanking.gapToFirst)} para o 1º lugar.`
               }
             </p>
           </div>
         </div>
 
-        {/* Quick stats */}
-        <div className="flex items-center gap-3">
-          {actionData?.stagnantDeals && actionData.stagnantDeals > 0 && (
-            <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-destructive/10 border border-destructive/20">
-              <AlertTriangle className="h-3 w-3 text-destructive" />
-              <span className="text-[11px] font-medium text-destructive">
-                {actionData.stagnantDeals} parado{actionData.stagnantDeals > 1 ? 's' : ''}
-              </span>
+        {/* Stats rápidas */}
+        <div className="flex items-center gap-4">
+          <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vendas</p>
+            <p className="font-display font-bold gradient-text">{formatCurrency(myRanking.totalSales)}</p>
+          </div>
+          <div className="text-center px-3 py-1.5 rounded-lg bg-muted/50 border border-border/30">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Deals</p>
+            <p className="font-display font-bold">{myRanking.dealsCount}</p>
+          </div>
+          {myRanking.leadsCount > 0 && (
+            <div className="text-center px-3 py-1.5 rounded-lg bg-status-info/10 border border-status-info/20">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium flex items-center justify-center gap-1">
+                <Target className="h-3 w-3" />
+                Leads
+              </p>
+              <p className="font-display font-bold text-status-info">{myRanking.leadsCount}</p>
             </div>
           )}
           
-          <div className="flex items-center gap-2">
-            <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vendas</p>
-              <p className="font-display font-bold text-sm">{formatCurrency(myRanking.totalSales)}</p>
+          {myRanking.rank > 1 && (
+            <div className="hidden md:block pl-4 border-l border-border/50">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Para subir</p>
+              <p className="font-display font-medium text-sm text-status-warning">
+                +{formatCurrency(myRanking.gapToNext)}
+              </p>
             </div>
-            <div className="text-center px-3 py-1.5 rounded-lg bg-muted/40 border border-border/20">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Deals</p>
-              <p className="font-display font-bold text-sm">{myRanking.dealsCount}</p>
-            </div>
-            {myRanking.rank > 1 && !isMobile && (
-              <div className="text-center px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Para subir</p>
-                <p className="font-display font-semibold text-sm text-status-warning">+{formatCurrency(myRanking.gapToNext)}</p>
-              </div>
-            )}
-          </div>
+          )}
         </div>
+
+        {/* CTA */}
+        {myRanking.leadsCount > 0 && (
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="hidden lg:flex gap-2 border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
+            onClick={() => navigate("/pipeline")}
+          >
+            <Target className="h-4 w-4" />
+            {myRanking.leadsCount} leads abertos
+          </Button>
+        )}
       </div>
     </div>
   );

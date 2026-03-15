@@ -1,8 +1,8 @@
-import { forwardRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Plus, Target, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface DashboardEmptyStateProps {
   type: "revenue" | "sales" | "clients" | "conversion";
@@ -11,72 +11,66 @@ interface DashboardEmptyStateProps {
 const emptyStates = {
   revenue: {
     icon: TrendingUp,
-    title: "Faturamento",
+    title: "Nenhum faturamento registrado",
+    description: "Registre sua primeira venda e acompanhe seu faturamento em tempo real.",
     cta: "Registrar Venda",
     href: "/vendas",
-    iconColor: "text-success",
-    iconBg: "bg-success/10",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
   },
   sales: {
     icon: Plus,
-    title: "Vendas",
+    title: "Sem vendas ainda",
+    description: "Comece adicionando deals ao seu pipeline.",
     cta: "Ir ao Pipeline",
     href: "/pipeline",
-    iconColor: "text-status-info",
-    iconBg: "bg-status-info/10",
+    color: "text-accent",
+    bgColor: "bg-accent/10",
   },
   clients: {
     icon: Users,
-    title: "Clientes",
-    cta: "Adicionar",
+    title: "Nenhum cliente cadastrado",
+    description: "Adicione seus primeiros clientes para começar a vender.",
+    cta: "Adicionar Cliente",
     href: "/clientes",
-    iconColor: "text-status-warning",
-    iconBg: "bg-status-warning/10",
+    color: "text-status-info",
+    bgColor: "bg-status-info/10",
   },
   conversion: {
     icon: Target,
-    title: "Conversão",
+    title: "Sem dados de conversão",
+    description: "Mova deals pelo pipeline para calcular sua taxa de conversão.",
     cta: "Ver Pipeline",
     href: "/pipeline",
-    iconColor: "text-status-purple",
-    iconBg: "bg-status-purple/10",
+    color: "text-status-warning",
+    bgColor: "bg-status-warning/10",
   },
 };
 
-export const DashboardEmptyState = forwardRef<HTMLDivElement, DashboardEmptyStateProps>(
-  function DashboardEmptyState({ type }, ref) {
-    const state = emptyStates[type];
-    const Icon = state.icon;
+export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
+  const state = emptyStates[type];
+  const Icon = state.icon;
 
-    return (
-      <div
-        ref={ref}
-        className="relative h-full rounded-xl border border-dashed border-border/50 bg-card/30 p-4 sm:p-5 flex flex-col justify-between gap-3 transition-colors hover:border-border/80 hover:bg-card/50"
-      >
-        <div className="flex items-start justify-between">
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="border-dashed border-2 border-border/50 bg-card/50">
+        <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center gap-3">
+          <div className={`p-3 rounded-2xl ${state.bgColor}`}>
+            <Icon className={`h-6 w-6 ${state.color}`} />
+          </div>
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground/70 font-medium uppercase tracking-wide">
-              {state.title}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold text-muted-foreground/30 font-display tabular-nums">
-              —
-            </p>
+            <h3 className="text-sm font-semibold">{state.title}</h3>
+            <p className="text-xs text-muted-foreground max-w-[200px]">{state.description}</p>
           </div>
-          <div className={cn("p-2 rounded-xl", state.iconBg)}>
-            <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", state.iconColor)} />
-          </div>
-        </div>
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          className="w-fit h-7 px-3 text-xs text-muted-foreground hover:text-foreground -ml-1"
-        >
-          <Link to={state.href}>+ {state.cta}</Link>
-        </Button>
-      </div>
-    );
-  }
-);
-
-DashboardEmptyState.displayName = "DashboardEmptyState";
+          <Button asChild size="sm" variant="outline" className="mt-1">
+            <Link to={state.href}>{state.cta}</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}

@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 
-export type AccentColor =
-  | "purple"
-  | "blue"
-  | "green"
-  | "orange"
-  | "pink"
-  | "cyan"
-  | "amber"
+export type AccentColor = 
+  | "purple" 
+  | "blue" 
+  | "green" 
+  | "orange" 
+  | "pink" 
+  | "cyan" 
+  | "amber" 
   | "rose";
 
 export type ThemeMode = "light" | "dark" | "system";
@@ -37,190 +37,90 @@ const DEFAULT_CONFIG: ThemeConfig = {
   highContrast: false,
 };
 
-const THEME_STORAGE_KEY = "theme-config";
-const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
-const isBrowser = typeof window !== "undefined";
-
-type ThemeListener = (config: ThemeConfig) => void;
-
-const listeners = new Set<ThemeListener>();
-let currentConfig: ThemeConfig = DEFAULT_CONFIG;
-let initialized = false;
-let mediaQuerySubscribed = false;
-let storageSubscribed = false;
-
-const accentColorKeys = Object.keys(ACCENT_COLORS) as AccentColor[];
-
-function resolveSystemTheme(): "light" | "dark" {
-  if (!isBrowser) return "dark";
-  return window.matchMedia(SYSTEM_THEME_QUERY).matches ? "dark" : "light";
-}
-
-function normalizeConfig(input: Partial<ThemeConfig> | null | undefined): ThemeConfig {
-  const accentColor = input?.accentColor;
-  const mode = input?.mode;
-
-  return {
-    accentColor:
-      accentColor && accentColorKeys.includes(accentColor as AccentColor)
-        ? (accentColor as AccentColor)
-        : DEFAULT_CONFIG.accentColor,
-    mode: mode === "light" || mode === "dark" || mode === "system" ? mode : DEFAULT_CONFIG.mode,
-    reducedMotion:
-      typeof input?.reducedMotion === "boolean"
-        ? input.reducedMotion
-        : DEFAULT_CONFIG.reducedMotion,
-    highContrast:
-      typeof input?.highContrast === "boolean"
-        ? input.highContrast
-        : DEFAULT_CONFIG.highContrast,
-  };
-}
-
-function applyConfigToDom(config: ThemeConfig) {
-  if (!isBrowser) return;
-
-  const root = document.documentElement;
-  const colors = ACCENT_COLORS[config.accentColor];
-  const resolvedMode = config.mode === "system" ? resolveSystemTheme() : config.mode;
-
-  root.style.setProperty("--primary", colors.primary);
-  root.style.setProperty("--primary-foreground", colors.primaryForeground);
-
-  root.classList.toggle("high-contrast", config.highContrast);
-  root.classList.toggle("reduce-motion", config.reducedMotion);
-
-  root.classList.remove("light", "dark");
-  root.classList.add(resolvedMode);
-}
-
-function persistConfig(config: ThemeConfig) {
-  if (!isBrowser) return;
-
-  localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(config));
-  localStorage.setItem("theme", config.mode === "system" ? resolveSystemTheme() : config.mode);
-}
-
-function notifySubscribers() {
-  listeners.forEach((listener) => listener(currentConfig));
-}
-
-function commitConfig(nextConfig: ThemeConfig, options?: { persist?: boolean; notify?: boolean }) {
-  currentConfig = normalizeConfig(nextConfig);
-  applyConfigToDom(currentConfig);
-
-  if (options?.persist !== false) {
-    persistConfig(currentConfig);
-  }
-
-  if (options?.notify !== false) {
-    notifySubscribers();
-  }
-}
-
-function loadStoredConfig(): ThemeConfig {
-  if (!isBrowser) return DEFAULT_CONFIG;
-
-  const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored) {
-    try {
-      return normalizeConfig(JSON.parse(stored));
-    } catch {
-      return DEFAULT_CONFIG;
-    }
-  }
-
-  const legacyTheme = localStorage.getItem("theme");
-  if (legacyTheme === "light" || legacyTheme === "dark") {
-    return { ...DEFAULT_CONFIG, mode: legacyTheme };
-  }
-
-  return DEFAULT_CONFIG;
-}
-
-function initializeTheme() {
-  if (!isBrowser || initialized) return;
-
-  currentConfig = loadStoredConfig();
-  commitConfig(currentConfig, { persist: true, notify: false });
-  initialized = true;
-
-  if (!mediaQuerySubscribed) {
-    const mediaQuery = window.matchMedia(SYSTEM_THEME_QUERY);
-    const handleThemeChange = () => {
-      if (currentConfig.mode === "system") {
-        applyConfigToDom(currentConfig);
-        persistConfig(currentConfig);
-        notifySubscribers();
-      }
-    };
-
-    mediaQuery.addEventListener("change", handleThemeChange);
-    mediaQuerySubscribed = true;
-  }
-
-  if (!storageSubscribed) {
-    window.addEventListener("storage", (event) => {
-      if (event.key !== THEME_STORAGE_KEY || !event.newValue) return;
-
-      try {
-        const nextConfig = normalizeConfig(JSON.parse(event.newValue));
-        commitConfig(nextConfig, { persist: false, notify: true });
-      } catch {
-        // Ignore malformed config from other tabs
-      }
-    });
-    storageSubscribed = true;
-  }
-}
-
 export function useCustomTheme() {
   const [config, setConfig] = useState<ThemeConfig>(() => {
-    initializeTheme();
-    return currentConfig;
+    if (typeof window === "undefined") return DEFAULT_CONFIG;
+    
+    const stored = localStorage.getItem("theme-config");
+    if (stored) {
+      try {
+        return { ...DEFAULT_CONFIG, ...JSON.parse(stored) };
+      } catch {
+        return DEFAULT_CONFIG;
+      }
+    }
+    return DEFAULT_CONFIG;
   });
 
+  // Apply accent color to CSS variables
   useEffect(() => {
-    initializeTheme();
+    const root = document.documentElement;
+    const colors = ACCENT_COLORS[config.accentColor];
+    
+    root.style.setProperty("--primary", colors.primary);
+    root.style.setProperty("--primary-foreground", colors.primaryForeground);
+    
+    // High contrast mode
+    if (config.highContrast) {
+      root.classList.add("high-contrast");
+    } else {
+      root.classList.remove("high-contrast");
+    }
+    
+    // Reduced motion
+    if (config.reducedMotion) {
+      root.classList.add("reduce-motion");
+    } else {
+      root.classList.remove("reduce-motion");
+    }
+  }, [config]);
 
-    const listener: ThemeListener = (nextConfig) => setConfig(nextConfig);
-    listeners.add(listener);
+  // Apply theme mode
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    if (config.mode === "system") {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      root.classList.remove("light", "dark");
+      root.classList.add(prefersDark ? "dark" : "light");
+    } else {
+      root.classList.remove("light", "dark");
+      root.classList.add(config.mode);
+    }
+  }, [config.mode]);
 
-    setConfig(currentConfig);
-
-    return () => {
-      listeners.delete(listener);
-    };
-  }, []);
-
-  const updateConfig = useCallback((updater: (prev: ThemeConfig) => ThemeConfig) => {
-    const nextConfig = updater(currentConfig);
-    commitConfig(nextConfig, { persist: true, notify: true });
-  }, []);
+  // Persist config
+  useEffect(() => {
+    localStorage.setItem("theme-config", JSON.stringify(config));
+    localStorage.setItem("theme", config.mode === "system" 
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : config.mode
+    );
+  }, [config]);
 
   const setAccentColor = useCallback((color: AccentColor) => {
-    updateConfig((prev) => ({ ...prev, accentColor: color }));
-  }, [updateConfig]);
+    setConfig(prev => ({ ...prev, accentColor: color }));
+  }, []);
 
   const setMode = useCallback((mode: ThemeMode) => {
-    updateConfig((prev) => ({ ...prev, mode }));
-  }, [updateConfig]);
+    setConfig(prev => ({ ...prev, mode }));
+  }, []);
 
   const setReducedMotion = useCallback((enabled: boolean) => {
-    updateConfig((prev) => ({ ...prev, reducedMotion: enabled }));
-  }, [updateConfig]);
+    setConfig(prev => ({ ...prev, reducedMotion: enabled }));
+  }, []);
 
   const setHighContrast = useCallback((enabled: boolean) => {
-    updateConfig((prev) => ({ ...prev, highContrast: enabled }));
-  }, [updateConfig]);
+    setConfig(prev => ({ ...prev, highContrast: enabled }));
+  }, []);
 
   const resetToDefaults = useCallback(() => {
-    commitConfig(DEFAULT_CONFIG, { persist: true, notify: true });
+    setConfig(DEFAULT_CONFIG);
   }, []);
 
   return {
     config,
-    accentColors: accentColorKeys,
+    accentColors: Object.keys(ACCENT_COLORS) as AccentColor[],
     setAccentColor,
     setMode,
     setReducedMotion,

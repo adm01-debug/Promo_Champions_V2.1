@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
-
+// Generic page loading fallback
 const PageLoadingFallback = () => (
   <div className="min-h-screen bg-background flex items-center justify-center" suppressHydrationWarning>
     <div className="space-y-4 w-full max-w-md p-8">
@@ -67,7 +67,6 @@ const BIVendedor = lazy(() => import("./pages/BIVendedor"));
 const BIGestor = lazy(() => import("./pages/BIGestor"));
 const BISDR = lazy(() => import("./pages/BISDR"));
 const BICloser = lazy(() => import("./pages/BICloser"));
-const BI = lazy(() => import("./pages/BI"));
 const DesafiosSemanais = lazy(() => import("./pages/DesafiosSemanais"));
 const HistoricoDesafiosDiarios = lazy(() => import("./pages/HistoricoDesafiosDiarios"));
 const PrevisaoDemanda = lazy(() => import("./pages/PrevisaoDemanda"));
@@ -93,9 +92,7 @@ const App = () => {
   // Global safety net for unhandled async errors
   useEffect(() => {
     const handler = (event: PromiseRejectionEvent) => {
-      if (import.meta.env.DEV) {
-        console.error("Unhandled rejection:", event.reason);
-      }
+      console.error("Unhandled rejection:", event.reason);
       event.preventDefault();
     };
     window.addEventListener("unhandledrejection", handler);
@@ -110,7 +107,7 @@ const App = () => {
           <XPToastProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <BrowserRouter>
               {/* KeyboardShortcutsProvider MUST be inside BrowserRouter because it uses useNavigate */}
               <KeyboardShortcutsProvider>
                 <AuthProvider>
@@ -199,7 +196,6 @@ const App = () => {
                                       } />
                                       <Route path="/admin" element={<AdminDashboard />} />
                                       <Route path="/assistente" element={<Assistente />} />
-                                      <Route path="/bi" element={<BI />} />
                                       <Route path="/bi-vendedor" element={<BIVendedor />} />
                                       <Route path="/bi-sdr" element={<BISDR />} />
                                       <Route path="/bi-closer" element={<BICloser />} />
