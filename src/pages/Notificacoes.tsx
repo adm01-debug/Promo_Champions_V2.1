@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 import { Bell, Plus, Trash2, Mail, Clock, AlertTriangle, Users, Target, Loader2, TrendingDown, Check, X, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
