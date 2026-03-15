@@ -58,7 +58,7 @@ export function TaskCard({ task }: TaskCardProps) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className={cn("p-1.5 rounded-md transition-all duration-200 group-hover:scale-110", `bg-${type.color.replace('text-', '')}/15`)}>
+            <div className={cn("p-1.5 rounded-md transition-all duration-200 group-hover:scale-110", type.bgClass)}>
               <TypeIcon className={cn("h-3.5 w-3.5 transition-colors", type.color)} />
             </div>
             <span className={cn("text-xs font-medium transition-colors", type.color)}>{type.label}</span>
