@@ -1,7 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SalespersonPerformance } from "@/hooks/useLeadRouting";
+interface SalespersonPerformance {
+  id: string;
+  name: string;
+  totalSales: number;
+  activeClientsCount: number;
+}
 import { Crown, Medal, Trophy, TrendingUp, Users, Percent } from "lucide-react";
 
 interface PerformanceRankingCardProps {

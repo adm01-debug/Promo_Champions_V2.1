@@ -22,10 +22,19 @@ interface DailyChallengesCardProps {
 }
 
 export function DailyChallengesCard({ salespersonId, compact = false, showTestButton = false }: DailyChallengesCardProps) {
-  const { data: challenges, isLoading } = useDailyChallengesWithProgress(salespersonId);
+  const { data: rawChallenges, isLoading } = useDailyChallengesWithProgress(salespersonId);
   const claimReward = useClaimDailyChallengeReward();
   const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Enrich challenges with computed properties
+  const challenges = (rawChallenges || []).map(challenge => ({
+    ...challenge,
+    isCompleted: (challenge.progress?.current_value || 0) >= challenge.target_value,
+    percentComplete: challenge.target_value > 0
+      ? Math.min(((challenge.progress?.current_value || 0) / challenge.target_value) * 100, 100)
+      : 0,
+  }));
 
   const handleClaimReward = (challengeId: string, xpReward: number) => {
     if (!salespersonId) return;

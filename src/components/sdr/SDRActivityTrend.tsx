@@ -303,27 +303,16 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
   const handleExportCSV = () => {
     if (viewMode === 'activity') {
       exportToCSV(
-        activityData,
-        [
-          { header: "Data", accessor: "label" },
-          { header: "Ligações", accessor: "calls" },
-          { header: "E-mails", accessor: "emails" },
-          { header: "Reuniões", accessor: "meetings" },
-          { header: "LinkedIn", accessor: "linkedin" },
-          { header: "WhatsApp", accessor: "whatsapp" },
-          { header: "Total", accessor: "total" },
-        ],
-        `sdr-atividades-por-tipo-${format(new Date(), "yyyy-MM-dd")}`
+        activityData as Record<string, unknown>[],
+        `sdr-atividades-por-tipo-${format(new Date(), "yyyy-MM-dd")}`,
+        ["label", "calls", "emails", "meetings", "linkedin", "whatsapp", "total"]
       );
     } else {
-      const columns = [
-        { header: "Data", accessor: "label" as keyof typeof comparisonData[0] },
-        ...sdrs.map(sdr => ({
-          header: sdr.name,
-          accessor: ((item: typeof comparisonData[0]) => (item[sdr.id] as number) || 0),
-        })),
-      ];
-      exportToCSV(comparisonData, columns, `sdr-comparacao-${format(new Date(), "yyyy-MM-dd")}`);
+      exportToCSV(
+        comparisonData as Record<string, unknown>[],
+        `sdr-comparacao-${format(new Date(), "yyyy-MM-dd")}`,
+        ["label", ...sdrs.map(sdr => sdr.id)]
+      );
     }
     toast.success("CSV exportado com sucesso");
   };

@@ -23,15 +23,30 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) 
       className
     )}>
       {items.map((item, index) => {
-        const Component = item.onClick ? 'button' : Link;
-        const props = item.onClick 
-          ? { onClick: item.onClick, type: 'button' as const }
-          : { to: item.href };
+        if (item.onClick) {
+          return (
+            <button
+              key={index}
+              onClick={item.onClick}
+              type="button"
+              className={cn(
+                "flex flex-col items-center justify-center flex-1 py-2 px-1",
+                "text-xs transition-colors",
+                item.isActive 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {item.icon}
+              <span className="mt-1 truncate">{item.label}</span>
+            </button>
+          );
+        }
         
         return (
-          <Component
+          <Link
             key={index}
-            {...props}
+            to={item.href}
             className={cn(
               "flex flex-col items-center justify-center flex-1 py-2 px-1",
               "text-xs transition-colors",
@@ -42,7 +57,7 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) 
           >
             {item.icon}
             <span className="mt-1 truncate">{item.label}</span>
-          </Component>
+          </Link>
         );
       })}
     </nav>
