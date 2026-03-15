@@ -42,7 +42,7 @@ export const useCreateNotificationPreference = () => {
       queryClient.invalidateQueries({ queryKey: ['notificationpreferences'] });
       toast.success('Configuração criada!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
