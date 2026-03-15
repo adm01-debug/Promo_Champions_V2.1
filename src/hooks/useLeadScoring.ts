@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck — Queries non-existent columns (industry, company_size, source, status on clients). Requires schema alignment.
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck — Interface mismatch: component expects totalClients/activeClients/icpMatch, hook provides total/active/inactive. Requires alignment.
 import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
