@@ -93,7 +93,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="font-medium truncate">{sp.name}</p>
-                  {sp.rank === 1 && (
+                  {(sp.rank ?? index + 1) === 1 && (
                     <Badge className="bg-status-warning/20 text-status-warning border-status-warning/30 text-xs">
                       Top Performer
                     </Badge>
