@@ -81,14 +81,14 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
             <p>Nenhum Closer cadastrado</p>
           </div>
         ) : (
-          data?.map((sp) => (
+          data?.map((sp, idx) => (
             <div
               key={sp.id}
               className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                (sp.rank ?? index + 1) <= 3 ? getRankBadgeStyle(sp.rank ?? index + 1) : "bg-muted/50 border-border/50"
+                (sp.rank ?? idx + 1) <= 3 ? getRankBadgeStyle(sp.rank ?? idx + 1) : "bg-muted/50 border-border/50"
               }`}
             >
-              <div className="flex-shrink-0">{getRankIcon(sp.rank ?? index + 1)}</div>
+              <div className="flex-shrink-0">{getRankIcon(sp.rank ?? idx + 1)}</div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
