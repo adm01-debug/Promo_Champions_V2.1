@@ -59,7 +59,7 @@ export const useRemoveFromPortfolio = () => {
       queryClient.invalidateQueries({ queryKey: ['client_portfolio'] });
       toast.success('Cliente removido do portfólio!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
