@@ -13,7 +13,7 @@ export interface ClientPortfolioItem {
   assigned_by: string | null;
   created_at: string;
   updated_at: string;
-  client?: { name: string; email?: string; phone?: string; company?: string };
+  client?: { name: string; email?: string; phone?: string; company?: string; total_value?: number };
   salesperson?: { name: string };
 }
 
@@ -23,13 +23,14 @@ export const useClientPortfolio = (salespersonId?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('client_portfolio')
-        .select('*, client:clients(name, email, phone, company), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
-      
+        .select('*, client:clients(name, email, phone, company, total_value), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
+
       if (salespersonId) {
         query = query.eq('salesperson_id', salespersonId);
       }
-      
-      const { data } = await query;
+
+      const { data, error } = await query;
+      if (error) throw error;
       return (data || []) as unknown as ClientPortfolioItem[];
     },
   });
@@ -85,13 +86,38 @@ export interface PortfolioStats {
 }
 
 export const usePortfolioStats = (salespersonId?: string) => {
-  const { data: portfolio } = useClientPortfolio(salespersonId);
-  const { data: unassigned } = useUnassignedClients();
+  const { data: portfolio, isLoading: isPortfolioLoading } = useClientPortfolio(salespersonId);
+  const { data: unassigned, isLoading: isUnassignedLoading } = useUnassignedClients();
+
+  const clientIds = (portfolio || []).map((item) => item.client_id);
+
+  const { data: icpRows = [], isLoading: isIcpLoading } = useQuery({
+    queryKey: ['portfolio-icp-stats', clientIds],
+    queryFn: async () => {
+      if (clientIds.length === 0) return [] as Array<{ client_id: string; is_icp_match: boolean | null }>;
+
+      const { data, error } = await supabase
+        .from('icp_data')
+        .select('client_id, is_icp_match')
+        .in('client_id', clientIds);
+
+      if (error) throw error;
+      return (data || []) as Array<{ client_id: string; is_icp_match: boolean | null }>;
+    },
+    enabled: clientIds.length > 0,
+  });
 
   const total = portfolio?.length || 0;
-  const active = portfolio?.filter(p => p.status === 'active').length || 0;
-  const inactive = portfolio?.filter(p => p.status === 'inactive').length || 0;
+  const active = portfolio?.filter((p) => p.status === 'active').length || 0;
+  const inactive = portfolio?.filter((p) => p.status === 'inactive').length || 0;
   const unassignedCount = unassigned?.length || 0;
+
+  const totalValue = (portfolio || []).reduce((sum, item) => sum + (item.client?.total_value || 0), 0);
+
+  const icpMap = new Map(icpRows.map((row) => [row.client_id, row]));
+  const icpMatch = clientIds.filter((id) => icpMap.get(id)?.is_icp_match === true).length;
+  const icpPartial = clientIds.filter((id) => icpMap.has(id) && icpMap.get(id)?.is_icp_match !== true).length;
+  const icpNone = total - (icpMatch + icpPartial);
 
   const stats: PortfolioStats = {
     total,
@@ -101,27 +127,35 @@ export const usePortfolioStats = (salespersonId?: string) => {
     totalClients: total,
     activeClients: active,
     inactiveClients: inactive,
-    totalValue: 0,
-    icpMatch: 0,
-    icpPartial: 0,
-    icpNone: 0,
+    totalValue,
+    icpMatch,
+    icpPartial,
+    icpNone,
   };
 
-  return { data: stats, isLoading: false };
+  return {
+    data: stats,
+    isLoading: isPortfolioLoading || isUnassignedLoading || (clientIds.length > 0 && isIcpLoading),
+  };
 };
 
 export const useUnassignedClients = () => {
   return useQuery({
     queryKey: ['unassigned_clients'],
     queryFn: async () => {
-      const { data: assigned } = await supabase.from('client_portfolio').select('client_id');
-      const assignedIds = (assigned || []).map(a => a.client_id);
-      
+      const { data: assigned, error: assignedError } = await supabase.from('client_portfolio').select('client_id');
+      if (assignedError) throw assignedError;
+
+      const assignedIds = (assigned || []).map((a) => a.client_id).filter(Boolean);
+
       let query = supabase.from('clients').select('*');
       if (assignedIds.length > 0) {
-        query = query.not('id', 'in', `(${assignedIds.join(',')})`);
+        const inFilter = `(${assignedIds.map((id) => `"${id}"`).join(',')})`;
+        query = query.not('id', 'in', inFilter);
       }
-      const { data } = await query;
+
+      const { data, error } = await query;
+      if (error) throw error;
       return data || [];
     },
   });

@@ -56,7 +56,7 @@ export const useABCAnalysis = () => {
       const { data: sales, error } = await supabase
         .from('sales')
         .select('amount, product_name, client_name, status')
-        .eq('status', 'won');
+        .in('status', ['won', 'completed']);
 
       if (error) throw error;
 

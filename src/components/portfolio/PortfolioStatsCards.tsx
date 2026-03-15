@@ -16,19 +16,22 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
       title: "Total de Clientes",
       value: stats?.totalClients || 0,
       icon: Users,
-      color: "primary",
+      iconWrapperClass: "bg-primary/10",
+      iconClass: "text-primary",
     },
     {
       title: "Clientes Ativos",
       value: stats?.activeClients || 0,
       icon: UserCheck,
-      color: "success",
+      iconWrapperClass: "bg-status-success/10",
+      iconClass: "text-status-success",
     },
     {
       title: "Clientes Inativos",
       value: stats?.inactiveClients || 0,
       icon: UserX,
-      color: "warning",
+      iconWrapperClass: "bg-status-warning/10",
+      iconClass: "text-status-warning",
     },
     {
       title: "Valor Total",
@@ -37,58 +40,14 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
         currency: "BRL",
       }).format(stats?.totalValue || 0),
       icon: DollarSign,
-      color: "accent",
+      iconWrapperClass: "bg-accent/10",
+      iconClass: "text-accent",
       isValue: true,
     },
   ];
-
-  const icpCards = [
-    {
-      title: "ICP Match",
-      value: stats?.icpMatch || 0,
-      icon: Target,
-      color: "success",
-      tooltip: "Clientes que atendem todos os critérios do ICP",
-    },
-    {
-      title: "ICP Parcial",
-      value: stats?.icpPartial || 0,
-      icon: AlertCircle,
-      color: "warning",
-      tooltip: "Clientes com dados ICP incompletos",
-    },
-    {
-      title: "Sem ICP",
-      value: stats?.icpNone || 0,
-      icon: CircleSlash,
-      color: "muted",
-      tooltip: "Clientes sem dados de ICP cadastrados",
-    },
-  ];
-
-  return (
-    <TooltipProvider>
-      <div className="space-y-4">
-        {/* Main Stats */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {cards.map((card) => (
-            <Card key={card.title} className="glass hover-lift">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {card.title}
-                    </p>
-                    {isLoading ? (
-                      <Skeleton className="h-8 w-24 mt-1" />
-                    ) : (
-                      <p className={`text-2xl font-bold ${card.isValue ? 'gradient-text' : ''}`}>
-                        {card.value}
-                      </p>
-                    )}
-                  </div>
-                  <div className={`h-12 w-12 rounded-xl bg-${card.color}/10 flex items-center justify-center`}>
-                    <card.icon className={`h-6 w-6 text-${card.color}`} />
+...
+                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${card.iconWrapperClass}`}>
+                    <card.icon className={`h-6 w-6 ${card.iconClass}`} />
                   </div>
                 </div>
               </CardContent>

@@ -64,12 +64,17 @@ export function NextBestAction() {
   };
 
   const handleCreateTask = (suggestion: ActionSuggestion) => {
+    const taskType = ['call', 'email', 'meeting', 'follow_up', 'proposal', 'other'].includes(suggestion.actionType)
+      ? (suggestion.actionType as 'call' | 'email' | 'meeting' | 'follow_up' | 'proposal' | 'other')
+      : 'other';
+
     createTask.mutate({
       title: suggestion.title,
       description: suggestion.description,
       due_date: new Date().toISOString().split('T')[0],
-      task_type: (suggestion.actionType as 'call' | 'email' | 'meeting' | 'follow_up' | 'other') || 'other',
+      task_type: taskType,
       priority: suggestion.priority === 'high' ? 'high' : suggestion.priority === 'medium' ? 'medium' : 'low',
+      salesperson_id: selectedSalesperson || undefined,
     });
   };
 
