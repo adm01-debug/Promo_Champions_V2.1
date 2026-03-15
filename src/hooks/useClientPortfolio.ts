@@ -35,7 +35,7 @@ export const useUpdatePortfolioStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ portfolioId, status, lastPurchaseDate }: { portfolioId: string; status: string; lastPurchaseDate?: string }) => {
-      const updates: any = { status };
+      const updates: Record<string, string> = { status };
       if (lastPurchaseDate) updates.last_purchase_date = lastPurchaseDate;
       const { error } = await supabase.from('client_portfolio').update(updates).eq('id', portfolioId);
       if (error) throw error;
@@ -44,7 +44,7 @@ export const useUpdatePortfolioStatus = () => {
       queryClient.invalidateQueries({ queryKey: ['client_portfolio'] });
       toast.success('Status atualizado!');
     },
-    onError: (err: any) => toast.error('Erro: ' + err.message),
+    onError: (err: Error) => toast.error('Erro: ' + err.message),
   });
 };
 
