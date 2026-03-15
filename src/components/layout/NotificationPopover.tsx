@@ -1,5 +1,4 @@
-import { forwardRef } from "react";
-import { Bell, Check, ExternalLink } from "lucide-react";
+import { Bell, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,21 +14,20 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export const NotificationPopover = forwardRef<HTMLDivElement>(function NotificationPopover(_props, _ref) {
+export function NotificationPopover() {
   const { salesperson } = useAuth();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
 
   const { data: recentAlerts } = useQuery({
     queryKey: ["recent-notifications", salesperson?.id],
     queryFn: async () => {
-      // Fetch recent login alerts
       const { data: loginAlerts } = await supabase
         .from("login_alerts")
         .select("id, alert_type, created_at, browser, location, acknowledged")
         .order("created_at", { ascending: false })
         .limit(5);
 
-      return (loginAlerts || []).map(a => ({
+      return (loginAlerts || []).map((a) => ({
         id: a.id,
         title: a.alert_type === "new_device" ? "Novo dispositivo detectado" : "Alerta de login",
         description: [a.browser, a.location].filter(Boolean).join(" · ") || "Detalhes indisponíveis",
@@ -66,7 +64,7 @@ export const NotificationPopover = forwardRef<HTMLDivElement>(function Notificat
               <p className="text-sm text-muted-foreground">Nenhuma notificação</p>
             </div>
           ) : (
-            recentAlerts.map(alert => (
+            recentAlerts.map((alert) => (
               <div
                 key={alert.id}
                 className={cn(
@@ -103,5 +101,4 @@ export const NotificationPopover = forwardRef<HTMLDivElement>(function Notificat
       </PopoverContent>
     </Popover>
   );
-});
-NotificationPopover.displayName = "NotificationPopover";
+}

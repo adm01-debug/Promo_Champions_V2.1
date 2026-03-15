@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { motion } from "framer-motion";
 import { Focus, X, Coffee, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,91 +15,87 @@ interface FocusModeToggleProps {
   className?: string;
 }
 
-export const FocusModeToggle = forwardRef<HTMLDivElement, FocusModeToggleProps>(
-  function FocusModeToggle({ variant = "icon", className }, _ref) {
-    const { isEnabled, formattedTime, toggleFocusMode } = useFocusMode();
+export function FocusModeToggle({ variant = "icon", className }: FocusModeToggleProps) {
+  const { isEnabled, formattedTime, toggleFocusMode } = useFocusMode();
 
-    if (variant === "icon") {
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={isEnabled ? "default" : "ghost"}
-              size="icon"
-              onClick={toggleFocusMode}
-              className={cn(
-                "relative h-9 w-9 transition-all",
-                isEnabled && "bg-primary text-primary-foreground",
-                className
-              )}
-            >
-              <motion.div
-                key={isEnabled ? "enabled" : "disabled"}
-                initial={{ scale: 0.7, rotate: isEnabled ? -180 : 180, opacity: 0 }}
-                animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                {isEnabled ? <X className="h-4 w-4" /> : <Focus className="h-4 w-4" />}
-              </motion.div>
-
-              {isEnabled && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 flex h-3 w-3"
-                >
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/70 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-success" />
-                </motion.span>
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {isEnabled ? `Modo Foco ativo (${formattedTime})` : "Ativar Modo Foco"}
-          </TooltipContent>
-        </Tooltip>
-      );
-    }
-
+  if (variant === "icon") {
     return (
-      <motion.div
-        layout
-        className={cn(
-          "flex items-center gap-2 p-2 rounded-lg transition-colors",
-          isEnabled ? "bg-primary/10" : "bg-muted/50",
-          className
-        )}
-      >
-        <Button
-          variant={isEnabled ? "default" : "outline"}
-          size="sm"
-          onClick={toggleFocusMode}
-          className="gap-2"
-        >
-          {isEnabled ? <X className="h-4 w-4" /> : <Focus className="h-4 w-4" />}
-          {isEnabled ? "Sair do Foco" : "Modo Foco"}
-        </Button>
-
-        {isEnabled && (
-          <motion.div
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            className="flex items-center gap-2 overflow-hidden"
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={isEnabled ? "default" : "ghost"}
+            size="icon"
+            onClick={toggleFocusMode}
+            className={cn(
+              "relative h-9 w-9 transition-all",
+              isEnabled && "bg-primary text-primary-foreground",
+              className
+            )}
           >
-            <Badge variant="secondary" className="gap-1 font-mono">
-              <Clock className="h-3 w-3" />
-              {formattedTime}
-            </Badge>
-          </motion.div>
-        )}
-      </motion.div>
+            <motion.div
+              key={isEnabled ? "enabled" : "disabled"}
+              initial={{ scale: 0.7, rotate: isEnabled ? -180 : 180, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              {isEnabled ? <X className="h-4 w-4" /> : <Focus className="h-4 w-4" />}
+            </motion.div>
+
+            {isEnabled && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 flex h-3 w-3"
+              >
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/70 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-success" />
+              </motion.span>
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          {isEnabled ? `Modo Foco ativo (${formattedTime})` : "Ativar Modo Foco"}
+        </TooltipContent>
+      </Tooltip>
     );
   }
-);
 
-FocusModeToggle.displayName = "FocusModeToggle";
+  return (
+    <motion.div
+      layout
+      className={cn(
+        "flex items-center gap-2 p-2 rounded-lg transition-colors",
+        isEnabled ? "bg-primary/10" : "bg-muted/50",
+        className
+      )}
+    >
+      <Button
+        variant={isEnabled ? "default" : "outline"}
+        size="sm"
+        onClick={toggleFocusMode}
+        className="gap-2"
+      >
+        {isEnabled ? <X className="h-4 w-4" /> : <Focus className="h-4 w-4" />}
+        {isEnabled ? "Sair do Foco" : "Modo Foco"}
+      </Button>
 
-export const FocusModeBreakReminder = forwardRef<HTMLDivElement>(function FocusModeBreakReminder(_props, _ref) {
+      {isEnabled && (
+        <motion.div
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: "auto" }}
+          className="flex items-center gap-2 overflow-hidden"
+        >
+          <Badge variant="secondary" className="gap-1 font-mono">
+            <Clock className="h-3 w-3" />
+            {formattedTime}
+          </Badge>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}
+
+export function FocusModeBreakReminder() {
   const { shouldShowBreakReminder, dismissBreakReminder, config } = useFocusMode();
 
   if (!shouldShowBreakReminder) return null;
@@ -136,5 +131,4 @@ export const FocusModeBreakReminder = forwardRef<HTMLDivElement>(function FocusM
       </div>
     </motion.div>
   );
-});
-FocusModeBreakReminder.displayName = "FocusModeBreakReminder";
+}

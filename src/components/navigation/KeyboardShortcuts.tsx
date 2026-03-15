@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState } from "react";
 import { Keyboard } from "lucide-react";
 import {
   Dialog,
@@ -17,15 +17,14 @@ const shortcuts = [
   { keys: ["?"], description: "Atalhos de teclado" },
 ];
 
-export const KeyboardShortcuts = forwardRef<HTMLDivElement>(function KeyboardShortcuts(_props, _ref) {
+export function KeyboardShortcuts() {
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  // Hide on mobile - no keyboard
   if (isMobile) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -42,32 +41,33 @@ export const KeyboardShortcuts = forwardRef<HTMLDivElement>(function KeyboardSho
         </Tooltip>
       </TooltipProvider>
 
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            <Keyboard className="h-5 w-5 text-primary" />
-            Atalhos de Teclado
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-3 mt-2">
-          {shortcuts.map((shortcut, i) => (
-            <div key={i} className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-muted-foreground">{shortcut.description}</span>
-              <div className="flex items-center gap-1">
-                {shortcut.keys.map((key, j) => (
-                  <kbd
-                    key={j}
-                    className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-muted px-1.5 font-mono text-[11px] font-medium text-muted-foreground"
-                  >
-                    {key}
-                  </kbd>
-                ))}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <Keyboard className="h-5 w-5 text-primary" />
+              Atalhos de Teclado
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 mt-2">
+            {shortcuts.map((shortcut, i) => (
+              <div key={i} className="flex items-center justify-between py-1.5">
+                <span className="text-sm text-muted-foreground">{shortcut.description}</span>
+                <div className="flex items-center gap-1">
+                  {shortcut.keys.map((key, j) => (
+                    <kbd
+                      key={j}
+                      className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-muted px-1.5 font-mono text-[11px] font-medium text-muted-foreground"
+                    >
+                      {key}
+                    </kbd>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </DialogContent>
-    </Dialog>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
-});
-KeyboardShortcuts.displayName = "KeyboardShortcuts";
+}
