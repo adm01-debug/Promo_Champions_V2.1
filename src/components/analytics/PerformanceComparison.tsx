@@ -22,6 +22,7 @@ import {
   PolarRadiusAxis,
   Radar,
   Legend,
+  Cell,
 } from "recharts";
 
 const ROLE_LABELS: Record<string, string> = {
