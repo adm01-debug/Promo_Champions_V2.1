@@ -93,65 +93,63 @@ export function LevelUpOverlay({
               </motion.div>
 
               {/* Level up text */}
-              <AnimatePresence>
-                {showContent && (
-                  <>
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="flex items-center justify-center gap-2 text-xp mb-2"
-                    >
-                      <Zap className="h-5 w-5" />
-                      <span className="font-display font-bold uppercase tracking-wider">Level Up!</span>
-                      <Zap className="h-5 w-5" />
-                    </motion.div>
+              {showContent && (
+                <>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="flex items-center justify-center gap-2 text-xp mb-2"
+                  >
+                    <Zap className="h-5 w-5" />
+                    <span className="font-display font-bold uppercase tracking-wider">Level Up!</span>
+                    <Zap className="h-5 w-5" />
+                  </motion.div>
 
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.4, type: "spring", bounce: 0.5 }}
-                      className="text-6xl mb-2"
-                    >
-                      {levelEmoji}
-                    </motion.div>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.4, type: "spring", bounce: 0.5 }}
+                    className="text-6xl mb-2"
+                  >
+                    {levelEmoji}
+                  </motion.div>
 
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.6 }}
-                    >
-                      <div className="text-4xl font-display font-bold gradient-text mb-1">
-                        Nível {level}
-                      </div>
-                      <div className="text-lg text-muted-foreground font-medium">
-                        {levelTitle}
-                      </div>
-                    </motion.div>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <div className="text-4xl font-display font-bold gradient-text mb-1">
+                      Nível {level}
+                    </div>
+                    <div className="text-lg text-muted-foreground font-medium">
+                      {levelTitle}
+                    </div>
+                  </motion.div>
 
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.8 }}
-                      className="mt-4 pt-4 border-t border-border/30"
-                    >
-                      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                        <Trophy className="h-4 w-4 text-coins" />
-                        <span>{salespersonName}</span>
-                      </div>
-                    </motion.div>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                    className="mt-4 pt-4 border-t border-border/30"
+                  >
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                      <Trophy className="h-4 w-4 text-coins" />
+                      <span>{salespersonName}</span>
+                    </div>
+                  </motion.div>
 
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1.2 }}
-                      className="text-xs text-muted-foreground mt-4"
-                    >
-                      Clique para continuar
-                    </motion.p>
-                  </>
-                )}
-              </AnimatePresence>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.2 }}
+                    className="text-xs text-muted-foreground mt-4"
+                  >
+                    Clique para continuar
+                  </motion.p>
+                </>
+              )}
             </div>
           </motion.div>
         </motion.div>
