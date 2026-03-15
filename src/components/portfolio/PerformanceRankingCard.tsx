@@ -88,7 +88,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
                 (sp.rank ?? index + 1) <= 3 ? getRankBadgeStyle(sp.rank ?? index + 1) : "bg-muted/50 border-border/50"
               }`}
             >
-              <div className="flex-shrink-0">{getRankIcon(sp.rank)}</div>
+              <div className="flex-shrink-0">{getRankIcon(sp.rank ?? index + 1)}</div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
