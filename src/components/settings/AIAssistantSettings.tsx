@@ -35,7 +35,7 @@ export function AIAssistantSettings() {
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [responseMode, setResponseMode] = useState<ResponseMode>('text');
-  const [voiceId, setVoiceId] = useState<VoiceId>('CwhRBWXzGAHq8TQ4Fs17');
+  const [voiceId, setVoiceId] = useState<string>('CwhRBWXzGAHq8TQ4Fs17');
   const [isTestingVoice, setIsTestingVoice] = useState(false);
 
   useEffect(() => {
@@ -236,7 +236,7 @@ export function AIAssistantSettings() {
                   {VOICE_OPTIONS.map((voice) => (
                     <SelectItem key={voice.id} value={voice.id}>
                       <div className="flex items-center gap-2">
-                        <span>{voice.gender === 'Masculino' ? '👨' : '👩'}</span>
+                        <span>{voice.gender === 'male' ? '👨' : '👩'}</span>
                         <span>{voice.name}</span>
                         <span className="text-muted-foreground text-xs">({voice.gender})</span>
                       </div>

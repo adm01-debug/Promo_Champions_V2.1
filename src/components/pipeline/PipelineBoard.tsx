@@ -27,7 +27,6 @@ export const PipelineBoard = () => {
   const queryClient = useQueryClient();
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
 
-  // Collect all deal IDs for probability calculation
   const allDealIds = useMemo(() => {
     if (!dealsByStage) return [];
     return PIPELINE_STAGES.flatMap(stage => 
@@ -35,32 +34,51 @@ export const PipelineBoard = () => {
     );
   }, [dealsByStage]);
 
-  const { data: probabilities } = useDealProbabilities();
-  const { data: leadScores } = useLeadScores();
+  const { data: rawProbabilities } = useDealProbabilities();
+  const { data: leadScoresData } = useLeadScores();
   const { data: activeCadences } = useActiveCadencesBySaleIds(allDealIds);
   const { data: icpByClientName } = useICPByClientName();
   const calculateScores = useCalculateLeadScores();
 
-  // Calculate lead scores when deals are loaded
+  // Transform probabilities from Record<string, number> to Record<string, DealProbability>
+  const probabilities = useMemo(() => {
+    if (!rawProbabilities) return undefined;
+    const mapped: Record<string, { probability: number; factors: string[] }> = {};
+    for (const [id, prob] of Object.entries(rawProbabilities)) {
+      mapped[id] = { probability: prob, factors: [] };
+    }
+    return mapped;
+  }, [rawProbabilities]);
+
+  // Transform ScoredLead[] to Record<string, LeadScoreData>
+  const leadScores = useMemo(() => {
+    if (!leadScoresData || !Array.isArray(leadScoresData)) return undefined;
+    const mapped: Record<string, { score: number; category: 'hot' | 'warm' | 'cold'; factors: string[] }> = {};
+    for (const lead of leadScoresData) {
+      mapped[lead.id] = {
+        score: lead.score,
+        category: lead.category.toLowerCase() as 'hot' | 'warm' | 'cold',
+        factors: Object.entries(lead.factors).map(([k, v]) => `${k}: ${v}`),
+      };
+    }
+    return mapped;
+  }, [leadScoresData]);
+
   useEffect(() => {
-    if (allDealIds.length > 0 && !leadScores) {
+    if (allDealIds.length > 0 && !leadScoresData) {
       calculateScores.mutate(allDealIds);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allDealIds, leadScores]);
+  }, [allDealIds, leadScoresData]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
+      activationConstraint: { distance: 8 },
     })
   );
 
   const handleDragStart = (event: DragStartEvent) => {
     const dealId = event.active.id as string;
-    
-    // Find the deal in any stage
     for (const stage of PIPELINE_STAGES) {
       const deal = dealsByStage?.[stage.id]?.find((d) => d.id === dealId);
       if (deal) {
@@ -72,18 +90,14 @@ export const PipelineBoard = () => {
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveDeal(null);
-
     const { active, over } = event;
     if (!over) return;
 
     const dealId = active.id as string;
     const overId = over.id as string;
-    
-    // Check if dropping on a valid stage
     const targetStage = PIPELINE_STAGES.find(s => s.id === overId);
     
     if (targetStage) {
-      // Find current stage of the deal
       let currentStageId: PipelineStageId | null = null;
       for (const stage of PIPELINE_STAGES) {
         if (dealsByStage?.[stage.id]?.some((d) => d.id === dealId)) {
@@ -91,12 +105,10 @@ export const PipelineBoard = () => {
           break;
         }
       }
-
       if (currentStageId && currentStageId !== targetStage.id) {
         moveDeal.mutate({ dealId, newStage: targetStage.id });
       }
     } else {
-      // Dropped on another deal, find its stage
       for (const stage of PIPELINE_STAGES) {
         const dealInStage = dealsByStage?.[stage.id]?.find((d) => d.id === overId);
         if (dealInStage) {
@@ -110,7 +122,6 @@ export const PipelineBoard = () => {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {/* Stats Bar Skeleton */}
         <div className="flex items-center justify-between p-4 rounded-xl glass border border-border/40">
           <div className="flex gap-6">
             <Skeleton className="h-12 w-28" />
@@ -121,8 +132,6 @@ export const PipelineBoard = () => {
             <Skeleton className="h-9 w-28" />
           </div>
         </div>
-        
-        {/* Columns Skeleton */}
         <div className="flex gap-4 overflow-x-auto pb-4">
           {PIPELINE_STAGES.map((stage) => (
             <div key={stage.id} className="min-w-[280px]">
@@ -139,20 +148,14 @@ export const PipelineBoard = () => {
   }
 
   const totalDeals = PIPELINE_STAGES.reduce(
-    (sum, stage) => sum + (dealsByStage?.[stage.id]?.length || 0),
-    0
+    (sum, stage) => sum + (dealsByStage?.[stage.id]?.length || 0), 0
   );
-
   const totalValue = PIPELINE_STAGES.reduce(
-    (sum, stage) =>
-      sum +
-      (dealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0),
-    0
+    (sum, stage) => sum + (dealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0), 0
   );
 
   return (
     <div className="space-y-4">
-      {/* Stats Bar */}
       <div className="flex items-center justify-between p-4 rounded-xl glass border border-border/40 dark:border-glow card-elevated">
         <div className="flex gap-8">
           <div className="relative">
@@ -163,10 +166,7 @@ export const PipelineBoard = () => {
           <div>
             <p className="text-xs text-muted-foreground font-medium mb-1">Valor Total no Pipeline</p>
             <p className="text-2xl font-display font-bold gradient-text">
-              {new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(totalValue)}
+              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalValue)}
             </p>
           </div>
         </div>
@@ -194,7 +194,6 @@ export const PipelineBoard = () => {
         </div>
       </div>
 
-      {/* Kanban Board */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

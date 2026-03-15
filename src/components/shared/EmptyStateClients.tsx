@@ -12,8 +12,7 @@ export const EmptyStateClients: FC<EmptyStateClientsProps> = ({ onAdd }) => {
       icon={UserPlus}
       title="Nenhum cliente cadastrado"
       description="Adicione clientes para começar a gerenciar seus relacionamentos e oportunidades."
-      actionLabel={onAdd ? "Adicionar Cliente" : undefined}
-      onAction={onAdd}
+      action={onAdd ? { label: "Adicionar Cliente", onClick: onAdd } : undefined}
     />
   );
 };

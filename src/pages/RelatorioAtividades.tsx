@@ -110,22 +110,9 @@ export default function RelatorioAtividades() {
     }
 
     exportToCSV(
-      filteredSalespeople,
-      [
-        { header: "Vendedor", accessor: "salesperson_name" },
-        { header: "Calls", accessor: "calls" },
-        { header: "Emails", accessor: "emails" },
-        { header: "Reuniões", accessor: "meetings" },
-        { header: "LinkedIn", accessor: "linkedin" },
-        { header: "WhatsApp", accessor: "whatsapp" },
-        { header: "Total Atividades", accessor: "total_activities" },
-        { header: "Conectou", accessor: "connected" },
-        { header: "Agendou", accessor: "scheduled" },
-        { header: "Não Atendeu", accessor: "no_answer" },
-        { header: "Taxa Conexão", accessor: (item) => formatPercentForExport(item.connection_rate) },
-        { header: "Taxa Agendamento", accessor: (item) => formatPercentForExport(item.scheduling_rate) },
-      ],
-      `relatorio-atividades-${outcomeFilter !== 'all' ? outcomeFilter + '-' : ''}${new Date().toISOString().split('T')[0]}`
+      filteredSalespeople as unknown as Record<string, unknown>[],
+      `relatorio-atividades-${outcomeFilter !== 'all' ? outcomeFilter + '-' : ''}${new Date().toISOString().split('T')[0]}`,
+      ["salesperson_name", "calls", "emails", "meetings", "linkedin", "whatsapp", "total_activities", "connected", "scheduled", "no_answer", "connection_rate", "scheduling_rate"]
     );
 
     toast.success("Relatório exportado com sucesso!");

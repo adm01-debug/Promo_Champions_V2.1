@@ -1,7 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SalespersonPerformance } from "@/hooks/useLeadRouting";
+interface SalespersonPerformance {
+  id: string;
+  name: string;
+  totalSales: number;
+  activeClientsCount: number;
+  rank?: number;
+  conversionRate?: number;
+  dealsCount?: number;
+}
 import { Crown, Medal, Trophy, TrendingUp, Users, Percent } from "lucide-react";
 
 interface PerformanceRankingCardProps {
@@ -76,19 +84,19 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
             <p>Nenhum Closer cadastrado</p>
           </div>
         ) : (
-          data?.map((sp) => (
+          data?.map((sp, idx) => (
             <div
               key={sp.id}
               className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                sp.rank <= 3 ? getRankBadgeStyle(sp.rank) : "bg-muted/50 border-border/50"
+                (sp.rank ?? idx + 1) <= 3 ? getRankBadgeStyle(sp.rank ?? idx + 1) : "bg-muted/50 border-border/50"
               }`}
             >
-              <div className="flex-shrink-0">{getRankIcon(sp.rank)}</div>
+              <div className="flex-shrink-0">{getRankIcon(sp.rank ?? idx + 1)}</div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="font-medium truncate">{sp.name}</p>
-                  {sp.rank === 1 && (
+                  {(sp.rank ?? idx + 1) === 1 && (
                     <Badge className="bg-status-warning/20 text-status-warning border-status-warning/30 text-xs">
                       Top Performer
                     </Badge>
@@ -105,7 +113,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
                   </span>
                   <span className="flex items-center gap-1">
                     <Percent className="h-3 w-3" />
-                    {sp.conversionRate.toFixed(0)}%
+                    {(sp.conversionRate ?? 0).toFixed(0)}%
                   </span>
                   <span className="flex items-center gap-1">
                     <Users className="h-3 w-3" />
@@ -116,7 +124,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
 
               <div className="text-right">
                 <p className="text-lg font-bold gradient-text">
-                  {sp.dealsCount}
+                  {sp.dealsCount ?? 0}
                 </p>
                 <p className="text-xs text-muted-foreground">vendas</p>
               </div>
