@@ -7,17 +7,13 @@ import { exportToExcel } from '@/lib/excelExporter';
 
 // Mock ExcelJS
 vi.mock('exceljs', () => {
-  const mockAddRow = vi.fn();
-  const mockWorksheet = {
-    columns: [],
-    addRow: mockAddRow,
-  };
-  const mockWriteBuffer = vi.fn().mockResolvedValue(new ArrayBuffer(100));
-
   return {
     default: class Workbook {
-      addWorksheet = vi.fn().mockReturnValue(mockWorksheet);
-      xlsx = { writeBuffer: mockWriteBuffer };
+      addWorksheet = vi.fn().mockReturnValue({
+        columns: [],
+        addRow: vi.fn(),
+      });
+      xlsx = { writeBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(100)) };
     },
   };
 });

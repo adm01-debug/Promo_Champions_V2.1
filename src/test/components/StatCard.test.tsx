@@ -80,8 +80,7 @@ describe('StatCard', () => {
     render(
       <StatCard title="Revenue" value="R$ 150.000" numericValue={150000} icon={DollarSign} />
     );
-    // Should show the animated value (mocked to return end immediately)
-    expect(screen.getByText('Faturamento') || screen.getByText('Revenue')).toBeDefined();
+    expect(screen.getByText('Revenue')).toBeInTheDocument();
   });
 
   it('formats percentage values correctly', () => {

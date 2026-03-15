@@ -31,7 +31,7 @@ describe('DashboardEmptyState', () => {
 
   it('renders conversion empty state', () => {
     renderWithRouter(<DashboardEmptyState type="conversion" />);
-    expect(screen.getByText(/conversão|taxa/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/conversão|taxa/i).length).toBeGreaterThan(0);
   });
 
   it('CTA links to correct routes', () => {
