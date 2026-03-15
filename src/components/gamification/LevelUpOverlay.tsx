@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Zap, Trophy, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,14 +12,14 @@ interface LevelUpOverlayProps {
   onComplete?: () => void;
 }
 
-export const LevelUpOverlay = forwardRef<HTMLDivElement, LevelUpOverlayProps>(function LevelUpOverlay({
+export function LevelUpOverlay({
   isVisible,
   level,
   levelTitle,
   levelEmoji,
   salespersonName,
   onComplete,
-}, ref) {
+}: LevelUpOverlayProps) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
