@@ -3,20 +3,22 @@
  * Tests: export functionality, data handling, edge cases
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { exportToExcel } from '@/lib/excelExporter';
 
-// Mock ExcelJS
+// Mock ExcelJS - must match how exceljs exports
+const mockAddRow = vi.fn();
+const mockWriteBuffer = vi.fn().mockResolvedValue(new ArrayBuffer(100));
+
 vi.mock('exceljs', () => {
-  return {
-    default: class Workbook {
-      addWorksheet = vi.fn().mockReturnValue({
-        columns: [],
-        addRow: vi.fn(),
-      });
-      xlsx = { writeBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(100)) };
-    },
-  };
+  class MockWorkbook {
+    addWorksheet() {
+      return { columns: null, addRow: mockAddRow };
+    }
+    xlsx = { writeBuffer: mockWriteBuffer };
+  }
+  return { default: MockWorkbook, Workbook: MockWorkbook };
 });
+
+import { exportToExcel } from '@/lib/excelExporter';
 
 describe('exportToExcel', () => {
   beforeEach(() => {
@@ -28,10 +30,7 @@ describe('exportToExcel', () => {
       { name: 'Test', value: 100 },
       { name: 'Test2', value: 200 },
     ];
-
     await exportToExcel(data, 'test-export');
-
-    // Should create download link
     expect(URL.createObjectURL).toHaveBeenCalled();
     expect(URL.revokeObjectURL).toHaveBeenCalled();
   });
@@ -42,15 +41,12 @@ describe('exportToExcel', () => {
   });
 
   it('should use custom sheet name', async () => {
-    const data = [{ col: 'value' }];
-    await exportToExcel(data, 'test', 'CustomSheet');
+    await exportToExcel([{ col: 'value' }], 'test', 'CustomSheet');
     expect(URL.createObjectURL).toHaveBeenCalled();
   });
 
-  it('should use default sheet name "Dados"', async () => {
-    const data = [{ col: 'value' }];
-    await exportToExcel(data, 'test');
-    // Default sheet name is 'Dados'
+  it('should use default sheet name', async () => {
+    await exportToExcel([{ col: 'value' }], 'test');
     expect(URL.createObjectURL).toHaveBeenCalled();
   });
 
@@ -64,9 +60,7 @@ describe('exportToExcel', () => {
 
   it('should handle large datasets', async () => {
     const data = Array.from({ length: 1000 }, (_, i) => ({
-      id: i,
-      name: `Item ${i}`,
-      value: Math.random() * 10000,
+      id: i, name: `Item ${i}`, value: Math.random() * 10000,
     }));
     await expect(exportToExcel(data, 'large-dataset')).resolves.not.toThrow();
   });
