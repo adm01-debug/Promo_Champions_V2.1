@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs';
 
 export async function exportToExcel<T extends Record<string, any>>(data: T[], filename: string, sheetName: string = 'Dados') {
-  const workbook = new (ExcelJS as any).Workbook();
+  const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
 
   if (data.length > 0) {
