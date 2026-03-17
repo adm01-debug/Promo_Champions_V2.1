@@ -13,12 +13,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  FunnelChart,
-  Funnel,
-  LabelList,
   Cell,
-  PieChart,
-  Pie,
 } from "recharts";
 import {
   TrendingUp,

@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import {
   startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval,
-  format, isSameDay, isSameMonth, isToday, addMonths, subMonths, parseISO,
+  format, isSameDay, isSameMonth, isToday, addMonths, subMonths,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useTasks, useUpdateTask, TaskRecord } from "@/hooks/useTasks";

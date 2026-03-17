@@ -100,10 +100,10 @@ export function useWeightedForecast() {
         }
 
         // Penalize deals stagnant too long
-        if (daysInStage > 30) {
-          probability *= 0.8;
-        } else if (daysInStage > 60) {
+        if (daysInStage > 60) {
           probability *= 0.5;
+        } else if (daysInStage > 30) {
+          probability *= 0.8;
         }
 
         return {
