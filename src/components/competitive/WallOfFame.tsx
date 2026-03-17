@@ -29,7 +29,7 @@ export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
   const { data: salespeople } = useQuery({
     queryKey: ['salespeople-list'],
     queryFn: async () => {
-      const { data } = await supabase.from('salespeople').select('id, name, avatar_url').eq('is_active', true).order('name');
+      const { data } = await supabase.rpc('get_active_salespeople');
       return data || [];
     },
   });

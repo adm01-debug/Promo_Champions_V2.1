@@ -22,7 +22,7 @@ export async function generateCurrentMonthReport() {
     supabase.from("sales").select("client_name, product_name, amount, status")
       .in("status", ["pending", "qualified", "proposal", "negotiation"])
       .order("amount", { ascending: false }).limit(10),
-    supabase.from("salespeople").select("id, name").eq("is_active", true),
+    supabase.rpc('get_active_salespeople'),
     supabase.from("sales_goals").select("salesperson_id, goal_amount").eq("month", format(now, "yyyy-MM") + "-01"),
   ]);
 
