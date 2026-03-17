@@ -25,59 +25,47 @@ import {
   Save,
   RotateCcw,
   GripVertical,
-  Eye,
-  EyeOff,
-  TrendingUp,
-  Target,
-  Activity,
-  Star,
-  BarChart3,
-  Clock,
-  Trophy,
-  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const WIDGET_ICONS: Record<string, React.ReactNode> = {
-  revenue_kpi: <TrendingUp className="h-5 w-5 text-primary" />,
-  pipeline_funnel: <BarChart3 className="h-5 w-5 text-status-info" />,
-  activities_today: <Activity className="h-5 w-5 text-status-warning" />,
-  top_deals: <Star className="h-5 w-5 text-status-success" />,
-  conversion_rate: <TrendingUp className="h-5 w-5 text-status-purple" />,
-  recent_activities: <Clock className="h-5 w-5 text-muted-foreground" />,
-  goal_progress: <Target className="h-5 w-5 text-primary" />,
-  team_ranking: <Trophy className="h-5 w-5 text-status-warning" />,
-  forecast_summary: <TrendingUp className="h-5 w-5 text-status-success" />,
-  calendar_preview: <Calendar className="h-5 w-5 text-status-info" />,
+// Real widget components
+import { RevenueKpiWidget } from "./widgets/RevenueKpiWidget";
+import { ActivitiesTodayWidget } from "./widgets/ActivitiesTodayWidget";
+import { ConversionRateWidget } from "./widgets/ConversionRateWidget";
+import { GoalProgressWidget } from "./widgets/GoalProgressWidget";
+import { ForecastWidget } from "./widgets/ForecastWidget";
+import { PipelineFunnelWidget } from "./widgets/PipelineFunnelWidget";
+import { TopDealsWidget } from "./widgets/TopDealsWidget";
+import { RecentActivitiesWidget } from "./widgets/RecentActivitiesWidget";
+import { TeamRankingWidget } from "./widgets/TeamRankingWidget";
+import { CalendarPreviewWidget } from "./widgets/CalendarPreviewWidget";
+
+const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
+  revenue_kpi: RevenueKpiWidget,
+  pipeline_funnel: PipelineFunnelWidget,
+  activities_today: ActivitiesTodayWidget,
+  top_deals: TopDealsWidget,
+  conversion_rate: ConversionRateWidget,
+  recent_activities: RecentActivitiesWidget,
+  goal_progress: GoalProgressWidget,
+  team_ranking: TeamRankingWidget,
+  forecast_summary: ForecastWidget,
+  calendar_preview: CalendarPreviewWidget,
 };
 
-function WidgetPlaceholder({ config }: { config: WidgetConfig }) {
-  const icon = WIDGET_ICONS[config.type] || <LayoutGrid className="h-5 w-5" />;
-  const widgetMeta = AVAILABLE_WIDGETS.find(w => w.type === config.type);
-
-  return (
-    <Card className={cn(
-      "h-full transition-all hover:shadow-md border-border/50",
-      !config.visible && "opacity-40"
-    )}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-display flex items-center gap-2">
-          <GripVertical className="h-3 w-3 text-muted-foreground cursor-grab" />
-          {icon}
-          {config.title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex items-center justify-center">
-        <div className="text-center py-4">
-          <p className="text-3xl font-bold text-primary">—</p>
-          <p className="text-[10px] text-muted-foreground mt-1">
-            {widgetMeta?.description || "Widget"}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-  );
+function RealWidget({ config }: { config: WidgetConfig }) {
+  const Component = WIDGET_COMPONENTS[config.type];
+  if (!Component) {
+    return (
+      <Card className="h-full">
+        <CardContent className="flex items-center justify-center h-full">
+          <p className="text-xs text-muted-foreground">Widget não encontrado</p>
+        </CardContent>
+      </Card>
+    );
+  }
+  return <Component />;
 }
 
 function WidgetManagerDialog({
@@ -132,9 +120,7 @@ function WidgetManagerDialog({
                       />
                     </div>
                   ) : (
-                    <Button size="sm" variant="outline" className="gap-1 h-7 text-xs" onClick={() => {
-                      onAddWidget(widget.type);
-                    }}>
+                    <Button size="sm" variant="outline" className="gap-1 h-7 text-xs" onClick={() => onAddWidget(widget.type)}>
                       <Plus className="h-3 w-3" />
                       Adicionar
                     </Button>
@@ -249,7 +235,7 @@ export function CustomizableDashboard() {
       {smallWidgets.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {smallWidgets.map(widget => (
-            <WidgetPlaceholder key={widget.id} config={widget} />
+            <RealWidget key={widget.id} config={widget} />
           ))}
         </div>
       )}
@@ -258,7 +244,7 @@ export function CustomizableDashboard() {
       {largeWidgets.length > 0 && (
         <div className="grid lg:grid-cols-2 gap-4">
           {largeWidgets.map(widget => (
-            <WidgetPlaceholder key={widget.id} config={widget} />
+            <RealWidget key={widget.id} config={widget} />
           ))}
         </div>
       )}

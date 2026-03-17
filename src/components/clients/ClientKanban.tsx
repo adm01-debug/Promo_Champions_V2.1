@@ -94,13 +94,13 @@ export function ClientKanban() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
 
   if (isLoading) {
-    return <div className="grid grid-cols-5 gap-3">
-      {STAGES.map(s => <Card key={s.id} className="h-96 animate-pulse bg-muted/30" />)}
+    return <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      {STAGES.map(s => <Card key={s.id} className="h-60 md:h-96 animate-pulse bg-muted/30" />)}
     </div>;
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto pb-2">
       {STAGES.map(stage => {
         const entries = groupedByStage[stage.id] || [];
         const totalValue = entries.reduce((sum, e) => sum + (e.clients?.total_value || 0), 0);
@@ -108,7 +108,7 @@ export function ClientKanban() {
           <div
             key={stage.id}
             className={cn(
-              "rounded-xl border-2 border-dashed p-2 transition-colors min-h-[400px]",
+              "rounded-xl border-2 border-dashed p-2 transition-all min-h-[300px] lg:min-h-[400px]",
               dragOverStage === stage.id ? "border-primary bg-primary/5" : "border-transparent"
             )}
             onDragOver={(e) => handleDragOver(e, stage.id)}
@@ -125,7 +125,7 @@ export function ClientKanban() {
               <span className="text-xs font-medium text-muted-foreground">{formatValue(totalValue)}</span>
             </div>
 
-            <ScrollArea className="h-[calc(100vh-320px)]">
+            <ScrollArea className="h-[calc(100vh-380px)] lg:h-[calc(100vh-320px)]">
               <div className="space-y-2">
                 {entries.map(entry => (
                   <Card

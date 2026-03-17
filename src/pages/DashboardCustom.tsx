@@ -1,5 +1,6 @@
 import { CustomizableDashboard } from "@/components/dashboard/CustomizableDashboard";
 import { Helmet } from "react-helmet-async";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function DashboardCustom() {
   return (
@@ -8,7 +9,9 @@ export default function DashboardCustom() {
         <title>Dashboard Personalizado | Sales Arena</title>
         <meta name="description" content="Monte seu próprio dashboard arrastando widgets personalizados" />
       </Helmet>
-      <CustomizableDashboard />
+      <PageTransition>
+        <CustomizableDashboard />
+      </PageTransition>
     </>
   );
 }
