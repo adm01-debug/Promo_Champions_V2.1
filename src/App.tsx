@@ -245,6 +245,8 @@ const App = () => {
                                       <Route path="/automacoes" element={<Automacoes />} />
                                       <Route path="/email-tracking" element={<EmailTracking />} />
                                       <Route path="/dashboard-custom" element={<DashboardCustom />} />
+                                      <Route path="/kanban-clientes" element={<KanbanClientes />} />
+                                      <Route path="/relatorios-email" element={<RelatoriosEmail />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>

@@ -63,6 +63,9 @@ const Index = () => {
               <DashboardHeader />
             </motion.div>
 
+            {/* Onboarding Checklist */}
+            <OnboardingChecklist />
+
             {/* Competitive Status Bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}

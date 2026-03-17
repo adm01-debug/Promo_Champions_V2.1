@@ -128,6 +128,8 @@ const gestaoMoreItems: MenuItem[] = [
   { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
   { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
   { title: "Calendário", url: "/calendario", icon: Calendar },
+  { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
+  { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
 ];
 
 const systemItems: MenuItem[] = [
