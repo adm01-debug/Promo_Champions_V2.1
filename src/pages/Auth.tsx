@@ -282,6 +282,7 @@ export default function Auth() {
                 </div>
               </div>
 
+              <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   {/* Alerta de bloqueio */}
                   {lockoutStatus.isLocked && countdown > 0 && (
