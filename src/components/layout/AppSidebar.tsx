@@ -20,6 +20,7 @@ import {
   Building2,
   Sparkles,
   FileText,
+  Calendar,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -87,6 +88,7 @@ const sdrMoreItems: MenuItem[] = [
   { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
   { title: "Cadências", url: "/cadencias", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: Target },
+  { title: "Calendário", url: "/calendario", icon: Calendar },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
@@ -94,6 +96,7 @@ const sdrMoreItems: MenuItem[] = [
 const closerMoreItems: MenuItem[] = [
   { title: "BI Closer", url: "/bi-closer", icon: LineChart },
   { title: "Atividades", url: "/atividades", icon: Activity },
+  { title: "Calendário", url: "/calendario", icon: Calendar },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
@@ -101,12 +104,14 @@ const closerMoreItems: MenuItem[] = [
 
 const gestaoMoreItems: MenuItem[] = [
   { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+  { title: "Forecast", url: "/forecast", icon: TrendingUp },
   { title: "Times", url: "/times", icon: Building2 },
   { title: "Portfólio", url: "/portfolio", icon: Target },
   { title: "ICP", url: "/icp", icon: Users },
   { title: "Playbooks", url: "/playbooks", icon: Target },
   { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
   { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
+  { title: "Calendário", url: "/calendario", icon: Calendar },
 ];
 
 const systemItems: MenuItem[] = [

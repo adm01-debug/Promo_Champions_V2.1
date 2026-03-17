@@ -31,6 +31,8 @@ const routeLabels: Record<string, string> = {
   'fornecedores': 'Fornecedores',
   'comparador-precos': 'Comparador',
   'previsao-demanda': 'Previsão',
+  'forecast': 'Forecast Ponderado',
+  'calendario': 'Calendário',
   'assinatura-digital': 'Assinatura Digital',
   'assistente': 'Assistente IA',
   'notificacoes': 'Notificações',

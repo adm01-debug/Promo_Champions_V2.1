@@ -70,6 +70,8 @@ const BICloser = lazy(() => import("./pages/BICloser"));
 const DesafiosSemanais = lazy(() => import("./pages/DesafiosSemanais"));
 const HistoricoDesafiosDiarios = lazy(() => import("./pages/HistoricoDesafiosDiarios"));
 const PrevisaoDemanda = lazy(() => import("./pages/PrevisaoDemanda"));
+const ForecastPonderado = lazy(() => import("./pages/ForecastPonderado"));
+const Calendario = lazy(() => import("./pages/Calendario"));
 const Fornecedores = lazy(() => import("./pages/Fornecedores"));
 const ComparadorPrecos = lazy(() => import("./pages/ComparadorPrecos"));
 const AssinaturaDigital = lazy(() => import("./pages/AssinaturaDigital"));
@@ -213,6 +215,12 @@ const App = () => {
                                           <PrevisaoDemanda />
                                         </ProtectedRoute>
                                       } />
+                                      <Route path="/forecast" element={
+                                        <ProtectedRoute requireAdminOrManager>
+                                          <ForecastPonderado />
+                                        </ProtectedRoute>
+                                      } />
+                                      <Route path="/calendario" element={<Calendario />} />
                                       <Route path="/fornecedores" element={
                                         <ProtectedRoute requireAdminOrManager>
                                           <Fornecedores />
