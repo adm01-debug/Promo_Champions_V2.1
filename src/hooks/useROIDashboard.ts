@@ -62,7 +62,7 @@ export function useROIDashboard(periodMonths: number = 3) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('sales')
-        .select('id, salesperson_id, value, status, created_at')
+        .select('id, salesperson_id, amount, status, created_at')
         .gte('created_at', startDate);
       if (error) throw error;
       return data || [];
