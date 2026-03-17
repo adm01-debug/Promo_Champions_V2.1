@@ -69,6 +69,8 @@ export function useDealTimeline(saleId: string | null) {
       if (activitiesRes.error) throw activitiesRes.error;
       if (stageRes.error) throw stageRes.error;
       if (tasksRes.error) throw tasksRes.error;
+      if (outcomesRes.error) throw outcomesRes.error;
+      if (chatRes.error) throw chatRes.error;
 
       const events: DealTimelineEvent[] = [];
 
