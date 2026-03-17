@@ -89,11 +89,13 @@ export const PrizeWheel: FC<PrizeWheelProps> = ({ salespersonId, className }) =>
         setIsSpinning(false);
         setWonPrize(result.prize.label);
         toast.success(`🎉 Você ganhou: ${result.prize.label}!`);
-        confetti({
-          particleCount: 60,
-          spread: 60,
-          origin: { y: 0.5 },
-          colors: [result.prize.color, '#FFD700', '#FF6347'],
+        import('canvas-confetti').then(({ default: confetti }) => {
+          confetti({
+            particleCount: 60,
+            spread: 60,
+            origin: { y: 0.5 },
+            colors: [result.prize.color, '#FFD700', '#FF6347'],
+          });
         });
       }, 3500);
     } catch {
