@@ -79,6 +79,8 @@ const Orcamentos = lazy(() => import("./pages/Orcamentos"));
 const Automacoes = lazy(() => import("./pages/Automacoes"));
 const EmailTracking = lazy(() => import("./pages/EmailTracking"));
 const DashboardCustom = lazy(() => import("./pages/DashboardCustom"));
+const KanbanClientes = lazy(() => import("./pages/KanbanClientes"));
+const RelatoriosEmail = lazy(() => import("./pages/RelatoriosEmail"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -243,6 +245,8 @@ const App = () => {
                                       <Route path="/automacoes" element={<Automacoes />} />
                                       <Route path="/email-tracking" element={<EmailTracking />} />
                                       <Route path="/dashboard-custom" element={<DashboardCustom />} />
+                                      <Route path="/kanban-clientes" element={<KanbanClientes />} />
+                                      <Route path="/relatorios-email" element={<RelatoriosEmail />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>

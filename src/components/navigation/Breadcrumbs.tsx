@@ -36,6 +36,8 @@ const routeLabels: Record<string, string> = {
   'automacoes': 'Automações',
   'email-tracking': 'Email Tracking',
   'dashboard-custom': 'Meu Dashboard',
+  'kanban-clientes': 'Kanban Clientes',
+  'relatorios-email': 'Relatórios Email',
   'assinatura-digital': 'Assinatura Digital',
   'assistente': 'Assistente IA',
   'notificacoes': 'Notificações',

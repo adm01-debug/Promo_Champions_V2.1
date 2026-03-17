@@ -24,6 +24,8 @@ import {
   Zap,
   MailSearch,
   LayoutGrid,
+  Columns,
+  MailCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -95,6 +97,7 @@ const sdrMoreItems: MenuItem[] = [
   { title: "Automações", url: "/automacoes", icon: Zap },
   { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
   { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
+  { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
@@ -106,6 +109,7 @@ const closerMoreItems: MenuItem[] = [
   { title: "Automações", url: "/automacoes", icon: Zap },
   { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
   { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
+  { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
@@ -124,6 +128,8 @@ const gestaoMoreItems: MenuItem[] = [
   { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
   { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
   { title: "Calendário", url: "/calendario", icon: Calendar },
+  { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
+  { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
 ];
 
 const systemItems: MenuItem[] = [

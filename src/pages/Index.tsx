@@ -1,4 +1,5 @@
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { SalesChart } from "@/components/dashboard/SalesChart";
 import { FunnelChart } from "@/components/dashboard/FunnelChart";
@@ -61,6 +62,9 @@ const Index = () => {
             >
               <DashboardHeader />
             </motion.div>
+
+            {/* Onboarding Checklist */}
+            <OnboardingChecklist />
 
             {/* Competitive Status Bar */}
             <motion.div
