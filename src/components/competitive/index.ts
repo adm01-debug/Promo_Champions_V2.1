@@ -18,3 +18,7 @@ export { WallOfFame } from './WallOfFame';
 export { GamifiedProfile } from './GamifiedProfile';
 export { Benchmarking } from './Benchmarking';
 export { ActivityHeatmap } from './ActivityHeatmap';
+export { TournamentBrackets } from './TournamentBrackets';
+export { PerformanceBets } from './PerformanceBets';
+export { TerritoryWars } from './TerritoryWars';
+export { EnhancedTVMode } from './EnhancedTVMode';

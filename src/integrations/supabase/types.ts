@@ -2166,6 +2166,62 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_bets: {
+        Row: {
+          bet_type: string
+          created_at: string
+          current_value: number
+          description: string | null
+          ends_at: string
+          id: string
+          resolved_at: string | null
+          salesperson_id: string
+          starts_at: string
+          status: string
+          target_value: number
+          xp_multiplier: number
+          xp_wagered: number
+        }
+        Insert: {
+          bet_type: string
+          created_at?: string
+          current_value?: number
+          description?: string | null
+          ends_at: string
+          id?: string
+          resolved_at?: string | null
+          salesperson_id: string
+          starts_at?: string
+          status?: string
+          target_value: number
+          xp_multiplier?: number
+          xp_wagered?: number
+        }
+        Update: {
+          bet_type?: string
+          created_at?: string
+          current_value?: number
+          description?: string | null
+          ends_at?: string
+          id?: string
+          resolved_at?: string | null
+          salesperson_id?: string
+          starts_at?: string
+          status?: string
+          target_value?: number
+          xp_multiplier?: number
+          xp_wagered?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_bets_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permissions: {
         Row: {
           action: string
@@ -3164,6 +3220,53 @@ export type Database = {
           },
         ]
       }
+      sales_territories: {
+        Row: {
+          conquered_at: string | null
+          created_at: string
+          current_owner_id: string | null
+          id: string
+          is_contested: boolean
+          territory_name: string
+          territory_type: string
+          total_deals: number
+          total_revenue: number
+          updated_at: string
+        }
+        Insert: {
+          conquered_at?: string | null
+          created_at?: string
+          current_owner_id?: string | null
+          id?: string
+          is_contested?: boolean
+          territory_name: string
+          territory_type?: string
+          total_deals?: number
+          total_revenue?: number
+          updated_at?: string
+        }
+        Update: {
+          conquered_at?: string | null
+          created_at?: string
+          current_owner_id?: string | null
+          id?: string
+          is_contested?: boolean
+          territory_name?: string
+          territory_type?: string
+          total_deals?: number
+          total_revenue?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_territories_current_owner_id_fkey"
+            columns: ["current_owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       salespeople: {
         Row: {
           auth_user_id: string | null
@@ -3958,6 +4061,238 @@ export type Database = {
           {
             foreignKeyName: "teams_sdr_id_fkey"
             columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      territory_history: {
+        Row: {
+          conquered_at: string | null
+          created_at: string
+          deals_count: number
+          id: string
+          lost_at: string | null
+          revenue_contribution: number
+          salesperson_id: string
+          territory_id: string
+        }
+        Insert: {
+          conquered_at?: string | null
+          created_at?: string
+          deals_count?: number
+          id?: string
+          lost_at?: string | null
+          revenue_contribution?: number
+          salesperson_id: string
+          territory_id: string
+        }
+        Update: {
+          conquered_at?: string | null
+          created_at?: string
+          deals_count?: number
+          id?: string
+          lost_at?: string | null
+          revenue_contribution?: number
+          salesperson_id?: string
+          territory_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "territory_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "territory_history_territory_id_fkey"
+            columns: ["territory_id"]
+            isOneToOne: false
+            referencedRelation: "sales_territories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournament_matches: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          match_order: number
+          player1_id: string | null
+          player1_score: number
+          player2_id: string | null
+          player2_score: number
+          round_number: number
+          started_at: string | null
+          status: string
+          tournament_id: string
+          winner_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          match_order?: number
+          player1_id?: string | null
+          player1_score?: number
+          player2_id?: string | null
+          player2_score?: number
+          round_number: number
+          started_at?: string | null
+          status?: string
+          tournament_id: string
+          winner_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          match_order?: number
+          player1_id?: string | null
+          player1_score?: number
+          player2_id?: string | null
+          player2_score?: number
+          round_number?: number
+          started_at?: string | null
+          status?: string
+          tournament_id?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_matches_player1_id_fkey"
+            columns: ["player1_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_matches_player2_id_fkey"
+            columns: ["player2_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_matches_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_matches_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournament_participants: {
+        Row: {
+          created_at: string
+          eliminated_in_round: number | null
+          final_position: number | null
+          id: string
+          is_eliminated: boolean
+          salesperson_id: string
+          seed: number | null
+          tournament_id: string
+        }
+        Insert: {
+          created_at?: string
+          eliminated_in_round?: number | null
+          final_position?: number | null
+          id?: string
+          is_eliminated?: boolean
+          salesperson_id: string
+          seed?: number | null
+          tournament_id: string
+        }
+        Update: {
+          created_at?: string
+          eliminated_in_round?: number | null
+          final_position?: number | null
+          id?: string
+          is_eliminated?: boolean
+          salesperson_id?: string
+          seed?: number | null
+          tournament_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_participants_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_participants_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          bracket_type: string
+          created_at: string
+          created_by: string | null
+          current_round: number
+          description: string | null
+          ends_at: string | null
+          id: string
+          metric_type: string
+          name: string
+          round_duration_days: number
+          starts_at: string
+          status: string
+          total_rounds: number
+          xp_reward: number
+        }
+        Insert: {
+          bracket_type?: string
+          created_at?: string
+          created_by?: string | null
+          current_round?: number
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          metric_type?: string
+          name: string
+          round_duration_days?: number
+          starts_at: string
+          status?: string
+          total_rounds?: number
+          xp_reward?: number
+        }
+        Update: {
+          bracket_type?: string
+          created_at?: string
+          created_by?: string | null
+          current_round?: number
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          metric_type?: string
+          name?: string
+          round_duration_days?: number
+          starts_at?: string
+          status?: string
+          total_rounds?: number
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournaments_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
