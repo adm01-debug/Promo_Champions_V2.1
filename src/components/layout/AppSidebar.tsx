@@ -24,6 +24,8 @@ import {
   Zap,
   MailSearch,
   LayoutGrid,
+  Columns,
+  MailCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
