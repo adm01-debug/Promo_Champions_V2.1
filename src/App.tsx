@@ -240,6 +240,9 @@ const App = () => {
                                         </ProtectedRoute>
                                       } />
                                       <Route path="/orcamentos" element={<Orcamentos />} />
+                                      <Route path="/automacoes" element={<Automacoes />} />
+                                      <Route path="/email-tracking" element={<EmailTracking />} />
+                                      <Route path="/dashboard-custom" element={<DashboardCustom />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>
