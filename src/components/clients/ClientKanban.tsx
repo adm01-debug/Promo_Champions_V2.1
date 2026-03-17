@@ -108,7 +108,7 @@ export function ClientKanban() {
           <div
             key={stage.id}
             className={cn(
-              "rounded-xl border-2 border-dashed p-2 transition-colors min-h-[400px]",
+              "rounded-xl border-2 border-dashed p-2 transition-all min-h-[300px] lg:min-h-[400px]",
               dragOverStage === stage.id ? "border-primary bg-primary/5" : "border-transparent"
             )}
             onDragOver={(e) => handleDragOver(e, stage.id)}
