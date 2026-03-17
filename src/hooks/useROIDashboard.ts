@@ -89,7 +89,7 @@ export function useROIDashboard(periodMonths: number = 3) {
     return salespeople.map((sp) => {
       const spSales = sales.filter((s) => s.salesperson_id === sp.id);
       const wonSales = spSales.filter((s) => s.status === 'won' || s.status === 'closed');
-      const totalRevenue = wonSales.reduce((sum, s) => sum + (s.value || 0), 0);
+      const totalRevenue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
       const spActivities = activities.filter((a) => a.salesperson_id === sp.id);
 
       const commissionPaid = totalRevenue * (sp.commission_rate || 0.1);
