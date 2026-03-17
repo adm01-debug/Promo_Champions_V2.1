@@ -4763,6 +4763,10 @@ export type Database = {
         Returns: undefined
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
+      update_own_profile: {
+        Args: { p_avatar_url?: string; p_name?: string }
+        Returns: undefined
+      }
       validate_session: {
         Args: { session_id: string }
         Returns: {
