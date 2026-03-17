@@ -6,11 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
+  lead: { label: "Lead", color: "bg-blue-500" },
   pending: { label: "Lead", color: "bg-blue-500" },
   qualified: { label: "Qualificado", color: "bg-indigo-500" },
   proposal: { label: "Proposta", color: "bg-amber-500" },
   negotiation: { label: "Negociação", color: "bg-orange-500" },
   won: { label: "Ganho", color: "bg-green-500" },
+  completed: { label: "Fechado", color: "bg-green-600" },
   lost: { label: "Perdido", color: "bg-red-500" },
 };
 

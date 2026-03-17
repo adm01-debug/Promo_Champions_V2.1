@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const STATUS_LABELS: Record<string, string> = {
+  lead: "Lead",
   pending: "Lead",
   qualified: "Qualificado",
   proposal: "Proposta",
