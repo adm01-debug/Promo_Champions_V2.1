@@ -155,7 +155,8 @@ export function useActivityGoalProgress() {
 
       return progressData.sort((a, b) => b.progress.overall - a.progress.overall);
     },
-    refetchInterval: 30000,
+    refetchInterval: 60000,
+    staleTime: 30000,
   });
 }
 

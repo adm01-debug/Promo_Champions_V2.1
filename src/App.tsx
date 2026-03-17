@@ -88,12 +88,13 @@ const RelatoriosExecutivos = lazy(() => import("./pages/RelatoriosExecutivos"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 2,
-      gcTime: 1000 * 60 * 10,
+      staleTime: 1000 * 60 * 3,
+      gcTime: 1000 * 60 * 15,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       retry: 1,
       refetchInterval: false,
+      networkMode: "offlineFirst",
     },
   },
 });

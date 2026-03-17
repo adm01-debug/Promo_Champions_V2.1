@@ -88,7 +88,8 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     assetsDir: "assets",
     sourcemap: mode === "development",
-    // Ensure consistent React bundling
+    cssCodeSplit: true,
+    minify: "esbuild",
     rollupOptions: {
       output: {
         manualChunks: {
@@ -97,7 +98,16 @@ export default defineConfig(({ mode }) => ({
             '@radix-ui/react-tooltip',
             '@radix-ui/react-dialog',
             '@radix-ui/react-popover',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-dropdown-menu',
           ],
+          'animation': ['framer-motion'],
+          'charts': ['recharts'],
+          'query': ['@tanstack/react-query'],
+          'supabase': ['@supabase/supabase-js'],
+          'date-utils': ['date-fns'],
+          'icons': ['lucide-react'],
         },
       },
     },
