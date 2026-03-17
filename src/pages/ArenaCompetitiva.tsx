@@ -68,7 +68,11 @@ const ArenaCompetitiva = () => {
             <TabsTrigger value="chat" className="gap-1.5"><MessageCircle className="h-4 w-4" /><span className="hidden sm:inline">Chat</span></TabsTrigger>
             <TabsTrigger value="wheel" className="gap-1.5"><Gift className="h-4 w-4" /><span className="hidden sm:inline">Roda</span></TabsTrigger>
             <TabsTrigger value="battles" className="gap-1.5"><Swords className="h-4 w-4" /><span className="hidden sm:inline">Duelos</span></TabsTrigger>
+            <TabsTrigger value="tournament" className="gap-1.5"><Crown className="h-4 w-4" /><span className="hidden sm:inline">Torneios</span></TabsTrigger>
+            <TabsTrigger value="bets" className="gap-1.5"><Coins className="h-4 w-4" /><span className="hidden sm:inline">Apostas</span></TabsTrigger>
+            <TabsTrigger value="territory" className="gap-1.5"><MapPin className="h-4 w-4" /><span className="hidden sm:inline">Territórios</span></TabsTrigger>
             <TabsTrigger value="tv" className="gap-1.5"><Tv className="h-4 w-4" /><span className="hidden sm:inline">TV</span></TabsTrigger>
+            <TabsTrigger value="tvpro" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">TV Pro</span></TabsTrigger>
             <TabsTrigger value="scoreboard" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">Placar</span></TabsTrigger>
             <TabsTrigger value="alerts" className="gap-1.5 relative">
               <Bell className="h-4 w-4" /><span className="hidden sm:inline">Alertas</span>
