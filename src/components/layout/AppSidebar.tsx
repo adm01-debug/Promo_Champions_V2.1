@@ -27,6 +27,7 @@ import {
   Columns,
   MailCheck,
   DollarSign,
+  Swords,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -71,6 +72,7 @@ const sdrMainItems: MenuItem[] = [
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Ranking", url: "/ranking", icon: Trophy },
+  { title: "Arena", url: "/arena", icon: Swords },
 ];
 
 const closerMainItems: MenuItem[] = [
@@ -79,6 +81,7 @@ const closerMainItems: MenuItem[] = [
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
   { title: "Clientes", url: "/clientes", icon: Users },
+  { title: "Arena", url: "/arena", icon: Swords },
 ];
 
 const gestaoMainItems: MenuItem[] = [

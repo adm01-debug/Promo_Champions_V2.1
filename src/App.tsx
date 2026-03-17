@@ -82,7 +82,7 @@ const DashboardCustom = lazy(() => import("./pages/DashboardCustom"));
 const KanbanClientes = lazy(() => import("./pages/KanbanClientes"));
 const RelatoriosEmail = lazy(() => import("./pages/RelatoriosEmail"));
 const ROIDashboard = lazy(() => import("./pages/ROIDashboard"));
-
+const ArenaCompetitiva = lazy(() => import("./pages/ArenaCompetitiva"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -253,6 +253,7 @@ const App = () => {
                                           <ROIDashboard />
                                         </ProtectedRoute>
                                       } />
+                                      <Route path="/arena" element={<ArenaCompetitiva />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>

@@ -85,6 +85,47 @@ export type Database = {
           },
         ]
       }
+      active_power_ups: {
+        Row: {
+          activated_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          multiplier: number
+          power_up_type: string
+          salesperson_id: string
+          source: string | null
+        }
+        Insert: {
+          activated_at?: string
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          power_up_type: string
+          salesperson_id: string
+          source?: string | null
+        }
+        Update: {
+          activated_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          power_up_type?: string
+          salesperson_id?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "active_power_ups_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       active_sessions: {
         Row: {
           created_at: string | null
@@ -220,6 +261,48 @@ export type Database = {
             foreignKeyName: "activity_goals_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      battle_participants: {
+        Row: {
+          battle_id: string
+          current_score: number
+          id: string
+          joined_at: string
+          salesperson_id: string
+          team_name: string | null
+        }
+        Insert: {
+          battle_id: string
+          current_score?: number
+          id?: string
+          joined_at?: string
+          salesperson_id: string
+          team_name?: string | null
+        }
+        Update: {
+          battle_id?: string
+          current_score?: number
+          id?: string
+          joined_at?: string
+          salesperson_id?: string
+          team_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "battle_participants_battle_id_fkey"
+            columns: ["battle_id"]
+            isOneToOne: false
+            referencedRelation: "sales_battles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "battle_participants_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -685,6 +768,42 @@ export type Database = {
           phone?: string | null
           total_value?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      competitive_seasons: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          metadata: Json | null
+          name: string
+          season_number: number
+          starts_at: string
+          status: string
+          xp_multiplier: number
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          season_number?: number
+          starts_at: string
+          status?: string
+          xp_multiplier?: number
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          season_number?: number
+          starts_at?: string
+          status?: string
+          xp_multiplier?: number
         }
         Relationships: []
       }
@@ -1215,6 +1334,84 @@ export type Database = {
           },
           {
             foreignKeyName: "email_tracking_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_comments: {
+        Row: {
+          content: string
+          created_at: string
+          feed_item_id: string
+          id: string
+          salesperson_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          feed_item_id: string
+          id?: string
+          salesperson_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          feed_item_id?: string
+          id?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_comments_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "victory_feed"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_comments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_reactions: {
+        Row: {
+          created_at: string
+          feed_item_id: string
+          id: string
+          reaction: string
+          salesperson_id: string
+        }
+        Insert: {
+          created_at?: string
+          feed_item_id: string
+          id?: string
+          reaction?: string
+          salesperson_id: string
+        }
+        Update: {
+          created_at?: string
+          feed_item_id?: string
+          id?: string
+          reaction?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_reactions_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "victory_feed"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_reactions_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople"
@@ -2533,6 +2730,66 @@ export type Database = {
           },
         ]
       }
+      sales_battles: {
+        Row: {
+          battle_type: string
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          id: string
+          metric: string
+          starts_at: string
+          status: string
+          target_value: number | null
+          title: string
+          winner_id: string | null
+          xp_reward: number
+        }
+        Insert: {
+          battle_type?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          id?: string
+          metric?: string
+          starts_at?: string
+          status?: string
+          target_value?: number | null
+          title: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          battle_type?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          id?: string
+          metric?: string
+          starts_at?: string
+          status?: string
+          target_value?: number | null
+          title?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_battles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_battles_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales_goals: {
         Row: {
           created_at: string
@@ -3353,6 +3610,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      victory_feed: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          salesperson_id: string
+          title: string
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          salesperson_id: string
+          title: string
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          salesperson_id?: string
+          title?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "victory_feed_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       webauthn_challenges: {
         Row: {
