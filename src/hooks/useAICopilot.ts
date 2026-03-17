@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useCurrentSalesperson } from '@/hooks/useCurrentSalesperson';
+import { useQuery } from '@tanstack/react-query';
 
 interface CopilotSuggestion {
   text: string;
