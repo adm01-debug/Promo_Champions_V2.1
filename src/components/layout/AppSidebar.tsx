@@ -104,12 +104,14 @@ const closerMoreItems: MenuItem[] = [
 
 const gestaoMoreItems: MenuItem[] = [
   { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+  { title: "Forecast", url: "/forecast", icon: TrendingUp },
   { title: "Times", url: "/times", icon: Building2 },
   { title: "Portfólio", url: "/portfolio", icon: Target },
   { title: "ICP", url: "/icp", icon: Users },
   { title: "Playbooks", url: "/playbooks", icon: Target },
   { title: "Fonte de Leads", url: "/fonte-leads", icon: Target },
   { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
+  { title: "Calendário", url: "/calendario", icon: Calendar },
 ];
 
 const systemItems: MenuItem[] = [
