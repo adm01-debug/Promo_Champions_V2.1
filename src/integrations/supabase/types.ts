@@ -5098,7 +5098,6 @@ export type Database = {
     Views: {
       salespeople_public: {
         Row: {
-          auth_user_id: string | null
           avatar_url: string | null
           id: string | null
           is_active: boolean | null
@@ -5106,7 +5105,6 @@ export type Database = {
           role: Database["public"]["Enums"]["salesperson_role"] | null
         }
         Insert: {
-          auth_user_id?: string | null
           avatar_url?: string | null
           id?: string | null
           is_active?: boolean | null
@@ -5114,7 +5112,6 @@ export type Database = {
           role?: Database["public"]["Enums"]["salesperson_role"] | null
         }
         Update: {
-          auth_user_id?: string | null
           avatar_url?: string | null
           id?: string | null
           is_active?: boolean | null
@@ -5150,8 +5147,26 @@ export type Database = {
         Returns: string
       }
       generate_mfa_backup_codes: { Args: never; Returns: string[] }
+      get_active_salespeople: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          id: string
+          is_active: boolean
+          name: string
+          role: string
+        }[]
+      }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
+      get_mfa_status: {
+        Args: never
+        Returns: {
+          preferred_method: string
+          sms_enabled: boolean
+          totp_enabled: boolean
+        }[]
+      }
       get_user_permissions: {
         Args: never
         Returns: {

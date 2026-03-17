@@ -21,7 +21,7 @@ export function useWeeklyRanking() {
       const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
 
       const [spResult, salesResult] = await Promise.all([
-        supabase.from('salespeople').select('id, name, avatar_url, role').eq('is_active', true),
+        supabase.rpc('get_active_salespeople'),
         supabase
           .from('sales')
           .select('salesperson_id, amount')

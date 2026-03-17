@@ -44,7 +44,7 @@ export function TournamentBrackets() {
   const { data: salespeople = [] } = useQuery({
     queryKey: ['tournament-salespeople'],
     queryFn: async () => {
-      const { data } = await supabase.from('salespeople').select('id, name').eq('is_active', true);
+      const { data } = await supabase.rpc('get_active_salespeople');
       return data || [];
     },
     staleTime: 5 * 60 * 1000,

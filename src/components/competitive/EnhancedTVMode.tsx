@@ -33,7 +33,7 @@ export function EnhancedTVMode() {
   const { data: salespeople = [] } = useQuery({
     queryKey: ['tv-salespeople'],
     queryFn: async () => {
-      const { data: sp } = await supabase.from('salespeople').select('id, name, role').eq('is_active', true);
+      const { data: sp } = await supabase.rpc('get_active_salespeople');
       const { data: xpData } = await supabase.from('salesperson_xp').select('salesperson_id, total_xp, current_level');
       const xpMap = new Map((xpData || []).map(x => [x.salesperson_id, x]));
       return (sp || []).map(s => ({
