@@ -23,6 +23,7 @@ const nameSchema = z.string().min(2, "Nome deve ter pelo menos 2 caracteres");
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
