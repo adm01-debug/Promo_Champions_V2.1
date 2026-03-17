@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Crown, Swords, Trophy, Loader2, Mail, ShieldAlert } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
