@@ -129,7 +129,7 @@ export function TerritoryWars() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {territories.map((territory, i) => (
           <motion.div key={territory.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-            <Card className={`transition-all ${territory.isContested ? 'border-destructive/50 animate-pulse-subtle' : 'hover:border-primary/30'}`}>
+            <Card className={`transition-all ${territory.isContested ? 'border-destructive/50' : 'hover:border-primary/30'}`}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
