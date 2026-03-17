@@ -98,7 +98,11 @@ const ArenaCompetitiva = () => {
           <TabsContent value="chat"><CompetitiveChat salespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="wheel"><PrizeWheel salespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="battles"><BattleArena /></TabsContent>
+          <TabsContent value="tournament"><TournamentBrackets /></TabsContent>
+          <TabsContent value="bets"><PerformanceBets /></TabsContent>
+          <TabsContent value="territory"><TerritoryWars /></TabsContent>
           <TabsContent value="tv"><CompetitiveTVDashboard /></TabsContent>
+          <TabsContent value="tvpro"><EnhancedTVMode /></TabsContent>
           <TabsContent value="scoreboard"><LiveScoreboard /></TabsContent>
           <TabsContent value="alerts"><RankNotifications salespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="evolution"><EvolutionChart /></TabsContent>
