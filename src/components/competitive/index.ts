@@ -14,3 +14,7 @@ export { BadgesGallery } from './BadgesGallery';
 export { ProgressiveGoals } from './ProgressiveGoals';
 export { CompetitiveChat } from './CompetitiveChat';
 export { CompetitiveTVDashboard } from './CompetitiveTVDashboard';
+export { WallOfFame } from './WallOfFame';
+export { GamifiedProfile } from './GamifiedProfile';
+export { Benchmarking } from './Benchmarking';
+export { ActivityHeatmap } from './ActivityHeatmap';
