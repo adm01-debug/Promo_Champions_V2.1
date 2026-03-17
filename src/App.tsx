@@ -218,6 +218,7 @@ const App = () => {
                                         <ProtectedRoute requireAdminOrManager>
                                           <ForecastPonderado />
                                         </ProtectedRoute>
+                                      } />
                                       <Route path="/fornecedores" element={
                                         <ProtectedRoute requireAdminOrManager>
                                           <Fornecedores />
