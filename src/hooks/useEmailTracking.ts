@@ -53,10 +53,15 @@ export function useEmailTrackingStats() {
   return useQuery({
     queryKey: ["email-tracking-stats", salesperson?.id],
     queryFn: async (): Promise<EmailTrackingStats> => {
-      const { data, error } = await supabase
+      const query = supabase
         .from("email_tracking_events")
         .select("event_type");
 
+      if (salesperson?.id) {
+        query.eq("salesperson_id", salesperson.id);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
 
       const events = data || [];
