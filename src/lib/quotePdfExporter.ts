@@ -1,10 +1,11 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import type { Quote, QuoteItem } from "@/hooks/useQuotes";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
+export async function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
+  const { default: jsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
+
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
 
