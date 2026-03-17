@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users } from 'lucide-react';
+import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv } from 'lucide-react';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
   WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications,
-  StreakTracker, LeagueSystem, HeadToHead, PrizeWheel
+  StreakTracker, LeagueSystem, HeadToHead, PrizeWheel,
+  BadgesGallery, ProgressiveGoals, CompetitiveChat, CompetitiveTVDashboard
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -62,6 +63,10 @@ const ArenaCompetitiva = () => {
               <Flame className="h-4 w-4" />
               <span className="hidden sm:inline">Ranking</span>
             </TabsTrigger>
+            <TabsTrigger value="badges" className="gap-1.5">
+              <Award className="h-4 w-4" />
+              <span className="hidden sm:inline">Badges</span>
+            </TabsTrigger>
             <TabsTrigger value="streaks" className="gap-1.5">
               <TrendingUp className="h-4 w-4" />
               <span className="hidden sm:inline">Streaks</span>
@@ -74,9 +79,17 @@ const ArenaCompetitiva = () => {
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">1v1</span>
             </TabsTrigger>
+            <TabsTrigger value="goals" className="gap-1.5">
+              <Target className="h-4 w-4" />
+              <span className="hidden sm:inline">Metas</span>
+            </TabsTrigger>
             <TabsTrigger value="missions" className="gap-1.5">
               <Target className="h-4 w-4" />
               <span className="hidden sm:inline">Missões</span>
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="gap-1.5">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">Chat</span>
             </TabsTrigger>
             <TabsTrigger value="wheel" className="gap-1.5">
               <Gift className="h-4 w-4" />
@@ -85,6 +98,10 @@ const ArenaCompetitiva = () => {
             <TabsTrigger value="battles" className="gap-1.5">
               <Swords className="h-4 w-4" />
               <span className="hidden sm:inline">Duelos</span>
+            </TabsTrigger>
+            <TabsTrigger value="tv" className="gap-1.5">
+              <Tv className="h-4 w-4" />
+              <span className="hidden sm:inline">TV</span>
             </TabsTrigger>
             <TabsTrigger value="scoreboard" className="gap-1.5">
               <Monitor className="h-4 w-4" />
@@ -113,6 +130,10 @@ const ArenaCompetitiva = () => {
             <WeeklyRanking />
           </TabsContent>
 
+          <TabsContent value="badges">
+            <BadgesGallery salespersonId={currentSalesperson?.id} />
+          </TabsContent>
+
           <TabsContent value="streaks">
             <StreakTracker />
           </TabsContent>
@@ -125,8 +146,16 @@ const ArenaCompetitiva = () => {
             <HeadToHead />
           </TabsContent>
 
+          <TabsContent value="goals">
+            <ProgressiveGoals salespersonId={currentSalesperson?.id} />
+          </TabsContent>
+
           <TabsContent value="missions">
             <DailyMissions salespersonId={currentSalesperson?.id} />
+          </TabsContent>
+
+          <TabsContent value="chat">
+            <CompetitiveChat salespersonId={currentSalesperson?.id} />
           </TabsContent>
 
           <TabsContent value="wheel">
@@ -135,6 +164,10 @@ const ArenaCompetitiva = () => {
 
           <TabsContent value="battles">
             <BattleArena />
+          </TabsContent>
+
+          <TabsContent value="tv">
+            <CompetitiveTVDashboard />
           </TabsContent>
 
           <TabsContent value="scoreboard">
