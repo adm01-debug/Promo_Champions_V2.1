@@ -144,7 +144,7 @@ function addTeamRanking(doc: jsPDF, team: ReportData["teamRanking"], startY: num
       `${t.progress.toFixed(0)}%`,
     ]),
     theme: "grid",
-    headStyles: { fillColor: BRAND_GREEN as unknown as number[], fontSize: 8, fontStyle: "bold" },
+    headStyles: { fillColor: [BRAND_GREEN[0], BRAND_GREEN[1], BRAND_GREEN[2]] as [number, number, number], fontSize: 8, fontStyle: "bold" },
     bodyStyles: { fontSize: 8 },
     margin: { left: 14, right: 14 },
     styles: { cellPadding: 2 },
