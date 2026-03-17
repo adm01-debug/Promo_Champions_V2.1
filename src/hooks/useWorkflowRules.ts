@@ -42,11 +42,16 @@ export function useWorkflowRules() {
   return useQuery({
     queryKey: ["workflow-rules", salesperson?.id],
     queryFn: async (): Promise<WorkflowRule[]> => {
-      const { data, error } = await supabase
+      const query = supabase
         .from("workflow_rules")
         .select("*")
         .order("created_at", { ascending: false });
 
+      if (salesperson?.id) {
+        query.eq("salesperson_id", salesperson.id);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return (data || []) as WorkflowRule[];
     },
