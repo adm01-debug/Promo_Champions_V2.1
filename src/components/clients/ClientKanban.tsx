@@ -100,7 +100,7 @@ export function ClientKanban() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto pb-2">
       {STAGES.map(stage => {
         const entries = groupedByStage[stage.id] || [];
         const totalValue = entries.reduce((sum, e) => sum + (e.clients?.total_value || 0), 0);
