@@ -161,7 +161,15 @@ export function EmailTrackingDashboard() {
                     const config = EVENT_CONFIG[event.event_type] || EVENT_CONFIG.sent;
                     return (
                       <div key={event.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors border border-border/30">
-                        <div className={cn("p-1.5 rounded-md", `bg-${event.event_type === 'sent' ? 'primary' : event.event_type === 'opened' ? 'status-success' : event.event_type === 'clicked' ? 'status-info' : 'muted'}/10`)}>
+                        <div className={cn(
+                          "p-1.5 rounded-md",
+                          event.event_type === 'sent' && "bg-primary/10",
+                          event.event_type === 'opened' && "bg-green-500/10",
+                          event.event_type === 'clicked' && "bg-blue-500/10",
+                          event.event_type === 'replied' && "bg-purple-500/10",
+                          event.event_type === 'bounced' && "bg-destructive/10",
+                          !['sent','opened','clicked','replied','bounced'].includes(event.event_type) && "bg-muted/10"
+                        )}>
                           {config.icon}
                         </div>
                         <div className="flex-1 min-w-0">
