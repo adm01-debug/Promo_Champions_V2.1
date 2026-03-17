@@ -1,13 +1,11 @@
-// MainLayout - primary layout wrapper
-import { useRef } from "react";
+// MainLayout - primary layout wrapper (performance-optimized)
+import { useRef, lazy, Suspense } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { GlobalSearch, GlobalSearchHandle, SearchTrigger } from "./GlobalSearch";
 import { useSecurityAlertNotifications } from "@/hooks/useSecurityAlertNotifications";
 import { useSDRAlertNotifications } from "@/hooks/useSDRAlertNotifications";
-import { CelebrationOverlayProvider } from "@/components/gamification/CelebrationOverlayProvider";
-import { MobileNavigation } from "@/components/mobile/MobileNavigation";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
@@ -18,9 +16,16 @@ import { NotificationBadge } from "@/components/ui/NotificationBadge";
 import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { InstallPrompt, UpdatePrompt, OfflineIndicator } from "@/components/pwa";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
-import { AICopilotFab } from "@/components/copilot";
+
+// Lazy load non-critical components that aren't needed for initial render
+const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
+const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
+const AICopilotFab = lazy(() => import("@/components/copilot/AICopilotFab").then(m => ({ default: m.AICopilotFab })));
+const InstallPrompt = lazy(() => import("@/components/pwa/InstallPrompt").then(m => ({ default: m.InstallPrompt })));
+const UpdatePrompt = lazy(() => import("@/components/pwa/UpdatePrompt").then(m => ({ default: m.UpdatePrompt })));
+const OfflineIndicator = lazy(() => import("@/components/pwa/OfflineIndicator").then(m => ({ default: m.OfflineIndicator })));
+
 interface MainLayoutProps {
   children: React.ReactNode;
 }
@@ -40,7 +45,9 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <SidebarProvider>
       {/* Offline indicator at top */}
-      <OfflineIndicator />
+      <Suspense fallback={null}>
+        <OfflineIndicator />
+      </Suspense>
       
       {/* Skip Links for Accessibility */}
       <SkipLinks />
@@ -100,23 +107,29 @@ export function MainLayout({ children }: MainLayoutProps) {
           </div>
         </main>
         
-        {/* Mobile bottom navigation */}
-        <MobileNavigation />
+        {/* Mobile bottom navigation - lazy */}
+        <Suspense fallback={null}>
+          <MobileNavigation />
+        </Suspense>
         
-        {/* Global celebration overlays */}
-        <CelebrationOverlayProvider />
+        {/* Global celebration overlays - lazy */}
+        <Suspense fallback={null}>
+          <CelebrationOverlayProvider />
+        </Suspense>
         
         {/* Focus mode break reminder */}
         <FocusModeBreakReminder />
         
-        {/* PWA Install Prompt */}
-        <InstallPrompt variant="card" />
+        {/* PWA prompts - lazy */}
+        <Suspense fallback={null}>
+          <InstallPrompt variant="card" />
+          <UpdatePrompt />
+        </Suspense>
         
-        {/* PWA Update Prompt */}
-        <UpdatePrompt />
-        
-        {/* AI Copilot FAB */}
-        <AICopilotFab />
+        {/* AI Copilot FAB - lazy */}
+        <Suspense fallback={null}>
+          <AICopilotFab />
+        </Suspense>
       </div>
     </SidebarProvider>
   );
