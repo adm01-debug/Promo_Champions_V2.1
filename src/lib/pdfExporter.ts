@@ -1,12 +1,12 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
-export function exportToPDF<T extends Record<string, any>>(
+export async function exportToPDF<T extends Record<string, any>>(
   data: T[],
   filename: string,
   title: string,
   columns?: { header: string; dataKey: string }[]
 ) {
+  const { default: jsPDF } = await import('jspdf');
+  const { default: autoTable } = await import('jspdf-autotable');
+  
   const doc = new jsPDF();
   
   doc.setFontSize(16);
