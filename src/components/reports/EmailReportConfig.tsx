@@ -195,14 +195,20 @@ export function EmailReportConfig() {
 
           <Separator />
 
-          <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setFormState({})}>
-              Cancelar
+          <div className="flex justify-between gap-3">
+            <Button variant="outline" onClick={() => generateCurrentMonthReport()} className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar PDF Agora
             </Button>
-            <Button onClick={handleSave} disabled={upsertConfig.isPending}>
-              <Send className="h-4 w-4 mr-2" />
-              Salvar Configurações
-            </Button>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setFormState({})}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSave} disabled={upsertConfig.isPending}>
+                <Send className="h-4 w-4 mr-2" />
+                Salvar Configurações
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
