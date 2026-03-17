@@ -253,6 +253,7 @@ const App = () => {
                                           <ROIDashboard />
                                         </ProtectedRoute>
                                       } />
+                                      <Route path="/arena" element={<ArenaCompetitiva />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>
