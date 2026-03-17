@@ -114,6 +114,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* PWA Update Prompt */}
         <UpdatePrompt />
+        
+        {/* AI Copilot FAB */}
+        <AICopilotFab />
       </div>
     </SidebarProvider>
   );
