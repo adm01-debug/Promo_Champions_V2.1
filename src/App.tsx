@@ -79,6 +79,8 @@ const Orcamentos = lazy(() => import("./pages/Orcamentos"));
 const Automacoes = lazy(() => import("./pages/Automacoes"));
 const EmailTracking = lazy(() => import("./pages/EmailTracking"));
 const DashboardCustom = lazy(() => import("./pages/DashboardCustom"));
+const KanbanClientes = lazy(() => import("./pages/KanbanClientes"));
+const RelatoriosEmail = lazy(() => import("./pages/RelatoriosEmail"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
