@@ -77,7 +77,7 @@ export function useCreateWorkflowRule() {
           action_type: input.action_type,
           action_config: input.action_config,
           salesperson_id: salesperson?.id,
-        })
+        } as never)
         .select()
         .single();
 
