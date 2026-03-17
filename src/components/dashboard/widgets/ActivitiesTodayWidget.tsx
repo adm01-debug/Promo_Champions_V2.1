@@ -28,7 +28,7 @@ export function ActivitiesTodayWidget() {
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
   const total = data?.length ?? 0;
-  const positive = data?.filter(a => a.outcome === "positive").length ?? 0;
+  const positive = data?.filter(a => a.outcome === "connected" || a.outcome === "qualified" || a.outcome === "scheduled").length ?? 0;
 
   return (
     <Card className="h-full">
