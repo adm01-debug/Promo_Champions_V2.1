@@ -2549,6 +2549,54 @@ export type Database = {
           },
         ]
       }
+      rank_change_notifications: {
+        Row: {
+          context: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          new_rank: number
+          old_rank: number
+          overtaken_by_id: string
+          salesperson_id: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          new_rank: number
+          old_rank: number
+          overtaken_by_id: string
+          salesperson_id: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          new_rank?: number
+          old_rank?: number
+          overtaken_by_id?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rank_change_notifications_overtaken_by_id_fkey"
+            columns: ["overtaken_by_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rank_change_notifications_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rate_limit_logs: {
         Row: {
           action: string
