@@ -81,6 +81,7 @@ const closerMainItems: MenuItem[] = [
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
   { title: "Clientes", url: "/clientes", icon: Users },
+  { title: "Arena", url: "/arena", icon: Swords },
 ];
 
 const gestaoMainItems: MenuItem[] = [

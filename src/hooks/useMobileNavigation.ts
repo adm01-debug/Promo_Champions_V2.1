@@ -43,6 +43,8 @@ const routeInfoMap: Record<string, PageInfo> = {
   '/bi-closer': { title: 'BI Closer' },
   '/bi-gestor': { title: 'BI Gestão' },
   '/fonte-leads': { title: 'Fonte de Leads' },
+  '/arena': { title: 'Arena', subtitle: 'Competição ao vivo' },
+  '/roi': { title: 'ROI', subtitle: 'Retorno por vendedor' },
 };
 
 export function useMobileNavigation() {
