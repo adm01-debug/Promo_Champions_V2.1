@@ -23,14 +23,6 @@ export function useUnreadNotificationsCount() {
       ]);
 
       return (alertsResult.count || 0) + (resetResult.count || 0);
-
-      // Count password reset requests pending
-      const { count: resetCount } = await supabase
-        .from("password_reset_requests")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "pending");
-
-      return (alertsCount || 0) + (resetCount || 0);
     },
     enabled: !!user?.id,
     refetchInterval: 60000,
