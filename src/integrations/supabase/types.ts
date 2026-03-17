@@ -266,6 +266,35 @@ export type Database = {
           },
         ]
       }
+      available_spins: {
+        Row: {
+          id: string
+          salesperson_id: string
+          spins_count: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          salesperson_id: string
+          spins_count?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          salesperson_id?: string
+          spins_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "available_spins_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       battle_participants: {
         Row: {
           battle_id: string
@@ -2269,6 +2298,44 @@ export type Database = {
           },
         ]
       }
+      prize_wheel_spins: {
+        Row: {
+          id: string
+          prize_label: string
+          prize_type: string
+          prize_value: number
+          salesperson_id: string
+          spun_at: string
+          trigger_type: string
+        }
+        Insert: {
+          id?: string
+          prize_label: string
+          prize_type: string
+          prize_value?: number
+          salesperson_id: string
+          spun_at?: string
+          trigger_type?: string
+        }
+        Update: {
+          id?: string
+          prize_label?: string
+          prize_type?: string
+          prize_value?: number
+          salesperson_id?: string
+          spun_at?: string
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prize_wheel_spins_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string
@@ -2870,6 +2937,44 @@ export type Database = {
           },
         ]
       }
+      sales_streaks: {
+        Row: {
+          current_streak: number
+          id: string
+          last_sale_date: string | null
+          longest_streak: number
+          salesperson_id: string
+          updated_at: string
+          xp_multiplier: number
+        }
+        Insert: {
+          current_streak?: number
+          id?: string
+          last_sale_date?: string | null
+          longest_streak?: number
+          salesperson_id: string
+          updated_at?: string
+          xp_multiplier?: number
+        }
+        Update: {
+          current_streak?: number
+          id?: string
+          last_sale_date?: string | null
+          longest_streak?: number
+          salesperson_id?: string
+          updated_at?: string
+          xp_multiplier?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_streaks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       salespeople: {
         Row: {
           auth_user_id: string | null
@@ -2908,6 +3013,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      salesperson_leagues: {
+        Row: {
+          created_at: string
+          demoted_at: string | null
+          id: string
+          league: Database["public"]["Enums"]["sales_league"]
+          points: number
+          promoted_at: string | null
+          salesperson_id: string
+          season_number: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          demoted_at?: string | null
+          id?: string
+          league?: Database["public"]["Enums"]["sales_league"]
+          points?: number
+          promoted_at?: string | null
+          salesperson_id: string
+          season_number?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          demoted_at?: string | null
+          id?: string
+          league?: Database["public"]["Enums"]["sales_league"]
+          points?: number
+          promoted_at?: string | null
+          salesperson_id?: string
+          season_number?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_leagues_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salesperson_preferences: {
         Row: {
@@ -3814,6 +3963,67 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_matchups: {
+        Row: {
+          created_at: string
+          id: string
+          salesperson_a_id: string
+          salesperson_b_id: string
+          score_a: number
+          score_b: number
+          status: string
+          week_start: string
+          winner_id: string | null
+          xp_reward: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          salesperson_a_id: string
+          salesperson_b_id: string
+          score_a?: number
+          score_b?: number
+          status?: string
+          week_start: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          salesperson_a_id?: string
+          salesperson_b_id?: string
+          score_a?: number
+          score_b?: number
+          status?: string
+          week_start?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_matchups_salesperson_a_id_fkey"
+            columns: ["salesperson_a_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_matchups_salesperson_b_id_fkey"
+            columns: ["salesperson_b_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_matchups_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_rules: {
         Row: {
           action_config: Json
@@ -4017,6 +4227,7 @@ export type Database = {
         | "whatsapp"
         | "other"
       app_role: "admin" | "manager" | "salesperson"
+      sales_league: "bronze" | "silver" | "gold" | "diamond"
       salesperson_role: "sdr" | "closer" | "hybrid"
       task_priority: "high" | "medium" | "low"
       task_status: "pending" | "in_progress" | "completed" | "cancelled"
@@ -4173,6 +4384,7 @@ export const Constants = {
         "other",
       ],
       app_role: ["admin", "manager", "salesperson"],
+      sales_league: ["bronze", "silver", "gold", "diamond"],
       salesperson_role: ["sdr", "closer", "hybrid"],
       task_priority: ["high", "medium", "low"],
       task_status: ["pending", "in_progress", "completed", "cancelled"],
