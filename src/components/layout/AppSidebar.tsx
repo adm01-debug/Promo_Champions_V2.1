@@ -71,6 +71,7 @@ const sdrMainItems: MenuItem[] = [
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Ranking", url: "/ranking", icon: Trophy },
+  { title: "Arena", url: "/arena", icon: Swords },
 ];
 
 const closerMainItems: MenuItem[] = [
