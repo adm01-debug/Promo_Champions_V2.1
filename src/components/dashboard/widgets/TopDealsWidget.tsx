@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const STATUS_LABELS: Record<string, string> = {
+  lead: "Lead",
   pending: "Lead",
   qualified: "Qualificado",
   proposal: "Proposta",
@@ -19,7 +20,7 @@ export function TopDealsWidget() {
       const { data, error } = await supabase
         .from("sales")
         .select("id, client_name, amount, status, product_name")
-        .in("status", ["pending", "qualified", "proposal", "negotiation"])
+        .in("status", ["lead", "pending", "qualified", "proposal", "negotiation"])
         .order("amount", { ascending: false })
         .limit(5);
       if (error) throw error;
