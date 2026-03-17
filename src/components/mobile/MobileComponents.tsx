@@ -1,6 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface NavItem {
   icon: ReactNode;
@@ -15,51 +16,84 @@ interface MobileBottomNavProps {
   className?: string;
 }
 
+const NavButton: FC<{ item: NavItem; index: number }> = ({ item, index }) => {
+  const content = (
+    <>
+      <motion.div
+        animate={item.isActive ? { scale: 1.15, y: -2 } : { scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+      >
+        {item.icon}
+      </motion.div>
+      <span className={cn(
+        "mt-1 truncate text-[10px] font-medium transition-colors",
+        item.isActive && "text-primary"
+      )}>
+        {item.label}
+      </span>
+      {item.isActive && (
+        <motion.div
+          layoutId="mobile-nav-indicator"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary"
+          transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+        />
+      )}
+    </>
+  );
+
+  const baseClasses = cn(
+    "relative flex flex-col items-center justify-center flex-1",
+    "min-h-[48px] min-w-[48px] py-1.5 px-1",
+    "text-xs transition-colors touch-manipulation",
+    "active:scale-95 active:opacity-70",
+    item.isActive
+      ? "text-primary"
+      : "text-muted-foreground"
+  );
+
+  if (item.onClick) {
+    return (
+      <button
+        key={index}
+        onClick={item.onClick}
+        type="button"
+        className={baseClasses}
+        aria-label={item.label}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      key={index}
+      to={item.href}
+      className={baseClasses}
+      aria-label={item.label}
+      aria-current={item.isActive ? 'page' : undefined}
+    >
+      {content}
+    </Link>
+  );
+};
+
 export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) => {
   return (
-    <nav className={cn(
-      "fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border",
-      "flex items-center justify-around h-16 px-2",
-      className
-    )}>
-      {items.map((item, index) => {
-        if (item.onClick) {
-          return (
-            <button
-              key={index}
-              onClick={item.onClick}
-              type="button"
-              className={cn(
-                "flex flex-col items-center justify-center flex-1 py-2 px-1",
-                "text-xs transition-colors",
-                item.isActive 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {item.icon}
-              <span className="mt-1 truncate">{item.label}</span>
-            </button>
-          );
-        }
-        
-        return (
-          <Link
-            key={index}
-            to={item.href}
-            className={cn(
-              "flex flex-col items-center justify-center flex-1 py-2 px-1",
-              "text-xs transition-colors",
-              item.isActive 
-                ? "text-primary" 
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {item.icon}
-            <span className="mt-1 truncate">{item.label}</span>
-          </Link>
-        );
-      })}
+    <nav
+      className={cn(
+        "fixed bottom-0 left-0 right-0 z-50",
+        "bg-background/95 backdrop-blur-lg border-t border-border/50",
+        "flex items-center justify-around",
+        "h-[68px] px-1",
+        "shadow-[0_-4px_20px_hsl(var(--foreground)/0.05)]",
+        className
+      )}
+      aria-label="Navegação principal mobile"
+    >
+      {items.map((item, index) => (
+        <NavButton key={index} item={item} index={index} />
+      ))}
     </nav>
   );
 };
