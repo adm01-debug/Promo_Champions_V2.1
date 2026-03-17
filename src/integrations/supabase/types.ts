@@ -5098,7 +5098,6 @@ export type Database = {
     Views: {
       salespeople_public: {
         Row: {
-          auth_user_id: string | null
           avatar_url: string | null
           id: string | null
           is_active: boolean | null
@@ -5106,7 +5105,6 @@ export type Database = {
           role: Database["public"]["Enums"]["salesperson_role"] | null
         }
         Insert: {
-          auth_user_id?: string | null
           avatar_url?: string | null
           id?: string | null
           is_active?: boolean | null
@@ -5114,7 +5112,6 @@ export type Database = {
           role?: Database["public"]["Enums"]["salesperson_role"] | null
         }
         Update: {
-          auth_user_id?: string | null
           avatar_url?: string | null
           id?: string | null
           is_active?: boolean | null
