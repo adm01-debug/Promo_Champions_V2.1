@@ -81,6 +81,7 @@ const EmailTracking = lazy(() => import("./pages/EmailTracking"));
 const DashboardCustom = lazy(() => import("./pages/DashboardCustom"));
 const KanbanClientes = lazy(() => import("./pages/KanbanClientes"));
 const RelatoriosEmail = lazy(() => import("./pages/RelatoriosEmail"));
+const ROIDashboard = lazy(() => import("./pages/ROIDashboard"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -247,6 +248,11 @@ const App = () => {
                                       <Route path="/dashboard-custom" element={<DashboardCustom />} />
                                       <Route path="/kanban-clientes" element={<KanbanClientes />} />
                                       <Route path="/relatorios-email" element={<RelatoriosEmail />} />
+                                      <Route path="/roi" element={
+                                        <ProtectedRoute requireAdminOrManager>
+                                          <ROIDashboard />
+                                        </ProtectedRoute>
+                                      } />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>

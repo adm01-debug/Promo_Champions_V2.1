@@ -26,6 +26,7 @@ import {
   LayoutGrid,
   Columns,
   MailCheck,
+  DollarSign,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -118,6 +119,7 @@ const closerMoreItems: MenuItem[] = [
 const gestaoMoreItems: MenuItem[] = [
   { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
   { title: "Forecast", url: "/forecast", icon: TrendingUp },
+  { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
   { title: "Automações", url: "/automacoes", icon: Zap },
   { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
   { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
