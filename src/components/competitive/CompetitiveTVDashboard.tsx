@@ -21,8 +21,8 @@ export const CompetitiveTVDashboard: FC = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { data: ranking } = useCompetitiveRanking();
-  const { streaks } = useSalesStreaks();
-  const { matchups } = useWeeklyMatchups();
+  const { data: streaks } = useSalesStreaks();
+  const { data: matchups } = useWeeklyMatchups();
 
   // Auto-rotate
   useEffect(() => {
