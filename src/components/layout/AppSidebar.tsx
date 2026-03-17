@@ -21,6 +21,9 @@ import {
   Sparkles,
   FileText,
   Calendar,
+  Zap,
+  MailSearch,
+  LayoutGrid,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -89,6 +92,9 @@ const sdrMoreItems: MenuItem[] = [
   { title: "Cadências", url: "/cadencias", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: Target },
   { title: "Calendário", url: "/calendario", icon: Calendar },
+  { title: "Automações", url: "/automacoes", icon: Zap },
+  { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+  { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
@@ -97,6 +103,9 @@ const closerMoreItems: MenuItem[] = [
   { title: "BI Closer", url: "/bi-closer", icon: LineChart },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Calendário", url: "/calendario", icon: Calendar },
+  { title: "Automações", url: "/automacoes", icon: Zap },
+  { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+  { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
@@ -105,6 +114,9 @@ const closerMoreItems: MenuItem[] = [
 const gestaoMoreItems: MenuItem[] = [
   { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
   { title: "Forecast", url: "/forecast", icon: TrendingUp },
+  { title: "Automações", url: "/automacoes", icon: Zap },
+  { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+  { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Times", url: "/times", icon: Building2 },
   { title: "Portfólio", url: "/portfolio", icon: Target },
   { title: "ICP", url: "/icp", icon: Users },

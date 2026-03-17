@@ -76,6 +76,9 @@ const Fornecedores = lazy(() => import("./pages/Fornecedores"));
 const ComparadorPrecos = lazy(() => import("./pages/ComparadorPrecos"));
 const AssinaturaDigital = lazy(() => import("./pages/AssinaturaDigital"));
 const Orcamentos = lazy(() => import("./pages/Orcamentos"));
+const Automacoes = lazy(() => import("./pages/Automacoes"));
+const EmailTracking = lazy(() => import("./pages/EmailTracking"));
+const DashboardCustom = lazy(() => import("./pages/DashboardCustom"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -237,6 +240,9 @@ const App = () => {
                                         </ProtectedRoute>
                                       } />
                                       <Route path="/orcamentos" element={<Orcamentos />} />
+                                      <Route path="/automacoes" element={<Automacoes />} />
+                                      <Route path="/email-tracking" element={<EmailTracking />} />
+                                      <Route path="/dashboard-custom" element={<DashboardCustom />} />
                                       <Route path="*" element={<NotFound />} />
                                     </Routes>
                                 </Suspense>
