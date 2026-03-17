@@ -202,7 +202,7 @@ export function PerformanceBets() {
                         </div>
                         <div>
                           <div className="font-semibold text-sm">{(bet as any).salespeople?.name}</div>
-                          <div className="text-xs text-muted-foreground">{type.label}: {bet.target_value} · {betForm.bet_type === 'revenue' ? `R$ ${bet.target_value}` : bet.target_value}</div>
+                          <div className="text-xs text-muted-foreground">{type.label}: {bet.bet_type === 'revenue' ? `R$ ${bet.target_value}` : bet.target_value}</div>
                         </div>
                       </div>
                       <div className="text-right">
