@@ -92,6 +92,9 @@ const sdrMoreItems: MenuItem[] = [
   { title: "Cadências", url: "/cadencias", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: Target },
   { title: "Calendário", url: "/calendario", icon: Calendar },
+  { title: "Automações", url: "/automacoes", icon: Zap },
+  { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+  { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
