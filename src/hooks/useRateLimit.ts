@@ -198,6 +198,7 @@ export function useRateLimitStats() {
         byAction,
       };
     },
-    refetchInterval: 30000, // Atualizar a cada 30s
+    refetchInterval: 60000,
+    staleTime: 30000,
   });
 }

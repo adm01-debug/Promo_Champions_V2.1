@@ -34,7 +34,8 @@ export function useCompetitiveChat() {
         reactions: m.reactions || {},
       })).reverse() as ChatMessage[];
     },
-    refetchInterval: 15000,
+    refetchInterval: 30000,
+    staleTime: 15000,
   });
 
   // Realtime

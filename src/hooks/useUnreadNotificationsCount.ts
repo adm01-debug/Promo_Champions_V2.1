@@ -26,7 +26,7 @@ export function useUnreadNotificationsCount() {
       return (alertsCount || 0) + (resetCount || 0);
     },
     enabled: !!user?.id,
-    refetchInterval: 30000, // refresh every 30s
-    staleTime: 10000,
+    refetchInterval: 60000,
+    staleTime: 30000,
   });
 }
