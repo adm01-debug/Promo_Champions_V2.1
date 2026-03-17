@@ -94,8 +94,8 @@ export function ClientKanban() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
 
   if (isLoading) {
-    return <div className="grid grid-cols-5 gap-3">
-      {STAGES.map(s => <Card key={s.id} className="h-96 animate-pulse bg-muted/30" />)}
+    return <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      {STAGES.map(s => <Card key={s.id} className="h-60 md:h-96 animate-pulse bg-muted/30" />)}
     </div>;
   }
 
