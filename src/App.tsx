@@ -214,6 +214,10 @@ const App = () => {
                                           <PrevisaoDemanda />
                                         </ProtectedRoute>
                                       } />
+                                      <Route path="/forecast" element={
+                                        <ProtectedRoute requireAdminOrManager>
+                                          <ForecastPonderado />
+                                        </ProtectedRoute>
                                       <Route path="/fornecedores" element={
                                         <ProtectedRoute requireAdminOrManager>
                                           <Fornecedores />
