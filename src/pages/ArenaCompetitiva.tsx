@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell } from 'lucide-react';
+import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users } from 'lucide-react';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
-  WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications
+  WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications,
+  StreakTracker, LeagueSystem, HeadToHead, PrizeWheel
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,7 +44,7 @@ const ArenaCompetitiva = () => {
             🏟️ Arena Competitiva
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Feed de vitórias, duelos, missões, ranking e placar ao vivo
+            Feed de vitórias, duelos, missões, ligas, streaks e muito mais
           </p>
         </div>
 
@@ -61,9 +62,25 @@ const ArenaCompetitiva = () => {
               <Flame className="h-4 w-4" />
               <span className="hidden sm:inline">Ranking</span>
             </TabsTrigger>
+            <TabsTrigger value="streaks" className="gap-1.5">
+              <TrendingUp className="h-4 w-4" />
+              <span className="hidden sm:inline">Streaks</span>
+            </TabsTrigger>
+            <TabsTrigger value="leagues" className="gap-1.5">
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline">Ligas</span>
+            </TabsTrigger>
+            <TabsTrigger value="h2h" className="gap-1.5">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">1v1</span>
+            </TabsTrigger>
             <TabsTrigger value="missions" className="gap-1.5">
               <Target className="h-4 w-4" />
               <span className="hidden sm:inline">Missões</span>
+            </TabsTrigger>
+            <TabsTrigger value="wheel" className="gap-1.5">
+              <Gift className="h-4 w-4" />
+              <span className="hidden sm:inline">Roda</span>
             </TabsTrigger>
             <TabsTrigger value="battles" className="gap-1.5">
               <Swords className="h-4 w-4" />
@@ -96,8 +113,24 @@ const ArenaCompetitiva = () => {
             <WeeklyRanking />
           </TabsContent>
 
+          <TabsContent value="streaks">
+            <StreakTracker />
+          </TabsContent>
+
+          <TabsContent value="leagues">
+            <LeagueSystem />
+          </TabsContent>
+
+          <TabsContent value="h2h">
+            <HeadToHead />
+          </TabsContent>
+
           <TabsContent value="missions">
             <DailyMissions salespersonId={currentSalesperson?.id} />
+          </TabsContent>
+
+          <TabsContent value="wheel">
+            <PrizeWheel salespersonId={currentSalesperson?.id} />
           </TabsContent>
 
           <TabsContent value="battles">
