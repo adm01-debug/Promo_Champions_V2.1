@@ -1,12 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User } from 'lucide-react';
+import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User, Crown, Coins, MapPin } from 'lucide-react';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
   WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications,
   StreakTracker, LeagueSystem, HeadToHead, PrizeWheel,
   BadgesGallery, ProgressiveGoals, CompetitiveChat, CompetitiveTVDashboard,
-  WallOfFame, GamifiedProfile, Benchmarking, ActivityHeatmap
+  WallOfFame, GamifiedProfile, Benchmarking, ActivityHeatmap,
+  TournamentBrackets, PerformanceBets, TerritoryWars, EnhancedTVMode
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
