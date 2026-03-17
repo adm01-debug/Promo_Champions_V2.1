@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,6 +28,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [salesperson, setSalesperson] = useState<Salesperson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const fetchedRef = useRef<string | null>(null);
+
+  const fetchSalesperson = async (authUserId: string) => {
+    // Prevent duplicate fetches for same user
+    if (fetchedRef.current === authUserId) return;
+    fetchedRef.current = authUserId;
+
+    const { data, error } = await supabase
+      .from("salespeople")
+      .select("id, name, email, avatar_url, role, commission_rate")
+      .eq("auth_user_id", authUserId)
+      .maybeSingle();
+
+    if (!error && data) {
+      setSalesperson(data);
+    } else {
+      fetchedRef.current = null; // Allow retry on error
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -36,13 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Fetch salesperson data after auth state changes
         if (session?.user) {
-          setTimeout(() => {
-            fetchSalesperson(session.user.id);
-          }, 0);
+          fetchSalesperson(session.user.id);
         } else {
           setSalesperson(null);
+          fetchedRef.current = null;
         }
       }
     );
@@ -59,18 +76,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const fetchSalesperson = async (authUserId: string) => {
-    const { data, error } = await supabase
-      .from("salespeople")
-      .select("*")
-      .eq("auth_user_id", authUserId)
-      .maybeSingle();
-
-    if (!error && data) {
-      setSalesperson(data);
-    }
-  };
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
