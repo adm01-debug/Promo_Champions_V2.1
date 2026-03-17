@@ -109,6 +109,7 @@ const closerMoreItems: MenuItem[] = [
   { title: "Automações", url: "/automacoes", icon: Zap },
   { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
   { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
+  { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
