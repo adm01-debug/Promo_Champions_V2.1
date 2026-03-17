@@ -70,6 +70,7 @@ const BICloser = lazy(() => import("./pages/BICloser"));
 const DesafiosSemanais = lazy(() => import("./pages/DesafiosSemanais"));
 const HistoricoDesafiosDiarios = lazy(() => import("./pages/HistoricoDesafiosDiarios"));
 const PrevisaoDemanda = lazy(() => import("./pages/PrevisaoDemanda"));
+const ForecastPonderado = lazy(() => import("./pages/ForecastPonderado"));
 const Fornecedores = lazy(() => import("./pages/Fornecedores"));
 const ComparadorPrecos = lazy(() => import("./pages/ComparadorPrecos"));
 const AssinaturaDigital = lazy(() => import("./pages/AssinaturaDigital"));
