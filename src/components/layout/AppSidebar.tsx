@@ -88,6 +88,7 @@ const sdrMoreItems: MenuItem[] = [
   { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
   { title: "Cadências", url: "/cadencias", icon: Activity },
   { title: "Tarefas", url: "/tarefas", icon: Target },
+  { title: "Calendário", url: "/calendario", icon: Calendar },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
