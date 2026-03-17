@@ -83,6 +83,8 @@ const KanbanClientes = lazy(() => import("./pages/KanbanClientes"));
 const RelatoriosEmail = lazy(() => import("./pages/RelatoriosEmail"));
 const ROIDashboard = lazy(() => import("./pages/ROIDashboard"));
 const ArenaCompetitiva = lazy(() => import("./pages/ArenaCompetitiva"));
+const FollowUpInteligente = lazy(() => import("./pages/FollowUpInteligente"));
+const RelatoriosExecutivos = lazy(() => import("./pages/RelatoriosExecutivos"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
