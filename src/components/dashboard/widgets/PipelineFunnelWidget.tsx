@@ -23,7 +23,7 @@ export function PipelineFunnelWidget() {
       const { data, error } = await supabase
         .from("sales")
         .select("status, amount")
-        .not("status", "eq", "completed");
+        .not("status", "in", "(completed,lost)");
       if (error) throw error;
 
       const stages: Record<string, { count: number; value: number }> = {};
