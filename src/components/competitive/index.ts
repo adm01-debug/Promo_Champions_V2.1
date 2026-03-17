@@ -10,3 +10,7 @@ export { StreakTracker } from './StreakTracker';
 export { LeagueSystem } from './LeagueSystem';
 export { HeadToHead } from './HeadToHead';
 export { PrizeWheel } from './PrizeWheel';
+export { BadgesGallery } from './BadgesGallery';
+export { ProgressiveGoals } from './ProgressiveGoals';
+export { CompetitiveChat } from './CompetitiveChat';
+export { CompetitiveTVDashboard } from './CompetitiveTVDashboard';

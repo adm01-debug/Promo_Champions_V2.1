@@ -800,6 +800,100 @@ export type Database = {
         }
         Relationships: []
       }
+      collectible_badges: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          rarity: string
+          unlock_condition: string
+          unlock_threshold: number
+          xp_reward: number
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name: string
+          rarity?: string
+          unlock_condition: string
+          unlock_threshold?: number
+          xp_reward?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          rarity?: string
+          unlock_condition?: string
+          unlock_threshold?: number
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      competitive_chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          matchup_id: string | null
+          message: string
+          message_type: string
+          reactions: Json | null
+          salesperson_id: string
+          target_salesperson_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          matchup_id?: string | null
+          message: string
+          message_type?: string
+          reactions?: Json | null
+          salesperson_id: string
+          target_salesperson_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          matchup_id?: string | null
+          message?: string
+          message_type?: string
+          reactions?: Json | null
+          salesperson_id?: string
+          target_salesperson_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitive_chat_messages_matchup_id_fkey"
+            columns: ["matchup_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_matchups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitive_chat_messages_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitive_chat_messages_target_salesperson_id_fkey"
+            columns: ["target_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitive_seasons: {
         Row: {
           created_at: string
@@ -2372,6 +2466,56 @@ export type Database = {
         }
         Relationships: []
       }
+      progressive_goals: {
+        Row: {
+          completed_levels: number
+          created_at: string
+          current_level: number
+          current_progress: number
+          current_target: number
+          goal_type: string
+          id: string
+          multiplier: number
+          salesperson_id: string
+          total_xp_earned: number
+          updated_at: string
+        }
+        Insert: {
+          completed_levels?: number
+          created_at?: string
+          current_level?: number
+          current_progress?: number
+          current_target?: number
+          goal_type?: string
+          id?: string
+          multiplier?: number
+          salesperson_id: string
+          total_xp_earned?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_levels?: number
+          created_at?: string
+          current_level?: number
+          current_progress?: number
+          current_target?: number
+          goal_type?: string
+          id?: string
+          multiplier?: number
+          salesperson_id?: string
+          total_xp_earned?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progressive_goals_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prospect_cadences: {
         Row: {
           cadence_id: string
@@ -3013,6 +3157,45 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      salesperson_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          is_showcase: boolean
+          salesperson_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          is_showcase?: boolean
+          salesperson_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          is_showcase?: boolean
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "collectible_badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_badges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salesperson_leagues: {
         Row: {
