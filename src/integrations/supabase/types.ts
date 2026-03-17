@@ -849,6 +849,38 @@ export type Database = {
           },
         ]
       }
+      dashboard_layouts: {
+        Row: {
+          created_at: string
+          id: string
+          layout_config: Json
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          layout_config?: Json
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          layout_config?: Json
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboard_layouts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_chat_history: {
         Row: {
           created_at: string
@@ -1138,6 +1170,57 @@ export type Database = {
           subject?: string | null
         }
         Relationships: []
+      }
+      email_tracking_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          recipient_email: string
+          sale_id: string | null
+          salesperson_id: string | null
+          subject: string
+          tracked_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          recipient_email: string
+          sale_id?: string | null
+          salesperson_id?: string | null
+          subject: string
+          tracked_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          recipient_email?: string
+          sale_id?: string | null
+          salesperson_id?: string | null
+          subject?: string
+          tracked_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_tracking_events_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_tracking_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       geo_access_logs: {
         Row: {
@@ -3384,6 +3467,62 @@ export type Database = {
           xp_reward?: number
         }
         Relationships: []
+      }
+      workflow_rules: {
+        Row: {
+          action_config: Json
+          action_type: string
+          created_at: string
+          description: string | null
+          executions_count: number
+          id: string
+          is_active: boolean
+          last_executed_at: string | null
+          name: string
+          salesperson_id: string | null
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          action_config?: Json
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          executions_count?: number
+          id?: string
+          is_active?: boolean
+          last_executed_at?: string | null
+          name: string
+          salesperson_id?: string | null
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Update: {
+          action_config?: Json
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          executions_count?: number
+          id?: string
+          is_active?: boolean
+          last_executed_at?: string | null
+          name?: string
+          salesperson_id?: string | null
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_rules_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       xp_history: {
         Row: {
