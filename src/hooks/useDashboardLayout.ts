@@ -75,7 +75,7 @@ export function useSaveDashboardLayout() {
           salesperson_id: salesperson!.id,
           layout_config: layout as unknown as Record<string, unknown>,
           updated_at: new Date().toISOString(),
-        }, { onConflict: "salesperson_id" });
+        } as never, { onConflict: "salesperson_id" });
 
       if (error) throw error;
     },

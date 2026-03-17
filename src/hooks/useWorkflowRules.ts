@@ -99,7 +99,7 @@ export function useToggleWorkflowRule() {
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
       const { error } = await supabase
         .from("workflow_rules")
-        .update({ is_active, updated_at: new Date().toISOString() })
+        .update({ is_active, updated_at: new Date().toISOString() } as never)
         .eq("id", id);
 
       if (error) throw error;

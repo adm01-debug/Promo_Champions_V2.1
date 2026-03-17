@@ -102,7 +102,7 @@ export function useLogEmailEvent() {
           subject: input.subject,
           event_type: input.event_type,
           metadata: input.metadata || {},
-        })
+        } as never)
         .select()
         .single();
 
