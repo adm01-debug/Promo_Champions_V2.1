@@ -33,8 +33,14 @@ export function EnhancedTVMode() {
   const { data: salespeople = [] } = useQuery({
     queryKey: ['tv-salespeople'],
     queryFn: async () => {
-      const { data } = await supabase.from('salespeople').select('id, name, role, xp, level').eq('is_active', true).order('xp', { ascending: false });
-      return data || [];
+      const { data: sp } = await supabase.from('salespeople').select('id, name, role').eq('is_active', true);
+      const { data: xpData } = await supabase.from('salesperson_xp').select('salesperson_id, total_xp, current_level');
+      const xpMap = new Map((xpData || []).map(x => [x.salesperson_id, x]));
+      return (sp || []).map(s => ({
+        ...s,
+        xp: xpMap.get(s.id)?.total_xp || 0,
+        level: xpMap.get(s.id)?.current_level || 1,
+      })).sort((a, b) => b.xp - a.xp);
     },
     refetchInterval: 10000,
   });
