@@ -27,6 +27,7 @@ import {
   Columns,
   MailCheck,
   DollarSign,
+  Swords,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
