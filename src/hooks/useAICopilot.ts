@@ -32,7 +32,20 @@ export function useAICopilot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const location = useLocation();
-  const { data: salesperson } = useCurrentSalesperson();
+  const { data: salesperson } = useQuery({
+    queryKey: ['current-salesperson-copilot'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+      const { data } = await supabase
+        .from('salespeople')
+        .select('id, name, role')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
   const lastPageRef = useRef<string>('');
   const cooldownRef = useRef<number>(0);
 
