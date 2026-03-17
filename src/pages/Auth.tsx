@@ -187,9 +187,23 @@ export default function Auth() {
     }
   };
 
-  const isLoginDisabled = isLoading || (lockoutStatus.isLocked && countdown > 0);
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const { error } = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (error) {
+        toast.error("Erro ao entrar com Google. Tente novamente.");
+      }
+    } catch {
+      toast.error("Erro ao conectar com Google.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
-  return (
+  const isLoginDisabled = isLoading || (lockoutStatus.isLocked && countdown > 0);
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
       <div className="w-full max-w-md">
         {/* Títulos animados */}
