@@ -20,6 +20,7 @@ import {
   Building2,
   Sparkles,
   FileText,
+  Calendar,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
