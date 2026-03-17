@@ -108,6 +108,9 @@ const closerMoreItems: MenuItem[] = [
 const gestaoMoreItems: MenuItem[] = [
   { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
   { title: "Forecast", url: "/forecast", icon: TrendingUp },
+  { title: "Automações", url: "/automacoes", icon: Zap },
+  { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+  { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Times", url: "/times", icon: Building2 },
   { title: "Portfólio", url: "/portfolio", icon: Target },
   { title: "ICP", url: "/icp", icon: Users },
