@@ -1783,6 +1783,51 @@ export type Database = {
         }
         Relationships: []
       }
+      kudos: {
+        Row: {
+          created_at: string
+          from_salesperson_id: string
+          id: string
+          is_pinned: boolean
+          kudos_type: string
+          message: string
+          to_salesperson_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_salesperson_id: string
+          id?: string
+          is_pinned?: boolean
+          kudos_type?: string
+          message: string
+          to_salesperson_id: string
+        }
+        Update: {
+          created_at?: string
+          from_salesperson_id?: string
+          id?: string
+          is_pinned?: boolean
+          kudos_type?: string
+          message?: string
+          to_salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_from_salesperson_id_fkey"
+            columns: ["from_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_to_salesperson_id_fkey"
+            columns: ["to_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_routing_log: {
         Row: {
           client_id: string | null

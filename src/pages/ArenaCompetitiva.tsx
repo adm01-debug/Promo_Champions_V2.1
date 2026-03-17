@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv } from 'lucide-react';
+import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User } from 'lucide-react';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
   WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications,
   StreakTracker, LeagueSystem, HeadToHead, PrizeWheel,
-  BadgesGallery, ProgressiveGoals, CompetitiveChat, CompetitiveTVDashboard
+  BadgesGallery, ProgressiveGoals, CompetitiveChat, CompetitiveTVDashboard,
+  WallOfFame, GamifiedProfile, Benchmarking, ActivityHeatmap
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,7 +39,6 @@ const ArenaCompetitiva = () => {
       </Helmet>
 
       <div className="p-4 lg:p-8 space-y-6">
-        {/* Header */}
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold font-display text-foreground">
             🏟️ Arena Competitiva
@@ -49,138 +48,55 @@ const ArenaCompetitiva = () => {
           </p>
         </div>
 
-        {/* Season Banner */}
         <SeasonAndPowerUps />
 
-        {/* Tabs */}
         <Tabs defaultValue="feed" className="space-y-4">
           <TabsList className="bg-muted/50 flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="feed" className="gap-1.5">
-              <Trophy className="h-4 w-4" />
-              <span className="hidden sm:inline">Vitórias</span>
-            </TabsTrigger>
-            <TabsTrigger value="ranking" className="gap-1.5">
-              <Flame className="h-4 w-4" />
-              <span className="hidden sm:inline">Ranking</span>
-            </TabsTrigger>
-            <TabsTrigger value="badges" className="gap-1.5">
-              <Award className="h-4 w-4" />
-              <span className="hidden sm:inline">Badges</span>
-            </TabsTrigger>
-            <TabsTrigger value="streaks" className="gap-1.5">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Streaks</span>
-            </TabsTrigger>
-            <TabsTrigger value="leagues" className="gap-1.5">
-              <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">Ligas</span>
-            </TabsTrigger>
-            <TabsTrigger value="h2h" className="gap-1.5">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">1v1</span>
-            </TabsTrigger>
-            <TabsTrigger value="goals" className="gap-1.5">
-              <Target className="h-4 w-4" />
-              <span className="hidden sm:inline">Metas</span>
-            </TabsTrigger>
-            <TabsTrigger value="missions" className="gap-1.5">
-              <Target className="h-4 w-4" />
-              <span className="hidden sm:inline">Missões</span>
-            </TabsTrigger>
-            <TabsTrigger value="chat" className="gap-1.5">
-              <MessageCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">Chat</span>
-            </TabsTrigger>
-            <TabsTrigger value="wheel" className="gap-1.5">
-              <Gift className="h-4 w-4" />
-              <span className="hidden sm:inline">Roda</span>
-            </TabsTrigger>
-            <TabsTrigger value="battles" className="gap-1.5">
-              <Swords className="h-4 w-4" />
-              <span className="hidden sm:inline">Duelos</span>
-            </TabsTrigger>
-            <TabsTrigger value="tv" className="gap-1.5">
-              <Tv className="h-4 w-4" />
-              <span className="hidden sm:inline">TV</span>
-            </TabsTrigger>
-            <TabsTrigger value="scoreboard" className="gap-1.5">
-              <Monitor className="h-4 w-4" />
-              <span className="hidden sm:inline">Placar</span>
-            </TabsTrigger>
+            <TabsTrigger value="feed" className="gap-1.5"><Trophy className="h-4 w-4" /><span className="hidden sm:inline">Vitórias</span></TabsTrigger>
+            <TabsTrigger value="profile" className="gap-1.5"><User className="h-4 w-4" /><span className="hidden sm:inline">Perfil</span></TabsTrigger>
+            <TabsTrigger value="ranking" className="gap-1.5"><Flame className="h-4 w-4" /><span className="hidden sm:inline">Ranking</span></TabsTrigger>
+            <TabsTrigger value="badges" className="gap-1.5"><Award className="h-4 w-4" /><span className="hidden sm:inline">Badges</span></TabsTrigger>
+            <TabsTrigger value="fame" className="gap-1.5"><Star className="h-4 w-4" /><span className="hidden sm:inline">Kudos</span></TabsTrigger>
+            <TabsTrigger value="streaks" className="gap-1.5"><TrendingUp className="h-4 w-4" /><span className="hidden sm:inline">Streaks</span></TabsTrigger>
+            <TabsTrigger value="leagues" className="gap-1.5"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Ligas</span></TabsTrigger>
+            <TabsTrigger value="h2h" className="gap-1.5"><Users className="h-4 w-4" /><span className="hidden sm:inline">1v1</span></TabsTrigger>
+            <TabsTrigger value="bench" className="gap-1.5"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Bench</span></TabsTrigger>
+            <TabsTrigger value="heatmap" className="gap-1.5"><Clock className="h-4 w-4" /><span className="hidden sm:inline">Heatmap</span></TabsTrigger>
+            <TabsTrigger value="goals" className="gap-1.5"><Target className="h-4 w-4" /><span className="hidden sm:inline">Metas</span></TabsTrigger>
+            <TabsTrigger value="missions" className="gap-1.5"><Target className="h-4 w-4" /><span className="hidden sm:inline">Missões</span></TabsTrigger>
+            <TabsTrigger value="chat" className="gap-1.5"><MessageCircle className="h-4 w-4" /><span className="hidden sm:inline">Chat</span></TabsTrigger>
+            <TabsTrigger value="wheel" className="gap-1.5"><Gift className="h-4 w-4" /><span className="hidden sm:inline">Roda</span></TabsTrigger>
+            <TabsTrigger value="battles" className="gap-1.5"><Swords className="h-4 w-4" /><span className="hidden sm:inline">Duelos</span></TabsTrigger>
+            <TabsTrigger value="tv" className="gap-1.5"><Tv className="h-4 w-4" /><span className="hidden sm:inline">TV</span></TabsTrigger>
+            <TabsTrigger value="scoreboard" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">Placar</span></TabsTrigger>
             <TabsTrigger value="alerts" className="gap-1.5 relative">
-              <Bell className="h-4 w-4" />
-              <span className="hidden sm:inline">Alertas</span>
+              <Bell className="h-4 w-4" /><span className="hidden sm:inline">Alertas</span>
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[9px] bg-destructive text-destructive-foreground">
-                  {unreadCount}
-                </Badge>
+                <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[9px] bg-destructive text-destructive-foreground">{unreadCount}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="evolution" className="gap-1.5">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Evolução</span>
-            </TabsTrigger>
+            <TabsTrigger value="evolution" className="gap-1.5"><TrendingUp className="h-4 w-4" /><span className="hidden sm:inline">Evolução</span></TabsTrigger>
           </TabsList>
 
-          <TabsContent value="feed">
-            <VictoryFeed currentSalespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="ranking">
-            <WeeklyRanking />
-          </TabsContent>
-
-          <TabsContent value="badges">
-            <BadgesGallery salespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="streaks">
-            <StreakTracker />
-          </TabsContent>
-
-          <TabsContent value="leagues">
-            <LeagueSystem />
-          </TabsContent>
-
-          <TabsContent value="h2h">
-            <HeadToHead />
-          </TabsContent>
-
-          <TabsContent value="goals">
-            <ProgressiveGoals salespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="missions">
-            <DailyMissions salespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="chat">
-            <CompetitiveChat salespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="wheel">
-            <PrizeWheel salespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="battles">
-            <BattleArena />
-          </TabsContent>
-
-          <TabsContent value="tv">
-            <CompetitiveTVDashboard />
-          </TabsContent>
-
-          <TabsContent value="scoreboard">
-            <LiveScoreboard />
-          </TabsContent>
-
-          <TabsContent value="alerts">
-            <RankNotifications salespersonId={currentSalesperson?.id} />
-          </TabsContent>
-
-          <TabsContent value="evolution">
-            <EvolutionChart />
-          </TabsContent>
+          <TabsContent value="feed"><VictoryFeed currentSalespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="profile"><GamifiedProfile salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="ranking"><WeeklyRanking /></TabsContent>
+          <TabsContent value="badges"><BadgesGallery salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="fame"><WallOfFame salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="streaks"><StreakTracker /></TabsContent>
+          <TabsContent value="leagues"><LeagueSystem /></TabsContent>
+          <TabsContent value="h2h"><HeadToHead /></TabsContent>
+          <TabsContent value="bench"><Benchmarking /></TabsContent>
+          <TabsContent value="heatmap"><ActivityHeatmap /></TabsContent>
+          <TabsContent value="goals"><ProgressiveGoals salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="missions"><DailyMissions salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="chat"><CompetitiveChat salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="wheel"><PrizeWheel salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="battles"><BattleArena /></TabsContent>
+          <TabsContent value="tv"><CompetitiveTVDashboard /></TabsContent>
+          <TabsContent value="scoreboard"><LiveScoreboard /></TabsContent>
+          <TabsContent value="alerts"><RankNotifications salespersonId={currentSalesperson?.id} /></TabsContent>
+          <TabsContent value="evolution"><EvolutionChart /></TabsContent>
         </Tabs>
       </div>
     </>
