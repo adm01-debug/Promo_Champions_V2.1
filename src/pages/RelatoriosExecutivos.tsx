@@ -132,7 +132,7 @@ const RelatoriosExecutivos = () => {
     else if (metrics.conversionRate < 15) result.push({ type: 'warning', text: `Taxa de conversão de ${metrics.conversionRate.toFixed(1)}% está abaixo do esperado. Revisar qualificação de leads.` });
     if (metrics.pipelineValue > metrics.totalRevenue * 2) result.push({ type: 'info', text: `Pipeline de R$ ${(metrics.pipelineValue / 1000).toFixed(0)}k representa ${(metrics.pipelineValue / (metrics.totalRevenue || 1) * 100).toFixed(0)}% da receita — bom potencial de crescimento.` });
     if (activities.length > 0) {
-      const connected = activities.filter(a => a.outcome === 'conectou' || a.outcome === 'agendou').length;
+      const connected = activities.filter(a => a.outcome === 'connected' || a.outcome === 'scheduled').length;
       const rate = (connected / activities.length * 100).toFixed(1);
       result.push({ type: 'info', text: `${activities.length} atividades realizadas com ${rate}% de taxa de conexão.` });
     }
