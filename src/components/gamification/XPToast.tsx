@@ -47,7 +47,7 @@ export function XPToastProvider({ children }: { children: ReactNode }) {
 function XPToastContainer({ notifications }: { notifications: XPNotification[] }) {
   return (
     <div className="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {notifications.map((notification) => (
           <XPToastItem key={notification.id} notification={notification} />
         ))}
