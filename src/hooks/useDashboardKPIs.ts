@@ -140,6 +140,8 @@ export const useDetailedKPIs = () => {
 
       const current = currentMetrics.data || [];
       const previous = previousMetrics.data || [];
+      const stageHistory = stageHistoryResult.data;
+      const allSales = allSalesResult.data;
 
       // Calculate averages
       const calcAvg = (data: typeof current, key: keyof typeof current[0]) =>
@@ -150,19 +152,6 @@ export const useDetailedKPIs = () => {
       
       const currentConversion = calcAvg(current, "conversion_rate");
       const previousConversion = calcAvg(previous, "conversion_rate");
-
-      // Fetch stage history and sales in parallel
-      const [stageHistoryResult, allSalesResult] = await Promise.all([
-        supabase
-          .from("deal_stage_history")
-          .select("sale_id, stage, entered_at, exited_at"),
-        supabase
-          .from("sales")
-          .select("client_name, status"),
-      ]);
-
-      const stageHistory = stageHistoryResult.data;
-      const allSales = allSalesResult.data;
 
       // Calculate average closing time
       const closedDeals = stageHistory?.filter(
