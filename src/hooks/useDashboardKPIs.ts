@@ -118,17 +118,24 @@ export const useDetailedKPIs = () => {
       const previousMonthStart = startOfMonth(subMonths(now, 1));
       const previousMonthEnd = endOfMonth(subMonths(now, 1));
 
-      const [currentMetrics, previousMetrics] = await Promise.all([
+      // Fetch ALL data in a single parallel batch
+      const [currentMetrics, previousMetrics, stageHistoryResult, allSalesResult] = await Promise.all([
         supabase
           .from("daily_metrics")
-          .select("*")
+          .select("avg_ticket, conversion_rate")
           .gte("date", format(currentMonthStart, "yyyy-MM-dd"))
           .lte("date", format(currentMonthEnd, "yyyy-MM-dd")),
         supabase
           .from("daily_metrics")
-          .select("*")
+          .select("avg_ticket, conversion_rate")
           .gte("date", format(previousMonthStart, "yyyy-MM-dd"))
           .lte("date", format(previousMonthEnd, "yyyy-MM-dd")),
+        supabase
+          .from("deal_stage_history")
+          .select("stage, entered_at, exited_at"),
+        supabase
+          .from("sales")
+          .select("client_name, status"),
       ]);
 
       const current = currentMetrics.data || [];
