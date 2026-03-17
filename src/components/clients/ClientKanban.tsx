@@ -125,7 +125,7 @@ export function ClientKanban() {
               <span className="text-xs font-medium text-muted-foreground">{formatValue(totalValue)}</span>
             </div>
 
-            <ScrollArea className="h-[calc(100vh-320px)]">
+            <ScrollArea className="h-[calc(100vh-380px)] lg:h-[calc(100vh-320px)]">
               <div className="space-y-2">
                 {entries.map(entry => (
                   <Card
