@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePrizeWheel, PRIZE_SLICES } from '@/hooks/usePrizeWheel';
 import { toast } from 'sonner';
-import confetti from 'canvas-confetti';
+
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -89,11 +89,13 @@ export const PrizeWheel: FC<PrizeWheelProps> = ({ salespersonId, className }) =>
         setIsSpinning(false);
         setWonPrize(result.prize.label);
         toast.success(`🎉 Você ganhou: ${result.prize.label}!`);
-        confetti({
-          particleCount: 60,
-          spread: 60,
-          origin: { y: 0.5 },
-          colors: [result.prize.color, '#FFD700', '#FF6347'],
+        import('canvas-confetti').then(({ default: confetti }) => {
+          confetti({
+            particleCount: 60,
+            spread: 60,
+            origin: { y: 0.5 },
+            colors: [result.prize.color, '#FFD700', '#FF6347'],
+          });
         });
       }, 3500);
     } catch {

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useWeeklyRanking, WeeklyRankedPerson } from '@/hooks/useWeeklyRanking';
-import confetti from 'canvas-confetti';
+
 
 const PODIUM_CONFIG: Record<number, { icon: typeof Crown; gradient: string; label: string }> = {
   1: { icon: Crown, gradient: 'from-amber-400 to-yellow-600', label: '🥇 Campeão da Semana' },
@@ -28,11 +28,13 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
     if (ranking?.length && ranking[0].weeklySales > 0 && !celebrated) {
       setCelebrated(true);
       setTimeout(() => {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.3 },
-          colors: ['#FFD700', '#FFA500', '#FF6347'],
+        import('canvas-confetti').then(({ default: confetti }) => {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.3 },
+            colors: ['#FFD700', '#FFA500', '#FF6347'],
+          });
         });
       }, 500);
     }

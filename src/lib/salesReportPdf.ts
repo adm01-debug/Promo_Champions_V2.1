@@ -1,8 +1,7 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import type jsPDF from "jspdf";
 
 interface ReportData {
   period: string;
@@ -20,11 +19,8 @@ const BRAND_DARK = [30, 30, 30] as const;
 
 function addHeader(doc: jsPDF, title: string, period: string) {
   const pageWidth = doc.internal.pageSize.getWidth();
-
-  // Brand bar
   doc.setFillColor(...BRAND_GREEN);
   doc.rect(0, 0, pageWidth, 28, "F");
-
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
@@ -32,19 +28,14 @@ function addHeader(doc: jsPDF, title: string, period: string) {
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text(title, 14, 22);
-
-  // Period badge
   doc.setFontSize(9);
   doc.text(period, pageWidth - 14, 18, { align: "right" });
-
-  // Reset
   doc.setTextColor(...BRAND_DARK);
 }
 
 function addFooter(doc: jsPDF, pageNum: number) {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  
   doc.setFontSize(8);
   doc.setTextColor(150, 150, 150);
   doc.text(
@@ -57,7 +48,6 @@ function addFooter(doc: jsPDF, pageNum: number) {
 
 function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
   let y = startY;
-
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...BRAND_DARK);
@@ -75,20 +65,15 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
   const gap = 4;
   kpis.forEach((kpi, i) => {
     const x = 14 + (cardWidth + gap) * i;
-
-    // Card bg
     doc.setFillColor(245, 245, 245);
     doc.roundedRect(x, y, cardWidth, 24, 2, 2, "F");
-
     doc.setFontSize(8);
     doc.setTextColor(120, 120, 120);
     doc.text(kpi.label, x + 4, y + 7);
-
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...BRAND_DARK);
     doc.text(kpi.value, x + 4, y + 16);
-
     doc.setFontSize(7);
     const changeColor = kpi.change >= 0 ? [0, 150, 50] : [200, 50, 50];
     doc.setTextColor(changeColor[0], changeColor[1], changeColor[2]);
@@ -99,7 +84,7 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
   return y + 30;
 }
 
-function addTopDeals(doc: jsPDF, deals: ReportData["topDeals"], startY: number): number {
+function addTopDeals(doc: jsPDF, autoTable: any, deals: ReportData["topDeals"], startY: number): number {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...BRAND_DARK);
@@ -127,7 +112,7 @@ function addTopDeals(doc: jsPDF, deals: ReportData["topDeals"], startY: number):
     : startY + 60;
 }
 
-function addTeamRanking(doc: jsPDF, team: ReportData["teamRanking"], startY: number): number {
+function addTeamRanking(doc: jsPDF, autoTable: any, team: ReportData["teamRanking"], startY: number): number {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...BRAND_DARK);
@@ -155,12 +140,15 @@ function addTeamRanking(doc: jsPDF, team: ReportData["teamRanking"], startY: num
 
 export async function generateSalesReport(data: ReportData) {
   try {
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
+
     const doc = new jsPDF();
 
     // Page 1
     addHeader(doc, "Relatório de Performance", data.period);
     let y = addKPISection(doc, data, 38);
-    y = addTopDeals(doc, data.topDeals, y + 4);
+    y = addTopDeals(doc, autoTable, data.topDeals, y + 4);
 
     // Check if team ranking fits, otherwise new page
     if (y > 220) {
@@ -170,7 +158,7 @@ export async function generateSalesReport(data: ReportData) {
       y = 38;
     }
 
-    addTeamRanking(doc, data.teamRanking, y);
+    addTeamRanking(doc, autoTable, data.teamRanking, y);
     addFooter(doc, doc.getNumberOfPages());
 
     doc.save(`relatorio-vendas-${format(new Date(), "yyyy-MM-dd")}.pdf`);
