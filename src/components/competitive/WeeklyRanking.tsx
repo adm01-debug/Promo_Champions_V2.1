@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useWeeklyRanking, WeeklyRankedPerson } from '@/hooks/useWeeklyRanking';
-import confetti from 'canvas-confetti';
+
 
 const PODIUM_CONFIG: Record<number, { icon: typeof Crown; gradient: string; label: string }> = {
   1: { icon: Crown, gradient: 'from-amber-400 to-yellow-600', label: '🥇 Campeão da Semana' },

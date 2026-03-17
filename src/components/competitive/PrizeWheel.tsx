@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePrizeWheel, PRIZE_SLICES } from '@/hooks/usePrizeWheel';
 import { toast } from 'sonner';
-import confetti from 'canvas-confetti';
+
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
