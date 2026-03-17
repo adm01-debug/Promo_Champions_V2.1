@@ -5152,6 +5152,14 @@ export type Database = {
       generate_mfa_backup_codes: { Args: never; Returns: string[] }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
+      get_mfa_status: {
+        Args: never
+        Returns: {
+          preferred_method: string
+          sms_enabled: boolean
+          totp_enabled: boolean
+        }[]
+      }
       get_user_permissions: {
         Args: never
         Returns: {
