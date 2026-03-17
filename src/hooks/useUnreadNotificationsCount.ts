@@ -10,12 +10,19 @@ export function useUnreadNotificationsCount() {
     queryFn: async () => {
       if (!user?.id) return 0;
 
-      // Count security alerts not acknowledged for admins
-      const { count: alertsCount } = await supabase
-        .from("login_alerts")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("acknowledged", false);
+      const [alertsResult, resetResult] = await Promise.all([
+        supabase
+          .from("login_alerts")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("acknowledged", false),
+        supabase
+          .from("password_reset_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending"),
+      ]);
+
+      return (alertsResult.count || 0) + (resetResult.count || 0);
 
       // Count password reset requests pending
       const { count: resetCount } = await supabase

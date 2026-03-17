@@ -186,6 +186,7 @@ export function useCadenceStats() {
         tasksCompletedToday: tasksCompletedToday || 0,
       };
     },
-    refetchInterval: 30000,
+    refetchInterval: 60000,
+    staleTime: 30000,
   });
 }
