@@ -7,9 +7,9 @@ import { describe, it, expect } from 'vitest';
 describe('Deal Probability - Stage Score', () => {
   const calculateStageScore = (status: string): number => {
     const scores: Record<string, number> = {
-      'pending': 30, 'completed': 100, 'cancelled': 0,
-      'lead': 10, 'prospecting': 20, 'qualified': 40,
-      'proposal': 60, 'negotiation': 75, 'won': 100, 'lost': 0,
+      pending: 30, completed: 100, cancelled: 0,
+      lead: 10, prospecting: 20, qualified: 40,
+      proposal: 60, negotiation: 75, won: 100, lost: 0,
     };
     return scores[status] || 20;
   };
