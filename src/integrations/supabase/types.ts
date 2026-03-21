@@ -5142,6 +5142,8 @@ export type Database = {
         Args: { check_email: string }
         Returns: number
       }
+      disable_sms: { Args: never; Returns: boolean }
+      disable_totp: { Args: never; Returns: boolean }
       generate_device_fingerprint: {
         Args: { p_ip_address: string; p_user_agent: string }
         Returns: string
@@ -5194,6 +5196,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      initialize_totp: {
+        Args: { p_email: string }
+        Returns: {
+          qr_url: string
+        }[]
+      }
       is_admin_or_manager: { Args: { _user_id: string }; Returns: boolean }
       is_authenticated: { Args: never; Returns: boolean }
       is_country_blocked: {
@@ -5217,6 +5225,9 @@ export type Database = {
         Returns: undefined
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
+      regenerate_backup_codes: { Args: never; Returns: string[] }
+      set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
+      setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
       update_own_profile: {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
@@ -5228,6 +5239,12 @@ export type Database = {
           reason: string
           valid: boolean
         }[]
+      }
+      verify_and_enable_sms: { Args: { p_code: string }; Returns: boolean }
+      verify_and_enable_totp: { Args: { p_token: string }; Returns: Json }
+      verify_mfa_code: {
+        Args: { p_code: string; p_method?: string }
+        Returns: boolean
       }
     }
     Enums: {

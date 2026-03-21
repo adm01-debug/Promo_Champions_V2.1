@@ -18,7 +18,9 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
   const [code, setCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [activeTab, setActiveTab] = useState<'totp' | 'sms' | 'backup'>(
-    settings?.preferred_method || 'totp'
+    (settings?.preferred_method === 'totp' || settings?.preferred_method === 'sms') 
+      ? settings.preferred_method 
+      : 'totp'
   );
 
   const handleVerify = async () => {
@@ -96,8 +98,7 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
 
             <TabsContent value="sms" className="mt-0">
               <p className="text-sm text-muted-foreground mb-4">
-                Um código foi enviado para {settings?.phone_number ? 
-                  `***${settings.phone_number.slice(-4)}` : 'seu telefone'}.
+                Um código foi enviado para seu telefone cadastrado.
               </p>
             </TabsContent>
 
