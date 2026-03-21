@@ -197,12 +197,35 @@ export function AppSidebar() {
   const moreItems = getMoreItems();
 
   const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
-    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-blue-400' },
-    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-green-400' },
-    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-purple-400' },
+    { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-info' },
+    { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-success' },
+    { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-primary' },
   ];
 
   const currentViewConfig = viewModes.find(v => v.mode === viewMode)!;
+
+  const userTypeAccentClasses = {
+    sdr: 'bg-info/15 text-info',
+    closer: 'bg-success/15 text-success',
+    admin: 'bg-destructive/15 text-destructive',
+    manager: 'bg-primary/15 text-primary',
+    salesperson: 'bg-muted text-muted-foreground',
+  } as const;
+
+  const renderUserTypeIcon = (type: typeof userType) => {
+    switch (type) {
+      case 'sdr':
+        return <Phone className="h-4 w-4" />;
+      case 'closer':
+        return <Handshake className="h-4 w-4" />;
+      case 'admin':
+        return <ShieldCheck className="h-4 w-4" />;
+      case 'manager':
+        return <Building2 className="h-4 w-4" />;
+      default:
+        return <Users className="h-4 w-4" />;
+    }
+  };
 
   const renderMenuItem = (item: MenuItem) => {
     const isNotifications = item.title === "Notificações";
@@ -363,17 +386,9 @@ export function AppSidebar() {
               <TooltipTrigger asChild>
                 <div className={cn(
                   "h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default",
-                  userType === 'sdr' ? "bg-blue-500/20" :
-                  userType === 'closer' ? "bg-green-500/20" :
-                  userType === 'admin' ? "bg-red-500/20" :
-                  userType === 'manager' ? "bg-purple-500/20" :
-                  "bg-primary/20"
+                  userTypeAccentClasses[userType]
                 )}>
-                  {userType === 'sdr' ? <Phone className="h-4 w-4 text-blue-500" /> :
-                   userType === 'closer' ? <Handshake className="h-4 w-4 text-green-500" /> :
-                   userType === 'admin' ? <ShieldCheck className="h-4 w-4 text-red-500" /> :
-                   userType === 'manager' ? <Building2 className="h-4 w-4 text-purple-500" /> :
-                   <Users className="h-4 w-4 text-primary" />}
+                  {renderUserTypeIcon(userType)}
                 </div>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -386,17 +401,9 @@ export function AppSidebar() {
           <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors">
             <div className={cn(
               "h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0",
-              userType === 'sdr' ? "bg-blue-500/20" :
-              userType === 'closer' ? "bg-green-500/20" :
-              userType === 'admin' ? "bg-red-500/20" :
-              userType === 'manager' ? "bg-purple-500/20" :
-              "bg-primary/20"
+              userTypeAccentClasses[userType]
             )}>
-              {userType === 'sdr' ? <Phone className="h-4 w-4 text-blue-500" /> :
-               userType === 'closer' ? <Handshake className="h-4 w-4 text-green-500" /> :
-               userType === 'admin' ? <ShieldCheck className="h-4 w-4 text-red-500" /> :
-               userType === 'manager' ? <Building2 className="h-4 w-4 text-purple-500" /> :
-               <Users className="h-4 w-4 text-primary" />}
+              {renderUserTypeIcon(userType)}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
