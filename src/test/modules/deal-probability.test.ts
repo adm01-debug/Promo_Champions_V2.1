@@ -11,7 +11,7 @@ describe('Deal Probability - Stage Score', () => {
       lead: 10, prospecting: 20, qualified: 40,
       proposal: 60, negotiation: 75, won: 100, lost: 0,
     };
-    return scores[status] || 20;
+    return scores[status] ?? 20;
   };
 
   it('should return 100 for won/completed', () => {
