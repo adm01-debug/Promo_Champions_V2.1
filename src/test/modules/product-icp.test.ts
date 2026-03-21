@@ -104,7 +104,7 @@ describe('ICP - Match Score Calculation', () => {
       { employees: 200, capital: 300000, sector: 'varejo' },
       criteria
     );
-    expect(score).toBe(55); // 40 (employees) + 15 (partial capital)
+    expect(score).toBe(40); // 40 (employees) + 0 (capital 300k < 500k threshold)
   });
 
   it('should score low for poor match', () => {

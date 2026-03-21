@@ -80,7 +80,7 @@ describe('Automation - Action Types', () => {
 describe('Automation - Scheduling Logic', () => {
   const shouldRun = (schedule: { type: 'immediate' | 'delay' | 'scheduled'; delayMinutes?: number; scheduledTime?: string }): boolean => {
     if (schedule.type === 'immediate') return true;
-    if (schedule.type === 'delay' && schedule.delayMinutes) {
+    if (schedule.type === 'delay' && schedule.delayMinutes !== undefined) {
       return schedule.delayMinutes <= 0;
     }
     if (schedule.type === 'scheduled' && schedule.scheduledTime) {
