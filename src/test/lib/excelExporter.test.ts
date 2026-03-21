@@ -4,9 +4,6 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockAddRow = vi.fn();
-const mockWriteBuffer = vi.fn().mockResolvedValue(new ArrayBuffer(100));
-
 vi.mock('exceljs', () => {
   class MockWorkbook {
     addWorksheet() {
@@ -14,9 +11,8 @@ vi.mock('exceljs', () => {
     }
     xlsx = { writeBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(100)) };
   }
-  // ExcelJS default export has .Workbook as a class
-  const mod = { Workbook: MockWorkbook };
-  return { default: mod, __esModule: true };
+
+  return { default: { Workbook: MockWorkbook }, __esModule: true };
 });
 
 import { exportToExcel } from '@/lib/excelExporter';

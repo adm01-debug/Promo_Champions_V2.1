@@ -48,5 +48,12 @@ vi.stubGlobal('cancelAnimationFrame', (id: number) => clearTimeout(id));
 URL.createObjectURL = vi.fn(() => 'blob:mock-url');
 URL.revokeObjectURL = vi.fn();
 
+// Prevent jsdom navigation warnings triggered by download links in tests
+Object.defineProperty(HTMLAnchorElement.prototype, 'click', {
+  configurable: true,
+  writable: true,
+  value: vi.fn(),
+});
+
 // Mock scrollTo
 window.scrollTo = vi.fn() as any;
