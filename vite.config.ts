@@ -109,7 +109,6 @@ export default defineConfig(({ mode }) => ({
           'date-utils': ['date-fns'],
           'icons': ['lucide-react'],
           'pdf-export': ['jspdf', 'jspdf-autotable'],
-          'excel-export': ['exceljs'],
           'form': ['react-hook-form', '@hookform/resolvers', 'zod'],
         },
       },
