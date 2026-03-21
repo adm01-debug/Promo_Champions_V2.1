@@ -73,7 +73,7 @@ describe('Relative Time', () => {
     const days = Math.floor(hours / 24);
     if (days < 30) return `${days}d atrás`;
     const months = Math.floor(days / 30);
-    return `${months} mês${months > 1 ? 'es' : ''} atrás`;
+    return `${months} ${months > 1 ? 'meses' : 'mês'} atrás`;
   };
 
   it('should show agora for recent', () => {
