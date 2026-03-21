@@ -79,8 +79,8 @@ describe('ABC Classification Algorithm', () => {
     const result = classifyABC(items);
     expect(result).toHaveLength(5);
     // Each is 20%, cumulative: 20, 40, 60, 80, 100
-    expect(result[3].classification).toBe('A'); // cumulative 80%
-    expect(result[4].classification).toBe('B'); // cumulative 100%
+    expect(result[3].classification).toBe('A'); // cumulative 80% (<=80)
+    expect(result[4].classification).toBe('C'); // cumulative 100% (>95)
   });
 
   it('should have cumulative percentage reach 100', () => {
