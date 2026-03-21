@@ -242,7 +242,7 @@ export const MFASetup = () => {
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <AlertTitle>SMS Ativo</AlertTitle>
                     <AlertDescription>
-                      Número: {settings.phone_number}
+                      SMS está ativo e configurado
                     </AlertDescription>
                   </Alert>
                   <div className="flex items-center justify-between">
