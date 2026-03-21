@@ -243,8 +243,8 @@ export function getAlertConfig() {
   return { ...alertConfig };
 }
 
-// Expose to window for debugging in production
-if (typeof window !== "undefined") {
+// Expose metrics helpers only in development
+if (typeof window !== "undefined" && import.meta.env.DEV) {
   (window as any).__queryMetrics = {
     get: getQueryMetrics,
     clear: clearQueryMetrics,
