@@ -297,7 +297,7 @@ export function AppSidebar() {
         </div>
       )}
       
-      {(isAdminOrManager || true) && <Separator className="bg-border/30" />}
+      <Separator className="bg-border/30" />
 
       <SidebarContent className="px-3 py-2">
         <ScrollArea className="flex-1">
