@@ -106,7 +106,7 @@ describe('Tour - Tooltip Positioning', () => {
   });
 
   it('should fallback to left/right', () => {
-    expect(calculatePosition({ top: 400, left: 50, width: 100, height: 40 }, 500)).toBe('right');
+    expect(calculatePosition({ top: 400, left: 500, width: 100, height: 40 }, 500)).toBe('left');
   });
 });
 
