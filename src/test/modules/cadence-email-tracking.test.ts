@@ -75,7 +75,7 @@ describe('Email Tracking - Engagement Score', () => {
     const result = calculateEngagement(events);
     expect(result.opens).toBe(2);
     expect(result.clicks).toBe(1);
-    expect(result.score).toBe(100); // 20 + 25 + 40 = 85, capped
+    expect(result.score).toBe(85); // 20 + 25 + 40 = 85
   });
 
   it('should score low engagement', () => {
