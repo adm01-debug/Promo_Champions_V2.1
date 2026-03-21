@@ -18,7 +18,9 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
   const [code, setCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [activeTab, setActiveTab] = useState<'totp' | 'sms' | 'backup'>(
-    settings?.preferred_method || 'totp'
+    (settings?.preferred_method === 'totp' || settings?.preferred_method === 'sms') 
+      ? settings.preferred_method 
+      : 'totp'
   );
 
   const handleVerify = async () => {
