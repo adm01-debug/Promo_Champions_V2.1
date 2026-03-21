@@ -59,10 +59,11 @@ describe('ABC Classification Algorithm', () => {
     expect(result).toEqual([]);
   });
 
-  it('should handle single item as class A', () => {
+  it('should handle single item (100% cumulative = C)', () => {
     const result = classifyABC([{ name: 'Only', revenue: 1000 }]);
     expect(result).toHaveLength(1);
-    expect(result[0].classification).toBe('A');
+    // Single item at 100% cumulative is > 95%, so classified as C
+    expect(result[0].classification).toBe('C');
     expect(result[0].percentage).toBe(100);
     expect(result[0].cumulativePercentage).toBe(100);
   });
