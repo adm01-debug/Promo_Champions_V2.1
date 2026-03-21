@@ -176,9 +176,7 @@ export const MFASetup = () => {
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <AlertTitle>TOTP Ativo</AlertTitle>
                     <AlertDescription>
-                      Configurado em {settings.totp_verified_at 
-                        ? new Date(settings.totp_verified_at).toLocaleDateString('pt-BR')
-                        : 'N/A'}
+                      TOTP está ativo e configurado
                     </AlertDescription>
                   </Alert>
                   <div className="flex items-center justify-between">
