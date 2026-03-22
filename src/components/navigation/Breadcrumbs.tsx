@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BackButton } from './BackButton';
 
 interface BreadcrumbItem {
   label: string;
@@ -71,45 +72,50 @@ export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, 
   });
 
   return (
-    <nav 
-      ref={ref}
-      aria-label="Breadcrumb" 
-      className="flex items-center gap-1 text-sm text-muted-foreground mb-4"
-    >
-      <ol className="flex items-center gap-1 flex-wrap">
-        {breadcrumbs.map((item, index) => {
-          const isLast = index === breadcrumbs.length - 1;
-          const isFirst = index === 0;
-          
-          return (
-            <li key={item.href} className="flex items-center gap-1">
-              {index > 0 && (
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" aria-hidden="true" />
-              )}
-              {isLast ? (
-                <span 
-                  className="font-medium text-foreground"
-                  aria-current="page"
-                >
-                  {item.label}
-                </span>
-              ) : (
-                <Link
-                  to={item.href}
-                  className={cn(
-                    "hover:text-primary transition-colors flex items-center gap-1",
-                    isFirst && "text-primary"
-                  )}
-                >
-                  {isFirst && <Home className="h-3.5 w-3.5" aria-hidden="true" />}
-                  {!isFirst && item.label}
-                </Link>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
+    <div className="flex items-center gap-2 mb-4">
+      {/* Back Button - visible on all screens */}
+      <BackButton className="hidden sm:flex" />
+
+      <nav 
+        ref={ref}
+        aria-label="Breadcrumb" 
+        className="flex items-center gap-1 text-sm text-muted-foreground"
+      >
+        <ol className="flex items-center gap-1 flex-wrap">
+          {breadcrumbs.map((item, index) => {
+            const isLast = index === breadcrumbs.length - 1;
+            const isFirst = index === 0;
+            
+            return (
+              <li key={item.href} className="flex items-center gap-1">
+                {index > 0 && (
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" aria-hidden="true" />
+                )}
+                {isLast ? (
+                  <span 
+                    className="font-medium text-foreground"
+                    aria-current="page"
+                  >
+                    {item.label}
+                  </span>
+                ) : (
+                  <Link
+                    to={item.href}
+                    className={cn(
+                      "hover:text-primary transition-colors flex items-center gap-1",
+                      isFirst && "text-primary"
+                    )}
+                  >
+                    {isFirst && <Home className="h-3.5 w-3.5" aria-hidden="true" />}
+                    {!isFirst && item.label}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+    </div>
   );
 });
 
