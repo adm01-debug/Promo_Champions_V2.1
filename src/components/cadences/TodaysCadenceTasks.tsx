@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const actionIcons: Record<ActionType, typeof Phone> = {
@@ -37,6 +39,36 @@ export function TodaysCadenceTasks() {
   const { data: tasks, isLoading } = useTodaysCadenceTasks();
   const completeTask = useCompleteCadenceTask();
   const skipTask = useSkipCadenceTask();
+  const [notesTaskId, setNotesTaskId] = useState<string | null>(null);
+  const [noteText, setNoteText] = useState("");
+  const [noteAction, setNoteAction] = useState<"complete" | "skip">("complete");
+
+  const handleAction = (taskId: string, action: "complete" | "skip") => {
+    setNotesTaskId(taskId);
+    setNoteAction(action);
+    setNoteText("");
+  };
+
+  const executeAction = () => {
+    if (!notesTaskId) return;
+    const payload = { taskId: notesTaskId, notes: noteText.trim() || undefined };
+    if (noteAction === "complete") {
+      completeTask.mutate(payload);
+    } else {
+      skipTask.mutate(payload);
+    }
+    setNotesTaskId(null);
+    setNoteText("");
+  };
+
+  const quickAction = (taskId: string, action: "complete" | "skip") => {
+    const payload = { taskId };
+    if (action === "complete") {
+      completeTask.mutate(payload);
+    } else {
+      skipTask.mutate(payload);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -52,11 +84,7 @@ export function TodaysCadenceTasks() {
         <CardContent>
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div 
-                key={i} 
-                className="p-3 rounded-lg border border-border/30 bg-muted/20 space-y-2 animate-fade-in"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
+              <div key={i} className="p-3 rounded-lg border border-border/30 bg-muted/20 space-y-2 animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="flex items-start gap-3">
                   <Skeleton className="h-8 w-8 rounded-lg animate-shimmer" />
                   <div className="flex-1 space-y-2">
@@ -113,6 +141,7 @@ export function TodaysCadenceTasks() {
                 const sale = prospectCadence?.sale;
                 const cadence = prospectCadence?.cadence;
                 const Icon = actionIcons[step?.action_type as ActionType] || MoreHorizontal;
+                const isNotesOpen = notesTaskId === task.id;
 
                 return (
                   <div
@@ -142,28 +171,70 @@ export function TodaysCadenceTasks() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-2">
-                      <Button
-                        size="sm"
-                        variant="glow"
-                        className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-                        onClick={() => completeTask.mutate({ taskId: task.id })}
-                        disabled={completeTask.isPending}
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                        Concluir
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 hover:scale-105 transition-all duration-200"
-                        onClick={() => skipTask.mutate({ taskId: task.id })}
-                        disabled={skipTask.isPending}
-                      >
-                        <SkipForward className="h-3.5 w-3.5" />
-                        Pular
-                      </Button>
-                    </div>
+                    {/* Notes area */}
+                    {isNotesOpen && (
+                      <div className="pt-2 space-y-2 border-t border-border/30 animate-fade-in">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                            <MessageSquare className="h-3 w-3" />
+                            {noteAction === "complete" ? "Nota ao concluir" : "Motivo ao pular"}
+                          </span>
+                          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => setNotesTaskId(null)}>
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        <Textarea
+                          value={noteText}
+                          onChange={(e) => setNoteText(e.target.value)}
+                          placeholder={noteAction === "complete" ? "Adicione observações sobre o contato..." : "Por que está pulando esta tarefa?"}
+                          className="min-h-[60px] text-xs resize-none bg-background/50 border-border/50 focus:border-primary"
+                        />
+                        <Button
+                          size="sm"
+                          variant={noteAction === "complete" ? "glow" : "outline"}
+                          className="w-full h-7 text-xs font-medium"
+                          onClick={executeAction}
+                          disabled={completeTask.isPending || skipTask.isPending}
+                        >
+                          {noteAction === "complete" ? "Concluir com Nota" : "Pular com Motivo"}
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Action buttons */}
+                    {!isNotesOpen && (
+                      <div className="flex items-center gap-2 pt-2">
+                        <Button
+                          size="sm"
+                          variant="glow"
+                          className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+                          onClick={() => quickAction(task.id, "complete")}
+                          disabled={completeTask.isPending}
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                          Concluir
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs gap-1 hover:bg-primary/5 border-border/50 hover:border-primary/40"
+                          onClick={() => handleAction(task.id, "complete")}
+                          title="Concluir com nota"
+                        >
+                          <MessageSquare className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 hover:scale-105 transition-all duration-200"
+                          onClick={() => handleAction(task.id, "skip")}
+                          disabled={skipTask.isPending}
+                        >
+                          <SkipForward className="h-3.5 w-3.5" />
+                          Pular
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 );
               })
