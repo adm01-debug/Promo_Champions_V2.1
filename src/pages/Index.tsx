@@ -15,6 +15,10 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
 import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
+import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidget";
+import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
+import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
+import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -209,6 +213,27 @@ const Index = () => {
               </motion.div>
               <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+              </motion.div>
+            </motion.div>
+
+            {/* Fourth Row - Performance Intelligence */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <MicroGoalsWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <VelocityScoreWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <ActivityQualityWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <SelfBenchmarkWidget />
               </motion.div>
             </motion.div>
           </div>
