@@ -30,6 +30,35 @@ export function useCreateCadence() {
   });
 }
 
+export function useUpdateCadence() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { id: string; name?: string; description?: string; is_active?: boolean }) => {
+      const { id, ...updates } = input;
+      const { data, error } = await supabase
+        .from("cadences")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cadences"] });
+      toast.success("Cadência atualizada!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao atualizar cadência");
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
+    },
+  });
+}
+
 export function useDeleteCadence() {
   const queryClient = useQueryClient();
 
@@ -83,6 +112,44 @@ export function useCreateCadenceStep() {
     },
     onError: (error) => {
       toast.error("Erro ao adicionar etapa");
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
+    },
+  });
+}
+
+export function useUpdateCadenceStep() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      id: string;
+      cadence_id: string;
+      day_number?: number;
+      action_type?: ActionType;
+      title?: string;
+      description?: string;
+      template_content?: string;
+      step_order?: number;
+    }) => {
+      const { id, cadence_id, ...updates } = input;
+      const { data, error } = await supabase
+        .from("cadence_steps")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["cadence-steps", variables.cadence_id] });
+      toast.success("Etapa atualizada!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao atualizar etapa");
       if (import.meta.env.DEV) {
         console.error(error);
       }

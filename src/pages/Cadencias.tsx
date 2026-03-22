@@ -4,16 +4,34 @@ import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GitBranch, Zap, Clock, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { GitBranch, Zap, Clock, CheckCircle, Search, Filter } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { useState, useMemo } from "react";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
   const { data: cadenceStats } = useCadenceStats();
   const deleteCadence = useDeleteCadence();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
+
+  const filteredCadences = useMemo(() => {
+    if (!cadences) return [];
+    return cadences.filter(c => {
+      const matchesSearch = !searchTerm || 
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || 
+        (statusFilter === "active" && c.is_active) ||
+        (statusFilter === "inactive" && !c.is_active);
+      return matchesSearch && matchesStatus;
+    });
+  }, [cadences, searchTerm, statusFilter]);
 
   return (
     <SkeletonTransition
@@ -96,24 +114,52 @@ export default function Cadencias() {
                     Suas Cadências
                   </CardTitle>
                   <Badge variant="secondary" className="text-xs">
-                    {cadences?.length || 0} total
+                    {filteredCadences.length} de {cadences?.length || 0}
                   </Badge>
+                </div>
+                {/* Search & Filter */}
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Buscar cadência..."
+                      className="h-8 pl-8 text-xs bg-muted/30 border-border/50 focus:border-primary"
+                    />
+                  </div>
+                  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+                    <SelectTrigger className="h-8 w-[120px] text-xs bg-muted/30 border-border/50">
+                      <Filter className="h-3 w-3 mr-1" />
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="glass border-border/50">
+                      <SelectItem value="all">Todas</SelectItem>
+                      <SelectItem value="active">Ativas</SelectItem>
+                      <SelectItem value="inactive">Inativas</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardHeader>
               <CardContent>
-                {cadences?.length === 0 ? (
+                {filteredCadences.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                     <GitBranch className="h-12 w-12 mb-3 opacity-50" />
-                    <p className="text-sm font-medium">Nenhuma cadência criada</p>
-                    <p className="text-xs mt-1">Crie sua primeira cadência de prospecção</p>
+                    <p className="text-sm font-medium">
+                      {cadences?.length === 0 ? "Nenhuma cadência criada" : "Nenhuma cadência encontrada"}
+                    </p>
+                    <p className="text-xs mt-1">
+                      {cadences?.length === 0 ? "Crie sua primeira cadência de prospecção" : "Tente alterar os filtros de busca"}
+                    </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {cadences?.map(cadence => (
+                    {filteredCadences.map(cadence => (
                       <CadenceCardWithSteps
                         key={cadence.id}
                         cadence={cadence}
                         onDelete={() => deleteCadence.mutate(cadence.id)}
+                        isDeleting={deleteCadence.isPending}
                       />
                     ))}
                   </div>
@@ -130,10 +176,12 @@ export default function Cadencias() {
 
 function CadenceCardWithSteps({
   cadence, 
-  onDelete 
+  onDelete,
+  isDeleting,
 }: { 
   cadence: CadenceRecord; 
   onDelete: () => void;
+  isDeleting?: boolean;
 }) {
   const { data: steps } = useCadenceSteps(cadence.id);
   
@@ -142,6 +190,7 @@ function CadenceCardWithSteps({
       cadence={cadence}
       steps={steps || []}
       onDelete={onDelete}
+      isDeleting={isDeleting}
     />
   );
 }
