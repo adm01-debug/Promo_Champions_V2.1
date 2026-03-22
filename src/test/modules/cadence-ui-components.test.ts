@@ -213,7 +213,7 @@ describe('TodaysCadenceTasks Notes Flow', () => {
   });
 
   it('should show correct placeholder for skip action', () => {
-    const action = 'skip';
+    const action: string = 'skip';
     const placeholder = action === 'complete' ? 'Adicione observações sobre o contato...' : 'Por que está pulando esta tarefa?';
     expect(placeholder).toContain('pulando');
   });
