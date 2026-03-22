@@ -215,6 +215,27 @@ const Index = () => {
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
               </motion.div>
             </motion.div>
+
+            {/* Fourth Row - Performance Intelligence */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <MicroGoalsWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <VelocityScoreWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <ActivityQualityWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <SelfBenchmarkWidget />
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </PageTransition>
