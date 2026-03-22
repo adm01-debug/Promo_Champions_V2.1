@@ -15,6 +15,10 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
 import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
+import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidget";
+import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
+import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
+import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
