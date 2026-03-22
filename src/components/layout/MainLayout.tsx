@@ -96,8 +96,8 @@ export function MainLayout({ children }: MainLayoutProps) {
           
           <GlobalSearch ref={searchRef} />
           
-          {/* Breadcrumbs - Desktop only */}
-          <div className="hidden md:block pt-16 px-4 lg:px-8">
+          {/* Breadcrumbs */}
+          <div className="pt-16 px-4 lg:px-8">
             <Breadcrumbs />
           </div>
           
