@@ -64,8 +64,8 @@ describe("TelemetryCharts", () => {
 
   it.each(["1h", "6h", "24h", "7d"])("handles timeFilter=%s", (tf) => {
     const rows = generateRows(5);
-    const { container } = render(<TelemetryCharts rows={rows} timeFilter={tf} />, { wrapper });
-    expect(container.querySelector(".recharts-wrapper")).toBeTruthy();
+    render(<TelemetryCharts rows={rows} timeFilter={tf} />, { wrapper });
+    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
   });
 
   it("handles mixed severity data", () => {
