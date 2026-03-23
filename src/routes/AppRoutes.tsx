@@ -6,7 +6,7 @@ import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const PageLoadingFallback = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center" suppressHydrationWarning>
+  <div className="min-h-screen bg-background flex items-center justify-center">
     <div className="space-y-4 w-full max-w-md p-8">
       <Skeleton className="h-8 w-3/4 mx-auto" />
       <Skeleton className="h-4 w-1/2 mx-auto" />
@@ -140,7 +140,9 @@ export function AppRoutes() {
                     <Route path="/icp" element={
                       <ProtectedRoute requireAdminOrManager><ICP /></ProtectedRoute>
                     } />
-                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin" element={
+                      <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
+                    } />
                     <Route path="/admin/telemetria" element={
                       <ProtectedRoute requireAdminOrManager><AdminTelemetria /></ProtectedRoute>
                     } />
