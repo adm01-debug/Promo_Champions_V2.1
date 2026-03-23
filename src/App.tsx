@@ -85,6 +85,7 @@ const ROIDashboard = lazy(() => import("./pages/ROIDashboard"));
 const ArenaCompetitiva = lazy(() => import("./pages/ArenaCompetitiva"));
 const FollowUpInteligente = lazy(() => import("./pages/FollowUpInteligente"));
 const RelatoriosExecutivos = lazy(() => import("./pages/RelatoriosExecutivos"));
+const AdminTelemetria = lazy(() => import("./pages/AdminTelemetria"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -208,6 +209,11 @@ const App = () => {
                                         </ProtectedRoute>
                                       } />
                                       <Route path="/admin" element={<AdminDashboard />} />
+                                      <Route path="/admin/telemetria" element={
+                                        <ProtectedRoute requireAdminOrManager>
+                                          <AdminTelemetria />
+                                        </ProtectedRoute>
+                                      } />
                                       <Route path="/assistente" element={<Assistente />} />
                                       <Route path="/bi-vendedor" element={<BIVendedor />} />
                                       <Route path="/bi-sdr" element={<BISDR />} />
