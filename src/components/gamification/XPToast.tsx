@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import { useState, useEffect, createContext, useContext, useCallback, ReactNode } from 'react';
+import { useState, createContext, useContext, useCallback, ReactNode } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 interface XPNotification {
   id: string;
@@ -46,7 +47,12 @@ export function XPToastProvider({ children }: { children: ReactNode }) {
 
 function XPToastContainer({ notifications }: { notifications: XPNotification[] }) {
   return (
-    <div className="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+    <div
+      className="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+      role="status"
+      aria-live="polite"
+      aria-label="Notificações de XP"
+    >
       <AnimatePresence>
         {notifications.map((notification) => (
           <XPToastItem key={notification.id} notification={notification} />
@@ -58,6 +64,7 @@ function XPToastContainer({ notifications }: { notifications: XPNotification[] }
 
 function XPToastItem({ notification }: { notification: XPNotification }) {
   const { amount, reason, type } = notification;
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const bgColor = type === 'level_up' 
     ? 'from-yellow-500/90 to-amber-600/90' 
@@ -67,13 +74,15 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
 
   const Icon = type === 'level_up' ? TrendingUp : type === 'streak' ? Zap : Sparkles;
 
+  const motionProps = prefersReducedMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.15 } }
+    : { initial: { opacity: 0, x: 100, scale: 0.8 }, animate: { opacity: 1, x: 0, scale: 1 }, exit: { opacity: 0, x: 100, scale: 0.8 }, transition: { type: 'spring' as const, stiffness: 500, damping: 30 } };
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100, scale: 0.8 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100, scale: 0.8 }}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      {...motionProps}
       className={`bg-gradient-to-r ${bgColor} backdrop-blur-md rounded-lg shadow-lg px-4 py-3 min-w-[200px] pointer-events-auto`}
+      aria-label={`+${amount} XP: ${reason}`}
     >
       <div className="flex items-center gap-3">
         <motion.div
@@ -105,32 +114,34 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
           </motion.p>
         </div>
 
-        {/* Sparkle particles */}
-        <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ 
-                x: '50%', 
-                y: '50%', 
-                scale: 0,
-                opacity: 1 
-              }}
-              animate={{ 
-                x: `${Math.random() * 100}%`, 
-                y: `${Math.random() * 100}%`,
-                scale: [0, 1, 0],
-                opacity: [1, 1, 0]
-              }}
-              transition={{ 
-                duration: 0.8,
-                delay: 0.1 + i * 0.05,
-                ease: 'easeOut'
-              }}
-              className="absolute w-1 h-1 bg-white rounded-full"
-            />
-          ))}
-        </div>
+        {/* Sparkle particles - hidden for reduced motion */}
+        {!prefersReducedMotion && (
+          <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none">
+            {[...Array(6)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ 
+                  x: '50%', 
+                  y: '50%', 
+                  scale: 0,
+                  opacity: 1 
+                }}
+                animate={{ 
+                  x: `${Math.random() * 100}%`, 
+                  y: `${Math.random() * 100}%`,
+                  scale: [0, 1, 0],
+                  opacity: [1, 1, 0]
+                }}
+                transition={{ 
+                  duration: 0.8,
+                  delay: 0.1 + i * 0.05,
+                  ease: 'easeOut'
+                }}
+                className="absolute w-1 h-1 bg-white rounded-full"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );
