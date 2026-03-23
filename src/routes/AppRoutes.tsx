@@ -140,7 +140,9 @@ export function AppRoutes() {
                     <Route path="/icp" element={
                       <ProtectedRoute requireAdminOrManager><ICP /></ProtectedRoute>
                     } />
-                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin" element={
+                      <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
+                    } />
                     <Route path="/admin/telemetria" element={
                       <ProtectedRoute requireAdminOrManager><AdminTelemetria /></ProtectedRoute>
                     } />
