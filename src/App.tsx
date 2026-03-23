@@ -85,6 +85,7 @@ const ROIDashboard = lazy(() => import("./pages/ROIDashboard"));
 const ArenaCompetitiva = lazy(() => import("./pages/ArenaCompetitiva"));
 const FollowUpInteligente = lazy(() => import("./pages/FollowUpInteligente"));
 const RelatoriosExecutivos = lazy(() => import("./pages/RelatoriosExecutivos"));
+const AdminTelemetria = lazy(() => import("./pages/AdminTelemetria"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
