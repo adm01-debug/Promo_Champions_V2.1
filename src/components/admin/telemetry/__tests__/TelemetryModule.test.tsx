@@ -52,20 +52,20 @@ describe("TelemetryCharts", () => {
   it("renders charts when rows are provided", () => {
     const rows = generateRows(10);
     render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
+    expect(screen.getByText("Alertas ao Longo do Tempo")).toBeInTheDocument();
     expect(screen.getByText("Por Severidade")).toBeInTheDocument();
   });
 
   it("renders top tables bar chart with enough data", () => {
     const rows = generateRows(20, { table_name: "sales" });
     render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(screen.getByText("Top Tabelas por Volume")).toBeInTheDocument();
+    expect(screen.getByText("Top Tabelas por Alertas")).toBeInTheDocument();
   });
 
   it.each(["1h", "6h", "24h", "7d"])("handles timeFilter=%s", (tf) => {
     const rows = generateRows(5);
     render(<TelemetryCharts rows={rows} timeFilter={tf} />, { wrapper });
-    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
+    expect(screen.getByText("Alertas ao Longo do Tempo")).toBeInTheDocument();
   });
 
   it("handles mixed severity data", () => {
@@ -82,31 +82,31 @@ describe("TelemetryCharts", () => {
   it("handles multiple tables in data", () => {
     const rows = TABLES.flatMap((t) => generateRows(3, { table_name: t }));
     render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(screen.getByText("Top Tabelas por Volume")).toBeInTheDocument();
+    expect(screen.getByText("Top Tabelas por Alertas")).toBeInTheDocument();
   });
 
   it("handles rpc_name rows", () => {
     const rows = generateRows(5, { rpc_name: "get_active_salespeople", table_name: null });
     render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(screen.getByText("Top Tabelas por Volume")).toBeInTheDocument();
+    expect(screen.getByText("Top Tabelas por Alertas")).toBeInTheDocument();
   });
 
   it("handles very large duration values", () => {
     const rows = generateRows(5, { duration_ms: 120000 });
     render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
+    expect(screen.getByText("Alertas ao Longo do Tempo")).toBeInTheDocument();
   });
 
   it("handles single row", () => {
     const rows = [makeTelemetryRow()];
     render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
+    expect(screen.getByText("Alertas ao Longo do Tempo")).toBeInTheDocument();
   });
 
   it("handles 200 rows without crashing", () => {
     const rows = generateRows(200);
     render(<TelemetryCharts rows={rows} timeFilter="7d" />, { wrapper });
-    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
+    expect(screen.getByText("Alertas ao Longo do Tempo")).toBeInTheDocument();
   });
 });
 
