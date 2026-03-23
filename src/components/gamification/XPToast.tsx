@@ -64,6 +64,7 @@ function XPToastContainer({ notifications }: { notifications: XPNotification[] }
 
 function XPToastItem({ notification }: { notification: XPNotification }) {
   const { amount, reason, type } = notification;
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const bgColor = type === 'level_up' 
     ? 'from-yellow-500/90 to-amber-600/90' 
@@ -73,13 +74,15 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
 
   const Icon = type === 'level_up' ? TrendingUp : type === 'streak' ? Zap : Sparkles;
 
+  const motionProps = prefersReducedMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.15 } }
+    : { initial: { opacity: 0, x: 100, scale: 0.8 }, animate: { opacity: 1, x: 0, scale: 1 }, exit: { opacity: 0, x: 100, scale: 0.8 }, transition: { type: 'spring' as const, stiffness: 500, damping: 30 } };
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100, scale: 0.8 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100, scale: 0.8 }}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      {...motionProps}
       className={`bg-gradient-to-r ${bgColor} backdrop-blur-md rounded-lg shadow-lg px-4 py-3 min-w-[200px] pointer-events-auto`}
+      aria-label={`+${amount} XP: ${reason}`}
     >
       <div className="flex items-center gap-3">
         <motion.div
