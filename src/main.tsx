@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import { reportWebVitals } from "./lib/webVitals";
 
 const rootElement = document.getElementById("root");
 
@@ -14,3 +15,6 @@ createRoot(rootElement).render(
     <App />
   </React.StrictMode>
 );
+
+// Report Core Web Vitals (CLS, INP, LCP, FCP, TTFB)
+reportWebVitals();
