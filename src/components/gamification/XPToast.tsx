@@ -114,32 +114,34 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
           </motion.p>
         </div>
 
-        {/* Sparkle particles */}
-        <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ 
-                x: '50%', 
-                y: '50%', 
-                scale: 0,
-                opacity: 1 
-              }}
-              animate={{ 
-                x: `${Math.random() * 100}%`, 
-                y: `${Math.random() * 100}%`,
-                scale: [0, 1, 0],
-                opacity: [1, 1, 0]
-              }}
-              transition={{ 
-                duration: 0.8,
-                delay: 0.1 + i * 0.05,
-                ease: 'easeOut'
-              }}
-              className="absolute w-1 h-1 bg-white rounded-full"
-            />
-          ))}
-        </div>
+        {/* Sparkle particles - hidden for reduced motion */}
+        {!prefersReducedMotion && (
+          <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none">
+            {[...Array(6)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ 
+                  x: '50%', 
+                  y: '50%', 
+                  scale: 0,
+                  opacity: 1 
+                }}
+                animate={{ 
+                  x: `${Math.random() * 100}%`, 
+                  y: `${Math.random() * 100}%`,
+                  scale: [0, 1, 0],
+                  opacity: [1, 1, 0]
+                }}
+                transition={{ 
+                  duration: 0.8,
+                  delay: 0.1 + i * 0.05,
+                  ease: 'easeOut'
+                }}
+                className="absolute w-1 h-1 bg-white rounded-full"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );
