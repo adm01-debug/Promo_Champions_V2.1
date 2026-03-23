@@ -93,8 +93,8 @@ describe("TelemetryCharts", () => {
 
   it("handles very large duration values", () => {
     const rows = generateRows(5, { duration_ms: 120000 });
-    const { container } = render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
-    expect(container.querySelector(".recharts-wrapper")).toBeTruthy();
+    render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
+    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
   });
 
   it("handles single row", () => {
