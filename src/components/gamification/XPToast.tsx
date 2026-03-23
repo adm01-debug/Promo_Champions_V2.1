@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
 import { useState, useEffect, createContext, useContext, useCallback, ReactNode } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { useState, useEffect, createContext, useContext, useCallback, ReactNode } from 'react';
 
 interface XPNotification {
   id: string;
