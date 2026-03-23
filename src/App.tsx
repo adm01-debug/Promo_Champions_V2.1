@@ -209,6 +209,11 @@ const App = () => {
                                         </ProtectedRoute>
                                       } />
                                       <Route path="/admin" element={<AdminDashboard />} />
+                                      <Route path="/admin/telemetria" element={
+                                        <ProtectedRoute requireAdminOrManager>
+                                          <AdminTelemetria />
+                                        </ProtectedRoute>
+                                      } />
                                       <Route path="/assistente" element={<Assistente />} />
                                       <Route path="/bi-vendedor" element={<BIVendedor />} />
                                       <Route path="/bi-sdr" element={<BISDR />} />
