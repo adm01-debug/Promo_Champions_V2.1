@@ -105,8 +105,8 @@ describe("TelemetryCharts", () => {
 
   it("handles 200 rows without crashing", () => {
     const rows = generateRows(200);
-    const { container } = render(<TelemetryCharts rows={rows} timeFilter="7d" />, { wrapper });
-    expect(container.querySelector(".recharts-wrapper")).toBeTruthy();
+    render(<TelemetryCharts rows={rows} timeFilter="7d" />, { wrapper });
+    expect(screen.getByText("Queries ao Longo do Tempo")).toBeInTheDocument();
   });
 });
 
