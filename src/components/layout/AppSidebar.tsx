@@ -144,6 +144,7 @@ const systemItems: MenuItem[] = [
 
 const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
+  { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
 ];
 
 export function AppSidebar() {
