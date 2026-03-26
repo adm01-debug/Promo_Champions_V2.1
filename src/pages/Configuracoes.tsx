@@ -10,8 +10,9 @@ import { IPWhitelistManager } from "@/components/security/IPWhitelistManager";
 import { GeoBlockingManager } from "@/components/security/GeoBlockingManager";
 import { PasswordResetApproval } from "@/components/security/PasswordResetApproval";
 import { AIAssistantSettings } from "@/components/settings/AIAssistantSettings";
+import { ThemeCustomizer } from "@/components/settings/ThemeCustomizer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
