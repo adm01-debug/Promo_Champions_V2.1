@@ -102,6 +102,10 @@ export default function Configuracoes() {
           <PortfolioSettings />
         </TabsContent>
 
+        <TabsContent value="skins" className="mt-6">
+          <ThemeCustomizer />
+        </TabsContent>
+
         {isAdmin && (
           <>
             <TabsContent value="permissions" className="mt-6">
