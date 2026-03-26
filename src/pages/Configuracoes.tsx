@@ -50,6 +50,10 @@ export default function Configuracoes() {
               <Briefcase className="h-4 w-4" />
               Portfólio
             </TabsTrigger>
+            <TabsTrigger value="skins" className="flex items-center gap-2">
+              <Palette className="h-4 w-4" />
+              Skins
+            </TabsTrigger>
             {isAdmin && (
               <>
                 <TabsTrigger value="permissions" className="flex items-center gap-2">
