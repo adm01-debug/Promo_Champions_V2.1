@@ -436,6 +436,9 @@ const BIGestor = () => {
             </Card>
           </div>
 
+          {/* Top Clients & Suppliers */}
+          <BITopClientsSection className="animate-slide-up" />
+
           {/* Team Performance Table */}
           <Card className="glass-card animate-slide-up" style={{ animationDelay: "700ms" }}>
             <CardHeader>
