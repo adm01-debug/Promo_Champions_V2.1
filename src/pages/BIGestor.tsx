@@ -41,6 +41,7 @@ import { motion } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { BITopClientsSection } from "@/components/bi/BITopClientsSection";
 import { BISalesInsights } from "@/components/bi/BISalesInsights";
+import { BIVendasMacro } from "@/components/bi/BIVendasMacro";
 
 
 const ABC_COLORS = { A: "hsl(var(--success))", B: "hsl(var(--warning))", C: "hsl(var(--destructive))" };
