@@ -39,6 +39,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { BITopClientsSection } from "@/components/bi/BITopClientsSection";
 
 
 const ABC_COLORS = { A: "hsl(var(--success))", B: "hsl(var(--warning))", C: "hsl(var(--destructive))" };
@@ -434,6 +435,9 @@ const BIGestor = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Top Clients & Suppliers */}
+          <BITopClientsSection className="animate-slide-up" />
 
           {/* Team Performance Table */}
           <Card className="glass-card animate-slide-up" style={{ animationDelay: "700ms" }}>
