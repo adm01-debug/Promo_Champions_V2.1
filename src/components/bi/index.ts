@@ -5,3 +5,4 @@ export { BIProjectionCard, BIComparisonCard } from './BIProjectionCard';
 export { BIClientList, BIPurchaseHistory } from './BIClientList';
 export { BITopClientsSection } from './BITopClientsSection';
 export { BISalesInsights } from './BISalesInsights';
+export { BIVendasMacro } from './BIVendasMacro';

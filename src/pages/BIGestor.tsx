@@ -41,6 +41,7 @@ import { motion } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { BITopClientsSection } from "@/components/bi/BITopClientsSection";
 import { BISalesInsights } from "@/components/bi/BISalesInsights";
+import { BIVendasMacro } from "@/components/bi/BIVendasMacro";
 
 
 const ABC_COLORS = { A: "hsl(var(--success))", B: "hsl(var(--warning))", C: "hsl(var(--destructive))" };
@@ -156,6 +157,9 @@ const BIGestor = () => {
               </div>
             ))}
           </div>
+
+          {/* Vendas Internas Macro */}
+          <BIVendasMacro className="animate-slide-up" />
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
