@@ -158,6 +158,9 @@ const BIGestor = () => {
             ))}
           </div>
 
+          {/* Vendas Internas Macro */}
+          <BIVendasMacro className="animate-slide-up" />
+
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Revenue Trend */}
