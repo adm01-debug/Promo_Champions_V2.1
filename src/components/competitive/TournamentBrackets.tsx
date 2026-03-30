@@ -178,7 +178,7 @@ export function TournamentBrackets() {
           {tournaments.map((t: any) => {
             const status = statusConfig[t.status] || statusConfig.upcoming;
             const matches = t.tournament_matches || [];
-            const rounds = Math.max(...matches.map((m: any) => m.round_number), 0);
+            const _rounds = Math.max(...matches.map((m: any) => m.round_number), 0);
 
             return (
               <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -212,7 +212,7 @@ export function TournamentBrackets() {
                       <div className="flex gap-8 min-w-max pb-2">
                         {Array.from({ length: t.total_rounds }, (_, r) => {
                           const roundMatches = matches.filter((m: any) => m.round_number === r + 1).sort((a: any, b: any) => a.match_order - b.match_order);
-                          const roundLabels = ['Quartas', 'Semi', 'Final', 'Grande Final'];
+                          const _roundLabels = ['Quartas', 'Semi', 'Final', 'Grande Final'];
                           const label = r + 1 === t.total_rounds ? 'Final' : r + 1 === t.total_rounds - 1 ? 'Semi' : `Round ${r + 1}`;
 
                           return (

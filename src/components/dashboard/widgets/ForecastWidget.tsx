@@ -10,7 +10,7 @@ export function ForecastWidget() {
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
   const projection = data?.projection ?? 0;
-  const goal = data?.totalGoal ?? 0;
+  const _goal = data?.totalGoal ?? 0;
   const onTrack = data?.onTrack ?? false;
 
   return (

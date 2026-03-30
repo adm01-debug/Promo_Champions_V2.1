@@ -42,7 +42,7 @@ export const MFASetup = () => {
   const [totpCode, setTotpCode] = useState("");
   const [smsCode, setSmsCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [showBackupCodes, setShowBackupCodes] = useState(false);
+  const [_showBackupCodes, setShowBackupCodes] = useState(false);
   const [isSettingUp, setIsSettingUp] = useState(false);
 
   const handleInitializeTOTP = async () => {

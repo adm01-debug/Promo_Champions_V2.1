@@ -31,15 +31,15 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoadingTTS, setIsLoadingTTS] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [isProcessingSTT, setIsProcessingSTT] = useState(false);
+  const [isProcessingSTT, _setIsProcessingSTT] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [useBrowserFallback, setUseBrowserFallback] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const _mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const _audioChunksRef = useRef<Blob[]>([]);
 
   // Check if ElevenLabs API is configured (we'll assume it is for now)
   const isApiConfigured = true;

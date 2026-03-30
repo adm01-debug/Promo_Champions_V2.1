@@ -50,11 +50,11 @@ export function useLoginRateLimiter() {
 
     // Contar tentativas falhadas consecutivas recentes
     let consecutiveFailures = 0;
-    let lastSuccessTime: Date | null = null;
+    let _lastSuccessTime: Date | null = null;
 
     for (const attempt of attempts || []) {
       if (attempt.success) {
-        lastSuccessTime = new Date(attempt.created_at);
+        _lastSuccessTime = new Date(attempt.created_at);
         break;
       }
       consecutiveFailures++;

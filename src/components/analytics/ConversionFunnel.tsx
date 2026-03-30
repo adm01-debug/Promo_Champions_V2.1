@@ -8,7 +8,7 @@ interface ConversionFunnelProps {
 
 export const ConversionFunnel: FC<ConversionFunnelProps> = ({ 
   stages = ['Lead', 'Qualificado', 'Proposta', 'Negociação', 'Fechado'],
-  showPercentages = true
+  showPercentages: _showPercentages = true
 }) => {
   return (
     <Card className="p-6">

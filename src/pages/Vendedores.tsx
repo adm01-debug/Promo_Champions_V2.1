@@ -17,13 +17,13 @@ import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSke
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
+const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
   sdr: { label: "SDR", color: "bg-blue-500/10 text-blue-500 border-blue-500/20" },
   closer: { label: "Closer", color: "bg-green-500/10 text-green-500 border-green-500/20" },
   hybrid: { label: "Híbrido", color: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
 };
 
-const getRankIcon = (rank: number) => {
+const _getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
       return <Crown className="h-6 w-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />;
@@ -36,7 +36,7 @@ const getRankIcon = (rank: number) => {
   }
 };
 
-const getRankStyles = (rank: number) => {
+const _getRankStyles = (rank: number) => {
   switch (rank) {
     case 1:
       return {
@@ -65,7 +65,7 @@ const getRankStyles = (rank: number) => {
   }
 };
 
-const getStreakInfo = (goalProgress: number) => {
+const _getStreakInfo = (goalProgress: number) => {
   if (goalProgress >= 120) return { icon: Flame, label: "Em Chamas!", color: "text-orange-500", bg: "bg-orange-500/20" };
   if (goalProgress >= 100) return { icon: Star, label: "Meta Batida!", color: "text-success", bg: "bg-success/20" };
   if (goalProgress >= 80) return { icon: Zap, label: "Quase Lá!", color: "text-yellow-500", bg: "bg-yellow-500/20" };
@@ -96,7 +96,7 @@ const Vendedores = () => {
     ? salespeople.reduce((sum, sp) => sum + sp.goalProgress, 0) / salespeople.length 
     : 0;
 
-  const topSeller = salespeople?.[0];
+  const _topSeller = salespeople?.[0];
 
   // Get gamification data for a salesperson
   const getGamificationForSalesperson = (salespersonId: string) => {

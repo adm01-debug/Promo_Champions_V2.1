@@ -13,7 +13,7 @@ const ROTATION_INTERVAL = 15000; // 15 seconds
 
 export function EnhancedTVMode() {
   const [currentScreen, setCurrentScreen] = useState<TVScreen>('leaderboard');
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [_isFullscreen, setIsFullscreen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
 

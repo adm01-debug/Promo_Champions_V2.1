@@ -133,7 +133,7 @@ export function useUpdateCadenceStep() {
       template_content?: string;
       step_order?: number;
     }) => {
-      const { id, cadence_id, ...updates } = input;
+      const { id, cadence_id: _cadence_id, ...updates } = input;
       const { data, error } = await supabase
         .from("cadence_steps")
         .update(updates)

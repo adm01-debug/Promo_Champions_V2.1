@@ -99,7 +99,7 @@ export function useFocusMode() {
 
   // Persist config (except enabled state)
   useEffect(() => {
-    const { enabled, startedAt, ...persistedConfig } = config;
+    const { enabled: _enabled, startedAt: _startedAt, ...persistedConfig } = config;
     localStorage.setItem("focus-mode-config", JSON.stringify(persistedConfig));
   }, [config]);
 

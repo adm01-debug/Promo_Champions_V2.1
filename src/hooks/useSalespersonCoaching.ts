@@ -69,7 +69,7 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
         .eq('salesperson_id', salespersonId);
 
       // Get team average for comparison
-      const { data: allTeamSales } = await supabase
+      const { data: _allTeamSales } = await supabase
         .from('sales')
         .select('amount, status, salesperson_id');
       
