@@ -956,6 +956,57 @@ export type Database = {
         }
         Relationships: []
       }
+      combo_tracking: {
+        Row: {
+          actions_count: number
+          combo_date: string
+          created_at: string
+          current_multiplier: number
+          current_tier: number
+          id: string
+          max_tier_today: number
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          actions_count?: number
+          combo_date?: string
+          created_at?: string
+          current_multiplier?: number
+          current_tier?: number
+          id?: string
+          max_tier_today?: number
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          actions_count?: number
+          combo_date?: string
+          created_at?: string
+          current_multiplier?: number
+          current_tier?: number
+          id?: string
+          max_tier_today?: number
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combo_tracking_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combo_tracking_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitive_chat_messages: {
         Row: {
           created_at: string
@@ -2139,6 +2190,94 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      league_members: {
+        Row: {
+          id: string
+          joined_at: string
+          league_id: string
+          salesperson_id: string
+          updated_at: string
+          weekly_xp: number
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          league_id: string
+          salesperson_id: string
+          updated_at?: string
+          weekly_xp?: number
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          league_id?: string
+          salesperson_id?: string
+          updated_at?: string
+          weekly_xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_members_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_members_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_members_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leagues: {
+        Row: {
+          color: string
+          created_at: string
+          demotion_slots: number
+          icon: string
+          id: string
+          min_xp: number
+          name: string
+          promotion_slots: number
+          tier: number
+          xp_bonus_percent: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          demotion_slots?: number
+          icon?: string
+          id?: string
+          min_xp?: number
+          name: string
+          promotion_slots?: number
+          tier?: number
+          xp_bonus_percent?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          demotion_slots?: number
+          icon?: string
+          id?: string
+          min_xp?: number
+          name?: string
+          promotion_slots?: number
+          tier?: number
+          xp_bonus_percent?: number
+        }
+        Relationships: []
       }
       login_alerts: {
         Row: {
