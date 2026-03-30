@@ -72,6 +72,12 @@ const Index = () => {
             {/* Onboarding Checklist */}
             <OnboardingChecklist />
 
+            {/* Seasonal Event + Flash Sales Banners */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <SeasonalEventBanner />
+              <FlashSalesBanner />
+            </div>
+
             {/* Competitive Status Bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
