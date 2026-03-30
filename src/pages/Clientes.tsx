@@ -51,7 +51,7 @@ const Clientes = () => {
     if (!clients || clients.length === 0) return [];
     
     // Apply fuzzy search
-    let filtered = searchTerm.trim() && fuse
+    const filtered = searchTerm.trim() && fuse
       ? fuse.search(searchTerm).map(result => result.item)
       : [...clients];
     

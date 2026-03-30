@@ -60,36 +60,42 @@ export function getDateRangeForPeriod(period: PeriodType, customRange?: DateRang
     case "today":
       return { start: startOfDay(now), end: endOfDay(now) };
     
-    case "yesterday":
+    case "yesterday": {
       const yesterday = subDays(now, 1);
       return { start: startOfDay(yesterday), end: endOfDay(yesterday) };
+    }
     
-    case "last_week":
+    case "last_week": {
       const weekStart = startOfWeek(subWeeks(now, 1), { locale: ptBR });
       const weekEnd = endOfWeek(subWeeks(now, 1), { locale: ptBR });
       return { start: weekStart, end: weekEnd };
+    }
     
     case "this_month":
       return { start: startOfMonth(now), end: endOfMonth(now) };
     
-    case "last_month":
+    case "last_month": {
       const lastMonth = subMonths(now, 1);
       return { start: startOfMonth(lastMonth), end: endOfMonth(lastMonth) };
+    }
     
-    case "last_quarter":
+    case "last_quarter": {
       const lastQuarter = subQuarters(now, 1);
       return { start: startOfQuarter(lastQuarter), end: endOfQuarter(lastQuarter) };
+    }
     
-    case "last_semester":
+    case "last_semester": {
       const sixMonthsAgo = subMonths(now, 6);
       return { start: startOfMonth(sixMonthsAgo), end: endOfMonth(subMonths(now, 1)) };
+    }
     
     case "this_year":
       return { start: startOfYear(now), end: endOfYear(now) };
     
-    case "last_year":
+    case "last_year": {
       const lastYear = subYears(now, 1);
       return { start: startOfYear(lastYear), end: endOfYear(lastYear) };
+    }
     
     case "custom":
       return customRange || { start: startOfMonth(now), end: endOfMonth(now) };

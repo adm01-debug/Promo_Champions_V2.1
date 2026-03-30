@@ -95,19 +95,21 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
         case "client":
           comparison = (a.client?.name || "").localeCompare(b.client?.name || "");
           break;
-        case "icp":
+        case "icp": {
           const icpA = a.client_id ? icpMap.get(a.client_id) : undefined;
           const icpB = b.client_id ? icpMap.get(b.client_id) : undefined;
           comparison = getIcpSortValue(icpA) - getIcpSortValue(icpB);
           break;
+        }
         case "status":
           comparison = (a.status || "").localeCompare(b.status || "");
           break;
-        case "lastPurchase":
+        case "lastPurchase": {
           const dateA = a.last_purchase_date ? new Date(a.last_purchase_date).getTime() : 0;
           const dateB = b.last_purchase_date ? new Date(b.last_purchase_date).getTime() : 0;
           comparison = dateA - dateB;
           break;
+        }
         case "assignedAt":
           comparison = new Date(a.assigned_at).getTime() - new Date(b.assigned_at).getTime();
           break;

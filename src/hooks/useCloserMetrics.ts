@@ -30,15 +30,18 @@ function getPeriodRange(period: PeriodFilter, offset: number = 0) {
   const now = new Date();
   
   switch (period) {
-    case "week":
+    case "week": {
       const weekRef = offset === 0 ? now : subWeeks(now, offset);
       return { start: startOfWeek(weekRef, { weekStartsOn: 1 }), end: endOfWeek(weekRef, { weekStartsOn: 1 }) };
-    case "month":
+    }
+    case "month": {
       const monthRef = offset === 0 ? now : subMonths(now, offset);
       return { start: startOfMonth(monthRef), end: endOfMonth(monthRef) };
-    case "quarter":
+    }
+    case "quarter": {
       const quarterRef = offset === 0 ? now : subQuarters(now, offset);
       return { start: startOfQuarter(quarterRef), end: endOfQuarter(quarterRef) };
+    }
   }
 }
 
