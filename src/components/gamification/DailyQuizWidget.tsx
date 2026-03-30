@@ -124,7 +124,7 @@ export function DailyQuizWidget({ className }: { className?: string }) {
           >
             <p className="text-sm font-medium text-foreground leading-snug">{question.question}</p>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5" role="listbox" aria-label="Opções de resposta">
               {question.options.map((option, idx) => {
                 const isCorrect = idx === question.correctIndex;
                 const isSelected = idx === selectedAnswer;

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "@/contexts/I18nContext";
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,7 +14,7 @@ import {
   LayoutDashboard, ShoppingCart, Users, Package, Target,
   BarChart3, Settings, Trophy, Calendar, MessageSquare,
   Bell, FileText, Zap, Search, Plus, Moon, Sun, Keyboard,
-  Clock, Heart, Brain, Flame, Radar, Shield, Star,
+  Clock, Heart, Brain, Flame, Radar, Shield, Star, Globe,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -48,6 +49,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const { locale, setLocale } = useI18n();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -97,8 +99,14 @@ export function CommandPalette() {
       icon: theme === "dark" ? Sun : Moon, shortcut: "⌘T",
       action: () => setTheme(theme === "dark" ? "light" : "dark"), group: "settings",
     },
+    {
+      id: "toggle-language", label: locale === "pt-BR" ? "Switch to English" : "Mudar para Português",
+      icon: Globe,
+      action: () => setLocale(locale === "pt-BR" ? "en" : "pt-BR"), group: "settings",
+      keywords: ["idioma", "language", "english", "português"],
+    },
     { id: "shortcuts", label: "Atalhos do Teclado", icon: Keyboard, shortcut: "⌘?", action: () => {}, group: "settings" },
-  ], [theme, setTheme]);
+  ], [theme, setTheme, locale, setLocale]);
 
   const allItems = useMemo(() => [...navigationItems, ...actionItems, ...settingsItems], [navigationItems, actionItems, settingsItems]);
 

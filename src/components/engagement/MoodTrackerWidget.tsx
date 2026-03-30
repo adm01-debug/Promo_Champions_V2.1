@@ -75,7 +75,7 @@ export function MoodTrackerWidget({ className }: { className?: string }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between gap-1.5">
+        <div className="flex items-center justify-between gap-1.5" role="radiogroup" aria-label="Selecione seu humor de hoje">
           {MOODS.map((mood) => (
             <motion.button
               key={mood.value}
@@ -83,6 +83,9 @@ export function MoodTrackerWidget({ className }: { className?: string }) {
               whileTap={{ scale: alreadySubmitted ? 1 : 0.9 }}
               onClick={() => handleSelect(mood.value)}
               disabled={alreadySubmitted}
+              aria-label={`Humor: ${mood.label}`}
+              aria-checked={currentMood === mood.value}
+              role="radio"
               className={cn(
                 "flex flex-col items-center gap-1 p-2 rounded-xl border transition-all flex-1",
                 mood.color,
