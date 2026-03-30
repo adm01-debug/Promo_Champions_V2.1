@@ -14,6 +14,7 @@ import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { GamificationCard } from "@/components/gamification/GamificationCard";
 import { CelebrationTestButtons } from "@/components/gamification/CelebrationTestButtons";
 import { RankingPodium } from "@/components/vendedores/RankingPodium";
+import { LeagueCard } from "@/components/gamification/LeagueCard";
 import { RankingGridItem } from "@/components/vendedores/RankingGridItem";
 import { cn } from "@/lib/utils";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
