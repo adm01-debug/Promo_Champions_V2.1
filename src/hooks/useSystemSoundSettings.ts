@@ -42,7 +42,7 @@ export function useSystemSoundSettings() {
       if (saved) {
         try {
           return { ...defaultPreferences, ...JSON.parse(saved) };
-        } catch {
+        } catch (_e) {
           return defaultPreferences;
         }
       }
