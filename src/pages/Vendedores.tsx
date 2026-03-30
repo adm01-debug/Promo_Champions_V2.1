@@ -179,6 +179,11 @@ const Vendedores = () => {
           </div>
         )}
 
+        {/* League System */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
+          <LeagueCard />
+        </div>
+
 
 
 
