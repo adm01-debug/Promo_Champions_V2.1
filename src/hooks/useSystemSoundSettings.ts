@@ -132,7 +132,7 @@ export function useSystemSoundSettings() {
           break;
         }
       }
-    } catch {
+    } catch (_e) {
       // Silently fail if audio context not available
     }
   }, [volume]);
