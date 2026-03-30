@@ -184,6 +184,7 @@ export function ChurnPredictionPanel({
   onRefresh,
   className,
 }: ChurnPredictionPanelProps) {
+  const predictions = externalPredictions || DEFAULT_PREDICTIONS;
   const sortedPredictions = useMemo(
     () => [...predictions].sort((a, b) => b.riskScore - a.riskScore),
     [predictions]
