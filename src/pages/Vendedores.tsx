@@ -220,6 +220,13 @@ const Vendedores = () => {
           </div>
         )}
 
+        {/* Podium */}
+        {salespeople && salespeople.length >= 3 && (
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
+            <RankingPodium top3={salespeople.slice(0, 3)} />
+          </div>
+        )}
+
         {/* Ranking List */}
         <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "300ms" }}>
           <div className="p-5 border-b border-border/50">
@@ -238,7 +245,7 @@ const Vendedores = () => {
                     Gamificado
                   </TabsTrigger>
                   <TabsTrigger value="classic" className="text-xs px-3 h-7">
-                    <Users className="h-3 w-3 mr-1" />
+                    <LayoutGrid className="h-3 w-3 mr-1" />
                     Clássico
                   </TabsTrigger>
                 </TabsList>
@@ -263,11 +270,9 @@ const Vendedores = () => {
               Erro ao carregar vendedores
             </div>
           ) : viewMode === "gamified" ? (
-            /* Gamified View */
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {salespeople?.map((sp) => {
                 const gamification = getGamificationForSalesperson(sp.id);
-                
                 return (
                   <Link key={sp.id} to={`/vendedor/${sp.id}`}>
                     <GamificationCard
@@ -292,153 +297,22 @@ const Vendedores = () => {
               })}
             </div>
           ) : (
-            /* Classic View */
-            <div className="divide-y divide-border/20 p-3">
-              {salespeople?.map((sp) => {
-                const styles = getRankStyles(sp.rank);
-                const streak = getStreakInfo(sp.goalProgress);
-                
-                return (
-                  <div 
-                    key={sp.id}
-                    className={cn(
-                      "p-4 rounded-xl my-2 transition-all duration-300",
-                      styles.card
-                    )}
-                  >
-                    <div className="flex items-center gap-4">
-                      {/* Rank Badge */}
-                      <div className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center",
-                        sp.rank <= 3 ? styles.badge : "bg-muted/50"
-                      )}>
-                        {getRankIcon(sp.rank)}
-                      </div>
-                      
-                      {/* Avatar */}
-                      <div className="relative">
-                        <Avatar className={cn("h-14 w-14", styles.avatar)}>
-                          <AvatarImage src={sp.avatar_url || undefined} alt={sp.name} />
-                          <AvatarFallback className="bg-gradient-to-br from-primary/30 to-secondary/30 text-foreground font-bold text-lg">
-                            {sp.name.split(" ").map(n => n[0]).join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        {streak && (
-                          <div className={cn("absolute -bottom-1 -right-1 p-1 rounded-full", streak.bg)}>
-                            <streak.icon className={cn("h-3 w-3", streak.color)} />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Info */}
-                      <Link to={`/vendedor/${sp.id}`} className="flex-1 min-w-0 group cursor-pointer">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{sp.name}</h3>
-                          <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <Badge variant="outline" className={cn("text-[10px]", roleLabels[sp.role || 'hybrid'].color)}>
-                            {roleLabels[sp.role || 'hybrid'].label}
-                          </Badge>
-                          {streak && (
-                            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", streak.bg, streak.color)}>
-                              {streak.label}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {sp.completedSales} vendas • {sp.commission_rate}% comissão
-                        </p>
-                      </Link>
-                        
-                      {/* Progress Bar */}
-                      <div className="flex-1 hidden lg:block">
-                        <div className="relative h-2.5 bg-muted/30 rounded-full overflow-hidden">
-                          <div 
-                            className={cn(
-                              "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
-                              sp.goalProgress >= 100 
-                                ? "bg-gradient-to-r from-success to-emerald-400" 
-                                : "gradient-primary"
-                            )}
-                            style={{ width: `${Math.min(sp.goalProgress, 100)}%` }}
-                          />
-                          {sp.goalProgress > 100 && (
-                            <div 
-                              className="absolute inset-y-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse"
-                              style={{ 
-                                left: "100%", 
-                                width: `${Math.min(sp.goalProgress - 100, 50)}%`,
-                                marginLeft: "-2px"
-                              }}
-                            />
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Stats */}
-                      <div className="hidden sm:flex items-center gap-6">
-                        <div className="text-right">
-                          <p className="text-xl font-black">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
-                          <p className="text-xs text-muted-foreground">
-                            de R$ {sp.goalAmount.toLocaleString("pt-BR")}
-                          </p>
-                        </div>
-                        
-                        <div className="text-center min-w-[60px]">
-                          <p className={cn(
-                            "text-xl font-black",
-                            sp.goalProgress >= 100 ? "text-success" : sp.goalProgress >= 80 ? "text-yellow-500" : "text-muted-foreground"
-                          )}>
-                            {sp.goalProgress.toFixed(0)}%
-                          </p>
-                          <p className="text-xs text-muted-foreground">meta</p>
-                        </div>
-                        
-                        <div className="text-right min-w-[90px]">
-                          <p className="text-lg font-bold text-success">
-                            R$ {sp.commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
-                          </p>
-                          <p className="text-xs text-muted-foreground">comissão</p>
-                        </div>
-                      </div>
-
-                      {/* Edit Button */}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 text-muted-foreground hover:text-primary"
-                        onClick={() => setEditingSalesperson({
-                          id: sp.id,
-                          name: sp.name,
-                          commission_rate: sp.commission_rate,
-                          goalAmount: sp.goalAmount,
-                        })}
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    {/* Mobile Stats */}
-                    <div className="sm:hidden mt-4 grid grid-cols-3 gap-3 text-center">
-                      <div className="p-2 rounded-lg bg-muted/30">
-                        <p className="text-sm font-bold">R$ {sp.totalSales.toLocaleString("pt-BR")}</p>
-                        <p className="text-xs text-muted-foreground">vendas</p>
-                      </div>
-                      <div className="p-2 rounded-lg bg-muted/30">
-                        <p className={cn("text-sm font-bold", sp.goalProgress >= 100 ? "text-success" : "")}>
-                          {sp.goalProgress.toFixed(0)}%
-                        </p>
-                        <p className="text-xs text-muted-foreground">meta</p>
-                      </div>
-                      <div className="p-2 rounded-lg bg-muted/30">
-                        <p className="text-sm font-bold text-success">
-                          R$ {sp.commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
-                        </p>
-                        <p className="text-xs text-muted-foreground">comissão</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            /* Classic Grid View - inspired by Ranking de Vendas */
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              {salespeople?.map((sp, index) => (
+                <RankingGridItem
+                  key={sp.id}
+                  id={sp.id}
+                  name={sp.name}
+                  avatar_url={sp.avatar_url}
+                  rank={sp.rank}
+                  totalSales={sp.totalSales}
+                  goalAmount={sp.goalAmount}
+                  goalProgress={sp.goalProgress}
+                  completedSales={sp.completedSales}
+                  index={index}
+                />
+              ))}
             </div>
           )}
         </div>
