@@ -178,12 +178,8 @@ const Vendedores = () => {
           </div>
         )}
 
-        {/* Podium */}
-        {salespeople && salespeople.length >= 3 && (
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
-            <RankingPodium top3={salespeople.slice(0, 3)} />
-          </div>
-        )}
+
+
 
         {/* Ranking List */}
         <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "300ms" }}>
