@@ -205,7 +205,7 @@ export function SalesAssistantChat() {
     messages, 
     isLoading, 
     sendMessage, 
-    _clearMessages,
+    clearMessages: _clearMessages,
     conversations,
     loadingConversations,
     currentConversationId,
