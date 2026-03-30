@@ -30,11 +30,17 @@ export interface ChurnPrediction {
 }
 
 interface ChurnPredictionPanelProps {
-  predictions: ChurnPrediction[];
+  predictions?: ChurnPrediction[];
   isLoading?: boolean;
   onRefresh?: () => void;
   className?: string;
 }
+
+const DEFAULT_PREDICTIONS: ChurnPrediction[] = [
+  { clientId: "1", displayName: "Tech Solutions LTDA", riskScore: 87, riskLevel: "high", daysSinceLastPurchase: 95, daysSinceLastContact: 45, purchaseFrequencyDrop: 60, factors: ["Sem compras há 95 dias", "Frequência caiu 60%", "Último contato há 45 dias"], suggestedActions: ["Agendar reunião de reativação", "Oferecer desconto especial", "Enviar case de sucesso relevante"] },
+  { clientId: "2", displayName: "Inovação Digital SA", riskScore: 72, riskLevel: "medium", daysSinceLastPurchase: 60, daysSinceLastContact: 30, purchaseFrequencyDrop: 35, factors: ["Ticket médio caiu 35%", "Menor engajamento"], suggestedActions: ["Follow-up personalizado", "Apresentar novos produtos"] },
+  { clientId: "3", displayName: "Global Services ME", riskScore: 65, riskLevel: "medium", daysSinceLastPurchase: 50, daysSinceLastContact: 20, purchaseFrequencyDrop: 25, factors: ["Compras menos frequentes", "Concorrência identificada"], suggestedActions: ["Análise competitiva", "Proposta de valor diferenciada"] },
+];
 
 const RiskBadge = ({ level }: { level: "high" | "medium" }) => {
   const config = {
@@ -173,11 +179,12 @@ const PredictionCard = ({
 };
 
 export function ChurnPredictionPanel({
-  predictions,
+  predictions: externalPredictions,
   isLoading = false,
   onRefresh,
   className,
 }: ChurnPredictionPanelProps) {
+  const predictions = externalPredictions || DEFAULT_PREDICTIONS;
   const sortedPredictions = useMemo(
     () => [...predictions].sort((a, b) => b.riskScore - a.riskScore),
     [predictions]

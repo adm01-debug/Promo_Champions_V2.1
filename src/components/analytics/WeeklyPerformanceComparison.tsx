@@ -15,10 +15,13 @@ interface WeeklyMetrics {
 }
 
 interface WeeklyPerformanceComparisonProps {
-  currentWeek: WeeklyMetrics;
-  previousWeek: WeeklyMetrics;
+  currentWeek?: WeeklyMetrics;
+  previousWeek?: WeeklyMetrics;
   className?: string;
 }
+
+const DEFAULT_CURRENT: WeeklyMetrics = { revenue: 45000, salesCount: 12, conversionRate: 32, avgTicket: 3750, activitiesCount: 48, newClients: 8 };
+const DEFAULT_PREVIOUS: WeeklyMetrics = { revenue: 38000, salesCount: 10, conversionRate: 28, avgTicket: 3800, activitiesCount: 42, newClients: 6 };
 
 function getChangePercent(current: number, previous: number): number {
   if (previous === 0) return current > 0 ? 100 : 0;
@@ -46,8 +49,8 @@ function ChangeIndicator({ current, previous, suffix = "" }: { current: number; 
 }
 
 export function WeeklyPerformanceComparison({
-  currentWeek,
-  previousWeek,
+  currentWeek = DEFAULT_CURRENT,
+  previousWeek = DEFAULT_PREVIOUS,
   className,
 }: WeeklyPerformanceComparisonProps) {
   const metrics = useMemo(() => [

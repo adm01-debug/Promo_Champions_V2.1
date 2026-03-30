@@ -24,12 +24,22 @@ export interface CompetencyData {
 }
 
 interface CompetencyRadarProps {
-  data: CompetencyData[];
+  data?: CompetencyData[];
   title?: string;
   showDetails?: boolean;
   compact?: boolean;
   className?: string;
 }
+
+const DEFAULT_DATA: CompetencyData[] = [
+  { area: "Prospecção", value: 72, maxValue: 100, previousValue: 65 },
+  { area: "Negociação", value: 85, maxValue: 100, previousValue: 80 },
+  { area: "Fechamento", value: 60, maxValue: 100, previousValue: 55 },
+  { area: "Follow-up", value: 90, maxValue: 100, previousValue: 85 },
+  { area: "Qualificação", value: 78, maxValue: 100, previousValue: 70 },
+  { area: "Apresentação", value: 65, maxValue: 100, previousValue: 62 },
+];
+
 
 const renderCustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
@@ -60,13 +70,14 @@ const renderCustomTooltip = ({ active, payload }: any) => {
 };
 
 export function CompetencyRadar({
-  data,
+  data: externalData,
   title = "Radar de Competências",
   showDetails = true,
   compact = false,
   className,
 }: CompetencyRadarProps) {
   const [showComparison, setShowComparison] = useState(false);
+  const data = externalData || DEFAULT_DATA;
 
   const chartData = data.map((d) => ({
     subject: d.area,

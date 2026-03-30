@@ -12,6 +12,7 @@ import { useIsMobile } from "@/hooks/useMediaQuery";
 import { SkipLinks } from "@/components/accessibility/SkipLinks";
 import { FocusModeToggle, FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
+import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";
 import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -90,6 +91,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <NotificationBadge count={unreadCount} size="sm" pulse className="absolute -top-1 -right-1" />
               </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
+              <LanguageToggle />
               <ThemeToggle />
             </div>
           </div>

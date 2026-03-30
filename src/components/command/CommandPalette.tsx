@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CommandDialog,
@@ -10,34 +10,38 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import {
-  LayoutDashboard,
-  ShoppingCart,
-  Users,
-  Package,
-  Target,
-  BarChart3,
-  Settings,
-  Trophy,
-  Calendar,
-  MessageSquare,
-  Bell,
-  FileText,
-  Zap,
-  Search,
-  Plus,
-  Moon,
-  Sun,
-  Keyboard,
+  LayoutDashboard, ShoppingCart, Users, Package, Target,
+  BarChart3, Settings, Trophy, Calendar, MessageSquare,
+  Bell, FileText, Zap, Search, Plus, Moon, Sun, Keyboard,
+  Clock, Heart, Brain, Flame, Radar, Shield, Star,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
-interface CommandItem {
+interface CommandItemData {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   shortcut?: string;
   action: () => void;
-  group: "navigation" | "actions" | "settings";
+  group: "navigation" | "actions" | "settings" | "recent";
+  keywords?: string[];
+}
+
+const RECENT_KEY = "command-palette-recent";
+const MAX_RECENT = 5;
+
+function getRecent(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function addRecent(id: string) {
+  const recent = getRecent().filter((r) => r !== id);
+  recent.unshift(id);
+  localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)));
 }
 
 export function CommandPalette() {
@@ -45,7 +49,6 @@ export function CommandPalette() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
-  // Keyboard shortcut to open
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -53,63 +56,91 @@ export function CommandPalette() {
         setOpen((open) => !open);
       }
     };
-
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const runCommand = useCallback((command: () => void) => {
+  const runCommand = useCallback((id: string, command: () => void) => {
     setOpen(false);
+    addRecent(id);
     command();
   }, []);
 
-  const navigationItems: CommandItem[] = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, shortcut: "⌘D", action: () => navigate("/"), group: "navigation" },
-    { id: "pipeline", label: "Pipeline", icon: Zap, shortcut: "⌘P", action: () => navigate("/pipeline"), group: "navigation" },
-    { id: "vendas", label: "Vendas", icon: ShoppingCart, shortcut: "⌘V", action: () => navigate("/vendas"), group: "navigation" },
-    { id: "clientes", label: "Clientes", icon: Users, shortcut: "⌘C", action: () => navigate("/clientes"), group: "navigation" },
-    { id: "produtos", label: "Produtos", icon: Package, action: () => navigate("/produtos"), group: "navigation" },
-    { id: "metas", label: "Metas", icon: Target, action: () => navigate("/metas"), group: "navigation" },
-    { id: "analytics", label: "Analytics", icon: BarChart3, action: () => navigate("/analytics"), group: "navigation" },
-    { id: "ranking", label: "Ranking Competitivo", icon: Trophy, action: () => navigate("/ranking"), group: "navigation" },
-    { id: "desafios", label: "Desafios Semanais", icon: Trophy, action: () => navigate("/desafios-semanais"), group: "navigation" },
-    { id: "atividades", label: "Atividades", icon: Calendar, action: () => navigate("/atividades"), group: "navigation" },
-    { id: "assistente", label: "Assistente IA", icon: MessageSquare, action: () => navigate("/assistente"), group: "navigation" },
-    { id: "notificacoes", label: "Notificações", icon: Bell, action: () => navigate("/notificacoes"), group: "navigation" },
-    { id: "relatorios", label: "Relatórios", icon: FileText, action: () => navigate("/relatorios"), group: "navigation" },
-    { id: "configuracoes", label: "Configurações", icon: Settings, action: () => navigate("/configuracoes"), group: "navigation" },
-  ];
+  const navigationItems: CommandItemData[] = useMemo(() => [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, shortcut: "⌘D", action: () => navigate("/"), group: "navigation", keywords: ["home", "início", "painel"] },
+    { id: "pipeline", label: "Pipeline", icon: Zap, shortcut: "⌘P", action: () => navigate("/pipeline"), group: "navigation", keywords: ["funil", "kanban"] },
+    { id: "vendas", label: "Vendas", icon: ShoppingCart, shortcut: "⌘V", action: () => navigate("/vendas"), group: "navigation", keywords: ["sales", "deals", "negócios"] },
+    { id: "clientes", label: "Clientes", icon: Users, shortcut: "⌘C", action: () => navigate("/clientes"), group: "navigation", keywords: ["customers", "contacts"] },
+    { id: "produtos", label: "Produtos", icon: Package, action: () => navigate("/produtos"), group: "navigation", keywords: ["products", "catalog"] },
+    { id: "metas", label: "Metas", icon: Target, action: () => navigate("/metas"), group: "navigation", keywords: ["goals", "objectives", "targets"] },
+    { id: "analytics", label: "Analytics", icon: BarChart3, action: () => navigate("/analytics"), group: "navigation", keywords: ["análise", "relatórios", "gráficos", "heatmap", "radar"] },
+    { id: "ranking", label: "Ranking Competitivo", icon: Trophy, action: () => navigate("/ranking"), group: "navigation", keywords: ["leaderboard", "competition"] },
+    { id: "desafios", label: "Desafios Semanais", icon: Flame, action: () => navigate("/desafios-semanais"), group: "navigation", keywords: ["challenges", "weekly"] },
+    { id: "atividades", label: "Atividades", icon: Calendar, action: () => navigate("/atividades"), group: "navigation", keywords: ["activities", "calls", "meetings"] },
+    { id: "assistente", label: "Assistente IA", icon: Brain, action: () => navigate("/assistente"), group: "navigation", keywords: ["ai", "copilot", "chat", "inteligência"] },
+    { id: "notificacoes", label: "Notificações", icon: Bell, action: () => navigate("/notificacoes"), group: "navigation", keywords: ["alerts", "avisos"] },
+    { id: "relatorios", label: "Relatórios", icon: FileText, action: () => navigate("/relatorios"), group: "navigation", keywords: ["reports", "export"] },
+    { id: "bi-gestor", label: "BI Gestão", icon: Radar, action: () => navigate("/bi-gestor"), group: "navigation", keywords: ["business intelligence", "gestão"] },
+    { id: "seguranca", label: "Segurança", icon: Shield, action: () => navigate("/configuracoes"), group: "navigation", keywords: ["security", "mfa", "2fa"] },
+    { id: "configuracoes", label: "Configurações", icon: Settings, action: () => navigate("/configuracoes"), group: "navigation", keywords: ["settings", "preferences"] },
+  ], [navigate]);
 
-  const actionItems: CommandItem[] = [
-    { id: "new-sale", label: "Nova Venda", icon: Plus, shortcut: "⌘N", action: () => navigate("/vendas?new=true"), group: "actions" },
-    { id: "new-client", label: "Novo Cliente", icon: Plus, action: () => navigate("/clientes?new=true"), group: "actions" },
+  const actionItems: CommandItemData[] = useMemo(() => [
+    { id: "new-sale", label: "Nova Venda", icon: Plus, shortcut: "⌘N", action: () => navigate("/vendas?new=true"), group: "actions", keywords: ["create", "add", "nova"] },
+    { id: "new-client", label: "Novo Cliente", icon: Plus, action: () => navigate("/clientes?new=true"), group: "actions", keywords: ["create", "add", "novo"] },
     { id: "search", label: "Busca Global", icon: Search, shortcut: "⌘/", action: () => {}, group: "actions" },
-  ];
+  ], [navigate]);
 
-  const settingsItems: CommandItem[] = [
-    { 
-      id: "toggle-theme", 
-      label: theme === "dark" ? "Modo Claro" : "Modo Escuro", 
-      icon: theme === "dark" ? Sun : Moon, 
-      shortcut: "⌘T",
-      action: () => setTheme(theme === "dark" ? "light" : "dark"), 
-      group: "settings" 
+  const settingsItems: CommandItemData[] = useMemo(() => [
+    {
+      id: "toggle-theme", label: theme === "dark" ? "Modo Claro" : "Modo Escuro",
+      icon: theme === "dark" ? Sun : Moon, shortcut: "⌘T",
+      action: () => setTheme(theme === "dark" ? "light" : "dark"), group: "settings",
     },
     { id: "shortcuts", label: "Atalhos do Teclado", icon: Keyboard, shortcut: "⌘?", action: () => {}, group: "settings" },
-  ];
+  ], [theme, setTheme]);
+
+  const allItems = useMemo(() => [...navigationItems, ...actionItems, ...settingsItems], [navigationItems, actionItems, settingsItems]);
+
+  const recentIds = getRecent();
+  const recentItems = useMemo(() =>
+    recentIds.map((id) => allItems.find((item) => item.id === id)).filter(Boolean) as CommandItemData[],
+    [recentIds, allItems]
+  );
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Digite um comando ou busque..." />
+      <CommandInput placeholder="Digite um comando ou busque... (ex: vendas, pipeline, novo)" />
       <CommandList>
         <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
-        
+
+        {recentItems.length > 0 && (
+          <>
+            <CommandGroup heading="Recentes">
+              {recentItems.map((item) => (
+                <CommandItem
+                  key={`recent-${item.id}`}
+                  onSelect={() => runCommand(item.id, item.action)}
+                  className="flex items-center gap-3"
+                  keywords={item.keywords}
+                >
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <item.icon className="h-4 w-4 text-muted-foreground" />
+                  <span>{item.label}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+          </>
+        )}
+
         <CommandGroup heading="Navegação">
           {navigationItems.map((item) => (
             <CommandItem
               key={item.id}
-              onSelect={() => runCommand(item.action)}
+              onSelect={() => runCommand(item.id, item.action)}
               className="flex items-center gap-3"
+              keywords={item.keywords}
             >
               <item.icon className="h-4 w-4 text-muted-foreground" />
               <span>{item.label}</span>
@@ -121,15 +152,16 @@ export function CommandPalette() {
             </CommandItem>
           ))}
         </CommandGroup>
-        
+
         <CommandSeparator />
-        
+
         <CommandGroup heading="Ações Rápidas">
           {actionItems.map((item) => (
             <CommandItem
               key={item.id}
-              onSelect={() => runCommand(item.action)}
+              onSelect={() => runCommand(item.id, item.action)}
               className="flex items-center gap-3"
+              keywords={item.keywords}
             >
               <item.icon className="h-4 w-4 text-primary" />
               <span>{item.label}</span>
@@ -141,15 +173,16 @@ export function CommandPalette() {
             </CommandItem>
           ))}
         </CommandGroup>
-        
+
         <CommandSeparator />
-        
+
         <CommandGroup heading="Configurações">
           {settingsItems.map((item) => (
             <CommandItem
               key={item.id}
-              onSelect={() => runCommand(item.action)}
+              onSelect={() => runCommand(item.id, item.action)}
               className="flex items-center gap-3"
+              keywords={item.keywords}
             >
               <item.icon className="h-4 w-4 text-muted-foreground" />
               <span>{item.label}</span>
@@ -166,12 +199,8 @@ export function CommandPalette() {
   );
 }
 
-// Hook to programmatically open command palette
 export function useCommandPalette() {
-  const [open, setOpen] = useState(false);
-  
   const openCommandPalette = useCallback(() => {
-    // Dispatch keyboard event to trigger command palette
     const event = new KeyboardEvent("keydown", {
       key: "k",
       metaKey: true,

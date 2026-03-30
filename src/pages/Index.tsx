@@ -15,10 +15,15 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { StreakWidget } from "@/components/gamification/StreakWidget";
 import { DailyChallengesCard } from "@/components/gamification/DailyChallengesCard";
+import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBanner";
+import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidget";
 import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
 import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
 import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
+import { MoodTrackerWidget } from "@/components/engagement/MoodTrackerWidget";
+import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
+import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -69,6 +74,12 @@ const Index = () => {
 
             {/* Onboarding Checklist */}
             <OnboardingChecklist />
+
+            {/* Seasonal Event + Flash Sales Banners */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <SeasonalEventBanner />
+              <FlashSalesBanner />
+            </div>
 
             {/* Competitive Status Bar */}
             <motion.div
@@ -234,6 +245,24 @@ const Index = () => {
               </motion.div>
               <motion.div variants={itemVariants}>
                 <SelfBenchmarkWidget />
+              </motion.div>
+            </motion.div>
+
+            {/* Fifth Row - Engagement & Learning */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <MoodTrackerWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <PulseSurveyWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <DailyQuizWidget />
               </motion.div>
             </motion.div>
           </div>

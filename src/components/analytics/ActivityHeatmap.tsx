@@ -6,6 +6,9 @@ import { ptBR } from "date-fns/locale";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ActivityData {
   date: string;
@@ -13,7 +16,7 @@ interface ActivityData {
 }
 
 interface ActivityHeatmapProps {
-  data: ActivityData[];
+  data?: ActivityData[];
   title?: string;
   className?: string;
 }
@@ -47,10 +50,35 @@ const levelGlow: Record<number, string> = {
 };
 
 export function ActivityHeatmap({
-  data,
+  data: externalData,
   title = "Atividade Anual",
   className
 }: ActivityHeatmapProps) {
+  const { salesperson } = useAuth();
+
+  const { data: fetchedData } = useQuery({
+    queryKey: ["activity-heatmap", salesperson?.id],
+    queryFn: async () => {
+      if (!salesperson?.id) return [];
+      const startDate = subDays(new Date(), DAYS_TO_SHOW);
+      const { data, error } = await supabase
+        .from("activities")
+        .select("created_at")
+        .eq("salesperson_id", salesperson.id)
+        .gte("created_at", startDate.toISOString());
+      if (error) return [];
+      const countMap = new Map<string, number>();
+      data.forEach((a) => {
+        const key = format(new Date(a.created_at), "yyyy-MM-dd");
+        countMap.set(key, (countMap.get(key) || 0) + 1);
+      });
+      return Array.from(countMap.entries()).map(([date, count]) => ({ date, count }));
+    },
+    enabled: !externalData && !!salesperson?.id,
+  });
+
+  const data = externalData || fetchedData || [];
+
   const today = new Date();
   const startDate = startOfWeek(subDays(today, DAYS_TO_SHOW - 1));
 

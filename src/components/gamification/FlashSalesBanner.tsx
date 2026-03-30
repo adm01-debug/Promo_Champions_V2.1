@@ -73,12 +73,17 @@ export interface FlashPromotion {
 }
 
 interface FlashSalesBannerProps {
-  promotions: FlashPromotion[];
+  promotions?: FlashPromotion[];
   onBuy?: (promotionId: string) => void;
   className?: string;
 }
 
-export function FlashSalesBanner({ promotions, onBuy, className }: FlashSalesBannerProps) {
+const DEFAULT_PROMOS: FlashPromotion[] = [
+  { id: "1", title: "Power-Up Velocidade", description: "2x XP por 24h", discount_percent: 50, ends_at: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), original_price: 500, sale_price: 250 },
+];
+
+export function FlashSalesBanner({ promotions: externalPromos, onBuy, className }: FlashSalesBannerProps) {
+  const promotions = externalPromos || DEFAULT_PROMOS;
   if (promotions.length === 0) return null;
 
   return (
