@@ -131,52 +131,10 @@ const Vendedores = () => {
           </div>
         </div>
 
-        {/* Top Seller Spotlight */}
-        {topSeller && (
+        {/* Podium - replaces old leader spotlight */}
+        {salespeople && salespeople.length >= 3 && (
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
-            <div className="glass rounded-2xl p-6 border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 via-transparent to-amber-500/10 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-              
-              <div className="relative flex flex-col md:flex-row items-center gap-6">
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full blur-md opacity-50 animate-pulse" />
-                  <Avatar className="h-24 w-24 relative ring-4 ring-yellow-400/60 shadow-2xl">
-                    <AvatarImage src={topSeller.avatar_url || undefined} alt={topSeller.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-white text-2xl font-bold">
-                      {topSeller.name.split(" ").map(n => n[0]).join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute -top-2 -right-2 p-1.5 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full shadow-lg">
-                    <Crown className="h-5 w-5 text-black" />
-                  </div>
-                </div>
-                
-                <div className="flex-1 text-center md:text-left">
-                  <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-                    <span className="text-xs font-bold uppercase tracking-wider text-yellow-500">Líder do Ranking</span>
-                    <Flame className="h-4 w-4 text-orange-500 animate-pulse" />
-                  </div>
-                  <h2 className="text-2xl md:text-3xl font-black">{topSeller.name}</h2>
-                  <p className="text-muted-foreground">{topSeller.completedSales} vendas realizadas</p>
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-4 md:gap-8">
-                  <div className="text-center">
-                    <p className="text-3xl md:text-4xl font-black gradient-text">
-                      R$ {topSeller.totalSales.toLocaleString("pt-BR")}
-                    </p>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Faturamento</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-3xl md:text-4xl font-black text-success">
-                      {topSeller.goalProgress.toFixed(0)}%
-                    </p>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">da Meta</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <RankingPodium top3={salespeople.slice(0, 3)} />
           </div>
         )}
 
