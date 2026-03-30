@@ -54,7 +54,7 @@ export function useLoginRateLimiter() {
 
     for (const attempt of attempts || []) {
       if (attempt.success) {
-        lastSuccessTime = new Date(attempt.created_at);
+        _lastSuccessTime = new Date(attempt.created_at);
         break;
       }
       consecutiveFailures++;
