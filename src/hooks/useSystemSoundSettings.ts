@@ -42,7 +42,7 @@ export function useSystemSoundSettings() {
       if (saved) {
         try {
           return { ...defaultPreferences, ...JSON.parse(saved) };
-        } catch {
+        } catch (_e) {
           return defaultPreferences;
         }
       }
@@ -132,7 +132,7 @@ export function useSystemSoundSettings() {
           break;
         }
       }
-    } catch {
+    } catch (_e) {
       // Silently fail if audio context not available
     }
   }, [volume]);
@@ -164,7 +164,7 @@ export function useSystemSoundSettings() {
       
       oscillator.start(now);
       oscillator.stop(now + 0.2);
-    } catch {
+    } catch (_e) {
       // Silently fail
     }
   }, [preferences.ready.enabled, volume]);
