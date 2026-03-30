@@ -164,7 +164,7 @@ export function useSystemSoundSettings() {
       
       oscillator.start(now);
       oscillator.stop(now + 0.2);
-    } catch {
+    } catch (_e) {
       // Silently fail
     }
   }, [preferences.ready.enabled, volume]);
