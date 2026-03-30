@@ -94,8 +94,8 @@ export const WinLossReasonChart: FC<WinLossReasonChartProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'wins' | 'losses'>('wins');
 
-  const data = activeTab === 'wins' ? winReasons : lossReasons;
-  const colors = activeTab === 'wins' ? COLORS : LOSS_COLORS;
+  const _data = activeTab === 'wins' ? winReasons : lossReasons;
+  const _colors = activeTab === 'wins' ? COLORS : LOSS_COLORS;
 
   return (
     <Card className={cn('p-4', className)}>

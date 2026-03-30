@@ -52,7 +52,7 @@ const statusConfig = {
 
 export const GoalProgressCard: FC<GoalProgressCardProps> = ({
   goal,
-  showDetails = true,
+  _showDetails = true,
   onClick,
   className,
 }) => {

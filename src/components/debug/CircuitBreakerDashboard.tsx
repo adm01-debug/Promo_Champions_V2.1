@@ -16,7 +16,7 @@ interface CircuitState {
 
 export const CircuitBreakerDashboard: FC = () => {
   const [circuits, setCircuits] = useState<Record<string, CircuitState>>({});
-  const { data: history, isLoading: historyLoading } = useCircuitBreakerHistory();
+  const { data: history, isLoading: _historyLoading } = useCircuitBreakerHistory();
 
   useEffect(() => {
     const interval = setInterval(() => {

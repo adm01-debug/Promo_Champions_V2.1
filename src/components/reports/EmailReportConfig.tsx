@@ -37,7 +37,7 @@ const FREQUENCIES = [
 export function EmailReportConfig() {
   const queryClient = useQueryClient();
 
-  const { data: config, isLoading } = useQuery({
+  const { data: config, _isLoading } = useQuery({
     queryKey: ['email-report-config'],
     queryFn: async () => {
       const { data, error } = await supabase

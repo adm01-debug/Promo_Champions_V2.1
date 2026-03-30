@@ -22,7 +22,7 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
 
   const { data: cadences } = useCadences();
   const { data: salespeople } = useSalespeople();
-  const { data: steps } = useCadenceSteps(selectedCadenceId || undefined);
+  const { data: _steps } = useCadenceSteps(selectedCadenceId || undefined);
   const enrollInCadence = useEnrollInCadence();
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];

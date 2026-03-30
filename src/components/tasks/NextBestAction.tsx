@@ -53,7 +53,7 @@ const actionTypeConfig = {
 
 export function NextBestAction() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>('');
-  const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
+  const { data: salespeople, isLoading: _loadingSalespeople } = useSalespeople();
   const nextBestAction = useNextBestAction();
   const createTask = useCreateTask();
 

@@ -48,10 +48,10 @@ export async function generateCurrentMonthReport() {
   };
 
   // Build team ranking
-  const salespeopleMap = new Map((spData.data || []).map(sp => [sp.id, sp.name]));
+  const _salespeopleMap = new Map((spData.data || []).map(sp => [sp.id, sp.name]));
   const goalsMap = new Map((goals.data || []).map(g => [g.salesperson_id, Number(g.goal_amount)]));
   
-  const spSalesAgg: Record<string, number> = {};
+  const _spSalesAgg: Record<string, number> = {};
   (curSales.data || []).forEach(() => {
     // Would need salesperson_id in the query - simplified
   });

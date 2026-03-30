@@ -11,7 +11,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
   if (coins <= 0) return null;
 
   const coinCount = Math.min(Math.ceil(coins / 200), 8);
-  const isRich = coins >= 500;
+  const _isRich = coins >= 500;
   const isWealthy = coins >= 1000;
 
   const sizeMap = { sm: 40, md: 56, lg: 72 };

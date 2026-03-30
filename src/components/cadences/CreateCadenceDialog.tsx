@@ -52,7 +52,7 @@ export function CreateCadenceDialog() {
 
   const createCadence = useCreateCadence();
   const createStep = useCreateCadenceStep();
-  const { data: savedSteps } = useCadenceSteps(cadenceId || undefined);
+  const { data: _savedSteps } = useCadenceSteps(cadenceId || undefined);
 
   const form = useForm<CadenceFormData>({
     resolver: zodResolver(cadenceSchema),

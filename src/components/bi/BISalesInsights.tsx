@@ -51,7 +51,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
   const repurchaseRate = data?.repurchaseRateGlobal || 0;
   const topByTicket = data?.topByAvgTicket || [];
   const topByRepurchase = data?.topByRepurchase || [];
-  const maxTicket = topByTicket[0]?.avgTicket || 0;
+  const _maxTicket = topByTicket[0]?.avgTicket || 0;
 
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-6", className)}>

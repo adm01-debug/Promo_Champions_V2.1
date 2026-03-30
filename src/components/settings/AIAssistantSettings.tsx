@@ -24,7 +24,7 @@ export function AIAssistantSettings() {
     aiAssistantName, 
     responseMode: savedResponseMode,
     voiceId: savedVoiceId,
-    voiceName: savedVoiceName,
+    voiceName: _savedVoiceName,
     updatePreferences, 
     isUpdating, 
     isLoading,
