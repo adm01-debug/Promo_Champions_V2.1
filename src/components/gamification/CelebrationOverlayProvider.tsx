@@ -29,7 +29,7 @@ const STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: n
   'streak_30': { title: 'Mestre da Consistência', icon: '👑', xp: 1000 },
 };
 
-export const CelebrationOverlayProvider = forwardRef<HTMLDivElement>(function CelebrationOverlayProvider(_props, _ref) {
+export function CelebrationOverlayProvider() {
   const { triggerLevelUp, triggerStreakMilestone } = useLevelUpCelebration();
   const salespersonNamesRef = useRef<Map<string, string>>(new Map());
   
