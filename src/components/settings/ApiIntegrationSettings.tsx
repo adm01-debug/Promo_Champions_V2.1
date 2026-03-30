@@ -332,7 +332,7 @@ Value: <seu_token_aqui>`}
                   <div>
                     <h3 className="text-lg font-semibold">📋 Códigos HTTP</h3>
                     <div className="grid grid-cols-2 gap-2">
-                      <div className="p-2 bg-muted rounded text-xs"><Badge className="bg-green-500">200</Badge> Sucesso</div>
+                      <div className="p-2 bg-muted rounded text-xs"><Badge className="bg-primary">200</Badge> Sucesso</div>
                       <div className="p-2 bg-muted rounded text-xs"><Badge variant="destructive">400</Badge> Operação mal sucedida</div>
                       <div className="p-2 bg-muted rounded text-xs"><Badge variant="destructive">403</Badge> Acesso negado</div>
                       <div className="p-2 bg-muted rounded text-xs"><Badge variant="destructive">404</Badge> Não encontrado</div>

@@ -71,3 +71,6 @@ verify_jwt = true
 
 [functions.receive-quote-webhook]
 verify_jwt = false
+
+[functions.ranking-api]
+verify_jwt = false
