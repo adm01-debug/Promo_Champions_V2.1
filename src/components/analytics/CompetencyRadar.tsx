@@ -38,6 +38,8 @@ const DEFAULT_DATA: CompetencyData[] = [
   { area: "Follow-up", value: 90, maxValue: 100, previousValue: 85 },
   { area: "Qualificação", value: 78, maxValue: 100, previousValue: 70 },
   { area: "Apresentação", value: 65, maxValue: 100, previousValue: 62 },
+];
+
 
 const renderCustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
