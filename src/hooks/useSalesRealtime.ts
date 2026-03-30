@@ -277,6 +277,7 @@ async function awardSaleXP(
   salespersonName: string
 ): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
   // Get or create XP record
+  // eslint-disable-next-line prefer-const
   let { data: xpRecord } = await supabase
     .from("salesperson_xp")
     .select("*")

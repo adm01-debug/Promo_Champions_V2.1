@@ -89,7 +89,7 @@ export function useCategoryMetrics(dateRange: DateRange) {
   return useQuery({
     queryKey: ["category_metrics", dateRange.from?.toISOString(), dateRange.to?.toISOString()],
     queryFn: async () => {
-      let query = supabase
+      const query = supabase
         .from("category_metrics")
         .select("*")
         .order("date", { ascending: false })
