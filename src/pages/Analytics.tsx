@@ -227,6 +227,49 @@ export default function Analytics() {
                       <PerformanceComparison />
                     </motion.div>
                   </TabsContent>
+                  <TabsContent value="heatmap" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ActivityHeatmap />
+                    </motion.div>
+                  </TabsContent>
+
+                  <TabsContent value="competency" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <CompetencyRadar />
+                    </motion.div>
+                  </TabsContent>
+
+                  <TabsContent value="weekly" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <WeeklyPerformanceComparison />
+                    </motion.div>
+                  </TabsContent>
+
+                  <TabsContent value="churn-risk" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ChurnPredictionPanel />
+                    </motion.div>
+                  </TabsContent>
                 </AnimatePresence>
               </Tabs>
             </motion.div>
