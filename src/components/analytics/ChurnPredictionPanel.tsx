@@ -179,7 +179,7 @@ const PredictionCard = ({
 };
 
 export function ChurnPredictionPanel({
-  predictions,
+  predictions: externalPredictions,
   isLoading = false,
   onRefresh,
   className,

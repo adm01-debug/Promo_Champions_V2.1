@@ -77,6 +77,7 @@ export function CompetencyRadar({
   className,
 }: CompetencyRadarProps) {
   const [showComparison, setShowComparison] = useState(false);
+  const data = externalData || DEFAULT_DATA;
 
   const chartData = data.map((d) => ({
     subject: d.area,
