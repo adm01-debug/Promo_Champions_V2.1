@@ -16,13 +16,24 @@ interface SeasonalEvent {
   theme_color?: string;
 }
 
-interface SeasonalEventBannerProps {
-  event: SeasonalEvent;
+export interface SeasonalEventBannerProps {
+  event?: SeasonalEvent;
   onClick?: () => void;
   className?: string;
 }
 
-export function SeasonalEventBanner({ event, onClick, className }: SeasonalEventBannerProps) {
+const DEFAULT_EVENT: SeasonalEvent = {
+  id: "spring-2026",
+  title: "🌸 Sprint da Primavera",
+  description: "XP em dobro para todas as vendas fechadas!",
+  icon: "🌸",
+  xp_multiplier: 2,
+  starts_at: new Date().toISOString(),
+  ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+};
+
+export function SeasonalEventBanner({ event: externalEvent, onClick, className }: SeasonalEventBannerProps) {
+  const event = externalEvent || DEFAULT_EVENT;
   const endsAt = new Date(event.ends_at);
   const now = new Date();
   const daysRemaining = differenceInDays(endsAt, now);
