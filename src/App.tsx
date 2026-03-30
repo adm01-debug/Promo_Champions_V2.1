@@ -51,8 +51,10 @@ const App = () => {
               <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <KeyboardShortcutsProvider>
                   <AuthProvider>
-                    <CommandPalette />
-                    <AppRoutes />
+                    <I18nProvider>
+                      <CommandPalette />
+                      <AppRoutes />
+                    </I18nProvider>
                   </AuthProvider>
                 </KeyboardShortcutsProvider>
               </BrowserRouter>
