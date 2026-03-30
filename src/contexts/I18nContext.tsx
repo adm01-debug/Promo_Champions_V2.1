@@ -152,7 +152,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLocaleState(newLocale);
     try {
       localStorage.setItem(LOCALE_KEY, newLocale);
-    } catch {}
+    } catch { /* localStorage unavailable */ }
   }, []);
 
   const t = useCallback((key: string, fallback?: string): string => {

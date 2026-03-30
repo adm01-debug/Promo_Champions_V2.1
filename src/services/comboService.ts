@@ -47,7 +47,7 @@ export const comboService = {
     const today = new Date().toISOString().split("T")[0];
     
     // Try to get existing combo
-    let combo = await this.getTodayCombo(salespersonId);
+    const combo = await this.getTodayCombo(salespersonId);
 
     if (!combo) {
       // Create new combo for today

@@ -322,14 +322,14 @@ describe('Follow-up Components E2E Logic', () => {
     it('should toggle a lead selection', () => {
       const selected = new Set<string>();
       const id = 'lead-1';
-      selected.has(id) ? selected.delete(id) : selected.add(id);
+      if (selected.has(id)) { selected.delete(id); } else { selected.add(id); }
       expect(selected.has(id)).toBe(true);
     });
 
     it('should deselect a previously selected lead', () => {
       const selected = new Set<string>(['lead-1']);
       const id = 'lead-1';
-      selected.has(id) ? selected.delete(id) : selected.add(id);
+      if (selected.has(id)) { selected.delete(id); } else { selected.add(id); }
       expect(selected.has(id)).toBe(false);
     });
 

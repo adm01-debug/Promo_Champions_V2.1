@@ -117,7 +117,7 @@ export function useSystemSoundSettings() {
           playNote(1320, now + 0.2, 0.2, 0.25);
           break;
         
-        case 'swoosh':
+        case 'swoosh': {
           const osc = audioContext.createOscillator();
           const gain = audioContext.createGain();
           osc.connect(gain);

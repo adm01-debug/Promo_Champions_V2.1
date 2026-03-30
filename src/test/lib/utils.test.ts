@@ -11,8 +11,10 @@ describe('cn - Class Name Merger', () => {
   });
 
   it('should handle conditional classes', () => {
-    expect(cn('base', true && 'active')).toBe('base active');
-    expect(cn('base', false && 'active')).toBe('base');
+    const condition = true;
+    expect(cn('base', condition && 'active')).toBe('base active');
+    const falseCondition = false;
+    expect(cn('base', falseCondition && 'active')).toBe('base');
   });
 
   it('should handle undefined and null', () => {
