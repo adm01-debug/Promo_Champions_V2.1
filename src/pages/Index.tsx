@@ -247,6 +247,24 @@ const Index = () => {
                 <SelfBenchmarkWidget />
               </motion.div>
             </motion.div>
+
+            {/* Fifth Row - Engagement & Learning */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.div variants={itemVariants}>
+                <MoodTrackerWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <PulseSurveyWidget />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <DailyQuizWidget />
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </PageTransition>
