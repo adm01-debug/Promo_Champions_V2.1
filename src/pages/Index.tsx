@@ -21,6 +21,9 @@ import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidge
 import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
 import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
 import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
+import { MoodTrackerWidget } from "@/components/engagement/MoodTrackerWidget";
+import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
+import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
