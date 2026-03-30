@@ -70,7 +70,7 @@ const renderCustomTooltip = ({ active, payload }: any) => {
 };
 
 export function CompetencyRadar({
-  data,
+  data: externalData,
   title = "Radar de Competências",
   showDetails = true,
   compact = false,
