@@ -4,7 +4,6 @@ import { Trophy, Flame, Shield, Award, Swords, Star, TrendingUp, Heart } from 'l
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useGamifiedProfile } from '@/hooks/useGamifiedProfile';
 

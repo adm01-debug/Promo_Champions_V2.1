@@ -11,7 +11,7 @@ import { ActivityOutcomesChart } from "@/components/analytics/ActivityOutcomesCh
 import { ActivityTrendChart } from "@/components/analytics/ActivityTrendChart";
 import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { exportToCSV, formatPercentForExport } from "@/utils/csvExport";
+import { exportToCSV } from "@/utils/csvExport";
 import { toast } from "sonner";
 
 type OutcomeFilter = 'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';

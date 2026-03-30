@@ -4,7 +4,6 @@ import { useLeadSourceAnalysis, sourceLabels, sourceColors, LeadSource } from "@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { PieChartIcon, TrendingUp, CheckCircle, DollarSign } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 export function LeadSourceDistribution() {
   const { data, isLoading } = useLeadSourceAnalysis(3);

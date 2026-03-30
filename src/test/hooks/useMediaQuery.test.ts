@@ -2,7 +2,7 @@
  * Media Query Hook Tests
  * Tests: breakpoints, responsive detection, reduced motion
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useMediaQuery, useIsMobile, useIsTablet, useIsDesktop } from '@/hooks/useMediaQuery';
 

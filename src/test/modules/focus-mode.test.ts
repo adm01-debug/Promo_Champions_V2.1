@@ -2,7 +2,7 @@
  * Focus Mode Logic Tests
  * Tests: timer formatting, config persistence, state management
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('Focus Mode - Time Formatting', () => {
   const formatTime = (seconds: number) => {

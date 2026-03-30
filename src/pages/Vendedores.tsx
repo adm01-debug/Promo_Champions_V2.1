@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Edit2, Flame, Zap, Star, ExternalLink, LayoutGrid, List } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { useGamificationData } from "@/hooks/useGamificationData";
@@ -16,7 +13,6 @@ import { CelebrationTestButtons } from "@/components/gamification/CelebrationTes
 import { RankingPodium } from "@/components/vendedores/RankingPodium";
 import { LeagueCard } from "@/components/gamification/LeagueCard";
 import { RankingGridItem } from "@/components/vendedores/RankingGridItem";
-import { cn } from "@/lib/utils";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";

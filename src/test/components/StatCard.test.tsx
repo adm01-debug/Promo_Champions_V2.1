@@ -2,10 +2,10 @@
  * StatCard Component Tests
  * Tests: rendering, hero mode, variants, count-up, edge cases
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { StatCard } from '@/components/dashboard/StatCard';
-import { DollarSign, Users, TrendingUp, ShoppingBag } from 'lucide-react';
+import { DollarSign, Users, TrendingUp } from 'lucide-react';
 
 // Mock useCountUp to return immediate values
 vi.mock('@/hooks/useCountUp', () => ({

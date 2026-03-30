@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { BarChart3, CheckCircle2, MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
+import { CheckCircle2, MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 
 interface PulseQuestion {
   id: string;

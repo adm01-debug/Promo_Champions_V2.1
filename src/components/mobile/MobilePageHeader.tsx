@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Menu, MoreVertical } from 'lucide-react';
+import { ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMediaQuery';

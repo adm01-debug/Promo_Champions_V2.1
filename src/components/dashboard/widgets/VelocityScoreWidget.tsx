@@ -1,7 +1,7 @@
 import { usePipelineVelocity } from "@/hooks/usePipelineVelocity";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Zap, TrendingUp, TrendingDown } from "lucide-react";
+import { Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 

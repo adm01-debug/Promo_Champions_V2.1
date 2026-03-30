@@ -31,7 +31,6 @@ import { format, subDays, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
-import { useUserRoles } from "@/hooks/useUserRoles";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
 import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";

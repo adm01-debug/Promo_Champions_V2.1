@@ -2,9 +2,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { FileDown, Keyboard } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
-import { useKeyboardShortcutsContext } from "@/components/keyboard/KeyboardShortcutsProvider";
 import { useState } from "react";
 
 export const DashboardHeader = () => {

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, Flame, ThermometerSun, Snowflake } from 'lucide-react';
-import type { ColdLead, LeadTemperature } from './types';
+import type { ColdLead } from './types';
 
 interface FollowUpStatsGridProps {
   leads: ColdLead[];

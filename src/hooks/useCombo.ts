@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { comboService, COMBO_TIERS } from "@/services/comboService";
-import { useState, useCallback } from "react";
 
 let tierUpCallback: ((tier: number) => void) | null = null;
 

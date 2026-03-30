@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { LucideIcon, FileX, Users, DollarSign, Activity, Search, Inbox, Target, Zap, Bell, Calendar, ShoppingCart, TrendingUp } from 'lucide-react';
+import { LucideIcon, FileX, Users, DollarSign, Search, Inbox, Target, Zap, Bell, Calendar, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 

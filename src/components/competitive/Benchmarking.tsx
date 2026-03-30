@@ -4,7 +4,6 @@ import { BarChart3, ArrowLeftRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 

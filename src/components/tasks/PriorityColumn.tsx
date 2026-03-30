@@ -3,7 +3,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { TaskRecord, TaskPriority } from '@/hooks/useTasks';
 import { DraggableTaskCard } from './DraggableTaskCard';
 import { cn } from '@/lib/utils';
-import { Flame, ClipboardList, CheckCircle, AlertTriangle, type LucideIcon } from 'lucide-react';
+import { Flame, ClipboardList, CheckCircle, type LucideIcon } from 'lucide-react';
 
 interface PriorityColumnProps {
   priority: TaskPriority;

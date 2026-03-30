@@ -12,7 +12,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { exportToCSV, formatDateForExport } from "@/utils/csvExport";
+import { exportToCSV } from "@/utils/csvExport";
 import { toast } from "sonner";
 
 type PeriodFilter = 'week' | 'month' | 'quarter';

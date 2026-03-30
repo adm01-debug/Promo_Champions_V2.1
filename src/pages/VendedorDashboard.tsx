@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils";
 import { VendedorDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { startOfMonth, endOfMonth, format, subMonths, differenceInDays, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import {
   AreaChart,
   Area,

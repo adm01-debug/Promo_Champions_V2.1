@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Volume2, VolumeX, Play, PartyPopper, Sparkles, Crown, Trophy, Loader2, Check, ShieldAlert, Bell, ListTodo, DollarSign, RefreshCw, TrendingDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

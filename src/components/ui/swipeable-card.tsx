@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { Check, X, RotateCcw } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SwipeableCardProps {

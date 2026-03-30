@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, subDays, eachDayOfInterval, parseISO } from "date-fns";
+import { format, subDays, eachDayOfInterval } from "date-fns";
 
 export interface AchievementTrendData {
   date: string;
