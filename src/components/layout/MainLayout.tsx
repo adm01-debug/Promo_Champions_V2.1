@@ -91,6 +91,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <NotificationBadge count={unreadCount} size="sm" pulse className="absolute -top-1 -right-1" />
               </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
+              <LanguageToggle />
               <ThemeToggle />
             </div>
           </div>
