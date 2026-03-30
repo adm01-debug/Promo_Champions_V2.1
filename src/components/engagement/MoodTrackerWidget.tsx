@@ -75,7 +75,7 @@ export function MoodTrackerWidget({ className }: { className?: string }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between gap-1.5">
+        <div className="flex items-center justify-between gap-1.5" role="radiogroup" aria-label="Selecione seu humor de hoje">
           {MOODS.map((mood) => (
             <motion.button
               key={mood.value}
