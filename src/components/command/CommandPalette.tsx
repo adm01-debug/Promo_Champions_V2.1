@@ -99,8 +99,14 @@ export function CommandPalette() {
       icon: theme === "dark" ? Sun : Moon, shortcut: "⌘T",
       action: () => setTheme(theme === "dark" ? "light" : "dark"), group: "settings",
     },
+    {
+      id: "toggle-language", label: locale === "pt-BR" ? "Switch to English" : "Mudar para Português",
+      icon: Globe,
+      action: () => setLocale(locale === "pt-BR" ? "en" : "pt-BR"), group: "settings",
+      keywords: ["idioma", "language", "english", "português"],
+    },
     { id: "shortcuts", label: "Atalhos do Teclado", icon: Keyboard, shortcut: "⌘?", action: () => {}, group: "settings" },
-  ], [theme, setTheme]);
+  ], [theme, setTheme, locale, setLocale]);
 
   const allItems = useMemo(() => [...navigationItems, ...actionItems, ...settingsItems], [navigationItems, actionItems, settingsItems]);
 
