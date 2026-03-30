@@ -294,6 +294,53 @@ export type Database = {
           },
         ]
       }
+      api_tokens: {
+        Row: {
+          company_name: string
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          last_used_at: string | null
+          team_id: string | null
+          token: string
+          usage_count: number
+        }
+        Insert: {
+          company_name?: string
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          team_id?: string | null
+          token: string
+          usage_count?: number
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          team_id?: string | null
+          token?: string
+          usage_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_tokens_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       available_spins: {
         Row: {
           id: string
@@ -3606,6 +3653,7 @@ export type Database = {
           is_active: boolean
           name: string
           role: Database["public"]["Enums"]["salesperson_role"]
+          score_total: number
           updated_at: string
         }
         Insert: {
@@ -3618,6 +3666,7 @@ export type Database = {
           is_active?: boolean
           name: string
           role?: Database["public"]["Enums"]["salesperson_role"]
+          score_total?: number
           updated_at?: string
         }
         Update: {
@@ -3630,6 +3679,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           role?: Database["public"]["Enums"]["salesperson_role"]
+          score_total?: number
           updated_at?: string
         }
         Relationships: []
@@ -3673,6 +3723,58 @@ export type Database = {
           },
           {
             foreignKeyName: "salesperson_badges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      salesperson_custom_field_values: {
+        Row: {
+          boolean_value: boolean | null
+          field_id: string
+          id: string
+          numeric_value: number | null
+          salesperson_id: string
+          text_value: string | null
+          updated_at: string
+        }
+        Insert: {
+          boolean_value?: boolean | null
+          field_id: string
+          id?: string
+          numeric_value?: number | null
+          salesperson_id: string
+          text_value?: string | null
+          updated_at?: string
+        }
+        Update: {
+          boolean_value?: boolean | null
+          field_id?: string
+          id?: string
+          numeric_value?: number | null
+          salesperson_id?: string
+          text_value?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_custom_field_values_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "team_custom_fields"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_custom_field_values_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_custom_field_values_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
@@ -3859,6 +3961,67 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      score_change_logs: {
+        Row: {
+          api_token_id: string | null
+          change_value: number
+          changed_by: string
+          created_at: string
+          field_name: string
+          id: string
+          new_value: number
+          old_value: number
+          operation: string
+          salesperson_id: string
+        }
+        Insert: {
+          api_token_id?: string | null
+          change_value?: number
+          changed_by?: string
+          created_at?: string
+          field_name?: string
+          id?: string
+          new_value?: number
+          old_value?: number
+          operation: string
+          salesperson_id: string
+        }
+        Update: {
+          api_token_id?: string | null
+          change_value?: number
+          changed_by?: string
+          created_at?: string
+          field_name?: string
+          id?: string
+          new_value?: number
+          old_value?: number
+          operation?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "score_change_logs_api_token_id_fkey"
+            columns: ["api_token_id"]
+            isOneToOne: false
+            referencedRelation: "api_tokens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_change_logs_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_change_logs_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sdr_alert_history: {
         Row: {
@@ -4392,6 +4555,47 @@ export type Database = {
           },
           {
             foreignKeyName: "team_closers_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_custom_fields: {
+        Row: {
+          created_at: string
+          field_key: string
+          field_label: string
+          field_type: string
+          id: string
+          is_active: boolean
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          field_label: string
+          field_type?: string
+          id?: string
+          is_active?: boolean
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          field_label?: string
+          field_type?: string
+          id?: string
+          is_active?: boolean
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_custom_fields_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -5192,6 +5396,7 @@ export type Database = {
       }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
+      generate_api_token: { Args: never; Returns: string }
       generate_device_fingerprint: {
         Args: { p_ip_address: string; p_user_agent: string }
         Returns: string
@@ -5279,6 +5484,14 @@ export type Database = {
       update_own_profile: {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
+      }
+      validate_api_token: {
+        Args: { p_token: string }
+        Returns: {
+          company_name: string
+          team_id: string
+          token_id: string
+        }[]
       }
       validate_session: {
         Args: { session_id: string }
