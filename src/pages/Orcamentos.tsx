@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useQuotes, useQuoteSummary, useCreateQuote, useDeleteQuote, QUOTE_STATUSES, type Quote } from "@/hooks/useQuotes";
+import { useQuotes, useQuoteSummary, useCreateQuote, useUpdateQuoteStatus, useDeleteQuote, QUOTE_STATUSES, type Quote } from "@/hooks/useQuotes";
 import { useAuth } from "@/contexts/AuthContext";
 import { FileText, Plus, Send, CheckCircle2, XCircle, Clock, AlertTriangle, Trash2, Link2, Eye } from "lucide-react";
 import { QuoteDetailDialog } from "@/components/quotes/QuoteDetailDialog";
