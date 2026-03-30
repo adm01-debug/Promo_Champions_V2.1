@@ -99,6 +99,22 @@ export default function Analytics() {
                     <GitCompare className="h-4 w-4" />
                     Benchmark
                   </TabsTrigger>
+                  <TabsTrigger value="heatmap" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <Flame className="h-4 w-4" />
+                    Heatmap
+                  </TabsTrigger>
+                  <TabsTrigger value="competency" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <Radar className="h-4 w-4" />
+                    Competências
+                  </TabsTrigger>
+                  <TabsTrigger value="weekly" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <CalendarDays className="h-4 w-4" />
+                    Semanal
+                  </TabsTrigger>
+                  <TabsTrigger value="churn-risk" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <ShieldAlert className="h-4 w-4" />
+                    Risco Churn
+                  </TabsTrigger>
                 </TabsList>
 
                 <AnimatePresence mode="wait">
