@@ -1,7 +1,7 @@
 import { Crown, Trophy, Medal, Flame, TrendingUp, Sparkles, Zap, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 interface PodiumPerson {

@@ -2,7 +2,7 @@
  * Authentication Flow Tests
  * Tests: login validation, session management, role checking
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('Login Validation', () => {
   const validateLogin = (email: string, password: string) => {

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { X, LayoutDashboard, Users, ShoppingBag, BarChart3, Settings, Target, Zap, Trophy } from 'lucide-react';
+import { LayoutDashboard, Users, ShoppingBag, BarChart3, Settings, Target, Zap, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 

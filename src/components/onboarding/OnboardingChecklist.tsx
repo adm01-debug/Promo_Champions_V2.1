@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Circle, ArrowRight, Rocket, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export function OnboardingChecklist() {
   const { steps, completedCount, totalSteps, progress, isComplete } = useOnboardingChecklist();

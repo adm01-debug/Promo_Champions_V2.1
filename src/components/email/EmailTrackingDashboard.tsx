@@ -1,8 +1,6 @@
-import { useMemo } from "react";
-import { useEmailTracking, useEmailTrackingStats, useLogEmailEvent } from "@/hooks/useEmailTracking";
+import { useEmailTracking, useEmailTrackingStats } from "@/hooks/useEmailTracking";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +14,7 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react";
-import { formatDistanceToNow, format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 

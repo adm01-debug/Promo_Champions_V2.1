@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CalendarCheck, TrendingUp, TrendingDown, Target, Sparkles, Users, ArrowRight, Zap, Trophy } from "lucide-react";
+import { CalendarCheck, TrendingUp, TrendingDown, Sparkles, Users, ArrowRight, Zap, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SchedulingRateGaugeProps {

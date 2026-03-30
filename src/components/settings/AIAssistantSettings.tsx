@@ -7,8 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useSalespersonPreferences, ResponseMode } from '@/hooks/useSalespersonPreferences';
 import { VoiceId } from '@/hooks/useElevenLabsVoice';
-import { Bot, Sparkles, Save, Loader2, Volume2, MessageSquare, VolumeX, Play } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Bot, Sparkles, Save, Loader2, Volume2, MessageSquare, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const SUGGESTED_NAMES = [

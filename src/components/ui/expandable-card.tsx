@@ -1,7 +1,7 @@
 import { FC, ReactNode, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, Check, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 interface ExpandableCardProps {
   title: string;

@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crown, Star, Zap, Gift, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 interface LevelUpCelebrationProps {

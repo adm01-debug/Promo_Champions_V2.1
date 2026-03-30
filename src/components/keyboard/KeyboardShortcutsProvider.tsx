@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Keyboard, Search, Plus, Moon, ArrowRight, Command } from "lucide-react";
+import { Keyboard, Search, Plus, Moon, Command } from "lucide-react";
 
 interface KeyboardShortcutsContextType {
   openSearch: () => void;

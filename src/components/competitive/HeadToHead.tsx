@@ -4,7 +4,6 @@ import { Swords, Zap, Trophy, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useWeeklyMatchups } from '@/hooks/useWeeklyMatchups';
 

@@ -2,7 +2,7 @@
  * Circuit Breaker Hook Tests
  * Tests: state transitions, failure thresholds, recovery, reset
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { CircuitBreakerError } from '@/hooks/useCircuitBreaker';
 import {
   calculateBackoffDelay,

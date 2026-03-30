@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePerformanceComparison, SalespersonPerformance } from "@/hooks/usePerformanceComparison";
 import { Users, Trophy, TrendingUp, Phone, Target, Crown, ArrowUp, ArrowDown, Minus } from "lucide-react";
 import {

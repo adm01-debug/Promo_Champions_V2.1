@@ -1,7 +1,7 @@
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ChevronRight, ChevronDown, Check, Circle, AlertCircle } from 'lucide-react';
+import { ChevronRight, Check, Circle } from 'lucide-react';
 
 interface StepperStep {
   id: string;

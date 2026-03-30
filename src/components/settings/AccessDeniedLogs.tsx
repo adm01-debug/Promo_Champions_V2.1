@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { ShieldX, AlertTriangle, Clock, User, Globe, FileWarning, Search, CalendarIcon, X, TrendingUp, Bell, Loader2 } from "lucide-react";
 import { format, startOfDay, endOfDay, subDays, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";

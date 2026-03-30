@@ -1,9 +1,8 @@
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Star, Zap, Trophy, Flame, Crown, Medal, Award, TrendingUp, Target } from "lucide-react";
+import { Zap, Trophy, Flame, Crown, Medal, Award, TrendingUp, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface GamificationCardProps {

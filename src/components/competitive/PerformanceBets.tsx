@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -9,12 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
-import { Flame, TrendingUp, TrendingDown, Target, Plus, Coins, Trophy, AlertTriangle, CheckCircle2, XCircle, Timer } from 'lucide-react';
+import { Flame, TrendingUp, Target, Plus, Coins, Trophy, AlertTriangle, CheckCircle2, XCircle, Timer } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { differenceInHours, format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { differenceInHours } from 'date-fns';
 
 export function PerformanceBets() {
   const queryClient = useQueryClient();

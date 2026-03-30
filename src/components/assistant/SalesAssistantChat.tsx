@@ -22,11 +22,11 @@ import {
   X,
   Volume2,
 } from 'lucide-react';
-import { useSalesAssistant, ChatMessage, ConversationWithMatches, DealContext } from '@/hooks/useSalesAssistant';
+import { useSalesAssistant, ChatMessage, ConversationWithMatches } from '@/hooks/useSalesAssistant';
 import { useSalespeople } from '@/hooks/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
 import { useDealChatHistory, QuestionType, QUESTION_TYPES } from '@/hooks/useDealChatHistory';
-import { useSalespersonPreferences, ResponseMode } from '@/hooks/useSalespersonPreferences';
+import { useSalespersonPreferences } from '@/hooks/useSalespersonPreferences';
 import { VoiceControls } from './VoiceControls';
 import { DealContextSelector } from './DealContextSelector';
 import { DealPreviewCard } from './DealPreviewCard';

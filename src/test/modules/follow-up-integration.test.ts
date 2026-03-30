@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { differenceInDays } from 'date-fns';
 import { getTemperature, getSuggestedAction, type ColdLead, type LeadTemperature } from '@/components/follow-up/types';
 

@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Phone, Mail, MessageSquare, Clock, Calendar, MapPin, Building, DollarSign } from 'lucide-react';
+import { Phone, Mail, MessageSquare, Clock, MapPin, Building, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

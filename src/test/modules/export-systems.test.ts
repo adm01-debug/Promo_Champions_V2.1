@@ -2,7 +2,7 @@
  * Export Systems Tests
  * Tests: PDF generation config, report data preparation, download logic
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('PDF Export Configuration', () => {
   const PDF_CONFIG = {

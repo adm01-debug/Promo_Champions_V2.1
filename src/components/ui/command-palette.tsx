@@ -1,7 +1,7 @@
 import { FC, useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Search, ArrowUp, ArrowDown, CornerDownLeft, X, Clock, Star, Hash, FileText } from 'lucide-react';
+import { Search, ArrowUp, ArrowDown, CornerDownLeft, X, Clock, Hash, FileText } from 'lucide-react';
 
 interface SearchResult {
   id: string;

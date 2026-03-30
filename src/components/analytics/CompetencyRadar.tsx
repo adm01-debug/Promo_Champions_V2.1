@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { Brain, TrendingUp, TrendingDown, Target, Sparkles, BarChart3 } from "lucide-react";
+import { Brain, TrendingUp, TrendingDown, Target, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

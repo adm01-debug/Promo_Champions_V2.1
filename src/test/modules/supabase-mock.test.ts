@@ -2,7 +2,7 @@
  * Supabase Mock Infrastructure Tests
  * Tests: mock chain behavior, auth mocks, function invocations
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createMockSupabase } from '@/test/test-utils';
 
 describe('Supabase Mock - Query Chain', () => {

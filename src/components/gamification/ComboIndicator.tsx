@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Flame, Zap, TrendingUp } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { motion } from "framer-motion";
+import { TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useTodayCombo, setTierUpCallback, COMBO_TIERS } from "@/hooks/useCombo";
+import { useTodayCombo, setTierUpCallback } from "@/hooks/useCombo";
 import { comboService } from "@/services/comboService";
 import { ComboExplosion } from "@/components/effects/ComboExplosion";
 import { cn } from "@/lib/utils";

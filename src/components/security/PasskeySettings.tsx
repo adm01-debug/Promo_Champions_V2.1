@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Fingerprint, Plus, Trash2, Loader2, AlertTriangle, Smartphone, Monitor, Key, CheckCircle } from 'lucide-react';
+import { Fingerprint, Plus, Trash2, Loader2, AlertTriangle, Smartphone, Key, CheckCircle } from 'lucide-react';
 import { useWebAuthn } from '@/hooks/useWebAuthn';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
