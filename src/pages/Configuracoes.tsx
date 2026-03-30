@@ -11,8 +11,10 @@ import { GeoBlockingManager } from "@/components/security/GeoBlockingManager";
 import { PasswordResetApproval } from "@/components/security/PasswordResetApproval";
 import { AIAssistantSettings } from "@/components/settings/AIAssistantSettings";
 import { ThemeCustomizer } from "@/components/settings/ThemeCustomizer";
+import { ApiIntegrationSettings } from "@/components/settings/ApiIntegrationSettings";
+import { CustomFieldsManager } from "@/components/settings/CustomFieldsManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2 } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -33,7 +35,7 @@ export default function Configuracoes() {
 
       <Tabs defaultValue="roles" className="w-full">
         <ScrollArea className="w-full whitespace-nowrap">
-          <TabsList className={`inline-flex w-max ${isAdmin ? '' : ''}`}>
+          <TabsList className="inline-flex w-max">
             <TabsTrigger value="roles" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               Roles
@@ -56,6 +58,14 @@ export default function Configuracoes() {
             </TabsTrigger>
             {isAdmin && (
               <>
+                <TabsTrigger value="api-integration" className="flex items-center gap-2">
+                  <Plug className="h-4 w-4" />
+                  API & Integrações
+                </TabsTrigger>
+                <TabsTrigger value="custom-fields" className="flex items-center gap-2">
+                  <Settings2 className="h-4 w-4" />
+                  Campos Adicionais
+                </TabsTrigger>
                 <TabsTrigger value="permissions" className="flex items-center gap-2">
                   <Key className="h-4 w-4" />
                   Permissões
@@ -108,6 +118,14 @@ export default function Configuracoes() {
 
         {isAdmin && (
           <>
+            <TabsContent value="api-integration" className="mt-6">
+              <ApiIntegrationSettings />
+            </TabsContent>
+
+            <TabsContent value="custom-fields" className="mt-6">
+              <CustomFieldsManager />
+            </TabsContent>
+
             <TabsContent value="permissions" className="mt-6">
               <PermissionMatrix />
             </TabsContent>
@@ -139,4 +157,3 @@ export default function Configuracoes() {
     </div>
   );
 }
-
