@@ -6,6 +6,9 @@ import { ptBR } from "date-fns/locale";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ActivityData {
   date: string;
@@ -13,7 +16,7 @@ interface ActivityData {
 }
 
 interface ActivityHeatmapProps {
-  data: ActivityData[];
+  data?: ActivityData[];
   title?: string;
   className?: string;
 }
