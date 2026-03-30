@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Heart, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,13 +29,14 @@ export function MoodTrackerWidget({ className }: { className?: string }) {
     queryKey: ["mood-today", salesperson?.id, today],
     queryFn: async () => {
       if (!salesperson?.id) return null;
-      const { data } = await supabase
-        .from("mood_entries")
+      const { data, error } = await supabase
+        .from("mood_entries" as any)
         .select("mood_value")
         .eq("salesperson_id", salesperson.id)
         .eq("entry_date", today)
         .maybeSingle();
-      return data?.mood_value ?? null;
+      if (error || !data) return null;
+      return (data as any).mood_value as number;
     },
     enabled: !!salesperson?.id,
   });
@@ -44,8 +44,8 @@ export function MoodTrackerWidget({ className }: { className?: string }) {
   const submitMood = useMutation({
     mutationFn: async (moodValue: number) => {
       if (!salesperson?.id) throw new Error("Not authenticated");
-      const { error } = await supabase.from("mood_entries").upsert(
-        { salesperson_id: salesperson.id, entry_date: today, mood_value: moodValue },
+      const { error } = await supabase.from("mood_entries" as any).upsert(
+        { salesperson_id: salesperson.id, entry_date: today, mood_value: moodValue } as any,
         { onConflict: "salesperson_id,entry_date" }
       );
       if (error) throw error;
