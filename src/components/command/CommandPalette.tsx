@@ -49,6 +49,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const { locale, setLocale } = useI18n();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
