@@ -130,6 +130,7 @@ export function useSystemSoundSettings() {
           osc.start(now);
           osc.stop(now + 0.2);
           break;
+        }
       }
     } catch {
       // Silently fail if audio context not available
