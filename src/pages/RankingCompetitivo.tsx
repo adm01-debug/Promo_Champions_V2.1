@@ -348,7 +348,7 @@ const RankingCompetitivo = () => {
           {(xpData || []).map((xpRecord, index) => {
             const salesperson = xpRecord.salespeople as { id: string; name: string; avatar_url: string | null; role: string } | null;
             const levelInfo = getLevelInfo(xpRecord.current_level || 1);
-            const { _progress, xpInLevel, xpToNext } = calculateLevelFromXP(xpRecord.total_xp || 0);
+            const { progress: _progress, xpInLevel, xpToNext } = calculateLevelFromXP(xpRecord.total_xp || 0);
 
             return (
               <Card

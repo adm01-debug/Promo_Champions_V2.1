@@ -161,7 +161,7 @@ export const ActivityList: FC<ActivityListProps> = ({
   onActivityClick,
   onActivityComplete,
   compact = false,
-  _groupByDate = false,
+  groupByDate: _groupByDate = false,
 }) => {
   if (activities.length === 0) {
     return (
