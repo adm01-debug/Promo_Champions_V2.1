@@ -110,7 +110,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
               <Download className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">Instalar CHAMPION's GIFT By Promo Brindes</h3>
+              <h3 className="font-semibold">Instalar PROMO CHAMPIONS</h3>
               <p className="text-sm text-muted-foreground">Acesso rápido ao app</p>
             </div>
           </div>
@@ -155,7 +155,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
           <div className="flex items-center gap-3">
             <Download className="h-5 w-5 shrink-0" />
             <p className="text-sm font-medium">
-              Instale o CHAMPION's GIFT By Promo Brindes para uma experiência completa
+              Instale o PROMO CHAMPIONS para uma experiência completa
             </p>
           </div>
 

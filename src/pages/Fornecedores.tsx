@@ -101,7 +101,7 @@ export default function Fornecedores() {
   return (
     <>
       <Helmet>
-        <title>Fornecedores | CHAMPION's GIFT By Promo Brindes</title>
+        <title>Fornecedores | PROMO CHAMPIONS</title>
         <meta name="description" content="Gestão de fornecedores, preços e análise de risco" />
       </Helmet>
       

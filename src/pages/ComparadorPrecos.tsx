@@ -75,7 +75,7 @@ export default function ComparadorPrecos() {
   return (
     <>
       <Helmet>
-        <title>Comparador de Preços | CHAMPION's GIFT By Promo Brindes</title>
+        <title>Comparador de Preços | PROMO CHAMPIONS</title>
         <meta name="description" content="Compare preços entre fornecedores e encontre as melhores ofertas" />
       </Helmet>
       

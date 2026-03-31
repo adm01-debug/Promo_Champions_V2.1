@@ -1,5 +1,5 @@
 /**
- * Constantes do sistema CHAMPION's GIFT By Promo Brindes
+ * Constantes do sistema PROMO CHAMPIONS
  * Centraliza valores mágicos e configurações
  */
 

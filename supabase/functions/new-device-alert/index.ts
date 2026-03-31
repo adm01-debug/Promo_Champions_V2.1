@@ -87,7 +87,7 @@ const generateEmailHTML = (data: NewDeviceAlertRequest) => `
       </ul>
     </div>
     <div class="footer">
-      <p>Este é um email automático de segurança do CHAMPION's GIFT By Promo Brindes.</p>
+      <p>Este é um email automático de segurança do PROMO CHAMPIONS.</p>
       <p>Se você não reconhece esta atividade, entre em contato conosco imediatamente.</p>
     </div>
   </div>
@@ -175,7 +175,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending new device alert email to:", data.user_email);
     
     const emailResponse = await resend.emails.send({
-      from: "CHAMPION's GIFT By Promo Brindes Security <onboarding@resend.dev>",
+      from: "PROMO CHAMPIONS Security <onboarding@resend.dev>",
       to: [data.user_email],
       subject: "⚠️ Novo dispositivo detectado em sua conta",
       html: generateEmailHTML(data),
