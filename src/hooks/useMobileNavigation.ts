@@ -72,8 +72,8 @@ export function useMobileNavigation() {
       }
     }
     
-    // Fallback
-    return { title: "CHAMPION's GIFT By Promo Brindes" };
+    // Fallback title
+    return { title: "CHAMPION\u0027s GIFT By Promo Brindes" };
   }, [location.pathname]);
 
   const goBack = useCallback(() => {
