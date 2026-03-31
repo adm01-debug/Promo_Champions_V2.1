@@ -1,4 +1,4 @@
-import { Crown, Trophy, Medal, Flame, TrendingUp, Sparkles, Zap, Star } from "lucide-react";
+import { Crown, Trophy, Medal, Flame, TrendingUp, Sparkles, Zap, Star, Swords, Shield } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -17,35 +17,77 @@ interface RankingPodiumProps {
   top3: PodiumPerson[];
 }
 
-// Floating particles component
-function FloatingParticles() {
+// Animated energy particles
+function EnergyParticles({ color }: { color: string }) {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 20 }).map((_, i) => (
+      {Array.from({ length: 15 }).map((_, i) => (
         <motion.div
           key={i}
           className="absolute rounded-full"
           style={{
-            width: Math.random() * 4 + 2,
-            height: Math.random() * 4 + 2,
+            width: Math.random() * 3 + 1,
+            height: Math.random() * 3 + 1,
             left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            background: `hsl(${40 + Math.random() * 20}, ${80 + Math.random() * 20}%, ${60 + Math.random() * 20}%)`,
+            bottom: `${Math.random() * 40}%`,
+            background: color,
+            boxShadow: `0 0 6px ${color}`,
           }}
           animate={{
-            y: [0, -30 - Math.random() * 40, 0],
-            x: [0, (Math.random() - 0.5) * 20, 0],
-            opacity: [0, 0.8, 0],
-            scale: [0, 1.2, 0],
+            y: [0, -60 - Math.random() * 80],
+            opacity: [0, 1, 0],
+            scale: [0, 1.5, 0],
           }}
           transition={{
-            duration: 3 + Math.random() * 3,
+            duration: 2 + Math.random() * 2,
             repeat: Infinity,
-            delay: Math.random() * 4,
-            ease: "easeInOut",
+            delay: Math.random() * 3,
+            ease: "easeOut",
           }}
         />
       ))}
+    </div>
+  );
+}
+
+// Hexagonal frame for avatar
+function HexFrame({ children, glowColor, size, isChampion }: { children: React.ReactNode; glowColor: string; size: string; isChampion?: boolean }) {
+  return (
+    <div className={cn("relative", size)}>
+      {/* Outer hexagon glow */}
+      <motion.div
+        className="absolute -inset-2 rounded-2xl"
+        style={{
+          background: `linear-gradient(135deg, ${glowColor}, transparent, ${glowColor})`,
+          opacity: 0.6,
+          clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
+        }}
+        animate={isChampion ? {
+          opacity: [0.4, 0.8, 0.4],
+          scale: [1, 1.05, 1],
+        } : {}}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      {/* Inner hexagon */}
+      <div
+        className="relative w-full h-full overflow-hidden"
+        style={{
+          clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
+        }}
+      >
+        {children}
+      </div>
+      {/* Corner accents */}
+      {isChampion && (
+        <>
+          <motion.div
+            className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3"
+            style={{ background: glowColor, clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -81,66 +123,89 @@ function AnimatedValue({ value, prefix = "" }: { value: number; prefix?: string 
   );
 }
 
+// Neon text component
+function NeonText({ children, color, className }: { children: React.ReactNode; color: string; className?: string }) {
+  return (
+    <span
+      className={cn("relative", className)}
+      style={{
+        textShadow: `0 0 7px ${color}, 0 0 10px ${color}, 0 0 21px ${color}`,
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
 const podiumConfig = [
   {
     position: "left" as const,
     rank: 2,
     index: 1,
-    podiumHeight: "h-36",
-    avatarSize: "h-18 w-18",
-    ringClass: "ring-[3px] ring-slate-300/80",
-    glowColor: "rgba(148,163,184,0.4)",
-    bgGradient: "from-slate-400/90 via-slate-300/80 to-slate-500/90",
-    badgeBg: "bg-gradient-to-r from-slate-300 to-slate-400",
+    podiumHeight: "h-40",
+    avatarSize: "h-20 w-20",
+    hexSize: "h-24 w-24",
+    neonColor: "#a78bfa",
+    glowColor: "rgba(167,139,250,0.6)",
+    bgGradient: "from-violet-600/90 via-purple-500/80 to-violet-700/90",
+    accentGradient: "from-violet-500 to-purple-600",
+    badgeBg: "bg-gradient-to-r from-violet-400 to-purple-500",
     icon: Medal,
-    iconColor: "text-slate-300",
+    iconColor: "text-violet-300",
     nameSize: "text-sm",
     salesSize: "text-lg",
+    salesColor: "text-violet-300",
     delay: 0.3,
     label: "2º",
     labelSize: "text-5xl",
-    crownGlow: "drop-shadow-[0_0_10px_rgba(148,163,184,0.6)]",
-    particleColor: "hsl(210, 20%, 70%)",
+    borderColor: "border-violet-500/40",
+    scanlineColor: "rgba(167,139,250,0.1)",
   },
   {
     position: "center" as const,
     rank: 1,
     index: 0,
-    podiumHeight: "h-52",
-    avatarSize: "h-28 w-28",
-    ringClass: "ring-[4px] ring-amber-400/90 shadow-[0_0_40px_rgba(250,204,21,0.5)]",
-    glowColor: "rgba(250,204,21,0.5)",
-    bgGradient: "from-amber-400 via-yellow-400 to-amber-500",
+    podiumHeight: "h-56",
+    avatarSize: "h-32 w-32",
+    hexSize: "h-36 w-36",
+    neonColor: "#fbbf24",
+    glowColor: "rgba(251,191,36,0.7)",
+    bgGradient: "from-amber-500 via-yellow-400 to-amber-600",
+    accentGradient: "from-amber-400 to-yellow-500",
     badgeBg: "bg-gradient-to-r from-yellow-400 to-amber-500",
     icon: Crown,
     iconColor: "text-amber-400",
     nameSize: "text-xl",
     salesSize: "text-2xl",
+    salesColor: "text-amber-300",
     delay: 0.1,
     label: "1º",
-    labelSize: "text-6xl",
-    crownGlow: "drop-shadow-[0_0_15px_rgba(250,204,21,0.9)]",
-    particleColor: "hsl(45, 100%, 60%)",
+    labelSize: "text-7xl",
+    borderColor: "border-amber-400/50",
+    scanlineColor: "rgba(251,191,36,0.08)",
   },
   {
     position: "right" as const,
     rank: 3,
     index: 2,
-    podiumHeight: "h-28",
-    avatarSize: "h-16 w-16",
-    ringClass: "ring-[3px] ring-amber-600/70",
-    glowColor: "rgba(217,119,6,0.35)",
-    bgGradient: "from-amber-600/90 via-amber-500/80 to-amber-700/90",
-    badgeBg: "bg-gradient-to-r from-amber-600 to-amber-700",
+    podiumHeight: "h-32",
+    avatarSize: "h-18 w-18",
+    hexSize: "h-22 w-22",
+    neonColor: "#f97316",
+    glowColor: "rgba(249,115,22,0.5)",
+    bgGradient: "from-orange-600/90 via-amber-500/80 to-orange-700/90",
+    accentGradient: "from-orange-500 to-amber-600",
+    badgeBg: "bg-gradient-to-r from-orange-500 to-amber-600",
     icon: Trophy,
-    iconColor: "text-amber-600",
+    iconColor: "text-orange-400",
     nameSize: "text-sm",
     salesSize: "text-base",
+    salesColor: "text-orange-300",
     delay: 0.4,
     label: "3º",
     labelSize: "text-4xl",
-    crownGlow: "drop-shadow-[0_0_8px_rgba(217,119,6,0.5)]",
-    particleColor: "hsl(30, 80%, 50%)",
+    borderColor: "border-orange-500/40",
+    scanlineColor: "rgba(249,115,22,0.08)",
   },
 ];
 
@@ -150,31 +215,40 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
   const maxSales = top3[0]?.totalSales || 1;
 
   return (
-    <div className="relative glass rounded-2xl border border-border/30 overflow-hidden">
-      {/* Animated background layers */}
-      <div className="absolute inset-0 bg-gradient-to-b from-amber-500/8 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
-      <motion.div
-        className="absolute top-10 left-1/4 w-32 h-32 bg-amber-400/5 rounded-full blur-[60px] pointer-events-none"
-        animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute top-10 right-1/4 w-32 h-32 bg-purple-400/5 rounded-full blur-[60px] pointer-events-none"
-        animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+    <div className="relative rounded-2xl border border-border/20 overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
+      {/* Dark arena background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,hsl(var(--primary)/0.05),transparent_60%)]" />
+      
+      {/* Grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: "40px 40px",
+        }}
       />
 
-      {/* Floating particles */}
-      <FloatingParticles />
+      {/* Top neon accent line */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), #fbbf24, hsl(var(--primary) / 0.6), transparent)",
+        }}
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
 
-      {/* Bottom glow line */}
+      {/* Bottom neon accent line */}
       <motion.div
         className="absolute bottom-0 left-0 right-0 h-[2px]"
         style={{
-          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), hsl(45 100% 60% / 0.6), hsl(var(--primary) / 0.5), transparent)",
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4), #fbbf24, hsl(var(--primary) / 0.4), transparent)",
         }}
-        animate={{ opacity: [0.4, 1, 0.4] }}
+        animate={{ opacity: [0.3, 0.8, 0.3] }}
         transition={{ duration: 3, repeat: Infinity }}
       />
 
@@ -187,33 +261,33 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
           className="flex items-center justify-center gap-3 mb-1"
         >
           <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>
-            <Trophy className="h-6 w-6 text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+            <Swords className="h-5 w-5 text-amber-500" style={{ filter: "drop-shadow(0 0 8px rgba(245,158,11,0.6))" }} />
           </motion.div>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-amber-400/60" />
-            <span className="text-sm font-black uppercase tracking-[0.2em] text-amber-500/90">
-              Pódio dos Campeões
-            </span>
-            <Sparkles className="h-4 w-4 text-amber-400/60" />
+            <Shield className="h-3.5 w-3.5 text-primary/60" />
+            <NeonText color="rgba(251,191,36,0.5)" className="text-sm font-black uppercase tracking-[0.25em] text-amber-500/90">
+              Arena dos Campeões
+            </NeonText>
+            <Shield className="h-3.5 w-3.5 text-primary/60" />
           </div>
           <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}>
-            <Trophy className="h-6 w-6 text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+            <Swords className="h-5 w-5 text-amber-500" style={{ filter: "drop-shadow(0 0 8px rgba(245,158,11,0.6))" }} />
           </motion.div>
         </motion.div>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-xs text-muted-foreground/60 flex items-center justify-center gap-1"
+          className="text-xs text-muted-foreground/50 flex items-center justify-center gap-1 uppercase tracking-widest"
         >
-          <Zap className="h-3 w-3 text-amber-500/50" />
-          Os melhores vendedores em destaque
-          <Zap className="h-3 w-3 text-amber-500/50" />
+          <Zap className="h-3 w-3 text-amber-500/40" />
+          Os guerreiros de elite
+          <Zap className="h-3 w-3 text-amber-500/40" />
         </motion.p>
       </div>
 
       {/* Podium */}
-      <div className="relative flex items-end justify-center gap-3 sm:gap-6 px-4 sm:px-10 pb-0 pt-6">
+      <div className="relative flex items-end justify-center gap-4 sm:gap-8 px-4 sm:px-10 pb-0 pt-8">
         {podiumConfig.map((config) => {
           const person = top3[config.index];
           if (!person) return null;
@@ -224,45 +298,49 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
           return (
             <motion.div
               key={person.id}
-              initial={{ opacity: 0, y: 60, scale: 0.85 }}
+              initial={{ opacity: 0, y: 80, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: config.delay, duration: 0.7, type: "spring", bounce: 0.35 }}
-              className="flex flex-col items-center flex-1 max-w-[200px] relative"
+              transition={{ delay: config.delay, duration: 0.8, type: "spring", bounce: 0.3 }}
+              className="flex flex-col items-center flex-1 max-w-[220px] relative"
             >
-              {/* Champion crown animation */}
+              {/* Champion crown - floating with energy */}
               {isChampion && (
                 <motion.div
-                  initial={{ scale: 0, y: 10, rotate: -30 }}
+                  initial={{ scale: 0, y: 20, rotate: -30 }}
                   animate={{ scale: 1, y: 0, rotate: 0 }}
                   transition={{ delay: 0.6, type: "spring", bounce: 0.6 }}
-                  className="absolute -top-2 z-20"
+                  className="absolute -top-4 z-20"
                 >
                   <motion.div
-                    animate={{ y: [0, -4, 0] }}
+                    animate={{ y: [0, -6, 0] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <Crown className={cn("h-10 w-10", config.iconColor, config.crownGlow)} />
+                    <Crown
+                      className="h-12 w-12 text-amber-400"
+                      style={{ filter: "drop-shadow(0 0 20px rgba(251,191,36,0.9)) drop-shadow(0 0 40px rgba(251,191,36,0.4))" }}
+                    />
                   </motion.div>
-                  {/* Crown sparkles */}
-                  {[...Array(3)].map((_, i) => (
+                  {/* Crown energy sparks */}
+                  {[...Array(4)].map((_, i) => (
                     <motion.div
                       key={i}
                       className="absolute"
                       style={{
-                        top: `${-5 + i * 3}px`,
-                        left: `${10 + i * 8}px`,
+                        top: `${-8 + Math.sin(i * 1.5) * 5}px`,
+                        left: `${5 + i * 10}px`,
                       }}
                       animate={{
                         opacity: [0, 1, 0],
-                        scale: [0, 1, 0],
+                        scale: [0, 1.2, 0],
+                        y: [0, -8, -16],
                       }}
                       transition={{
-                        duration: 1.5,
+                        duration: 1.2,
                         repeat: Infinity,
-                        delay: i * 0.5,
+                        delay: i * 0.3,
                       }}
                     >
-                      <Star className="h-2.5 w-2.5 text-amber-300 fill-amber-300" />
+                      <Star className="h-2 w-2 text-amber-300 fill-amber-300" />
                     </motion.div>
                   ))}
                 </motion.div>
@@ -274,46 +352,61 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ delay: config.delay + 0.3, type: "spring", bounce: 0.5 }}
-                  className="mb-2"
+                  className="mb-3"
                 >
-                  <Icon className={cn("h-7 w-7", config.iconColor, config.crownGlow)} />
+                  <Icon
+                    className={cn("h-7 w-7", config.iconColor)}
+                    style={{ filter: `drop-shadow(0 0 10px ${config.glowColor})` }}
+                  />
                 </motion.div>
               )}
 
-              {/* Avatar container with orbit ring */}
-              <div className={cn("relative mb-3", isChampion ? "mt-10" : "")}>
-                {/* Pulsing outer glow */}
+              {/* Avatar with hexagonal frame */}
+              <div className={cn("relative mb-3", isChampion ? "mt-12" : "")}>
+                {/* Pulsing energy ring */}
                 <motion.div
-                  className="absolute -inset-3 rounded-full"
+                  className="absolute -inset-4 rounded-full"
                   style={{
                     background: `radial-gradient(circle, ${config.glowColor}, transparent 70%)`,
                   }}
                   animate={{
-                    scale: [1, 1.15, 1],
-                    opacity: [0.5, 0.8, 0.5],
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.7, 0.3],
                   }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 />
 
-                {/* Orbiting dot (champion only) */}
+                {/* Orbiting energy (champion) */}
                 {isChampion && (
-                  <motion.div
-                    className="absolute inset-[-8px]"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                  >
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" />
-                  </motion.div>
+                  <>
+                    <motion.div
+                      className="absolute inset-[-12px]"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                    >
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
+                    </motion.div>
+                    <motion.div
+                      className="absolute inset-[-12px]"
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+                    >
+                      <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.8)]" />
+                    </motion.div>
+                  </>
                 )}
 
-                <Avatar className={cn(config.avatarSize, config.ringClass, "relative shadow-2xl z-10")}>
-                  <AvatarImage src={person.avatar_url || undefined} alt={person.name} />
-                  <AvatarFallback className={cn("bg-gradient-to-br text-white font-bold", config.bgGradient, isChampion ? "text-2xl" : "text-base")}>
-                    {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
+                {/* Hexagonal avatar */}
+                <HexFrame glowColor={config.neonColor} size={config.hexSize} isChampion={isChampion}>
+                  <Avatar className={cn(config.avatarSize, "rounded-none w-full h-full")}>
+                    <AvatarImage src={person.avatar_url || undefined} alt={person.name} className="object-cover" />
+                    <AvatarFallback className={cn("bg-gradient-to-br text-white font-bold rounded-none w-full h-full", config.bgGradient, isChampion ? "text-3xl" : "text-lg")}>
+                      {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                </HexFrame>
 
-                {/* Fire indicator for goal achievers */}
+                {/* Fire indicator */}
                 {person.goalProgress >= 100 && (
                   <motion.div
                     className="absolute -bottom-1 -right-1 z-20"
@@ -321,66 +414,73 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
                     animate={{ scale: 1 }}
                     transition={{ delay: config.delay + 0.6, type: "spring" }}
                   >
-                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }}>
-                      <Flame className="h-5 w-5 text-orange-500 drop-shadow-[0_0_6px_rgba(249,115,22,0.7)]" />
+                    <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 0.6, repeat: Infinity }}>
+                      <Flame className="h-5 w-5 text-orange-400" style={{ filter: "drop-shadow(0 0 8px rgba(249,115,22,0.8))" }} />
                     </motion.div>
                   </motion.div>
                 )}
 
-                {/* XP-like level badge */}
+                {/* Rank badge */}
                 <motion.div
                   className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: config.delay + 0.5, type: "spring", bounce: 0.6 }}
                 >
-                  <div className={cn(
-                    "px-2 py-0.5 rounded-full text-[10px] font-black shadow-lg border border-white/20",
-                    config.badgeBg, "text-white"
-                  )}>
+                  <div
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-[11px] font-black shadow-lg border text-white",
+                      config.badgeBg, config.borderColor
+                    )}
+                    style={{ boxShadow: `0 0 15px ${config.glowColor}` }}
+                  >
                     #{config.rank}
                   </div>
                 </motion.div>
               </div>
 
-              {/* Name */}
+              {/* Player name */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: config.delay + 0.4 }}
-                className={cn("font-bold text-center truncate max-w-[10rem] mt-1", config.nameSize)}
+                className={cn("font-black text-center truncate max-w-[10rem] mt-2", config.nameSize)}
               >
                 {person.name.split(" ")[0]}
               </motion.p>
 
-              {/* Sales value with animated counter */}
-              <motion.p
+              {/* Sales value with neon effect */}
+              <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: config.delay + 0.5 }}
-                className={cn("font-black text-center gradient-text", config.salesSize)}
               >
-                R$ <AnimatedValue value={person.totalSales} />
-              </motion.p>
+                <NeonText
+                  color={config.glowColor}
+                  className={cn("font-black text-center block", config.salesSize, config.salesColor)}
+                >
+                  R$ <AnimatedValue value={person.totalSales} />
+                </NeonText>
+              </motion.div>
 
-              {/* Stats row with badges */}
+              {/* Stats row */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: config.delay + 0.6 }}
-                className="flex items-center gap-2 mt-1.5 mb-3"
+                className="flex items-center gap-2 mt-2 mb-3"
               >
-                <span className="text-[10px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded-full">
+                <span className="text-[10px] text-muted-foreground/70 bg-muted/30 px-2 py-0.5 rounded-md border border-border/20 backdrop-blur-sm">
                   {person.completedSales} vendas
                 </span>
                 {person.goalProgress > 0 && (
                   <span className={cn(
-                    "text-[10px] font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-full",
+                    "text-[10px] font-bold flex items-center gap-0.5 px-2 py-0.5 rounded-md border",
                     person.goalProgress >= 100
-                      ? "bg-green-500/20 text-green-400"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                       : person.goalProgress >= 80
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-muted/50 text-muted-foreground"
+                        ? "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
+                        : "bg-muted/30 text-muted-foreground/70 border-border/20"
                   )}>
                     <TrendingUp className="h-2.5 w-2.5" />
                     {person.goalProgress.toFixed(0)}%
@@ -388,73 +488,103 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
                 )}
               </motion.div>
 
-              {/* Podium block */}
+              {/* Podium block - Gaming style */}
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
-                transition={{ delay: config.delay + 0.2, duration: 0.6, ease: "easeOut" }}
+                transition={{ delay: config.delay + 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 className="w-full overflow-hidden"
               >
                 <div
                   className={cn(
-                    "w-full rounded-t-2xl flex flex-col items-center justify-center bg-gradient-to-t relative overflow-hidden",
+                    "w-full rounded-t-xl flex flex-col items-center justify-center relative overflow-hidden border-t-2",
                     config.podiumHeight,
-                    config.bgGradient,
+                    config.borderColor
                   )}
+                  style={{
+                    background: `linear-gradient(180deg, ${config.neonColor}22, ${config.neonColor}08)`,
+                  }}
                 >
-                  {/* Shimmer sweep effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12"
-                    animate={{ x: ["-200%", "200%"] }}
-                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
+                  {/* Scanline effect */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(0deg, ${config.scanlineColor}, ${config.scanlineColor} 1px, transparent 1px, transparent 4px)`,
+                    }}
                   />
 
-                  {/* Vertical light beams */}
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="absolute left-1/4 top-0 bottom-0 w-px bg-gradient-to-b from-white/0 via-white/40 to-white/0" />
-                    <div className="absolute right-1/4 top-0 bottom-0 w-px bg-gradient-to-b from-white/0 via-white/40 to-white/0" />
-                  </div>
+                  {/* Side accent lines */}
+                  <div className="absolute left-0 top-4 bottom-4 w-[2px]" style={{ background: `linear-gradient(to bottom, transparent, ${config.neonColor}60, transparent)` }} />
+                  <div className="absolute right-0 top-4 bottom-4 w-[2px]" style={{ background: `linear-gradient(to bottom, transparent, ${config.neonColor}60, transparent)` }} />
+
+                  {/* Corner brackets */}
+                  <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 rounded-tl-sm" style={{ borderColor: `${config.neonColor}50` }} />
+                  <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: `${config.neonColor}50` }} />
+                  <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 rounded-bl-sm" style={{ borderColor: `${config.neonColor}30` }} />
+                  <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: `${config.neonColor}30` }} />
+
+                  {/* Energy particles inside podium */}
+                  <EnergyParticles color={config.neonColor} />
+
+                  {/* Shimmer effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12"
+                    animate={{ x: ["-200%", "200%"] }}
+                    transition={{ duration: 4, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+                  />
 
                   {/* Rank number */}
                   <motion.span
-                    className={cn("font-black text-white/90 drop-shadow-lg relative z-10", config.labelSize)}
-                    animate={isChampion ? { scale: [1, 1.05, 1] } : {}}
+                    className={cn("font-black relative z-10", config.labelSize)}
+                    style={{
+                      color: `${config.neonColor}`,
+                      textShadow: `0 0 20px ${config.neonColor}80, 0 0 40px ${config.neonColor}40`,
+                    }}
+                    animate={isChampion ? { scale: [1, 1.06, 1] } : {}}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
                     {config.label}
                   </motion.span>
 
-                  {/* Progress bar inside podium */}
-                  <div className="w-3/4 h-2 bg-white/10 rounded-full mt-2 overflow-hidden relative z-10 backdrop-blur-sm">
+                  {/* Power bar */}
+                  <div className="w-3/4 h-1.5 bg-white/5 rounded-full mt-3 overflow-hidden relative z-10 border border-white/5">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${salesPercent}%` }}
-                      transition={{ delay: config.delay + 0.8, duration: 1, ease: "easeOut" }}
+                      transition={{ delay: config.delay + 0.8, duration: 1.2, ease: "easeOut" }}
                       className="h-full rounded-full relative overflow-hidden"
                       style={{
-                        background: "linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.6))",
+                        background: `linear-gradient(90deg, ${config.neonColor}60, ${config.neonColor})`,
+                        boxShadow: `0 0 10px ${config.neonColor}60`,
                       }}
                     >
-                      {/* Progress bar glow */}
                       <motion.div
-                        className="absolute inset-0 bg-white/20"
-                        animate={{ opacity: [0.3, 0.7, 0.3] }}
+                        className="absolute inset-0"
+                        style={{ background: `linear-gradient(90deg, transparent, ${config.neonColor}40, transparent)` }}
+                        animate={{ x: ["-100%", "100%"] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       />
                     </motion.div>
                   </div>
 
-                  {/* Stars decoration at bottom for champion */}
+                  {/* Stars for champion */}
                   {isChampion && (
-                    <div className="flex gap-1 mt-2 relative z-10">
+                    <div className="flex gap-1.5 mt-3 relative z-10">
                       {[...Array(5)].map((_, i) => (
                         <motion.div
                           key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: config.delay + 1 + i * 0.1 }}
+                          initial={{ opacity: 0, scale: 0, rotate: -30 }}
+                          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                          transition={{ delay: config.delay + 1 + i * 0.1, type: "spring" }}
                         >
-                          <Star className="h-3 w-3 text-white/50 fill-white/30" />
+                          <Star
+                            className="h-3.5 w-3.5"
+                            style={{
+                              color: config.neonColor,
+                              fill: i < 3 ? config.neonColor : "transparent",
+                              filter: `drop-shadow(0 0 4px ${config.neonColor}80)`,
+                            }}
+                          />
                         </motion.div>
                       ))}
                     </div>
