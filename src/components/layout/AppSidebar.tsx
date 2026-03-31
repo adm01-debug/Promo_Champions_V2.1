@@ -287,7 +287,7 @@ export function AppSidebar() {
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
               <span className="text-base font-semibold text-foreground tracking-normal">
-                Promo Gifts
+                Promo Champions
               </span>
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
                 Plataforma de Vendas
