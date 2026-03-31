@@ -29,6 +29,7 @@ import {
   DollarSign,
   Swords,
   Gift,
+  Crown,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
