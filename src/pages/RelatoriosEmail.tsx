@@ -5,7 +5,7 @@ export default function RelatoriosEmail() {
   return (
     <>
       <Helmet>
-        <title>Relatórios por Email | Sales Arena</title>
+        <title>Relatórios por Email | I HAVE THE POWER!</title>
         <meta name="description" content="Configure o envio automático de relatórios de performance por email" />
       </Helmet>
       <div className="space-y-6">

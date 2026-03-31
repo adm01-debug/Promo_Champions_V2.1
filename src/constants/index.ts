@@ -1,5 +1,5 @@
 /**
- * Constantes do sistema Sales Arena
+ * Constantes do sistema I HAVE THE POWER!
  * Centraliza valores mágicos e configurações
  */
 

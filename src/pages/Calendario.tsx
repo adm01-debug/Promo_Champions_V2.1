@@ -5,7 +5,7 @@ export default function Calendario() {
   return (
     <>
       <Helmet>
-        <title>Calendário de Atividades | Sales Arena</title>
+        <title>Calendário de Atividades | I HAVE THE POWER!</title>
         <meta name="description" content="Visualize e reagende atividades no calendário com drag-and-drop" />
       </Helmet>
       <div className="p-4 lg:p-8">

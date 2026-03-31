@@ -6,7 +6,7 @@ export default function EmailTracking() {
   return (
     <>
       <Helmet>
-        <title>Rastreamento de Email | Sales Arena</title>
+        <title>Rastreamento de Email | I HAVE THE POWER!</title>
         <meta name="description" content="Acompanhe aberturas, cliques e respostas dos seus emails em tempo real" />
       </Helmet>
       <PageTransition>

@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: 'Sales Arena',
+        name: 'I HAVE THE POWER!',
         short_name: 'SalesArena',
         description: 'Plataforma Inteligente de Gestão de Vendas',
         start_url: '/',

@@ -5,7 +5,7 @@ export default function PrevisaoDemanda() {
   return (
     <>
       <Helmet>
-        <title>Previsão de Demanda | Sales Arena</title>
+        <title>Previsão de Demanda | I HAVE THE POWER!</title>
         <meta name="description" content="Análise preditiva de demanda de produtos e gestão de estoque" />
       </Helmet>
       <div className="min-h-screen bg-background">
