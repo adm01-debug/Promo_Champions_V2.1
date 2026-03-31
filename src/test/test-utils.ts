@@ -1,5 +1,5 @@
 /**
- * Test utilities and shared mocks for CHAMPION's GIFT By Promo Brindes test suite
+ * Test utilities and shared mocks for PROMO CHAMPIONS test suite
  */
 import { vi } from 'vitest';
 import React from 'react';

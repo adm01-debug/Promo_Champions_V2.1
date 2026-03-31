@@ -173,7 +173,7 @@ serve(async (req) => {
             'Authorization': `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: 'CHAMPION's GIFT By Promo Brindes <onboarding@resend.dev>',
+            from: 'PROMO CHAMPIONS <onboarding@resend.dev>',
             to: [adminEmail],
             subject,
             html: emailHtml,

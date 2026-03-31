@@ -24,7 +24,7 @@ function addHeader(doc: jsPDF, title: string, period: string) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("CHAMPION's GIFT By Promo Brindes", 14, 14);
+  doc.text("PROMO CHAMPIONS", 14, 14);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text(title, 14, 22);

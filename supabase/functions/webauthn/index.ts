@@ -25,7 +25,7 @@ function base64urlToBase64(base64url: string): string {
   return base64;
 }
 
-const RP_NAME = "CHAMPION's GIFT By Promo Brindes";
+const RP_NAME = "PROMO CHAMPIONS";
 const RP_ID_HEADER = "x-rp-id"; // Will be set from frontend
 
 interface WebAuthnAction {

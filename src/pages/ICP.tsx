@@ -134,7 +134,7 @@ export default function ICP() {
   return (
     <>
       <Helmet>
-        <title>ICP - Perfil Ideal de Cliente | CHAMPION's GIFT By Promo Brindes</title>
+        <title>ICP - Perfil Ideal de Cliente | PROMO CHAMPIONS</title>
         <meta name="description" content="Gerencie critérios de perfil ideal de clientes" />
       </Helmet>
 

@@ -7,7 +7,7 @@ export default function KanbanClientes() {
   return (
     <>
       <Helmet>
-        <title>Kanban de Clientes | CHAMPION's GIFT By Promo Brindes</title>
+        <title>Kanban de Clientes | PROMO CHAMPIONS</title>
         <meta name="description" content="Visualize e gerencie seus clientes por estágio de relacionamento" />
       </Helmet>
       <PageTransition>

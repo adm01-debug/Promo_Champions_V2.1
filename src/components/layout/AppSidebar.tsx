@@ -286,7 +286,7 @@ export function AppSidebar() {
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
               <span className="text-lg font-bold text-foreground">
-                CHAMPION's GIFT By Promo Brindes
+                PROMO CHAMPIONS
               </span>
               <span className={cn("text-[10px] uppercase tracking-widest font-bold", currentViewConfig.color)}>
                 {currentViewConfig.label}

@@ -35,7 +35,7 @@ const ArenaCompetitiva = () => {
   return (
     <>
       <Helmet>
-        <title>Arena Competitiva | CHAMPION's GIFT By Promo Brindes</title>
+        <title>Arena Competitiva | PROMO CHAMPIONS</title>
         <meta name="description" content="Feed de vitórias, duelos ao vivo, missões diárias, ranking semanal e placar em tempo real" />
       </Helmet>
 
