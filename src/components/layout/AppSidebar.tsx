@@ -28,6 +28,7 @@ import {
   MailCheck,
   DollarSign,
   Swords,
+  Gift,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -280,13 +281,16 @@ export function AppSidebar() {
       {/* Header com Logo */}
       <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">
-            <TrendingUp className="h-5 w-5 text-primary-foreground" />
+          <div className="h-10 w-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25">
+            <Gift className="h-5 w-5 text-white" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-lg font-bold text-foreground tracking-tight">
-                PROMO CHAMPIONS
+              <span className="text-base font-semibold text-foreground tracking-normal">
+                Promo Gifts
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
+                Plataforma de Vendas
               </span>
             </div>
           )}
