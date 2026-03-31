@@ -34,8 +34,8 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: 'I HAVE THE POWER!',
-        short_name: 'IHTP',
+        name: 'CHAMPION's GIFT By Promo Brindes',
+        short_name: 'ChampionsGift',
         description: 'Plataforma Inteligente de Gestão de Vendas',
         start_url: '/',
         display: 'standalone',

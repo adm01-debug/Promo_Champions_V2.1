@@ -75,7 +75,7 @@ export default function ComparadorPrecos() {
   return (
     <>
       <Helmet>
-        <title>Comparador de Preços | I HAVE THE POWER!</title>
+        <title>Comparador de Preços | CHAMPION's GIFT By Promo Brindes</title>
         <meta name="description" content="Compare preços entre fornecedores e encontre as melhores ofertas" />
       </Helmet>
       

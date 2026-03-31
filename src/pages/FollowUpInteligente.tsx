@@ -128,7 +128,7 @@ const FollowUpInteligente = () => {
   return (
     <>
       <Helmet>
-        <title>Follow-up Inteligente | I HAVE THE POWER!</title>
+        <title>Follow-up Inteligente | CHAMPION's GIFT By Promo Brindes</title>
         <meta name="description" content="Detecção automática de leads esfriando com sugestões inteligentes de follow-up para maximizar conversões." />
       </Helmet>
 

@@ -139,7 +139,7 @@ const RelatoriosExecutivos = () => {
 
   return (
     <>
-      <Helmet><title>Relatórios Executivos | I HAVE THE POWER!</title></Helmet>
+      <Helmet><title>Relatórios Executivos | CHAMPION's GIFT By Promo Brindes</title></Helmet>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

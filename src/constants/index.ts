@@ -1,5 +1,5 @@
 /**
- * Constantes do sistema I HAVE THE POWER!
+ * Constantes do sistema CHAMPION's GIFT By Promo Brindes
  * Centraliza valores mágicos e configurações
  */
 
