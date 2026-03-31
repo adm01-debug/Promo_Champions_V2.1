@@ -282,7 +282,7 @@ export function AppSidebar() {
       <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25">
-            <Gift className="h-5 w-5 text-white" />
+            <Crown className="h-5 w-5 text-white" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
