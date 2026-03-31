@@ -5,7 +5,7 @@ export default function ForecastPonderado() {
   return (
     <>
       <Helmet>
-        <title>Forecast Ponderado | I HAVE THE POWER!</title>
+        <title>Forecast Ponderado | CHAMPION's GIFT By Promo Brindes</title>
         <meta name="description" content="Previsão de receita ponderada por probabilidade e estágio do pipeline" />
       </Helmet>
       <WeightedForecastDashboard />

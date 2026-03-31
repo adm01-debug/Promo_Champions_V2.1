@@ -6,7 +6,7 @@ export default function DashboardCustom() {
   return (
     <>
       <Helmet>
-        <title>Dashboard Personalizado | I HAVE THE POWER!</title>
+        <title>Dashboard Personalizado | CHAMPION's GIFT By Promo Brindes</title>
         <meta name="description" content="Monte seu próprio dashboard arrastando widgets personalizados" />
       </Helmet>
       <PageTransition>

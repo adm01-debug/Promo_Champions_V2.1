@@ -132,7 +132,7 @@ export default function Portfolio() {
   return (
     <>
       <Helmet>
-        <title>Portfólio de Clientes | I HAVE THE POWER!</title>
+        <title>Portfólio de Clientes | CHAMPION's GIFT By Promo Brindes</title>
         <meta
           name="description"
           content="Gerencie o portfólio de clientes por vendedor"

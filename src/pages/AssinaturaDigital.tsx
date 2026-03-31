@@ -126,7 +126,7 @@ export default function AssinaturaDigital() {
   return (
     <>
       <Helmet>
-        <title>Assinatura Digital | I HAVE THE POWER!</title>
+        <title>Assinatura Digital | CHAMPION's GIFT By Promo Brindes</title>
         <meta name="description" content="Gerencie documentos e assinaturas digitais" />
       </Helmet>
       

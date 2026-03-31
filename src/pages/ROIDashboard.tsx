@@ -81,7 +81,7 @@ const ROIDashboard = () => {
   return (
     <>
       <Helmet>
-        <title>ROI por Vendedor | I HAVE THE POWER!</title>
+        <title>ROI por Vendedor | CHAMPION's GIFT By Promo Brindes</title>
         <meta name="description" content="Dashboard de ROI por vendedor com CAC, LTV e payback period" />
       </Helmet>
 
