@@ -290,7 +290,7 @@ export function AppSidebar() {
                 Promo Champions
               </span>
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
-                Plataforma de Vendas
+                Realize seus sonhos!
               </span>
             </div>
           )}
