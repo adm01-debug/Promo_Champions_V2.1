@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: 'CHAMPION's GIFT By Promo Brindes',
+        name: "CHAMPION's GIFT By Promo Brindes",
         short_name: 'ChampionsGift',
         description: 'Plataforma Inteligente de Gestão de Vendas',
         start_url: '/',
