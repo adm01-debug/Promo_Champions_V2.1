@@ -110,7 +110,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
               <Download className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">Instalar SalesPro</h3>
+              <h3 className="font-semibold">Instalar I HAVE THE POWER!</h3>
               <p className="text-sm text-muted-foreground">Acesso rápido ao app</p>
             </div>
           </div>
@@ -155,7 +155,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
           <div className="flex items-center gap-3">
             <Download className="h-5 w-5 shrink-0" />
             <p className="text-sm font-medium">
-              Instale o SalesPro para uma experiência completa
+              Instale o I HAVE THE POWER! para uma experiência completa
             </p>
           </div>
 

@@ -34,8 +34,8 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: 'Sales Arena',
-        short_name: 'SalesArena',
+        name: 'I HAVE THE POWER!',
+        short_name: 'IHTP',
         description: 'Plataforma Inteligente de Gestão de Vendas',
         start_url: '/',
         display: 'standalone',

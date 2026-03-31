@@ -73,7 +73,7 @@ serve(async (req) => {
       }
     }
 
-    const systemPrompt = `Você é o Copilot do Sales Arena, um assistente de vendas ultra-conciso e proativo.
+    const systemPrompt = `Você é o Copilot do I HAVE THE POWER!, um assistente de vendas ultra-conciso e proativo.
 Sua função é dar micro-sugestões contextuais baseadas na tela atual e nos dados do vendedor.
 REGRAS:
 - Máximo 2-3 frases curtas

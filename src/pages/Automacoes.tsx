@@ -5,7 +5,7 @@ export default function Automacoes() {
   return (
     <>
       <Helmet>
-        <title>Automações Visuais | Sales Arena</title>
+        <title>Automações Visuais | I HAVE THE POWER!</title>
         <meta name="description" content="Crie automações visuais com regras se/então para otimizar seu pipeline" />
       </Helmet>
       <WorkflowBuilder />

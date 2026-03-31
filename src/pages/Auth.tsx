@@ -231,7 +231,7 @@ export default function Auth() {
             </div>
           </div>
           <h1 className="text-3xl font-bold gradient-text opacity-0 animate-fade-in" style={{ animationDelay: "300ms", animationFillMode: "forwards" }}>
-            Sales Arena
+            I HAVE THE POWER!
           </h1>
           <p className="text-muted-foreground opacity-0 animate-fade-in" style={{ animationDelay: "400ms", animationFillMode: "forwards" }}>
             Entre na arena e conquiste seu lugar no ranking

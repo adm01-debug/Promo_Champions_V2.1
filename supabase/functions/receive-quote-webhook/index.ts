@@ -48,7 +48,7 @@ interface IncomingQuoteItem {
   }[];
 }
 
-// ── Status mapping: GIFT STORE → SalesPro ──────────────────────────────
+// ── Status mapping: GIFT STORE → I HAVE THE POWER! ──────────────────────────────
 function mapQuoteStatus(externalStatus: string): string {
   const mapping: Record<string, string> = {
     draft: "draft",

@@ -75,7 +75,7 @@ export default function ComparadorPrecos() {
   return (
     <>
       <Helmet>
-        <title>Comparador de Preços | Sales Arena</title>
+        <title>Comparador de Preços | I HAVE THE POWER!</title>
         <meta name="description" content="Compare preços entre fornecedores e encontre as melhores ofertas" />
       </Helmet>
       

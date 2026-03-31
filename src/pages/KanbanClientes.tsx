@@ -7,7 +7,7 @@ export default function KanbanClientes() {
   return (
     <>
       <Helmet>
-        <title>Kanban de Clientes | Sales Arena</title>
+        <title>Kanban de Clientes | I HAVE THE POWER!</title>
         <meta name="description" content="Visualize e gerencie seus clientes por estágio de relacionamento" />
       </Helmet>
       <PageTransition>

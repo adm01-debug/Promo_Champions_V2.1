@@ -73,7 +73,7 @@ export function useMobileNavigation() {
     }
     
     // Fallback
-    return { title: 'Sales Arena' };
+    return { title: 'I HAVE THE POWER!' };
   }, [location.pathname]);
 
   const goBack = useCallback(() => {

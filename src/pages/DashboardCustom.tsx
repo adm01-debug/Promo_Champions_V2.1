@@ -6,7 +6,7 @@ export default function DashboardCustom() {
   return (
     <>
       <Helmet>
-        <title>Dashboard Personalizado | Sales Arena</title>
+        <title>Dashboard Personalizado | I HAVE THE POWER!</title>
         <meta name="description" content="Monte seu próprio dashboard arrastando widgets personalizados" />
       </Helmet>
       <PageTransition>

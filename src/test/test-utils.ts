@@ -1,5 +1,5 @@
 /**
- * Test utilities and shared mocks for Sales Arena test suite
+ * Test utilities and shared mocks for I HAVE THE POWER! test suite
  */
 import { vi } from 'vitest';
 import React from 'react';
