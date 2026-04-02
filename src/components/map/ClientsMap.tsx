@@ -299,7 +299,7 @@ export const ClientsMap = () => {
             <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-destructive" /> &lt; R$10k
             </span>
-            <span className="ml-auto font-mono">{filtered.length} resultados</span>
+            <span className="ml-auto font-mono" aria-live="polite">{filtered.length} resultados</span>
           </div>
         </div>
       )}
