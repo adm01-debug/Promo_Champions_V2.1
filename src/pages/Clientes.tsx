@@ -33,7 +33,7 @@ const Clientes = () => {
   const [sortBy, setSortBy] = useState("name_asc");
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
-  
+  const [timelineClient, setTimelineClient] = useState<Client | null>(null);
   const { data: clients = [], isLoading } = useClients();
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
