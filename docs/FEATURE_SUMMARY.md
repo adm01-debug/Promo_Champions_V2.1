@@ -6,65 +6,84 @@
 
 #### Core CRM
 - ✅ Client management with full CRUD
-- ✅ Deal pipeline with stages
-- ✅ Activity tracking (calls, emails, meetings)
+- ✅ Deal pipeline with stages (Kanban)
+- ✅ Activity tracking (calls, emails, meetings, WhatsApp, LinkedIn)
 - ✅ Product catalog with SKUs
 - ✅ Task management with assignments
 - ✅ Team collaboration
+- ✅ Client interaction timeline
 
 #### Analytics
 - ✅ Dashboard with KPIs
-- ✅ Sales reports
-- ✅ Conversion analysis
+- ✅ Sales reports (PDF/CSV/Excel export)
+- ✅ Conversion analysis (funnel + stage bottlenecks)
 - ✅ Deal velocity tracking
 - ✅ Win/loss analysis
 - ✅ Pipeline health metrics
+- ✅ ABC Analysis (Pareto 80/20)
+- ✅ Closing time analysis
+- ✅ Cohort analysis (client retention)
+- ✅ LTV by segment
+- ✅ Activity heatmap
+- ✅ Weekly performance comparison
 
 #### Advanced Features
-- ✅ Lead scoring AI
+- ✅ Lead scoring (rule-based)
 - ✅ Next best action recommendations
-- ✅ Churn prediction
+- ✅ Churn prediction (real data-driven)
 - ✅ Deal probability calculator
-- ✅ ABC analysis
-- ✅ Regional sales tracking
+- ✅ AI Sales Assistant (streaming via Edge Function)
+- ✅ Demand forecasting
+- ✅ Weighted pipeline forecast
 
 #### Gamification
 - ✅ XP and levels system
 - ✅ Leaderboards
-- ✅ Achievements
-- ✅ Challenges
-- ✅ Badges
+- ✅ Achievements and badges
+- ✅ Daily & weekly challenges
+- ✅ Sales battles
+- ✅ Combo system
+- ✅ Prize wheel
 
 #### Security
-- ✅ 2FA with TOTP
-- ✅ Audit trail
-- ✅ RLS policies
-- ✅ Rate limiting
-- ✅ Error tracking
-- ✅ RBAC permissions
+- ✅ 2FA with TOTP (HMAC-SHA1 RFC 4226/6238)
+- ✅ SMS MFA
+- ✅ Backup codes
+- ✅ Audit trail (access denied logs)
+- ✅ RLS policies on all tables
+- ✅ Rate limiting (login + API)
+- ✅ IP blocking & whitelisting
+- ✅ Geo-blocking
+- ✅ Known devices tracking
+- ✅ Session management
+- ✅ RBAC with admin/manager/salesperson roles
+- ✅ Real IP tracking via Edge Function
 
 #### Infrastructure
-- ✅ Offline support
-- ✅ i18n (pt-BR, en-US, es-ES)
-- ✅ Feature flags
-- ✅ A/B testing
-- ✅ PDF generation
-- ✅ Webhooks
-- ✅ Real-time collaboration
-- ✅ CI/CD pipelines
-- ✅ Monitoring (Sentry + Analytics)
+- ✅ PWA support (offline mode, service workers)
+- ✅ PDF generation (quotes, reports)
+- ✅ Real-time notifications (push + in-app)
+- ✅ CRON-based alert emails
+- ✅ Digital signatures
+
+### ⚠️ Partial / Not Implemented
+
+#### Not Yet Available
+- ❌ i18n — UI is hardcoded in pt-BR. No multi-language framework.
+- ❌ Feature flags — No runtime feature flag system.
+- ❌ A/B testing — No framework in place.
+- ❌ WhatsApp integration — Activity type exists for manual logging only; no API/webhook integration.
+- ❌ Email integration — Email tracking exists but no automatic log from email providers.
+- ❌ E2E tests — No end-to-end test files.
 
 ### 📈 Coverage Metrics
 
-\`\`\`
-Code Coverage:        85%
+```
 Type Safety:          100% (TypeScript strict)
-Test Coverage:        80%
-E2E Tests:            7 complete journeys
-Documentation:        100%
-Security Audit:       Passed
-Performance Score:    95+ (Lighthouse)
-\`\`\`
+Unit Tests:           Minimal (rate limiter tests only)
+Security Audit:       Passed (10/10 hardening)
+Performance Score:    95+ (Lighthouse target)
+```
 
 ### 🎯 Key Capabilities
 
@@ -72,88 +91,18 @@ Performance Score:    95+ (Lighthouse)
    - Lead capture → Qualification → Proposal → Negotiation → Close
 
 2. **AI-Powered Intelligence**
-   - Automatic lead scoring
+   - Real-time AI Sales Assistant with SSE streaming
+   - Lead scoring
    - Deal probability prediction
    - Churn risk detection
-   - Smart recommendations
 
 3. **Team Productivity**
-   - Real-time collaboration
    - Gamification for motivation
-   - Automated workflows
-   - Mobile-ready interface
+   - Cadences and playbooks
+   - Mobile-ready responsive interface
 
-4. **Enterprise-Ready**
-   - Offline-first architecture
-   - Multi-language support
-   - Webhook integrations
-   - Advanced security
-
-5. **Data-Driven Decisions**
-   - Comprehensive analytics
-   - Custom reports
-   - Forecasting
-   - A/B testing
-
-## 🚀 Recent Additions (Latest Sprint)
-
-1. ✅ 10 Advanced Hooks
-   - Call tracking
-   - Client portfolio analysis
-   - Closing time metrics
-   - Daily challenges
-   - Product recommendations
-   - Regional sales
-   - Win/loss analysis
-
-2. ✅ Enterprise Features
-   - Offline sync queue
-   - i18n framework
-   - Feature flags with gradual rollout
-   - A/B testing framework
-   - PDF generator with templates
-
-3. ✅ Webhooks System
-   - Complete webhook management
-   - Retry logic
-   - Event logging
-   - Testing interface
-
-4. ✅ Permissions & Collaboration
-   - RBAC system
-   - Real-time presence
-   - Cursor tracking
-
-5. ✅ Complete E2E Coverage
-   - SDR journey
-   - Closer journey
-   - Gamification flow
-   - Cadences
-   - Reports
-   - Team management
-   - Playbooks
-
-6. ✅ Enhanced Database
-   - Materialized views for analytics
-   - Stored procedures for complex queries
-   - Performance indexes
-   - Health score calculations
-
-## 📊 Performance Benchmarks
-
-\`\`\`
-Initial Load:         < 2s
-Time to Interactive:  < 3s
-First Paint:          < 1s
-Largest Content:      < 2.5s
-Cumulative Shift:     < 0.1
-Database Queries:     < 100ms avg
-API Latency:          < 200ms p95
-\`\`\`
-
-## 🎉 Achievement Unlocked!
-
-**Status**: Production-Ready ✅
-
-All core features implemented, tested, and documented.
-Ready for deployment and scaling.
+4. **Data-Driven Decisions**
+   - Comprehensive analytics (16+ tabs)
+   - Cohort retention analysis
+   - LTV segmentation
+   - Custom reports with export
