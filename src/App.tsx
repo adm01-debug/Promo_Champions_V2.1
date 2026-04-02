@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { UI } from "@/config/constants";
 
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
