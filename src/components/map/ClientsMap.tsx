@@ -42,8 +42,8 @@ interface ClientWithCoords {
 }
 
 function getMarkerIcon(value: number) {
-  if (value >= 50000) return greenIcon;
-  if (value >= 10000) return goldIcon;
+  if (value >= CLIENT_MAP.TIER_PREMIUM) return greenIcon;
+  if (value >= CLIENT_MAP.TIER_REGULAR) return goldIcon;
   return redIcon;
 }
 
