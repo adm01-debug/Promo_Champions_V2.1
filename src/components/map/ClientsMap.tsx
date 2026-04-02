@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, useRef, useCallback } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback, useDeferredValue, memo } from "react";
+import { CLIENT_MAP } from "@/config/constants";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -42,8 +43,8 @@ interface ClientWithCoords {
 }
 
 function getMarkerIcon(value: number) {
-  if (value >= 50000) return greenIcon;
-  if (value >= 10000) return goldIcon;
+  if (value >= CLIENT_MAP.TIER_PREMIUM) return greenIcon;
+  if (value >= CLIENT_MAP.TIER_REGULAR) return goldIcon;
   return redIcon;
 }
 
@@ -70,7 +71,7 @@ async function geocodeLocation(location: string): Promise<{ lat: number; lng: nu
   }
 }
 
-function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
+const MarkerClusterGroup = memo(function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
   const map = useMap();
   const clusterRef = useRef<L.MarkerClusterGroup | null>(null);
 
@@ -79,7 +80,7 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
 
     const cluster = L.markerClusterGroup({
       chunkedLoading: true,
-      maxClusterRadius: 50,
+      maxClusterRadius: CLIENT_MAP.CLUSTER_RADIUS,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       iconCreateFunction: (c) => {
@@ -116,7 +117,7 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
           ${client.phone ? `<p style="margin:2px 0">📞 ${client.phone}</p>` : ""}
           <div style="border-top:1px solid #333;margin-top:6px;padding-top:4px;display:flex;justify-content:space-between">
             <span style="font-weight:600">Valor Total</span>
-            <span style="font-family:monospace;font-weight:700;color:${client.total_value >= 50000 ? "#22c55e" : "#d4a520"}">${formattedValue}</span>
+            <span style="font-family:monospace;font-weight:700;color:${client.total_value >= CLIENT_MAP.TIER_PREMIUM ? "#22c55e" : "#d4a520"}">${formattedValue}</span>
           </div>
         </div>
       `;
@@ -129,7 +130,7 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
 
     if (clients.length > 0) {
       const bounds = L.latLngBounds(clients.map((c) => [c.lat, c.lng]));
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: CLIENT_MAP.MAX_FIT_ZOOM });
     }
 
     return () => {
@@ -138,7 +139,7 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
   }, [clients, map]);
 
   return null;
-}
+});
 
 export const ClientsMap = () => {
   const [minValue, setMinValue] = useState(0);
@@ -174,7 +175,7 @@ export const ClientsMap = () => {
         geocoded++;
         setGeocodingCount(geocoded);
       }
-      await new Promise((r) => setTimeout(r, 1100));
+      await new Promise((r) => setTimeout(r, CLIENT_MAP.GEOCODE_INTERVAL_MS));
     }
     if (geocoded > 0) {
       queryClient.invalidateQueries({ queryKey: ["clients-map"] });
@@ -204,13 +205,16 @@ export const ClientsMap = () => {
     return Array.from(s).sort();
   }, [allMappable]);
 
+  const deferredMinValue = useDeferredValue(minValue);
+  const deferredCompany = useDeferredValue(selectedCompany);
+
   const filtered = useMemo(() => {
     return allMappable.filter((c) => {
-      if (c.total_value < minValue) return false;
-      if (selectedCompany !== "all" && c.company !== selectedCompany) return false;
+      if (c.total_value < deferredMinValue) return false;
+      if (deferredCompany !== "all" && c.company !== deferredCompany) return false;
       return true;
     });
-  }, [allMappable, minValue, selectedCompany]);
+  }, [allMappable, deferredMinValue, deferredCompany]);
 
   const totalClients = clients?.length ?? 0;
   const unmappable = totalClients - allMappable.length;
@@ -226,7 +230,7 @@ export const ClientsMap = () => {
             <MapPin className="h-6 w-6 text-primary" />
             Mapa de Clientes
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">
             {filtered.length} de {totalClients} clientes no mapa
             {unmappable > 0 && ` · ${unmappable} sem coordenadas`}
             {hasActiveFilters && " (filtrado)"}
@@ -234,8 +238,8 @@ export const ClientsMap = () => {
         </div>
         <div className="flex gap-2 items-center">
           {isGeocoding && (
-            <div className="flex items-center gap-1.5 text-xs text-primary">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <div className="flex items-center gap-1.5 text-xs text-primary" role="status" aria-live="assertive">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
               Geocodificando... {geocodingCount}
             </div>
           )}
@@ -268,7 +272,7 @@ export const ClientsMap = () => {
                   {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(minValue)}
                 </span>
               </Label>
-              <Slider value={[minValue]} onValueChange={([v]) => setMinValue(v)} min={0} max={200000} step={5000} />
+              <Slider value={[minValue]} onValueChange={([v]) => setMinValue(v)} min={0} max={CLIENT_MAP.SLIDER_MAX_VALUE} step={CLIENT_MAP.SLIDER_STEP} />
               <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
                 <span>R$0</span><span>R$50k</span><span>R$100k</span><span>R$150k</span><span>R$200k</span>
               </div>
@@ -298,7 +302,7 @@ export const ClientsMap = () => {
             <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-destructive" /> &lt; R$10k
             </span>
-            <span className="ml-auto font-mono">{filtered.length} resultados</span>
+            <span className="ml-auto font-mono" aria-live="polite">{filtered.length} resultados</span>
           </div>
         </div>
       )}
@@ -310,8 +314,8 @@ export const ClientsMap = () => {
           </div>
         ) : (
           <MapContainer
-            center={filtered.length > 0 ? [filtered[0].lat, filtered[0].lng] : [-14.235, -51.925]}
-            zoom={4}
+            center={filtered.length > 0 ? [filtered[0].lat, filtered[0].lng] : CLIENT_MAP.DEFAULT_CENTER}
+            zoom={CLIENT_MAP.DEFAULT_ZOOM}
             style={{ height: "100%", width: "100%" }}
             className="z-0"
           >
