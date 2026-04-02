@@ -71,7 +71,7 @@ async function geocodeLocation(location: string): Promise<{ lat: number; lng: nu
   }
 }
 
-function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
+const MarkerClusterGroup = memo(function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
   const map = useMap();
   const clusterRef = useRef<L.MarkerClusterGroup | null>(null);
 
