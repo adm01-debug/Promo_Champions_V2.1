@@ -140,6 +140,7 @@ const gestaoMoreItems: MenuItem[] = [
   { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
   { title: "Calendário", url: "/calendario", icon: Calendar },
   { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
+  { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
   { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
 ];
 

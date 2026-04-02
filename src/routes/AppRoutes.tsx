@@ -183,6 +183,7 @@ export function AppRoutes() {
                     } />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
                     <Route path="/follow-up" element={<FollowUpInteligente />} />
+                    <Route path="/mapa-clientes" element={<MapaClientes />} />
                     <Route path="/relatorios-executivos" element={
                       <ProtectedRoute requireAdminOrManager><RelatoriosExecutivos /></ProtectedRoute>
                     } />
