@@ -1,4 +1,4 @@
-import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -16,6 +16,8 @@ import { TablePagination } from "@/components/shared/TablePagination";
 import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
+import { ClientTimeline } from "@/components/clients/ClientTimeline";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
@@ -31,7 +33,7 @@ const Clientes = () => {
   const [sortBy, setSortBy] = useState("name_asc");
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
-  
+  const [timelineClient, setTimelineClient] = useState<Client | null>(null);
   const { data: clients = [], isLoading } = useClients();
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
@@ -156,6 +158,15 @@ const Clientes = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
+                      onClick={() => setTimelineClient(client)}
+                      title="Ver timeline"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
                       onClick={() => setEditingClient(client)}
                     >
                       <Pencil className="h-4 w-4" />
@@ -258,6 +269,21 @@ const Clientes = () => {
         description={`Tem certeza que deseja excluir o cliente "${deletingClient?.name}"? Esta ação não pode ser desfeita.`}
         isDeleting={deleteClient.isPending}
       />
+
+      {/* Timeline Dialog */}
+      <Dialog open={!!timelineClient} onOpenChange={(open) => !open && setTimelineClient(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5 text-primary" />
+              Timeline — {timelineClient?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {timelineClient && (
+            <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
+          )}
+        </DialogContent>
+      </Dialog>
     </SkeletonTransition>
   );
 };

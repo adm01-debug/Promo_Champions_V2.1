@@ -13,8 +13,10 @@ import { ActivityHeatmap } from '@/components/analytics/ActivityHeatmap';
 import { CompetencyRadar } from '@/components/analytics/CompetencyRadar';
 import { WeeklyPerformanceComparison } from '@/components/analytics/WeeklyPerformanceComparison';
 import { ChurnPredictionPanel } from '@/components/analytics/ChurnPredictionPanel';
+import { CohortAnalysis } from '@/components/analytics/CohortAnalysis';
+import { LTVBySegment } from '@/components/analytics/LTVBySegment';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert, UserCheck, DollarSign } from 'lucide-react';
 import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
 import { AnalyticsPageLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
@@ -114,6 +116,14 @@ export default function Analytics() {
                   <TabsTrigger value="churn-risk" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                     <ShieldAlert className="h-4 w-4" />
                     Risco Churn
+                  </TabsTrigger>
+                  <TabsTrigger value="cohort" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <UserCheck className="h-4 w-4" />
+                    Cohort
+                  </TabsTrigger>
+                  <TabsTrigger value="ltv" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <DollarSign className="h-4 w-4" />
+                    LTV
                   </TabsTrigger>
                 </TabsList>
 
@@ -268,6 +278,28 @@ export default function Analytics() {
                       transition={{ duration: 0.3 }}
                     >
                       <ChurnPredictionPanel />
+                    </motion.div>
+                  </TabsContent>
+
+                  <TabsContent value="cohort" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <CohortAnalysis />
+                    </motion.div>
+                  </TabsContent>
+
+                  <TabsContent value="ltv" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <LTVBySegment />
                     </motion.div>
                   </TabsContent>
                 </AnimatePresence>
