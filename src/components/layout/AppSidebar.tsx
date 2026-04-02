@@ -121,6 +121,7 @@ const closerMoreItems: MenuItem[] = [
   { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
+  { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
 
