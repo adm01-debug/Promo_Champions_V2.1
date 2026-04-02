@@ -74,6 +74,7 @@ const ROIDashboard = lazy(() => import("@/pages/ROIDashboard"));
 const ArenaCompetitiva = lazy(() => import("@/pages/ArenaCompetitiva"));
 const FollowUpInteligente = lazy(() => import("@/pages/FollowUpInteligente"));
 const RelatoriosExecutivos = lazy(() => import("@/pages/RelatoriosExecutivos"));
+const MapaClientes = lazy(() => import("@/pages/MapaClientes"));
 const AdminTelemetria = lazy(() => import("@/pages/AdminTelemetria"));
 
 export { PageLoadingFallback };
@@ -182,6 +183,7 @@ export function AppRoutes() {
                     } />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
                     <Route path="/follow-up" element={<FollowUpInteligente />} />
+                    <Route path="/mapa-clientes" element={<MapaClientes />} />
                     <Route path="/relatorios-executivos" element={
                       <ProtectedRoute requireAdminOrManager><RelatoriosExecutivos /></ProtectedRoute>
                     } />

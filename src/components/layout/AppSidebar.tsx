@@ -31,6 +31,7 @@ import {
   Swords,
   Gift,
   Crown,
+  MapPin,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -106,6 +107,7 @@ const sdrMoreItems: MenuItem[] = [
   { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
+  { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
 
@@ -119,6 +121,7 @@ const closerMoreItems: MenuItem[] = [
   { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
+  { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
 
@@ -137,6 +140,7 @@ const gestaoMoreItems: MenuItem[] = [
   { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
   { title: "Calendário", url: "/calendario", icon: Calendar },
   { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
+  { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
   { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
 ];
 
