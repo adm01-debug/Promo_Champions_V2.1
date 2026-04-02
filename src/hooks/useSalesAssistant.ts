@@ -52,76 +52,6 @@ interface AssistantResponse {
   confidence: number;
 }
 
-// AI Responses for the assistant
-const AI_RESPONSES: Record<string, string[]> = {
-  objection_price: [
-    "Entendo sua preocupação com o preço. Vamos focar no retorno sobre o investimento:\n\n1. **Destaque o valor**, não o custo - Quanto o cliente perde sem a solução?\n2. **Fragmentize o preço** - Divida por dia/mês para parecer menor\n3. **Compare com alternativas** - O que custa NÃO resolver o problema?\n4. **Ofereça opções** - Diferentes pacotes para diferentes orçamentos\n\n💡 Frase-chave: \"Entendo que o investimento é importante. Vamos analisar juntos quanto você economizará/ganhará com essa solução?\"",
-    "O preço é uma das objeções mais comuns! Aqui está como contornar:\n\n🎯 **Técnica do Sanduíche:**\n1. Reconheça a preocupação\n2. Apresente o valor e benefícios\n3. Reforce com cases de sucesso\n\n📊 **Argumente com números:**\n- ROI esperado\n- Economia de tempo/recursos\n- Custo de oportunidade\n\n💬 Exemplo: \"Muitos clientes tiveram a mesma preocupação inicial, mas após 3 meses reportaram economia de 40% em...\"",
-  ],
-  cold_calling: [
-    "Cold calling ainda funciona quando feito corretamente! Aqui estão minhas dicas:\n\n📞 **Preparação (antes da ligação):**\n- Pesquise a empresa e o decisor\n- Tenha um objetivo claro para cada chamada\n- Prepare respostas para objeções comuns\n\n🗣️ **Durante a ligação:**\n1. Nos primeiros 10 segundos, capture atenção\n2. Fale menos, pergunte mais\n3. Use a técnica do espelhamento\n4. Termine com próximo passo claro\n\n⏰ **Melhores horários:**\n- Terça a quinta: 10-11h e 14-16h\n- Evite segunda de manhã e sexta à tarde",
-    "Vamos turbinar suas cold calls! 🚀\n\n**Estrutura da ligação perfeita:**\n\n1. **Abertura** (10s): \"Olá [nome], não nos conhecemos, mas...\"\n\n2. **Hook** (20s): Apresente um insight ou dado relevante\n\n3. **Qualificação** (2min): Faça 2-3 perguntas estratégicas\n\n4. **Pitch** (1min): Conecte dor + solução\n\n5. **CTA** (30s): Próximo passo específico\n\n💡 **Dica de ouro:** Grave suas chamadas (com permissão) e analise mensalmente!",
-  ],
-  follow_up: [
-    "Follow-up efetivo é arte e ciência! Aqui está meu framework:\n\n📅 **Cadência ideal:**\n- Dia 1: Email de agradecimento\n- Dia 3: Valor adicional (artigo/insight)\n- Dia 7: Check-in por telefone\n- Dia 14: Novo ângulo/abordagem\n- Dia 21: Último contato formal\n\n✨ **Boas práticas:**\n1. Sempre agregue valor, nunca só \"checando\"\n2. Varie os canais (email, ligação, LinkedIn)\n3. Personalize com contexto da última conversa\n4. Tenha um CTA claro em cada contato",
-    "O segredo do follow-up está na consistência e valor!\n\n🎯 **Regra de ouro:** Cada contato deve trazer algo novo:\n- Insight do mercado\n- Case de sucesso relevante\n- Artigo interessante\n- Resposta a algo mencionado\n\n📧 **Template matador:**\n\"Oi [nome], lembrei de você quando vi [insight/notícia]. Como está a situação de [problema discutido]? Achei que [solução/recurso] poderia ajudar.\"\n\n⚡ **Automação:** Use CRM para lembretes, mas personalize cada mensagem!",
-  ],
-  closing: [
-    "Fechamento é a coroação de todo o processo! 🏆\n\n**Técnicas comprovadas:**\n\n1. **Fechamento Assumido:** \"Quando podemos iniciar a implementação?\"\n\n2. **Alternativa:** \"Prefere o plano mensal ou anual?\"\n\n3. **Urgência Legítima:** \"A condição especial é válida até...\"\n\n4. **Resumo:** Recapitule benefícios antes de pedir decisão\n\n5. **Silêncio:** Faça a proposta e espere - não quebre o silêncio!\n\n💡 **Sinais de compra:**\n- Perguntas sobre implementação\n- Negociação de detalhes\n- Envolvimento de outros stakeholders",
-    "Para fechar mais vendas, domine estas técnicas:\n\n🔑 **Perguntas de fechamento:**\n- \"O que impediria de seguirmos em frente hoje?\"\n- \"Em uma escala de 1-10, onde estamos?\"\n- \"Faz sentido para você?\"\n\n⚠️ **Erros comuns:**\n1. Ter medo de pedir a venda\n2. Falar demais após fazer a proposta\n3. Não identificar o decisor real\n4. Não criar senso de urgência\n\n✅ **Checklist pré-fechamento:**\n- [ ] Todas objeções tratadas?\n- [ ] Valor claramente demonstrado?\n- [ ] Próximos passos definidos?\n- [ ] Decisor envolvido?",
-  ],
-  motivation: [
-    "Você é INCRÍVEL! 🔥\n\n💪 **Lembre-se:**\n- Cada \"não\" te aproxima do próximo \"sim\"\n- Os melhores vendedores também ouvem rejeições\n- Sua persistência é seu superpoder\n\n📈 **Dica energizante:**\nAntes de cada ligação, levante-se, respire fundo e sorria. Sua energia é contagiante!\n\n🌟 **Mantra do dia:**\n\"Eu crio oportunidades. Eu resolvo problemas. Eu faço a diferença.\"\n\nAGORA VAI LÁ E ARRASA! 🚀",
-    "Hora de BRILHAR! ⭐\n\n🎯 **Foco no que você controla:**\n- Número de tentativas\n- Qualidade das conversas\n- Seu desenvolvimento contínuo\n\n💎 **Verdade inconveniente:**\nSuccesso em vendas = Habilidade + Esforço + Resiliência\n\n🏃 **Desafio:** Nas próximas 2 horas, faça 3 ligações que você estava adiando. O momentum vem da ação!\n\nVocê tem tudo que precisa. Agora é SÓ FAZER! 💪",
-  ],
-  general: [
-    "Ótima pergunta! Estou aqui para ajudar com suas vendas.\n\nPosso te ajudar com:\n📞 Técnicas de prospecção\n🎯 Estratégias de fechamento\n🛡️ Como lidar com objeções\n📧 Templates de email\n💪 Motivação e mindset\n\nSobre o que você gostaria de aprofundar?",
-    "Vamos juntos melhorar seus resultados! 🚀\n\nEstou aqui para ser seu coach de vendas. Me conta:\n- Qual seu maior desafio agora?\n- Que tipo de venda você faz?\n- Onde sente que pode melhorar?\n\nCom essas informações, posso dar dicas mais personalizadas!",
-  ],
-};
-
-function getAIResponse(message: string, dealContext: DealContext | null): string {
-  const lowerMessage = message.toLowerCase();
-  
-  // Check for deal context questions
-  if (dealContext) {
-    if (lowerMessage.includes('analis') || lowerMessage.includes('avaliar')) {
-      return `📊 **Análise do Deal: ${dealContext.clientName}**\n\n**Produto:** ${dealContext.productName}\n**Valor:** R$ ${dealContext.amount.toLocaleString('pt-BR')}\n**Status:** ${dealContext.status}\n\n**Pontos de atenção:**\n1. Verifique se o decisor está engajado\n2. Confirme o timing de compra\n3. Identifique possíveis objeções\n\n**Recomendação:** Com base no valor, sugiro uma abordagem consultiva focando em ROI e cases de sucesso similares.`;
-    }
-    if (lowerMessage.includes('fechar') || lowerMessage.includes('fechamento')) {
-      return `🎯 **Estratégia de Fechamento para ${dealContext.clientName}**\n\n**Valor do deal:** R$ ${dealContext.amount.toLocaleString('pt-BR')}\n\n**Táticas recomendadas:**\n1. **Resumo de valor:** Recapitule os principais benefícios\n2. **Urgência legítima:** Crie um deadline natural\n3. **Fechamento alternativo:** "Preferem implementar em janeiro ou fevereiro?"\n\n**Próximo passo sugerido:** Agende uma call de decisão com todos os stakeholders.`;
-    }
-    if (lowerMessage.includes('risco')) {
-      return `⚠️ **Análise de Riscos: ${dealContext.clientName}**\n\n**Deal:** ${dealContext.productName} - R$ ${dealContext.amount.toLocaleString('pt-BR')}\n\n**Riscos identificados:**\n1. 🔴 Ciclo de vendas prolongado\n2. 🟡 Múltiplos decisores\n3. 🟡 Concorrência ativa\n\n**Mitigações:**\n- Mantenha contato frequente (a cada 3-5 dias)\n- Mapeie todos os stakeholders\n- Destaque diferenciais competitivos`;
-    }
-    if (lowerMessage.includes('próximo') || lowerMessage.includes('passo') || lowerMessage.includes('ação')) {
-      return `📋 **Plano de Ação: ${dealContext.clientName}**\n\n**Esta semana:**\n- [ ] Enviar material complementar\n- [ ] Agendar call de follow-up\n- [ ] Preparar proposta personalizada\n\n**Próxima semana:**\n- [ ] Apresentar proposta final\n- [ ] Negociar termos\n- [ ] Alinhar com decisores\n\n💡 **Dica:** Para deals acima de R$ 50k, inclua um executive sponsor no processo.`;
-    }
-    if (lowerMessage.includes('objeç') || lowerMessage.includes('objecao')) {
-      return `🛡️ **Objeções Esperadas: ${dealContext.clientName}**\n\n**Para um deal de R$ ${dealContext.amount.toLocaleString('pt-BR')}:**\n\n1. **"O preço está alto"**\n   → Resposta: Destaque o ROI e custo de não resolver\n\n2. **"Preciso pensar"**\n   → Resposta: "O que especificamente gostaria de analisar melhor?"\n\n3. **"Vou consultar outros fornecedores"**\n   → Resposta: Reforce diferenciais e ofereça comparativo\n\n**Preparação:** Tenha cases de sucesso prontos para apresentar!`;
-    }
-  }
-  
-  // Check for keywords
-  if (lowerMessage.includes('preço') || lowerMessage.includes('caro') || lowerMessage.includes('objeção') || lowerMessage.includes('objecao')) {
-    return AI_RESPONSES.objection_price[Math.floor(Math.random() * AI_RESPONSES.objection_price.length)];
-  }
-  if (lowerMessage.includes('cold call') || lowerMessage.includes('ligação') || lowerMessage.includes('prospecção') || lowerMessage.includes('prospeccao')) {
-    return AI_RESPONSES.cold_calling[Math.floor(Math.random() * AI_RESPONSES.cold_calling.length)];
-  }
-  if (lowerMessage.includes('follow') || lowerMessage.includes('acompanhar') || lowerMessage.includes('retorno')) {
-    return AI_RESPONSES.follow_up[Math.floor(Math.random() * AI_RESPONSES.follow_up.length)];
-  }
-  if (lowerMessage.includes('fechar') || lowerMessage.includes('fechamento') || lowerMessage.includes('converter')) {
-    return AI_RESPONSES.closing[Math.floor(Math.random() * AI_RESPONSES.closing.length)];
-  }
-  if (lowerMessage.includes('motiv') || lowerMessage.includes('energia') || lowerMessage.includes('ânimo') || lowerMessage.includes('animo')) {
-    return AI_RESPONSES.motivation[Math.floor(Math.random() * AI_RESPONSES.motivation.length)];
-  }
-  
-  return AI_RESPONSES.general[Math.floor(Math.random() * AI_RESPONSES.general.length)];
-}
-
 export const useSalesAssistant = (
   salespersonId: string | null,
   aiName?: string,
@@ -248,7 +178,7 @@ export const useSalesAssistant = (
       .eq('id', conversationId);
   }, []);
 
-  // Send message
+  // Send message using real AI edge function with streaming
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || isLoading) return;
     
@@ -274,29 +204,107 @@ export const useSalesAssistant = (
     if (convId) {
       await saveMessage(convId, 'user', content);
     }
-    
-    // Simulate AI response delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    
-    // Generate AI response
-    const aiResponse = getAIResponse(content, dealContext);
-    
-    const assistantMessage: ChatMessage = {
-      id: `assistant-${Date.now()}`,
-      role: 'assistant',
-      content: aiResponse,
-      timestamp: new Date(),
-    };
-    
-    setMessages(prev => [...prev, assistantMessage]);
-    
-    // Save assistant message
-    if (convId) {
-      await saveMessage(convId, 'assistant', aiResponse);
+
+    // Build conversation history from current messages
+    const conversationHistory = messages.map(m => ({
+      role: m.role,
+      content: m.content,
+    }));
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sales-assistant-chat`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token}`,
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            message: content,
+            salespersonId,
+            conversationHistory,
+            dealContext: dealContext ? { dealId: dealContext.dealId } : undefined,
+            aiAssistantName: aiName,
+            salespersonName: userName,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro ${response.status}`);
+      }
+
+      // Handle SSE streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      const assistantMsgId = `assistant-${Date.now()}`;
+
+      // Add empty assistant message for streaming
+      setMessages(prev => [...prev, {
+        id: assistantMsgId,
+        role: 'assistant' as const,
+        content: '',
+        timestamp: new Date(),
+      }]);
+
+      if (reader) {
+        let buffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) {
+                assistantContent += delta;
+                setMessages(prev =>
+                  prev.map(m =>
+                    m.id === assistantMsgId
+                      ? { ...m, content: assistantContent }
+                      : m
+                  )
+                );
+              }
+            } catch {
+              // skip malformed SSE chunks
+            }
+          }
+        }
+      }
+
+      // Save final assistant message
+      if (convId && assistantContent) {
+        await saveMessage(convId, 'assistant', assistantContent);
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: `❌ Desculpe, ocorreu um erro: ${errorMsg}. Tente novamente.`,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
     }
-    
+
     setIsLoading(false);
-  }, [isLoading, currentConversationId, createConversation, saveMessage, dealContext]);
+  }, [isLoading, currentConversationId, createConversation, saveMessage, dealContext, messages, salespersonId, aiName, userName]);
 
   // Clear messages and start new conversation
   const clearMessages = useCallback(() => {

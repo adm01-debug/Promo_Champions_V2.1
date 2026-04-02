@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const MAX_ATTEMPTS = 5;
-const BASE_LOCKOUT_SECONDS = 30; // 30 segundos base
+const BASE_LOCKOUT_SECONDS = 30;
 
 interface LockoutStatus {
   isLocked: boolean;
@@ -15,10 +15,29 @@ interface LoginAttemptResult {
   lockoutStatus: LockoutStatus;
 }
 
-// Calcula o tempo de bloqueio com progressão exponencial
-// 1ª série: 30s, 2ª: 60s, 3ª: 120s, 4ª: 240s, etc.
 const calculateLockoutDuration = (failedSeries: number): number => {
   return BASE_LOCKOUT_SECONDS * Math.pow(2, failedSeries - 1);
+};
+
+// Fetch real client IP from edge function
+const fetchClientIp = async (): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-client-ip`,
+      {
+        method: "GET",
+        headers: {
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.ip !== "unknown" ? data.ip : null;
+  } catch {
+    return null;
+  }
 };
 
 export function useLoginRateLimiter() {
@@ -31,7 +50,6 @@ export function useLoginRateLimiter() {
   const checkLoginAttempts = useCallback(async (email: string): Promise<LoginAttemptResult> => {
     const normalizedEmail = email.toLowerCase().trim();
     
-    // Buscar tentativas recentes (últimas 24 horas)
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     
     const { data: attempts, error } = await supabase
@@ -48,30 +66,24 @@ export function useLoginRateLimiter() {
       return { canAttempt: true, lockoutStatus: { isLocked: false, remainingSeconds: 0, attempts: 0 } };
     }
 
-    // Contar tentativas falhadas consecutivas recentes
     let consecutiveFailures = 0;
-    let _lastSuccessTime: Date | null = null;
 
     for (const attempt of attempts || []) {
       if (attempt.success) {
-        _lastSuccessTime = new Date(attempt.created_at);
         break;
       }
       consecutiveFailures++;
     }
 
-    // Se houver menos de MAX_ATTEMPTS falhas consecutivas, permitir
     if (consecutiveFailures < MAX_ATTEMPTS) {
       const status = { isLocked: false, remainingSeconds: 0, attempts: consecutiveFailures };
       setLockoutStatus(status);
       return { canAttempt: true, lockoutStatus: status };
     }
 
-    // Calcular quantas "séries" de bloqueio já ocorreram
     const failedSeries = Math.floor(consecutiveFailures / MAX_ATTEMPTS);
     const lockoutDuration = calculateLockoutDuration(failedSeries);
 
-    // Verificar quando foi a última tentativa falhada
     const lastFailedAttempt = attempts?.[0];
     if (!lastFailedAttempt) {
       const status = { isLocked: false, remainingSeconds: 0, attempts: 0 };
@@ -101,16 +113,18 @@ export function useLoginRateLimiter() {
     failureReason?: string
   ): Promise<void> => {
     const normalizedEmail = email.toLowerCase().trim();
+    
+    // Fetch real IP address from edge function
+    const clientIp = await fetchClientIp();
 
     await supabase.from("login_attempts").insert({
       email: normalizedEmail,
       success,
       failure_reason: failureReason || null,
-      ip_address: null, // Seria necessário uma edge function para obter o IP real
+      ip_address: clientIp,
       user_agent: navigator.userAgent,
     });
 
-    // Atualizar status após registro
     if (!success) {
       await checkLoginAttempts(normalizedEmail);
     } else {
