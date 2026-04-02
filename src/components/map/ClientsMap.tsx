@@ -130,7 +130,7 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
 
     if (clients.length > 0) {
       const bounds = L.latLngBounds(clients.map((c) => [c.lat, c.lng]));
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: CLIENT_MAP.MAX_FIT_ZOOM });
     }
 
     return () => {
