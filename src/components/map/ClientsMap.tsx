@@ -311,8 +311,8 @@ export const ClientsMap = () => {
           </div>
         ) : (
           <MapContainer
-            center={filtered.length > 0 ? [filtered[0].lat, filtered[0].lng] : [-14.235, -51.925]}
-            zoom={4}
+            center={filtered.length > 0 ? [filtered[0].lat, filtered[0].lng] : CLIENT_MAP.DEFAULT_CENTER}
+            zoom={CLIENT_MAP.DEFAULT_ZOOM}
             style={{ height: "100%", width: "100%" }}
             className="z-0"
           >
