@@ -269,6 +269,21 @@ const Clientes = () => {
         description={`Tem certeza que deseja excluir o cliente "${deletingClient?.name}"? Esta ação não pode ser desfeita.`}
         isDeleting={deleteClient.isPending}
       />
+
+      {/* Timeline Dialog */}
+      <Dialog open={!!timelineClient} onOpenChange={(open) => !open && setTimelineClient(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5 text-primary" />
+              Timeline — {timelineClient?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {timelineClient && (
+            <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
+          )}
+        </DialogContent>
+      </Dialog>
     </SkeletonTransition>
   );
 };
