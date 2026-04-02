@@ -107,6 +107,7 @@ const sdrMoreItems: MenuItem[] = [
   { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
   { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
   { title: "Desafios", url: "/desafios", icon: Sparkles },
+  { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
   { title: "Assistente IA", url: "/assistente", icon: Bot },
 ];
 
