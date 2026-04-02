@@ -141,7 +141,6 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
 }
 
 export const ClientsMap = () => {
-  const { salesperson } = useAuth();
   const [minValue, setMinValue] = useState(0);
   const [selectedCompany, setSelectedCompany] = useState("all");
   const [showFilters, setShowFilters] = useState(true);
