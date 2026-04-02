@@ -117,7 +117,7 @@ const MarkerClusterGroup = memo(function MarkerClusterGroup({ clients }: { clien
           ${client.phone ? `<p style="margin:2px 0">📞 ${client.phone}</p>` : ""}
           <div style="border-top:1px solid #333;margin-top:6px;padding-top:4px;display:flex;justify-content:space-between">
             <span style="font-weight:600">Valor Total</span>
-            <span style="font-family:monospace;font-weight:700;color:${client.total_value >= 50000 ? "#22c55e" : "#d4a520"}">${formattedValue}</span>
+            <span style="font-family:monospace;font-weight:700;color:${client.total_value >= CLIENT_MAP.TIER_PREMIUM ? "#22c55e" : "#d4a520"}">${formattedValue}</span>
           </div>
         </div>
       `;
