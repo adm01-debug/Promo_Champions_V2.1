@@ -54,3 +54,66 @@ jobs:
         run: |
           BUILD_SIZE=$(du -sh dist | cut -f1)
           echo "Build size: $BUILD_SIZE"
+
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          uploadArtifacts: true
+          configPath: .lighthouserc.json
+
+  bundle-size:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Report bundle sizes
+        run: |
+          echo "## 📦 Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          for f in dist/assets/*.js; do
+            SIZE=$(wc -c < "$f" | awk '{printf "%.1f KB", $1/1024}')
+            NAME=$(basename "$f")
+            echo "| \`$NAME\` | $SIZE |" >> $GITHUB_STEP_SUMMARY
+          done
+          TOTAL=$(du -sh dist | cut -f1)
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total build size:** $TOTAL" >> $GITHUB_STEP_SUMMARY
