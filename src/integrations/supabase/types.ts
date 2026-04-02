@@ -890,6 +890,8 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          lat: number | null
+          lng: number | null
           name: string
           phone: string | null
           total_value: number
@@ -900,6 +902,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           name: string
           phone?: string | null
           total_value?: number
@@ -910,6 +914,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           name?: string
           phone?: string | null
           total_value?: number
