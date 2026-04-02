@@ -175,7 +175,7 @@ export const ClientsMap = () => {
         geocoded++;
         setGeocodingCount(geocoded);
       }
-      await new Promise((r) => setTimeout(r, 1100));
+      await new Promise((r) => setTimeout(r, CLIENT_MAP.GEOCODE_INTERVAL_MS));
     }
     if (geocoded > 0) {
       queryClient.invalidateQueries({ queryKey: ["clients-map"] });
