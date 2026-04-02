@@ -220,10 +220,27 @@ export function useBIGestor() {
       });
       const revenueByMonth = Object.entries(revenueByMonthMap).map(([month, value]) => ({ month, value }));
       
-      // Conversion by month (simplified - needs more data for accurate calculation)
+      // Conversion by month - calculated from actual completed vs total deals
+      const salesByMonth: Record<string, { completed: number; total: number }> = {};
+      currentSales.forEach(sale => {
+        const month = format(parseISO(sale.created_at), "MMM/yy");
+        if (!salesByMonth[month]) salesByMonth[month] = { completed: 0, total: 0 };
+        salesByMonth[month].total++;
+        if (sale.status === "completed") salesByMonth[month].completed++;
+      });
+      // Also include historical data from last 6 months
+      last6MonthsSales.forEach(sale => {
+        const month = format(parseISO(sale.created_at), "MMM/yy");
+        if (!salesByMonth[month]) salesByMonth[month] = { completed: 0, total: 0 };
+        // These are already filtered to completed status
+        salesByMonth[month].completed++;
+        salesByMonth[month].total++;
+      });
       const conversionByMonth = revenueByMonth.map(r => ({
         month: r.month,
-        rate: Math.random() * 30 + 15 // Placeholder - would need full sales data
+        rate: salesByMonth[r.month]
+          ? (salesByMonth[r.month].completed / salesByMonth[r.month].total) * 100
+          : 0,
       }));
       
       // Deals by source
