@@ -227,7 +227,7 @@ export const ClientsMap = () => {
             <MapPin className="h-6 w-6 text-primary" />
             Mapa de Clientes
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">
             {filtered.length} de {totalClients} clientes no mapa
             {unmappable > 0 && ` · ${unmappable} sem coordenadas`}
             {hasActiveFilters && " (filtrado)"}
