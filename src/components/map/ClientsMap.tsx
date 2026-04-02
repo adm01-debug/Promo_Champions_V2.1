@@ -139,7 +139,7 @@ const MarkerClusterGroup = memo(function MarkerClusterGroup({ clients }: { clien
   }, [clients, map]);
 
   return null;
-}
+});
 
 export const ClientsMap = () => {
   const [minValue, setMinValue] = useState(0);
