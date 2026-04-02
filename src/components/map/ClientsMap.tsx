@@ -7,7 +7,6 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -142,7 +141,6 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
 }
 
 export const ClientsMap = () => {
-  const { salesperson } = useAuth();
   const [minValue, setMinValue] = useState(0);
   const [selectedCompany, setSelectedCompany] = useState("all");
   const [showFilters, setShowFilters] = useState(true);
