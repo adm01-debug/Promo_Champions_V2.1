@@ -235,8 +235,8 @@ export const ClientsMap = () => {
         </div>
         <div className="flex gap-2 items-center">
           {isGeocoding && (
-            <div className="flex items-center gap-1.5 text-xs text-primary">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <div className="flex items-center gap-1.5 text-xs text-primary" role="status" aria-live="assertive">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
               Geocodificando... {geocodingCount}
             </div>
           )}
