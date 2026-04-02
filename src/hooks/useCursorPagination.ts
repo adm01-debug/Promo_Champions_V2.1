@@ -38,7 +38,7 @@ export function useCursorPagination<T extends Record<string, any>>({
       setError(null);
 
       try {
-        let query = supabase
+        let query = (supabase as any)
           .from(table)
           .select(select)
           .order(orderColumn, { ascending: orderAscending })
