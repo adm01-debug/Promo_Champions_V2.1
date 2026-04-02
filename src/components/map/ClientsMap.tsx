@@ -269,7 +269,7 @@ export const ClientsMap = () => {
                   {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(minValue)}
                 </span>
               </Label>
-              <Slider value={[minValue]} onValueChange={([v]) => setMinValue(v)} min={0} max={200000} step={5000} />
+              <Slider value={[minValue]} onValueChange={([v]) => setMinValue(v)} min={0} max={CLIENT_MAP.SLIDER_MAX_VALUE} step={CLIENT_MAP.SLIDER_STEP} />
               <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
                 <span>R$0</span><span>R$50k</span><span>R$100k</span><span>R$150k</span><span>R$200k</span>
               </div>
