@@ -280,6 +280,28 @@ export default function Analytics() {
                       <ChurnPredictionPanel />
                     </motion.div>
                   </TabsContent>
+
+                  <TabsContent value="cohort" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <CohortAnalysis />
+                    </motion.div>
+                  </TabsContent>
+
+                  <TabsContent value="ltv" className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <LTVBySegment />
+                    </motion.div>
+                  </TabsContent>
                 </AnimatePresence>
               </Tabs>
             </motion.div>
