@@ -1,4 +1,4 @@
-import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -16,6 +16,8 @@ import { TablePagination } from "@/components/shared/TablePagination";
 import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
+import { ClientTimeline } from "@/components/clients/ClientTimeline";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
