@@ -117,6 +117,14 @@ export default function Analytics() {
                     <ShieldAlert className="h-4 w-4" />
                     Risco Churn
                   </TabsTrigger>
+                  <TabsTrigger value="cohort" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <UserCheck className="h-4 w-4" />
+                    Cohort
+                  </TabsTrigger>
+                  <TabsTrigger value="ltv" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <DollarSign className="h-4 w-4" />
+                    LTV
+                  </TabsTrigger>
                 </TabsList>
 
                 <AnimatePresence mode="wait">
