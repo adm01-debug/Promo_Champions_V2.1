@@ -18,8 +18,8 @@ import { AppRoutes } from "@/routes/AppRoutes";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 3,
-      gcTime: 1000 * 60 * 15,
+      staleTime: UI.STALE_TIME_MS,
+      gcTime: UI.GC_TIME_MS,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       retry: 1,
