@@ -158,6 +158,15 @@ const Clientes = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
+                      onClick={() => setTimelineClient(client)}
+                      title="Ver timeline"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
                       onClick={() => setEditingClient(client)}
                     >
                       <Pencil className="h-4 w-4" />
