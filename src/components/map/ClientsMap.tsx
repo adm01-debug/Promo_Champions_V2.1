@@ -80,7 +80,7 @@ function MarkerClusterGroup({ clients }: { clients: ClientWithCoords[] }) {
 
     const cluster = L.markerClusterGroup({
       chunkedLoading: true,
-      maxClusterRadius: 50,
+      maxClusterRadius: CLIENT_MAP.CLUSTER_RADIUS,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       iconCreateFunction: (c) => {
