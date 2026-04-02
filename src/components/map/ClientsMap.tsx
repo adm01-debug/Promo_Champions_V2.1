@@ -205,13 +205,16 @@ export const ClientsMap = () => {
     return Array.from(s).sort();
   }, [allMappable]);
 
+  const deferredMinValue = useDeferredValue(minValue);
+  const deferredCompany = useDeferredValue(selectedCompany);
+
   const filtered = useMemo(() => {
     return allMappable.filter((c) => {
-      if (c.total_value < minValue) return false;
-      if (selectedCompany !== "all" && c.company !== selectedCompany) return false;
+      if (c.total_value < deferredMinValue) return false;
+      if (deferredCompany !== "all" && c.company !== deferredCompany) return false;
       return true;
     });
-  }, [allMappable, minValue, selectedCompany]);
+  }, [allMappable, deferredMinValue, deferredCompany]);
 
   const totalClients = clients?.length ?? 0;
   const unmappable = totalClients - allMappable.length;
