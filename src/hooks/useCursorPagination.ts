@@ -62,7 +62,7 @@ export function useCursorPagination<T extends Record<string, any>>({
 
         if (dbError) throw dbError;
 
-        const items = (data || []) as T[];
+        const items = (data || []) as unknown as T[];
         const hasMoreItems = items.length > pageSize;
         const pageItems = hasMoreItems ? items.slice(0, pageSize) : items;
         const nextCursor = pageItems.length > 0
