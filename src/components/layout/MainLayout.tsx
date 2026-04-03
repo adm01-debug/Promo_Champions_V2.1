@@ -121,7 +121,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           </ErrorBoundary>
           
           {/* Breadcrumbs */}
-          <div className="pt-16 px-4 lg:px-8">
+          <div className="px-4 lg:px-6 pt-3">
             <Breadcrumbs />
           </div>
           
