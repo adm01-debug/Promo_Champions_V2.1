@@ -80,7 +80,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           id="main-content" 
           className={cn(
             "flex-1 relative flex flex-col bg-background",
-            isMobile && "pb-20"
+            isMobile && "pb-[calc(5rem+env(safe-area-inset-bottom,0px))]"
           )}
           role="main"
           aria-label="Conteúdo principal"
