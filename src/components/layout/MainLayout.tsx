@@ -105,8 +105,14 @@ export function MainLayout({ children }: MainLayoutProps) {
             <div className="flex items-center gap-1.5">
               <FocusModeToggle />
               <Link to="/notificacoes" className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-                <NotificationBadge count={unreadCount} size="sm" pulse className="absolute -top-1 -right-1" />
+                <Bell className={cn("h-4 w-4 transition-colors", unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground")} />
+                <NotificationBadge 
+                  count={unreadCount} 
+                  size="sm" 
+                  pulse={unreadCount > 5}
+                  variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
+                  className="absolute -top-1 -right-1" 
+                />
               </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
               <LanguageToggle />
