@@ -10,6 +10,8 @@ interface DashboardSectionProps {
   defaultOpen?: boolean;
   className?: string;
   badge?: string;
+  /** Teaser text shown when section is collapsed */
+  teaser?: string;
   /** If true, no collapsible wrapper — just render children directly */
   alwaysOpen?: boolean;
 }
