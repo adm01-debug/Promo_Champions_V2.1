@@ -57,6 +57,7 @@ const BIGestor = lazy(() => import("@/pages/BIGestor"));
 const BISDR = lazy(() => import("@/pages/BISDR"));
 const BICloser = lazy(() => import("@/pages/BICloser"));
 const DesafiosSemanais = lazy(() => import("@/pages/DesafiosSemanais"));
+const Territorios = lazy(() => import("@/pages/Territorios"));
 const HistoricoDesafiosDiarios = lazy(() => import("@/pages/HistoricoDesafiosDiarios"));
 const PrevisaoDemanda = lazy(() => import("@/pages/PrevisaoDemanda"));
 const ForecastPonderado = lazy(() => import("@/pages/ForecastPonderado"));
@@ -183,6 +184,7 @@ export function AppRoutes() {
                     } />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
                     <Route path="/follow-up" element={<FollowUpInteligente />} />
+                    <Route path="/territorios" element={<Territorios />} />
                     <Route path="/mapa-clientes" element={<MapaClientes />} />
                     <Route path="/relatorios-executivos" element={
                       <ProtectedRoute requireAdminOrManager><RelatoriosExecutivos /></ProtectedRoute>

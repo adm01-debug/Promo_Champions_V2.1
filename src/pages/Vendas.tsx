@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { SavedFiltersBar } from "@/components/filters/SavedFiltersBar";
 import Fuse from "fuse.js";
 import { useSalesData } from "@/hooks/useSalesData";
 import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
@@ -148,6 +149,15 @@ const Vendas = () => {
                 ]}
               />
             </div>
+            <SavedFiltersBar
+              entityType="vendas"
+              currentFilters={{ searchTerm, sortBy, statusFilter }}
+              onApplyFilter={(filters) => {
+                if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm as string);
+                if (filters.sortBy !== undefined) setSortBy(filters.sortBy as string);
+                if (filters.statusFilter !== undefined) setStatusFilter(filters.statusFilter as string);
+              }}
+            />
           </div>
 
           {/* Table */}
