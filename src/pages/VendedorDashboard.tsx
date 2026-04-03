@@ -465,6 +465,11 @@ const VendedorDashboard = () => {
           </div>
         </div>
 
+        {/* Next Best Action AI Card */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "430ms" }}>
+          <NextBestActionCard salespersonId={id} />
+        </div>
+
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Deals */}
