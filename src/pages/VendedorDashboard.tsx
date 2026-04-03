@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { VendedorDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { startOfMonth, endOfMonth, format, subMonths, differenceInDays, parseISO } from "date-fns";
+import { NextBestActionCard } from "@/components/ai/NextBestActionCard";
 import {
   AreaChart,
   Area,
