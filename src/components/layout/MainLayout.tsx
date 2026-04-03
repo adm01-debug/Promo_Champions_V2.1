@@ -1,11 +1,8 @@
 // MainLayout - primary layout wrapper (performance-optimized)
 import { useRef, lazy, Suspense } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "./AppSidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { GlobalSearch, GlobalSearchHandle, SearchTrigger } from "./GlobalSearch";
-import { useSecurityAlertNotifications } from "@/hooks/useSecurityAlertNotifications";
-import { useSDRAlertNotifications } from "@/hooks/useSDRAlertNotifications";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
@@ -14,12 +11,15 @@ import { FocusModeToggle, FocusModeBreakReminder } from "@/components/focus/Focu
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";
+import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 
 // Lazy load non-critical components that aren't needed for initial render
+const RoleAwareSidebar = lazy(() => import("./RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
+const LayoutRealtimeEffects = lazy(() => import("./LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
 const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
 const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
 const AICopilotFab = lazy(() => import("@/components/copilot/AICopilotFab").then(m => ({ default: m.AICopilotFab })));
@@ -36,15 +36,27 @@ export function MainLayout({ children }: MainLayoutProps) {
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
-  
-  // Enable real-time security alert notifications for admins/managers
-  useSecurityAlertNotifications();
-  
-  // Enable real-time SDR alert notifications for admins/managers
-  useSDRAlertNotifications();
+
+  const sidebarFallback = (
+    <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
+      <div className="w-72 min-h-screen border-r border-border bg-sidebar px-4 pt-6">
+        <div className="space-y-3 pt-14">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <div key={index} className="h-10 rounded-xl bg-muted/70 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </nav>
+  );
 
   return (
     <SidebarProvider>
+      <ErrorBoundary fallback={null}>
+        <Suspense fallback={null}>
+          <LayoutRealtimeEffects />
+        </Suspense>
+      </ErrorBoundary>
+
       {/* Offline indicator at top */}
       <Suspense fallback={null}>
         <OfflineIndicator />
@@ -54,9 +66,13 @@ export function MainLayout({ children }: MainLayoutProps) {
       <SkipLinks />
       <div className="min-h-screen flex w-full bg-background">
         {/* Hide sidebar on mobile */}
-        <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
-          <AppSidebar />
-        </nav>
+        <ErrorBoundary fallback={sidebarFallback}>
+          <Suspense fallback={sidebarFallback}>
+            <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
+              <RoleAwareSidebar />
+            </nav>
+          </Suspense>
+        </ErrorBoundary>
         
         <main 
           id="main-content" 
