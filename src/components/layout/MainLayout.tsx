@@ -161,6 +161,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Suspense fallback={null}>
           <AICopilotFab />
         </Suspense>
+        
+        {/* Scroll to top */}
+        <ScrollToTop />
       </div>
     </SidebarProvider>
   );
