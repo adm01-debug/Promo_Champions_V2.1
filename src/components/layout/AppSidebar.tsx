@@ -306,7 +306,7 @@ export function AppSidebar() {
       {/* View Mode Switcher */}
       {isAdminOrManager && !isCollapsed && (
         <div className="px-3 pb-3">
-          <div className="flex gap-1 p-1 bg-muted rounded-xl border border-border/40">
+          <div className="flex gap-1 p-1.5 bg-background/60 rounded-xl border border-border/50 shadow-inner">
             {viewModes.map((vm) => {
               const isActive = viewMode === vm.mode;
               return (
