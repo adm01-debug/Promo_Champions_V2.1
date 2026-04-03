@@ -244,7 +244,7 @@ export default function Auth() {
           </p>
         </div>
 
-        <Card className="glass border-border/40 opacity-0 animate-scale-in" style={{ animationDelay: "500ms", animationFillMode: "forwards" }}>
+        <Card className="glass border-border/30 shadow-2xl shadow-primary/5 opacity-0 animate-scale-in backdrop-blur-xl" style={{ animationDelay: "500ms", animationFillMode: "forwards" }}>
           <CardHeader className="text-center">
             <CardTitle>Acesso</CardTitle>
             <CardDescription>
