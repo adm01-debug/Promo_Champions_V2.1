@@ -551,6 +551,9 @@ function AdminDashboardContent() {
         </CardContent>
       </Card>
 
+      {/* Backend Automation Monitor */}
+      <BackendAutomationMonitor />
+
       {/* Circuit Breaker Dashboard */}
       <CircuitBreakerDashboard />
 
