@@ -1,6 +1,6 @@
 /**
  * Breadcrumbs Component Tests
- * Verifies: route mapping, home link, nested routes
+ * Verifies: route mapping, home link, nested routes, null on single-segment
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -17,45 +17,50 @@ const renderAtRoute = (route: string) =>
 describe('Breadcrumbs', () => {
   it('renders nothing on root /', () => {
     const { container } = renderAtRoute('/');
-    // At root, breadcrumbs may be minimal or hidden
-    expect(container).toBeInTheDocument();
+    expect(container.innerHTML).toBe('');
   });
 
-  it('renders breadcrumb for /vendas', () => {
-    renderAtRoute('/vendas');
+  it('renders nothing on single-segment routes (e.g., /vendas)', () => {
+    const { container } = renderAtRoute('/vendas');
+    expect(container.innerHTML).toBe('');
+  });
+
+  it('renders breadcrumbs for nested route /vendas/123', () => {
+    renderAtRoute('/vendas/123');
     expect(screen.getByText('Vendas')).toBeInTheDocument();
   });
 
-  it('renders breadcrumb for /clientes', () => {
-    renderAtRoute('/clientes');
+  it('renders breadcrumbs for nested route /clientes/abc', () => {
+    renderAtRoute('/clientes/abc');
     expect(screen.getByText('Clientes')).toBeInTheDocument();
   });
 
-  it('renders breadcrumb for /pipeline', () => {
-    renderAtRoute('/pipeline');
+  it('renders breadcrumbs for nested route /pipeline/deal', () => {
+    renderAtRoute('/pipeline/deal');
     expect(screen.getByText('Pipeline')).toBeInTheDocument();
   });
 
-  it('renders breadcrumb for /relatorios', () => {
-    renderAtRoute('/relatorios');
-    expect(screen.getByText('Relatórios')).toBeInTheDocument();
-  });
-
-  it('renders breadcrumb for /ranking', () => {
-    renderAtRoute('/ranking');
-    expect(screen.getByText('Ranking')).toBeInTheDocument();
-  });
-
-  it('renders breadcrumb for /configuracoes', () => {
-    renderAtRoute('/configuracoes');
-    expect(screen.getByText('Configurações')).toBeInTheDocument();
-  });
-
-  it('renders home icon/link', () => {
-    renderAtRoute('/vendas');
-    // Should have a link back to dashboard
+  it('shows home icon for first breadcrumb', () => {
+    renderAtRoute('/vendas/123');
+    const nav = screen.getByLabelText('Breadcrumb');
+    expect(nav).toBeInTheDocument();
     const links = screen.getAllByRole('link');
-    const homeLink = links.find(l => l.getAttribute('href') === '/');
-    expect(homeLink).toBeTruthy();
+    expect(links[0]).toHaveAttribute('href', '/');
+  });
+
+  it('last segment is not a link (aria-current="page")', () => {
+    renderAtRoute('/vendas/123');
+    const current = screen.getByText('123');
+    expect(current).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('capitalizes unknown segments', () => {
+    renderAtRoute('/vendas/custom-page');
+    expect(screen.getByText('Custom-page')).toBeInTheDocument();
+  });
+
+  it('renders known route labels correctly', () => {
+    renderAtRoute('/relatorios/detalhes');
+    expect(screen.getByText('Relatórios')).toBeInTheDocument();
   });
 });
