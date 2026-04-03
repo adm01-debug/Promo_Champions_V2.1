@@ -316,7 +316,7 @@ export function AppSidebar() {
                   size="sm"
                   onClick={() => setViewMode(vm.mode)}
                   className={cn(
-                    "flex-1 h-9 text-xs font-semibold rounded-lg transition-all duration-300 gap-2 px-3",
+                    "flex-1 h-8 text-[11px] font-semibold rounded-lg transition-all duration-300 gap-1.5 px-2",
                     isActive
                       ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 border border-primary/50"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent"
