@@ -3,39 +3,34 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const skeletonVariants = cva(
-  "relative overflow-hidden rounded-md",
+  "relative overflow-hidden rounded-lg",
   {
     variants: {
       variant: {
-        default: "bg-muted/60",
+        default: "bg-muted/50 dark:bg-muted/30",
         intense: "bg-muted/80",
-        subtle: "bg-muted/40",
-        primary: "bg-primary/10",
-      },
-      shimmer: {
-        default: "via-muted-foreground/10",
-        intense: "via-muted-foreground/20",
-        glow: "via-primary/15",
+        subtle: "bg-muted/30",
+        primary: "bg-primary/8",
       },
     },
     defaultVariants: {
       variant: "default",
-      shimmer: "default",
     },
   }
 );
 
 interface SkeletonProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof skeletonVariants> {}
+    VariantProps<typeof skeletonVariants> {
+  /** Use branded shimmer with primary color tint */
+  branded?: boolean;
+}
 
 const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ className, variant, shimmer, ...props }, ref) => {
-    const shimmerClass = shimmer === "intense" 
-      ? "via-muted-foreground/20" 
-      : shimmer === "glow" 
-      ? "via-primary/15" 
-      : "via-muted-foreground/10";
+  ({ className, variant, branded = true, ...props }, ref) => {
+    const shimmerGradient = branded
+      ? "from-transparent via-primary/[0.07] to-transparent"
+      : "from-transparent via-muted-foreground/10 to-transparent";
 
     return (
       <div
@@ -45,8 +40,8 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
       >
         <div 
           className={cn(
-            "absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent to-transparent animate-shimmer",
-            shimmerClass
+            "absolute inset-0 -translate-x-full bg-gradient-to-r animate-shimmer",
+            shimmerGradient
           )} 
         />
       </div>
