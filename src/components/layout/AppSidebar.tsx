@@ -245,9 +245,11 @@ export function AppSidebar() {
           <NavLink 
             to={item.url} 
             end 
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
-            activeClassName="bg-primary/10 text-primary font-medium shadow-sm"
+            className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/50 group/item"
+            activeClassName="bg-primary/10 text-primary font-medium shadow-sm [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
           >
+            {/* Active indicator bar */}
+            <span className="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary opacity-0 scale-y-0 transition-all duration-300" />
             <div className="relative">
               <item.icon className={cn(
                 "h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover/item:scale-110",
