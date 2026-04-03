@@ -33,13 +33,13 @@ describe('Design System CSS Tokens', () => {
 
   // Status tokens (added in improvements)
   const statusTokens = [
-    '--status-success',
-    '--status-warning',
-    '--status-info',
+    '--success:',
+    '--warning:',
+    '--info:',
   ];
 
   statusTokens.forEach((token) => {
-    it(`defines ${token} status token`, () => {
+    it(`defines ${token.replace(':', '')} status token`, () => {
       expect(indexCss).toContain(token);
     });
   });
