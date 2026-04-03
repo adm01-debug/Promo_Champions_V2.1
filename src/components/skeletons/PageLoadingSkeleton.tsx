@@ -64,16 +64,37 @@ export const PageHeaderSkeleton: FC = () => (
   </div>
 );
 
-// Dashboard loading skeleton
+// Dashboard loading skeleton — matches real dashboard layout
 export const DashboardLoadingSkeleton: FC = () => (
-  <div className="space-y-6 p-6">
-    <PageHeaderSkeleton />
-    <StatsGridSkeleton count={4} />
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <ChartSkeleton />
-      <ChartSkeleton />
+  <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6">
+    {/* Header */}
+    <div className="flex items-center justify-between">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-56" />
+        <Skeleton className="h-4 w-80" />
+      </div>
+      <Skeleton className="h-9 w-28 rounded-lg" />
     </div>
-    <TableSkeleton />
+    {/* Hero KPIs — 2+1+1+1 grid */}
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-6">
+      <div className="col-span-2">
+        <Skeleton className="h-36 w-full rounded-xl" />
+      </div>
+      <Skeleton className="h-28 w-full rounded-xl" />
+      <Skeleton className="h-28 w-full rounded-xl" />
+      <Skeleton className="h-28 w-full rounded-xl" />
+    </div>
+    {/* Chart + Goal */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6">
+      <Skeleton className="lg:col-span-2 h-72 rounded-xl" />
+      <Skeleton className="h-72 rounded-xl" />
+    </div>
+    {/* Secondary row */}
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Skeleton key={i} className="h-48 rounded-xl" />
+      ))}
+    </div>
   </div>
 );
 
