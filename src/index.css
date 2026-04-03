@@ -219,7 +219,7 @@
 
     /* ===== MUTED - Higher contrast for WCAG AA ===== */
     --muted: 230 15% 20%;
-    --muted-foreground: 220 10% 72%;
+    --muted-foreground: 220 12% 75%;
 
     /* ===== ACCENT - Neon Cyan ===== */
     --accent: 185 100% 50%;
