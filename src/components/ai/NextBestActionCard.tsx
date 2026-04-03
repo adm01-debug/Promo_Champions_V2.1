@@ -1,4 +1,4 @@
-import { useNextBestAction, NextBestAction } from '@/hooks/useNextBestAction';
+import { useNextBestActionQuery, NextBestAction } from '@/hooks/useNextBestAction';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Lightbulb, Phone, Mail, Users, ArrowRight, MessageSquare, FileText, Loader2, AlertTriangle } from 'lucide-react';
@@ -17,10 +17,10 @@ const actionIcons: Record<string, React.ReactNode> = {
   other: <MessageSquare className="h-4 w-4" />,
 };
 
-const priorityColors: Record<string, string> = {
+const priorityStyles: Record<string, string> = {
   high: 'bg-destructive/10 text-destructive border-destructive/20',
-  medium: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  low: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  medium: 'bg-accent text-accent-foreground border-border',
+  low: 'bg-muted text-muted-foreground border-border',
 };
 
 const priorityLabels: Record<string, string> = {
@@ -30,7 +30,7 @@ const priorityLabels: Record<string, string> = {
 };
 
 export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
-  const { data, isLoading, error } = useNextBestAction(salespersonId);
+  const { data, isLoading, error } = useNextBestActionQuery(salespersonId);
 
   if (!salespersonId) return null;
 
@@ -59,7 +59,7 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
 
         {error && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTriangle className="h-4 w-4 text-destructive" />
             Não foi possível carregar as sugestões.
           </div>
         )}
@@ -73,7 +73,7 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
             )}
 
             {data.suggestions?.map((action, idx) => (
-              <ActionItem key={idx} action={action} index={idx} />
+              <ActionItem key={idx} action={action} />
             ))}
           </>
         )}
@@ -82,7 +82,7 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
   );
 }
 
-function ActionItem({ action, index }: { action: NextBestAction; index: number }) {
+function ActionItem({ action }: { action: NextBestAction }) {
   return (
     <div className="flex gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
       <div className="flex-shrink-0 mt-0.5">
@@ -93,16 +93,16 @@ function ActionItem({ action, index }: { action: NextBestAction; index: number }
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-medium text-sm">{action.title}</span>
-          <Badge variant="outline" className={`text-xs ${priorityColors[action.priority] || ''}`}>
+          <Badge variant="outline" className={`text-xs ${priorityStyles[action.priority] || ''}`}>
             {priorityLabels[action.priority] || action.priority}
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground line-clamp-2">
           {action.description}
         </p>
-        {action.dealClient && (
+        {(action.dealClient || action.dealName) && (
           <span className="text-xs text-primary/80">
-            Cliente: {action.dealClient}
+            Cliente: {action.dealClient || action.dealName}
           </span>
         )}
       </div>
