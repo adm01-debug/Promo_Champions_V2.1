@@ -36,6 +36,7 @@ import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
 import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";
 import { EmailMetricsDashboard } from "@/components/analytics/EmailMetricsDashboard";
 import { getQueryMetrics } from "@/hooks/useQueryPerformance";
+import { BackendAutomationMonitor } from "@/components/admin/BackendAutomationMonitor";
 
 // Quick stats hook
 function useAdminStats() {
