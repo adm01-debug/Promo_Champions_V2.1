@@ -61,19 +61,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     
     return (
       <Comp 
-        className={cn(buttonVariants({ variant, size, className }), loading && "cursor-wait")} 
+        className={cn(
+          buttonVariants({ variant, size, className }), 
+          loading && "cursor-wait relative"
+        )} 
         ref={ref} 
         disabled={disabled || loading}
+        aria-busy={loading || undefined}
         {...props}
       >
-        {loading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            {loadingText || children}
-          </>
-        ) : (
-          children
+        {loading && (
+          <Loader2 className="h-4 w-4 animate-spin absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
         )}
+        <span className={cn(loading && !loadingText && "opacity-0")}>
+          {loading && loadingText ? loadingText : children}
+        </span>
       </Comp>
     );
   },
