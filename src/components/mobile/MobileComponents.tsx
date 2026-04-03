@@ -85,7 +85,8 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) 
         "fixed bottom-0 left-0 right-0 z-50",
         "bg-background/95 backdrop-blur-lg border-t border-border/50",
         "flex items-center justify-around",
-        "h-[68px] px-1",
+        "px-1 pb-[env(safe-area-inset-bottom,0px)]",
+        "h-[calc(68px+env(safe-area-inset-bottom,0px))]",
         "shadow-[0_-4px_20px_hsl(var(--foreground)/0.05)]",
         className
       )}
