@@ -561,6 +561,9 @@ function AdminDashboardContent() {
 
       {/* Email Metrics Dashboard */}
       <EmailMetricsDashboard />
+
+      {/* Quote Sync Logs */}
+      <QuoteSyncLogsPanel />
     </div>
   );
 }
