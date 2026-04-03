@@ -240,6 +240,7 @@ const Index = () => {
               title="Engajamento & Aprendizado"
               icon={<Heart className="h-4 w-4" />}
               defaultOpen={false}
+              teaser="💡 Registre seu humor, responda pesquisas e complete quizzes diários"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
                 <MoodTrackerWidget />
