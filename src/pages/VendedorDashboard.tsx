@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 import { VendedorDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { startOfMonth, endOfMonth, format, subMonths, differenceInDays, parseISO } from "date-fns";
+import { NextBestActionCard } from "@/components/ai/NextBestActionCard";
+import { CustomFieldsDisplay } from "@/components/salespeople/CustomFieldsDisplay";
 import {
   AreaChart,
   Area,
@@ -273,6 +275,7 @@ const VendedorDashboard = () => {
                     </span>
                   )}
                 </div>
+                <CustomFieldsDisplay salespersonId={id} className="mt-2" />
               </div>
 
               <div className="flex flex-col items-center gap-1">
@@ -462,6 +465,11 @@ const VendedorDashboard = () => {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Next Best Action AI Card */}
+        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "430ms" }}>
+          <NextBestActionCard salespersonId={id} />
         </div>
 
         {/* Bottom Row */}

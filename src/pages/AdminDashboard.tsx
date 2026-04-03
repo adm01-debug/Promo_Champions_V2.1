@@ -36,6 +36,8 @@ import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
 import { CircuitBreakerDashboard } from "@/components/debug/CircuitBreakerDashboard";
 import { EmailMetricsDashboard } from "@/components/analytics/EmailMetricsDashboard";
 import { getQueryMetrics } from "@/hooks/useQueryPerformance";
+import { BackendAutomationMonitor } from "@/components/admin/BackendAutomationMonitor";
+import { QuoteSyncLogsPanel } from "@/components/admin/QuoteSyncLogsPanel";
 
 // Quick stats hook
 function useAdminStats() {
@@ -551,11 +553,17 @@ function AdminDashboardContent() {
         </CardContent>
       </Card>
 
+      {/* Backend Automation Monitor */}
+      <BackendAutomationMonitor />
+
       {/* Circuit Breaker Dashboard */}
       <CircuitBreakerDashboard />
 
       {/* Email Metrics Dashboard */}
       <EmailMetricsDashboard />
+
+      {/* Quote Sync Logs */}
+      <QuoteSyncLogsPanel />
     </div>
   );
 }
