@@ -58,7 +58,8 @@ export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, 
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   
-  if (pathSegments.length === 0) return null;
+  // Only show breadcrumbs when depth >= 2 (not on top-level pages)
+  if (pathSegments.length < 2) return null;
   
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', href: '/' }
