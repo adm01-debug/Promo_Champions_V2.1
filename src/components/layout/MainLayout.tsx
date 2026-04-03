@@ -1,5 +1,6 @@
 // MainLayout - primary layout wrapper (performance-optimized)
 import { useRef, lazy, Suspense } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { SearchTrigger } from "./SearchTrigger";
