@@ -306,7 +306,7 @@ export function AppSidebar() {
       {/* View Mode Switcher */}
       {isAdminOrManager && !isCollapsed && (
         <div className="px-3 pb-3">
-          <div className="flex gap-1 p-1 bg-muted/50 rounded-xl border border-border/30">
+          <div className="flex gap-1 p-1 bg-muted rounded-xl border border-border/40">
             {viewModes.map((vm) => {
               const isActive = viewMode === vm.mode;
               return (
@@ -318,13 +318,13 @@ export function AppSidebar() {
                   className={cn(
                     "flex-1 h-9 text-xs font-semibold rounded-lg transition-all duration-300 gap-2 px-3",
                     isActive
-                      ? "bg-primary/15 text-primary shadow-sm border border-primary/20 hover:bg-primary/20"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-transparent"
+                      ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 border border-primary/50"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent"
                   )}
                 >
                   <vm.icon className={cn(
                     "h-3.5 w-3.5 transition-colors duration-300",
-                    isActive ? vm.color : "text-muted-foreground"
+                    isActive ? "text-primary-foreground" : "text-muted-foreground"
                   )} />
                   {vm.label}
                 </Button>
