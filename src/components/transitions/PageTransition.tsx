@@ -7,33 +7,44 @@ interface PageTransitionProps {
   className?: string;
 }
 
+const springTransition = {
+  type: "spring" as const,
+  stiffness: 300,
+  damping: 30,
+  mass: 0.8,
+};
+
 export const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
+      staggerChildren: 0.06,
+      delayChildren: 0.08,
     }
   }
 };
 
 export const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16, scale: 0.98 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' }
+    scale: 1,
+    transition: { 
+      duration: 0.35, 
+      ease: [0.25, 0.46, 0.45, 0.94],
+    }
   }
 };
 
 export const PageTransition: FC<PageTransitionProps> = ({ children, className }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={cn(className)}
     >
       {children}
@@ -61,7 +72,7 @@ export const StaggeredContainer: FC<StaggeredContainerProps> = ({
         visible: {
           opacity: 1,
           transition: {
-            staggerChildren: 0.05,
+            staggerChildren: 0.04,
             delayChildren: delay
           }
         }
