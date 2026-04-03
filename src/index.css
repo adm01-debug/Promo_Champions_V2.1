@@ -396,6 +396,25 @@
     font-family: var(--font-sans);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* Thin scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  /* Webkit scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
   }
 
   /* Display font for headers */
