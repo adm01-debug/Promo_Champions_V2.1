@@ -23,6 +23,7 @@ export function DashboardSection({
   defaultOpen = true,
   className,
   badge,
+  teaser,
   alwaysOpen = false,
 }: DashboardSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
