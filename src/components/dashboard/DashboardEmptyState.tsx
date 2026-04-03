@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Plus, Target, Users } from "lucide-react";
+import { TrendingUp, Plus, Target, Users, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -15,8 +15,8 @@ const emptyStates = {
     description: "Registre sua primeira venda e acompanhe seu faturamento em tempo real.",
     cta: "Registrar Venda",
     href: "/vendas",
-    color: "text-primary",
-    bgColor: "bg-primary/10",
+    gradient: "from-primary/20 via-primary/5 to-transparent",
+    iconGradient: "from-primary to-primary/60",
   },
   sales: {
     icon: Plus,
@@ -24,8 +24,8 @@ const emptyStates = {
     description: "Comece adicionando deals ao seu pipeline.",
     cta: "Ir ao Pipeline",
     href: "/pipeline",
-    color: "text-accent",
-    bgColor: "bg-accent/10",
+    gradient: "from-accent/20 via-accent/5 to-transparent",
+    iconGradient: "from-accent to-accent/60",
   },
   clients: {
     icon: Users,
@@ -33,8 +33,8 @@ const emptyStates = {
     description: "Adicione seus primeiros clientes para começar a vender.",
     cta: "Adicionar Cliente",
     href: "/clientes",
-    color: "text-status-info",
-    bgColor: "bg-status-info/10",
+    gradient: "from-status-info/20 via-status-info/5 to-transparent",
+    iconGradient: "from-status-info to-status-info/60",
   },
   conversion: {
     icon: Target,
@@ -42,8 +42,8 @@ const emptyStates = {
     description: "Mova deals pelo pipeline para calcular sua taxa de conversão.",
     cta: "Ver Pipeline",
     href: "/pipeline",
-    color: "text-status-warning",
-    bgColor: "bg-status-warning/10",
+    gradient: "from-status-warning/20 via-status-warning/5 to-transparent",
+    iconGradient: "from-status-warning to-status-warning/60",
   },
 };
 
@@ -53,21 +53,47 @@ export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      <Card className="border-dashed border-2 border-border/50 bg-card/50">
-        <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center gap-3">
-          <div className={`p-3 rounded-2xl ${state.bgColor}`}>
-            <Icon className={`h-6 w-6 ${state.color}`} />
+      <Card className="border-dashed border-2 border-border/40 bg-card/50 overflow-hidden relative group hover:border-primary/30 transition-colors duration-300">
+        {/* Gradient background */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${state.gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
+        
+        <CardContent className="p-5 sm:p-8 flex flex-col items-center text-center gap-4 relative z-10">
+          {/* Animated icon container */}
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+            className="relative"
+          >
+            <div className={`p-4 rounded-2xl bg-gradient-to-br ${state.iconGradient} shadow-lg`}>
+              <Icon className="h-7 w-7 text-white" />
+            </div>
+            {/* Floating sparkle */}
+            <motion.div
+              animate={{ y: [-2, 2, -2], rotate: [0, 10, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-1 -right-1"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-primary/60" />
+            </motion.div>
+          </motion.div>
+          
+          <div className="space-y-1.5">
+            <h3 className="text-sm font-bold">{state.title}</h3>
+            <p className="text-xs text-muted-foreground max-w-[240px] leading-relaxed">
+              {state.description}
+            </p>
           </div>
-          <div className="space-y-1">
-            <h3 className="text-sm font-semibold">{state.title}</h3>
-            <p className="text-xs text-muted-foreground max-w-[200px]">{state.description}</p>
-          </div>
-          <Button asChild size="sm" variant="outline" className="mt-1">
-            <Link to={state.href}>{state.cta}</Link>
+          
+          <Button asChild size="sm" variant="default" className="mt-1 shadow-sm">
+            <Link to={state.href}>
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              {state.cta}
+            </Link>
           </Button>
         </CardContent>
       </Card>
