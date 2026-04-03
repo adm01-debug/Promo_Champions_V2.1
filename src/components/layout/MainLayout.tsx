@@ -97,16 +97,22 @@ export function MainLayout({ children }: MainLayoutProps) {
             }
           />
           
-          {/* Desktop Top Bar */}
-          <div className="absolute top-4 left-4 right-4 z-50 items-center justify-between hidden md:flex">
+          {/* Desktop Top Bar - Sticky Glass */}
+          <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="glass h-9 w-9 hover:bg-muted/50 hover-scale-lg" />
+              <SidebarTrigger className="h-9 w-9 rounded-lg hover:bg-muted/80 transition-colors" />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <FocusModeToggle />
-              <Link to="/notificacoes" className="relative glass h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/50 transition-colors">
-                <Bell className="h-4 w-4" />
-                <NotificationBadge count={unreadCount} size="sm" pulse className="absolute -top-1 -right-1" />
+              <Link to="/notificacoes" className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors">
+                <Bell className={cn("h-4 w-4 transition-colors", unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground")} />
+                <NotificationBadge 
+                  count={unreadCount} 
+                  size="sm" 
+                  pulse={unreadCount > 5}
+                  variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
+                  className="absolute -top-1 -right-1" 
+                />
               </Link>
               <SearchTrigger onClick={() => searchRef.current?.open()} />
               <LanguageToggle />
@@ -121,7 +127,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           </ErrorBoundary>
           
           {/* Breadcrumbs */}
-          <div className="pt-16 px-4 lg:px-8">
+          <div className="px-4 lg:px-6 pt-3">
             <Breadcrumbs />
           </div>
           

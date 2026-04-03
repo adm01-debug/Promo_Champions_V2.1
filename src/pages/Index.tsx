@@ -24,6 +24,7 @@ import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmar
 import { MoodTrackerWidget } from "@/components/engagement/MoodTrackerWidget";
 import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
 import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
+import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -37,6 +38,10 @@ import {
   ShoppingBag,
   Users,
   TrendingUp,
+  BarChart3,
+  Trophy,
+  Zap,
+  Heart,
 } from "lucide-react";
 
 const Index = () => {
@@ -62,7 +67,7 @@ const Index = () => {
     >
       <PageTransition>
         <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
+          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6">
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -91,15 +96,14 @@ const Index = () => {
               <CompetitiveStatusBar />
             </motion.div>
 
-            {/* Hero Faturamento + Stats Row */}
+            {/* ===== HERO KPIs — Always visible ===== */}
             <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-6"
+              className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
               data-tour="stats"
             >
-              {/* Hero: Faturamento (spans 2 cols) */}
               <motion.div variants={itemVariants} className="col-span-2">
                 {hasRevenue ? (
                   <StatCard
@@ -160,9 +164,9 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Main Grid */}
+            {/* ===== CHARTS & GOALS — Always visible ===== */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -178,93 +182,74 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Second Row */}
-            <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+            {/* ===== ANALYTICS — Collapsible ===== */}
+            <DashboardSection
+              title="Análises"
+              icon={<BarChart3 className="h-4 w-4" />}
+              defaultOpen={true}
             >
-              <motion.div variants={itemVariants}>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
                 <FunnelChart />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <SalesForecast />
-              </motion.div>
-              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
-                <KPIGrid />
-              </motion.div>
-              <motion.div variants={itemVariants} className="col-span-2 lg:col-span-1">
-                <AlertsPanel />
-              </motion.div>
-            </motion.div>
+                <div className="col-span-2 lg:col-span-1">
+                  <KPIGrid />
+                </div>
+                <div className="col-span-2 lg:col-span-1">
+                  <AlertsPanel />
+                </div>
+              </div>
+            </DashboardSection>
 
-            {/* Third Row - with Mini Leaderboard */}
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              data-tour="gamification"
+            {/* ===== GAMIFICATION — Collapsible ===== */}
+            <DashboardSection
+              title="Competição & Conquistas"
+              icon={<Trophy className="h-4 w-4" />}
+              defaultOpen={true}
+              badge="Ativo"
             >
-              <motion.div variants={itemVariants} className="sm:col-span-1">
-                <RecentDeals />
-              </motion.div>
-              <motion.div variants={itemVariants} className="sm:col-span-1">
-                <TopProducts />
-              </motion.div>
-              <motion.div variants={itemVariants}>
+              <div 
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
+                data-tour="gamification"
+              >
+                <div className="sm:col-span-1">
+                  <RecentDeals />
+                </div>
+                <div className="sm:col-span-1">
+                  <TopProducts />
+                </div>
                 <MiniLeaderboard />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <StreakWidget salespersonId={salesperson?.id} />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
-              </motion.div>
-            </motion.div>
+              </div>
+            </DashboardSection>
 
-            {/* Fourth Row - Performance Intelligence */}
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+            {/* ===== PERFORMANCE INTELLIGENCE — Collapsible, default closed ===== */}
+            <DashboardSection
+              title="Performance Inteligente"
+              icon={<Zap className="h-4 w-4" />}
+              defaultOpen={false}
             >
-              <motion.div variants={itemVariants}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
                 <MicroGoalsWidget />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <VelocityScoreWidget />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <ActivityQualityWidget />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <SelfBenchmarkWidget />
-              </motion.div>
-            </motion.div>
+              </div>
+            </DashboardSection>
 
-            {/* Fifth Row - Engagement & Learning */}
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+            {/* ===== ENGAGEMENT — Collapsible, default closed ===== */}
+            <DashboardSection
+              title="Engajamento & Aprendizado"
+              icon={<Heart className="h-4 w-4" />}
+              defaultOpen={false}
             >
-              <motion.div variants={itemVariants}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
                 <MoodTrackerWidget />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <PulseSurveyWidget />
-              </motion.div>
-              <motion.div variants={itemVariants}>
                 <DailyQuizWidget />
-              </motion.div>
-            </motion.div>
+              </div>
+            </DashboardSection>
           </div>
         </div>
       </PageTransition>
