@@ -62,7 +62,7 @@ export function DashboardSection({
       </button>
 
       <AnimatePresence initial={false}>
-        {isOpen && (
+        {isOpen ? (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -72,7 +72,20 @@ export function DashboardSection({
           >
             {children}
           </motion.div>
-        )}
+        ) : teaser ? (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsOpen(true)}
+            className="w-full text-left px-3 py-2.5 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group/teaser"
+          >
+            <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors">
+              {teaser} <span className="text-primary font-medium">→ Expandir</span>
+            </p>
+          </motion.button>
+        ) : null}
       </AnimatePresence>
     </div>
   );
