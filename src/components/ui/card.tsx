@@ -7,7 +7,7 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-card border-border/50 shadow-sm hover:shadow-md",
+        default: "bg-card border-border/50 shadow-sm hover:shadow-md dark:border-border/30 dark:shadow-[0_0_0_1px_hsl(var(--primary)/0.04)]",
         elevated: "bg-card border-border/40 shadow-md hover:shadow-lg hover:-translate-y-0.5",
         floating: "bg-card border-border/30 shadow-lg hover:shadow-xl hover:-translate-y-1",
         glass: "glass glass-hover backdrop-blur-md",
