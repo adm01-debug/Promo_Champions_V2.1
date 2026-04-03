@@ -306,24 +306,30 @@ export function AppSidebar() {
       {/* View Mode Switcher */}
       {isAdminOrManager && !isCollapsed && (
         <div className="px-3 pb-3">
-          <div className="flex gap-0.5 p-1 bg-muted/40 rounded-full border border-border/20">
-            {viewModes.map((vm) => (
-              <Button
-                key={vm.mode}
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode(vm.mode)}
-                className={cn(
-                  "flex-1 h-8 text-xs font-semibold rounded-full transition-all duration-200 gap-1.5 px-3",
-                  viewMode === vm.mode 
-                    ? "bg-background shadow-md text-foreground border border-border/30" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-transparent border border-transparent"
-                )}
-              >
-                <vm.icon className={cn("h-3.5 w-3.5", viewMode === vm.mode && vm.color)} />
-                {vm.label}
-              </Button>
-            ))}
+          <div className="flex gap-1 p-1.5 bg-background/60 rounded-xl border border-border/50 shadow-inner">
+            {viewModes.map((vm) => {
+              const isActive = viewMode === vm.mode;
+              return (
+                <Button
+                  key={vm.mode}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode(vm.mode)}
+                  className={cn(
+                    "flex-1 h-9 text-xs font-semibold rounded-lg transition-all duration-300 gap-2 px-3",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 border border-primary/50"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent"
+                  )}
+                >
+                  <vm.icon className={cn(
+                    "h-3.5 w-3.5 transition-colors duration-300",
+                    isActive ? "text-primary-foreground" : "text-muted-foreground"
+                  )} />
+                  {vm.label}
+                </Button>
+              );
+            })}
           </div>
         </div>
       )}
