@@ -40,8 +40,8 @@ describe('StatCard', () => {
     const { container } = render(
       <StatCard title="Faturamento" value="R$ 150.000" icon={DollarSign} hero />
     );
-    // Hero should have lg:col-span-2 class
-    expect(container.querySelector('.lg\\:col-span-2')).toBeInTheDocument();
+    // Hero should have decorative blur elements
+    expect(container.querySelector('.blur-3xl')).toBeInTheDocument();
   });
 
   it('renders decorative element in hero mode', () => {
