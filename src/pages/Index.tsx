@@ -225,6 +225,7 @@ const Index = () => {
               title="Performance Inteligente"
               icon={<Zap className="h-4 w-4" />}
               defaultOpen={false}
+              teaser="📊 Descubra seu Score de Velocidade, qualidade de atividades e micro-metas"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
                 <MicroGoalsWidget />
