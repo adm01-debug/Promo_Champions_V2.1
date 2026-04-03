@@ -2,6 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
 import { Crown, Swords, Trophy, TrendingUp, Target, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
