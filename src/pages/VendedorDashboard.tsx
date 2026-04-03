@@ -22,6 +22,7 @@ import { VendedorDashboardLoadingSkeleton } from "@/components/skeletons/PageLoa
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { startOfMonth, endOfMonth, format, subMonths, differenceInDays, parseISO } from "date-fns";
 import { NextBestActionCard } from "@/components/ai/NextBestActionCard";
+import { CustomFieldsDisplay } from "@/components/salespeople/CustomFieldsDisplay";
 import {
   AreaChart,
   Area,
