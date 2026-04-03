@@ -4,6 +4,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
+import Index from "@/pages/Index";
 
 const PageLoadingFallback = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -20,7 +21,6 @@ const PageLoadingFallback = () => (
 );
 
 // Lazy load all pages
-const Index = lazy(() => import("@/pages/Index"));
 const Vendas = lazy(() => import("@/pages/Vendas"));
 const Clientes = lazy(() => import("@/pages/Clientes"));
 const Produtos = lazy(() => import("@/pages/Produtos"));
