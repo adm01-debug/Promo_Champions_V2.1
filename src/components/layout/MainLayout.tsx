@@ -13,6 +13,7 @@ import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Bell } from "lucide-react";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
