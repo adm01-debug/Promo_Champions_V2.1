@@ -20,7 +20,7 @@ interface ChatInputAreaProps {
   isListening: boolean;
   onToggleListening: () => void;
   isProcessingSTT: boolean;
-  responseMode: string;
+  responseMode: 'text' | 'audio' | 'both';
   isApiConfigured: boolean;
 }
 
