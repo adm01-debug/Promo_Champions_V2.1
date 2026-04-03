@@ -401,10 +401,10 @@ export function AppSidebar() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className={cn(
-                  "h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default",
+                  "h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm",
                   userTypeAccentClasses[userType]
                 )}>
-                  {renderUserTypeIcon(userType)}
+                  {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -414,12 +414,12 @@ export function AppSidebar() {
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group">
             <div className={cn(
-              "h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0",
+              "h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm",
               userTypeAccentClasses[userType]
             )}>
-              {renderUserTypeIcon(userType)}
+              {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
