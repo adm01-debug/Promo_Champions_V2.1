@@ -2,7 +2,7 @@
 import { useRef, lazy, Suspense } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
-import { GlobalSearch, GlobalSearchHandle, SearchTrigger } from "./GlobalSearch";
+import { SearchTrigger } from "./SearchTrigger";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
@@ -16,8 +16,10 @@ import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
+import type { GlobalSearchHandle } from "./GlobalSearch";
 
 // Lazy load non-critical components that aren't needed for initial render
+const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
 const RoleAwareSidebar = lazy(() => import("./RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
 const LayoutRealtimeEffects = lazy(() => import("./LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
 const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
@@ -112,7 +114,11 @@ export function MainLayout({ children }: MainLayoutProps) {
             </div>
           </div>
           
-          <GlobalSearch ref={searchRef} />
+          <ErrorBoundary fallback={null}>
+            <Suspense fallback={null}>
+              <GlobalSearch ref={searchRef} />
+            </Suspense>
+          </ErrorBoundary>
           
           {/* Breadcrumbs */}
           <div className="pt-16 px-4 lg:px-8">
