@@ -2,6 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
 import { Crown, Swords, Trophy, TrendingUp, Target, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
@@ -99,8 +100,14 @@ export function CompetitiveStatusBar() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-display font-bold text-lg">
-                {myRanking.emoji} #{myRanking.rank}
+              <span className={cn(
+                "inline-flex items-center justify-center font-display font-black text-lg min-w-[2.5rem] h-9 rounded-xl border-2 shadow-sm",
+                myRanking.rank === 1 && "bg-gradient-to-br from-yellow-400 to-amber-500 text-yellow-950 border-yellow-300",
+                myRanking.rank === 2 && "bg-gradient-to-br from-slate-300 to-slate-400 text-slate-800 border-slate-200",
+                myRanking.rank === 3 && "bg-gradient-to-br from-orange-400 to-amber-600 text-orange-950 border-orange-300",
+                myRanking.rank > 3 && "bg-muted text-foreground border-border/50"
+              )}>
+                #{myRanking.rank}
               </span>
               {myRanking.title && (
                 <Badge 
@@ -111,7 +118,7 @@ export function CompetitiveStatusBar() {
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground mt-0.5">
               Olá, <span className="font-medium text-foreground">{salesperson.name}</span>! 
               {myRanking.rank === 1 
                 ? " Você é o líder! 👑"

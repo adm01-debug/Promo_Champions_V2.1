@@ -1,5 +1,6 @@
 // MainLayout - primary layout wrapper (performance-optimized)
 import { useRef, lazy, Suspense } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { SearchTrigger } from "./SearchTrigger";
@@ -101,24 +102,58 @@ export function MainLayout({ children }: MainLayoutProps) {
           {/* Desktop Top Bar - Sticky Glass */}
           <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-9 w-9 rounded-lg hover:bg-muted/80 transition-colors" />
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SidebarTrigger className="h-9 w-9 rounded-lg hover:bg-muted/80 transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Alternar menu lateral</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-            <div className="flex items-center gap-1.5">
-              <FocusModeToggle />
-              <Link to="/notificacoes" className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors">
-                <Bell className={cn("h-4 w-4 transition-colors", unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground")} />
-                <NotificationBadge 
-                  count={unreadCount} 
-                  size="sm" 
-                  pulse={unreadCount > 5}
-                  variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
-                  className="absolute -top-1 -right-1" 
-                />
-              </Link>
-              <SearchTrigger onClick={() => searchRef.current?.open()} />
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
+            <TooltipProvider delayDuration={300}>
+              <div className="flex items-center gap-1.5">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span><FocusModeToggle /></span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Modo foco</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link to="/notificacoes" className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors" aria-label="Notificações">
+                      <Bell className={cn("h-4 w-4 transition-colors", unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground")} />
+                      <NotificationBadge 
+                        count={unreadCount} 
+                        size="sm" 
+                        pulse={unreadCount > 5}
+                        variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
+                        className="absolute -top-1 -right-1" 
+                      />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Notificações{unreadCount > 0 ? ` (${unreadCount} novas)` : ''}</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span><SearchTrigger onClick={() => searchRef.current?.open()} /></span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Buscar (⌘K)</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span><LanguageToggle /></span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Idioma</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span><ThemeToggle /></span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom"><p>Alternar tema</p></TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
           </div>
           
           <ErrorBoundary fallback={null}>

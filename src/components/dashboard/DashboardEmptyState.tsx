@@ -89,7 +89,7 @@ export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
             </p>
           </div>
           
-          <Button asChild size="sm" variant="default" className="mt-1 shadow-sm">
+          <Button asChild size="sm" variant={type === "revenue" ? "glow-pulse" : "glow"} className="mt-1">
             <Link to={state.href}>
               <Plus className="h-3.5 w-3.5 mr-1" />
               {state.cta}

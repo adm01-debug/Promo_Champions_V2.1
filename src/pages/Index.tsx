@@ -208,15 +208,11 @@ const Index = () => {
               badge="Ativo"
             >
               <div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6"
                 data-tour="gamification"
               >
-                <div className="sm:col-span-1">
-                  <RecentDeals />
-                </div>
-                <div className="sm:col-span-1">
-                  <TopProducts />
-                </div>
+                <RecentDeals />
+                <TopProducts />
                 <MiniLeaderboard />
                 <StreakWidget salespersonId={salesperson?.id} />
                 <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
@@ -229,6 +225,7 @@ const Index = () => {
               title="Performance Inteligente"
               icon={<Zap className="h-4 w-4" />}
               defaultOpen={false}
+              teaser="📊 Descubra seu Score de Velocidade, qualidade de atividades e micro-metas"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
                 <MicroGoalsWidget />
@@ -243,6 +240,7 @@ const Index = () => {
               title="Engajamento & Aprendizado"
               icon={<Heart className="h-4 w-4" />}
               defaultOpen={false}
+              teaser="💡 Registre seu humor, responda pesquisas e complete quizzes diários"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
                 <MoodTrackerWidget />
