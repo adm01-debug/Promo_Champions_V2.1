@@ -275,6 +275,7 @@ const VendedorDashboard = () => {
                     </span>
                   )}
                 </div>
+                <CustomFieldsDisplay salespersonId={id} className="mt-2" />
               </div>
 
               <div className="flex flex-col items-center gap-1">
