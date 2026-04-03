@@ -217,9 +217,9 @@
     --secondary: 172 80% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    /* ===== MUTED ===== */
+    /* ===== MUTED - Higher contrast for WCAG AA ===== */
     --muted: 230 15% 20%;
-    --muted-foreground: 220 10% 65%;
+    --muted-foreground: 220 10% 72%;
 
     /* ===== ACCENT - Neon Cyan ===== */
     --accent: 185 100% 50%;
@@ -229,9 +229,9 @@
     --destructive: 0 90% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* ===== BORDAS E INPUTS ===== */
-    --border: 230 15% 20%;
-    --input: 230 15% 20%;
+    /* ===== BORDAS E INPUTS - Slightly more visible ===== */
+    --border: 230 15% 22%;
+    --input: 230 15% 22%;
     --ring: 262 90% 65%;
 
     /* ===== ESTADOS ===== */
