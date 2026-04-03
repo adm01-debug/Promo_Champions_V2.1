@@ -149,6 +149,15 @@ const Vendas = () => {
                 ]}
               />
             </div>
+            <SavedFiltersBar
+              entityType="vendas"
+              currentFilters={{ searchTerm, sortBy, statusFilter }}
+              onApplyFilter={(filters) => {
+                if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm as string);
+                if (filters.sortBy !== undefined) setSortBy(filters.sortBy as string);
+                if (filters.statusFilter !== undefined) setStatusFilter(filters.statusFilter as string);
+              }}
+            />
           </div>
 
           {/* Table */}
