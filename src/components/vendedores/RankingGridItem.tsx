@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
@@ -50,7 +51,7 @@ const getRankDecor = (rank: number) => {
   }
 };
 
-export function RankingGridItem({
+export const RankingGridItem = React.memo(function RankingGridItem({
   id,
   name,
   avatar_url,
@@ -129,4 +130,4 @@ export function RankingGridItem({
       </Link>
     </motion.div>
   );
-}
+});

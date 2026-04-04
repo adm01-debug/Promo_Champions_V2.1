@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Line, ComposedChart } from "recharts";
 import { TrendingUp } from "lucide-react";
+import type { RechartsTooltipProps } from "@/types/recharts";
 
 interface ABCItem {
   name: string;
@@ -21,9 +22,9 @@ const COLORS = {
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-function ABCTooltip({ active, payload }: any) {
+function ABCTooltip({ active, payload }: RechartsTooltipProps) {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload;
+  const data = payload[0].payload as unknown as ABCItem;
   return (
     <div className="glass rounded-xl p-4 border border-border/50 shadow-xl animate-fade-in">
       <p className="font-display font-semibold text-foreground gradient-text">{data.name}</p>
@@ -32,7 +33,7 @@ function ABCTooltip({ active, payload }: any) {
         <p className="text-sm text-muted-foreground">Participação: <span className="text-foreground font-medium">{data.percentage.toFixed(1)}%</span></p>
         <p className="text-sm text-muted-foreground">Acumulado: <span className="text-foreground font-medium">{data.cumulativePercentage.toFixed(1)}%</span></p>
       </div>
-      <Badge variant="outline" className="mt-2 font-bold" style={{ borderColor: COLORS[data.classification as keyof typeof COLORS], color: COLORS[data.classification as keyof typeof COLORS] }}>
+      <Badge variant="outline" className="mt-2 font-bold" style={{ borderColor: COLORS[data.classification], color: COLORS[data.classification] }}>
         Classe {data.classification}
       </Badge>
     </div>

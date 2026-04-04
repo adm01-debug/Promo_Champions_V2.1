@@ -5,7 +5,7 @@ import { exportToCSV } from '@/lib/csvExporter';
 import { exportToExcel } from '@/lib/excelExporter';
 import { exportToPDF } from '@/lib/pdfExporter';
 
-export function ExportButton({ data, filename }: { data: any[]; filename: string }) {
+export function ExportButton({ data, filename }: { data: Record<string, unknown>[]; filename: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

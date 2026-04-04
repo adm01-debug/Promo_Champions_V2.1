@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { RechartsTooltipProps } from "@/types/recharts";
 
 export interface CompetencyData {
   area: string;
@@ -41,9 +42,9 @@ const DEFAULT_DATA: CompetencyData[] = [
 ];
 
 
-const renderCustomTooltip = ({ active, payload }: any) => {
+const renderCustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload;
+    const data = payload[0].payload as unknown as CompetencyData;
     const percentage = Math.round((data.value / data.maxValue) * 100);
     const status =
       percentage >= 70

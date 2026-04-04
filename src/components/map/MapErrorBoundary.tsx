@@ -19,7 +19,9 @@ export class MapErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error("[MapErrorBoundary]", error, info.componentStack);
+    if (import.meta.env.DEV) {
+      console.error("[MapErrorBoundary]", error, info.componentStack);
+    }
   }
 
   handleRetry = () => {

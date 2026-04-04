@@ -27,6 +27,7 @@ export function useRankNotifications(salespersonId?: string) {
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((n: any) => ({
         ...n,
         overtaker_name: n.overtaker?.name || 'Alguém',

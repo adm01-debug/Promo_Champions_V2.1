@@ -47,7 +47,7 @@ interface ActivityItemProps {
   compact?: boolean;
 }
 
-export const ActivityItem: FC<ActivityItemProps> = ({
+export const ActivityItem: FC<ActivityItemProps> = React.memo(({
   activity,
   onComplete,
   onClick,
@@ -147,7 +147,8 @@ export const ActivityItem: FC<ActivityItemProps> = ({
       </div>
     </motion.div>
   );
-};
+});
+ActivityItem.displayName = "ActivityItem";
 
 interface ActivityListProps {
   activities: Activity[];

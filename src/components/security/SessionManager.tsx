@@ -18,7 +18,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const getDeviceIcon = (deviceInfo: any) => {
+const getDeviceIcon = (deviceInfo: Record<string, string> | null) => {
   const os = deviceInfo?.os?.toLowerCase() || '';
   if (os.includes('android') || os.includes('ios')) {
     return <Smartphone className="h-5 w-5" />;

@@ -5,6 +5,7 @@ import { TrendingUp, Phone, Mail, Calendar, Activity } from "lucide-react";
 import { ActivityTrendData } from "@/hooks/useSalespersonActivityReport";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import type { RechartsTooltipProps, RechartsTooltipPayloadEntry } from "@/types/recharts";
 
 interface ActivityTrendChartProps {
   data: ActivityTrendData[];
@@ -21,13 +22,13 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
   const totalMeetings = data.reduce((sum, d) => sum + d.meetings, 0);
   const totalActivities = totalCalls + totalEmails + totalMeetings;
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="glass border border-border/50 rounded-xl p-3 shadow-xl backdrop-blur-md">
           <p className="text-xs font-display font-bold text-foreground mb-2">{label}</p>
           <div className="space-y-1.5">
-            {payload.map((entry: any, index: number) => (
+            {payload.map((entry: RechartsTooltipPayloadEntry, index: number) => (
               <div key={index} className="flex items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-1.5">
                   <div 
