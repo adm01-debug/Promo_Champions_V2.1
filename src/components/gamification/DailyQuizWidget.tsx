@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,7 +44,7 @@ const QUIZ_BANK: QuizQuestion[] = [
   },
 ];
 
-export function DailyQuizWidget({ className }: { className?: string }) {
+function _DailyQuizWidget({ className }: { className?: string }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -174,3 +175,5 @@ export function DailyQuizWidget({ className }: { className?: string }) {
     </Card>
   );
 }
+
+export const DailyQuizWidget = React.memo(_DailyQuizWidget);

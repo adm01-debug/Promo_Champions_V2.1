@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Flame, Trophy, Target } from "lucide-react";
@@ -9,7 +10,7 @@ interface StreakWidgetProps {
   salespersonId?: string;
 }
 
-export function StreakWidget({ salespersonId }: StreakWidgetProps) {
+function _StreakWidget({ salespersonId }: StreakWidgetProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
 
@@ -113,3 +114,5 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
     </Card>
   );
 }
+
+export const StreakWidget = React.memo(_StreakWidget);

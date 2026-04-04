@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +20,7 @@ const PULSE_QUESTIONS: PulseQuestion[] = [
   { id: "enps", question: "De 0 a 10, qual a chance de recomendar nossa empresa como local de trabalho?", type: "enps" },
 ];
 
-export function PulseSurveyWidget({ className }: { className?: string }) {
+function _PulseSurveyWidget({ className }: { className?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [isComplete, setIsComplete] = useState(false);
@@ -152,3 +153,5 @@ export function PulseSurveyWidget({ className }: { className?: string }) {
     </Card>
   );
 }
+
+export const PulseSurveyWidget = React.memo(_PulseSurveyWidget);

@@ -1,3 +1,4 @@
+import React from "react";
 import { Flame, Trophy, Zap, Crown, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -43,7 +44,7 @@ const getRankBadge = (rank: number) => {
   return <span className="text-sm text-muted-foreground font-medium">#{rank}</span>;
 };
 
-export function StreakRanking() {
+function _StreakRanking() {
   const { data: ranking, isLoading } = useStreakRanking();
   const { data: xpData } = useAllSalespeopleXP();
 
@@ -161,3 +162,5 @@ export function StreakRanking() {
     </Card>
   );
 }
+
+export const StreakRanking = React.memo(_StreakRanking);

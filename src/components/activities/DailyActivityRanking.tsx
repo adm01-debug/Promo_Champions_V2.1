@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +42,7 @@ const getStatusBadge = (progress: number, hasGoals: boolean) => {
   return null;
 };
 
-export function DailyActivityRanking({ data }: DailyActivityRankingProps) {
+function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
   const { data: xpData } = useAllSalespeopleXP();
 
   const getXPInfo = (salespersonId: string) => {
@@ -158,3 +159,5 @@ export function DailyActivityRanking({ data }: DailyActivityRankingProps) {
     </Card>
   );
 }
+
+export const DailyActivityRanking = React.memo(_DailyActivityRanking);
