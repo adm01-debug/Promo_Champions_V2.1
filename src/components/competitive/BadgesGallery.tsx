@@ -13,9 +13,9 @@ interface BadgesGalleryProps {
 }
 
 const RARITY_STYLES: Record<string, string> = {
-  legendary: 'border-yellow-500/50 bg-yellow-500/5 shadow-yellow-500/20 shadow-lg',
-  epic: 'border-purple-500/40 bg-purple-500/5 shadow-purple-500/10 shadow-md',
-  rare: 'border-blue-500/30 bg-blue-500/5',
+  legendary: 'border-coins/50 bg-coins/5 shadow-coins/20 shadow-lg',
+  epic: 'border-primary/40 bg-primary/5 shadow-primary/10 shadow-md',
+  rare: 'border-info/30 bg-info/5',
   common: 'border-border/30 bg-muted/20',
 };
 
