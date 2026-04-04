@@ -13,7 +13,7 @@ describe('Cadence Update Operations', () => {
   };
 
   it('should update cadence name', () => {
-    const cadence = { id: '1', name: 'Old Name', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Old Name', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { name: 'New Name' });
     expect(result.name).toBe('New Name');
     expect(result.is_active).toBe(true);
