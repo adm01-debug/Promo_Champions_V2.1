@@ -35,7 +35,8 @@ export function useTerritories() {
         .order('total_revenue', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((t: Record<string, unknown> & { salespeople?: { id: string; name: string; avatar_url: string | null } | null }) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (data || []).map((t: any) => ({
         ...t,
         owner: t.salespeople || null,
         salespeople: undefined,
