@@ -1,3 +1,4 @@
+import React from "react";
 import { FC } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, LucideIcon } from 'lucide-react';

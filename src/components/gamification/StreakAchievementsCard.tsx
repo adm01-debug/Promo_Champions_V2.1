@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +17,7 @@ interface StreakAchievementsCardProps {
   compact?: boolean;
 }
 
-export function StreakAchievementsCard({ salespersonId, compact = false }: StreakAchievementsCardProps) {
+const StreakAchievementsCardInner = ({ salespersonId, compact = false }: StreakAchievementsCardProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
 

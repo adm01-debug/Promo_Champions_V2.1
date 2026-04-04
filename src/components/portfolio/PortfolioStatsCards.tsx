@@ -1,3 +1,4 @@
+import React from "react";
 // PortfolioStatsCards - aligned with PortfolioStats interface
 import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +11,7 @@ interface PortfolioStatsCardsProps {
   isLoading: boolean;
 }
 
-export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
+const PortfolioStatsCardsInner = ({ stats, isLoading }: PortfolioStatsCardsProps) {
   const cards = [
     {
       title: "Total de Clientes",

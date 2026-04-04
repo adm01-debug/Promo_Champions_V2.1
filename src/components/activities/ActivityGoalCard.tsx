@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -68,7 +69,7 @@ const getStreakDisplay = (current: number, best: number) => {
   };
 };
 
-export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
+const ActivityGoalCardInner = ({ data, onEdit }: ActivityGoalCardProps) {
   const { celebrate } = useCelebration();
   const { data: streakData } = useSalespersonStreak(data.salesperson_id);
   const currentStreak = streakData?.current ?? 0;
