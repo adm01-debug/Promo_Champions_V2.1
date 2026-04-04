@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
@@ -37,7 +38,7 @@ interface DraggableTaskCardProps {
   isDragging?: boolean;
 }
 
-export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) {
+const DraggableTaskCardInner = function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) {
   const {
     attributes,
     listeners,
@@ -124,3 +125,4 @@ export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) 
     </Card>
   );
 }
+export const DraggableTaskCard = memo(DraggableTaskCardInner);

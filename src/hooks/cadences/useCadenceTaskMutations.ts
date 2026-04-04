@@ -29,7 +29,7 @@ export function useCompleteCadenceTask() {
     onError: (error) => {
       toast.error("Erro ao concluir tarefa");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
@@ -60,7 +60,7 @@ export function useSkipCadenceTask() {
     onError: (error) => {
       toast.error("Erro ao pular tarefa");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });

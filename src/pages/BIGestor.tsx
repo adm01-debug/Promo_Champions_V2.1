@@ -1,4 +1,5 @@
 import { useBIGestor } from "@/hooks/useBIGestor";
+import { Helmet } from "react-helmet-async";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { AnalyticsLoadingSkeleton as BIGestorLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +26,11 @@ const BIGestor = () => {
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
+    <>
+      <Helmet>
+        <title>BI Gestão | Promo Champions</title>
+        <meta name="description" content="Business Intelligence para Gestores" />
+      </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<BIGestorLoadingSkeleton />} duration={400}>
       <PageTransition>
         <div className="min-h-screen bg-background">
@@ -176,6 +182,7 @@ const BIGestor = () => {
         </div>
       </PageTransition>
     </SkeletonTransition>
+    </>
   );
 };
 

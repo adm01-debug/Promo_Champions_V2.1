@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { BarChart3, Download, Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -40,6 +41,11 @@ const Relatorios = () => {
   ];
 
   return (
+    <>
+      <Helmet>
+        <title>Relatórios | Promo Champions</title>
+        <meta name="description" content="Relatórios de vendas e performance" />
+      </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<RelatoriosLoadingSkeleton />} duration={400}>
       <div className="min-h-screen bg-background p-6 lg:p-8">
         <div className="max-w-[1400px] mx-auto space-y-6">
@@ -134,6 +140,7 @@ const Relatorios = () => {
         </div>
       </div>
     </SkeletonTransition>
+    </>
   );
 };
 
