@@ -73,8 +73,8 @@ export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, 
   });
 
   return (
-    <div className="flex items-center gap-2 mb-4">
-      {/* Back Button - visible on all screens */}
+    <div className="flex items-center gap-2">
+      {/* Back Button */}
       <BackButton className="hidden sm:flex" />
 
       <nav 
