@@ -139,10 +139,10 @@ export const ActivityHeatmap: FC = () => {
   return (
     <div className="space-y-4">
       <Card className="border-none shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10">
+        <div className="bg-gradient-to-r from-success/10 to-secondary/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success to-secondary flex items-center justify-center">
                 <Clock className="h-4 w-4 text-primary-foreground" />
               </div>
               Mapa de Calor de Atividades

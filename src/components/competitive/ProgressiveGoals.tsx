@@ -13,13 +13,13 @@ interface ProgressiveGoalsProps {
 
 const LEVEL_COLORS: Record<number, string> = {
   1: 'from-gray-400 to-gray-500',
-  2: 'from-green-400 to-green-600',
-  3: 'from-blue-400 to-blue-600',
+  2: 'from-success to-success/80',
+  3: 'from-info to-info/80',
   4: 'from-primary to-primary-glow',
-  5: 'from-amber-400 to-amber-600',
-  6: 'from-red-400 to-red-600',
+  5: 'from-rank-gold to-rank-gold/80',
+  6: 'from-destructive to-destructive/80',
   7: 'from-accent to-secondary',
-  8: 'from-yellow-400 to-yellow-600',
+  8: 'from-coins to-coins/80',
   9: 'from-cyan-400 to-cyan-600',
   10: 'from-violet-400 to-violet-600',
 };

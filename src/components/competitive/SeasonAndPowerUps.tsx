@@ -22,8 +22,8 @@ const powerUpLabels: Record<string, string> = {
 
 const powerUpColors: Record<string, string> = {
   xp_boost: 'from-primary/20 to-accent/10 border-primary/30',
-  streak_shield: 'from-emerald-500/20 to-emerald-500/5 border-emerald-500/30',
-  double_points: 'from-amber-500/20 to-amber-500/5 border-amber-500/30',
+  streak_shield: 'from-success/20 to-success/5 border-success/30',
+  double_points: 'from-rank-gold/20 to-rank-gold/5 border-rank-gold/30',
 };
 
 export const SeasonAndPowerUps: FC = () => {

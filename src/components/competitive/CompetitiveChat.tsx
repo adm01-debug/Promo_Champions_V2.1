@@ -56,7 +56,7 @@ export const CompetitiveChat: FC<CompetitiveChatProps> = ({ salespersonId }) => 
     <Card className="border-none shadow-lg overflow-hidden flex flex-col" style={{ height: '500px' }}>
       <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-base flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success to-success/80 flex items-center justify-center">
             <MessageCircle className="h-4 w-4 text-primary-foreground" />
           </div>
           Chat Competitivo
