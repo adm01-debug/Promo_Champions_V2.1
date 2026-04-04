@@ -24,7 +24,7 @@ export function useCreateCadence() {
     onError: (error) => {
       toast.error("Erro ao criar cadência");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
@@ -53,7 +53,7 @@ export function useUpdateCadence() {
     onError: (error) => {
       toast.error("Erro ao atualizar cadência");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
@@ -78,7 +78,7 @@ export function useDeleteCadence() {
     onError: (error) => {
       toast.error("Erro ao excluir cadência");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
@@ -113,7 +113,7 @@ export function useCreateCadenceStep() {
     onError: (error) => {
       toast.error("Erro ao adicionar etapa");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
@@ -151,7 +151,7 @@ export function useUpdateCadenceStep() {
     onError: (error) => {
       toast.error("Erro ao atualizar etapa");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
@@ -177,7 +177,7 @@ export function useDeleteCadenceStep() {
     onError: (error) => {
       toast.error("Erro ao remover etapa");
       if (import.meta.env.DEV) {
-        console.error(error);
+        if (import.meta.env.DEV) console.error(error);
       }
     },
   });
