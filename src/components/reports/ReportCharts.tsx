@@ -23,7 +23,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 
 interface ReportChartsProps {
   revenueData: Array<Record<string, string | number>>;
-  categoryData: Array<Record<string, string | number>>;
+  categoryData: Array<{ name: string; value: number; color: string }>;
   salesData: Array<Record<string, string | number>>;
   selectedPeriod: string;
 }
