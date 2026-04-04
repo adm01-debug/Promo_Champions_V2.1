@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; name?: string }>; label?: string }) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="glass rounded-lg p-3 shadow-lg border border-border/50">

@@ -21,7 +21,7 @@ const COLORS = {
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-function ABCTooltip({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number; payload: Record<string, unknown> }> }) {
+function ABCTooltip({ active, payload }: any) {
   if (!active || !payload?.length) return null;
   const data = payload[0].payload;
   return (
