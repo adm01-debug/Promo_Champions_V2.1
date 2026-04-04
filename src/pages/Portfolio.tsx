@@ -171,6 +171,12 @@ export default function Portfolio() {
         {/* Stats Cards */}
         <PortfolioStatsCards stats={stats} isLoading={loadingStats} />
 
+        {/* Portfolio Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PortfolioDistributionChart portfolio={portfolio || []} salespeople={closers || []} />
+          <PortfolioValueChart portfolio={portfolio || []} salespeople={closers || []} />
+        </div>
+
         {/* Filters */}
         <Card className="glass">
           <CardHeader className="pb-3">
