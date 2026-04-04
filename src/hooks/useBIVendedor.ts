@@ -178,16 +178,7 @@ export function useBIVendedor() {
       const commission = totalRevenue * (salesperson.commission_rate / 100);
       
       // Pipeline
-      const pipelineValue = pipelineDeals.reduce((sum, s) => sum + Number(s.amount), 0);
-      const dealsByStage = ["pending", "qualified", "proposal", "negotiation"].map(stage => ({
-        stage,
-        count: pipelineDeals.filter(d => d.status === stage).length,
-        value: pipelineDeals.filter(d => d.status === stage).reduce((sum, d) => sum + Number(d.amount), 0)
-      }));
-      
-      const avgDaysInPipeline = pipelineDeals.length > 0 
-        ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) / pipelineDeals.length 
-        : 0;
+      const { pipelineValue, dealsByStage, avgDaysInPipeline } = computePipelineByStage(pipelineDeals, now);
       
       // Get ranking
       const { data: rankingData } = await supabase
