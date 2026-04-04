@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { startOfMonth, endOfMonth, subMonths, format, parseISO, differenceInDays, subDays } from "date-fns";
+import { startOfMonth, endOfMonth, subMonths, format, differenceInDays, subDays } from "date-fns";
+import {
+  computeRanking, computeActivitiesByType, computeStreak,
+  computePipelineByStage, buildSalesByDay, buildSalesByCategory,
+} from "./biVendedorHelpers";
 
 export interface BIVendedorData {
   // Performance metrics
@@ -174,16 +178,7 @@ export function useBIVendedor() {
       const commission = totalRevenue * (salesperson.commission_rate / 100);
       
       // Pipeline
-      const pipelineValue = pipelineDeals.reduce((sum, s) => sum + Number(s.amount), 0);
-      const dealsByStage = ["pending", "qualified", "proposal", "negotiation"].map(stage => ({
-        stage,
-        count: pipelineDeals.filter(d => d.status === stage).length,
-        value: pipelineDeals.filter(d => d.status === stage).reduce((sum, d) => sum + Number(d.amount), 0)
-      }));
-      
-      const avgDaysInPipeline = pipelineDeals.length > 0 
-        ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) / pipelineDeals.length 
-        : 0;
+      const { pipelineValue, dealsByStage, avgDaysInPipeline } = computePipelineByStage(pipelineDeals, now);
       
       // Get ranking
       const { data: rankingData } = await supabase
@@ -193,29 +188,14 @@ export function useBIVendedor() {
         .gte("created_at", monthStart.toISOString())
         .lte("created_at", monthEnd.toISOString());
       
-      const salesBySalesperson: Record<string, number> = {};
-      (rankingData || []).forEach(sale => {
-        if (sale.salesperson_id) {
-          salesBySalesperson[sale.salesperson_id] = (salesBySalesperson[sale.salesperson_id] || 0) + Number(sale.amount);
-        }
-      });
-      
-      const rankings = Object.entries(salesBySalesperson)
-        .sort((a, b) => b[1] - a[1])
-        .map(([id], index) => ({ id, rank: index + 1 }));
-      
-      const currentRank = rankings.find(r => r.id === salesperson.id)?.rank || allSalespeople.length;
+      const currentRank = computeRanking(rankingData || [], salesperson.id, allSalespeople.length);
       
       // Activities by type
-      const activityTypeCounts: Record<string, number> = {};
-      activities.forEach(a => {
-        activityTypeCounts[a.activity_type] = (activityTypeCounts[a.activity_type] || 0) + 1;
-      });
-      const activitiesByType = Object.entries(activityTypeCounts).map(([type, count]) => ({ type, count }));
+      const activitiesByType = computeActivitiesByType(activities);
       
       // Activity goal progress
       const todayActivities = activities.filter(a => 
-        format(parseISO(a.created_at), "yyyy-MM-dd") === today
+        a.created_at.slice(0, 10) === today
       ).length;
       
       const totalGoalToday = activityGoals 
@@ -225,7 +205,7 @@ export function useBIVendedor() {
       
       const activityGoalProgress = totalGoalToday > 0 ? (todayActivities / totalGoalToday) * 100 : 0;
       
-      // Calculate streak (simplified)
+      // Calculate streak
       const { data: streakAchievements } = await supabase
         .from("achievements")
         .select("achievement_date")
@@ -233,39 +213,12 @@ export function useBIVendedor() {
         .eq("achievement_type", "daily_goal")
         .order("achievement_date", { ascending: false });
       
-      let currentStreak = 0;
-      let bestStreak = 0;
-      let tempStreak = 0;
       const achievementDates = (streakAchievements || []).map(a => a.achievement_date);
+      const { currentStreak, bestStreak } = computeStreak(achievementDates, now);
       
-      for (let i = 0; i < 30; i++) {
-        const checkDate = format(subDays(now, i), "yyyy-MM-dd");
-        if (achievementDates.includes(checkDate)) {
-          if (i === 0 || tempStreak > 0) {
-            tempStreak++;
-            if (i < 7) currentStreak = tempStreak;
-          }
-        } else {
-          bestStreak = Math.max(bestStreak, tempStreak);
-          tempStreak = 0;
-        }
-      }
-      bestStreak = Math.max(bestStreak, tempStreak);
-      
-      // Sales by day for chart
-      const salesByDayMap: Record<string, number> = {};
-      currentSales.forEach(sale => {
-        const day = format(parseISO(sale.created_at), "dd/MM");
-        salesByDayMap[day] = (salesByDayMap[day] || 0) + Number(sale.amount);
-      });
-      const salesByDay = Object.entries(salesByDayMap).map(([day, value]) => ({ day, value }));
-      
-      // Sales by category
-      const salesByCategoryMap: Record<string, number> = {};
-      currentSales.forEach(sale => {
-        salesByCategoryMap[sale.category] = (salesByCategoryMap[sale.category] || 0) + Number(sale.amount);
-      });
-      const salesByCategory = Object.entries(salesByCategoryMap).map(([category, value]) => ({ category, value }));
+      // Sales by day/category for charts
+      const salesByDay = buildSalesByDay(currentSales);
+      const salesByCategory = buildSalesByCategory(currentSales);
       
       return {
         totalRevenue,
