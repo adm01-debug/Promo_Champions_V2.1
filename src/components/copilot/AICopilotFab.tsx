@@ -57,7 +57,7 @@ export const AICopilotFab: FC = () => {
                 size="icon" aria-label="Fechar"
                 className="h-7 w-7"
                 onClick={dismiss}
-                aria-label="Fechar copilot"
+               
               >
                 <X className="h-4 w-4" />
               </Button>
