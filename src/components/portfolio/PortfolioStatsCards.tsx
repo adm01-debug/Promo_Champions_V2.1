@@ -11,7 +11,7 @@ interface PortfolioStatsCardsProps {
   isLoading: boolean;
 }
 
-export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
+function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
   const cards = [
     {
       title: "Total de Clientes",
@@ -163,3 +163,5 @@ export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsPro
     </TooltipProvider>
   );
 }
+
+export const PortfolioStatsCards = React.memo(_PortfolioStatsCards);

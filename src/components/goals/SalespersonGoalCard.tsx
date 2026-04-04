@@ -28,7 +28,7 @@ const roleLabels: Record<string, string> = {
   hybrid: "Híbrido",
 };
 
-export function SalespersonGoalCard({
+function _SalespersonGoalCard({
   name,
   avatar_url,
   role,
@@ -146,3 +146,5 @@ export function SalespersonGoalCard({
     </div>
   );
 }
+
+export const SalespersonGoalCard = React.memo(_SalespersonGoalCard);

@@ -44,7 +44,7 @@ interface CadenceCardProps {
   isDeleting?: boolean;
 }
 
-export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleting }: CadenceCardProps) {
+function _CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleting }: CadenceCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -200,3 +200,5 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, is
     </>
   );
 }
+
+export const CadenceCard = React.memo(_CadenceCard);
