@@ -2531,6 +2531,66 @@ export type Database = {
           },
         ]
       }
+      page_analytics: {
+        Row: {
+          created_at: string
+          device_type: string | null
+          duration_seconds: number | null
+          entered_at: string
+          exited_at: string | null
+          id: string
+          interactions: number | null
+          page_title: string | null
+          referrer_route: string | null
+          route: string
+          salesperson_id: string | null
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_type?: string | null
+          duration_seconds?: number | null
+          entered_at?: string
+          exited_at?: string | null
+          id?: string
+          interactions?: number | null
+          page_title?: string | null
+          referrer_route?: string | null
+          route: string
+          salesperson_id?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_type?: string | null
+          duration_seconds?: number | null
+          entered_at?: string
+          exited_at?: string | null
+          id?: string
+          interactions?: number | null
+          page_title?: string | null
+          referrer_route?: string | null
+          route?: string
+          salesperson_id?: string | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_analytics_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_analytics_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       password_reset_requests: {
         Row: {
           created_at: string
