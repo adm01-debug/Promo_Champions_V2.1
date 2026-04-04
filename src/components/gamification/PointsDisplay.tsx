@@ -46,7 +46,7 @@ export const PointsDisplay: FC<PointsDisplayProps> = ({
     <div className={cn("inline-flex items-center", sizeClasses[size], className)}>
       <Icon 
         size={iconSizes[size]} 
-        className="text-rank-gold fill-amber-500" 
+        className="text-coins fill-coins" 
       />
       <motion.span 
         key={points}
