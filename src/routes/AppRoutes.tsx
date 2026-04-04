@@ -190,6 +190,7 @@ export function AppRoutes() {
                     <Route path="/relatorios-executivos" element={
                       <ProtectedRoute requireAdminOrManager><RelatoriosExecutivos /></ProtectedRoute>
                     } />
+                    <Route path="/lead-scoring" element={<LeadScoring />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

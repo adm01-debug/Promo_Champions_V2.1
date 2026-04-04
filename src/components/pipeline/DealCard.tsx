@@ -136,6 +136,13 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
         )}
 
+        {/* AI Copilot - Stagnant Deal Alert */}
+        <StagnantDealAlert
+          updatedAt={deal.updated_at || deal.created_at}
+          clientName={deal.client_name}
+          amount={deal.amount}
+        />
+
         {/* Date */}
         <div className="mt-2 pt-2 border-t border-border/30 flex items-center gap-1 text-[10px] text-muted-foreground">
           <Calendar className="h-3 w-3" />
