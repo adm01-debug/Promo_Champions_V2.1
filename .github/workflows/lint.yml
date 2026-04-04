@@ -1,4 +1,4 @@
-name: Lint
+name: CI
 
 on: 
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  lint:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,4 +19,20 @@ jobs:
           
       - run: npm ci
       
-      - run: npm run lint
+      - name: Type Check
+        run: npx tsc --noEmit
+      
+      - name: Lint
+        run: npm run lint
+      
+      - name: Unit Tests
+        run: npm run test -- --run --reporter=verbose
+      
+      - name: Security Audit
+        run: npm audit --audit-level=high || true
+        
+      - name: Bundle Size Check
+        run: |
+          npm run build
+          echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          du -sh dist/assets/*.js | sort -rh | head -10 >> $GITHUB_STEP_SUMMARY
