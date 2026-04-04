@@ -10,7 +10,7 @@ import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSetti
 import { toast } from "sonner";
 
 // Preload confetti module
-type ConfettiFunction = ((options?: Record<string, unknown>) => Promise<unknown> | null) | null;
+type ConfettiFunction = (options?: Record<string, unknown>) => Promise<null>;
 
 const READY_SOUND_KEY = 'celebration-ready-sound-enabled';
 
