@@ -36,7 +36,7 @@ function ChangeIndicator({ current, previous, suffix = "" }: { current: number; 
   return (
     <span className={cn(
       "flex items-center gap-0.5 text-[10px] font-medium",
-      isPositive && "text-green-600 dark:text-green-400",
+      isPositive && "text-success",
       !isPositive && !isNeutral && "text-destructive",
       isNeutral && "text-muted-foreground"
     )}>
