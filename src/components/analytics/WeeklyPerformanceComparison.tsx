@@ -76,7 +76,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.conversionRate,
       previous: previousWeek.conversionRate,
       format: (v: number) => `${v.toFixed(1)}%`,
-      color: "text-emerald-500",
+      color: "text-success",
     },
     {
       label: "Ticket Médio",
