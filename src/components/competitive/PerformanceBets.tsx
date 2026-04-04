@@ -142,10 +142,10 @@ export function PerformanceBets() {
                   </SelectContent>
                 </Select>
               </div>
-              <Card className="border-amber-500/30 bg-amber-500/5">
+              <Card className="border-coins/30 bg-coins/5">
                 <CardContent className="p-3 text-center text-sm">
-                  <Flame className="h-5 w-5 mx-auto mb-1 text-amber-500" />
-                  Se bater: <strong className="text-green-500">+{betForm.xp_wagered * 2} XP</strong><br />
+                  <Flame className="h-5 w-5 mx-auto mb-1 text-coins" />
+                  Se bater: <strong className="text-success">+{betForm.xp_wagered * 2} XP</strong><br />
                   Se falhar: <strong className="text-destructive">-{betForm.xp_wagered} XP</strong>
                 </CardContent>
               </Card>
