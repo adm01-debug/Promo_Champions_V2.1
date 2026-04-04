@@ -24,5 +24,6 @@ export default function Assistente() {
           <SalesAssistantChat />
         </div>
       </div>
+    </>
   );
 }
