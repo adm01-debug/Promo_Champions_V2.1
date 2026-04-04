@@ -141,3 +141,5 @@ const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
     </Card>
   );
 };
+
+export const ClientInfoCard = React.memo(ClientInfoCardBase);

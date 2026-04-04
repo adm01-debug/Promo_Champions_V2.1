@@ -18,3 +18,5 @@ const PipelineOverviewBase: FC<PipelineOverviewProps> = ({
     </Card>
   );
 };
+
+export const PipelineOverview = React.memo(PipelineOverviewBase);
