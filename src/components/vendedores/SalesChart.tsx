@@ -1,6 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { BarChart3, Trophy, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { RechartsTooltipProps } from "@/types/recharts";
 
 interface SalespersonData {
   id: string;
@@ -15,9 +16,9 @@ interface SalesChartProps {
 }
 // Chart gradient colors are defined in the SVG defs below
 // Custom tooltip content component (not using forwardRef since Recharts Tooltip handles the wrapper)
-const CustomTooltipContent = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
+const CustomTooltipContent = ({ active, payload }: RechartsTooltipProps) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload;
+    const data = payload[0].payload as unknown as SalespersonData;
     return (
       <div className="glass rounded-xl p-4 border border-border/50 shadow-xl animate-fade-in">
         <p className="font-semibold text-sm gradient-text">{data.name}</p>

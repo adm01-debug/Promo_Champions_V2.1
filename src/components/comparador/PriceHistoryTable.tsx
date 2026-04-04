@@ -6,8 +6,18 @@ import { History, TrendingDown, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+interface PriceHistoryEntry {
+  id: string;
+  old_price: number;
+  new_price: number;
+  price_change_percent: number;
+  recorded_at: string;
+  products?: { name: string };
+  suppliers?: { name: string };
+}
+
 interface PriceHistoryTableProps {
-  priceHistory: any[];
+  priceHistory: PriceHistoryEntry[];
   formatCurrency: (value: number) => string;
 }
 

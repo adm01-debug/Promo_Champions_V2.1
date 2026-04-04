@@ -10,6 +10,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SDRConversionTooltip } from "./SDRConversionTooltip";
 
+interface SDRDetails {
+  meetings: number;
+  leads: number;
+  rate: number;
+}
+
+interface ChartDataPoint {
+  date: string;
+  label: string;
+  teamAverage: number;
+  teamMeetings: number;
+  teamLeads: number;
+  details: Record<string, SDRDetails>;
+  [key: string]: number | string | Record<string, SDRDetails>;
+}
+
 type PeriodFilter = 'week' | 'month' | 'quarter';
 
 interface SDRConversionEvolutionProps {
@@ -42,7 +58,7 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
       const chartData = intervals.map(date => {
         const dateKey = format(date, 'yyyy-MM-dd');
         const label = useWeekly ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}` : format(date, 'dd/MM', { locale: ptBR });
-        const point: any = { date: dateKey, label, teamAverage: 0, teamMeetings: 0, teamLeads: 0, details: {} };
+        const point: ChartDataPoint = { date: dateKey, label, teamAverage: 0, teamMeetings: 0, teamLeads: 0, details: {} };
         let totalMeetings = 0, totalLeads = 0;
 
         sdrs.forEach(sdr => {

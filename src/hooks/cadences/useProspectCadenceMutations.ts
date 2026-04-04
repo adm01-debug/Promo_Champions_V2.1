@@ -55,7 +55,7 @@ export function useEnrollInCadence() {
       queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
       toast.success("Prospect inscrito na cadência!");
     },
-    onError: (error: any) => {
+    onError: (error: Error & { code?: string }) => {
       if (error.code === "23505") {
         toast.error("Prospect já está inscrito nesta cadência");
       } else {
