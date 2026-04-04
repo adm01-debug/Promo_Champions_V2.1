@@ -165,7 +165,7 @@ export function TodaysCadenceTasks() {
                         </p>
                         {step?.description && (
                           <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1.5 border border-border/20 shadow-inner">
-                            {step.description}
+                            {String(step.description)}
                           </p>
                         )}
                       </div>
