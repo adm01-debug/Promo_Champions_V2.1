@@ -74,7 +74,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
   return (
     <div className="space-y-3">
       <AnimatePresence mode="popLayout">
-        {feedItems.map((item: Record<string, unknown>, index: number) => {
+        {feedItems.map((item: Record<string, any>, index: number) => {
           const Icon = eventIcons[item.event_type] || Trophy;
           const gradient = eventColors[item.event_type] || eventColors.sale;
           const reactions = item.feed_reactions || [];
@@ -167,7 +167,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
                           className="overflow-hidden"
                         >
                           <div className="mt-3 space-y-2 border-t border-border/20 pt-3">
-                            {comments.map((c: Record<string, unknown>) => (
+                            {comments.map((c: Record<string, any>) => (
                               <div key={c.id} className="flex gap-2 text-xs">
                                 <span className="font-semibold text-foreground">{((c.salespeople as Record<string, string> | null))?.name || '?'}:</span>
                                 <span className="text-muted-foreground">{c.content}</span>
