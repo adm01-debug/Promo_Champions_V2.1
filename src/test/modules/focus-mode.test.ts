@@ -49,7 +49,7 @@ describe('Focus Mode - Config Defaults', () => {
     dimInactiveElements: true,
     autoBreakReminder: true,
     breakIntervalMinutes: 25,
-    startedAt: null,
+    startedAt: null as string | null,
   };
 
   it('should start disabled', () => {

@@ -77,7 +77,7 @@ export default function HistoricoDesafiosDiarios() {
         })) as DailyChallengeWithProgress[];
       }
 
-      return challenges?.map(c => ({ ...c, progress: null })) as DailyChallengeWithProgress[];
+      return challenges?.map(c => ({ ...c, progress: null as null })) as DailyChallengeWithProgress[];
     },
     enabled: !!salesperson?.id,
   });

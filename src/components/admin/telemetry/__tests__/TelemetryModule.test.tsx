@@ -5,20 +5,20 @@ import { BrowserRouter } from "react-router-dom";
 import { TelemetryCharts } from "@/components/admin/telemetry/TelemetryCharts";
 
 // ─── Helpers ───
-function makeTelemetryRow(overrides: Partial<any> = {}) {
+function makeTelemetryRow(overrides: Partial<Record<string, unknown>> = {}) {
   return {
     id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36),
     operation: "select",
     table_name: "sales",
-    rpc_name: null,
+    rpc_name: null as string | null,
     duration_ms: 500,
     record_count: 10,
     query_limit: 100,
     query_offset: 0,
-    count_mode: null,
+    count_mode: null as string | null,
     severity: "normal",
-    error_message: null,
-    user_id: null,
+    error_message: null as string | null,
+    user_id: null as string | null,
     created_at: new Date().toISOString(),
     ...overrides,
   };

@@ -69,7 +69,7 @@ describe("StagnantDealAlert prop mapping from Deal", () => {
   });
 
   it("falls back to created_at when updated_at is missing", () => {
-    const deal = { updated_at: undefined, created_at: "2026-01-01", client_name: "Test", amount: 5000 };
+    const deal = { updated_at: undefined as string | undefined, created_at: "2026-01-01", client_name: "Test", amount: 5000 };
     const updatedAt = deal.updated_at || deal.created_at;
     expect(updatedAt).toBe("2026-01-01");
   });
@@ -88,7 +88,7 @@ describe("StagnantDealAlert prop mapping from Deal", () => {
 // ─── ICP Badge visibility ──────────────────────────────────────────
 describe("ICP badge display", () => {
   it("shows when is_icp_match is true", () => {
-    const icpData = { is_icp_match: true, grupo_nicho: "Tech" };
+    const icpData: { is_icp_match: boolean; grupo_nicho?: string } = { is_icp_match: true, grupo_nicho: "Tech" };
     expect(icpData.is_icp_match).toBe(true);
   });
 
@@ -98,7 +98,7 @@ describe("ICP badge display", () => {
   });
 
   it("hidden when icpData is undefined", () => {
-    const icpData = undefined;
+    const icpData: { is_icp_match: boolean } | undefined = undefined;
     expect(icpData?.is_icp_match).toBeUndefined();
   });
 });
@@ -106,13 +106,13 @@ describe("ICP badge display", () => {
 // ─── Active Cadence display ────────────────────────────────────────
 describe("Active cadence display in DealCard", () => {
   it("shows cadence name and step", () => {
-    const cadence = { cadenceName: "Outbound B2B", currentStep: 3, status: "active" as const };
+    const cadence: { cadenceName: string; currentStep: number; status: string } = { cadenceName: "Outbound B2B", currentStep: 3, status: "active" };
     expect(cadence.cadenceName).toBe("Outbound B2B");
     expect(cadence.currentStep).toBe(3);
   });
 
   it("hidden when no active cadence", () => {
-    const cadence = undefined;
+    const cadence: undefined = undefined;
     expect(cadence).toBeUndefined();
   });
 });
@@ -120,12 +120,12 @@ describe("Active cadence display in DealCard", () => {
 // ─── Probability badge ─────────────────────────────────────────────
 describe("Probability badge display", () => {
   it("shows percentage when probability exists", () => {
-    const prob = { probability: 75, factors: ["high value"] };
+    const prob: { probability: number; factors: string[] } = { probability: 75, factors: ["high value"] };
     expect(prob.probability).toBe(75);
   });
 
   it("hidden when no probability", () => {
-    const prob = undefined;
+    const prob: undefined = undefined;
     expect(prob).toBeUndefined();
   });
 });

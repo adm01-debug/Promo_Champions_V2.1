@@ -307,7 +307,7 @@ export const MFASetup = () => {
                   </Alert>
                   
                   <div className="grid grid-cols-2 gap-2 p-4 bg-muted rounded-lg font-mono text-sm">
-                    {settings.backup_codes.map((code, i) => (
+                    {settings.backup_codes.map((code: string, i: number) => (
                       <div key={i} className="p-2 bg-background rounded text-center">
                         {code}
                       </div>

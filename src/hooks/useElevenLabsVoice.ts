@@ -169,12 +169,12 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
       setTranscript('');
     };
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: Event & { results: SpeechRecognitionResultList }) => {
       const result = event.results[0][0].transcript;
       setTranscript(result);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: Event & { error: string }) => {
       if (import.meta.env.DEV) {
         console.error('Speech recognition error:', event.error);
       }

@@ -81,9 +81,9 @@ const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode
         .in('role', ['sdr', 'hybrid']);
 
       if (!sdrs?.length) return { 
-        activityData: [], 
-        comparisonData: [], 
-        sdrs: [], 
+        activityData: [] as Record<string, unknown>[], 
+        comparisonData: [] as Record<string, unknown>[], 
+        sdrs: [] as { id: string; name: string }[], 
         totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 },
         dailyGoal: 0,
         sdrGoals: {} as Record<string, number>
@@ -493,7 +493,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <div className="flex items-center justify-between gap-4">
                         <p className="font-semibold text-foreground text-sm">{label}</p>
                         <span className="text-xs font-medium text-muted-foreground">
-                          Total: {dataPoint?.total ?? 0}
+                          Total: {(dataPoint as Record<string, number>)?.total ?? 0}
                         </span>
                       </div>
                       <div className="space-y-1">

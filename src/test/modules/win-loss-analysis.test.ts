@@ -59,7 +59,7 @@ describe('Reason Counting', () => {
   });
 
   it('should handle null reasons', () => {
-    const items = [{ reason: null }, { reason: null }];
+    const items: { reason: string | null }[] = [{ reason: null }, { reason: null }];
     const result = countReasons(items);
     expect(result[0].reason).toBe('Não informado');
     expect(result[0].count).toBe(2);

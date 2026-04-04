@@ -138,7 +138,7 @@ export function NextBestAction() {
               </h4>
               
               {nextBestAction.data.suggestions.map((suggestion, index) => {
-                const actionType = actionTypeConfig[suggestion.actionType] || actionTypeConfig.other;
+                const actionType = actionTypeConfig[suggestion.actionType as keyof typeof actionTypeConfig] || actionTypeConfig.other;
                 const ActionIcon = actionType.icon;
                 const priority = priorityConfig[suggestion.priority];
 

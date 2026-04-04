@@ -75,7 +75,7 @@ export function SoundSettings() {
       setIsLoading(true);
       setActiveCelebration('meta');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('meta');
@@ -129,7 +129,7 @@ export function SoundSettings() {
       setIsLoading(true);
       setActiveCelebration('levelup');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('levelup');
@@ -192,7 +192,7 @@ export function SoundSettings() {
       setIsLoading(true);
       setActiveCelebration('record');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('record');

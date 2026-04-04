@@ -254,13 +254,12 @@ export const useMFA = () => {
       totp_enabled: status.totp_enabled,
       sms_enabled: status.sms_enabled,
       preferred_method: status.preferred_method,
-      // No secrets exposed
-      totp_secret: null,
-      backup_codes: null,
+      totp_secret: null as string | null,
+      backup_codes: null as string[] | null,
     } : null,
-    attempts: [],
+    attempts: [] as string[],
     isLoading,
-    totpSecret: null, // Never exposed to client
+    totpSecret: null as string | null,
     qrCodeUrl,
     isMFAEnabled: status?.totp_enabled || status?.sms_enabled || false,
     initializeTOTP,

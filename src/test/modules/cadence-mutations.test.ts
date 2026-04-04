@@ -13,26 +13,26 @@ describe('Cadence Update Operations', () => {
   };
 
   it('should update cadence name', () => {
-    const cadence = { id: '1', name: 'Old Name', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Old Name', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { name: 'New Name' });
     expect(result.name).toBe('New Name');
     expect(result.is_active).toBe(true);
   });
 
   it('should update cadence description', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { description: 'New description' });
     expect(result.description).toBe('New description');
   });
 
   it('should toggle cadence active status to inactive', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { is_active: false });
     expect(result.is_active).toBe(false);
   });
 
   it('should toggle cadence active status to active', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: false };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: false };
     const result = simulateUpdateCadence(cadence, { is_active: true });
     expect(result.is_active).toBe(true);
   });
@@ -53,7 +53,7 @@ describe('Cadence Update Operations', () => {
   });
 
   it('should set updated_at timestamp', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { name: 'Updated' });
     expect(result.updated_at).toBeDefined();
   });
@@ -224,7 +224,7 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should complete task with notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task, 'Contato feito com sucesso');
     expect(result.status).toBe('completed');
     expect(result.notes).toBe('Contato feito com sucesso');
@@ -232,33 +232,33 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should complete task without notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task);
     expect(result.status).toBe('completed');
     expect(result.notes).toBeNull();
   });
 
   it('should skip task with reason', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = skipTaskWithNotes(task, 'Cliente não disponível');
     expect(result.status).toBe('skipped');
     expect(result.notes).toBe('Cliente não disponível');
   });
 
   it('should skip task without notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = skipTaskWithNotes(task);
     expect(result.status).toBe('skipped');
   });
 
   it('should trim whitespace from notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task, '  Trimmed note  ');
     expect(result.notes).toBe('Trimmed note');
   });
 
   it('should treat empty string notes as null', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task, '   ');
     expect(result.notes).toBeNull();
   });

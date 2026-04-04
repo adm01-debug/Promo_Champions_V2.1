@@ -192,7 +192,7 @@ describe('Cadence Map Building (Active Cadences by Sale)', () => {
   });
 
   it('should handle null cadence name', () => {
-    const data = [{ sale_id: 's1', status: 'active', current_step: 1, cadence: null }];
+    const data: { sale_id: string; status: string; current_step: number; cadence: null }[] = [{ sale_id: 's1', status: 'active', current_step: 1, cadence: null }];
     const map: Record<string, { cadenceName: string }> = {};
     data.forEach(pc => {
       map[pc.sale_id] = {
