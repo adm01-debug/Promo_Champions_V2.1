@@ -5,6 +5,7 @@ import { TrendingUp, Phone, Mail, Calendar, Activity } from "lucide-react";
 import { ActivityTrendData } from "@/hooks/useSalespersonActivityReport";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import type { RechartsTooltipProps, RechartsTooltipPayloadEntry } from "@/types/recharts";
 
 interface ActivityTrendChartProps {
   data: ActivityTrendData[];
