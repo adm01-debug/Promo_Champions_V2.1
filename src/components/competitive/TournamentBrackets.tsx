@@ -122,7 +122,7 @@ export function TournamentBrackets() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-display font-bold flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-amber-500" /> Torneios Eliminatórios
+            <Trophy className="h-5 w-5 text-rank-gold" /> Torneios Eliminatórios
           </h2>
           <p className="text-sm text-muted-foreground">Brackets de eliminação com rounds semanais</p>
         </div>

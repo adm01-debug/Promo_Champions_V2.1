@@ -205,7 +205,7 @@ export function PerformanceBets() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge variant="outline" className="text-amber-500 border-amber-500/30">{bet.xp_wagered} XP</Badge>
+                        <Badge variant="outline" className="text-coins border-coins/30">{bet.xp_wagered} XP</Badge>
                         <div className="text-xs text-muted-foreground mt-1">
                           <Timer className="h-3 w-3 inline mr-1" />{hoursLeft > 0 ? `${hoursLeft}h restantes` : 'Expirado'}
                         </div>

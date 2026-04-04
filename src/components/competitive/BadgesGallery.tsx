@@ -56,8 +56,8 @@ export const BadgesGallery: FC<BadgesGalleryProps> = ({ salespersonId }) => {
         <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
-                <Trophy className="h-4 w-4 text-white" />
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center">
+                <Trophy className="h-4 w-4 text-primary-foreground" />
               </div>
               Coleção de Conquistas
               <Badge variant="secondary" className="ml-auto text-xs">

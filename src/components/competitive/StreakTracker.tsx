@@ -75,9 +75,9 @@ export const StreakTracker: FC<StreakTrackerProps> = ({ className }) => {
                   transition={{ delay: i * 0.08 }}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-xl border transition-all',
-                    s.current_streak >= 10 && 'bg-gradient-to-r from-red-500/10 to-orange-500/5 border-red-500/30',
-                    s.current_streak >= 5 && s.current_streak < 10 && 'bg-gradient-to-r from-orange-500/10 to-amber-500/5 border-orange-500/30',
-                    s.current_streak >= 2 && s.current_streak < 5 && 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border-amber-500/30',
+                    s.current_streak >= 10 && 'bg-gradient-to-r from-destructive/10 to-streak/5 border-destructive/30',
+                    s.current_streak >= 5 && s.current_streak < 10 && 'bg-gradient-to-r from-streak/10 to-warning/5 border-streak/30',
+                    s.current_streak >= 2 && s.current_streak < 5 && 'bg-gradient-to-r from-warning/10 to-coins/5 border-warning/30',
                   )}
                 >
                   <Avatar className="h-9 w-9 border-2 border-background shadow">

@@ -177,7 +177,7 @@ export function EnhancedTVMode() {
                       <div className="font-semibold">{sale.client_name}</div>
                       <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id) || 'N/A'}</div>
                     </div>
-                    <div className="text-xl font-bold text-green-500">
+                    <div className="text-xl font-bold text-success">
                       R$ {(sale.amount || 0).toLocaleString('pt-BR')}
                     </div>
                   </motion.div>

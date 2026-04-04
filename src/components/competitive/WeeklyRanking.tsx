@@ -113,7 +113,7 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
                     </div>
                   </div>
 
-                  <p className={cn('font-bold text-right', i === 0 ? 'text-lg text-amber-600 dark:text-amber-400' : 'text-sm text-foreground')}>
+                  <p className={cn('font-bold text-right', i === 0 ? 'text-lg text-rank-gold' : 'text-sm text-foreground')}>
                     R$ {person.weeklySales.toLocaleString('pt-BR')}
                   </p>
                 </motion.div>
