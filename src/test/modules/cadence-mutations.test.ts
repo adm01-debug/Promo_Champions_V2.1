@@ -53,7 +53,7 @@ describe('Cadence Update Operations', () => {
   });
 
   it('should set updated_at timestamp', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { name: 'Updated' });
     expect(result.updated_at).toBeDefined();
   });
