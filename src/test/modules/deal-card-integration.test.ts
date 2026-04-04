@@ -69,7 +69,7 @@ describe("StagnantDealAlert prop mapping from Deal", () => {
   });
 
   it("falls back to created_at when updated_at is missing", () => {
-    const deal = { updated_at: undefined, created_at: "2026-01-01", client_name: "Test", amount: 5000 };
+    const deal = { updated_at: undefined as string | undefined, created_at: "2026-01-01", client_name: "Test", amount: 5000 };
     const updatedAt = deal.updated_at || deal.created_at;
     expect(updatedAt).toBe("2026-01-01");
   });
