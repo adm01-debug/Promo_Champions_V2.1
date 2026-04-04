@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock } from "lucide-react";
@@ -20,7 +21,7 @@ interface ActivityItemRowProps {
   salesperson?: { name: string; avatar_url: string | null } | null;
 }
 
-export function ActivityItemRow({ activity, salesperson }: ActivityItemRowProps) {
+const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }: ActivityItemRowProps) {
   const Icon = activityIcons[activity.activity_type];
   const outcomeStyle = outcomeLabels[activity.outcome];
 
@@ -62,3 +63,4 @@ export function ActivityItemRow({ activity, salesperson }: ActivityItemRowProps)
     </div>
   );
 }
+export const ActivityItemRow = memo(ActivityItemRowInner);
