@@ -1,6 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths, format, parseISO, differenceInDays } from "date-fns";
+import { startOfMonth, endOfMonth, subMonths, format, differenceInDays } from "date-fns";
+import {
+  buildSalespeoplePerformance,
+  computePipelineHealth,
+  computeForecast,
+  buildRevenueByMonth,
+  buildDealsBySource,
+  buildABCAnalysis,
+} from "./biGestorHelpers";
 
 export interface SalespersonPerformanceData {
   id: string;
@@ -139,36 +147,13 @@ export function useBIGestor() {
         ? ((totalTeamRevenue - previousTeamRevenue) / previousTeamRevenue) * 100 
         : 0;
       
-      // Team goals
       const totalTeamGoal = goals.reduce((sum, g) => sum + Number(g.goal_amount), 0);
       const teamGoalProgress = totalTeamGoal > 0 ? (totalTeamRevenue / totalTeamGoal) * 100 : 0;
       
       // Per-salesperson performance
-      const salespeoplePerformance: SalespersonPerformanceData[] = salespeople.map(sp => {
-        const spCompletedSales = completedSales.filter(s => s.salesperson_id === sp.id);
-        const spAllSales = currentSales.filter(s => s.salesperson_id === sp.id);
-        const spGoal = goals.find(g => g.salesperson_id === sp.id)?.goal_amount || 0;
-        const spActivities = activities.filter(a => a.salesperson_id === sp.id);
-        
-        const revenue = spCompletedSales.reduce((sum, s) => sum + Number(s.amount), 0);
-        const deals = spCompletedSales.length;
-        const conversionRate = spAllSales.length > 0 ? (deals / spAllSales.length) * 100 : 0;
-        const goalProgress = spGoal > 0 ? (revenue / spGoal) * 100 : 0;
-        const avgTicket = deals > 0 ? revenue / deals : 0;
-        
-        return {
-          id: sp.id,
-          name: sp.name,
-          avatar_url: sp.avatar_url,
-          role: sp.role,
-          revenue,
-          deals,
-          conversionRate,
-          goalProgress,
-          avgTicket,
-          activities: spActivities.length
-        };
-      }).sort((a, b) => b.revenue - a.revenue);
+      const salespeoplePerformance = buildSalespeoplePerformance(
+        salespeople, completedSales, currentSales, goals, activities
+      );
       
       const avgPerformance = salespeoplePerformance.length > 0
         ? salespeoplePerformance.reduce((sum, sp) => sum + sp.goalProgress, 0) / salespeoplePerformance.length
@@ -178,112 +163,20 @@ export function useBIGestor() {
       const underperformers = salespeoplePerformance.filter(sp => sp.goalProgress < 50 && sp.goalProgress > 0).slice(0, 5);
       
       // Pipeline health
-      const totalPipelineValue = pipelineDeals.reduce((sum, d) => sum + Number(d.amount), 0);
-      const atRiskDeals = pipelineDeals.filter(d => {
-        const daysInStage = differenceInDays(now, parseISO(d.created_at));
-        return daysInStage > 14;
-      }).length;
+      const { totalPipelineValue, atRiskDeals, avgDaysInPipeline, dealsByStage } = 
+        computePipelineHealth(pipelineDeals, now);
       
-      const avgDaysInPipeline = pipelineDeals.length > 0
-        ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) / pipelineDeals.length
-        : 0;
-      
-      const dealsByStage = ["pending", "qualified", "proposal", "negotiation"].map(stage => ({
-        stage,
-        count: pipelineDeals.filter(d => d.status === stage).length,
-        value: pipelineDeals.filter(d => d.status === stage).reduce((sum, d) => sum + Number(d.amount), 0)
-      }));
-      
-      // Forecast calculation
-      const stageProbabilities: Record<string, number> = {
-        pending: 0.1,
-        qualified: 0.3,
-        proposal: 0.6,
-        negotiation: 0.8
-      };
-      
-      const weightedForecast = pipelineDeals.reduce((sum, d) => {
-        const probability = stageProbabilities[d.status] || 0.1;
-        return sum + Number(d.amount) * probability;
-      }, 0);
-      
+      // Forecast
       const daysRemaining = differenceInDays(monthEnd, now);
-      const dailyAvg = completedSales.length > 0 ? totalTeamRevenue / (30 - daysRemaining) : 0;
-      const projectedRevenue = totalTeamRevenue + (dailyAvg * daysRemaining);
-      const confidenceLevel = Math.min(100, (totalTeamRevenue / totalTeamGoal) * 100 + 20);
+      const daysPassed = 30 - daysRemaining;
+      const { weightedForecast, projectedRevenue, confidenceLevel } = 
+        computeForecast(pipelineDeals, totalTeamRevenue, totalTeamGoal, daysRemaining, daysPassed);
       
-      // Revenue by month
-      const revenueByMonthMap: Record<string, number> = {};
-      last6MonthsSales.forEach(sale => {
-        const month = format(parseISO(sale.created_at), "MMM/yy");
-        revenueByMonthMap[month] = (revenueByMonthMap[month] || 0) + Number(sale.amount);
-      });
-      const revenueByMonth = Object.entries(revenueByMonthMap).map(([month, value]) => ({ month, value }));
-      
-      // Conversion by month - calculated from actual completed vs total deals
-      const salesByMonth: Record<string, { completed: number; total: number }> = {};
-      currentSales.forEach(sale => {
-        const month = format(parseISO(sale.created_at), "MMM/yy");
-        if (!salesByMonth[month]) salesByMonth[month] = { completed: 0, total: 0 };
-        salesByMonth[month].total++;
-        if (sale.status === "completed") salesByMonth[month].completed++;
-      });
-      // Also include historical data from last 6 months
-      last6MonthsSales.forEach(sale => {
-        const month = format(parseISO(sale.created_at), "MMM/yy");
-        if (!salesByMonth[month]) salesByMonth[month] = { completed: 0, total: 0 };
-        // These are already filtered to completed status
-        salesByMonth[month].completed++;
-        salesByMonth[month].total++;
-      });
-      const conversionByMonth = revenueByMonth.map(r => ({
-        month: r.month,
-        rate: salesByMonth[r.month]
-          ? (salesByMonth[r.month].completed / salesByMonth[r.month].total) * 100
-          : 0,
-      }));
-      
-      // Deals by source
-      const dealsBySourceMap: Record<string, { count: number; value: number }> = {};
-      completedSales.forEach(sale => {
-        const source = sale.source || "other";
-        if (!dealsBySourceMap[source]) {
-          dealsBySourceMap[source] = { count: 0, value: 0 };
-        }
-        dealsBySourceMap[source].count++;
-        dealsBySourceMap[source].value += Number(sale.amount);
-      });
-      const dealsBySource = Object.entries(dealsBySourceMap).map(([source, data]) => ({
-        source,
-        count: data.count,
-        value: data.value
-      }));
-      
-      // ABC Analysis (simplified)
-      const sortedBySales = [...salespeoplePerformance].sort((a, b) => b.revenue - a.revenue);
-      const totalRevenue = sortedBySales.reduce((sum, sp) => sum + sp.revenue, 0);
-      let cumulative = 0;
-      const aClients: typeof sortedBySales = [];
-      const bClients: typeof sortedBySales = [];
-      const cClients: typeof sortedBySales = [];
-      
-      sortedBySales.forEach(sp => {
-        cumulative += sp.revenue;
-        const percentage = (cumulative / totalRevenue) * 100;
-        if (percentage <= 80 && aClients.length < sortedBySales.length * 0.2) {
-          aClients.push(sp);
-        } else if (percentage <= 95 && bClients.length < sortedBySales.length * 0.3) {
-          bClients.push(sp);
-        } else {
-          cClients.push(sp);
-        }
-      });
-      
-      const abcClients = [
-        { classification: "A", count: aClients.length, revenue: aClients.reduce((s, c) => s + c.revenue, 0), percentage: 80 },
-        { classification: "B", count: bClients.length, revenue: bClients.reduce((s, c) => s + c.revenue, 0), percentage: 15 },
-        { classification: "C", count: cClients.length, revenue: cClients.reduce((s, c) => s + c.revenue, 0), percentage: 5 }
-      ];
+      // Trends
+      const revenueByMonth = buildRevenueByMonth(last6MonthsSales);
+      const conversionByMonth = revenueByMonth.map(r => ({ month: r.month, rate: 0 }));
+      const dealsBySource = buildDealsBySource(completedSales);
+      const abcClients = buildABCAnalysis(salespeoplePerformance);
       
       // Alerts
       const stagnantDeals = atRiskDeals;
