@@ -62,6 +62,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Suspense>
       </ErrorBoundary>
 
+      {/* Product Analytics Route Tracker */}
+      <Suspense fallback={null}>
+        <RouteTracker />
+      </Suspense>
+
       {/* Offline indicator at top */}
       <Suspense fallback={null}>
         <OfflineIndicator />
