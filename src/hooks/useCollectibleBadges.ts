@@ -53,7 +53,7 @@ export function useCollectibleBadges(salespersonId?: string) {
         .eq('salesperson_id', salespersonId)
         .order('earned_at', { ascending: false });
       if (error) throw error;
-      return (data || []).map((eb: any) => ({
+      return (data || []).map((eb: Record<string, unknown> & { badge?: CollectibleBadge }) => ({
         ...eb,
         badge: eb.badge as CollectibleBadge,
       })) as EarnedBadge[];
