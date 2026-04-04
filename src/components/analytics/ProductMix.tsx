@@ -96,7 +96,7 @@ export const ProductMix: FC = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, name: string, props: any) => [
+                  formatter={(value: number, name: string, props: Record<string, unknown>) => [
                     `${value} vendas (${props.payload.percentage}%)`,
                     name
                   ]}

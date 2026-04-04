@@ -13,7 +13,7 @@ function FloatingOrb({ delay, x, y, size, color }: { delay: number; x: string; y
   );
 }
 
-function StatBadge({ icon: Icon, label, value, delay }: { icon: any; label: string; value: string; delay: number }) {
+function StatBadge({ icon: Icon, label, value, delay }: { icon: React.ElementType; label: string; value: string; delay: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

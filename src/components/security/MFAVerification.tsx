@@ -69,7 +69,7 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
       </CardHeader>
       
       <CardContent>
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'totp' | 'passkey')}>
           <TabsList className="grid w-full grid-cols-3">
             {settings?.totp_enabled && (
               <TabsTrigger value="totp" className="flex items-center gap-1">

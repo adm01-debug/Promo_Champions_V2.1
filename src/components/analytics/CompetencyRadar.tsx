@@ -41,7 +41,7 @@ const DEFAULT_DATA: CompetencyData[] = [
 ];
 
 
-const renderCustomTooltip = ({ active, payload }: any) => {
+const renderCustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number; payload: Record<string, unknown> }> }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const percentage = Math.round((data.value / data.maxValue) * 100);

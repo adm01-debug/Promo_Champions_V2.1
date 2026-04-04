@@ -66,7 +66,7 @@ export function SecurityAlertSettings() {
         description: "As configurações de alerta foram atualizadas.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Erro ao salvar",
         description: error.message || "Não foi possível salvar as configurações.",
