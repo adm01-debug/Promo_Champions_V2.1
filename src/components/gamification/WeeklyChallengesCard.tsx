@@ -65,7 +65,7 @@ function ChallengeItem({
             <Gift className="h-3 w-3" />
           </Button>
         )}
-        {alreadyClaimed && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+        {alreadyClaimed && <CheckCircle2 className="h-4 w-4 text-success" />}
       </motion.div>
     );
   }

@@ -30,9 +30,9 @@ interface LeaderboardCardProps {
 
 const getRankIcon = (rank: number) => {
   switch (rank) {
-    case 1: return <Crown size={18} className="text-amber-500 fill-amber-500" />;
-    case 2: return <Medal size={18} className="text-slate-400" />;
-    case 3: return <Medal size={18} className="text-amber-700" />;
+    case 1: return <Crown size={18} className="text-rank-gold fill-rank-gold" />;
+    case 2: return <Medal size={18} className="text-rank-silver" />;
+    case 3: return <Medal size={18} className="text-rank-bronze" />;
     default: return <span className="text-muted-foreground font-mono text-sm">{rank}º</span>;
   }
 };
@@ -40,16 +40,16 @@ const getRankIcon = (rank: number) => {
 const getRankChange = (current: number, previous?: number) => {
   if (previous === undefined) return null;
   const diff = previous - current;
-  if (diff > 0) return <TrendingUp size={14} className="text-green-500" />;
-  if (diff < 0) return <TrendingDown size={14} className="text-red-500" />;
+  if (diff > 0) return <TrendingUp size={14} className="text-success" />;
+  if (diff < 0) return <TrendingDown size={14} className="text-destructive" />;
   return <Minus size={14} className="text-muted-foreground" />;
 };
 
 const getRankBackground = (rank: number) => {
   switch (rank) {
-    case 1: return 'bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/30';
-    case 2: return 'bg-gradient-to-r from-slate-400/20 via-slate-400/10 to-transparent border-slate-400/30';
-    case 3: return 'bg-gradient-to-r from-amber-700/20 via-amber-700/10 to-transparent border-amber-700/30';
+    case 1: return 'bg-gradient-to-r from-rank-gold/20 via-rank-gold/10 to-transparent border-rank-gold/30';
+    case 2: return 'bg-gradient-to-r from-rank-silver/20 via-rank-silver/10 to-transparent border-rank-silver/20';
+    case 3: return 'bg-gradient-to-r from-rank-bronze/20 via-rank-bronze/10 to-transparent border-rank-bronze/20';
     default: return '';
   }
 };
@@ -69,7 +69,7 @@ export const LeaderboardCard: FC<LeaderboardCardProps> = ({
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Trophy size={20} className="text-amber-500" />
+          <Trophy size={20} className="text-rank-gold" />
           {title}
         </CardTitle>
       </CardHeader>
@@ -127,7 +127,7 @@ export const LeaderboardCard: FC<LeaderboardCardProps> = ({
 
                 {/* Streak */}
                 {showStreak && entry.streak !== undefined && entry.streak > 0 && (
-                  <div className="flex items-center gap-1 text-xs text-orange-500">
+                  <div className="flex items-center gap-1 text-xs text-streak">
                     🔥 {entry.streak}
                   </div>
                 )}
@@ -170,12 +170,12 @@ export const MiniLeaderboard: FC<MiniLeaderboardProps> = ({
       {/* 2nd place */}
       {top3[1] && (
         <div className="flex flex-col items-center">
-          <Avatar className="h-12 w-12 border-2 border-slate-400">
+          <Avatar className="h-12 w-12 border-2 border-rank-silver">
             <AvatarImage src={top3[1].avatarUrl} />
             <AvatarFallback>{top3[1].name.slice(0, 2)}</AvatarFallback>
           </Avatar>
-          <div className="mt-2 w-16 h-16 bg-gradient-to-t from-slate-400 to-slate-300 rounded-t-lg flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">2</span>
+          <div className="mt-2 w-16 h-16 bg-gradient-to-t from-rank-silver to-rank-silver/70 rounded-t-lg flex items-center justify-center">
+            <span className="text-2xl font-bold text-rank-silver-foreground">2</span>
           </div>
           <p className="text-xs mt-1 truncate max-w-[4rem]">{top3[1].name}</p>
         </div>
@@ -184,13 +184,13 @@ export const MiniLeaderboard: FC<MiniLeaderboardProps> = ({
       {/* 1st place */}
       {top3[0] && (
         <div className="flex flex-col items-center">
-          <Crown size={24} className="text-amber-500 mb-1" />
-          <Avatar className="h-14 w-14 border-2 border-amber-500">
+          <Crown size={24} className="text-rank-gold mb-1" />
+          <Avatar className="h-14 w-14 border-2 border-rank-gold">
             <AvatarImage src={top3[0].avatarUrl} />
             <AvatarFallback>{top3[0].name.slice(0, 2)}</AvatarFallback>
           </Avatar>
-          <div className="mt-2 w-20 h-20 bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-lg flex items-center justify-center">
-            <span className="text-3xl font-bold text-white">1</span>
+          <div className="mt-2 w-20 h-20 bg-gradient-to-t from-rank-gold to-coins rounded-t-lg flex items-center justify-center">
+            <span className="text-3xl font-bold text-rank-gold-foreground">1</span>
           </div>
           <p className="text-xs mt-1 truncate max-w-[5rem] font-medium">{top3[0].name}</p>
         </div>
@@ -199,12 +199,12 @@ export const MiniLeaderboard: FC<MiniLeaderboardProps> = ({
       {/* 3rd place */}
       {top3[2] && (
         <div className="flex flex-col items-center">
-          <Avatar className="h-10 w-10 border-2 border-amber-700">
+          <Avatar className="h-10 w-10 border-2 border-rank-bronze">
             <AvatarImage src={top3[2].avatarUrl} />
             <AvatarFallback>{top3[2].name.slice(0, 2)}</AvatarFallback>
           </Avatar>
-          <div className="mt-2 w-14 h-12 bg-gradient-to-t from-amber-700 to-amber-600 rounded-t-lg flex items-center justify-center">
-            <span className="text-xl font-bold text-white">3</span>
+          <div className="mt-2 w-14 h-12 bg-gradient-to-t from-rank-bronze to-rank-bronze/70 rounded-t-lg flex items-center justify-center">
+            <span className="text-xl font-bold text-rank-bronze-foreground">3</span>
           </div>
           <p className="text-xs mt-1 truncate max-w-[3.5rem]">{top3[2].name}</p>
         </div>

@@ -35,28 +35,32 @@ const categoryIcons = {
 
 const rarityStyles = {
   common: {
-    border: 'border-slate-500/30',
-    bg: 'bg-slate-500/5',
-    text: 'text-slate-500',
-    glow: ''
+    border: 'border-muted-foreground/30',
+    bg: 'bg-muted/5',
+    text: 'text-muted-foreground',
+    glow: '',
+    gradient: 'from-muted-foreground/40 to-muted-foreground/60'
   },
   rare: {
-    border: 'border-blue-500/30',
-    bg: 'bg-blue-500/5',
-    text: 'text-blue-500',
-    glow: 'shadow-blue-500/20'
+    border: 'border-info/30',
+    bg: 'bg-info/5',
+    text: 'text-info',
+    glow: 'shadow-info/20',
+    gradient: 'from-info/40 to-info/60'
   },
   epic: {
-    border: 'border-purple-500/30',
-    bg: 'bg-purple-500/5',
-    text: 'text-purple-500',
-    glow: 'shadow-purple-500/20'
+    border: 'border-primary/30',
+    bg: 'bg-primary/5',
+    text: 'text-primary',
+    glow: 'shadow-primary/20',
+    gradient: 'from-primary/40 to-primary/60'
   },
   legendary: {
-    border: 'border-amber-500/30',
-    bg: 'bg-amber-500/10',
-    text: 'text-amber-500',
-    glow: 'shadow-amber-500/30'
+    border: 'border-coins/30',
+    bg: 'bg-coins/10',
+    text: 'text-coins',
+    glow: 'shadow-coins/30',
+    gradient: 'from-coins/40 to-streak/60'
   }
 };
 
@@ -82,9 +86,7 @@ export const AchievementCard: FC<AchievementCardProps> = ({
         <div className={cn(
           "w-10 h-10 rounded-full flex items-center justify-center text-lg",
           achievement.unlocked 
-            ? `bg-gradient-to-br ${achievement.rarity === 'legendary' ? 'from-amber-400 to-orange-500' : 
-               achievement.rarity === 'epic' ? 'from-purple-400 to-purple-600' :
-               achievement.rarity === 'rare' ? 'from-blue-400 to-blue-600' : 'from-slate-400 to-slate-600'}`
+            ? `bg-gradient-to-br ${style.gradient}`
             : 'bg-muted'
         )}>
           {achievement.unlocked ? achievement.emoji : <Lock size={16} className="text-muted-foreground" />}
@@ -101,7 +103,7 @@ export const AchievementCard: FC<AchievementCardProps> = ({
           </p>
         </div>
         {achievement.unlocked ? (
-          <CheckCircle2 size={18} className="text-green-500" />
+          <CheckCircle2 size={18} className="text-success" />
         ) : (
           <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
         )}
@@ -152,9 +154,9 @@ export const AchievementCard: FC<AchievementCardProps> = ({
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+                className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full flex items-center justify-center"
               >
-                <CheckCircle2 size={14} className="text-white" />
+                <CheckCircle2 size={14} className="text-success-foreground" />
               </motion.div>
             )}
           </div>
@@ -180,7 +182,7 @@ export const AchievementCard: FC<AchievementCardProps> = ({
                 <span>{categoryIcons[achievement.category]}</span>
                 <span>{achievement.progress} / {achievement.target}</span>
               </div>
-              <div className="flex items-center gap-1 text-xs font-medium text-amber-500">
+              <div className="flex items-center gap-1 text-xs font-medium text-coins">
                 <Star size={12} className="fill-current" />
                 +{achievement.xpReward} XP
               </div>
@@ -199,7 +201,7 @@ export const AchievementCard: FC<AchievementCardProps> = ({
             )}
 
             {achievement.unlocked && achievement.unlockedAt && (
-              <p className="text-xs text-green-500 mt-2">
+              <p className="text-xs text-success mt-2">
                 ✓ Conquistado em {achievement.unlockedAt.toLocaleDateString('pt-BR')}
               </p>
             )}
@@ -209,7 +211,7 @@ export const AchievementCard: FC<AchievementCardProps> = ({
         {/* Legendary shimmer effect */}
         {achievement.unlocked && achievement.rarity === 'legendary' && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-foreground/10 to-transparent"
             animate={{ x: ['-100%', '100%'] }}
             transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
           />
