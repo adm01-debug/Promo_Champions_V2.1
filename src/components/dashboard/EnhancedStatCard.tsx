@@ -22,7 +22,7 @@ interface EnhancedStatCardProps {
   sparklineData?: number[];
 }
 
-export const EnhancedStatCard = React.memo<EnhancedStatCardProps>(function EnhancedStatCard({
+const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
   title,
   value,
   previousValue,
@@ -36,7 +36,7 @@ export const EnhancedStatCard = React.memo<EnhancedStatCardProps>(function Enhan
   className,
   onClick,
   sparklineData
-) {
+}) => {
   // Determine trend from change if not provided
   const effectiveTrend = trend ?? (change ? (change > 0 ? 'up' : change < 0 ? 'down' : 'neutral') : 'neutral');
   
