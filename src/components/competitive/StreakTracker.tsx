@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 import { useSalesStreaks } from '@/hooks/useSalesStreaks';
 
 const STREAK_TIERS = [
-  { min: 10, label: 'Lendário', emoji: '🔥🔥🔥', multiplier: '3x XP', color: 'text-red-500' },
-  { min: 5, label: 'On Fire', emoji: '🔥🔥', multiplier: '2x XP', color: 'text-orange-500' },
-  { min: 2, label: 'Esquentando', emoji: '🔥', multiplier: '1.5x XP', color: 'text-amber-500' },
+  { min: 10, label: 'Lendário', emoji: '🔥🔥🔥', multiplier: '3x XP', color: 'text-destructive' },
+  { min: 5, label: 'On Fire', emoji: '🔥🔥', multiplier: '2x XP', color: 'text-streak' },
+  { min: 2, label: 'Esquentando', emoji: '🔥', multiplier: '1.5x XP', color: 'text-warning' },
   { min: 0, label: 'Início', emoji: '❄️', multiplier: '1x XP', color: 'text-muted-foreground' },
 ];
 
