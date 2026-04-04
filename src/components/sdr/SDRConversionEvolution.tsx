@@ -10,6 +10,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SDRConversionTooltip } from "./SDRConversionTooltip";
 
+interface SDRDetails {
+  meetings: number;
+  leads: number;
+  rate: number;
+}
+
+interface ChartDataPoint {
+  date: string;
+  label: string;
+  teamAverage: number;
+  teamMeetings: number;
+  teamLeads: number;
+  details: Record<string, SDRDetails>;
+  [key: string]: number | string | Record<string, SDRDetails>;
+}
+
 type PeriodFilter = 'week' | 'month' | 'quarter';
 
 interface SDRConversionEvolutionProps {
