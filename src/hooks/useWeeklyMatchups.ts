@@ -32,7 +32,8 @@ export function useWeeklyMatchups() {
 
       if (error) throw error;
 
-      return (data || []).map((m: Record<string, unknown> & { sp_a?: { id: string; name: string; avatar_url: string | null }; sp_b?: { id: string; name: string; avatar_url: string | null } }) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (data || []).map((m: any) => ({
         id: m.id,
         salesperson_a: m.sp_a || { id: m.salesperson_a_id, name: 'Vendedor A', avatar_url: null },
         salesperson_b: m.sp_b || { id: m.salesperson_b_id, name: 'Vendedor B', avatar_url: null },
