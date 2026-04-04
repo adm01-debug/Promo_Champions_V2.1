@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Line, ComposedChart } from "recharts";
 import { TrendingUp } from "lucide-react";
+import type { RechartsTooltipProps } from "@/types/recharts";
 
 interface ABCItem {
   name: string;
