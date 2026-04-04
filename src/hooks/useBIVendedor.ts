@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { startOfMonth, endOfMonth, subMonths, format, parseISO, differenceInDays, subDays } from "date-fns";
+import { startOfMonth, endOfMonth, subMonths, format, differenceInDays, subDays } from "date-fns";
+import {
+  computeRanking, computeActivitiesByType, computeStreak,
+  computePipelineByStage, buildSalesByDay, buildSalesByCategory,
+} from "./biVendedorHelpers";
 
 export interface BIVendedorData {
   // Performance metrics
