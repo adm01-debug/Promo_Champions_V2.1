@@ -142,7 +142,7 @@ export const CompetitiveTVDashboard: FC = () => {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.1 }}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/20"
+                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-streak/10 to-destructive/10 border border-streak/20"
                     >
                       <div className="text-3xl">🔥</div>
                       <div>
