@@ -166,6 +166,7 @@ const closerGroupedItems: MenuGroup[] = [
     icon: Gauge,
     items: [
       { title: "BI Closer", url: "/bi-closer", icon: LineChart },
+      { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
