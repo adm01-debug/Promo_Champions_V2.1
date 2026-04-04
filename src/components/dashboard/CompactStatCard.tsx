@@ -43,7 +43,7 @@ const variantStyles: Record<CardVariant, { bg: string; text: string; iconBg: str
   },
 };
 
-export const CompactStatCard: FC<CompactStatCardProps> = ({
+export const CompactStatCard: FC<CompactStatCardProps> = React.memo(({
   title,
   value,
   icon: Icon,
