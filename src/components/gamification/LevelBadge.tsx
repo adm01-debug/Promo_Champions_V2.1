@@ -25,21 +25,21 @@ const sizeStyles = {
 };
 
 const levelGradients: Record<number, string> = {
-  1: 'from-slate-400/20 to-slate-500/20 border-slate-400/30 text-slate-600',
-  2: 'from-green-400/20 to-green-500/20 border-green-400/30 text-green-600',
-  3: 'from-blue-400/20 to-blue-500/20 border-blue-400/30 text-blue-600',
-  4: 'from-purple-400/20 to-purple-500/20 border-purple-400/30 text-purple-600',
-  5: 'from-orange-400/20 to-red-500/20 border-orange-400/30 text-orange-600',
-  6: 'from-cyan-400/20 to-blue-500/20 border-cyan-400/30 text-cyan-600',
-  7: 'from-pink-400/20 to-rose-500/20 border-pink-400/30 text-pink-600',
-  8: 'from-amber-400/20 to-yellow-500/20 border-amber-400/30 text-amber-600',
-  9: 'from-emerald-400/20 to-teal-500/20 border-emerald-400/30 text-emerald-600',
-  10: 'from-violet-400/20 to-purple-500/20 border-violet-400/30 text-violet-600',
+  1: 'from-muted-foreground/20 to-muted-foreground/20 border-muted-foreground/30 text-muted-foreground',
+  2: 'from-success/20 to-success/20 border-success/30 text-success',
+  3: 'from-info/20 to-info/20 border-info/30 text-info',
+  4: 'from-primary/20 to-primary/20 border-primary/30 text-primary',
+  5: 'from-streak/20 to-destructive/20 border-streak/30 text-streak',
+  6: 'from-accent/20 to-info/20 border-accent/30 text-accent',
+  7: 'from-live-pulse/20 to-destructive/20 border-live-pulse/30 text-live-pulse',
+  8: 'from-coins/20 to-warning/20 border-coins/30 text-coins',
+  9: 'from-success/20 to-accent/20 border-success/30 text-success',
+  10: 'from-xp/20 to-primary/20 border-xp/30 text-xp',
 };
 
 const getGradientForLevel = (level: number): string => {
   if (level >= 15) {
-    return 'from-amber-400/30 to-orange-500/30 border-amber-500/50 text-amber-500';
+    return 'from-coins/30 to-streak/30 border-coins/50 text-coins';
   }
   return levelGradients[level] || levelGradients[Math.min(level, 10)];
 };
@@ -103,7 +103,7 @@ export const LevelUpNotification: FC<LevelUpNotificationProps> = ({
   newLevel,
   onClose
 }) => {
-  const newLevelInfo = getLevelFromXP(newLevel * 100); // Approximate XP for level
+  const newLevelInfo = getLevelFromXP(newLevel * 100);
 
   return (
     <motion.div

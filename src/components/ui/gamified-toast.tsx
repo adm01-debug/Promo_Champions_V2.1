@@ -23,17 +23,17 @@ const toastStyles: Record<ToastType, {
   textColor: string;
   emoji?: string;
 }> = {
-  xp: { icon: <Zap className="w-5 h-5" />, gradient: "from-blue-500/20 to-cyan-500/20", textColor: "text-blue-500", emoji: "⚡" },
-  coins: { icon: <Coins className="w-5 h-5" />, gradient: "from-yellow-500/20 to-amber-500/20", textColor: "text-yellow-500", emoji: "🪙" },
-  achievement: { icon: <Trophy className="w-5 h-5" />, gradient: "from-purple-500/20 to-pink-500/20", textColor: "text-purple-500", emoji: "🏆" },
-  levelUp: { icon: <Crown className="w-5 h-5" />, gradient: "from-amber-500/20 to-yellow-500/20", textColor: "text-amber-500", emoji: "👑" },
-  streak: { icon: <Flame className="w-5 h-5" />, gradient: "from-orange-500/20 to-red-500/20", textColor: "text-orange-500", emoji: "🔥" },
-  reward: { icon: <Gift className="w-5 h-5" />, gradient: "from-pink-500/20 to-rose-500/20", textColor: "text-pink-500", emoji: "🎁" },
-  quest: { icon: <Target className="w-5 h-5" />, gradient: "from-emerald-500/20 to-green-500/20", textColor: "text-emerald-500", emoji: "🎯" },
-  success: { icon: <CheckCircle2 className="w-5 h-5" />, gradient: "from-green-500/20 to-emerald-500/20", textColor: "text-green-500" },
-  error: { icon: <XCircle className="w-5 h-5" />, gradient: "from-red-500/20 to-rose-500/20", textColor: "text-red-500" },
-  warning: { icon: <AlertCircle className="w-5 h-5" />, gradient: "from-yellow-500/20 to-orange-500/20", textColor: "text-yellow-600" },
-  info: { icon: <Info className="w-5 h-5" />, gradient: "from-blue-500/20 to-indigo-500/20", textColor: "text-blue-500" },
+  xp: { icon: <Zap className="w-5 h-5" />, gradient: "from-info/20 to-accent/20", textColor: "text-info", emoji: "⚡" },
+  coins: { icon: <Coins className="w-5 h-5" />, gradient: "from-coins/20 to-warning/20", textColor: "text-coins", emoji: "🪙" },
+  achievement: { icon: <Trophy className="w-5 h-5" />, gradient: "from-primary/20 to-live-pulse/20", textColor: "text-primary", emoji: "🏆" },
+  levelUp: { icon: <Crown className="w-5 h-5" />, gradient: "from-coins/20 to-rank-gold/20", textColor: "text-coins", emoji: "👑" },
+  streak: { icon: <Flame className="w-5 h-5" />, gradient: "from-streak/20 to-destructive/20", textColor: "text-streak", emoji: "🔥" },
+  reward: { icon: <Gift className="w-5 h-5" />, gradient: "from-live-pulse/20 to-destructive/20", textColor: "text-live-pulse", emoji: "🎁" },
+  quest: { icon: <Target className="w-5 h-5" />, gradient: "from-success/20 to-accent/20", textColor: "text-success", emoji: "🎯" },
+  success: { icon: <CheckCircle2 className="w-5 h-5" />, gradient: "from-success/20 to-accent/20", textColor: "text-success" },
+  error: { icon: <XCircle className="w-5 h-5" />, gradient: "from-destructive/20 to-live-pulse/20", textColor: "text-destructive" },
+  warning: { icon: <AlertCircle className="w-5 h-5" />, gradient: "from-warning/20 to-streak/20", textColor: "text-warning" },
+  info: { icon: <Info className="w-5 h-5" />, gradient: "from-info/20 to-primary/20", textColor: "text-info" },
 };
 
 const ToastContent = ({ title, description, type, amount, icon: customIcon }: GamifiedToastOptions) => {
@@ -112,37 +112,26 @@ const ToastContent = ({ title, description, type, amount, icon: customIcon }: Ga
 export const gamifiedToast = {
   xp: (amount: number, description?: string) =>
     toast.custom(() => <ToastContent title={`+${amount} XP Ganhos!`} description={description || "Continue assim!"} type="xp" amount={amount} />, { duration: 3000 }),
-
   coins: (amount: number, description?: string) =>
     toast.custom(() => <ToastContent title={`+${amount} Moedas!`} description={description || "Moedas adicionadas à sua conta"} type="coins" amount={amount} />, { duration: 3000 }),
-
   achievement: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description || "Nova conquista desbloqueada!"} type="achievement" />, { duration: 4000 }),
-
   levelUp: (level: number) =>
     toast.custom(() => <ToastContent title={`Level ${level} Alcançado!`} description="Parabéns pela evolução!" type="levelUp" />, { duration: 5000 }),
-
   streak: (days: number) =>
     toast.custom(() => <ToastContent title={`${days} Dias de Streak!`} description="Mantenha o ritmo!" type="streak" />, { duration: 3000 }),
-
   reward: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description || "Você ganhou uma recompensa!"} type="reward" />, { duration: 4000 }),
-
   quest: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description || "Missão completada!"} type="quest" />, { duration: 3000 }),
-
   success: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description} type="success" />, { duration: 3000 }),
-
   error: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description} type="error" />, { duration: 4000 }),
-
   warning: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description} type="warning" />, { duration: 4000 }),
-
   info: (title: string, description?: string) =>
     toast.custom(() => <ToastContent title={title} description={description} type="info" />, { duration: 3000 }),
-
   custom: (options: GamifiedToastOptions) =>
     toast.custom(() => <ToastContent {...options} />, { duration: options.duration || 3000 }),
 };

@@ -6,14 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
-  lead: { label: "Lead", color: "bg-blue-500" },
-  pending: { label: "Lead", color: "bg-blue-500" },
-  qualified: { label: "Qualificado", color: "bg-indigo-500" },
-  proposal: { label: "Proposta", color: "bg-amber-500" },
-  negotiation: { label: "Negociação", color: "bg-orange-500" },
-  won: { label: "Ganho", color: "bg-green-500" },
-  completed: { label: "Fechado", color: "bg-green-600" },
-  lost: { label: "Perdido", color: "bg-red-500" },
+  lead: { label: "Lead", color: "bg-info" },
+  pending: { label: "Lead", color: "bg-info" },
+  qualified: { label: "Qualificado", color: "bg-primary" },
+  proposal: { label: "Proposta", color: "bg-warning" },
+  negotiation: { label: "Negociação", color: "bg-streak" },
+  won: { label: "Ganho", color: "bg-success" },
+  completed: { label: "Fechado", color: "bg-success" },
+  lost: { label: "Perdido", color: "bg-destructive" },
 };
 
 export function PipelineFunnelWidget() {
@@ -47,7 +47,7 @@ export function PipelineFunnelWidget() {
     <Card className="h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-          <BarChart3 className="h-3.5 w-3.5 text-blue-500" />
+          <BarChart3 className="h-3.5 w-3.5 text-info" />
           Funil de Pipeline
         </CardTitle>
       </CardHeader>
