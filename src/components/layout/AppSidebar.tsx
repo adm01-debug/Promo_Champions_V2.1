@@ -36,6 +36,7 @@ import {
   Briefcase,
   Search,
   Gauge,
+  MessageSquare,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -114,6 +115,7 @@ const sdrGroupedItems: MenuGroup[] = [
     icon: Search,
     items: [
       { title: "Cadências", url: "/cadencias", icon: Activity },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
     ],
@@ -147,6 +149,7 @@ const closerGroupedItems: MenuGroup[] = [
     icon: DollarSign,
     items: [
       { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
     ],
@@ -203,6 +206,7 @@ const gestaoGroupedItems: MenuGroup[] = [
     items: [
       { title: "Times", url: "/times", icon: Building2 },
       { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
     ],
