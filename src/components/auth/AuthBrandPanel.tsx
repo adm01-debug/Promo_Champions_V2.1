@@ -77,9 +77,9 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }} className="flex items-center gap-6">
           {[
-            { icon: Crown, label: "Lenda", gradient: "from-yellow-400 to-amber-500" },
-            { icon: Swords, label: "Elite", gradient: "from-purple-400 to-violet-500" },
-            { icon: Trophy, label: "Veterano", gradient: "from-amber-400 to-orange-500" },
+            { icon: Crown, label: "Lenda", gradient: "from-coins to-rank-gold" },
+            { icon: Swords, label: "Elite", gradient: "from-primary to-primary-glow" },
+            { icon: Trophy, label: "Veterano", gradient: "from-rank-gold to-streak" },
           ].map((rank, i) => (
             <motion.div key={rank.label} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.5 + i * 0.15, type: "spring", stiffness: 300 }} className="flex flex-col items-center gap-1.5">
               <div className={`p-2.5 rounded-xl bg-gradient-to-br ${rank.gradient} shadow-lg`}>

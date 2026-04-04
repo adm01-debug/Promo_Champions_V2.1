@@ -19,10 +19,10 @@ const eventIcons: Record<string, typeof Trophy> = {
 };
 
 const eventColors: Record<string, string> = {
-  sale: 'from-emerald-500/20 to-emerald-500/5',
-  achievement: 'from-amber-500/20 to-amber-500/5',
+  sale: 'from-success/20 to-success/5',
+  achievement: 'from-rank-gold/20 to-rank-gold/5',
   record: 'from-primary/20 to-primary/5',
-  streak: 'from-orange-500/20 to-orange-500/5',
+  streak: 'from-streak/20 to-streak/5',
   challenge: 'from-accent/20 to-accent/5',
 };
 

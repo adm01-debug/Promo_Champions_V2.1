@@ -29,10 +29,10 @@ export const Benchmarking: FC = () => {
   return (
     <div className="space-y-4">
       <Card className="border-none shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-500/10 to-violet-500/10">
+        <div className="bg-gradient-to-r from-primary/10 to-primary-glow/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
                 <BarChart3 className="h-4 w-4 text-primary-foreground" />
               </div>
               Benchmarking

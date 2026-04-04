@@ -65,7 +65,7 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
       case "outcome": return event.deal_outcome === "won"
         ? "bg-gradient-to-br from-status-success/30 to-status-success/10 text-status-success border border-status-success/30"
         : "bg-gradient-to-br from-status-error/30 to-status-error/10 text-status-error border border-status-error/30";
-      case "chat": return "bg-gradient-to-br from-purple-500/30 to-purple-500/10 text-primary border border-primary/30";
+      case "chat": return "bg-gradient-to-br from-primary/30 to-primary/10 text-primary border border-primary/30";
       default: return "bg-muted text-muted-foreground border border-border";
     }
   };

@@ -57,7 +57,7 @@ export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-yellow-600 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center">
                   <Star className="h-4 w-4 text-primary-foreground" />
                 </div>
                 Wall of Fame

@@ -65,7 +65,7 @@ export const SalespersonCard = React.memo(function SalespersonCard({
             </div>
           )}
           {rank === 3 && (
-            <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full p-0.5 shadow">
+            <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-0.5 shadow">
               <span className="text-[8px] font-bold text-background">3º</span>
             </div>
           )}

@@ -35,7 +35,7 @@ export const LeagueSystem: FC<LeagueSystemProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent to-info flex items-center justify-center">
               <Shield className="h-4 w-4 text-primary-foreground" />
             </div>
             Sistema de Ligas

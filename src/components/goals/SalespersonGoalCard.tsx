@@ -1,3 +1,4 @@
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,7 @@ const roleLabels: Record<string, string> = {
   hybrid: "Híbrido",
 };
 
-export function SalespersonGoalCard({
+function _SalespersonGoalCard({
   name,
   avatar_url,
   role,
@@ -145,3 +146,5 @@ export function SalespersonGoalCard({
     </div>
   );
 }
+
+export const SalespersonGoalCard = React.memo(_SalespersonGoalCard);

@@ -15,7 +15,7 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
 
   if (streakLoading || achievementsLoading) {
     return (
-      <Card className="bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 border-streak/20">
+      <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20">
         <CardContent className="p-4">
           <Skeleton className="h-16 w-full" />
         </CardContent>
@@ -34,9 +34,9 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
   const daysToNext = nextMilestone ? nextMilestone.days - streak : 0;
 
   return (
-    <Card className="bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 border-streak/20 overflow-hidden relative">
+    <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20 overflow-hidden relative">
       {/* Animated fire glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-streak/5 to-transparent pointer-events-none" />
       
       <CardContent className="p-4 relative">
         <div className="flex items-center justify-between mb-3">

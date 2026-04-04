@@ -1,3 +1,4 @@
+import React from "react";
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -36,9 +37,9 @@ const getRankIcon = (rank: number) => {
 
 const getRankBadgeColor = (rank: number) => {
   switch (rank) {
-    case 1: return "bg-gradient-to-r from-rank-gold to-yellow-400 text-background shadow-glow-gold";
+    case 1: return "bg-gradient-to-r from-rank-gold to-coins text-background shadow-glow-gold";
     case 2: return "bg-gradient-to-r from-rank-silver to-gray-300 text-background";
-    case 3: return "bg-gradient-to-r from-rank-bronze to-orange-400 text-background";
+    case 3: return "bg-gradient-to-r from-rank-bronze to-streak text-background";
     default: return "bg-muted text-muted-foreground";
   }
 };
@@ -46,7 +47,7 @@ const getRankBadgeColor = (rank: number) => {
 const avatarSizes = { sm: "h-10 w-10", md: "h-14 w-14", lg: "h-16 w-16" };
 const sizeClasses = { sm: "p-3", md: "p-4", lg: "p-5" };
 
-export function GamificationCard({
+function _GamificationCard({
   name, avatarUrl, level, totalXP, xpProgress, xpToNext,
   levelTitle, levelEmoji, levelColor, rank,
   streak = 0, streakRecord = 0, achievements = 0,
@@ -157,3 +158,5 @@ export function GamificationCard({
 }
 
 export { CompactGamificationCard } from "./CompactGamificationCard";
+
+export const GamificationCard = React.memo(_GamificationCard);

@@ -62,7 +62,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-blue-500/20 to-transparent"
+            className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-info/20 to-transparent"
           />
         )}
       </AnimatePresence>

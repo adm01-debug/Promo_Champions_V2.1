@@ -67,9 +67,9 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const bgColor = type === 'level_up' 
-    ? 'from-yellow-500/90 to-amber-600/90' 
+    ? 'from-coins/90 to-rank-gold/90' 
     : type === 'streak' 
-      ? 'from-orange-500/90 to-red-500/90'
+      ? 'from-streak/90 to-destructive/90'
       : 'from-primary/90 to-primary/70';
 
   const Icon = type === 'level_up' ? TrendingUp : type === 'streak' ? Zap : Sparkles;

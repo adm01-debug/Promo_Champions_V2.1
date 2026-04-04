@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,7 @@ import { Trophy, Zap, Shield } from "lucide-react";
 import { useLeagues, LEAGUE_CONFIG, type LeagueTier } from "@/hooks/useLeagues";
 import { cn } from "@/lib/utils";
 
-export function LeagueCard() {
+function _LeagueCard() {
   const { data: members, isLoading } = useLeagues();
 
   if (isLoading) {
@@ -143,3 +144,5 @@ export function LeagueCard() {
     </div>
   );
 }
+
+export const LeagueCard = React.memo(_LeagueCard);
