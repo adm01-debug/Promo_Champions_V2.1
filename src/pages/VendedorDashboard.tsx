@@ -69,7 +69,6 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
   return (
-    <>
     <div className={cn("glass rounded-xl p-5", variant === "primary" && "gradient-border glow-primary", variant === "success" && "border-success/30 bg-success/5")}>
       <div className="flex items-center gap-3 mb-3">
         <div className={cn("p-2 rounded-lg", variant === "primary" ? "gradient-primary" : variant === "success" ? "bg-success/20" : "bg-muted")}>

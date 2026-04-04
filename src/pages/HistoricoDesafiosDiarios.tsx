@@ -83,7 +83,6 @@ export default function HistoricoDesafiosDiarios() {
 
   if (isLoading) {
     return (
-    <>
       <div className="min-h-screen bg-background p-6 lg:p-8 space-y-8">
         <Skeleton className="h-10 w-64" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i => <Skeleton key={i} className="h-32" />)}</div>

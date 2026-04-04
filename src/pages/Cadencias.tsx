@@ -34,7 +34,6 @@ export default function Cadencias() {
   }, [cadences, searchTerm, statusFilter]);
 
   return (
-    <>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<CadenciasLoadingSkeleton />}
