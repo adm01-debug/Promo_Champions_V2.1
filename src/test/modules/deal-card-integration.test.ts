@@ -88,7 +88,7 @@ describe("StagnantDealAlert prop mapping from Deal", () => {
 // ─── ICP Badge visibility ──────────────────────────────────────────
 describe("ICP badge display", () => {
   it("shows when is_icp_match is true", () => {
-    const icpData = { is_icp_match: true, grupo_nicho: "Tech" };
+    const icpData: { is_icp_match: boolean; grupo_nicho?: string } = { is_icp_match: true, grupo_nicho: "Tech" };
     expect(icpData.is_icp_match).toBe(true);
   });
 
