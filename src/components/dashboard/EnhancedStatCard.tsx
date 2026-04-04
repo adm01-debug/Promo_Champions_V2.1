@@ -22,7 +22,7 @@ interface EnhancedStatCardProps {
   sparklineData?: number[];
 }
 
-export const EnhancedStatCard: FC<EnhancedStatCardProps> = ({
+export const EnhancedStatCard = React.memo<EnhancedStatCardProps>(function EnhancedStatCard({
   title,
   value,
   previousValue,
