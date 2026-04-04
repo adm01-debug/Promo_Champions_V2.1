@@ -12,13 +12,17 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface StreakEntry {
+  id: string;
   current_streak: number;
+  xp_multiplier?: number;
   salespeople?: { name: string } | null;
 }
 
 interface MatchupEntry {
   id: string;
   status: string;
+  player1_score?: number;
+  player2_score?: number;
   player1?: { name: string } | null;
   player2?: { name: string } | null;
 }

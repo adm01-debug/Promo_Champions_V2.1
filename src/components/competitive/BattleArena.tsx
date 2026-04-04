@@ -21,6 +21,7 @@ interface Battle {
   status: string;
   ends_at: string;
   xp_reward: number;
+  winner_id?: string | null;
   battle_participants?: BattleParticipant[];
 }
 
