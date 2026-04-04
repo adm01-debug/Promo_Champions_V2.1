@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 import { useSalesStreaks } from '@/hooks/useSalesStreaks';
 
 const STREAK_TIERS = [
-  { min: 10, label: 'Lendário', emoji: '🔥🔥🔥', multiplier: '3x XP', color: 'text-red-500' },
-  { min: 5, label: 'On Fire', emoji: '🔥🔥', multiplier: '2x XP', color: 'text-orange-500' },
-  { min: 2, label: 'Esquentando', emoji: '🔥', multiplier: '1.5x XP', color: 'text-amber-500' },
+  { min: 10, label: 'Lendário', emoji: '🔥🔥🔥', multiplier: '3x XP', color: 'text-destructive' },
+  { min: 5, label: 'On Fire', emoji: '🔥🔥', multiplier: '2x XP', color: 'text-streak' },
+  { min: 2, label: 'Esquentando', emoji: '🔥', multiplier: '1.5x XP', color: 'text-warning' },
   { min: 0, label: 'Início', emoji: '❄️', multiplier: '1x XP', color: 'text-muted-foreground' },
 ];
 
@@ -42,8 +42,8 @@ export const StreakTracker: FC<StreakTrackerProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-              <Flame className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-streak to-destructive flex items-center justify-center">
+              <Flame className="h-4 w-4 text-primary-foreground" />
             </div>
             Streak de Vendas
             <Badge variant="outline" className="text-xs ml-auto">
@@ -75,9 +75,9 @@ export const StreakTracker: FC<StreakTrackerProps> = ({ className }) => {
                   transition={{ delay: i * 0.08 }}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-xl border transition-all',
-                    s.current_streak >= 10 && 'bg-gradient-to-r from-red-500/10 to-orange-500/5 border-red-500/30',
-                    s.current_streak >= 5 && s.current_streak < 10 && 'bg-gradient-to-r from-orange-500/10 to-amber-500/5 border-orange-500/30',
-                    s.current_streak >= 2 && s.current_streak < 5 && 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border-amber-500/30',
+                    s.current_streak >= 10 && 'bg-gradient-to-r from-destructive/10 to-streak/5 border-destructive/30',
+                    s.current_streak >= 5 && s.current_streak < 10 && 'bg-gradient-to-r from-streak/10 to-warning/5 border-streak/30',
+                    s.current_streak >= 2 && s.current_streak < 5 && 'bg-gradient-to-r from-warning/10 to-coins/5 border-warning/30',
                   )}
                 >
                   <Avatar className="h-9 w-9 border-2 border-background shadow">

@@ -35,7 +35,7 @@ export function CalendarPreviewWidget() {
     <Card className="h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5 text-blue-500" />
+          <Calendar className="h-3.5 w-3.5 text-info" />
           Próximas Atividades
         </CardTitle>
       </CardHeader>

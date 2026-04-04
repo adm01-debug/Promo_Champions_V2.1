@@ -21,10 +21,10 @@ interface DealChatHistoryProps {
 
 const TYPE_COLORS: Record<QuestionType, string> = {
   general: 'bg-muted text-muted-foreground',
-  analysis: 'bg-blue-500/20 text-blue-500',
-  objections: 'bg-orange-500/20 text-orange-500',
-  closing: 'bg-green-500/20 text-green-500',
-  strategy: 'bg-purple-500/20 text-purple-500',
+  analysis: 'bg-info/20 text-info',
+  objections: 'bg-streak/20 text-streak',
+  closing: 'bg-success/20 text-success',
+  strategy: 'bg-primary/20 text-primary',
 };
 
 export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryProps) {

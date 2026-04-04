@@ -27,7 +27,7 @@ const formatTime = (iso: string) =>
 const getSeverityBadge = (severity: string) => {
   switch (severity) {
     case "very_slow": return <Badge className="bg-destructive/20 text-destructive border-destructive/30 text-[10px]">🔴 Muito Lenta</Badge>;
-    case "slow": return <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 text-[10px]">🟡 Lenta</Badge>;
+    case "slow": return <Badge className="bg-yellow-500/20 text-warning border-yellow-500/30 text-[10px]">🟡 Lenta</Badge>;
     case "error": return <Badge className="bg-destructive/20 text-destructive border-destructive/30 text-[10px]">❌ Erro</Badge>;
     default: return <Badge variant="secondary" className="text-[10px]">{severity}</Badge>;
   }
@@ -74,7 +74,7 @@ export const TelemetryTable = React.memo(function TelemetryTable({ rows, isLoadi
                     <td className="p-3"><Badge variant="outline" className="text-[10px] font-mono">{row.operation}</Badge></td>
                     <td className="p-3 font-mono text-xs font-medium">{row.rpc_name || row.table_name || "-"}</td>
                     <td className="p-3 text-right font-mono font-bold tabular-nums">
-                      <span className={row.duration_ms >= 8000 ? "text-destructive" : row.duration_ms >= 3000 ? "text-yellow-600" : ""}>{formatDuration(row.duration_ms)}</span>
+                      <span className={row.duration_ms >= 8000 ? "text-destructive" : row.duration_ms >= 3000 ? "text-warning" : ""}>{formatDuration(row.duration_ms)}</span>
                     </td>
                     <td className="p-3 text-right font-mono text-xs tabular-nums">{row.record_count ?? "-"}</td>
                     <td className="p-3 text-right font-mono text-xs tabular-nums text-muted-foreground">{row.query_limit ?? "-"}</td>

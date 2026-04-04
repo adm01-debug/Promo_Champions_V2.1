@@ -169,15 +169,15 @@ export function EnhancedTVMode() {
                 className="space-y-3">
                 {latestSales.map((sale: any, i: number) => (
                   <motion.div key={sale.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.15 }}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-green-500/5 border border-green-500/20">
-                    <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <DollarSign className="h-5 w-5 text-green-500" />
+                    className="flex items-center gap-4 p-4 rounded-xl bg-success/5 border border-success/20">
+                     <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
+                       <DollarSign className="h-5 w-5 text-success" />
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold">{sale.client_name}</div>
                       <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id) || 'N/A'}</div>
                     </div>
-                    <div className="text-xl font-bold text-green-500">
+                    <div className="text-xl font-bold text-success">
                       R$ {(sale.amount || 0).toLocaleString('pt-BR')}
                     </div>
                   </motion.div>

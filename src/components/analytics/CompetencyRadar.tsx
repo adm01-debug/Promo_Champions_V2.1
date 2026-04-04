@@ -47,9 +47,9 @@ const renderCustomTooltip = ({ active, payload }: any) => {
     const percentage = Math.round((data.value / data.maxValue) * 100);
     const status =
       percentage >= 70
-        ? { label: "Excelente", color: "text-green-500" }
+        ? { label: "Excelente", color: "text-success" }
         : percentage >= 40
-        ? { label: "Em Desenvolvimento", color: "text-yellow-500" }
+        ? { label: "Em Desenvolvimento", color: "text-warning" }
         : { label: "Gap Identificado", color: "text-destructive" };
 
     return (
@@ -200,7 +200,7 @@ export function CompetencyRadar({
                   {change !== 0 && (
                     <span className={cn(
                       "flex items-center gap-0.5",
-                      change > 0 ? "text-green-500" : "text-destructive"
+                      change > 0 ? "text-success" : "text-destructive"
                     )}>
                       {change > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                       {change > 0 ? "+" : ""}{change}

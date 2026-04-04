@@ -44,7 +44,7 @@ export function DealPreviewCard({ dealId, clientName, productName, amount, statu
 
   return (
     <div className={cn("rounded-lg border p-3 mb-3 animate-fade-in",
-      riskLevel.level === 'high' ? "border-red-500/30 bg-red-500/5" : riskLevel.level === 'medium' ? "border-amber-500/30 bg-amber-500/5" : "border-primary/20 bg-primary/5"
+      riskLevel.level === 'high' ? "border-destructive/30 bg-destructive/5" : riskLevel.level === 'medium' ? "border-warning/30 bg-warning/5" : "border-primary/20 bg-primary/5"
     )}>
       <TooltipProvider>
         <Tooltip>
@@ -84,7 +84,7 @@ export function DealPreviewCard({ dealId, clientName, productName, amount, statu
 
       {status !== 'closed_won' && status !== 'closed_lost' && (
         <div className={cn("mt-3 p-2 rounded-md border text-xs",
-          riskLevel.level === 'high' ? "bg-red-500/5 border-red-500/20" : riskLevel.level === 'medium' ? "bg-amber-500/5 border-amber-500/20" : "bg-emerald-500/5 border-emerald-500/20"
+          riskLevel.level === 'high' ? "bg-destructive/5 border-destructive/20" : riskLevel.level === 'medium' ? "bg-warning/5 border-warning/20" : "bg-success/5 border-success/20"
         )}>
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 flex-1">
@@ -92,7 +92,7 @@ export function DealPreviewCard({ dealId, clientName, productName, amount, statu
               <div>
                 <span className="font-medium text-[10px] uppercase tracking-wide text-muted-foreground block mb-0.5">Ação Recomendada</span>
                 <p className={cn("font-medium",
-                  riskLevel.level === 'high' ? "text-red-600 dark:text-red-400" : riskLevel.level === 'medium' ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
+                  riskLevel.level === 'high' ? "text-destructive" : riskLevel.level === 'medium' ? "text-warning" : "text-success"
                 )}>{riskLevel.action.text}</p>
               </div>
             </div>

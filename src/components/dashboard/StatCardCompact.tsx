@@ -31,7 +31,7 @@ export const StatCardCompact: FC<StatCardCompactProps> = ({
 
   const getTrendColor = () => {
     if (!change) return 'text-muted-foreground';
-    return change > 0 ? 'text-green-600' : 'text-red-600';
+    return change > 0 ? 'text-success' : 'text-destructive';
   };
 
   return (
@@ -87,8 +87,8 @@ export const MiniStat: FC<MiniStatProps> = ({ label, value, trend }) => (
     <p className="text-xs text-muted-foreground">{label}</p>
     <div className="flex items-center justify-center gap-1">
       <span className="font-semibold">{value}</span>
-      {trend === 'up' && <TrendingUp size={12} className="text-green-600" />}
-      {trend === 'down' && <TrendingDown size={12} className="text-red-600" />}
+      {trend === 'up' && <TrendingUp size={12} className="text-success" />}
+      {trend === 'down' && <TrendingDown size={12} className="text-destructive" />}
     </div>
   </div>
 );

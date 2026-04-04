@@ -51,7 +51,7 @@ const RiskBadge = ({ level }: { level: "high" | "medium" }) => {
     },
     medium: {
       label: "Médio Risco",
-      className: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border-yellow-500/30",
+      className: "bg-warning/20 text-warning border-warning/30",
       icon: TrendingDown,
     },
   };
@@ -135,7 +135,7 @@ const PredictionCard = ({
                     "h-2",
                     prediction.riskLevel === "high"
                       ? "[&>[role=progressbar]]:bg-destructive"
-                      : "[&>[role=progressbar]]:bg-yellow-500"
+                      : "[&>[role=progressbar]]:bg-warning"
                   )}
                 />
               </div>
@@ -158,7 +158,7 @@ const PredictionCard = ({
               {/* Suggested Actions */}
               <div>
                 <p className="text-xs font-medium mb-1 flex items-center gap-1">
-                  <Lightbulb className="h-3 w-3 text-yellow-500" />
+                  <Lightbulb className="h-3 w-3 text-warning" />
                   Ações Sugeridas
                 </p>
                 <ul className="space-y-1">
@@ -236,7 +236,7 @@ export function ChurnPredictionPanel({
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <div className="w-2 h-2 rounded-full bg-yellow-500" />
+            <div className="w-2 h-2 rounded-full bg-warning" />
             <span className="text-muted-foreground">
               {mediumRiskCount} médio risco
             </span>

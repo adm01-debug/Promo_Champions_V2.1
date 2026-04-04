@@ -79,7 +79,7 @@ export function PerformanceBets() {
 
   const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
     active: { label: 'Em andamento', color: 'bg-primary/20 text-primary', icon: Timer },
-    won: { label: 'GANHOU! 🎉', color: 'bg-green-500/20 text-green-500', icon: CheckCircle2 },
+    won: { label: 'GANHOU! 🎉', color: 'bg-success/20 text-success', icon: CheckCircle2 },
     lost: { label: 'Perdeu 😞', color: 'bg-destructive/20 text-destructive', icon: XCircle },
     cancelled: { label: 'Cancelada', color: 'bg-muted text-muted-foreground', icon: AlertTriangle },
   };
@@ -93,7 +93,7 @@ export function PerformanceBets() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-display font-bold flex items-center gap-2">
-            <Flame className="h-5 w-5 text-amber-500" /> Apostas de Performance
+            <Flame className="h-5 w-5 text-coins" /> Apostas de Performance
           </h2>
           <p className="text-sm text-muted-foreground">Aposte XP nas suas próprias metas. Ganhe o dobro ou perca tudo!</p>
         </div>
@@ -142,10 +142,10 @@ export function PerformanceBets() {
                   </SelectContent>
                 </Select>
               </div>
-              <Card className="border-amber-500/30 bg-amber-500/5">
+              <Card className="border-coins/30 bg-coins/5">
                 <CardContent className="p-3 text-center text-sm">
-                  <Flame className="h-5 w-5 mx-auto mb-1 text-amber-500" />
-                  Se bater: <strong className="text-green-500">+{betForm.xp_wagered * 2} XP</strong><br />
+                  <Flame className="h-5 w-5 mx-auto mb-1 text-coins" />
+                  Se bater: <strong className="text-success">+{betForm.xp_wagered * 2} XP</strong><br />
                   Se falhar: <strong className="text-destructive">-{betForm.xp_wagered} XP</strong>
                 </CardContent>
               </Card>
@@ -167,13 +167,13 @@ export function PerformanceBets() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-amber-500">{totalXpAtStake}</div>
+            <div className="text-2xl font-bold text-coins">{totalXpAtStake}</div>
             <div className="text-xs text-muted-foreground">XP em Jogo</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-500">
+            <div className="text-2xl font-bold text-success">
               {completedBets.filter((b: any) => b.status === 'won').length}
             </div>
             <div className="text-xs text-muted-foreground">Apostas Ganhas</div>
@@ -205,7 +205,7 @@ export function PerformanceBets() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge variant="outline" className="text-amber-500 border-amber-500/30">{bet.xp_wagered} XP</Badge>
+                        <Badge variant="outline" className="text-coins border-coins/30">{bet.xp_wagered} XP</Badge>
                         <div className="text-xs text-muted-foreground mt-1">
                           <Timer className="h-3 w-3 inline mr-1" />{hoursLeft > 0 ? `${hoursLeft}h restantes` : 'Expirado'}
                         </div>

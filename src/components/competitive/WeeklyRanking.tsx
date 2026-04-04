@@ -10,9 +10,9 @@ import { useWeeklyRanking } from '@/hooks/useWeeklyRanking';
 
 
 const PODIUM_CONFIG: Record<number, { icon: typeof Crown; gradient: string; label: string }> = {
-  1: { icon: Crown, gradient: 'from-amber-400 to-yellow-600', label: '🥇 Campeão da Semana' },
-  2: { icon: Medal, gradient: 'from-slate-300 to-slate-500', label: '🥈 Vice' },
-  3: { icon: Trophy, gradient: 'from-amber-600 to-orange-800', label: '🥉 Bronze' },
+  1: { icon: Crown, gradient: 'from-rank-gold to-coins', label: '🥇 Campeão da Semana' },
+  2: { icon: Medal, gradient: 'from-rank-silver to-rank-silver/70', label: '🥈 Vice' },
+  3: { icon: Trophy, gradient: 'from-rank-bronze to-streak', label: '🥉 Bronze' },
 };
 
 interface WeeklyRankingProps {
@@ -58,8 +58,8 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center">
-              <Crown className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center">
+              <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
             Ranking Semanal
             <Badge variant="outline" className="text-xs ml-auto">
@@ -81,9 +81,9 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
                   transition={{ delay: i * 0.15 }}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-xl border transition-all',
-                    i === 0 && 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border-amber-500/30 shadow-md',
-                    i === 1 && 'bg-gradient-to-r from-slate-300/10 to-slate-400/5 border-slate-400/30',
-                    i === 2 && 'bg-gradient-to-r from-orange-500/10 to-amber-600/5 border-orange-500/30',
+                    i === 0 && 'bg-gradient-to-r from-rank-gold/10 to-coins/5 border-rank-gold/30 shadow-md',
+                    i === 1 && 'bg-gradient-to-r from-rank-silver/10 to-rank-silver/5 border-rank-silver/30',
+                    i === 2 && 'bg-gradient-to-r from-streak/10 to-rank-bronze/5 border-streak/30',
                   )}
                 >
                   <div className={cn(
@@ -113,7 +113,7 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
                     </div>
                   </div>
 
-                  <p className={cn('font-bold text-right', i === 0 ? 'text-lg text-amber-600 dark:text-amber-400' : 'text-sm text-foreground')}>
+                  <p className={cn('font-bold text-right', i === 0 ? 'text-lg text-rank-gold' : 'text-sm text-foreground')}>
                     R$ {person.weeklySales.toLocaleString('pt-BR')}
                   </p>
                 </motion.div>

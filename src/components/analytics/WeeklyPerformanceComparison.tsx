@@ -36,7 +36,7 @@ function ChangeIndicator({ current, previous, suffix = "" }: { current: number; 
   return (
     <span className={cn(
       "flex items-center gap-0.5 text-[10px] font-medium",
-      isPositive && "text-green-600 dark:text-green-400",
+      isPositive && "text-success",
       !isPositive && !isNeutral && "text-destructive",
       isNeutral && "text-muted-foreground"
     )}>
@@ -68,7 +68,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.salesCount,
       previous: previousWeek.salesCount,
       format: (v: number) => v.toString(),
-      color: "text-blue-500",
+      color: "text-info",
     },
     {
       label: "Conversão",
@@ -76,7 +76,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.conversionRate,
       previous: previousWeek.conversionRate,
       format: (v: number) => `${v.toFixed(1)}%`,
-      color: "text-emerald-500",
+      color: "text-success",
     },
     {
       label: "Ticket Médio",
@@ -84,7 +84,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.avgTicket,
       previous: previousWeek.avgTicket,
       format: (v: number) => `R$ ${v.toLocaleString("pt-BR")}`,
-      color: "text-purple-500",
+      color: "text-primary",
     },
     {
       label: "Atividades",
@@ -92,7 +92,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.activitiesCount,
       previous: previousWeek.activitiesCount,
       format: (v: number) => v.toString(),
-      color: "text-orange-500",
+      color: "text-streak",
     },
     {
       label: "Novos Clientes",
@@ -100,7 +100,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.newClients,
       previous: previousWeek.newClients,
       format: (v: number) => v.toString(),
-      color: "text-cyan-500",
+      color: "text-info",
     },
   ], [currentWeek, previousWeek]);
 
@@ -142,7 +142,7 @@ export function WeeklyPerformanceComparison({
                 transition={{ delay: index * 0.05 }}
                 className={cn(
                   "p-3 rounded-lg border bg-card",
-                  change > 0 && "border-green-500/20",
+                  change > 0 && "border-success/20",
                   change < 0 && "border-destructive/20"
                 )}
               >

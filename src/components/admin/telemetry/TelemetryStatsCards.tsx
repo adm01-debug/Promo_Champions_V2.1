@@ -12,7 +12,7 @@ interface TelemetryStatsCardsProps {
 export const TelemetryStatsCards = React.memo(function TelemetryStatsCards({ verySlow, slow, errors, avgDuration }: TelemetryStatsCardsProps) {
   const cards = [
     { icon: AlertTriangle, iconColor: "text-destructive", bg: "bg-destructive/10", value: verySlow, label: "Muito Lentas (>8s)" },
-    { icon: Clock, iconColor: "text-yellow-600", bg: "bg-yellow-500/10", value: slow, label: "Lentas (>3s)" },
+    { icon: Clock, iconColor: "text-warning", bg: "bg-warning/10", value: slow, label: "Lentas (>3s)" },
     { icon: Zap, iconColor: "text-destructive", bg: "bg-destructive/10", value: errors, label: "Erros" },
     { icon: Database, iconColor: "text-primary", bg: "bg-primary/10", value: avgDuration, label: "Média de duração" },
   ];

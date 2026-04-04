@@ -91,7 +91,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'ranking' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <Trophy className="h-6 w-6 text-amber-500" />
+                  <Trophy className="h-6 w-6 text-rank-gold" />
                   <h2 className="text-xl font-bold text-foreground">Ranking do Mês</h2>
                 </div>
                 <div className="space-y-3">
@@ -103,9 +103,9 @@ export const CompetitiveTVDashboard: FC = () => {
                       transition={{ delay: i * 0.1 }}
                       className={cn(
                         'flex items-center gap-4 p-3 rounded-xl',
-                        i === 0 && 'bg-amber-500/10 border border-amber-500/30',
-                        i === 1 && 'bg-gray-300/10 border border-gray-400/20',
-                        i === 2 && 'bg-amber-700/10 border border-amber-700/20',
+                        i === 0 && 'bg-rank-gold/10 border border-rank-gold/30',
+                        i === 1 && 'bg-rank-silver/10 border border-rank-silver/20',
+                        i === 2 && 'bg-rank-bronze/10 border border-rank-bronze/20',
                         i > 2 && 'bg-muted/20',
                       )}
                     >
@@ -132,7 +132,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'streaks' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <Flame className="h-6 w-6 text-orange-500" />
+                  <Flame className="h-6 w-6 text-streak" />
                   <h2 className="text-xl font-bold text-foreground">Streaks Ativos</h2>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -142,12 +142,12 @@ export const CompetitiveTVDashboard: FC = () => {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.1 }}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/20"
+                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-streak/10 to-destructive/10 border border-streak/20"
                     >
                       <div className="text-3xl">🔥</div>
                       <div>
                         <p className="font-bold text-foreground">{(streak.salespeople as any)?.name || 'Vendedor'}</p>
-                        <p className="text-2xl font-black text-orange-500">{streak.current_streak} dias</p>
+                        <p className="text-2xl font-black text-streak">{streak.current_streak} dias</p>
                         <p className="text-xs text-muted-foreground">Multiplicador: {streak.xp_multiplier}x</p>
                       </div>
                     </motion.div>
@@ -165,7 +165,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'matchups' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <Swords className="h-6 w-6 text-purple-500" />
+                  <Swords className="h-6 w-6 text-primary" />
                   <h2 className="text-xl font-bold text-foreground">Duelos da Semana</h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -175,7 +175,7 @@ export const CompetitiveTVDashboard: FC = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.15 }}
-                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20"
+                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
                     >
                       <div className="text-center flex-1">
                         <p className="font-bold text-foreground">{(matchup.player1 as any)?.name || '?'}</p>
@@ -201,7 +201,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'stats' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <TrendingUp className="h-6 w-6 text-emerald-500" />
+                  <TrendingUp className="h-6 w-6 text-success" />
                   <h2 className="text-xl font-bold text-foreground">Destaques do Dia</h2>
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

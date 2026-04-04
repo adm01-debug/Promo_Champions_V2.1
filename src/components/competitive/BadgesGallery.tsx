@@ -13,16 +13,16 @@ interface BadgesGalleryProps {
 }
 
 const RARITY_STYLES: Record<string, string> = {
-  legendary: 'border-yellow-500/50 bg-yellow-500/5 shadow-yellow-500/20 shadow-lg',
-  epic: 'border-purple-500/40 bg-purple-500/5 shadow-purple-500/10 shadow-md',
-  rare: 'border-blue-500/30 bg-blue-500/5',
+  legendary: 'border-coins/50 bg-coins/5 shadow-coins/20 shadow-lg',
+  epic: 'border-primary/40 bg-primary/5 shadow-primary/10 shadow-md',
+  rare: 'border-info/30 bg-info/5',
   common: 'border-border/30 bg-muted/20',
 };
 
 const RARITY_LABELS: Record<string, { label: string; color: string }> = {
-  legendary: { label: 'Lendário', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  epic: { label: 'Épico', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-  rare: { label: 'Raro', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+  legendary: { label: 'Lendário', color: 'bg-coins/20 text-coins border-coins/30' },
+  epic: { label: 'Épico', color: 'bg-primary/20 text-primary border-primary/30' },
+  rare: { label: 'Raro', color: 'bg-info/20 text-info border-info/30' },
   common: { label: 'Comum', color: 'bg-muted text-muted-foreground' },
 };
 
@@ -56,8 +56,8 @@ export const BadgesGallery: FC<BadgesGalleryProps> = ({ salespersonId }) => {
         <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
-                <Trophy className="h-4 w-4 text-white" />
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center">
+                <Trophy className="h-4 w-4 text-primary-foreground" />
               </div>
               Coleção de Conquistas
               <Badge variant="secondary" className="ml-auto text-xs">

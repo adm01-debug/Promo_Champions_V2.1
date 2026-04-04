@@ -107,7 +107,7 @@ export const LeadSLAMonitor: FC = () => {
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg bg-muted/30 text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CheckCircle2 className="h-4 w-4 text-success" />
             </div>
             <p className="text-xl font-bold">{data.slaRate}%</p>
             <p className="text-xs text-muted-foreground">Dentro do SLA</p>
