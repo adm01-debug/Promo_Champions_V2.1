@@ -79,7 +79,7 @@ export function PerformanceBets() {
 
   const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
     active: { label: 'Em andamento', color: 'bg-primary/20 text-primary', icon: Timer },
-    won: { label: 'GANHOU! 🎉', color: 'bg-green-500/20 text-green-500', icon: CheckCircle2 },
+    won: { label: 'GANHOU! 🎉', color: 'bg-success/20 text-success', icon: CheckCircle2 },
     lost: { label: 'Perdeu 😞', color: 'bg-destructive/20 text-destructive', icon: XCircle },
     cancelled: { label: 'Cancelada', color: 'bg-muted text-muted-foreground', icon: AlertTriangle },
   };
