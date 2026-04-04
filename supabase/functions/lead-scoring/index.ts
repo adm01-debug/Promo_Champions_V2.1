@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,10 +23,13 @@ serve(async (req) => {
   try {
     const { dealIds } = await req.json();
     
-    if (!dealIds || !Array.isArray(dealIds) || dealIds.length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'dealIds array is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    const errors = collectErrors([
+      validateArray(dealIds, "dealIds", { required: true, maxLength: 200 }),
+    ]);
+    if (errors.length > 0 || !Array.isArray(dealIds) || dealIds.length === 0) {
+      return validationErrorResponse(
+        errors.length > 0 ? errors : [{ field: "dealIds", message: "dealIds array is required" }],
+        corsHeaders
       );
     }
 

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { validateString, validateUUID, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,10 +33,19 @@ serve(async (req) => {
       });
     }
 
-    const { message, salespersonId, conversationHistory = [], dealContext, aiAssistantName, salespersonName } = await req.json();
+    const body = await req.json();
+    const { message, salespersonId, conversationHistory = [], dealContext, aiAssistantName, salespersonName } = body;
 
-    if (!message) {
-      throw new Error("Message is required");
+    // Input validation
+    const errors = collectErrors([
+      validateString(message, "message", { required: true, maxLength: 5000 }),
+      validateUUID(salespersonId, "salespersonId"),
+      validateArray(conversationHistory, "conversationHistory", { maxLength: 50 }),
+      validateString(aiAssistantName, "aiAssistantName", { maxLength: 100 }),
+      validateString(salespersonName, "salespersonName", { maxLength: 100 }),
+    ]);
+    if (errors.length > 0) {
+      return validationErrorResponse(errors, corsHeaders);
     }
 
     // Use custom AI name if provided, otherwise default
