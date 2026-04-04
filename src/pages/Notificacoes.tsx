@@ -26,8 +26,12 @@ import { toast } from "sonner";
 import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
-const DEFAULT_PREF = {
-  email: "", frequency: "daily" as const, notify_stagnant_deals: true, notify_inactive_clients: true,
+const DEFAULT_PREF: {
+  email: string; frequency: "realtime" | "daily" | "weekly"; notify_stagnant_deals: boolean;
+  notify_inactive_clients: boolean; notify_at_risk_goals: boolean; stagnant_threshold_days: number;
+  inactive_threshold_days: number; consecutive_days_threshold: number; preferred_time: string; is_active: boolean;
+} = {
+  email: "", frequency: "daily", notify_stagnant_deals: true, notify_inactive_clients: true,
   notify_at_risk_goals: true, stagnant_threshold_days: 14, inactive_threshold_days: 60,
   consecutive_days_threshold: 3, preferred_time: "08:00", is_active: true,
 };
