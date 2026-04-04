@@ -123,7 +123,7 @@ export function GeoBlockingManager() {
         </CardHeader>
         <CardContent>
           {isWhitelistMode ? (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-success/10 border border-success/20"><Shield className="h-5 w-5 text-success" /><span className="text-sm text-emerald-700 dark:text-success">Modo Whitelist ativo: Somente países listados abaixo podem acessar o sistema.</span></div>
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-success/10 border border-success/20"><Shield className="h-5 w-5 text-success" /><span className="text-sm text-success dark:text-success">Modo Whitelist ativo: Somente países listados abaixo podem acessar o sistema.</span></div>
           ) : (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-rank-gold/10 border border-rank-gold/20"><AlertTriangle className="h-5 w-5 text-rank-gold" /><span className="text-sm text-rank-gold dark:text-rank-gold">Modo Whitelist desativado: Todos os países podem acessar o sistema.</span></div>
           )}

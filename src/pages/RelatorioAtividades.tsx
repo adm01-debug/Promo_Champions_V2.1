@@ -85,7 +85,7 @@ export default function RelatorioAtividades() {
       value: filteredTeamSummary.total_meetings,
       icon: Calendar,
       color: "text-primary",
-      bgColor: "bg-purple-400/10",
+      bgColor: "bg-primary/10",
     },
     {
       label: "Taxa Conexão",

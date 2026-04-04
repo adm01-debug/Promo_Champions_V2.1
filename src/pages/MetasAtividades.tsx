@@ -69,7 +69,7 @@ export default function MetasAtividades() {
       value: needsAttention,
       icon: AlertTriangle,
       color: "text-destructive",
-      bgColor: "bg-red-400/10",
+      bgColor: "bg-destructive/10",
     },
   ];
 

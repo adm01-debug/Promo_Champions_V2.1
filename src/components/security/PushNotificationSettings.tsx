@@ -28,7 +28,7 @@ export const PushNotificationSettings: React.FC = () => {
   const getPermissionBadge = () => {
     switch (permission) {
       case 'granted':
-        return <Badge variant="default" className="bg-green-600">Permitido</Badge>;
+        return <Badge variant="default" className="bg-success">Permitido</Badge>;
       case 'denied':
         return <Badge variant="destructive">Bloqueado</Badge>;
       default:

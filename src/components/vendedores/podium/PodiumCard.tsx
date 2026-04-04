@@ -72,7 +72,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
               animate={{ opacity: [0, 1, 0], scale: [0, 1.2, 0], y: [0, -8, -16] }}
               transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }}
             >
-              <Star className="h-2 w-2 text-amber-300 fill-amber-300" />
+              <Star className="h-2 w-2 text-coins fill-coins" />
             </motion.div>
           ))}
         </motion.div>
@@ -104,7 +104,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-rank-gold shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
             </motion.div>
             <motion.div className="absolute inset-[-12px]" animate={{ rotate: -360 }} transition={{ duration: 7, repeat: Infinity, ease: "linear" }}>
-              <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.8)]" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-coins shadow-[0_0_8px_rgba(252,211,77,0.8)]" />
             </motion.div>
           </>
         )}

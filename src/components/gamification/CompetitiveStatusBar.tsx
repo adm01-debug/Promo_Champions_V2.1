@@ -102,7 +102,7 @@ export function CompetitiveStatusBar() {
             <div className="flex items-center gap-2">
               <span className={cn(
                 "inline-flex items-center justify-center font-display font-black text-lg min-w-[2.5rem] h-9 rounded-xl border-2 shadow-sm",
-                myRanking.rank === 1 && "bg-gradient-to-br from-coins to-rank-gold text-yellow-950 border-yellow-300",
+                myRanking.rank === 1 && "bg-gradient-to-br from-coins to-rank-gold text-rank-gold-foreground border-rank-gold/60",
                 myRanking.rank === 2 && "bg-gradient-to-br from-slate-300 to-slate-400 text-slate-800 border-slate-200",
                 myRanking.rank === 3 && "bg-gradient-to-br from-streak to-amber-600 text-streak-foreground border-streak/60",
                 myRanking.rank > 3 && "bg-muted text-foreground border-border/50"

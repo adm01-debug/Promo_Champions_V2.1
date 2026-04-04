@@ -54,7 +54,7 @@ export const ROIRankingList = React.memo(function ROIRankingList({ roiData }: RO
                   "h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
                   i === 0 && "bg-rank-gold/20 text-rank-gold dark:bg-rank-gold/30/30 dark:text-rank-gold",
                   i === 1 && "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
-                  i === 2 && "bg-streak/20 text-orange-700 dark:bg-orange-900/30 dark:text-streak",
+                  i === 2 && "bg-streak/20 text-streak dark:bg-streak/30 dark:text-streak",
                   i > 2 && "bg-muted text-muted-foreground"
                 )}>
                   {i + 1}º
@@ -77,9 +77,9 @@ export const ROIRankingList = React.memo(function ROIRankingList({ roiData }: RO
                 </div>
                 <div className={cn(
                   "px-3 py-1.5 rounded-lg text-sm font-bold shrink-0",
-                  sp.roi >= 100 && "bg-success/20 text-emerald-700 dark:bg-emerald-900/30 dark:text-success",
+                  sp.roi >= 100 && "bg-success/20 text-success dark:bg-success/30 dark:text-success",
                   sp.roi >= 0 && sp.roi < 100 && "bg-rank-gold/20 text-rank-gold dark:bg-rank-gold/30/30 dark:text-rank-gold",
-                  sp.roi < 0 && "bg-destructive/20 text-red-700 dark:bg-red-900/30 dark:text-destructive"
+                  sp.roi < 0 && "bg-destructive/20 text-destructive dark:bg-destructive/30 dark:text-destructive"
                 )}>
                   {formatPercent(sp.roi)} ROI
                 </div>

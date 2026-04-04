@@ -76,10 +76,10 @@ export const PasswordResetRequestList = React.memo(function PasswordResetRequest
               {request.status === "pending" && !isExpired(request.expires_at) && (
                 <div className="flex gap-2 ml-4">
                   <AlertDialog>
-                    <AlertDialogTrigger asChild><Button size="sm" variant="default" className="bg-emerald-600 hover:bg-emerald-700"><Check className="h-4 w-4 mr-1" />Aprovar</Button></AlertDialogTrigger>
+                    <AlertDialogTrigger asChild><Button size="sm" variant="default" className="bg-success hover:bg-success/90"><Check className="h-4 w-4 mr-1" />Aprovar</Button></AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader><AlertDialogTitle>Aprovar Reset de Senha?</AlertDialogTitle><AlertDialogDescription>Um email de reset de senha será enviado para <strong>{request.user_email}</strong>.</AlertDialogDescription></AlertDialogHeader>
-                      <AlertDialogFooter><AlertDialogCancel>Cancelar</AlertDialogCancel><AlertDialogAction onClick={() => approveMutation.mutate(request.id)} className="bg-emerald-600 hover:bg-emerald-700">Aprovar e Enviar Email</AlertDialogAction></AlertDialogFooter>
+                      <AlertDialogFooter><AlertDialogCancel>Cancelar</AlertDialogCancel><AlertDialogAction onClick={() => approveMutation.mutate(request.id)} className="bg-success hover:bg-success/90">Aprovar e Enviar Email</AlertDialogAction></AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
                   <Dialog open={rejectDialogOpen && selectedRequest?.id === request.id} onOpenChange={(open) => { setRejectDialogOpen(open); if (!open) { setSelectedRequest(null); setRejectionReason(""); } }}>
