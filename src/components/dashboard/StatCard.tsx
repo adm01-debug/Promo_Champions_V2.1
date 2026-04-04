@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
+import { MiniSparkline } from "@/components/dashboard/MiniSparkline";
 
 interface StatCardProps {
   title: string;
@@ -12,6 +13,8 @@ interface StatCardProps {
   icon: LucideIcon;
   variant?: "default" | "primary" | "success" | "warning";
   hero?: boolean;
+  /** Optional 7-point data for mini sparkline */
+  sparklineData?: number[];
 }
 
 export const StatCard = ({
@@ -23,6 +26,7 @@ export const StatCard = ({
   icon: Icon,
   variant = "default",
   hero = false,
+  sparklineData,
 }: StatCardProps) => {
   const isPositive = change >= 0;
 
@@ -44,6 +48,13 @@ export const StatCard = ({
     primary: "bg-primary/15 text-primary shadow-sm shadow-primary/10",
     success: "bg-success/15 text-success shadow-sm shadow-success/10",
     warning: "bg-warning/15 text-warning shadow-sm shadow-warning/10",
+  };
+
+  const sparklineColors = {
+    default: "text-muted-foreground",
+    primary: "text-primary",
+    success: "text-success",
+    warning: "text-warning",
   };
 
   const heroStyles = hero
@@ -69,7 +80,7 @@ export const StatCard = ({
     )}>
       <CardContent className={cn("p-4 sm:p-6", hero && "sm:p-8")}>
         <div className="flex items-start justify-between">
-          <div className={cn("space-y-1 sm:space-y-2", hero && "space-y-2 sm:space-y-3")}>
+          <div className={cn("space-y-1 sm:space-y-2 flex-1 min-w-0", hero && "space-y-2 sm:space-y-3")}>
             <p className={cn(
               "text-xs sm:text-sm text-muted-foreground font-medium tracking-wide uppercase",
               hero && "text-sm sm:text-base"
@@ -106,17 +117,41 @@ export const StatCard = ({
               </div>
             )}
           </div>
-          <div className={cn(
-            "p-2 sm:p-3 rounded-xl transition-transform duration-200",
-            iconColors[variant],
-            hero && "p-3 sm:p-4 rounded-2xl"
-          )}>
-            <Icon className={cn(
-              "h-4 w-4 sm:h-5 sm:w-5",
-              hero && "h-6 w-6 sm:h-8 sm:w-8"
-            )} />
+          <div className="flex flex-col items-end gap-2">
+            <div className={cn(
+              "p-2 sm:p-3 rounded-xl transition-transform duration-200",
+              iconColors[variant],
+              hero && "p-3 sm:p-4 rounded-2xl"
+            )}>
+              <Icon className={cn(
+                "h-4 w-4 sm:h-5 sm:w-5",
+                hero && "h-6 w-6 sm:h-8 sm:w-8"
+              )} />
+            </div>
+            {/* Mini sparkline for non-hero cards */}
+            {!hero && sparklineData && sparklineData.length > 1 && (
+              <MiniSparkline
+                data={sparklineData}
+                className={sparklineColors[variant]}
+                width={56}
+                height={20}
+              />
+            )}
           </div>
         </div>
+
+        {/* Hero sparkline — full width at bottom */}
+        {hero && sparklineData && sparklineData.length > 1 && (
+          <div className="mt-3 -mb-2">
+            <MiniSparkline
+              data={sparklineData}
+              className={sparklineColors[variant]}
+              width={240}
+              height={32}
+              strokeWidth={2}
+            />
+          </div>
+        )}
 
         {/* Hero decorative elements */}
         {hero && (
