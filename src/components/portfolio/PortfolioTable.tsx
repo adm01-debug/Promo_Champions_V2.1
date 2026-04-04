@@ -25,23 +25,16 @@ import {
   useRemoveFromPortfolio,
 } from "@/hooks/useClientPortfolio";
 import {
-  MoreHorizontal,
-  UserCheck,
-  UserX,
-  Trash2,
-  Calendar,
-  Building2,
-  Mail,
-  Phone,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Building2,
 } from "lucide-react";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { TablePagination } from "@/components/shared/TablePagination";
-import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap, ICPData } from "@/hooks/useICPData";
 import { usePagination } from "@/hooks/usePagination";
+import { PortfolioTableRow } from "./PortfolioTableRow";
 
 type SortField = "client" | "icp" | "status" | "lastPurchase" | "assignedAt";
 type SortDirection = "asc" | "desc";
