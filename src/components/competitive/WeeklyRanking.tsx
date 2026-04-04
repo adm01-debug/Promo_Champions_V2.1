@@ -10,9 +10,9 @@ import { useWeeklyRanking } from '@/hooks/useWeeklyRanking';
 
 
 const PODIUM_CONFIG: Record<number, { icon: typeof Crown; gradient: string; label: string }> = {
-  1: { icon: Crown, gradient: 'from-amber-400 to-yellow-600', label: '🥇 Campeão da Semana' },
-  2: { icon: Medal, gradient: 'from-slate-300 to-slate-500', label: '🥈 Vice' },
-  3: { icon: Trophy, gradient: 'from-amber-600 to-orange-800', label: '🥉 Bronze' },
+  1: { icon: Crown, gradient: 'from-rank-gold to-coins', label: '🥇 Campeão da Semana' },
+  2: { icon: Medal, gradient: 'from-rank-silver to-rank-silver/70', label: '🥈 Vice' },
+  3: { icon: Trophy, gradient: 'from-rank-bronze to-streak', label: '🥉 Bronze' },
 };
 
 interface WeeklyRankingProps {
