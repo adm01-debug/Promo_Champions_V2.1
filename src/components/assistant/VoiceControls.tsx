@@ -60,6 +60,7 @@ export function VoiceControls({
                 isProcessingSTT && 'opacity-50'
               )}
               onClick={onToggleListening}
+              aria-label={isListening ? "Parar gravação" : "Iniciar gravação de voz"}
               disabled={isProcessingSTT}
             >
               {isProcessingSTT ? (
