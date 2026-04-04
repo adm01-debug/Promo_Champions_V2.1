@@ -84,7 +84,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.avgTicket,
       previous: previousWeek.avgTicket,
       format: (v: number) => `R$ ${v.toLocaleString("pt-BR")}`,
-      color: "text-purple-500",
+      color: "text-primary",
     },
     {
       label: "Atividades",
