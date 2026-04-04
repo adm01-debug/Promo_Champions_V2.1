@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -85,10 +84,6 @@ export default function HistoricoDesafiosDiarios() {
   if (isLoading) {
     return (
     <>
-      <Helmet>
-        <title>Histórico de Desafios | Promo Champions</title>
-        <meta name="description" content="Histórico de desafios diários completados" />
-      </Helmet>
       <div className="min-h-screen bg-background p-6 lg:p-8 space-y-8">
         <Skeleton className="h-10 w-64" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i => <Skeleton key={i} className="h-32" />)}</div>
@@ -186,6 +181,5 @@ export default function HistoricoDesafiosDiarios() {
         </motion.div>
       </div>
     </PageTransition>
-  </>
   );
 }

@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { RoleManagement } from "@/components/settings/RoleManagement";
 import { SoundSettingsTabs } from "@/components/settings/SoundSettingsTabs";
 import { AccessDeniedLogs } from "@/components/settings/AccessDeniedLogs";
@@ -23,10 +22,6 @@ export default function Configuracoes() {
   const { isAdmin } = useUserRoles();
 
   return (
-    <Helmet>
-      <title>Configurações | Promo Champions</title>
-      <meta name="description" content="Preferências e configurações do sistema" />
-    </Helmet>
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">

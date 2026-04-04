@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -69,10 +68,6 @@ export default function ResetPassword() {
 
   if (isSuccess) {
     return (
-      <Helmet>
-        <title>Redefinir Senha | Promo Champions</title>
-        <meta name="description" content="Redefina sua senha de acesso" />
-      </Helmet>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
         <Card className="w-full max-w-md glass border-border/40">
           <CardContent className="pt-6">

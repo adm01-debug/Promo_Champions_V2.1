@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 // MainLayout is already applied at route level in App.tsx
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,10 +32,6 @@ export default function RelatorioAtividades() {
 
   if (error) {
     return (
-      <Helmet>
-        <title>Relatório de Atividades | Promo Champions</title>
-        <meta name="description" content="Relatórios detalhados de atividades" />
-      </Helmet>
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-destructive">Erro ao carregar relatório</p>
       </div>
@@ -214,6 +209,5 @@ export default function RelatorioAtividades() {
           </div>
         </div>
       </SkeletonTransition>
-    </>
   );
 }

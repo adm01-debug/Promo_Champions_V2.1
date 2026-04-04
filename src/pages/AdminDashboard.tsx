@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Settings, RefreshCw } from "lucide-react";
@@ -24,10 +23,6 @@ function AdminDashboardContent() {
   if (statsLoading || edgeLoading) {
     return (
     <>
-      <Helmet>
-        <title>Painel Administrativo | Promo Champions</title>
-        <meta name="description" content="Gerenciamento e monitoramento do sistema" />
-      </Helmet>
       <div className="p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32" />)}
@@ -84,6 +79,5 @@ export default function AdminDashboard() {
     <ProtectedRoute requireAdminOrManager>
       <AdminDashboardContent />
     </ProtectedRoute>
-  </>
   );
 }
