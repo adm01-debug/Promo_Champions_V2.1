@@ -135,7 +135,7 @@ const PredictionCard = ({
                     "h-2",
                     prediction.riskLevel === "high"
                       ? "[&>[role=progressbar]]:bg-destructive"
-                      : "[&>[role=progressbar]]:bg-yellow-500"
+                      : "[&>[role=progressbar]]:bg-warning"
                   )}
                 />
               </div>
