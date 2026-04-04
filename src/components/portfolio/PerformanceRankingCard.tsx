@@ -22,7 +22,7 @@ const getRankIcon = (rank: number) => {
     case 1:
       return <Crown className="h-5 w-5 text-warning" />;
     case 2:
-      return <Medal className="h-5 w-5 text-gray-400" />;
+      return <Medal className="h-5 w-5 text-rank-silver" />;
     case 3:
       return <Trophy className="h-5 w-5 text-rank-gold" />;
     default:
@@ -39,7 +39,7 @@ const getRankBadgeStyle = (rank: number) => {
     case 1:
       return "bg-gradient-to-r from-yellow-500/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins";
     case 2:
-      return "bg-gradient-to-r from-gray-300/20 to-gray-400/20 border-gray-400/30 text-gray-600 dark:text-gray-300";
+      return "bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/30 text-muted-foreground dark:text-muted-foreground";
     case 3:
       return "bg-gradient-to-r from-rank-gold/20 to-orange-500/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold";
     default:

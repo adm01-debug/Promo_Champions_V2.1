@@ -54,9 +54,9 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-              className="relative mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-rank-gold to-yellow-500 flex items-center justify-center shadow-lg"
+              className="relative mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center shadow-lg"
             >
-              <Crown className="h-10 w-10 text-black" />
+              <Crown className="h-10 w-10 text-foreground" />
             </motion.div>
 
             {/* Title */}
@@ -112,7 +112,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
               </motion.div>
             )}
 
-            <Button onClick={onClose} className="w-full bg-gradient-to-r from-rank-gold to-yellow-500 text-black font-bold hover:from-rank-gold hover:to-yellow-600">
+            <Button onClick={onClose} className="w-full bg-gradient-to-r from-rank-gold to-coins text-foreground font-bold hover:from-rank-gold hover:to-coins/90">
               Continuar
             </Button>
           </motion.div>

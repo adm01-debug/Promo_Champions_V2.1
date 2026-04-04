@@ -24,7 +24,7 @@ const getRankDecor = (rank: number) => {
         icon: <Crown className="h-4 w-4 text-rank-gold" />,
         border: "border-rank-gold/40",
         bg: "from-rank-gold/15 to-transparent",
-        rankBg: "bg-gradient-to-br from-rank-gold to-yellow-500 text-black",
+        rankBg: "bg-gradient-to-br from-rank-gold to-yellow-500 text-foreground",
       };
     case 2:
       return {

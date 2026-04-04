@@ -37,7 +37,7 @@ export default function DesafiosSemanais() {
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Crown className="h-5 w-5 text-warning" />;
-    if (rank === 2) return <Medal className="h-5 w-5 text-gray-400" />;
+    if (rank === 2) return <Medal className="h-5 w-5 text-rank-silver" />;
     if (rank === 3) return <Award className="h-5 w-5 text-rank-gold" />;
     return <span className="text-muted-foreground font-bold">#{rank}</span>;
   };
@@ -193,7 +193,7 @@ export default function DesafiosSemanais() {
                           index === 0
                             ? "bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border border-warning/30"
                             : index === 1
-                            ? "bg-gradient-to-r from-gray-400/20 to-gray-500/10 border border-gray-400/30"
+                            ? "bg-gradient-to-r from-rank-silver/20 to-rank-silver/10 border border-rank-silver/30"
                             : index === 2
                             ? "bg-gradient-to-r from-rank-gold/20 to-amber-700/10 border border-amber-600/30"
                             : "bg-muted/50"
