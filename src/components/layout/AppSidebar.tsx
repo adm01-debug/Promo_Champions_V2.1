@@ -29,7 +29,7 @@ import {
   MailCheck,
   DollarSign,
   Swords,
-  _Gift,
+  
   Crown,
   MapPin,
   ChevronRight,

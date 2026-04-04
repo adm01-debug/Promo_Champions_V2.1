@@ -49,7 +49,6 @@ import {
   ArrowRight,
   Trash2,
   Play,
-  _Pause,
   Clock,
   GitBranch,
   ChevronRight,

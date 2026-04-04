@@ -12,7 +12,6 @@ import {
   Briefcase,
   X,
   Search,
-  _TrendingUp,
   Clock,
   DollarSign,
 } from 'lucide-react';

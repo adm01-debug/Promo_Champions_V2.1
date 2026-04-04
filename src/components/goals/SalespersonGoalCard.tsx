@@ -34,6 +34,7 @@ export function SalespersonGoalCard({
   goalAmount,
   currentSales,
   progress,
+  projection: _projection,
   onTrack,
   dailyAverage,
   requiredDailyAverage,
