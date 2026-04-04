@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 /** Shimmer skeleton with custom sizing for content-aware loading */
-const Shimmer: FC<{ className?: string }> = ({ className }) => (
-  <Skeleton className={cn("animate-pulse", className)} />
+const Shimmer: FC<{ className?: string; style?: React.CSSProperties }> = ({ className, style }) => (
+  <Skeleton className={cn("animate-pulse", className)} style={style} />
 );
 
 // Generic skeleton card
