@@ -72,4 +72,4 @@ export const MiniSparkline = React.memo(function MiniSparkline({
       />
     </svg>
   );
-}
+});
