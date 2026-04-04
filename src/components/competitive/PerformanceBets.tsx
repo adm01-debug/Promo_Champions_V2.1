@@ -173,7 +173,7 @@ export function PerformanceBets() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-500">
+            <div className="text-2xl font-bold text-success">
               {completedBets.filter((b: any) => b.status === 'won').length}
             </div>
             <div className="text-xs text-muted-foreground">Apostas Ganhas</div>
