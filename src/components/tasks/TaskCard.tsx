@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,7 @@ interface TaskCardProps {
   task: TaskRecord;
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
   const completeTask = useCompleteTask();
   const priority = priorityConfig[task.priority] || priorityConfig.medium;
   const type = typeConfig[task.task_type] || typeConfig.other;
@@ -114,3 +115,4 @@ export function TaskCard({ task }: TaskCardProps) {
     </Card>
   );
 }
+export const TaskCard = memo(TaskCardInner);

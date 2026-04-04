@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { LucideIcon, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,7 @@ const getVariantStyles = (variant: string) => {
   }
 };
 
-export function SDRStatCard({ 
+const SDRStatCardInner = function SDRStatCard({ 
   title, 
   value, 
   change, 
@@ -125,3 +126,4 @@ export function SDRStatCard({
     </motion.div>
   );
 }
+export const SDRStatCard = memo(SDRStatCardInner);

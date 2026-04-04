@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -22,7 +23,7 @@ interface SystemSoundRowProps {
   showSoundSelect?: boolean;
 }
 
-export function SystemSoundRow({
+const SystemSoundRowInner = function SystemSoundRow({
   icon: Icon,
   iconColor,
   iconBg,
@@ -81,3 +82,4 @@ export function SystemSoundRow({
     </div>
   );
 }
+export const SystemSoundRow = memo(SystemSoundRowInner);

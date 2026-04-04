@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,7 @@ interface DealPreviewCardProps {
   onAskAssistant?: (question: string) => void;
 }
 
-export function DealPreviewCard({ dealId, clientName, productName, amount, status, onAskAssistant }: DealPreviewCardProps) {
+const DealPreviewCardInner = function DealPreviewCard({ dealId, clientName, productName, amount, status, onAskAssistant }: DealPreviewCardProps) {
   const [showHistory, setShowHistory] = useState(false);
 
   const { data: dealDetails } = useQuery({
@@ -116,3 +117,4 @@ export function DealPreviewCard({ dealId, clientName, productName, amount, statu
     </div>
   );
 }
+export const DealPreviewCard = memo(DealPreviewCardInner);
