@@ -23,7 +23,7 @@ interface SDRActivityTrendProps {
   period: PeriodFilter;
 }
 
-interface SDR {
+interface _SDR {
   id: string;
   name: string;
 }

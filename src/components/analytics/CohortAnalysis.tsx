@@ -82,7 +82,7 @@ export const CohortAnalysis: FC = () => {
         const retention: number[] = [];
 
         for (let i = 0; i <= maxPeriods; i++) {
-          const checkMonth = format(subMonths(now, maxPeriods - i) > cohortDate ? 
+          const _checkMonth = format(subMonths(now, maxPeriods - i) > cohortDate ? 
             new Date(cohortDate.getFullYear(), cohortDate.getMonth() + i, 1) : cohortDate, 'yyyy-MM');
           
           const targetMonth = format(new Date(cohortDate.getFullYear(), cohortDate.getMonth() + i, 1), 'yyyy-MM');

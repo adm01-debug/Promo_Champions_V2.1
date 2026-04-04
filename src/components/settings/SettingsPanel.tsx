@@ -9,11 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { 
   User, 
   Bell, 
-  Shield, 
+  _Shield, 
   Palette, 
-  Globe, 
+  _Globe, 
   Save,
-  ChevronRight 
+  _ChevronRight 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

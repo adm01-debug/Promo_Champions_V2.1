@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -90,7 +89,7 @@ export const staggerItem = {
  */
 export function CountUpText({
   value,
-  duration = 1.2,
+  _duration = 1.2,
   className,
   prefix = "",
   suffix = "",

@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Plus, Target, Users, Sparkles } from "lucide-react";
+import { TrendingUp, Plus, Target, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -127,7 +127,7 @@ const emptyStates = {
 
 export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
   const state = emptyStates[type];
-  const Icon = state.icon;
+  const _Icon = state.icon;
 
   return (
     <motion.div

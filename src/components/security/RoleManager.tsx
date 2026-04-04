@@ -6,16 +6,16 @@ import { Switch } from '@/components/ui/switch';
 import { 
   Users, 
   Shield, 
-  Key, 
+  _Key, 
   Lock, 
-  Unlock, 
+  _Unlock, 
   Plus, 
   Edit, 
   Trash2,
-  Check,
+  _Check,
   X,
   Eye,
-  EyeOff,
+  _EyeOff,
   AlertTriangle
 } from 'lucide-react';
 

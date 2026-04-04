@@ -15,7 +15,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
   className, 
   variant = 'banner',
   onDismiss 
-}, ref) => {
+}, _ref) => {
   const { isInstallable, isInstalled, installApp } = usePWA();
   const [isDismissed, setIsDismissed] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);

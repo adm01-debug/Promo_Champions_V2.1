@@ -13,7 +13,7 @@ vi.mock('next-themes', () => ({
 
 // Mock sonner
 vi.mock('sonner', () => ({
-  Toaster: ({ toastOptions, position, richColors, closeButton, ...props }: any) => {
+  Toaster: ({ toastOptions, position, richColors, closeButton, ..._props }: any) => {
     return (
       <div 
         data-testid="sonner" 

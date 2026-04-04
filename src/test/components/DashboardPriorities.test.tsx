@@ -2,7 +2,7 @@
  * useDashboardPriorities Hook Tests
  * Verifies: role-based section defaults for SDR, Closer, Gestão, Hybrid
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useDashboardPriorities } from '@/hooks/useDashboardPriorities';
 

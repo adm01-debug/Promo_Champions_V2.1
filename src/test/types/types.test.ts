@@ -4,9 +4,9 @@
  */
 import { describe, it, expect } from 'vitest';
 import type {
-  Deal, Client, Activity, User, PipelineStage, Pipeline,
-  Product, DealProduct, Cadence, CadenceStep, Achievement,
-  Goal, Task, DateRange, MetricData, FilterOptions,
+  Deal, Client, Activity, User, __PipelineStage, Pipeline,
+  _Product, _DealProduct, _Cadence, _CadenceStep, Achievement,
+  Goal, Task, _DateRange, _MetricData, FilterOptions,
   PaginationParams, PaginatedResponse, ApiResponse, ApiError,
 } from '@/types';
 

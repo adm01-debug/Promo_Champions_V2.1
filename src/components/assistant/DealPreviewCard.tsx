@@ -62,7 +62,7 @@ interface RiskLevel {
 function getRecommendedAction(
   status: string,
   daysWithoutActivity: number | null,
-  daysInStage: number | null,
+  _daysInStage: number | null,
   riskLevel: 'low' | 'medium' | 'high'
 ): { text: string; icon: string } {
   // Stage-specific actions

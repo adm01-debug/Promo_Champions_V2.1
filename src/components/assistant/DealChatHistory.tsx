@@ -1,4 +1,3 @@
-import React from 'react';
 import { MessageSquare, Trash2, Clock, Loader2, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -28,7 +27,7 @@ const TYPE_COLORS: Record<QuestionType, string> = {
   strategy: 'bg-purple-500/20 text-purple-500',
 };
 
-export function DealChatHistory({ dealId, clientName, onSelectQuestion }: DealChatHistoryProps) {
+export function DealChatHistory({ dealId, _clientName, onSelectQuestion }: DealChatHistoryProps) {
   const { history, allHistory, isLoading, deleteEntry, filterType, setFilterType } = useDealChatHistory(dealId);
 
   if (isLoading) {

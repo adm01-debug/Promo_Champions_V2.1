@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { UI } from "@/config/constants";
 
-interface UseCursorPaginationOptions<T> {
+interface UseCursorPaginationOptions<_T> {
   table: string;
   select?: string;
   orderColumn?: string;

@@ -9,7 +9,7 @@ import {
   Clock, 
   Activity, 
   ChevronDown, 
-  ChevronUp,
+  _ChevronUp,
   Sparkles,
   RefreshCw 
 } from "lucide-react";

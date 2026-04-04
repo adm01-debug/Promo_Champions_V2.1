@@ -84,7 +84,7 @@ export function CompetitiveLeaderboard({ showAll: _showAll = false }: Competitiv
       <CardContent className="p-0">
         <ScrollArea className="h-[400px]">
           <div className="p-4 space-y-2.5">
-            {ranking?.map((person, index) => {
+            {ranking?.map((person, _index) => {
               const RankIcon = RANK_ICONS[person.rank] || TrendingUp;
               const isCurrentUser = salesperson?.id === person.id;
               const isTopThree = person.rank <= 3;

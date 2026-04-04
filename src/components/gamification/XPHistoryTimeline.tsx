@@ -11,7 +11,7 @@ import {
   Star, 
   Gift,
   TrendingUp,
-  Award,
+  _Award,
   Clock
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";

@@ -14,7 +14,7 @@ import {
   Settings, 
   TrendingUp,
   Clock,
-  Mail,
+  _Mail,
   Zap,
   Database,
   Server,

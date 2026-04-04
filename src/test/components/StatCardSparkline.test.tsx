@@ -3,7 +3,7 @@
  * Verifies: sparkline rendering in hero/non-hero modes, conditional display
  */
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { DollarSign } from 'lucide-react';
 

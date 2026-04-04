@@ -48,7 +48,7 @@ export const FunnelChart: FC = () => {
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
-  const maxVal = Math.max(...(data || []).map(d => d.value), 1);
+  const _maxVal = Math.max(...(data || []).map(d => d.value), 1);
 
   return (
     <Card className="h-full">

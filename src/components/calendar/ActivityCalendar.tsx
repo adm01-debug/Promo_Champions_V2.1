@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import {
   startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval,
-  format, isSameDay, isSameMonth, isToday, addMonths, subMonths,
+  format, _isSameDay, isSameMonth, isToday, addMonths, subMonths,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useTasks, useUpdateTask, TaskRecord } from "@/hooks/useTasks";
@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronLeft, ChevronRight, Calendar as CalendarIcon,
   Phone, Mail, Users, Reply, FileText, CheckCircle2,
-  Clock, GripVertical, MoreHorizontal,
+  _Clock, GripVertical, _MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";

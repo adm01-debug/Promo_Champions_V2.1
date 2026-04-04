@@ -165,7 +165,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
               <div className="absolute left-4 top-0 bottom-0 w-px bg-border" />
 
               <div className="space-y-1">
-                {filteredEvents.map((event, idx) => (
+                {filteredEvents.map((event, _idx) => (
                   <div key={event.id} className="relative flex gap-3 pl-1 py-2 group">
                     {/* Dot */}
                     <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-card border-2 border-border group-hover:border-primary transition-colors shrink-0">

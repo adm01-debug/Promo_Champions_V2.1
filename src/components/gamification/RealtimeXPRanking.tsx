@@ -9,7 +9,7 @@ import {
   Zap, 
   TrendingUp, 
   TrendingDown,
-  Minus,
+  _Minus,
   Crown,
   Medal,
   Award,

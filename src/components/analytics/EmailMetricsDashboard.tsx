@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEmailMetrics } from '@/hooks/useEmailMetrics';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell, PieChart, Pie
+  BarChart, Bar, _Cell, __PieChart, Pie
 } from 'recharts';
 import { 
   Mail, Send, AlertTriangle, CheckCircle, TrendingUp, 

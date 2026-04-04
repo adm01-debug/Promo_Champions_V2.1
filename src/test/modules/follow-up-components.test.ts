@@ -23,7 +23,7 @@ function createLead(overrides: Partial<ColdLead> = {}): ColdLead {
   };
 }
 
-function createLeadSet(count: number, tempDistribution: Record<LeadTemperature, number> = { hot: 2, warm: 3, cold: 4, frozen: 1 }): ColdLead[] {
+function createLeadSet(_count: number, tempDistribution: Record<LeadTemperature, number> = { hot: 2, warm: 3, cold: 4, frozen: 1 }): ColdLead[] {
   const leads: ColdLead[] = [];
   const temps: LeadTemperature[] = ['hot', 'warm', 'cold', 'frozen'];
   temps.forEach(temp => {

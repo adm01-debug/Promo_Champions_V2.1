@@ -221,7 +221,7 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
               }}
               wrapperStyle={{ paddingTop: '20px' }}
             />
-            {displayedClosers.map((closer, index) => {
+            {displayedClosers.map((closer, _index) => {
               const colorIndex = closers.findIndex(c => c.id === closer.id);
               return (
                 <Line

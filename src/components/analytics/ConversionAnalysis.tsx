@@ -60,7 +60,7 @@ export const ConversionAnalysis: FC<ConversionAnalysisProps> = ({
       </div>
 
       <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
-        {data.map((stage, index) => (
+        {data.map((stage, _index) => (
           <div key={stage.stage} className="text-center">
             <p className="text-xs text-muted-foreground truncate">{stage.stage}</p>
             <p className="font-semibold">{stage.conversionRate}%</p>
@@ -128,7 +128,7 @@ export const WinLossReasonChart: FC<WinLossReasonChartProps> = ({
 const ReasonList: FC<{ data: WinLossData[]; colors: string[]; type: 'win' | 'loss' }> = ({
   data,
   colors,
-  type,
+  _type,
 }) => (
   <div className="space-y-3">
     {data.map((item, index) => (

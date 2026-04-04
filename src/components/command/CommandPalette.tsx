@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/command";
 import {
   LayoutDashboard, ShoppingCart, Users, Package, Target,
-  BarChart3, Settings, Trophy, Calendar, MessageSquare,
+  BarChart3, Settings, Trophy, Calendar, _MessageSquare,
   Bell, FileText, Zap, Search, Plus, Moon, Sun, Keyboard,
-  Clock, Heart, Brain, Flame, Radar, Shield, Star, Globe,
+  Clock, _Heart, Brain, Flame, Radar, Shield, _Star, Globe,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 

@@ -67,7 +67,7 @@ export const EvolutionChart: FC = () => {
 
         {/* People selector */}
         <div className="flex flex-wrap gap-1.5 mt-2">
-          {salespeople.map((sp, i) => (
+          {salespeople.map((sp, _i) => (
             <button
               key={sp.id}
               onClick={() => togglePerson(sp.id)}

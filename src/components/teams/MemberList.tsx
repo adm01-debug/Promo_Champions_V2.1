@@ -5,9 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { 
   UserPlus, 
-  UserMinus, 
+  _UserMinus, 
   Search, 
-  ChevronRight,
+  _ChevronRight,
   Mail,
   Phone,
   MoreHorizontal 

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-import { subDays, format, startOfDay, endOfDay } from "date-fns";
+import { subDays, format } from "date-fns";
 
 interface ActivityChartProps {
   userId?: string;

@@ -3,7 +3,7 @@
  * Tests: session ID generation, page tracking lifecycle, interaction counting,
  * flush logic, device detection, visibility/unload listeners
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // --- Session ID generation ---
 describe('Analytics - Session ID', () => {

@@ -338,7 +338,7 @@ describe('SSR Warning Cleanup', () => {
     // This was removed from PageLoadingFallback
     const spaFlags = ['suppressHydrationWarning'];
     const isNeeded = false; // Not needed in SPA
-    spaFlags.forEach(flag => {
+    spaFlags.forEach(_flag => {
       expect(isNeeded).toBe(false);
     });
   });

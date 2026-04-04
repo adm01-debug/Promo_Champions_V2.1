@@ -11,7 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  Cell,
+  _Cell,
 } from "recharts";
 
 export function AchievementComparisonChart() {

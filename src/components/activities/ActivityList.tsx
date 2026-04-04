@@ -15,7 +15,7 @@ import { useState, useMemo, useEffect } from "react";
 import Fuse from "fuse.js";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip as TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { activityLabels, outcomeLabels, activityTypeOptions, outcomeOptions } from "./activityConstants";
 import { ActivityStatsCharts } from "./ActivityStatsCharts";

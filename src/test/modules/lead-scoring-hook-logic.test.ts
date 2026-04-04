@@ -43,7 +43,7 @@ describe("Best server score selection", () => {
   });
 
   it("returns 0 when no server scores", () => {
-    const scores: Record<string, { score: number }> = {};
+    const _scores: Record<string, { score: number }> = {};
     let bestScore = 0;
     expect(bestScore).toBe(0);
   });
