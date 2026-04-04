@@ -50,7 +50,7 @@ const statusConfig = {
   },
 };
 
-export const GoalProgressCard: FC<GoalProgressCardProps> = ({
+export const GoalProgressCard = React.memo<GoalProgressCardProps>(function GoalProgressCard({
   goal,
   showDetails: _showDetails = true,
   onClick,
