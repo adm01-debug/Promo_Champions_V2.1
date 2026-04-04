@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -35,7 +35,7 @@ const statusLabels = {
   churned: { label: 'Perdido', variant: 'destructive' as const },
 };
 
-export const ClientInfoCard: FC<ClientInfoCardProps> = ({
+const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
   client,
   showActions = true,
   onCall,
@@ -141,3 +141,5 @@ export const ClientInfoCard: FC<ClientInfoCardProps> = ({
     </Card>
   );
 };
+
+export const ClientInfoCard = React.memo(ClientInfoCardBase);

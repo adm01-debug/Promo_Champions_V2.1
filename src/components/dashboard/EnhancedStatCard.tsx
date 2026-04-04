@@ -22,7 +22,7 @@ interface EnhancedStatCardProps {
   sparklineData?: number[];
 }
 
-export const EnhancedStatCard: FC<EnhancedStatCardProps> = ({
+const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
   title,
   value,
   previousValue,
@@ -175,3 +175,5 @@ export const EnhancedStatCard: FC<EnhancedStatCardProps> = ({
     </motion.div>
   );
 };
+
+export const EnhancedStatCard = React.memo(EnhancedStatCardBase);

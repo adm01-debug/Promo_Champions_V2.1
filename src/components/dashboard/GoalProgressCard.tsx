@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -50,7 +50,7 @@ const statusConfig = {
   },
 };
 
-export const GoalProgressCard: FC<GoalProgressCardProps> = ({
+const GoalProgressCardBase: FC<GoalProgressCardProps> = ({
   goal,
   showDetails: _showDetails = true,
   onClick,
@@ -96,6 +96,8 @@ export const GoalProgressCard: FC<GoalProgressCardProps> = ({
     </motion.div>
   );
 };
+
+export const GoalProgressCard = React.memo(GoalProgressCardBase);
 
 interface GoalsSummaryProps {
   goals: Goal[];

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Card } from '@/components/ui/card';
 
 interface PipelineOverviewProps {
@@ -6,7 +6,7 @@ interface PipelineOverviewProps {
   showValue?: boolean;
 }
 
-export const PipelineOverview: FC<PipelineOverviewProps> = ({ 
+const PipelineOverviewBase: FC<PipelineOverviewProps> = ({ 
   pipelineId,
   showValue = true
 }) => {
@@ -18,3 +18,5 @@ export const PipelineOverview: FC<PipelineOverviewProps> = ({
     </Card>
   );
 };
+
+export const PipelineOverview = React.memo(PipelineOverviewBase);

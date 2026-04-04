@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 
@@ -13,7 +14,7 @@ interface MiniSparklineProps {
  * A tiny SVG sparkline for inline KPI trend visualization.
  * Renders a smooth polyline + gradient fill area.
  */
-export function MiniSparkline({
+export const MiniSparkline = React.memo(function MiniSparkline({
   data,
   className,
   width = 56,
@@ -71,4 +72,4 @@ export function MiniSparkline({
       />
     </svg>
   );
-}
+});
