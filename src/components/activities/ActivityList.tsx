@@ -154,7 +154,7 @@ export function ActivityList({ limit = 100, showHeader = true, showPagination = 
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus className="p-3 pointer-events-auto" locale={ptBR} /></PopoverContent>
                   </Popover>
-                  {(startDate || endDate) && <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setStartDate(undefined); setEndDate(undefined); }}><X className="h-4 w-4" /></Button>}
+                  {(startDate || endDate) && <Button variant="ghost" size="icon" aria-label="Limpar filtro" className="h-8 w-8" onClick={() => { setStartDate(undefined); setEndDate(undefined); }}><X className="h-4 w-4" /></Button>}
                 </div>
               </div>
             </div>

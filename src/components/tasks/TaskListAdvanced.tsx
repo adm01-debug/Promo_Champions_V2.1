@@ -132,10 +132,10 @@ export const TaskListAdvanced: FC<TaskListAdvancedProps> = ({
               </div>
 
               <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onEdit?.(task)}>
+                <Button variant="ghost" size="icon" aria-label="Editar tarefa" className="h-7 w-7" onClick={() => onEdit?.(task)}>
                   <Edit className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDelete?.(task.id)}>
+                <Button variant="ghost" size="icon" aria-label="Excluir tarefa" className="h-7 w-7" onClick={() => onDelete?.(task.id)}>
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
@@ -219,7 +219,7 @@ export const TaskKanbanColumn: FC<TaskKanbanColumnProps> = ({
           <h4 className="font-medium">{title}</h4>
           <Badge variant="secondary">{count}</Badge>
         </div>
-        <Button variant="ghost" size="icon" className="h-7 w-7">
+        <Button variant="ghost" size="icon" aria-label="Mais opções" className="h-7 w-7">
           <Plus className="h-4 w-4" />
         </Button>
       </div>

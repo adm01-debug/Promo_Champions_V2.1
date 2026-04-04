@@ -115,7 +115,7 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
                 <div key={i} className="p-3 rounded-lg border border-primary/30 bg-primary/5 space-y-3">
                   <div className="flex items-center justify-between">
                     <Badge variant="secondary" className="text-xs bg-primary/20 text-primary border-primary/30">Nova Etapa</Badge>
-                    <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => setNewSteps(newSteps.filter((_, idx) => idx !== i))}><Trash2 className="h-3 w-3" /></Button>
+                    <Button size="icon" aria-label="Remover etapa" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => setNewSteps(newSteps.filter((_, idx) => idx !== i))}><Trash2 className="h-3 w-3" /></Button>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1"><Label className="text-xs">Dia</Label><Input type="number" min={1} value={s.day_number} onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, day_number: parseInt(e.target.value) || 1 }; setNewSteps(u); }} className="h-8 text-sm bg-background/50" /></div>

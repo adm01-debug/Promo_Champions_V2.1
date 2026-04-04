@@ -218,7 +218,7 @@ export function ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 relative z-10 hover:bg-primary/10 hover:text-primary transition-colors" onClick={() => onEdit(data.salesperson_id)}>
+          <Button variant="ghost" size="icon" aria-label="Editar meta" className="h-8 w-8 relative z-10 hover:bg-primary/10 hover:text-primary transition-colors" onClick={() => onEdit(data.salesperson_id)}>
             <Settings className="h-4 w-4" />
           </Button>
         </div>

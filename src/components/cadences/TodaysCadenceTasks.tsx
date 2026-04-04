@@ -179,7 +179,7 @@ export function TodaysCadenceTasks() {
                             <MessageSquare className="h-3 w-3" />
                             {noteAction === "complete" ? "Nota ao concluir" : "Motivo ao pular"}
                           </span>
-                          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => setNotesTaskId(null)}>
+                          <Button size="icon" aria-label="Fechar notas" variant="ghost" className="h-5 w-5" onClick={() => setNotesTaskId(null)}>
                             <X className="h-3 w-3" />
                           </Button>
                         </div>

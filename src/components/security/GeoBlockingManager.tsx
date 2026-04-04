@@ -179,7 +179,7 @@ export function GeoBlockingManager() {
                         <Badge variant={country.is_active ? "default" : "secondary"}>{country.is_active ? "Ativo" : "Inativo"}</Badge>
                       </div>
                       <AlertDialog>
-                        <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
+                        <AlertDialogTrigger asChild><Button variant="ghost" size="icon" aria-label="Remover região" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader><AlertDialogTitle>Remover país?</AlertDialogTitle><AlertDialogDescription>Isso removerá <strong>{country.country_name}</strong> da whitelist. Usuários deste país não poderão mais acessar o sistema.</AlertDialogDescription></AlertDialogHeader>
                           <AlertDialogFooter><AlertDialogCancel>Cancelar</AlertDialogCancel><AlertDialogAction onClick={() => removeCountryMutation.mutate(country.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Remover</AlertDialogAction></AlertDialogFooter>

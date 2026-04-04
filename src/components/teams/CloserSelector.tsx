@@ -37,7 +37,7 @@ export const CloserSelector = React.memo(function CloserSelector({ allClosers, s
             return (
               <Badge key={closerId} variant="secondary" className="flex items-center gap-1 pr-1">
                 {closer.name}
-                <Button type="button" variant="ghost" size="icon" className="h-4 w-4 ml-1 hover:bg-destructive/20" onClick={() => onToggle(closerId)}><X className="h-3 w-3" /></Button>
+                <Button type="button" variant="ghost" size="icon" aria-label="Remover" className="h-4 w-4 ml-1 hover:bg-destructive/20" onClick={() => onToggle(closerId)}><X className="h-3 w-3" /></Button>
               </Badge>
             );
           })}

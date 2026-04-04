@@ -221,7 +221,7 @@ export function ChurnPredictionPanel({
             </Badge>
           </CardTitle>
           {onRefresh && (
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onRefresh}>
+            <Button variant="ghost" size="icon" aria-label="Atualizar" className="h-8 w-8" onClick={onRefresh}>
               <RefreshCw className="h-4 w-4" />
             </Button>
           )}

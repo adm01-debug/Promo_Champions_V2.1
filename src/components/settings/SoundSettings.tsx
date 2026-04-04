@@ -87,7 +87,7 @@ export function SoundSettings() {
                   </Label>
                 </div>
                 {option.id !== 'none' && (
-                  <Button variant="ghost" size="icon" onClick={(e) => { e.preventDefault(); previewSound(option.id); }} className="hover-scale-sm" disabled={volume === 0}>
+                  <Button variant="ghost" size="icon" aria-label="Testar som" onClick={(e) => { e.preventDefault(); previewSound(option.id); }} className="hover-scale-sm" disabled={volume === 0}>
                     <Play className="h-4 w-4" />
                   </Button>
                 )}
