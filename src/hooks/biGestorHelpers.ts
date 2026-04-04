@@ -3,7 +3,7 @@ import type { SalespersonPerformanceData } from "./useBIGestor";
 
 interface SaleRecord {
   id?: string;
-  salesperson_id: string | null;
+  salesperson_id?: string | null;
   amount: number;
   status: string;
   category?: string | null;
