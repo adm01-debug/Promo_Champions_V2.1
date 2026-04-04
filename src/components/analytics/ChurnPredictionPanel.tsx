@@ -51,7 +51,7 @@ const RiskBadge = ({ level }: { level: "high" | "medium" }) => {
     },
     medium: {
       label: "Médio Risco",
-      className: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border-yellow-500/30",
+      className: "bg-warning/20 text-warning border-warning/30",
       icon: TrendingDown,
     },
   };
