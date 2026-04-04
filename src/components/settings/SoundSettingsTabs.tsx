@@ -65,7 +65,7 @@ export function SoundSettingsTabs() {
           <TabsContent value="sdr" className="space-y-6 mt-0">
             <div className="p-3 rounded-lg bg-accent/30 border border-border/40">
               <p className="text-sm text-muted-foreground">
-                <TrendingDown className="h-4 w-4 inline mr-2 text-amber-500" />
+                <TrendingDown className="h-4 w-4 inline mr-2 text-rank-gold" />
                 Sons para alertas de SDRs abaixo da meta por dias consecutivos
               </p>
             </div>
