@@ -147,7 +147,7 @@ export function SalesAssistantChat() {
               </Button>
             )}
             {messages.length > 0 && (
-              <Button variant="ghost" size="icon" onClick={newConversation} className="text-muted-foreground hover:text-foreground" title="Nova conversa">
+              <Button variant="ghost" size="icon" onClick={newConversation} className="text-muted-foreground hover:text-foreground" title="Nova conversa" aria-label="Nova conversa">
                 <Plus className="h-4 w-4" />
               </Button>
             )}
