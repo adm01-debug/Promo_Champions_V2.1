@@ -55,7 +55,7 @@ export const GoalProgressCard = React.memo<GoalProgressCardProps>(function GoalP
   showDetails: _showDetails = true,
   onClick,
   className,
-}) => {
+) {
   const percentage = Math.min((goal.current / goal.target) * 100, 100);
   const config = statusConfig[goal.status];
   const Icon = config.icon;
