@@ -78,6 +78,7 @@ const RelatoriosExecutivos = lazy(() => import("@/pages/RelatoriosExecutivos"));
 const MapaClientes = lazy(() => import("@/pages/MapaClientes"));
 const AdminTelemetria = lazy(() => import("@/pages/AdminTelemetria"));
 const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
+const Multichannel = lazy(() => import("@/pages/Multichannel"));
 
 export { PageLoadingFallback };
 
