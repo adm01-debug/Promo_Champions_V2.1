@@ -169,6 +169,19 @@ export default function Metas() {
                 isLoading={isLoading}
               />
             </motion.div>
+
+            {/* Charts Row */}
+            <motion.div
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <div className="lg:col-span-2">
+                <GoalComparisonChart salespeople={data?.salespeople || []} />
+              </div>
+              <GoalDistributionChart salespeople={data?.salespeople || []} />
+            </motion.div>
           </div>
         </div>
       </PageTransition>
