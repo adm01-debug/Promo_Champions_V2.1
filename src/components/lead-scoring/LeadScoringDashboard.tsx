@@ -197,7 +197,7 @@ export function LeadScoringDashboard() {
                               </div>
                             ))}
                             {!lead.labels && (
-                              <FactorBar label="Valor do Deal" value={(lead.factors as any).dealValue} maxValue={25} />
+                              <FactorBar label="Valor do Deal" value={((lead.factors as unknown as Record<string, number>)).dealValue} maxValue={25} />
                             )}
                           </div>
                         </TooltipContent>
@@ -212,10 +212,10 @@ export function LeadScoringDashboard() {
                         <TooltipContent side="left" className="max-w-xs">
                           <div className="space-y-2 p-1">
                             <p className="font-semibold text-xs mb-2">Fatores Locais</p>
-                            <FactorBar label="Empresa" value={(lead.factors as any).companySize} maxValue={20} />
-                            <FactorBar label="Indústria" value={(lead.factors as any).industry} maxValue={15} />
-                            <FactorBar label="Engajamento" value={(lead.factors as any).engagement} maxValue={25} />
-                            <FactorBar label="Origem" value={(lead.factors as any).source} maxValue={10} />
+                            <FactorBar label="Empresa" value={((lead.factors as unknown as Record<string, number>)).companySize} maxValue={20} />
+                            <FactorBar label="Indústria" value={((lead.factors as unknown as Record<string, number>)).industry} maxValue={15} />
+                            <FactorBar label="Engajamento" value={((lead.factors as unknown as Record<string, number>)).engagement} maxValue={25} />
+                            <FactorBar label="Origem" value={((lead.factors as unknown as Record<string, number>)).source} maxValue={10} />
                           </div>
                         </TooltipContent>
                       </Tooltip>

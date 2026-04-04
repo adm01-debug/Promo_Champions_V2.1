@@ -113,7 +113,7 @@ export function TournamentBrackets() {
     completed: { label: 'Finalizado', color: 'bg-success/20 text-success' },
   };
 
-  const metricLabels: Record<string, string> = {
+  const metricLabels: Record<string, any> = {
     revenue: 'Receita', deals: 'Deals', activities: 'Atividades', conversion: 'Conversão',
   };
 
@@ -175,7 +175,7 @@ export function TournamentBrackets() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {tournaments.map((t: any) => {
+          {tournaments.map((t: Record<string, any>) => {
             const status = statusConfig[t.status] || statusConfig.upcoming;
             const matches = t.tournament_matches || [];
 
@@ -210,15 +210,15 @@ export function TournamentBrackets() {
                     <div className="overflow-x-auto">
                       <div className="flex gap-8 min-w-max pb-2">
                         {Array.from({ length: t.total_rounds }, (_, r) => {
-                          const roundMatches = matches.filter((m: any) => m.round_number === r + 1).sort((a: any, b: any) => a.match_order - b.match_order);
+                          const roundMatches = matches.filter((m: Record<string, any>) => m.round_number === r + 1).sort((a: Record<string, any>, b: Record<string, any>) => a.match_order - b.match_order);
                           const label = r + 1 === t.total_rounds ? 'Final' : r + 1 === t.total_rounds - 1 ? 'Semi' : `Round ${r + 1}`;
 
                           return (
                             <div key={r} className="flex flex-col gap-4">
                               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">{label}</div>
-                              {roundMatches.length > 0 ? roundMatches.map((match: any) => {
-                                const p1Name = t.tournament_participants?.find((p: any) => p.salesperson_id === match.player1_id)?.salespeople?.name || 'TBD';
-                                const p2Name = match.player2_id ? t.tournament_participants?.find((p: any) => p.salesperson_id === match.player2_id)?.salespeople?.name || 'TBD' : 'BYE';
+                              {roundMatches.length > 0 ? roundMatches.map(( match: Record<string, any>) => {
+                                const p1Name = t.tournament_participants?.find((p: Record<string, any>) => p.salesperson_id === match.player1_id)?.salespeople?.name || 'TBD';
+                                const p2Name = match.player2_id ? t.tournament_participants?.find((p: Record<string, any>) => p.salesperson_id === match.player2_id)?.salespeople?.name || 'TBD' : 'BYE';
 
                                 return (
                                   <div key={match.id} className="w-48 border rounded-lg overflow-hidden bg-card">

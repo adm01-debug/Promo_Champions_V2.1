@@ -15,6 +15,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { differenceInHours } from 'date-fns';
 
+
+interface PerformanceBet {
+  id: string;
+  status: string;
+  xp_wagered: number;
+  bet_type: string;
+  target_value: number;
+  current_value: number;
+  description: string | null;
+  ends_at: string;
+  created_at: string;
+  salespeople?: { id: string; name: string } | null;
+}
 export function PerformanceBets() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
@@ -84,9 +97,9 @@ export function PerformanceBets() {
     cancelled: { label: 'Cancelada', color: 'bg-muted text-muted-foreground', icon: AlertTriangle },
   };
 
-  const activeBets = bets.filter((b: any) => b.status === 'active');
-  const completedBets = bets.filter((b: any) => b.status !== 'active');
-  const totalXpAtStake = activeBets.reduce((sum: number, b: any) => sum + (b.xp_wagered || 0), 0);
+  const activeBets = bets.filter((b: PerformanceBet) => b.status === 'active');
+  const completedBets = bets.filter((b: PerformanceBet) => b.status !== 'active');
+  const totalXpAtStake = activeBets.reduce((sum: number, b: PerformanceBet) => sum + (b.xp_wagered || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -185,7 +198,7 @@ export function PerformanceBets() {
       {activeBets.length > 0 && (
         <div className="space-y-3">
           <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">🔥 Apostas Ativas</h3>
-          {activeBets.map((bet: any, i: number) => {
+          {activeBets.map((bet: PerformanceBet, i: number) => {
             const type = typeLabels[bet.bet_type] || typeLabels.deals;
             const progress = bet.target_value > 0 ? Math.min((bet.current_value / bet.target_value) * 100, 100) : 0;
             const hoursLeft = differenceInHours(new Date(bet.ends_at), new Date());
@@ -200,7 +213,7 @@ export function PerformanceBets() {
                           <type.icon className="h-4 w-4 text-primary" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm">{(bet as any).salespeople?.name}</div>
+                          <div className="font-semibold text-sm">{bet.salespeople?.name}</div>
                           <div className="text-xs text-muted-foreground">{type.label}: {bet.bet_type === 'revenue' ? `R$ ${bet.target_value}` : bet.target_value}</div>
                         </div>
                       </div>
@@ -228,7 +241,7 @@ export function PerformanceBets() {
       {completedBets.length > 0 && (
         <div className="space-y-3">
           <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">📜 Histórico</h3>
-          {completedBets.slice(0, 10).map((bet: any) => {
+          {completedBets.slice(0, 10).map(( bet: PerformanceBet) => {
             const status = statusConfig[bet.status] || statusConfig.cancelled;
             const StatusIcon = status.icon;
             return (
@@ -236,7 +249,7 @@ export function PerformanceBets() {
                 <CardContent className="p-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <StatusIcon className="h-4 w-4" />
-                    <span className="text-sm">{(bet as any).salespeople?.name}</span>
+                    <span className="text-sm">{bet.salespeople?.name}</span>
                     <span className="text-xs text-muted-foreground">· {typeLabels[bet.bet_type]?.label}</span>
                   </div>
                   <Badge variant="outline" className={status.color}>{status.label}</Badge>

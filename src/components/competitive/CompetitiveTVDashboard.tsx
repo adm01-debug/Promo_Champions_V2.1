@@ -11,6 +11,22 @@ import { useWeeklyMatchups } from '@/hooks/useWeeklyMatchups';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+interface StreakEntry {
+  id: string;
+  current_streak: number;
+  xp_multiplier?: number;
+  salespeople?: { name: string } | null;
+}
+
+interface MatchupEntry {
+  id: string;
+  status: string;
+  player1_score?: number;
+  player2_score?: number;
+  player1?: { name: string } | null;
+  player2?: { name: string } | null;
+}
+
 const SLIDES = ['ranking', 'streaks', 'matchups', 'stats'] as const;
 type _Slide = typeof SLIDES[number];
 
@@ -136,7 +152,7 @@ export const CompetitiveTVDashboard: FC = () => {
                   <h2 className="text-xl font-bold text-foreground">Streaks Ativos</h2>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {(streaks || []).filter((s: any) => s.current_streak > 0).slice(0, 6).map((streak: any, i: number) => (
+                  {(streaks || []).filter((s: StreakEntry) => s.current_streak > 0).slice(0, 6).map((streak: StreakEntry, i: number) => (
                     <motion.div
                       key={streak.id}
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -146,14 +162,14 @@ export const CompetitiveTVDashboard: FC = () => {
                     >
                       <div className="text-3xl">🔥</div>
                       <div>
-                        <p className="font-bold text-foreground">{(streak.salespeople as any)?.name || 'Vendedor'}</p>
+                        <p className="font-bold text-foreground">{streak.salespeople?.name || 'Vendedor'}</p>
                         <p className="text-2xl font-black text-streak">{streak.current_streak} dias</p>
                         <p className="text-xs text-muted-foreground">Multiplicador: {streak.xp_multiplier}x</p>
                       </div>
                     </motion.div>
                   ))}
                 </div>
-                {(!streaks || streaks.filter((s: any) => s.current_streak > 0).length === 0) && (
+                {(!streaks || streaks.filter((s: StreakEntry) => s.current_streak > 0).length === 0) && (
                   <div className="text-center py-12">
                     <Flame className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-muted-foreground">Nenhum streak ativo no momento</p>
@@ -169,7 +185,7 @@ export const CompetitiveTVDashboard: FC = () => {
                   <h2 className="text-xl font-bold text-foreground">Duelos da Semana</h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {(matchups || []).filter((m: any) => m.status === 'active').slice(0, 4).map((matchup: any, i: number) => (
+                  {(matchups || []).filter((m: MatchupEntry) => m.status === 'active').slice(0, 4).map((matchup: MatchupEntry, i: number) => (
                     <motion.div
                       key={matchup.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -178,18 +194,18 @@ export const CompetitiveTVDashboard: FC = () => {
                       className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
                     >
                       <div className="text-center flex-1">
-                        <p className="font-bold text-foreground">{(matchup.player1 as any)?.name || '?'}</p>
+                        <p className="font-bold text-foreground">{matchup.player1?.name || '?'}</p>
                         <p className="text-2xl font-black text-primary">{matchup.player1_score}</p>
                       </div>
                       <div className="text-xl font-bold text-muted-foreground">VS</div>
                       <div className="text-center flex-1">
-                        <p className="font-bold text-foreground">{(matchup.player2 as any)?.name || '?'}</p>
+                        <p className="font-bold text-foreground">{matchup.player2?.name || '?'}</p>
                         <p className="text-2xl font-black text-primary">{matchup.player2_score}</p>
                       </div>
                     </motion.div>
                   ))}
                 </div>
-                {(!matchups || matchups.filter((m: any) => m.status === 'active').length === 0) && (
+                {(!matchups || matchups.filter((m: MatchupEntry) => m.status === 'active').length === 0) && (
                   <div className="text-center py-12">
                     <Swords className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-muted-foreground">Nenhum duelo ativo no momento</p>
@@ -209,7 +225,7 @@ export const CompetitiveTVDashboard: FC = () => {
                     { label: 'Total Vendedores', value: ranking?.length || 0, icon: '👥' },
                     { label: 'Vendas do Mês', value: ranking?.reduce((s, r) => s + r.dealsCount, 0) || 0, icon: '📊' },
                     { label: 'Receita Total', value: `R$${((ranking?.reduce((s, r) => s + r.totalSales, 0) || 0) / 1000).toFixed(0)}k`, icon: '💰' },
-                    { label: 'Streaks Ativos', value: streaks?.filter((s: any) => s.current_streak > 0).length || 0, icon: '🔥' },
+                    { label: 'Streaks Ativos', value: streaks?.filter((s: StreakEntry) => s.current_streak > 0).length || 0, icon: '🔥' },
                   ].map((stat, i) => (
                     <motion.div
                       key={stat.label}

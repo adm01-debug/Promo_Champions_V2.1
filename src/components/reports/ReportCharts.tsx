@@ -5,12 +5,12 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart,
 } from "recharts";
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) => {
   if (active && payload?.length) {
     return (
       <div className="glass rounded-lg p-3 border border-border/50">
         <p className="text-sm font-medium mb-1">{label}</p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry: { name: string; value: number; color: string }, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {typeof entry.value === 'number' ? `R$ ${entry.value.toLocaleString("pt-BR")}` : entry.value}
           </p>
@@ -22,9 +22,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 interface ReportChartsProps {
-  revenueData: any[];
-  categoryData: any[];
-  salesData: any[];
+  revenueData: Array<Record<string, string | number>>;
+  categoryData: Array<{ name: string; value: number; color: string }>;
+  salesData: Array<Record<string, string | number>>;
   selectedPeriod: string;
 }
 

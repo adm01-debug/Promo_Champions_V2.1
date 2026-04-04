@@ -79,7 +79,7 @@ export const useLeadScoring = (leadId?: string) => {
             serverScores = edgeResult.scores;
           }
         } catch (err) {
-          console.warn('Edge function lead-scoring unavailable, using local fallback');
+          if (import.meta.env.DEV) console.warn('Edge function lead-scoring unavailable, using local fallback');
         }
       }
 
