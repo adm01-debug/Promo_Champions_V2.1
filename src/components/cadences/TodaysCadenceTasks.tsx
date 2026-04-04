@@ -135,11 +135,11 @@ export function TodaysCadenceTasks() {
                 <p className="text-xs text-muted-foreground mt-1">As próximas tarefas aparecerão aqui</p>
               </div>
             ) : (
-              tasks.map((task: { id: string; cadence_step: Record<string, unknown> | null; prospect_cadence: Record<string, unknown> | null; scheduled_date: string; status: string; notes: string | null }, index: number) => {
-                const step = task.cadence_step;
-                const prospectCadence = task.prospect_cadence;
-                const sale = prospectCadence?.sale;
-                const cadence = prospectCadence?.cadence;
+              tasks.map((task, index: number) => {
+                const step = task.cadence_step as Record<string, unknown> | null;
+                const prospectCadence = task.prospect_cadence as Record<string, unknown> | null;
+                const sale = prospectCadence?.sale as Record<string, unknown> | null;
+                const cadence = prospectCadence?.cadence as Record<string, unknown> | null;
                 const Icon = actionIcons[step?.action_type as ActionType] || MoreHorizontal;
                 const isNotesOpen = notesTaskId === task.id;
 

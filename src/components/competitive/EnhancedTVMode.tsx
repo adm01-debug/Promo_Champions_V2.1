@@ -206,7 +206,7 @@ export function EnhancedTVMode() {
                             <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1.5, ease: 'easeOut' }} />
                           </div>
                           <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                            <span>R$ {((goal.current_amount || 0) / 1000).toFixed(1)}k</span>
+                            <span>R$ {((goalWithAmount.current_amount || 0) / 1000).toFixed(1)}k</span>
                             <span>R$ {((goal.goal_amount || 0) / 1000).toFixed(1)}k</span>
                           </div>
                         </CardContent>
