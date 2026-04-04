@@ -2,6 +2,8 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { TeamGoalProgress } from "@/components/goals/TeamGoalProgress";
 import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
 import { CommissionCalculator } from "@/components/goals/CommissionCalculator";
+import { GoalComparisonChart } from "@/components/goals/GoalComparisonChart";
+import { GoalDistributionChart } from "@/components/goals/GoalDistributionChart";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Target, TrendingUp, Users, Zap, RefreshCw } from "lucide-react";
