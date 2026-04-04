@@ -56,16 +56,21 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
           onEnabledChange={(e) => updatePreference('dealUpdate', { enabled: e })}
           onPreview={previewSound}
         />
-        <SystemSoundRow
-          icon={Check} iconColor="text-primary" iconBg="bg-primary/10"
-          label='Som de "Pronto"' description="Toca quando o confetti estiver carregado"
-          sound={preferences.ready.sound} enabled={preferences.ready.enabled} volume={volume}
-          soundOptions={soundOptions}
-          onSoundChange={(s) => updatePreference('ready', { sound: s })}
-          onEnabledChange={(e) => updatePreference('ready', { enabled: e })}
-          onPreview={previewSound}
-          showSoundSelect={false}
-        />
+        <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Check className="h-4 w-4 text-primary" />
+            </div>
+            <div className="space-y-0.5">
+              <Label className="text-sm font-medium">Som de "Pronto"</Label>
+              <p className="text-xs text-muted-foreground">Toca quando o confetti estiver carregado</p>
+            </div>
+          </div>
+          <Switch
+            checked={preferences.ready.enabled}
+            onCheckedChange={(checked) => updatePreference('ready', { enabled: checked })}
+          />
+        </div>
       </div>
     </div>
   );
