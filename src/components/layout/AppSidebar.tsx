@@ -36,6 +36,7 @@ import {
   Briefcase,
   Search,
   Gauge,
+  MessageSquare,
 } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
