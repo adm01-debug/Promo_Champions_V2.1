@@ -220,7 +220,7 @@ export const AccessControl: FC<AccessControlProps> = ({
                 </select>
                 <Button 
                   variant="ghost" 
-                  size="icon"
+                  size="icon" aria-label="Fechar"
                   onClick={() => onRemoveUser?.(access.userId)}
                 >
                   <X className="h-4 w-4" />

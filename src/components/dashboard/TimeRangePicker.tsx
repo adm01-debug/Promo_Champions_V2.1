@@ -97,7 +97,7 @@ export const ComparisonPeriod: FC<ComparisonPeriodProps> = ({
   <div className={cn('flex items-center justify-between', className)}>
     <Button
       variant="ghost"
-      size="icon"
+      size="icon" aria-label="Anterior"
       onClick={() => onNavigate?.('prev')}
     >
       <ChevronLeft size={16} />

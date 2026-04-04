@@ -162,7 +162,7 @@ export function ConversationHistory({
                         </div>
                       )}
                     </div>
-                    <Button variant="ghost" size="icon"
+                    <Button variant="ghost" size="icon" aria-label="Excluir"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                       onClick={(e) => { e.stopPropagation(); onDeleteConversation(conv.id); }}>
                       <Trash2 className="h-4 w-4" />
