@@ -7,6 +7,7 @@ interface PageTransitionProps {
   className?: string;
 }
 
+const springTransition = {
   type: "spring" as const,
   stiffness: 300,
   damping: 30,

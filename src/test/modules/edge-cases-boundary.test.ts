@@ -115,6 +115,7 @@ describe('Edge Cases - Empty & Null Handling', () => {
 });
 
 describe('Edge Cases - Timezone Handling', () => {
+  const toTimezone = (dateStr: string, offsetHours: number): string => {
     const date = new Date(dateStr);
     date.setHours(date.getHours() - offsetHours);
     return date.toISOString();

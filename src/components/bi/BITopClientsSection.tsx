@@ -9,6 +9,7 @@ import { useBITopClients, TopClientData, SupplierSalesData, TopCompanyData } fro
 const formatCurrency = (value: number) =>
   `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
+const RANK_COLORS = [
   "bg-rank-gold",
   "bg-rank-silver", 
   "bg-rank-bronze",

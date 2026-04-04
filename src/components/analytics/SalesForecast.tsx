@@ -25,6 +25,7 @@ interface ForecastItem {
   risk_level: 'low' | 'medium' | 'high' | 'critical';
 }
 
+const trendIcons: Record<string, JSX.Element> = {
   increasing: <TrendingUp className="h-4 w-4 text-emerald-500" />,
   stable: <Minus className="h-4 w-4 text-muted-foreground" />,
   decreasing: <TrendingDown className="h-4 w-4 text-destructive" />,

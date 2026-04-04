@@ -34,7 +34,7 @@ const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
       return <span className="text-lg font-black text-muted-foreground/60">#{rank}</span>;
   }
 };
-
+const getRankStyles = (rank: number) => {
   switch (rank) {
     case 1:
       return {
@@ -63,6 +63,7 @@ const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
   }
 };
 
+const getGoalBadge = (goalProgress: number) => {
   if (goalProgress >= 120) return { icon: Flame, label: "Em Chamas!", color: "text-orange-500", bg: "bg-orange-500/20" };
   if (goalProgress >= 100) return { icon: Star, label: "Meta Batida!", color: "text-success", bg: "bg-success/20" };
   if (goalProgress >= 80) return { icon: Zap, label: "Quase Lá!", color: "text-yellow-500", bg: "bg-yellow-500/20" };

@@ -22,7 +22,7 @@ const FUNCTION_LABELS: Record<string, string> = {
   'access-denied-alerts': 'Alertas Segurança',
   'check-lead-sla': 'Lead SLA'
 };
-
+const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--status-success))',
   'hsl(var(--status-warning))',
