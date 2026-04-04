@@ -22,7 +22,7 @@ interface SaleRecord {
 }
 
 export function computeRanking(
-  rankingData: SaleRecord[],
+  rankingData: Array<{ salesperson_id?: string | null; amount: number }>,
   salespersonId: string,
   totalSalespeople: number
 ): number {
