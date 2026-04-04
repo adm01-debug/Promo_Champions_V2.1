@@ -30,6 +30,8 @@ import { AssignClientDialog } from "@/components/portfolio/AssignClientDialog";
 import { AutoRouteDialog } from "@/components/portfolio/AutoRouteDialog";
 import { RoutingHistoryTable } from "@/components/portfolio/RoutingHistoryTable";
 import { PerformanceRankingCard } from "@/components/portfolio/PerformanceRankingCard";
+import { PortfolioDistributionChart } from "@/components/portfolio/PortfolioDistributionChart";
+import { PortfolioValueChart } from "@/components/portfolio/PortfolioValueChart";
 import { Briefcase, Plus, Search, Filter, Zap, History, ChevronDown, Target, Building2, Users, Banknote, Tag, X } from "lucide-react";
 
 export default function Portfolio() {
@@ -168,6 +170,12 @@ export default function Portfolio() {
 
         {/* Stats Cards */}
         <PortfolioStatsCards stats={stats} isLoading={loadingStats} />
+
+        {/* Portfolio Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PortfolioDistributionChart portfolio={portfolio || []} salespeople={closers || []} />
+          <PortfolioValueChart portfolio={portfolio || []} salespeople={closers || []} />
+        </div>
 
         {/* Filters */}
         <Card className="glass">

@@ -2,8 +2,9 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProgressRing } from "@/components/ui/ProgressRing";
+import { cn } from "@/lib/utils";
 
 export function GoalProgressWidget() {
   const { data: goalsData, isLoading: goalsLoading } = useGoalsDashboard();
@@ -14,6 +15,8 @@ export function GoalProgressWidget() {
   const current = goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0;
   const goal = goalsData?.totalGoal || 0;
   const progress = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
+  const remaining = Math.max(goal - current, 0);
+  const variant = progress >= 100 ? "success" : progress >= 60 ? "primary" : progress >= 30 ? "warning" : "destructive";
 
   return (
     <Card className="h-full">
@@ -23,12 +26,26 @@ export function GoalProgressWidget() {
           Progresso da Meta
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-2xl font-bold">{progress.toFixed(0)}%</p>
-        <Progress value={progress} className="h-2 mt-2" />
-        <p className="text-xs text-muted-foreground mt-1">
-          R$ {current.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} / R$ {goal.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
-        </p>
+      <CardContent className="flex flex-col items-center gap-2 pt-2">
+        <ProgressRing
+          value={progress}
+          size={80}
+          strokeWidth={6}
+          variant={variant}
+        />
+        <div className="text-center">
+          <p className="text-sm font-semibold">
+            R$ {current.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            de R$ {goal.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+          </p>
+          {remaining > 0 && (
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Faltam R$ {remaining.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+            </p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

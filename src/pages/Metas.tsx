@@ -2,6 +2,8 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { TeamGoalProgress } from "@/components/goals/TeamGoalProgress";
 import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
 import { CommissionCalculator } from "@/components/goals/CommissionCalculator";
+import { GoalComparisonChart } from "@/components/goals/GoalComparisonChart";
+import { GoalDistributionChart } from "@/components/goals/GoalDistributionChart";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Target, TrendingUp, Users, Zap, RefreshCw } from "lucide-react";
@@ -166,6 +168,19 @@ export default function Metas() {
                 salespeople={data?.salespeople || []}
                 isLoading={isLoading}
               />
+            </motion.div>
+
+            {/* Charts Row */}
+            <motion.div
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <div className="lg:col-span-2">
+                <GoalComparisonChart salespeople={data?.salespeople || []} />
+              </div>
+              <GoalDistributionChart salespeople={data?.salespeople || []} />
             </motion.div>
           </div>
         </div>
