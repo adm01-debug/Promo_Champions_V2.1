@@ -193,7 +193,7 @@ export function SDRAlertHistory() {
                   <Check className="h-3.5 w-3.5 text-success" />
                 </Button>
                 <Button
-                  size="icon"
+                  size="icon" aria-label="Confirmar"
                   variant="ghost"
                   className="h-7 w-7"
                   onClick={() => {

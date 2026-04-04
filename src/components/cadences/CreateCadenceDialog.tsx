@@ -206,7 +206,7 @@ export function CreateCadenceDialog() {
                     {steps.length > 1 && (
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon" aria-label="Excluir"
                         className="h-6 w-6 text-destructive hover:bg-destructive/10 transition-colors"
                         onClick={() => removeStep(index)}
                       >

@@ -76,7 +76,7 @@ export const SlideOverPanel: FC<SlideOverPanelProps> = ({
               </div>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon" aria-label="Fechar"
                 onClick={onClose}
                 className="h-8 w-8"
               >

@@ -22,9 +22,9 @@ export function LanguageToggle({ className }: { className?: string }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
+          size="icon" aria-label="Idioma"
           className={cn("glass h-9 w-9 hover:bg-muted/50", className)}
-          aria-label="Alterar idioma"
+         
         >
           <Globe className="h-4 w-4" />
         </Button>

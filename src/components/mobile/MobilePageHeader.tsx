@@ -54,10 +54,10 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = ({
           {showBack && !isHomePage && (
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Voltar"
               onClick={handleBack}
               className="h-10 w-10 shrink-0 -ml-2"
-              aria-label="Voltar"
+             
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -77,10 +77,10 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = ({
           {onMenuClick && (
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Mais opções"
               onClick={onMenuClick}
               className="h-10 w-10"
-              aria-label="Menu de opções"
+             
             >
               <MoreVertical className="h-5 w-5" />
             </Button>

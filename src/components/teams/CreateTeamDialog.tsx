@@ -216,7 +216,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          size="icon" aria-label="Fechar"
                           className="h-4 w-4 ml-1 hover:bg-destructive/20"
                           onClick={() => toggleCloser(closerId)}
                         >

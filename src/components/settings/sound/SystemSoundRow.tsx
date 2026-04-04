@@ -67,7 +67,7 @@ export function SystemSoundRow({
             </Select>
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Reproduzir"
               className="h-8 w-8"
               onClick={() => onPreview(sound)}
               disabled={!enabled || sound === 'none' || volume === 0}

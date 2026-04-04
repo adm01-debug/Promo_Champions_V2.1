@@ -79,7 +79,7 @@ export function DraggableTaskCard({ task, isDragging }: DraggableTaskCardProps) 
           <GripVertical className="h-4 w-4 text-muted-foreground/50 hover:text-muted-foreground" />
           <Button
             variant="outline"
-            size="icon"
+            size="icon" aria-label="Arrastar"
             className="h-8 w-8 rounded-full shrink-0 border-2 hover:bg-primary hover:border-primary"
             onClick={handleComplete}
             disabled={completeTask.isPending}

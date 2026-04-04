@@ -48,7 +48,7 @@ export function TaskCard({ task }: TaskCardProps) {
       <div className="flex items-start gap-3">
         <Button
           variant="outline"
-          size="icon"
+          size="icon" aria-label="Confirmar"
           className="h-9 w-9 rounded-full shrink-0 border-2 border-border/50 hover:bg-status-success hover:border-status-success hover:text-primary-foreground hover:scale-110 hover:shadow-lg hover:shadow-status-success/30 transition-all duration-200 shadow-sm"
           onClick={handleComplete}
           disabled={completeTask.isPending}
