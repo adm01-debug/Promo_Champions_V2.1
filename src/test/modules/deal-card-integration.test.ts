@@ -125,7 +125,7 @@ describe("Probability badge display", () => {
   });
 
   it("hidden when no probability", () => {
-    const prob = undefined;
+    const prob: undefined = undefined;
     expect(prob).toBeUndefined();
   });
 });
