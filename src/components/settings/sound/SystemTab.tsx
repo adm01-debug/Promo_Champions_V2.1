@@ -14,7 +14,7 @@ interface SystemTabProps {
     newTask: SystemPreference;
     newSale: SystemPreference;
     dealUpdate: SystemPreference;
-    ready: { enabled: boolean; sound: SystemSoundType };
+    ready: { enabled: boolean };
   };
   updatePreference: (key: string, patch: Partial<SystemPreference>) => void;
   volume: number;
