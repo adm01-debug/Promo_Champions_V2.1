@@ -58,7 +58,7 @@ export const useSessionManagement = () => {
       setCurrentSession(data as ActiveSession);
       
       // Salvar token no localStorage
-      localStorage.setItem('session_id', data.id);
+      setStoredSessionId(data.id);
       
       return data.id;
     } catch (error) {
@@ -85,7 +85,7 @@ export const useSessionManagement = () => {
       setSessions((data || []) as ActiveSession[]);
 
       // Identificar sessão atual
-      const currentSessionId = localStorage.getItem('session_id');
+      const currentSessionId = getStoredSessionId();
       if (currentSessionId) {
         const current = data?.find(s => s.id === currentSessionId);
         if (current) {
@@ -103,7 +103,7 @@ export const useSessionManagement = () => {
 
   // Atualizar atividade da sessão
   const updateActivity = useCallback(async () => {
-    const sessionId = localStorage.getItem('session_id');
+    const sessionId = getStoredSessionId();
     if (!sessionId || !user) return;
 
     try {
@@ -120,7 +120,7 @@ export const useSessionManagement = () => {
 
   // Refresh da sessão
   const refreshSession = useCallback(async (): Promise<boolean> => {
-    const sessionId = localStorage.getItem('session_id');
+    const sessionId = getStoredSessionId();
     if (!sessionId) return false;
 
     try {
@@ -145,7 +145,7 @@ export const useSessionManagement = () => {
 
   // Validar sessão
   const validateSession = useCallback(async (): Promise<{ valid: boolean; needsRefresh: boolean }> => {
-    const sessionId = localStorage.getItem('session_id');
+    const sessionId = getStoredSessionId();
     if (!sessionId) return { valid: false, needsRefresh: false };
 
     try {
@@ -179,8 +179,8 @@ export const useSessionManagement = () => {
       if (error) throw error;
 
       // Se for a sessão atual, fazer logout
-      if (sessionId === localStorage.getItem('session_id')) {
-        localStorage.removeItem('session_id');
+      if (sessionId === getStoredSessionId()) {
+        clearStoredSessionId();
         await supabase.auth.signOut();
         toast.info('Sessão encerrada');
       } else {
@@ -202,7 +202,7 @@ export const useSessionManagement = () => {
   const terminateOtherSessions = useCallback(async (): Promise<boolean> => {
     if (!user) return false;
 
-    const currentSessionId = localStorage.getItem('session_id');
+    const currentSessionId = getStoredSessionId();
 
     try {
       const { error } = await supabase
@@ -234,7 +234,7 @@ export const useSessionManagement = () => {
 
       if (!valid) {
         toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
-        localStorage.removeItem('session_id');
+        clearStoredSessionId();
         await supabase.auth.signOut();
         return;
       }
@@ -274,7 +274,7 @@ export const useSessionManagement = () => {
 
   // Criar sessão ao fazer login
   useEffect(() => {
-    if (user && !localStorage.getItem('session_id')) {
+    if (user && !getStoredSessionId()) {
       createSession();
     }
   }, [user, createSession]);
