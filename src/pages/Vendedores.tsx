@@ -34,6 +34,7 @@ const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
       return <span className="text-lg font-black text-muted-foreground/60">#{rank}</span>;
   }
 };
+
 const getRankStyles = (rank: number) => {
   switch (rank) {
     case 1:
