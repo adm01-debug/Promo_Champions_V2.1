@@ -42,8 +42,8 @@ export const MFATotpTab = React.memo(function MFATotpTab({
   if (totpEnabled) {
     return (
       <div className="space-y-4">
-        <Alert className="bg-green-500/10 border-green-500/20">
-          <CheckCircle2 className="h-4 w-4 text-green-500" />
+      <Alert className="bg-status-success/10 border-status-success/20">
+          <CheckCircle2 className="h-4 w-4 text-status-success" />
           <AlertTitle>TOTP Ativo</AlertTitle>
           <AlertDescription>TOTP está ativo e configurado</AlertDescription>
         </Alert>
