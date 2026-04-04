@@ -36,8 +36,8 @@ export function usePageAnalytics(days: number = 30) {
 
       if (error || !data) return [];
 
-      // Aggregate by route
-      const map = new Map<string, RouteUsage>();
+      type InternalUsage = RouteUsage & { _sessions: Set<string> };
+      const map = new Map<string, InternalUsage>();
 
       for (const row of data) {
         const key = row.route;
@@ -63,7 +63,7 @@ export function usePageAnalytics(days: number = 30) {
             total_interactions: row.interactions ?? 0,
             unique_sessions: sessions.size,
             _sessions: sessions,
-          } as RouteUsage & { _sessions: Set<string> });
+          });
         }
       }
 
