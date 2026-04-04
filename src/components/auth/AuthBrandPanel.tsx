@@ -83,7 +83,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
           ].map((rank, i) => (
             <motion.div key={rank.label} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.5 + i * 0.15, type: "spring", stiffness: 300 }} className="flex flex-col items-center gap-1.5">
               <div className={`p-2.5 rounded-xl bg-gradient-to-br ${rank.gradient} shadow-lg`}>
-                <rank.icon className="h-5 w-5 text-white" />
+                <rank.icon className="h-5 w-5 text-primary-foreground" />
               </div>
               <span className="text-[10px] font-semibold text-primary-foreground/50 uppercase tracking-wider">{rank.label}</span>
             </motion.div>

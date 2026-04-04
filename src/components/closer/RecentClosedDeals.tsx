@@ -60,7 +60,7 @@ export function RecentClosedDeals() {
                 )}>
                   <DollarSign className={cn(
                     "h-4 w-4",
-                    index === 0 ? "text-white" : "text-status-success"
+                    index === 0 ? "text-primary-foreground" : "text-status-success"
                   )} />
                 </div>
                 <div className="flex-1 min-w-0">

@@ -31,14 +31,14 @@ const getRankDecor = (rank: number) => {
         icon: <Medal className="h-4 w-4 text-slate-300" />,
         border: "border-slate-400/40",
         bg: "from-slate-400/10 to-transparent",
-        rankBg: "bg-gradient-to-br from-slate-400 to-slate-500 text-white",
+        rankBg: "bg-gradient-to-br from-slate-400 to-slate-500 text-primary-foreground",
       };
     case 3:
       return {
         icon: <Award className="h-4 w-4 text-rank-gold" />,
         border: "border-amber-600/40",
         bg: "from-rank-gold/10 to-transparent",
-        rankBg: "bg-gradient-to-br from-rank-gold to-amber-700 text-white",
+        rankBg: "bg-gradient-to-br from-rank-gold to-amber-700 text-primary-foreground",
       };
     default:
       return {

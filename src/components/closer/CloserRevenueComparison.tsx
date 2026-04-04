@@ -134,7 +134,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-display">
             <div className="p-2 rounded-lg gradient-primary">
-              <Swords className="h-4 w-4 text-white" />
+              <Swords className="h-4 w-4 text-primary-foreground" />
             </div>
             Competição de Receita
           </CardTitle>
@@ -152,7 +152,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 font-display">
             <div className="p-2 rounded-lg gradient-primary">
-              <Swords className="h-4 w-4 text-white" />
+              <Swords className="h-4 w-4 text-primary-foreground" />
             </div>
             Competição de Receita
           </CardTitle>

@@ -117,7 +117,7 @@ export function SalesAssistantChat() {
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl gradient-primary">
-              <Sparkles className="h-5 w-5 text-white" />
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
               <CardTitle className="text-lg">{aiAssistantName}</CardTitle>

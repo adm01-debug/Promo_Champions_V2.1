@@ -76,7 +76,7 @@ export function TodaysCadenceTasks() {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md animate-pulse">
-              <ListTodo className="h-4 w-4 text-white" />
+              <ListTodo className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Tarefas de Cadência - Hoje</span>
           </CardTitle>
@@ -110,7 +110,7 @@ export function TodaysCadenceTasks() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
-              <ListTodo className="h-4 w-4 text-white" />
+              <ListTodo className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Tarefas de Cadência - Hoje</span>
           </CardTitle>

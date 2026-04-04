@@ -39,7 +39,7 @@ export function TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
             )}>
               <GitBranch className={cn(
                 "h-5 w-5",
-                isComplete ? "text-white" : "text-muted-foreground"
+                isComplete ? "text-primary-foreground" : "text-muted-foreground"
               )} />
             </div>
             <div>

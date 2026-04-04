@@ -139,7 +139,7 @@ export function SDRConversionRanking({ period }: SDRConversionRankingProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-display">
             <div className="p-2 rounded-lg gradient-primary">
-              <ArrowRightLeft className="h-4 w-4 text-white" />
+              <ArrowRightLeft className="h-4 w-4 text-primary-foreground" />
             </div>
             Conversão SDR→Closer
           </CardTitle>
@@ -160,7 +160,7 @@ export function SDRConversionRanking({ period }: SDRConversionRankingProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 font-display">
             <div className="p-2 rounded-lg gradient-primary">
-              <ArrowRightLeft className="h-4 w-4 text-white" />
+              <ArrowRightLeft className="h-4 w-4 text-primary-foreground" />
             </div>
             Conversão SDR→Closer
           </CardTitle>

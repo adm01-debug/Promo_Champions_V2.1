@@ -127,9 +127,9 @@ export function TopSDRsRanking() {
                 >
                   <div className={cn(
                     "flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg",
-                    index === 0 && "bg-gradient-to-br from-rank-gold to-streak text-white shadow-rank-gold/40 animate-float",
-                    index === 1 && "bg-gradient-to-br from-rank-silver to-rank-silver/70 text-white shadow-rank-silver/30",
-                    index === 2 && "bg-gradient-to-br from-rank-bronze to-rank-bronze/70 text-white shadow-rank-bronze/30",
+                    index === 0 && "bg-gradient-to-br from-rank-gold to-streak text-primary-foreground shadow-rank-gold/40 animate-float",
+                    index === 1 && "bg-gradient-to-br from-rank-silver to-rank-silver/70 text-primary-foreground shadow-rank-silver/30",
+                    index === 2 && "bg-gradient-to-br from-rank-bronze to-rank-bronze/70 text-primary-foreground shadow-rank-bronze/30",
                     index > 2 && "bg-muted text-muted-foreground"
                   )}>
                     {getRankIcon(index)}

@@ -65,11 +65,11 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30">
-                <CalendarCheck className="h-6 w-6 text-white" />
+                <CalendarCheck className="h-6 w-6 text-primary-foreground" />
               </div>
               {rate >= 20 && (
                 <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-status-success flex items-center justify-center animate-bounce">
-                  <Trophy className="h-2.5 w-2.5 text-white" />
+                  <Trophy className="h-2.5 w-2.5 text-primary-foreground" />
                 </div>
               )}
             </div>

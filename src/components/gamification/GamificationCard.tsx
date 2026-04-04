@@ -94,7 +94,7 @@ export function GamificationCard({
               </div>
             </div>
             <div className={cn("absolute -bottom-1 -right-1 rounded-full flex items-center justify-center bg-gradient-to-br shadow-md border-2 border-background", levelColor, size === "sm" ? "h-5 w-5 text-[8px]" : "h-6 w-6 text-[10px]")}>
-              <span className="font-bold text-white">{level}</span>
+              <span className="font-bold text-primary-foreground">{level}</span>
             </div>
           </div>
 

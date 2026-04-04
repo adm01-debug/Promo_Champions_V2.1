@@ -164,7 +164,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-white text-lg shrink-0`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-primary-foreground text-lg shrink-0`}>
                   {getDailyChallengeIcon(challenge.challenge_type)}
                 </div>
                 

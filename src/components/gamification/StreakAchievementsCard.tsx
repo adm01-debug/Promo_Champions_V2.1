@@ -56,7 +56,7 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-                <span className="text-2xl font-bold text-white">{currentStreak || 0}</span>
+                <span className="text-2xl font-bold text-primary-foreground">{currentStreak || 0}</span>
               </div>
               {(currentStreak || 0) > 0 && (
                 <motion.div

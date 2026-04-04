@@ -32,7 +32,7 @@ export const RankNotifications: FC<RankNotificationsProps> = ({ salespersonId, c
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-destructive to-orange-500 flex items-center justify-center">
-                <Bell className="h-4 w-4 text-white" />
+                <Bell className="h-4 w-4 text-primary-foreground" />
               </div>
               Alertas de Ultrapassagem
               {unreadCount > 0 && (

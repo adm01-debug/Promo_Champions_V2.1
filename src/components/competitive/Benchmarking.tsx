@@ -33,7 +33,7 @@ export const Benchmarking: FC = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
+                <BarChart3 className="h-4 w-4 text-primary-foreground" />
               </div>
               Benchmarking
             </CardTitle>

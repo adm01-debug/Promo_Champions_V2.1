@@ -49,7 +49,7 @@ export function TaskCard({ task }: TaskCardProps) {
         <Button
           variant="outline"
           size="icon"
-          className="h-9 w-9 rounded-full shrink-0 border-2 border-border/50 hover:bg-status-success hover:border-status-success hover:text-white hover:scale-110 hover:shadow-lg hover:shadow-status-success/30 transition-all duration-200 shadow-sm"
+          className="h-9 w-9 rounded-full shrink-0 border-2 border-border/50 hover:bg-status-success hover:border-status-success hover:text-primary-foreground hover:scale-110 hover:shadow-lg hover:shadow-status-success/30 transition-all duration-200 shadow-sm"
           onClick={handleComplete}
           disabled={completeTask.isPending}
         >
@@ -99,7 +99,7 @@ export function TaskCard({ task }: TaskCardProps) {
               <div className="flex items-center gap-2 group/avatar">
                 <Avatar className="h-6 w-6 border-2 border-background shadow-sm transition-all duration-200 group-hover/avatar:scale-110 group-hover/avatar:shadow-md">
                   <AvatarImage src={task.salesperson.avatar_url || undefined} />
-                  <AvatarFallback className="text-[10px] font-display bg-gradient-to-br from-primary to-accent text-white">
+                  <AvatarFallback className="text-[10px] font-display bg-gradient-to-br from-primary to-accent text-primary-foreground">
                     {task.salesperson.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>

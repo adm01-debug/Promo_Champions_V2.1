@@ -31,7 +31,7 @@ export function ABCAnalysis() {
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center gap-2 mb-2 group/header">
         <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110 group-hover/header:shadow-primary/40">
-          <Layers className="h-5 w-5 text-white" />
+          <Layers className="h-5 w-5 text-primary-foreground" />
         </div>
         <span className="text-lg font-display font-semibold gradient-text">Análise ABC</span>
       </div>
@@ -48,20 +48,20 @@ export function ABCAnalysis() {
 
       <Tabs defaultValue="products" className="space-y-4">
         <TabsList className="glass border border-border/50">
-          <TabsTrigger value="products" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="products" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">
             <Package className="h-4 w-4" />Produtos
           </TabsTrigger>
-          <TabsTrigger value="clients" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="clients" className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">
             <Users className="h-4 w-4" />Clientes
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="products" className="animate-fade-in">
-          <ABCChartTable items={data?.products || []} chartTitle="Curva ABC - Produtos" tableTitle="Ranking de Produtos" chartIcon={null} tableIcon={<Package className="h-4 w-4 text-white" />} emptyIcon={<Package className="h-10 w-10 opacity-50" />} />
+          <ABCChartTable items={data?.products || []} chartTitle="Curva ABC - Produtos" tableTitle="Ranking de Produtos" chartIcon={null} tableIcon={<Package className="h-4 w-4 text-primary-foreground" />} emptyIcon={<Package className="h-10 w-10 opacity-50" />} />
         </TabsContent>
 
         <TabsContent value="clients" className="animate-fade-in">
-          <ABCChartTable items={data?.clients || []} chartTitle="Curva ABC - Clientes" tableTitle="Ranking de Clientes" chartIcon={null} tableIcon={<Users className="h-4 w-4 text-white" />} emptyIcon={<Users className="h-10 w-10 opacity-50" />} />
+          <ABCChartTable items={data?.clients || []} chartTitle="Curva ABC - Clientes" tableTitle="Ranking de Clientes" chartIcon={null} tableIcon={<Users className="h-4 w-4 text-primary-foreground" />} emptyIcon={<Users className="h-10 w-10 opacity-50" />} />
         </TabsContent>
       </Tabs>
     </div>

@@ -63,7 +63,7 @@ export const PlaybooksManager = () => {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 group">
           <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
-            <BookOpen className="h-6 w-6 text-white" />
+            <BookOpen className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
             <h2 className="text-2xl font-display font-bold gradient-text">Playbooks de Vendas</h2>

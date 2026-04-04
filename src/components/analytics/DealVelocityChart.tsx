@@ -34,7 +34,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
         <CardHeader>
           <CardTitle className="text-lg font-display flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
-              <Clock className="h-5 w-5 text-white" />
+              <Clock className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="gradient-text">Velocidade do Deal</span>
           </CardTitle>
@@ -62,7 +62,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
             <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40 group-hover/title:rotate-3">
-              <Activity className="h-5 w-5 text-white" />
+              <Activity className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="gradient-text">Velocidade do Deal</span>
           </CardTitle>
@@ -96,7 +96,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
             <div className="grid grid-cols-3 gap-4">
               <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-primary/50">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30 group-hover:rotate-3">
-                  <Timer className="h-4 w-4 text-white" />
+                  <Timer className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.totalAvgDays.toFixed(1)}d</p>

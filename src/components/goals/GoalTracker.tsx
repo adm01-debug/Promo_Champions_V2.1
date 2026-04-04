@@ -58,7 +58,7 @@ export const GoalTracker: FC<GoalTrackerProps> = ({ goal, onEdit, showDetails = 
             <p className="text-sm text-muted-foreground">{goal.period}</p>
           </div>
         </div>
-        <Badge className={`${status.color} text-white`}>
+        <Badge className={`${status.color} text-primary-foreground`}>
           <StatusIcon className="h-3 w-3 mr-1" />
           {status.label}
         </Badge>
@@ -155,7 +155,7 @@ export const MilestoneTracker: FC<MilestoneProps> = ({ milestones, onComplete })
               onClick={() => !milestone.isCompleted && onComplete?.(milestone.id)}
               className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                 milestone.isCompleted 
-                  ? 'bg-success border-success text-white' 
+                  ? 'bg-success border-success text-primary-foreground' 
                   : 'border-muted-foreground hover:border-primary'
               }`}
             >
