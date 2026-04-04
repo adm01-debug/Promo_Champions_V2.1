@@ -5941,6 +5941,16 @@ export type Database = {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
       }
+      update_user_mfa_settings: {
+        Args: {
+          p_backup_codes?: string[]
+          p_preferred_method?: string
+          p_sms_enabled?: boolean
+          p_totp_enabled?: boolean
+          p_totp_secret?: string
+        }
+        Returns: boolean
+      }
       validate_api_token: {
         Args: { p_token: string }
         Returns: {
