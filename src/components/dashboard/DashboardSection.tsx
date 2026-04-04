@@ -1,7 +1,30 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const STORAGE_KEY = "dashboard-sections-state";
+
+/** Read persisted section states from localStorage */
+function getPersistedStates(): Record<string, boolean> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+/** Persist a single section's state */
+function persistSectionState(sectionId: string, isOpen: boolean) {
+  try {
+    const current = getPersistedStates();
+    current[sectionId] = isOpen;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+  } catch {
+    // Silent fail — localStorage might be full or disabled
+  }
+}
 
 interface DashboardSectionProps {
   title: string;
@@ -14,6 +37,8 @@ interface DashboardSectionProps {
   teaser?: string;
   /** If true, no collapsible wrapper — just render children directly */
   alwaysOpen?: boolean;
+  /** Unique ID for state persistence. Defaults to slugified title. */
+  persistId?: string;
 }
 
 export function DashboardSection({
@@ -25,8 +50,22 @@ export function DashboardSection({
   badge,
   teaser,
   alwaysOpen = false,
+  persistId,
 }: DashboardSectionProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const sectionId = persistId || title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  
+  const [isOpen, setIsOpen] = useState(() => {
+    const persisted = getPersistedStates();
+    return sectionId in persisted ? persisted[sectionId] : defaultOpen;
+  });
+
+  const toggle = useCallback(() => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      persistSectionState(sectionId, next);
+      return next;
+    });
+  }, [sectionId]);
 
   if (alwaysOpen) {
     return <div className={className}>{children}</div>;
@@ -35,7 +74,7 @@ export function DashboardSection({
   return (
     <div className={cn("space-y-3", className)}>
       <button
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={toggle}
         className="flex items-center gap-2.5 group w-full text-left py-1 px-1 rounded-lg hover:bg-muted/30 transition-colors -mx-1"
         aria-expanded={isOpen}
       >
@@ -78,7 +117,10 @@ export function DashboardSection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsOpen(true);
+              persistSectionState(sectionId, true);
+            }}
             className="w-full text-left px-3 py-2.5 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group/teaser"
           >
             <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors">
