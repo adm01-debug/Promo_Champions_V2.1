@@ -91,6 +91,7 @@ export function VoiceControls({
                   isSpeaking && 'text-primary bg-primary/10 animate-pulse'
                 )}
                 onClick={onManualSpeak}
+                aria-label={isSpeaking ? "Parar reprodução" : "Reproduzir resposta"}
                 disabled={isLoadingTTS}
               >
                 {isLoadingTTS ? (

@@ -187,6 +187,7 @@ export function SDRAlertHistory() {
                   size="icon"
                   variant="ghost"
                   className="h-7 w-7"
+                  aria-label="Salvar limiar"
                   onClick={handleSaveThreshold}
                   disabled={updateThresholdMutation.isPending}
                 >

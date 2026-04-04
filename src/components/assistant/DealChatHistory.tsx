@@ -108,6 +108,7 @@ export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryPro
                         "hover:bg-destructive/10 hover:text-destructive"
                       )}
                       onClick={(e) => {
+                      aria-label="Excluir conversa"
                         e.stopPropagation();
                         deleteEntry.mutate(entry.id);
                       }}

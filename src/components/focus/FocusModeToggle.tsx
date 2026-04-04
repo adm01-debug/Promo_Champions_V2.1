@@ -28,6 +28,7 @@ export const FocusModeToggle = forwardRef<HTMLDivElement, FocusModeToggleProps>(
             variant={isEnabled ? "default" : "ghost"}
             size="icon"
             onClick={toggleFocusMode}
+            aria-label={isEnabled ? "Desativar modo foco" : "Ativar modo foco"}
             className={cn(
               "relative h-9 w-9 transition-all",
               isEnabled && "bg-primary text-primary-foreground",
