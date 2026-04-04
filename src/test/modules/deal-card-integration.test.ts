@@ -120,7 +120,7 @@ describe("Active cadence display in DealCard", () => {
 // ─── Probability badge ─────────────────────────────────────────────
 describe("Probability badge display", () => {
   it("shows percentage when probability exists", () => {
-    const prob = { probability: 75, factors: ["high value"] };
+    const prob: { probability: number; factors: string[] } = { probability: 75, factors: ["high value"] };
     expect(prob.probability).toBe(75);
   });
 

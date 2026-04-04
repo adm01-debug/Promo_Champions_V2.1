@@ -258,7 +258,7 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should treat empty string notes as null', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task, '   ');
     expect(result.notes).toBeNull();
   });

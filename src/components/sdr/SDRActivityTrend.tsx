@@ -493,7 +493,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <div className="flex items-center justify-between gap-4">
                         <p className="font-semibold text-foreground text-sm">{label}</p>
                         <span className="text-xs font-medium text-muted-foreground">
-                          Total: {dataPoint?.total ?? 0}
+                          Total: {(dataPoint as Record<string, number>)?.total ?? 0}
                         </span>
                       </div>
                       <div className="space-y-1">

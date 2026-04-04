@@ -49,7 +49,7 @@ describe("Best server score selection", () => {
   });
 
   it("handles single deal", () => {
-    const scores = { "deal-1": { score: 55 } };
+    const scores: Record<string, { score: number }> = { "deal-1": { score: 55 } };
     let bestScore = 0;
     ["deal-1"].forEach(id => {
       if (scores[id]?.score > bestScore) bestScore = scores[id].score;
