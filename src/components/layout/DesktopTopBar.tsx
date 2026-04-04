@@ -4,7 +4,6 @@ import { Bell } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
-import { SearchTrigger } from "./SearchTrigger";
 import { FocusModeToggle } from "@/components/focus/FocusModeToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";

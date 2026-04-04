@@ -45,7 +45,6 @@ export function ApiIntegrationSettings() {
     });
   };
 
-  const _baseUrl = `${window.location.origin.replace('://', '://').split('.')[0]}.supabase.co/functions/v1/ranking-api/v2`;
 
   return (
     <div className="space-y-6">

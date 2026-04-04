@@ -1,4 +1,4 @@
-import { Crown, Trophy, Medal, Flame, TrendingUp, Sparkles, Zap, Star, Swords, Shield } from "lucide-react";
+import { Crown, Trophy, Medal, Flame, TrendingUp, Zap, Star, Swords, Shield } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";

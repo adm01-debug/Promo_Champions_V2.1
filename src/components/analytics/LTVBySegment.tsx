@@ -170,7 +170,7 @@ export const LTVBySegment: FC = () => {
 
             {/* Segment cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {data.map((seg, idx) => (
+              {data.map((seg, _idx) => (
                 <div key={seg.segment} className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium truncate">{seg.segment}</span>

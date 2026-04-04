@@ -83,7 +83,7 @@ export function useWebAuthn(): UseWebAuthnReturn {
   }, [user?.id]);
 
   // Register a new passkey
-  const registerPasskey = useCallback(async (friendlyName?: string): Promise<boolean> => {
+  const registerPasskey = useCallback(async (_friendlyName?: string): Promise<boolean> => {
     if (!isSupported) {
       toast.error('WebAuthn não é suportado neste navegador');
       return false;

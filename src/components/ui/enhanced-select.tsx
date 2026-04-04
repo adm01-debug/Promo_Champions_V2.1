@@ -245,7 +245,7 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
                           {group}
                         </div>
                       )}
-                      {groupOpts.map((option, idx) => {
+                      {groupOpts.map((option, _idx) => {
                         const globalIdx = filteredOptions.findIndex(o => o.value === option.value);
                         const isHighlighted = globalIdx === highlightedIndex;
                         const isSelected = option.value === value;

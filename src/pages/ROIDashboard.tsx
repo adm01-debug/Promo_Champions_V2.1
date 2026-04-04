@@ -297,7 +297,7 @@ const ROIDashboard = () => {
                     />
                     <Legend />
                     <Bar dataKey="revenue" name="Receita" radius={[6, 6, 0, 0]}>
-                      {roiChartData.map((entry, index) => (
+                      {roiChartData.map((_entry, index) => (
                         <Cell key={index} fill={`hsl(262, 83%, ${58 + index * 5}%)`} />
                       ))}
                     </Bar>

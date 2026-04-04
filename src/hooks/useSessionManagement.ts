@@ -19,7 +19,6 @@ interface ActiveSession {
 }
 
 const SESSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutos
-const _REFRESH_THRESHOLD = 2 * 60 * 60 * 1000; // 2 horas antes de expirar
 
 export const useSessionManagement = () => {
   const { user } = useAuth();

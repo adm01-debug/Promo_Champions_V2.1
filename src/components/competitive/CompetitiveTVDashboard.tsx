@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const SLIDES = ['ranking', 'streaks', 'matchups', 'stats'] as const;
-type Slide = typeof SLIDES[number];
+type _Slide = typeof SLIDES[number];
 
 const SLIDE_DURATION = 8000; // 8s per slide
 

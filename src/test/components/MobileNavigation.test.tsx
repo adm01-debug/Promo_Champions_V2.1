@@ -2,7 +2,7 @@
  * MobileNavigation & MobileComponents Tests
  * Verifies: nav items, active states, badges, drawer, accessibility, pill indicator
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 

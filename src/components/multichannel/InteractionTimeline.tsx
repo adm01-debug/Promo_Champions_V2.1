@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChannelInteraction, Channel } from "@/hooks/useMultichannel";
+import { ChannelInteraction } from "@/hooks/useMultichannel";
 import { ArrowUpRight, ArrowDownLeft, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";

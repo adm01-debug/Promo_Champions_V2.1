@@ -6,16 +6,16 @@ import { Switch } from '@/components/ui/switch';
 import { 
   Users, 
   Shield, 
-  Key, 
+  _Key, 
   Lock, 
-  Unlock, 
+  _Unlock, 
   Plus, 
   Edit, 
   Trash2,
-  Check,
+  _Check,
   X,
   Eye,
-  EyeOff,
+  _EyeOff,
   AlertTriangle
 } from 'lucide-react';
 
@@ -203,7 +203,6 @@ export const AccessControl: FC<AccessControlProps> = ({
       <div className="space-y-2">
         {currentAccess.map((access) => {
           const level = levelLabels[access.level];
-          const _Icon = level.icon;
           
           return (
             <div key={access.userId} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">

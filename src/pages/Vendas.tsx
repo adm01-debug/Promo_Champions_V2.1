@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { SavedFiltersBar } from "@/components/filters/SavedFiltersBar";
 import Fuse from "fuse.js";
 import { useSalesData } from "@/hooks/useSalesData";

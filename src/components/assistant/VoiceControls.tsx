@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -42,7 +41,6 @@ export function VoiceControls({
   isLoadingTTS,
   onManualSpeak,
   showSpeakButton,
-  isApiConfigured,
   responseMode = 'text',
   className,
 }: VoiceControlsProps) {

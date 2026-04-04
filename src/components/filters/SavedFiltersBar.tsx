@@ -7,7 +7,6 @@ import { useSavedFilters } from '@/hooks/useSavedFilters';
 import { Save, Star, Trash2, BookmarkPlus, Filter } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface SavedFiltersBarProps {
   entityType: string;
@@ -16,7 +15,7 @@ interface SavedFiltersBarProps {
 }
 
 export function SavedFiltersBar({ entityType, currentFilters, onApplyFilter }: SavedFiltersBarProps) {
-  const { filters, saveFilter, deleteFilter, updateFilter, isLoading } = useSavedFilters(entityType);
+  const { filters, saveFilter, deleteFilter } = useSavedFilters(entityType);
   const [newName, setNewName] = useState('');
   const [isDefault, setIsDefault] = useState(false);
   const [open, setOpen] = useState(false);

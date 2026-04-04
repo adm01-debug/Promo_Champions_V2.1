@@ -25,27 +25,27 @@ interface ForecastItem {
   risk_level: 'low' | 'medium' | 'high' | 'critical';
 }
 
-const trendIcons = {
+const trendIcons: Record<string, JSX.Element> = {
   increasing: <TrendingUp className="h-4 w-4 text-emerald-500" />,
   stable: <Minus className="h-4 w-4 text-muted-foreground" />,
   decreasing: <TrendingDown className="h-4 w-4 text-destructive" />,
 };
 
-const riskStyles: Record<string, string> = {
+const _riskStyles: Record<string, string> = {
   low: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
   medium: 'bg-accent text-accent-foreground border-border',
   high: 'bg-destructive/10 text-destructive border-destructive/20',
   critical: 'bg-destructive text-destructive-foreground',
 };
 
-const riskLabels: Record<string, string> = {
+const _riskLabels: Record<string, string> = {
   low: 'Baixo',
   medium: 'Médio',
   high: 'Alto',
   critical: 'Crítico',
 };
 
-export const SalesForecast: FC<SalesForecastProps> = ({ period = 'month' }) => {
+export const SalesForecast: FC<SalesForecastProps> = ({= 'month' }) => {
   const queryClient = useQueryClient();
 
   // Fetch existing forecasts from database

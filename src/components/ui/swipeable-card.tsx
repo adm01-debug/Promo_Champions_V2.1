@@ -40,7 +40,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
   const leftOpacity = useTransform(x, [-threshold, 0], [1, 0]);
   const rightOpacity = useTransform(x, [0, threshold], [0, 1]);
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (disabled) return;
 
     if (info.offset.x < -threshold && onSwipeLeft) {
@@ -139,7 +139,7 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   const leftOpacity = useTransform(x, [-80, -40, 0], [1, 0.5, 0]);
   const rightOpacity = useTransform(x, [0, 40, 80], [0, 0.5, 1]);
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (info.offset.x < -80 && onSwipeLeft) {
       onSwipeLeft();
     } else if (info.offset.x > 80 && onSwipeRight) {

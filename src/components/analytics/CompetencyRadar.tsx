@@ -93,7 +93,7 @@ export function CompetencyRadar({
     data.reduce((sum, d) => sum + (d.value / d.maxValue) * 100, 0) / data.length
   );
 
-  const _improvements = data.filter(
+  const improvements = data.filter(
     (d) => d.previousValue && d.value > d.previousValue
   ).length;
 

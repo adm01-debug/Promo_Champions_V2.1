@@ -62,7 +62,6 @@ export const useSalesAssistant = (
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [dealContext, setDealContext] = useState<DealContext | null>(null);
   
-  const _queryClient = useQueryClient();
 
   // Fetch conversations for the salesperson
   const { data: conversations, isLoading: loadingConversations, refetch: refetchConversations } = useQuery({

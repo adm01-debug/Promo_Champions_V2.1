@@ -73,7 +73,7 @@ export function SalespersonCoaching() {
               </SelectTrigger>
               <SelectContent className="glass border-border/50">
                 <ScrollArea className="h-[200px]">
-                  {salespeople?.map((sp, index) => (
+                  {salespeople?.map((sp, _index) => (
                     <SelectItem 
                       key={sp.id} 
                       value={sp.id}

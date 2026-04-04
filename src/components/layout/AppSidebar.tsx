@@ -29,7 +29,7 @@ import {
   MailCheck,
   DollarSign,
   Swords,
-  Gift,
+  _Gift,
   Crown,
   MapPin,
   ChevronRight,
@@ -330,7 +330,7 @@ export function AppSidebar() {
     );
   };
 
-  const renderGroupedMenu = (group: MenuGroup, index: number) => {
+  const renderGroupedMenu = (group: MenuGroup, _index: number) => {
     // Auto-open if any child route is active
     const currentPath = window.location.pathname;
     const hasActiveChild = group.items.some(item => currentPath === item.url || currentPath.startsWith(item.url + '/'));

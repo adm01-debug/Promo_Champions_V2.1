@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
+  _LayoutDashboard, 
   Kanban, 
   ClipboardList, 
-  Trophy,
+  _Trophy,
   Menu,
   Bot,
   Home,

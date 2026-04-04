@@ -194,7 +194,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                     <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/30">
                       {category}
                     </div>
-                    {items.map((result, index) => {
+                    {items.map((result, _index) => {
                       const globalIndex = results.findIndex((r) => r.id === result.id);
                       const isSelected = globalIndex === selectedIndex;
 

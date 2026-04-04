@@ -204,7 +204,7 @@ const RankingCompetitivo = () => {
 
         {/* Ranking Tab */}
         <TabsContent value="ranking" className="space-y-4">
-          {ranking?.map((person, index) => (
+          {ranking?.map((person, _index) => (
             <Card
               key={person.id}
               className={`glass border overflow-hidden transition-all hover:scale-[1.01] bg-gradient-to-r ${getRankGradient(person.rank)}`}

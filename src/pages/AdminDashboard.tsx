@@ -14,7 +14,7 @@ import {
   Settings, 
   TrendingUp,
   Clock,
-  Mail,
+  _Mail,
   Zap,
   Database,
   Server,
@@ -45,7 +45,6 @@ function useAdminStats() {
     queryKey: ["admin-stats"],
     queryFn: async () => {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
-      const _today = new Date().toISOString();
 
       const [
         { count: totalUsers },

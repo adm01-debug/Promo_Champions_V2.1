@@ -35,7 +35,6 @@ function generateRows(count: number, template: Partial<any> = {}) {
 
 const TABLES = ["sales", "clients", "salespeople", "activities", "products", "deal_outcomes", "cadences", "daily_metrics"];
 const OPERATIONS = ["select", "insert", "update", "delete", "rpc"];
-const _SEVERITIES = ["normal", "slow", "very_slow", "error"];
 
 // ─── TelemetryCharts Component Tests ───
 describe("TelemetryCharts", () => {

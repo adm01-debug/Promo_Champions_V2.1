@@ -49,7 +49,7 @@ import {
   ArrowRight,
   Trash2,
   Play,
-  Pause,
+  _Pause,
   Clock,
   GitBranch,
   ChevronRight,

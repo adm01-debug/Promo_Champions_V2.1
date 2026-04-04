@@ -17,7 +17,7 @@ interface FocusModeToggleProps {
 }
 
 export const FocusModeToggle = forwardRef<HTMLDivElement, FocusModeToggleProps>(
-  function FocusModeToggle({ variant = "icon", className }, ref) {
+  function FocusModeToggle({ variant = "icon", className }, _ref) {
   const { isEnabled, formattedTime, toggleFocusMode } = useFocusMode();
 
   if (variant === "icon") {

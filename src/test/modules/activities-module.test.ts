@@ -20,7 +20,6 @@ describe('Activity Types', () => {
 });
 
 describe('Activity Outcomes', () => {
-  const _OUTCOMES = ['positive', 'negative', 'neutral', 'no_answer', 'scheduled'];
 
   const classifyOutcome = (outcome: string): 'success' | 'failure' | 'pending' => {
     if (['positive', 'scheduled'].includes(outcome)) return 'success';

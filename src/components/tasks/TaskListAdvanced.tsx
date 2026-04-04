@@ -10,10 +10,10 @@ import {
   Calendar, 
   Clock, 
   User,
-  Flag,
-  CheckCircle2,
-  Circle,
-  MoreVertical,
+  _Flag,
+  _CheckCircle2,
+  _Circle,
+  _MoreVertical,
   Trash2,
   Edit
 } from 'lucide-react';

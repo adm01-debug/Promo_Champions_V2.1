@@ -23,7 +23,7 @@ interface Supplier {
   updated_at: string;
 }
 
-interface SupplierProduct {
+interface _SupplierProduct {
   id: string;
   supplier_id: string;
   product_id: string;
@@ -40,7 +40,7 @@ interface SupplierProduct {
   };
 }
 
-interface RiskAssessment {
+interface _RiskAssessment {
   id: string;
   supplier_id: string;
   assessment_date: string;

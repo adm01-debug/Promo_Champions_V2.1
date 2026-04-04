@@ -162,7 +162,7 @@ export function useRetryMutation<TData, TError extends Error, TVariables, TConte
 }
 
 // Create retry-enabled mutation options
-export function createRetryMutationOptions<TData, TError extends Error, TVariables>(
+export function createRetryMutationOptions<TData, _TError extends Error, TVariables>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   retryConfig?: RetryConfig
 ): { mutationFn: (variables: TVariables) => Promise<TData> } {

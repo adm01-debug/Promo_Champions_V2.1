@@ -23,7 +23,7 @@ export const useReauthentication = () => {
   const [pendingRequest, setPendingRequest] = useState<ReauthRequest | null>(null);
 
   // Verificar se ação requer re-autenticação
-  const requiresReauth = useCallback((action: ActionType): boolean => {
+  const requiresReauth = useCallback((_action: ActionType): boolean => {
     // Todas as ações sensíveis requerem re-autenticação
     return true;
   }, []);
