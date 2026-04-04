@@ -16,7 +16,7 @@ export function ActivityQualityWidget() {
     <Card className="h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-          <Star className="h-3.5 w-3.5 text-violet-500" />
+          <Star className="h-3.5 w-3.5 text-primary" />
           Qualidade de Atividades
         </CardTitle>
       </CardHeader>
