@@ -149,6 +149,7 @@ const closerGroupedItems: MenuGroup[] = [
     icon: DollarSign,
     items: [
       { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
     ],
