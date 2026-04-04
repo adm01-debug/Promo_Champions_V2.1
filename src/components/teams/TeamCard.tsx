@@ -62,7 +62,7 @@ function _TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
           <div className="flex gap-1">
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Editar"
               className="h-8 w-8 hover-scale-sm"
               onClick={() => onEdit(team)}
             >
@@ -70,7 +70,7 @@ function _TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
             </Button>
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Excluir"
               className="h-8 w-8 text-destructive hover:text-destructive hover-scale-sm"
               onClick={() => onDelete(team)}
             >

@@ -114,7 +114,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
           </div>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Copiar"
             className="h-8 w-8 hover:bg-primary/10"
             onClick={() => duplicatePlaybook.mutate(playbook.id)}
             title="Duplicar playbook"

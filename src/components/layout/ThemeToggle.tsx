@@ -17,7 +17,7 @@ export const ThemeToggle = forwardRef<HTMLDivElement>(function ThemeToggle(_prop
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Tema claro"
             onClick={toggleTheme}
             className="h-9 w-9 rounded-lg relative overflow-hidden hover-scale-lg"
           >

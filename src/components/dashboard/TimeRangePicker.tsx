@@ -108,7 +108,7 @@ export const ComparisonPeriod: FC<ComparisonPeriodProps> = ({
     </div>
     <Button
       variant="ghost"
-      size="icon"
+      size="icon" aria-label="Próximo"
       onClick={() => onNavigate?.('next')}
       disabled={!canGoNext}
     >

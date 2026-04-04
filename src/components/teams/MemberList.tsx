@@ -113,7 +113,7 @@ export const MemberList: FC<MemberListProps> = ({
               <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  size="icon" 
+                  size="icon" aria-label="Mais opções" 
                   className="h-8 w-8"
                   onClick={e => e.stopPropagation()}
                 >

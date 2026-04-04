@@ -98,7 +98,7 @@ function _CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleti
               </Button>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon" aria-label="Editar"
                 className="h-7 w-7 hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-110"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -110,7 +110,7 @@ function _CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleti
               {onDelete && (
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="icon" aria-label="Expandir"
                   className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10 transition-all duration-200 hover:scale-110"
                   onClick={(e) => {
                     e.stopPropagation();

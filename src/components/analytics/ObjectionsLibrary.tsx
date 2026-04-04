@@ -229,7 +229,7 @@ export function ObjectionsLibrary() {
                     <div className="flex gap-1 shrink-0">
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon" aria-label="Copiar"
                         className="h-8 w-8 hover:bg-status-success/20 hover:text-status-success transition-colors"
                         onClick={() => handleCopyResponse(obj.id, obj.response)}
                       >
@@ -237,7 +237,7 @@ export function ObjectionsLibrary() {
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon" aria-label="Excluir"
                         className="h-8 w-8 hover:bg-status-error/20 text-muted-foreground hover:text-status-error transition-colors"
                         onClick={() => deleteObjection.mutate(obj.id)}
                       >

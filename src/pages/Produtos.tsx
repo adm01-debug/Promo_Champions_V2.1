@@ -193,7 +193,7 @@ const Produtos = () => {
                   <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon" aria-label="Editar"
                       className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
                       onClick={() => setEditingProduct(product)}
                     >
@@ -201,7 +201,7 @@ const Produtos = () => {
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon" aria-label="Excluir"
                       className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive"
                       onClick={() => setDeletingProduct(product)}
                     >

@@ -69,7 +69,7 @@ export function SecurityAlertSoundSettings() {
                 {option.id !== 'none' && (
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="icon" aria-label="Reproduzir"
                     onClick={() => previewSound(option.id)}
                     className="hover-scale-sm"
                     disabled={volume === 0}

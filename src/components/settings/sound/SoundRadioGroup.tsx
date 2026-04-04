@@ -38,7 +38,7 @@ export function SoundRadioGroup({ value, onValueChange, options, onPreview, disa
             {option.id !== 'none' && (
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon" aria-label="Reproduzir"
                 onClick={(e) => { e.preventDefault(); onPreview(option.id); }}
                 className="hover-scale-sm"
                 disabled={disabled}

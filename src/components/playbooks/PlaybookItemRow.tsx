@@ -112,7 +112,7 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
         <>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Editar"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-primary/10"
             onClick={() => setIsEditing(true)}
           >
@@ -120,7 +120,7 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
           </Button>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Excluir"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-destructive/10 hover:scale-110"
             onClick={() => onDelete(item.id)}
           >

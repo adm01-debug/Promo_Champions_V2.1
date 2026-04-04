@@ -196,7 +196,7 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon" aria-label="Excluir"
                         className="h-7 w-7 text-status-error hover:text-status-error"
                         onClick={() => deleteTemplate.mutate(tpl.id)}
                       >

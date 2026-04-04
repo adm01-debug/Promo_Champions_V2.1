@@ -175,7 +175,7 @@ export const CompetitiveChat: FC<CompetitiveChatProps> = ({ salespersonId }) => 
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Reagir"
             className="h-8 w-8 shrink-0"
             onClick={() => setShowQuickMessages(!showQuickMessages)}
           >
@@ -190,7 +190,7 @@ export const CompetitiveChat: FC<CompetitiveChatProps> = ({ salespersonId }) => 
             disabled={!salespersonId}
           />
           <Button
-            size="icon"
+            size="icon" aria-label="Enviar"
             className="h-8 w-8 shrink-0"
             onClick={handleSend}
             disabled={!newMessage.trim() || !salespersonId || sendMessage.isPending}

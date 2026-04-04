@@ -183,7 +183,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
                                 className="flex-1 text-xs bg-background/50 rounded-lg px-3 py-1.5 border border-border/30 outline-none"
                               />
                               <Button
-                                size="icon"
+                                size="icon" aria-label="Enviar"
                                 variant="ghost"
                                 className="h-7 w-7"
                                 onClick={() => handleComment(item.id)}

@@ -54,7 +54,7 @@ export const AICopilotFab: FC = () => {
               </div>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon" aria-label="Fechar"
                 className="h-7 w-7"
                 onClick={dismiss}
                 aria-label="Fechar copilot"
@@ -95,7 +95,7 @@ export const AICopilotFab: FC = () => {
                 />
                 <Button
                   type="submit"
-                  size="icon"
+                  size="icon" aria-label="Enviar"
                   variant="ghost"
                   className="h-7 w-7 shrink-0"
                   disabled={!question.trim() || isLoading}
