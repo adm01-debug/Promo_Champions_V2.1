@@ -97,7 +97,7 @@ export function useSDRMetrics(period: PeriodFilter = "month") {
 
       const scoreMap = new Map(leadScores.map(s => [s.sale_id, s.score]));
 
-      const calculateMetrics = (sales: Array<{ id: string; status: string; salesperson_id: string | null; created_at: string }>, tasks: Array<{ id: string; salesperson_id: string | null }>): SDRMetrics => {
+      const calculateMetrics = (sales: Array<{ id: string; status: string; salesperson_id: string | null }>, tasks: Array<{ id: string; salesperson_id: string | null }>): SDRMetrics => {
         const totalLeads = sales?.length || 0;
         const qualifiedLeads = sales?.filter(s => 
           s.status === "qualified" || s.status === "proposal" || s.status === "negotiation" || s.status === "completed"
