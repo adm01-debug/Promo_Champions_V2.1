@@ -193,7 +193,7 @@ export function EnhancedTVMode() {
                 className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {goals.slice(0, 6).map((goal, i: number) => {
                   const goalWithAmount = goal as typeof goal & { current_amount?: number };
-                  const progress = goal.goal_amount > 0 ? Math.min((goal.current_amount / goal.goal_amount) * 100, 100) : 0;
+                  const progress = goal.goal_amount > 0 ? Math.min(((goalWithAmount.current_amount || 0) / goal.goal_amount) * 100, 100) : 0;
                   return (
                     <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
                       <Card>
