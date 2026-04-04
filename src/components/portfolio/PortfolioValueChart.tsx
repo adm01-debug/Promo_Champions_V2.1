@@ -6,7 +6,7 @@ import { BarChart3 } from "lucide-react";
 interface PortfolioValueChartProps {
   portfolio: Array<{
     salesperson_id: string;
-    client?: { total_value: number; name: string } | null;
+    client?: { total_value?: number; name: string } | null;
   }>;
   salespeople: Array<{ id: string; name: string }>;
 }
