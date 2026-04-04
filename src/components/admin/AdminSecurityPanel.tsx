@@ -8,10 +8,11 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Link } from "react-router-dom";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface AdminSecurityPanelProps {
-  recentAccessDenied: Array<Record<string, unknown>>;
-  recentSecurityAlerts: Array<Record<string, unknown>>;
-  recentSDRAlerts: Array<Record<string, unknown>>;
+  recentAccessDenied: any[];
+  recentSecurityAlerts: any[];
+  recentSDRAlerts: any[];
 }
 
 export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, recentSDRAlerts }: AdminSecurityPanelProps) {
