@@ -137,7 +137,7 @@ export function CustomFieldsManager() {
                   ) : fields.length === 0 ? (
                     <p className="text-sm text-muted-foreground">Nenhum campo adicional para este time</p>
                   ) : (
-                    fields.map((field: { name: string; type: string }, i: number) => (
+                    fields.map((field: { field_label: string; field_type: string; field_key: string; id: string }, i: number) => (
                       <motion.div
                         key={field.id}
                         initial={{ opacity: 0, y: 5 }}

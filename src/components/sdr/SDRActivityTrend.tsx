@@ -185,7 +185,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <span className="text-xs font-medium text-muted-foreground">Total: {(dataPoint as Record<string, number>)?.total ?? 0}</span>
                     </div>
                     <div className="space-y-1">
-                      {payload.map((entry: { name?: string; value?: number; color?: string; dataKey?: string }) => (
+                      {payload.map((entry: { name?: string; value?: number; color?: string; dataKey?: string; stroke?: string }) => (
                         <div key={entry.dataKey} className="flex items-center gap-2">
                           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.stroke }} />
                           <span className="text-xs text-muted-foreground">{ACTIVITY_LABELS[entry.dataKey] || entry.dataKey}</span>
@@ -217,7 +217,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <span className="text-xs font-medium text-muted-foreground">Total: {total}</span>
                     </div>
                     <div className="space-y-1">
-                      {payload.sort((a: { value?: number }, b: { value?: number }) => (b.value || 0) - (a.value || 0)).map((entry: { name?: string; value?: number; color?: string; dataKey?: string }) => {
+                      {payload.sort((a: { value?: number }, b: { value?: number }) => (b.value || 0) - (a.value || 0)).map((entry: { name?: string; value?: number; color?: string; dataKey?: string; stroke?: string }) => {
                         const sdr = sdrs.find(s => s.id === entry.dataKey);
                         const goal = sdrGoals[entry.dataKey] || 0;
                         const diff = goal > 0 ? (entry.value as number) - goal : 0;
