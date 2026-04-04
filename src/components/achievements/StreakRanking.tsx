@@ -133,7 +133,7 @@ export function StreakRanking() {
                   {/* Streaks */}
                   <div className="flex items-center gap-3">
                     {/* Current Streak */}
-                    {person.currentStreak ?? 0 > 0 && (
+                    {(person.currentStreak ?? 0) > 0 && (
                       <div className="text-center">
                         <Badge className={`${getStreakBadgeColor(person.currentStreak ?? 0)} flex items-center gap-1 animate-bounce-in hover:animate-pop`}>
                           {getStreakIcon(person.currentStreak ?? 0)}
