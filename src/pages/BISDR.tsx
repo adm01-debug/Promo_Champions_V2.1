@@ -20,6 +20,7 @@ const BISDR = () => {
   const { data, isLoading, refetch } = useBISDR({ dateRange: filters.dateRange });
 
   return (
+    <>
     <Helmet>
       <title>BI SDR | Promo Champions</title>
       <meta name="description" content="Business Intelligence para SDRs" />
@@ -105,6 +106,7 @@ const BISDR = () => {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 };
 

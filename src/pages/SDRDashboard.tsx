@@ -37,6 +37,7 @@ export default function SDRDashboard() {
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
 
   return (
+    <>
     <Helmet>
       <title>Dashboard SDR | Promo Champions</title>
       <meta name="description" content="Painel de performance do SDR" />
@@ -234,5 +235,6 @@ export default function SDRDashboard() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

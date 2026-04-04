@@ -12,6 +12,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
+    <>
     <Helmet>
       <title>Página Não Encontrada | Promo Champions</title>
       <meta name="description" content="A página solicitada não existe" />
@@ -25,6 +26,7 @@ const NotFound = () => {
         </a>
       </div>
     </div>
+  </>
   );
 };
 

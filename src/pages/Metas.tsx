@@ -36,6 +36,7 @@ export default function Metas() {
   const exceededCount = data?.salespeople.filter(sp => sp.progress >= 100).length || 0;
 
   return (
+    <>
     <Helmet>
       <title>Metas | Promo Champions</title>
       <meta name="description" content="Acompanhamento de metas de vendas" />
@@ -191,5 +192,6 @@ export default function Metas() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

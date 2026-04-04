@@ -21,6 +21,7 @@ const BICloser = () => {
   const { data, isLoading, refetch } = useBICloser({ dateRange: filters.dateRange });
 
   return (
+    <>
     <Helmet>
       <title>BI Closer | Promo Champions</title>
       <meta name="description" content="Business Intelligence para Closers" />
@@ -155,6 +156,7 @@ const BICloser = () => {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 };
 

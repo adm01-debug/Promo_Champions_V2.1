@@ -84,6 +84,7 @@ export default function HistoricoDesafiosDiarios() {
 
   if (isLoading) {
     return (
+    <>
       <Helmet>
         <title>Histórico de Desafios | Promo Champions</title>
         <meta name="description" content="Histórico de desafios diários completados" />
@@ -185,5 +186,6 @@ export default function HistoricoDesafiosDiarios() {
         </motion.div>
       </div>
     </PageTransition>
+  </>
   );
 }

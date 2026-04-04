@@ -65,6 +65,7 @@ export default function Notificacoes() {
   };
 
   return (
+    <>
     <Helmet>
       <title>Notificações | Promo Champions</title>
       <meta name="description" content="Central de notificações e alertas" />
@@ -174,5 +175,6 @@ export default function Notificacoes() {
         </Tabs>
       </div>
     </SkeletonTransition>
+  </>
   );
 }

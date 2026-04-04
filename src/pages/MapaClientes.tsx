@@ -5,6 +5,7 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 
 const MapaClientes = () => {
   return (
+    <>
     <Helmet>
       <title>Mapa de Clientes | Promo Champions</title>
       <meta name="description" content="Visualização geográfica de clientes" />
@@ -18,6 +19,7 @@ const MapaClientes = () => {
         </div>
       </div>
     </PageTransition>
+  </>
   );
 };
 

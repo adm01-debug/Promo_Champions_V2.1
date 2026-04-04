@@ -63,6 +63,7 @@ const Index = () => {
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
 
   return (
+    <>
     <Helmet>
       <title>Dashboard | Promo Champions</title>
       <meta name="description" content="Painel principal do Promo Champions" />
@@ -259,6 +260,7 @@ const Index = () => {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 };
 

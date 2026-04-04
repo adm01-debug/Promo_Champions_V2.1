@@ -44,6 +44,7 @@ export default function DesafiosSemanais() {
   };
 
   return (
+    <>
     <Helmet>
       <title>Desafios Semanais | Promo Champions</title>
       <meta name="description" content="Desafios gamificados da semana" />
@@ -234,5 +235,6 @@ export default function DesafiosSemanais() {
         </Tabs>
       </div>
     </PageTransition>
+  </>
   );
 }

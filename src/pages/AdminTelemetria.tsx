@@ -118,6 +118,7 @@ export default function AdminTelemetriaPage() {
   }, [rows]);
 
   return (
+    <>
     <Helmet>
       <title>Telemetria | Promo Champions</title>
       <meta name="description" content="Métricas e monitoramento de performance do sistema" />
@@ -184,5 +185,6 @@ export default function AdminTelemetriaPage() {
         <TelemetryTable rows={rows} isLoading={isLoading} />
       </div>
     </MainLayout>
+  </>
   );
 }

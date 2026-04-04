@@ -31,6 +31,7 @@ export default function CloserDashboard() {
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   return (
+    <>
     <Helmet>
       <title>Dashboard Closer | Promo Champions</title>
       <meta name="description" content="Painel de performance do Closer" />
@@ -180,5 +181,6 @@ export default function CloserDashboard() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

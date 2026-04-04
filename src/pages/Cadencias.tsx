@@ -35,6 +35,7 @@ export default function Cadencias() {
   }, [cadences, searchTerm, statusFilter]);
 
   return (
+    <>
     <Helmet>
       <title>Cadências | Promo Champions</title>
       <meta name="description" content="Gerenciamento de cadências de prospecção" />
@@ -197,5 +198,6 @@ function CadenceCardWithSteps({
       onDelete={onDelete}
       isDeleting={isDeleting}
     />
+  </>
   );
 }

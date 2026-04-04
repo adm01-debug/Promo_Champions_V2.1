@@ -75,6 +75,7 @@ export default function MetasAtividades() {
   ];
 
   return (
+    <>
     <Helmet>
       <title>Metas de Atividades | Promo Champions</title>
       <meta name="description" content="Metas e objetivos de atividades" />
@@ -243,5 +244,6 @@ export default function MetasAtividades() {
       )}
     </div>
     </SkeletonTransition>
+  </>
   );
 }

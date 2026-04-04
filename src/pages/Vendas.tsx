@@ -100,6 +100,7 @@ const Vendas = () => {
   } = usePagination(filteredAndSortedSales, { initialItemsPerPage: 10 });
 
   return (
+    <>
     <Helmet>
       <title>Vendas | Promo Champions</title>
       <meta name="description" content="Registro e acompanhamento de vendas" />
@@ -230,6 +231,7 @@ const Vendas = () => {
         </div>
       </div>
     </SkeletonTransition>
+  </>
   );
 };
 

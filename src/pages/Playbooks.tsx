@@ -8,6 +8,7 @@ export default function Playbooks() {
   const { isLoading } = usePlaybooks();
 
   return (
+    <>
     <Helmet>
       <title>Playbooks | Promo Champions</title>
       <meta name="description" content="Estratégias e roteiros de vendas" />
@@ -21,5 +22,6 @@ export default function Playbooks() {
         <PlaybooksManager />
       </div>
     </SkeletonTransition>
+  </>
   );
 }

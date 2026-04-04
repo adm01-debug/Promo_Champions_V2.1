@@ -36,6 +36,7 @@ export default function Times() {
   const incompleteTeams = totalTeams - completeTeams;
 
   return (
+    <>
     <Helmet>
       <title>Times | Promo Champions</title>
       <meta name="description" content="Gestão de equipes de vendas" />
@@ -178,5 +179,6 @@ export default function Times() {
       />
     </div>
     </SkeletonTransition>
+  </>
   );
 }

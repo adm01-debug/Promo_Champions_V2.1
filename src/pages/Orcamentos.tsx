@@ -47,6 +47,7 @@ export default function Orcamentos() {
   ];
 
   return (
+    <>
     <Helmet>
       <title>Orçamentos | Promo Champions</title>
       <meta name="description" content="Gestão de orçamentos e propostas" />
@@ -111,5 +112,6 @@ export default function Orcamentos() {
         <QuoteDetailDialog quote={selectedQuote} open={!!selectedQuote} onOpenChange={(open) => !open && setSelectedQuote(null)} />
       </div>
     </PageTransition>
+  </>
   );
 }

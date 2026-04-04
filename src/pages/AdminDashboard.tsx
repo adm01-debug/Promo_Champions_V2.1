@@ -23,6 +23,7 @@ function AdminDashboardContent() {
 
   if (statsLoading || edgeLoading) {
     return (
+    <>
       <Helmet>
         <title>Painel Administrativo | Promo Champions</title>
         <meta name="description" content="Gerenciamento e monitoramento do sistema" />
@@ -83,5 +84,6 @@ export default function AdminDashboard() {
     <ProtectedRoute requireAdminOrManager>
       <AdminDashboardContent />
     </ProtectedRoute>
+  </>
   );
 }

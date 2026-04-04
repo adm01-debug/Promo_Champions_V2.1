@@ -14,6 +14,7 @@ const AccessDenied = () => {
   };
 
   return (
+    <>
     <Helmet>
       <title>Acesso Negado | Promo Champions</title>
       <meta name="description" content="Você não tem permissão para acessar esta página" />
@@ -65,6 +66,7 @@ const AccessDenied = () => {
         </div>
       </div>
     </div>
+  </>
   );
 };
 

@@ -5,6 +5,7 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 
 export default function Territorios() {
   return (
+    <>
     <Helmet>
       <title>Territórios | Promo Champions</title>
       <meta name="description" content="Gestão de territórios de vendas" />
@@ -26,5 +27,6 @@ export default function Territorios() {
         <TerritoriesBoard />
       </div>
     </PageTransition>
+  </>
   );
 }

@@ -70,6 +70,7 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
   return (
+    <>
     <Helmet>
       <title>Dashboard Vendedor | Promo Champions</title>
       <meta name="description" content="Painel de performance do vendedor" />
@@ -177,6 +178,7 @@ const VendedorDashboard = () => {
         </div>
       </div>
     </SkeletonTransition>
+  </>
   );
 };
 

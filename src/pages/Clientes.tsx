@@ -99,6 +99,7 @@ const Clientes = () => {
   };
 
   return (
+    <>
     <Helmet>
       <title>Clientes | Promo Champions</title>
       <meta name="description" content="Gestão da carteira de clientes" />
@@ -290,6 +291,7 @@ const Clientes = () => {
         </DialogContent>
       </Dialog>
     </SkeletonTransition>
+  </>
   );
 };
 

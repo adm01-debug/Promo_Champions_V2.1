@@ -12,6 +12,7 @@ export default function Pipeline() {
   const { isLoading } = usePipelineDeals();
 
   return (
+    <>
     <Helmet>
       <title>Pipeline | Promo Champions</title>
       <meta name="description" content="Funil de vendas e gestão de deals" />
@@ -63,5 +64,6 @@ export default function Pipeline() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

@@ -11,6 +11,7 @@ export default function Atividades() {
   const { isLoading } = useActivities();
 
   return (
+    <>
     <Helmet>
       <title>Atividades | Promo Champions</title>
       <meta name="description" content="Registro e acompanhamento de atividades comerciais" />
@@ -55,5 +56,6 @@ export default function Atividades() {
       </div>
     </div>
     </SkeletonTransition>
+  </>
   );
 }

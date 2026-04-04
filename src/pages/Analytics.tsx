@@ -67,6 +67,7 @@ export default function Analytics() {
   const { isLoading } = useWinLossAnalysis();
 
   return (
+    <>
     <Helmet>
       <title>Analytics | Promo Champions</title>
       <meta name="description" content="Análises avançadas de vendas e performance" />
@@ -107,5 +108,6 @@ export default function Analytics() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

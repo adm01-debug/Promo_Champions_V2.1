@@ -15,6 +15,7 @@ export default function Tarefas() {
   const { isLoading } = useTodayTasks();
 
   return (
+    <>
     <Helmet>
       <title>Tarefas | Promo Champions</title>
       <meta name="description" content="Gestão de tarefas e atividades pendentes" />
@@ -68,5 +69,6 @@ export default function Tarefas() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

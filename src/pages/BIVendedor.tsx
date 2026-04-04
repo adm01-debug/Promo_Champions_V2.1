@@ -22,6 +22,7 @@ const BIVendedor = () => {
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
+    <>
     <Helmet>
       <title>BI Vendedor | Promo Champions</title>
       <meta name="description" content="Business Intelligence para Vendedores" />
@@ -137,6 +138,7 @@ const BIVendedor = () => {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 };
 

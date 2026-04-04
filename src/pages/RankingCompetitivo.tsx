@@ -76,6 +76,7 @@ const RankingCompetitivo = () => {
   const leader = ranking?.[0];
 
   return (
+    <>
     <Helmet>
       <title>Ranking Competitivo | Promo Champions</title>
       <meta name="description" content="Rankings e competições entre vendedores" />
@@ -222,6 +223,7 @@ const RankingCompetitivo = () => {
         </Tabs>
       </div>
     </SkeletonTransition>
+  </>
   );
 };
 

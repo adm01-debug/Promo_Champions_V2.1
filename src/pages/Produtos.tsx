@@ -122,6 +122,7 @@ const Produtos = () => {
   };
 
   return (
+    <>
     <Helmet>
       <title>Produtos | Promo Champions</title>
       <meta name="description" content="Catálogo e gestão de produtos" />
@@ -293,6 +294,7 @@ const Produtos = () => {
         isDeleting={deleteProduct.isPending}
       />
     </SkeletonTransition>
+  </>
   );
 };
 

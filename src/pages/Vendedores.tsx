@@ -103,6 +103,7 @@ const Vendedores = () => {
   };
 
   return (
+    <>
     <Helmet>
       <title>Vendedores | Promo Champions</title>
       <meta name="description" content="Gestão da equipe de vendedores" />
@@ -289,6 +290,7 @@ const Vendedores = () => {
       </div>
     </div>
     </SkeletonTransition>
+  </>
   );
 };
 

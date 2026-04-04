@@ -97,6 +97,7 @@ export default function Auth() {
   const isLoginDisabled = isLoading || (lockoutStatus.isLocked && countdown > 0);
 
   return (
+    <>
     <Helmet>
       <title>Login | Promo Champions</title>
       <meta name="description" content="Acesse o Promo Champions" />
@@ -119,5 +120,6 @@ export default function Auth() {
         handlePasswordReset={handlePasswordReset} handleGoogleSignIn={handleGoogleSignIn}
       />
     </div>
+  </>
   );
 }

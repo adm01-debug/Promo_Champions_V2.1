@@ -23,6 +23,7 @@ export default function FonteLeads() {
     : 0;
 
   return (
+    <>
     <Helmet>
       <title>Fonte de Leads | Promo Champions</title>
       <meta name="description" content="Análise de origens de leads" />
@@ -158,5 +159,6 @@ export default function FonteLeads() {
       </div>
     </div>
     </SkeletonTransition>
+  </>
   );
 }
