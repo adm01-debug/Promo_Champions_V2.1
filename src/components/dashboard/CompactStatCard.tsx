@@ -83,4 +83,5 @@ export const CompactStatCard: FC<CompactStatCardProps> = React.memo(({
       </div>
     </Card>
   );
-};
+});
+CompactStatCard.displayName = "CompactStatCard";
