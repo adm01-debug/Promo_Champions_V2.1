@@ -58,8 +58,8 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center">
-              <Crown className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center">
+              <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
             Ranking Semanal
             <Badge variant="outline" className="text-xs ml-auto">
