@@ -27,7 +27,7 @@ interface PortfolioEntry {
 const STAGES = [
   { id: 'active', label: 'Ativo', color: 'bg-success/10 border-success/30 text-success' },
   { id: 'nurturing', label: 'Nutrição', color: 'bg-info/10 border-info/30 text-info' },
-  { id: 'at_risk', label: 'Em Risco', color: 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400' },
+  { id: 'at_risk', label: 'Em Risco', color: 'bg-rank-gold/10 border-rank-gold/30 text-rank-gold dark:text-rank-gold' },
   { id: 'inactive', label: 'Inativo', color: 'bg-destructive/10 border-destructive/30 text-destructive' },
   { id: 'churned', label: 'Perdido', color: 'bg-muted border-border text-muted-foreground' },
 ];

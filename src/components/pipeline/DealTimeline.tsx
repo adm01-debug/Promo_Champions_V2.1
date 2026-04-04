@@ -65,7 +65,7 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
       case "outcome": return event.deal_outcome === "won"
         ? "bg-gradient-to-br from-status-success/30 to-status-success/10 text-status-success border border-status-success/30"
         : "bg-gradient-to-br from-status-error/30 to-status-error/10 text-status-error border border-status-error/30";
-      case "chat": return "bg-gradient-to-br from-purple-500/30 to-purple-500/10 text-purple-500 border border-purple-500/30";
+      case "chat": return "bg-gradient-to-br from-purple-500/30 to-purple-500/10 text-primary border border-primary/30";
       default: return "bg-muted text-muted-foreground border border-border";
     }
   };
@@ -106,7 +106,7 @@ function TimelineEventItem({ event }: { event: DealTimelineEvent }) {
           )}
           {event.type === "task_completed" && (<><span className="font-display font-medium text-sm text-status-success">Tarefa Concluída</span><span className="text-xs text-muted-foreground">• {TASK_TYPE_LABELS[event.task_type || "other"]}</span></>)}
           {event.type === "outcome" && <span className={cn("font-display font-medium text-sm", event.deal_outcome === "won" ? "text-status-success" : "text-status-error")}>{event.deal_outcome === "won" ? "🏆 Deal Ganho" : "❌ Deal Perdido"}</span>}
-          {event.type === "chat" && <span className="font-display font-medium text-sm text-purple-500">Análise IA</span>}
+          {event.type === "chat" && <span className="font-display font-medium text-sm text-primary">Análise IA</span>}
         </div>
 
         {event.type === "task_completed" && event.task_title && <p className="text-sm mt-0.5 text-foreground font-medium">{event.task_title}</p>}

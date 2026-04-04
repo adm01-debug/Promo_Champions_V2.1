@@ -97,7 +97,7 @@ export const RoleManager: FC<RoleManagerProps> = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-red-500"
+                  className="text-destructive"
                   onClick={() => onDeleteRole?.(role.id)}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -252,9 +252,9 @@ export const SecurityAlerts: FC<SecurityAlertProps> = ({
   onAction
 }) => {
   const typeStyles = {
-    warning: 'border-yellow-500 bg-yellow-500/10',
-    critical: 'border-red-500 bg-red-500/10',
-    info: 'border-blue-500 bg-blue-500/10'
+    warning: 'border-warning bg-warning/10',
+    critical: 'border-destructive bg-destructive/10',
+    info: 'border-info bg-info/10'
   };
 
   return (
@@ -264,8 +264,8 @@ export const SecurityAlerts: FC<SecurityAlertProps> = ({
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-3">
               <AlertTriangle className={`h-5 w-5 ${
-                alert.type === 'critical' ? 'text-red-500' : 
-                alert.type === 'warning' ? 'text-yellow-500' : 'text-blue-500'
+                alert.type === 'critical' ? 'text-destructive' : 
+                alert.type === 'warning' ? 'text-warning' : 'text-info'
               }`} />
               <div>
                 <h4 className="font-medium">{alert.title}</h4>

@@ -62,7 +62,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
           className="absolute -top-4 z-20"
         >
           <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
-            <Crown className="h-12 w-12 text-amber-400" style={{ filter: "drop-shadow(0 0 20px rgba(251,191,36,0.9)) drop-shadow(0 0 40px rgba(251,191,36,0.4))" }} />
+            <Crown className="h-12 w-12 text-rank-gold" style={{ filter: "drop-shadow(0 0 20px rgba(251,191,36,0.9)) drop-shadow(0 0 40px rgba(251,191,36,0.4))" }} />
           </motion.div>
           {[...Array(4)].map((_, i) => (
             <motion.div
@@ -101,7 +101,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
         {isChampion && (
           <>
             <motion.div className="absolute inset-[-12px]" animate={{ rotate: 360 }} transition={{ duration: 5, repeat: Infinity, ease: "linear" }}>
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-rank-gold shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
             </motion.div>
             <motion.div className="absolute inset-[-12px]" animate={{ rotate: -360 }} transition={{ duration: 7, repeat: Infinity, ease: "linear" }}>
               <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.8)]" />
@@ -119,7 +119,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
         {person.goalProgress >= 100 && (
           <motion.div className="absolute -bottom-1 -right-1 z-20" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: config.delay + 0.6, type: "spring" }}>
             <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 0.6, repeat: Infinity }}>
-              <Flame className="h-5 w-5 text-orange-400" style={{ filter: "drop-shadow(0 0 8px rgba(249,115,22,0.8))" }} />
+              <Flame className="h-5 w-5 text-streak" style={{ filter: "drop-shadow(0 0 8px rgba(249,115,22,0.8))" }} />
             </motion.div>
           </motion.div>
         )}
@@ -150,8 +150,8 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
         {person.goalProgress > 0 && (
           <span className={cn(
             "text-[10px] font-bold flex items-center gap-0.5 px-2 py-0.5 rounded-md border",
-            person.goalProgress >= 100 ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" :
-            person.goalProgress >= 80 ? "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" :
+            person.goalProgress >= 100 ? "bg-success/15 text-success border-success/30" :
+            person.goalProgress >= 80 ? "bg-warning/15 text-coins border-warning/30" :
             "bg-muted/30 text-muted-foreground/70 border-border/20"
           )}>
             <TrendingUp className="h-2.5 w-2.5" />

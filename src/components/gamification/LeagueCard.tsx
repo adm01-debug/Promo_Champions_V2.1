@@ -69,7 +69,7 @@ export function LeagueCard() {
                   </Badge>
                 )}
                 {config.xpBonus > 0 && (
-                  <span className="text-[10px] text-green-500">+{config.xpBonus}%</span>
+                  <span className="text-[10px] text-success">+{config.xpBonus}%</span>
                 )}
               </motion.div>
             );
@@ -88,7 +88,7 @@ export function LeagueCard() {
                 <span className="text-sm font-bold">{config.label}</span>
                 <div className="flex-1 h-px bg-border/30" />
                 {config.xpBonus > 0 && (
-                  <span className="text-[10px] text-green-500 flex items-center gap-0.5">
+                  <span className="text-[10px] text-success flex items-center gap-0.5">
                     <Zap className="h-2.5 w-2.5" />
                     +{config.xpBonus}% XP
                   </span>
@@ -105,9 +105,9 @@ export function LeagueCard() {
                     transition={{ delay: idx * 0.05 }}
                     className={cn(
                       "flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors",
-                      idx === 0 && tier === "legendary" ? "bg-orange-500/5 border border-orange-500/20" :
-                      idx === 0 && tier === "diamond" ? "bg-cyan-500/5 border border-cyan-500/20" :
-                      idx === 0 && tier === "gold" ? "bg-yellow-500/5 border border-yellow-500/20" : ""
+                      idx === 0 && tier === "legendary" ? "bg-streak/5 border border-streak/20" :
+                      idx === 0 && tier === "diamond" ? "bg-accent/5 border border-cyan-500/20" :
+                      idx === 0 && tier === "gold" ? "bg-warning/5 border border-warning/20" : ""
                     )}
                   >
                     {/* Rank */}

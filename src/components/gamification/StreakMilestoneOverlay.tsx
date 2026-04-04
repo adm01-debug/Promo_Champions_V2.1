@@ -73,12 +73,12 @@ export function StreakMilestoneOverlay({
             transition={{ type: "spring", duration: 0.7, bounce: 0.5 }}
             className="relative"
           >
-            <div className="absolute inset-0 -m-16 rounded-full bg-gradient-to-t from-red-600 via-orange-500 to-yellow-400 opacity-40 blur-3xl animate-pulse" />
+            <div className="absolute inset-0 -m-16 rounded-full bg-gradient-to-t from-red-600 via-orange-500 to-coins opacity-40 blur-3xl animate-pulse" />
             <div className="absolute inset-0 -m-8 rounded-full bg-gradient-to-t from-orange-600 via-amber-500 to-yellow-300 opacity-30 blur-2xl" />
             
             <div className={cn(
               "relative glass-card p-10 rounded-3xl text-center",
-              "border-2 border-orange-500/50 shadow-2xl",
+              "border-2 border-streak/50 shadow-2xl",
               "min-w-[320px] bg-gradient-to-b from-background/95 to-background/80"
             )}>
               <motion.div animate={{ y: [-5, 5, -5], rotate: [-5, 5, -5] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute -top-6 -left-6 text-4xl">🔥</motion.div>
@@ -93,25 +93,25 @@ export function StreakMilestoneOverlay({
                       className="text-7xl mb-4 drop-shadow-lg">{milestoneIcon}</motion.div>
 
                     <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="mb-3">
-                      <span className="text-2xl font-display font-bold bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400 bg-clip-text text-transparent uppercase tracking-wider">
+                      <span className="text-2xl font-display font-bold bg-gradient-to-r from-streak via-amber-500 to-coins bg-clip-text text-transparent uppercase tracking-wider">
                         {milestoneTitle}
                       </span>
                     </motion.div>
 
                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, type: "spring", bounce: 0.6 }} className="relative mb-2">
-                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-orange-400 to-red-500 bg-clip-text text-transparent">{streakDays}</span>
-                      <span className="text-2xl font-bold text-orange-400 ml-2">dias</span>
+                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-streak to-red-500 bg-clip-text text-transparent">{streakDays}</span>
+                      <span className="text-2xl font-bold text-streak ml-2">dias</span>
                     </motion.div>
 
                     {xpReward > 0 && (
                       <motion.div initial={{ scale: 0, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ delay: 0.6, type: "spring" }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 mb-3">
-                        <Zap className="h-5 w-5 text-amber-400" /><span className="text-lg font-bold text-amber-400">+{xpReward} XP</span>
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rank-gold/20 to-orange-500/20 border border-rank-gold/30 mb-3">
+                        <Zap className="h-5 w-5 text-rank-gold" /><span className="text-lg font-bold text-rank-gold">+{xpReward} XP</span>
                       </motion.div>
                     )}
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="flex items-center justify-center gap-2 text-muted-foreground mt-3">
-                      <Trophy className="h-4 w-4 text-amber-500" /><span className="font-medium">{salespersonName}</span>
+                      <Trophy className="h-4 w-4 text-rank-gold" /><span className="font-medium">{salespersonName}</span>
                     </motion.div>
 
                     <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} transition={{ delay: 1.5, duration: 2, repeat: Infinity }} className="text-xs text-muted-foreground mt-5">

@@ -53,11 +53,11 @@ export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
     <div className="space-y-4">
       {/* Header */}
       <Card className="border-none shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-amber-500/10 via-yellow-500/5 to-amber-500/10">
+        <div className="bg-gradient-to-r from-rank-gold/10 via-yellow-500/5 to-rank-gold/10">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-yellow-600 flex items-center justify-center">
                   <Star className="h-4 w-4 text-white" />
                 </div>
                 Wall of Fame
@@ -122,7 +122,7 @@ export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
             const typeInfo = KUDOS_TYPES[k.kudos_type] || KUDOS_TYPES.recognition;
             return (
               <motion.div key={k.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <Card className={cn('border-none shadow-sm', k.is_pinned && 'ring-1 ring-amber-500/30 bg-amber-500/5')}>
+                <Card className={cn('border-none shadow-sm', k.is_pinned && 'ring-1 ring-rank-gold/30 bg-rank-gold/5')}>
                   <CardContent className="p-4">
                     <div className="flex gap-3">
                       <Avatar className="h-9 w-9 shrink-0">
@@ -135,7 +135,7 @@ export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
                           <span className="text-xs text-muted-foreground">→</span>
                           <span className="text-sm font-bold text-primary">{k.to_name}</span>
                           <Badge variant="outline" className="text-[10px] h-4">{typeInfo.emoji} {typeInfo.label}</Badge>
-                          {k.is_pinned && <Pin className="h-3 w-3 text-amber-500" />}
+                          {k.is_pinned && <Pin className="h-3 w-3 text-rank-gold" />}
                         </div>
                         <p className="text-sm text-foreground mt-1">{k.message}</p>
                         <p className="text-[10px] text-muted-foreground mt-1">

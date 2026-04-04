@@ -39,7 +39,7 @@ export function OfflineIndicator({
           exit={{ opacity: 0, y: -50 }}
           className={cn(
             "fixed top-0 left-0 right-0 z-[100]",
-            "bg-amber-500 text-amber-950",
+            "bg-rank-gold text-amber-950",
             "px-4 py-2 text-center",
             className
           )}
@@ -58,7 +58,7 @@ export function OfflineIndicator({
           exit={{ opacity: 0, y: -50 }}
           className={cn(
             "fixed top-0 left-0 right-0 z-[100]",
-            "bg-green-500 text-white",
+            "bg-success text-white",
             "px-4 py-2 text-center",
             className
           )}

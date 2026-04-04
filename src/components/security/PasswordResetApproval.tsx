@@ -72,10 +72,10 @@ export function PasswordResetApproval() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "pending": return <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
-      case "approved": return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30"><CheckCircle className="h-3 w-3 mr-1" />Aprovado</Badge>;
+      case "pending": return <Badge variant="outline" className="bg-rank-gold/10 text-rank-gold border-rank-gold/30"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
+      case "approved": return <Badge variant="outline" className="bg-success/10 text-success border-success/30"><CheckCircle className="h-3 w-3 mr-1" />Aprovado</Badge>;
       case "rejected": return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30"><XCircle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
-      case "completed": return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30"><Check className="h-3 w-3 mr-1" />Concluído</Badge>;
+      case "completed": return <Badge variant="outline" className="bg-info/10 text-info border-info/30"><Check className="h-3 w-3 mr-1" />Concluído</Badge>;
       case "expired": return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Expirado</Badge>;
       default: return <Badge variant="secondary">{status}</Badge>;
     }
@@ -111,7 +111,7 @@ export function PasswordResetApproval() {
       </div>
 
       {pendingRequests.length > 0 && (
-        <Card className="border-amber-500/50 bg-amber-500/5"><CardContent className="pt-6"><div className="flex items-center gap-3"><AlertTriangle className="h-5 w-5 text-amber-600" /><span className="text-amber-700 dark:text-amber-400">Você tem <strong>{pendingRequests.length}</strong> solicitação(ões) de reset de senha aguardando aprovação.</span></div></CardContent></Card>
+        <Card className="border-rank-gold/50 bg-rank-gold/5"><CardContent className="pt-6"><div className="flex items-center gap-3"><AlertTriangle className="h-5 w-5 text-rank-gold" /><span className="text-rank-gold dark:text-rank-gold">Você tem <strong>{pendingRequests.length}</strong> solicitação(ões) de reset de senha aguardando aprovação.</span></div></CardContent></Card>
       )}
 
       <Card>

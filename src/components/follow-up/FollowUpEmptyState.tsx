@@ -15,7 +15,7 @@ export function FollowUpEmptyState({ isFiltered }: FollowUpEmptyStateProps) {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
         >
-          <CheckCircle2 className="h-16 w-16 mx-auto mb-4 text-green-500" />
+          <CheckCircle2 className="h-16 w-16 mx-auto mb-4 text-success" />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}

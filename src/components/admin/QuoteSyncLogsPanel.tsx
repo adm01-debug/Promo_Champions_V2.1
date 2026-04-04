@@ -25,7 +25,7 @@ export function QuoteSyncLogsPanel() {
 
   const statusIcon = (status: string) => {
     switch (status) {
-      case 'success': return <CheckCircle2 className="h-4 w-4 text-emerald-500" />;
+      case 'success': return <CheckCircle2 className="h-4 w-4 text-success" />;
       case 'error': return <XCircle className="h-4 w-4 text-destructive" />;
       default: return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
@@ -33,7 +33,7 @@ export function QuoteSyncLogsPanel() {
 
   const statusColor = (status: string) => {
     switch (status) {
-      case 'success': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+      case 'success': return 'bg-success/10 text-success border-success/20';
       case 'error': return 'bg-destructive/10 text-destructive border-destructive/20';
       default: return 'bg-muted text-muted-foreground';
     }

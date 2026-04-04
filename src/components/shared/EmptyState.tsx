@@ -48,19 +48,19 @@ const presets: Record<EmptyStateType, { icon: LucideIcon; title: string; descrip
     icon: Search,
     title: 'Nenhum resultado',
     description: 'Tente ajustar os filtros ou termos de busca.',
-    color: 'text-blue-500'
+    color: 'text-info'
   },
   data: {
     icon: FileX,
     title: 'Sem dados disponíveis',
     description: 'Não há dados para exibir. Verifique seus filtros ou tente novamente.',
-    color: 'text-purple-500'
+    color: 'text-primary'
   },
   clients: {
     icon: Users,
     title: 'Nenhum cliente',
     description: 'Adicione seu primeiro cliente para começar a vender!',
-    color: 'text-green-500'
+    color: 'text-success'
   },
   sales: {
     icon: ShoppingCart,
@@ -72,25 +72,25 @@ const presets: Record<EmptyStateType, { icon: LucideIcon; title: string; descrip
     icon: Target,
     title: 'Sem metas definidas',
     description: 'Defina suas metas para acompanhar seu progresso.',
-    color: 'text-orange-500'
+    color: 'text-streak'
   },
   activities: {
     icon: Zap,
     title: 'Nenhuma atividade',
     description: 'Registre suas atividades para ganhar XP e subir no ranking!',
-    color: 'text-yellow-500'
+    color: 'text-warning'
   },
   notifications: {
     icon: Bell,
     title: 'Tudo em dia!',
     description: 'Você não tem novas notificações.',
-    color: 'text-blue-500'
+    color: 'text-info'
   },
   tasks: {
     icon: Calendar,
     title: 'Sem tarefas pendentes',
     description: 'Ótimo trabalho! Você está em dia com suas tarefas.',
-    color: 'text-green-500'
+    color: 'text-success'
   },
   deals: {
     icon: DollarSign,
@@ -102,7 +102,7 @@ const presets: Record<EmptyStateType, { icon: LucideIcon; title: string; descrip
     icon: Inbox,
     title: 'Caixa de entrada vazia',
     description: 'Parabéns! Você está em dia com todas as suas tarefas.',
-    color: 'text-green-500'
+    color: 'text-success'
   },
   custom: {
     icon: Inbox,

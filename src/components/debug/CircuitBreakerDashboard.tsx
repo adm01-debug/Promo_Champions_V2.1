@@ -40,11 +40,11 @@ export const CircuitBreakerDashboard: FC = () => {
   const getStateColor = (state: CircuitState['state']) => {
     switch (state) {
       case 'CLOSED':
-        return 'bg-emerald-500';
+        return 'bg-success';
       case 'OPEN':
-        return 'bg-red-500';
+        return 'bg-destructive';
       case 'HALF_OPEN':
-        return 'bg-amber-500';
+        return 'bg-rank-gold';
     }
   };
 

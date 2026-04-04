@@ -205,7 +205,7 @@ export function PermissionMatrix() {
                             {isAdmin ? (
                               <Checkbox id={perm.id} checked={hasPerm} disabled={isDisabled || togglePermissionMutation.isPending} onCheckedChange={() => { if (!isDisabled) togglePermissionMutation.mutate({ role: selectedRole, permissionId: perm.id, hasPermission: hasPerm }); }} />
                             ) : hasPerm ? (
-                              <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                              <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                             ) : (
                               <XCircle className="h-4 w-4 text-muted-foreground shrink-0" />
                             )}

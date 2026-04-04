@@ -27,9 +27,9 @@ import {
 import { cn } from "@/lib/utils";
 
 const CHANNEL_CONFIG: Record<Channel, { label: string; icon: typeof Mail; color: string }> = {
-  whatsapp: { label: "WhatsApp", icon: MessageSquare, color: "text-green-500" },
+  whatsapp: { label: "WhatsApp", icon: MessageSquare, color: "text-success" },
   email: { label: "Email", icon: Mail, color: "text-primary" },
-  linkedin: { label: "LinkedIn", icon: Linkedin, color: "text-blue-600" },
+  linkedin: { label: "LinkedIn", icon: Linkedin, color: "text-info" },
   sms: { label: "SMS", icon: Smartphone, color: "text-status-warning" },
   phone: { label: "Telefone", icon: Phone, color: "text-status-info" },
 };

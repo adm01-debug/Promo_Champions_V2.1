@@ -91,11 +91,11 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
             className="absolute flex items-center gap-1"
           >
             {particle.value ? (
-              <span className="text-blue-400 font-black text-sm drop-shadow-[0_0_6px_rgba(59,130,246,0.6)]">
+              <span className="text-info font-black text-sm drop-shadow-[0_0_6px_rgba(59,130,246,0.6)]">
                 {particle.value}
               </span>
             ) : (
-              <Zap className="text-blue-400" style={{ width: particle.size, height: particle.size }} />
+              <Zap className="text-info" style={{ width: particle.size, height: particle.size }} />
             )}
           </motion.div>
         ))}
@@ -121,7 +121,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
               duration: 1,
               delay: particle.delay + 0.2,
             }}
-            className="absolute w-1 h-1 rounded-full bg-blue-300"
+            className="absolute w-1 h-1 rounded-full bg-info/60"
           />
         ))}
       </AnimatePresence>
@@ -133,7 +133,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
             initial={{ scale: 0, opacity: 0.5 }}
             animate={{ scale: 3, opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-blue-500/30"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-info/30"
           />
         )}
       </AnimatePresence>

@@ -10,8 +10,8 @@ import { Shield, ShieldCheck, User, Crown, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; color: string }> = {
-  admin: { label: "Admin", icon: Crown, color: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30" },
-  manager: { label: "Gerente", icon: ShieldCheck, color: "bg-blue-500/20 text-blue-500 border-blue-500/30" },
+  admin: { label: "Admin", icon: Crown, color: "bg-warning/20 text-warning border-warning/30" },
+  manager: { label: "Gerente", icon: ShieldCheck, color: "bg-info/20 text-info border-info/30" },
   salesperson: { label: "Vendedor", icon: User, color: "bg-muted text-muted-foreground border-border" },
 };
 
@@ -139,13 +139,13 @@ export function RoleManagement() {
                         <SelectContent>
                           <SelectItem value="admin">
                             <div className="flex items-center gap-2">
-                              <Crown className="h-4 w-4 text-yellow-500" />
+                              <Crown className="h-4 w-4 text-warning" />
                               Admin
                             </div>
                           </SelectItem>
                           <SelectItem value="manager">
                             <div className="flex items-center gap-2">
-                              <ShieldCheck className="h-4 w-4 text-blue-500" />
+                              <ShieldCheck className="h-4 w-4 text-info" />
                               Gerente
                             </div>
                           </SelectItem>
@@ -176,8 +176,8 @@ export function RoleManagement() {
         <div className="mt-6 p-4 bg-muted/50 rounded-lg">
           <h4 className="font-semibold mb-2">Permissões por Role:</h4>
           <ul className="space-y-1 text-sm text-muted-foreground">
-            <li><Crown className="h-4 w-4 inline mr-2 text-yellow-500" /><strong>Admin:</strong> Acesso total, gerenciamento de roles, exclusão de dados</li>
-            <li><ShieldCheck className="h-4 w-4 inline mr-2 text-blue-500" /><strong>Gerente:</strong> Visualizar relatórios, editar metas, gerenciar equipe</li>
+            <li><Crown className="h-4 w-4 inline mr-2 text-warning" /><strong>Admin:</strong> Acesso total, gerenciamento de roles, exclusão de dados</li>
+            <li><ShieldCheck className="h-4 w-4 inline mr-2 text-info" /><strong>Gerente:</strong> Visualizar relatórios, editar metas, gerenciar equipe</li>
             <li><User className="h-4 w-4 inline mr-2" /><strong>Vendedor:</strong> Acesso às próprias vendas, atividades e metas</li>
           </ul>
         </div>

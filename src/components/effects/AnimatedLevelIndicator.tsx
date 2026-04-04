@@ -102,7 +102,7 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
             animate={{ rotate: [0, 360] }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="h-3 w-3 text-yellow-300" />
+            <Sparkles className="h-3 w-3 text-coins" />
           </motion.div>
         )}
       </motion.div>

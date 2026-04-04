@@ -84,7 +84,7 @@ export const RankNotifications: FC<RankNotificationsProps> = ({ salespersonId, c
                       'h-9 w-9 rounded-lg flex items-center justify-center shrink-0',
                       wentDown
                         ? 'bg-destructive/15 text-destructive'
-                        : 'bg-emerald-500/15 text-emerald-500'
+                        : 'bg-success/15 text-success'
                     )}>
                       {wentDown ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
                     </div>

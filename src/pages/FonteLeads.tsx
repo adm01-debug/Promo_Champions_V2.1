@@ -60,8 +60,8 @@ export default function FonteLeads() {
           </Card>
           <Card className="glass border-border/40">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-500/10">
-                <TrendingUp className="h-5 w-5 text-green-500" />
+              <div className="p-3 rounded-xl bg-success/10">
+                <TrendingUp className="h-5 w-5 text-success" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{data?.totalClosed || 0}</p>
@@ -71,8 +71,8 @@ export default function FonteLeads() {
           </Card>
           <Card className="glass border-border/40">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-500/10">
-                <Percent className="h-5 w-5 text-blue-500" />
+              <div className="p-3 rounded-xl bg-info/10">
+                <Percent className="h-5 w-5 text-info" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{overallConversion}%</p>
@@ -82,8 +82,8 @@ export default function FonteLeads() {
           </Card>
           <Card className="glass border-border/40">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-orange-500/10">
-                <DollarSign className="h-5 w-5 text-orange-500" />
+              <div className="p-3 rounded-xl bg-streak/10">
+                <DollarSign className="h-5 w-5 text-streak" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{formatCurrency(avgTicket)}</p>
@@ -119,8 +119,8 @@ export default function FonteLeads() {
                 <h3 className="text-sm font-medium mb-4">💡 Insights Automáticos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {data.highestValueSource && (
-                    <div className="p-4 rounded-lg bg-green-500/5 border border-green-500/20">
-                      <p className="text-sm font-medium text-green-500 mb-1">Maior ROI</p>
+                    <div className="p-4 rounded-lg bg-success/5 border border-success/20">
+                      <p className="text-sm font-medium text-success mb-1">Maior ROI</p>
                       <p className="text-xs text-muted-foreground">
                         <strong>{sourceLabels[data.highestValueSource]}</strong> gerou o maior valor em vendas fechadas. 
                         Considere aumentar investimento neste canal.
@@ -128,8 +128,8 @@ export default function FonteLeads() {
                     </div>
                   )}
                   {data.bestConversionSource && (
-                    <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/20">
-                      <p className="text-sm font-medium text-blue-500 mb-1">Melhor Conversão</p>
+                    <div className="p-4 rounded-lg bg-info/5 border border-info/20">
+                      <p className="text-sm font-medium text-info mb-1">Melhor Conversão</p>
                       <p className="text-xs text-muted-foreground">
                         <strong>{sourceLabels[data.bestConversionSource]}</strong> tem a maior taxa de conversão. 
                         Leads deste canal são mais qualificados.
@@ -137,8 +137,8 @@ export default function FonteLeads() {
                     </div>
                   )}
                   {data.highestVolumeSource && data.highestVolumeSource !== data.highestValueSource && (
-                    <div className="p-4 rounded-lg bg-purple-500/5 border border-purple-500/20">
-                      <p className="text-sm font-medium text-purple-500 mb-1">Maior Volume</p>
+                    <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                      <p className="text-sm font-medium text-primary mb-1">Maior Volume</p>
                       <p className="text-xs text-muted-foreground">
                         <strong>{sourceLabels[data.highestVolumeSource]}</strong> gera mais leads, mas nem sempre maior valor. 
                         Analise a qualidade dos leads.

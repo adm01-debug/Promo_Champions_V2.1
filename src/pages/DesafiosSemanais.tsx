@@ -36,9 +36,9 @@ export default function DesafiosSemanais() {
     .slice(0, 10);
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="h-5 w-5 text-yellow-500" />;
+    if (rank === 1) return <Crown className="h-5 w-5 text-warning" />;
     if (rank === 2) return <Medal className="h-5 w-5 text-gray-400" />;
-    if (rank === 3) return <Award className="h-5 w-5 text-amber-600" />;
+    if (rank === 3) return <Award className="h-5 w-5 text-rank-gold" />;
     return <span className="text-muted-foreground font-bold">#{rank}</span>;
   };
 
@@ -66,11 +66,11 @@ export default function DesafiosSemanais() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
+            <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-info/20">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-500/20 rounded-full">
-                    <Target className="h-6 w-6 text-blue-500" />
+                  <div className="p-3 bg-info/20 rounded-full">
+                    <Target className="h-6 w-6 text-info" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Desafios Ativos</p>
@@ -86,11 +86,11 @@ export default function DesafiosSemanais() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
+            <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-success/20">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-green-500/20 rounded-full">
-                    <Trophy className="h-6 w-6 text-green-500" />
+                  <div className="p-3 bg-success/20 rounded-full">
+                    <Trophy className="h-6 w-6 text-success" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Completados</p>
@@ -108,11 +108,11 @@ export default function DesafiosSemanais() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
+            <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-primary/20">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-purple-500/20 rounded-full">
-                    <Zap className="h-6 w-6 text-purple-500" />
+                  <div className="p-3 bg-primary/20 rounded-full">
+                    <Zap className="h-6 w-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">XP Disponível</p>
@@ -130,11 +130,11 @@ export default function DesafiosSemanais() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-orange-500/20">
+            <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-streak/20">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-orange-500/20 rounded-full">
-                    <Users className="h-6 w-6 text-orange-500" />
+                  <div className="p-3 bg-streak/20 rounded-full">
+                    <Users className="h-6 w-6 text-streak" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Participantes</p>
@@ -165,7 +165,7 @@ export default function DesafiosSemanais() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Crown className="h-5 w-5 text-yellow-500" />
+                  <Crown className="h-5 w-5 text-warning" />
                   Ranking de Desafios da Semana
                 </CardTitle>
               </CardHeader>
@@ -191,11 +191,11 @@ export default function DesafiosSemanais() {
                         transition={{ delay: index * 0.05 }}
                         className={`flex items-center gap-4 p-4 rounded-lg ${
                           index === 0
-                            ? "bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border border-yellow-500/30"
+                            ? "bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border border-warning/30"
                             : index === 1
                             ? "bg-gradient-to-r from-gray-400/20 to-gray-500/10 border border-gray-400/30"
                             : index === 2
-                            ? "bg-gradient-to-r from-amber-600/20 to-amber-700/10 border border-amber-600/30"
+                            ? "bg-gradient-to-r from-rank-gold/20 to-amber-700/10 border border-amber-600/30"
                             : "bg-muted/50"
                         }`}
                       >

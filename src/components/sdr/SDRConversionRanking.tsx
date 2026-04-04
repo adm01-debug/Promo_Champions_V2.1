@@ -194,9 +194,9 @@ export function SDRConversionRanking({ period }: SDRConversionRankingProps) {
               {/* Rank */}
               <div className={cn(
                 "flex items-center justify-center h-8 w-8 rounded-full font-bold text-sm",
-                index === 0 && "bg-yellow-500/20 text-yellow-500",
+                index === 0 && "bg-warning/20 text-warning",
                 index === 1 && "bg-gray-400/20 text-gray-400",
-                index === 2 && "bg-amber-700/20 text-amber-700",
+                index === 2 && "bg-amber-700/20 text-rank-gold",
                 index > 2 && "bg-muted text-muted-foreground"
               )}>
                 {index === 0 ? (

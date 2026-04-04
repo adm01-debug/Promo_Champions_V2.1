@@ -139,7 +139,7 @@ export function DailyQuizWidget({ className }: { className?: string }) {
                     className={cn(
                       "w-full text-left p-2.5 rounded-lg border text-xs transition-all flex items-center gap-2",
                       !isAnswered && "hover:bg-muted cursor-pointer border-border",
-                      isAnswered && isCorrect && "bg-green-500/10 border-green-500/40 text-green-700 dark:text-green-400",
+                      isAnswered && isCorrect && "bg-success/10 border-success/40 text-success dark:text-success",
                       isAnswered && isSelected && !isCorrect && "bg-destructive/10 border-destructive/40 text-destructive",
                       isAnswered && !isSelected && !isCorrect && "opacity-50 border-border"
                     )}

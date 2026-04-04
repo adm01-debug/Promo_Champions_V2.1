@@ -15,7 +15,7 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
 
   if (streakLoading || achievementsLoading) {
     return (
-      <Card className="bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 border-orange-500/20">
+      <Card className="bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 border-streak/20">
         <CardContent className="p-4">
           <Skeleton className="h-16 w-full" />
         </CardContent>
@@ -34,7 +34,7 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
   const daysToNext = nextMilestone ? nextMilestone.days - streak : 0;
 
   return (
-    <Card className="bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 border-orange-500/20 overflow-hidden relative">
+    <Card className="bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 border-streak/20 overflow-hidden relative">
       {/* Animated fire glow effect */}
       <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent pointer-events-none" />
       
@@ -52,13 +52,13 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
                 repeatType: "reverse"
               }}
             >
-              <Flame className={`h-5 w-5 ${streak > 0 ? 'text-orange-500' : 'text-muted-foreground'}`} />
+              <Flame className={`h-5 w-5 ${streak > 0 ? 'text-streak' : 'text-muted-foreground'}`} />
             </motion.div>
             <span className="text-sm font-medium text-foreground">Streak Diário</span>
           </div>
           
           {achievements && achievements.length > 0 && (
-            <div className="flex items-center gap-1 text-xs text-amber-500">
+            <div className="flex items-center gap-1 text-xs text-rank-gold">
               <Trophy className="h-3.5 w-3.5" />
               <span>{achievements.length}</span>
             </div>
@@ -68,7 +68,7 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
         <div className="flex items-end justify-between mb-2">
           <div className="flex items-baseline gap-1">
             <motion.span 
-              className="text-3xl font-bold text-orange-500"
+              className="text-3xl font-bold text-streak"
               key={streak}
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -93,7 +93,7 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
           <div className="space-y-1">
             <Progress 
               value={progressToNext} 
-              className="h-2 bg-orange-500/10"
+              className="h-2 bg-streak/10"
             />
             <p className="text-xs text-muted-foreground text-center">
               {daysToNext > 0 
@@ -105,7 +105,7 @@ export function StreakWidget({ salespersonId }: StreakWidgetProps) {
         )}
 
         {!nextMilestone && streak > 0 && (
-          <p className="text-xs text-center text-amber-500 font-medium">
+          <p className="text-xs text-center text-rank-gold font-medium">
             🏆 Todas as conquistas de streak alcançadas!
           </p>
         )}

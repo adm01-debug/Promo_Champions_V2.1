@@ -21,10 +21,10 @@ const getRankDecor = (rank: number) => {
   switch (rank) {
     case 1:
       return {
-        icon: <Crown className="h-4 w-4 text-amber-400" />,
-        border: "border-amber-500/40",
-        bg: "from-amber-500/15 to-transparent",
-        rankBg: "bg-gradient-to-br from-amber-400 to-yellow-500 text-black",
+        icon: <Crown className="h-4 w-4 text-rank-gold" />,
+        border: "border-rank-gold/40",
+        bg: "from-rank-gold/15 to-transparent",
+        rankBg: "bg-gradient-to-br from-rank-gold to-yellow-500 text-black",
       };
     case 2:
       return {
@@ -35,10 +35,10 @@ const getRankDecor = (rank: number) => {
       };
     case 3:
       return {
-        icon: <Award className="h-4 w-4 text-amber-600" />,
+        icon: <Award className="h-4 w-4 text-rank-gold" />,
         border: "border-amber-600/40",
-        bg: "from-amber-600/10 to-transparent",
-        rankBg: "bg-gradient-to-br from-amber-600 to-amber-700 text-white",
+        bg: "from-rank-gold/10 to-transparent",
+        rankBg: "bg-gradient-to-br from-rank-gold to-amber-700 text-white",
       };
     default:
       return {
@@ -114,7 +114,7 @@ export function RankingGridItem({
             />
             <span className={cn(
               "text-[11px] font-bold shrink-0",
-              goalProgress >= 100 ? "text-emerald-500" : goalProgress >= 70 ? "text-amber-500" : "text-muted-foreground"
+              goalProgress >= 100 ? "text-success" : goalProgress >= 70 ? "text-rank-gold" : "text-muted-foreground"
             )}>
               {goalProgress.toFixed(0)}%
             </span>

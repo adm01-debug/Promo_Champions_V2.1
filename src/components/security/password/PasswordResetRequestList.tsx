@@ -58,7 +58,7 @@ export const PasswordResetRequestList = React.memo(function PasswordResetRequest
     <ScrollArea className="h-[500px]">
       <div className="space-y-3">
         {filteredRequests.map((request) => (
-          <div key={request.id} className={`p-4 rounded-lg border transition-colors ${request.status === "pending" && !isExpired(request.expires_at) ? "bg-amber-500/5 border-amber-500/20" : "bg-muted/30 border-border"}`}>
+          <div key={request.id} className={`p-4 rounded-lg border transition-colors ${request.status === "pending" && !isExpired(request.expires_at) ? "bg-rank-gold/5 border-rank-gold/20" : "bg-muted/30 border-border"}`}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">

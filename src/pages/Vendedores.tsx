@@ -18,18 +18,18 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
-  sdr: { label: "SDR", color: "bg-blue-500/10 text-blue-500 border-blue-500/20" },
-  closer: { label: "Closer", color: "bg-green-500/10 text-green-500 border-green-500/20" },
-  hybrid: { label: "Híbrido", color: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
+  sdr: { label: "SDR", color: "bg-info/10 text-info border-info/20" },
+  closer: { label: "Closer", color: "bg-success/10 text-success border-success/20" },
+  hybrid: { label: "Híbrido", color: "bg-primary/10 text-primary border-primary/20" },
 };
 const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
-      return <Crown className="h-6 w-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />;
+      return <Crown className="h-6 w-6 text-coins drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />;
     case 2:
       return <Medal className="h-6 w-6 text-slate-300 drop-shadow-[0_0_6px_rgba(148,163,184,0.5)]" />;
     case 3:
-      return <Award className="h-6 w-6 text-amber-500 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />;
+      return <Award className="h-6 w-6 text-rank-gold drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />;
     default:
       return <span className="text-lg font-black text-muted-foreground/60">#{rank}</span>;
   }
@@ -39,9 +39,9 @@ const getRankStyles = (rank: number) => {
   switch (rank) {
     case 1:
       return {
-        card: "bg-gradient-to-r from-yellow-500/15 via-yellow-400/10 to-amber-500/15 border-2 border-yellow-500/40 shadow-[0_0_30px_rgba(250,204,21,0.15)]",
+        card: "bg-gradient-to-r from-yellow-500/15 via-yellow-400/10 to-rank-gold/15 border-2 border-warning/40 shadow-[0_0_30px_rgba(250,204,21,0.15)]",
         avatar: "ring-4 ring-yellow-400/50 shadow-[0_0_20px_rgba(250,204,21,0.4)]",
-        badge: "bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold",
+        badge: "bg-gradient-to-r from-yellow-500 to-rank-gold text-black font-bold",
       };
     case 2:
       return {
@@ -51,9 +51,9 @@ const getRankStyles = (rank: number) => {
       };
     case 3:
       return {
-        card: "bg-gradient-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 border-2 border-amber-500/30",
-        avatar: "ring-4 ring-amber-500/50",
-        badge: "bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold",
+        card: "bg-gradient-to-r from-rank-gold/10 via-amber-500/5 to-amber-600/10 border-2 border-rank-gold/30",
+        avatar: "ring-4 ring-rank-gold/50",
+        badge: "bg-gradient-to-r from-rank-gold to-amber-600 text-white font-bold",
       };
     default:
       return {
@@ -65,9 +65,9 @@ const getRankStyles = (rank: number) => {
 };
 
 const getGoalBadge = (goalProgress: number) => {
-  if (goalProgress >= 120) return { icon: Flame, label: "Em Chamas!", color: "text-orange-500", bg: "bg-orange-500/20" };
+  if (goalProgress >= 120) return { icon: Flame, label: "Em Chamas!", color: "text-streak", bg: "bg-streak/20" };
   if (goalProgress >= 100) return { icon: Star, label: "Meta Batida!", color: "text-success", bg: "bg-success/20" };
-  if (goalProgress >= 80) return { icon: Zap, label: "Quase Lá!", color: "text-yellow-500", bg: "bg-yellow-500/20" };
+  if (goalProgress >= 80) return { icon: Zap, label: "Quase Lá!", color: "text-warning", bg: "bg-warning/20" };
   return null;
 };
 

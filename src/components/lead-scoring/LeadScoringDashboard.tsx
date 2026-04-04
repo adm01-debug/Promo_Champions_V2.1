@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const categoryConfig = {
   Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/30", label: "Quente" },
   Warm: { icon: Thermometer, color: "text-status-warning", bg: "bg-status-warning/10 border-status-warning/30", label: "Morno" },
-  Cold: { icon: Snowflake, color: "text-blue-500", bg: "bg-blue-500/10 border-blue-500/30", label: "Frio" },
+  Cold: { icon: Snowflake, color: "text-info", bg: "bg-info/10 border-info/30", label: "Frio" },
 };
 
 function ScoreRing({ score, size = 56 }: { score: number; size?: number }) {

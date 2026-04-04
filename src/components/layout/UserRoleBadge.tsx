@@ -7,13 +7,13 @@ const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; colo
   admin: { 
     label: "Admin", 
     icon: Crown, 
-    color: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30",
+    color: "bg-warning/20 text-warning border-warning/30",
     description: "Acesso total ao sistema"
   },
   manager: { 
     label: "Gerente", 
     icon: ShieldCheck, 
-    color: "bg-blue-500/20 text-blue-500 border-blue-500/30",
+    color: "bg-info/20 text-info border-info/30",
     description: "Gerenciamento de equipe e relatórios"
   },
   salesperson: { 
