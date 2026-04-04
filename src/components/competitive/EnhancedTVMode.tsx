@@ -167,7 +167,7 @@ export function EnhancedTVMode() {
             {currentScreen === 'latest-sales' && (
               <motion.div key="ls" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
                 className="space-y-3">
-                {latestSales.map((sale: any, i: number) => (
+                {latestSales.map((sale: Record<string, unknown>, i: number) => (
                   <motion.div key={sale.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.15 }}
                     className="flex items-center gap-4 p-4 rounded-xl bg-success/5 border border-success/20">
                      <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
@@ -191,7 +191,7 @@ export function EnhancedTVMode() {
             {currentScreen === 'goals' && (
               <motion.div key="gl" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
                 className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {goals.slice(0, 6).map((goal: any, i: number) => {
+                {goals.slice(0, 6).map((goal: Record<string, unknown>, i: number) => {
                   const progress = goal.goal_amount > 0 ? Math.min((goal.current_amount / goal.goal_amount) * 100, 100) : 0;
                   return (
                     <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>

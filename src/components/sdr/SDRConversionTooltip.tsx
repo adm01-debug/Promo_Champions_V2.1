@@ -19,7 +19,7 @@ interface ChartDataPoint {
 
 interface SDRConversionTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: Array<{ name?: string; value?: number; color?: string; dataKey?: string }>;
   label?: string;
   chartData: ChartDataPoint[];
   sdrs: Array<{ id: string; name: string }>;
@@ -36,7 +36,7 @@ export const SDRConversionTooltip = React.memo(function SDRConversionTooltip({
     <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
       <p className="font-semibold text-foreground text-sm">{label}</p>
       <div className="space-y-1.5">
-        {payload.map((entry: any) => {
+        {payload.map((entry: { name?: string; value?: number; color?: string; dataKey?: string }) => {
           const isTeamAverage = entry.dataKey === 'teamAverage';
           const sdr = sdrs.find(s => s.id === entry.dataKey);
           const details = dataPoint?.details?.[entry.dataKey];

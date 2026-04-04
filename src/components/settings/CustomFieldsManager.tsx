@@ -93,7 +93,7 @@ export function CustomFieldsManager() {
                 <SelectValue placeholder="Escolha um time..." />
               </SelectTrigger>
               <SelectContent>
-                {teams.map((t: any) => (
+                {teams.map((t: { id: string; name: string }) => (
                   <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
                 ))}
               </SelectContent>
@@ -137,7 +137,7 @@ export function CustomFieldsManager() {
                   ) : fields.length === 0 ? (
                     <p className="text-sm text-muted-foreground">Nenhum campo adicional para este time</p>
                   ) : (
-                    fields.map((field: any, i: number) => (
+                    fields.map((field: { name: string; type: string }, i: number) => (
                       <motion.div
                         key={field.id}
                         initial={{ opacity: 0, y: 5 }}
