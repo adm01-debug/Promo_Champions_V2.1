@@ -167,7 +167,7 @@ export function PerformanceBets() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-amber-500">{totalXpAtStake}</div>
+            <div className="text-2xl font-bold text-coins">{totalXpAtStake}</div>
             <div className="text-xs text-muted-foreground">XP em Jogo</div>
           </CardContent>
         </Card>
