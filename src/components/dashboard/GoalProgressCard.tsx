@@ -95,7 +95,9 @@ const GoalProgressCardBase: FC<GoalProgressCardProps> = ({
       </Card>
     </motion.div>
   );
-});
+};
+
+export const GoalProgressCard = React.memo(GoalProgressCardBase);
 
 interface GoalsSummaryProps {
   goals: Goal[];

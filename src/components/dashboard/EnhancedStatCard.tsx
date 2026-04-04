@@ -174,4 +174,6 @@ const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
       </Card>
     </motion.div>
   );
-});
+};
+
+export const EnhancedStatCard = React.memo(EnhancedStatCardBase);
