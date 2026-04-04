@@ -252,7 +252,7 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should trim whitespace from notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task, '  Trimmed note  ');
     expect(result.notes).toBe('Trimmed note');
   });
