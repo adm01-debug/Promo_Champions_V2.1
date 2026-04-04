@@ -87,11 +87,11 @@ export const CompetitiveChat: FC<CompetitiveChatProps> = ({ salespersonId }) => 
                 >
                   <Avatar className="h-7 w-7 shrink-0">
                     <AvatarImage src={msg.sender_avatar || undefined} />
-                    <AvatarFallback className="text-[10px]">{msg.sender_name[0]}</AvatarFallback>
+                    <AvatarFallback className="text-[10px]">{msg.sender_name ?? 'Anônimo'[0]}</AvatarFallback>
                   </Avatar>
                   <div className={cn('max-w-[75%]', isMe && 'items-end')}>
                     <p className={cn('text-[10px] text-muted-foreground mb-0.5', isMe && 'text-right')}>
-                      {msg.sender_name}
+                      {msg.sender_name ?? 'Anônimo'}
                     </p>
                     <div className={cn(
                       'px-3 py-2 rounded-2xl text-sm',

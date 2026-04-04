@@ -72,7 +72,7 @@ export function StreakRanking() {
     );
   }
 
-  const hasAnyStreak = ranking?.some(r => r.bestStreak > 0);
+  const hasAnyStreak = ranking?.some(r => r.bestStreak ?? 0 > 0);
 
   return (
     <Card className="bg-card/50 backdrop-blur border-border/50">
@@ -94,7 +94,7 @@ export function StreakRanking() {
           </div>
         ) : (
           <div className="space-y-3">
-            {ranking?.filter(r => r.bestStreak > 0).map((person, index) => {
+            {ranking?.filter(r => r.bestStreak ?? 0 > 0).map((person, index) => {
               const rank = index + 1;
               const xpInfo = getXPInfo(person.salesperson_id);
               
@@ -112,14 +112,14 @@ export function StreakRanking() {
                   <Avatar className={`h-10 w-10 border-2 ${rank <= 3 ? 'border-current/30' : 'border-border/40'}`}>
                     <AvatarImage src={person.avatar_url || ""} />
                     <AvatarFallback className="bg-primary/20 text-primary">
-                      {person.name.charAt(0)}
+                      {person.name ?? "".charAt(0)}
                     </AvatarFallback>
                   </Avatar>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-medium truncate">{person.name}</span>
+                      <span className="font-medium truncate">{person.name ?? ""}</span>
                       <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                       <Badge variant="outline" className="text-[10px]">
                         {roleLabels[person.role] || person.role}
@@ -133,11 +133,11 @@ export function StreakRanking() {
                   {/* Streaks */}
                   <div className="flex items-center gap-3">
                     {/* Current Streak */}
-                    {person.currentStreak > 0 && (
+                    {(person.currentStreak ?? 0) > 0 && (
                       <div className="text-center">
-                        <Badge className={`${getStreakBadgeColor(person.currentStreak)} flex items-center gap-1 animate-bounce-in hover:animate-pop`}>
-                          {getStreakIcon(person.currentStreak)}
-                          <span>{person.currentStreak}</span>
+                        <Badge className={`${getStreakBadgeColor(person.currentStreak ?? 0)} flex items-center gap-1 animate-bounce-in hover:animate-pop`}>
+                          {getStreakIcon(person.currentStreak ?? 0)}
+                          <span>{person.currentStreak ?? 0}</span>
                         </Badge>
                         <div className="text-[9px] text-muted-foreground mt-1">Atual</div>
                       </div>
