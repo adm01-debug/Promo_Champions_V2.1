@@ -51,7 +51,7 @@ const getRankDecor = (rank: number) => {
   }
 };
 
-export function RankingGridItem({
+export const RankingGridItem = React.memo(function RankingGridItem({
   id,
   name,
   avatar_url,
