@@ -154,6 +154,7 @@ export const PasskeySettings: React.FC = () => {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          aria-label="Excluir passkey"
                           disabled={deletingId === cred.id}
                         >
                           {deletingId === cred.id ? (
