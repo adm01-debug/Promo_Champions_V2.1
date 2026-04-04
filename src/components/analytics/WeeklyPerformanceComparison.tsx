@@ -92,7 +92,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.activitiesCount,
       previous: previousWeek.activitiesCount,
       format: (v: number) => v.toString(),
-      color: "text-orange-500",
+      color: "text-streak",
     },
     {
       label: "Novos Clientes",
