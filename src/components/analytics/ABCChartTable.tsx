@@ -22,7 +22,7 @@ const COLORS = {
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-function ABCTooltip({ active, payload }: any) {
+function ABCTooltip({ active, payload }: RechartsTooltipProps) {
   if (!active || !payload?.length) return null;
   const data = payload[0].payload;
   return (

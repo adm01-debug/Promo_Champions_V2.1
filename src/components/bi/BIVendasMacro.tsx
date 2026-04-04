@@ -64,12 +64,12 @@ const KpiCard: FC<KpiCardProps> = ({ icon: Icon, label, value, sub, variant = "d
   </div>
 );
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="glass rounded-xl p-3 border border-border/50 shadow-xl text-xs space-y-1">
       <p className="font-semibold text-sm">{label}</p>
-      {payload.map((entry: any, idx: number) => (
+      {payload.map((entry: RechartsTooltipPayloadEntry, idx: number) => (
         <div key={idx} className="flex items-center gap-2 justify-between">
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
