@@ -23,10 +23,8 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
       {/* Milestone ring effect */}
       {isMilestone && (
         <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{
-            border: `2px solid hsl(${25 - milestoneLevel * 3}, 100%, 50%)`,
-          }}
+          className="absolute inset-0 rounded-full border-2 border-streak"
+          style={{ opacity: 0.7 }}
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
         />
@@ -34,7 +32,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
 
       {/* Glow */}
       <motion.div
-        className="absolute inset-0 rounded-full bg-gradient-to-t from-orange-500/40 to-transparent blur-md"
+        className="absolute inset-0 rounded-full bg-gradient-to-t from-streak/40 to-transparent blur-md"
         animate={{ opacity: [0.3, 0.6 + intensity * 0.4, 0.3], scale: [0.9, 1.1, 0.9] }}
         transition={{ duration: 1.5, repeat: Infinity }}
       />
@@ -67,7 +65,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
 
       {/* Streak count badge */}
       <motion.div
-        className="absolute -bottom-1 -right-1 bg-orange-500 text-white rounded-full flex items-center justify-center font-black shadow-lg"
+        className="absolute -bottom-1 -right-1 bg-streak text-streak-foreground rounded-full flex items-center justify-center font-black shadow-lg"
         style={{
           width: containerSize * 0.4,
           height: containerSize * 0.4,
@@ -84,7 +82,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
       {Array.from({ length: 3 }).map((_, i) => (
         <motion.div
           key={`spark-${i}`}
-          className="absolute w-1 h-1 rounded-full bg-yellow-400"
+          className="absolute w-1 h-1 rounded-full bg-coins"
           style={{ left: `${30 + i * 20}%` }}
           animate={{
             y: [0, -20 - Math.random() * 15],

@@ -27,26 +27,26 @@ const statusConfig = {
   'on-track': {
     icon: TrendingUp,
     label: 'No caminho',
-    color: 'text-green-600',
-    bg: 'bg-green-100',
+    color: 'text-success',
+    bg: 'bg-success/10',
   },
   'at-risk': {
     icon: AlertTriangle,
     label: 'Em risco',
-    color: 'text-yellow-600',
-    bg: 'bg-yellow-100',
+    color: 'text-warning',
+    bg: 'bg-warning/10',
   },
   'behind': {
     icon: Clock,
     label: 'Atrasado',
-    color: 'text-red-600',
-    bg: 'bg-red-100',
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
   },
   'completed': {
     icon: CheckCircle2,
     label: 'Concluído',
-    color: 'text-green-600',
-    bg: 'bg-green-100',
+    color: 'text-success',
+    bg: 'bg-success/10',
   },
 };
 
@@ -110,20 +110,20 @@ export const GoalsSummary: FC<GoalsSummaryProps> = ({ goals, className }) => {
 
   return (
     <div className={cn('grid grid-cols-4 gap-2', className)}>
-      <div className="text-center p-2 rounded-lg bg-green-50 dark:bg-green-950/30">
-        <p className="text-lg font-bold text-green-600">{completed}</p>
+      <div className="text-center p-2 rounded-lg bg-success/10">
+        <p className="text-lg font-bold text-success">{completed}</p>
         <p className="text-xs text-muted-foreground">Concluídas</p>
       </div>
-      <div className="text-center p-2 rounded-lg bg-blue-50 dark:bg-blue-950/30">
-        <p className="text-lg font-bold text-blue-600">{onTrack}</p>
+      <div className="text-center p-2 rounded-lg bg-info/10">
+        <p className="text-lg font-bold text-info">{onTrack}</p>
         <p className="text-xs text-muted-foreground">No caminho</p>
       </div>
-      <div className="text-center p-2 rounded-lg bg-yellow-50 dark:bg-yellow-950/30">
-        <p className="text-lg font-bold text-yellow-600">{atRisk}</p>
+      <div className="text-center p-2 rounded-lg bg-warning/10">
+        <p className="text-lg font-bold text-warning">{atRisk}</p>
         <p className="text-xs text-muted-foreground">Em risco</p>
       </div>
-      <div className="text-center p-2 rounded-lg bg-red-50 dark:bg-red-950/30">
-        <p className="text-lg font-bold text-red-600">{behind}</p>
+      <div className="text-center p-2 rounded-lg bg-destructive/10">
+        <p className="text-lg font-bold text-destructive">{behind}</p>
         <p className="text-xs text-muted-foreground">Atrasadas</p>
       </div>
     </div>

@@ -25,18 +25,18 @@ interface Activity {
 }
 
 const typeConfig = {
-  call: { icon: Phone, label: 'Ligação', color: 'text-blue-500' },
-  email: { icon: Mail, label: 'Email', color: 'text-green-500' },
-  meeting: { icon: Video, label: 'Reunião', color: 'text-purple-500' },
-  message: { icon: MessageSquare, label: 'Mensagem', color: 'text-orange-500' },
-  task: { icon: Calendar, label: 'Tarefa', color: 'text-gray-500' },
+  call: { icon: Phone, label: 'Ligação', color: 'text-info' },
+  email: { icon: Mail, label: 'Email', color: 'text-success' },
+  meeting: { icon: Video, label: 'Reunião', color: 'text-primary' },
+  message: { icon: MessageSquare, label: 'Mensagem', color: 'text-streak' },
+  task: { icon: Calendar, label: 'Tarefa', color: 'text-muted-foreground' },
 };
 
 const statusConfig = {
-  pending: { icon: Circle, label: 'Pendente', color: 'text-yellow-500' },
-  completed: { icon: CheckCircle2, label: 'Concluído', color: 'text-green-500' },
-  overdue: { icon: AlertCircle, label: 'Atrasado', color: 'text-red-500' },
-  scheduled: { icon: Clock, label: 'Agendado', color: 'text-blue-500' },
+  pending: { icon: Circle, label: 'Pendente', color: 'text-warning' },
+  completed: { icon: CheckCircle2, label: 'Concluído', color: 'text-success' },
+  overdue: { icon: AlertCircle, label: 'Atrasado', color: 'text-destructive' },
+  scheduled: { icon: Clock, label: 'Agendado', color: 'text-info' },
 };
 
 interface ActivityItemProps {
@@ -75,7 +75,7 @@ export const ActivityItem: FC<ActivityItemProps> = ({
           <span className={cn(
             'text-xs',
             isPast(activity.dueDate) && activity.status !== 'completed' 
-              ? 'text-red-500' 
+              ? 'text-destructive' 
               : 'text-muted-foreground'
           )}>
             {formatDueDate(activity.dueDate)}
@@ -95,7 +95,7 @@ export const ActivityItem: FC<ActivityItemProps> = ({
         onClick={(e) => { e.stopPropagation(); onComplete?.(); }}
         className={cn(
           'mt-0.5 p-1 rounded-full transition-colors',
-          activity.status === 'completed' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'
+          activity.status === 'completed' ? 'text-success' : 'text-muted-foreground hover:text-primary'
         )}
       >
         <StatusIcon size={18} />
@@ -125,7 +125,7 @@ export const ActivityItem: FC<ActivityItemProps> = ({
           {activity.dueDate && (
             <span className={cn(
               'flex items-center gap-1',
-              isPast(activity.dueDate) && activity.status !== 'completed' && 'text-red-500'
+              isPast(activity.dueDate) && activity.status !== 'completed' && 'text-destructive'
             )}>
               <Clock size={12} />
               {formatDueDate(activity.dueDate)}

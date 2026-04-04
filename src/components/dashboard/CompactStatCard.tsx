@@ -22,24 +22,24 @@ const variantStyles: Record<CardVariant, { bg: string; text: string; iconBg: str
     iconBg: 'bg-primary/10',
   },
   success: {
-    bg: 'bg-emerald-500/5 border-emerald-500/20',
-    text: 'text-emerald-600 dark:text-emerald-400',
-    iconBg: 'bg-emerald-500/10',
+    bg: 'bg-success/5 border-success/20',
+    text: 'text-success',
+    iconBg: 'bg-success/10',
   },
   warning: {
-    bg: 'bg-amber-500/5 border-amber-500/20',
-    text: 'text-amber-600 dark:text-amber-400',
-    iconBg: 'bg-amber-500/10',
+    bg: 'bg-warning/5 border-warning/20',
+    text: 'text-warning',
+    iconBg: 'bg-warning/10',
   },
   danger: {
-    bg: 'bg-red-500/5 border-red-500/20',
-    text: 'text-red-600 dark:text-red-400',
-    iconBg: 'bg-red-500/10',
+    bg: 'bg-destructive/5 border-destructive/20',
+    text: 'text-destructive',
+    iconBg: 'bg-destructive/10',
   },
   info: {
-    bg: 'bg-blue-500/5 border-blue-500/20',
-    text: 'text-blue-600 dark:text-blue-400',
-    iconBg: 'bg-blue-500/10',
+    bg: 'bg-info/5 border-info/20',
+    text: 'text-info',
+    iconBg: 'bg-info/10',
   },
 };
 
