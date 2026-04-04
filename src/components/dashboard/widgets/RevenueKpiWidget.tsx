@@ -25,7 +25,7 @@ export function RevenueKpiWidget() {
         <p className="text-2xl font-bold text-primary">
           R$ {revenue.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
         </p>
-        <div className={cn("flex items-center gap-1 text-xs mt-1", isPositive ? "text-green-600" : "text-red-500")}>
+        <div className={cn("flex items-center gap-1 text-xs mt-1", isPositive ? "text-success" : "text-destructive")}>
           {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
           {isPositive ? "+" : ""}{change}% vs mês anterior
         </div>

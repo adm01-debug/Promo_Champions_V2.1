@@ -28,9 +28,9 @@ export function ActivityQualityWidget() {
                 <span
                   className={cn(
                     "text-xs font-bold w-5 text-center",
-                    i === 0 && "text-amber-500",
-                    i === 1 && "text-slate-400",
-                    i === 2 && "text-amber-700"
+                    i === 0 && "text-rank-gold",
+                    i === 1 && "text-rank-silver",
+                    i === 2 && "text-rank-bronze"
                   )}
                 >
                   {i + 1}º
