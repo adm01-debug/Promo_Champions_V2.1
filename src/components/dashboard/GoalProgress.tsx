@@ -57,4 +57,4 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
       </CardContent>
     </Card>
   );
-};
+});
