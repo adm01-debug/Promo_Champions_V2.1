@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord } from "@/hooks/useCadences";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
@@ -34,6 +35,10 @@ export default function Cadencias() {
   }, [cadences, searchTerm, statusFilter]);
 
   return (
+    <Helmet>
+      <title>Cadências | Promo Champions</title>
+      <meta name="description" content="Gerenciamento de cadências de prospecção" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<CadenciasLoadingSkeleton />}

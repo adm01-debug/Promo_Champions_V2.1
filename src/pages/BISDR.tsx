@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBIFilters } from "@/hooks/useBIFilters";
 import { useBISDR } from "@/hooks/useBISDR";
@@ -19,6 +20,10 @@ const BISDR = () => {
   const { data, isLoading, refetch } = useBISDR({ dateRange: filters.dateRange });
 
   return (
+    <Helmet>
+      <title>BI SDR | Promo Champions</title>
+      <meta name="description" content="Business Intelligence para SDRs" />
+    </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<VendedorDashboardLoadingSkeleton />} duration={400}>
       <PageTransition>
         <div className="min-h-screen bg-background">

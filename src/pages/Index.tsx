@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -62,6 +63,10 @@ const Index = () => {
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
 
   return (
+    <Helmet>
+      <title>Dashboard | Promo Champions</title>
+      <meta name="description" content="Painel principal do Promo Champions" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<DashboardLoadingSkeleton />}

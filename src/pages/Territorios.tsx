@@ -1,9 +1,14 @@
+import { Helmet } from "react-helmet-async";
 import { TerritoriesBoard } from '@/components/territories/TerritoriesBoard';
 import { MapPin } from 'lucide-react';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
 export default function Territorios() {
   return (
+    <Helmet>
+      <title>Territórios | Promo Champions</title>
+      <meta name="description" content="Gestão de territórios de vendas" />
+    </Helmet>
     <PageTransition>
       <div className="space-y-6">
         <div className="flex items-center gap-3">

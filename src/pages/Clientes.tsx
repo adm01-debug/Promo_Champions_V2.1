@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,6 +99,10 @@ const Clientes = () => {
   };
 
   return (
+    <Helmet>
+      <title>Clientes | Promo Champions</title>
+      <meta name="description" content="Gestão da carteira de clientes" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<ClientesLoadingSkeleton />}

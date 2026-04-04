@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { GitBranch, Plus, Phone, Handshake, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,10 @@ export default function Times() {
   const incompleteTeams = totalTeams - completeTeams;
 
   return (
+    <Helmet>
+      <title>Times | Promo Champions</title>
+      <meta name="description" content="Gestão de equipes de vendas" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<TimesLoadingSkeleton />}

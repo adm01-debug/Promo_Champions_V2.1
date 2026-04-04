@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBIFilters } from "@/hooks/useBIFilters";
 import { useBICloser } from "@/hooks/useBICloser";
@@ -20,6 +21,10 @@ const BICloser = () => {
   const { data, isLoading, refetch } = useBICloser({ dateRange: filters.dateRange });
 
   return (
+    <Helmet>
+      <title>BI Closer | Promo Champions</title>
+      <meta name="description" content="Business Intelligence para Closers" />
+    </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<VendedorDashboardLoadingSkeleton />} duration={400}>
       <PageTransition>
         <div className="min-h-screen bg-background">

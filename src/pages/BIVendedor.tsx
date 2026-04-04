@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useBIVendedor } from "@/hooks/useBIVendedor";
 import { useAuth } from "@/contexts/AuthContext";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -21,6 +22,10 @@ const BIVendedor = () => {
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
+    <Helmet>
+      <title>BI Vendedor | Promo Champions</title>
+      <meta name="description" content="Business Intelligence para Vendedores" />
+    </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<BIVendedorLoadingSkeleton />} duration={400}>
       <PageTransition>
         <div className="min-h-screen bg-background">

@@ -1,9 +1,14 @@
 // MainLayout is already applied at route level in App.tsx
+import { Helmet } from "react-helmet-async";
 import { SalesAssistantChat } from '@/components/assistant/SalesAssistantChat';
 import { Sparkles } from 'lucide-react';
 
 export default function Assistente() {
   return (
+    <Helmet>
+      <title>Assistente IA | Promo Champions</title>
+      <meta name="description" content="Assistente inteligente para vendas" />
+    </Helmet>
     <>
       <div className="space-y-6">
         {/* Header */}

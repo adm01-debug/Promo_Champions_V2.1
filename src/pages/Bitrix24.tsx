@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,10 @@ export default function Bitrix24() {
   const StatusIcon = status.icon;
 
   return (
+    <Helmet>
+      <title>Bitrix24 | Promo Champions</title>
+      <meta name="description" content="Integração com Bitrix24 CRM" />
+    </Helmet>
     <div className="space-y-6 p-6 animate-fade-in">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-display font-bold gradient-text">Integração Bitrix24</h1>

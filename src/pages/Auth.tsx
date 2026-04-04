@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -96,6 +97,10 @@ export default function Auth() {
   const isLoginDisabled = isLoading || (lockoutStatus.isLocked && countdown > 0);
 
   return (
+    <Helmet>
+      <title>Login | Promo Champions</title>
+      <meta name="description" content="Acesse o Promo Champions" />
+    </Helmet>
     <div className="min-h-screen flex flex-col lg:flex-row relative overflow-hidden bg-background">
       <AuthBrandPanel />
       <AuthFormCard

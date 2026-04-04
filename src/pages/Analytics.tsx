@@ -1,4 +1,5 @@
 // Analytics page - MainLayout is applied at route level
+import { Helmet } from "react-helmet-async";
 import { WinLossAnalysis } from '@/components/analytics/WinLossAnalysis';
 import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
 import { ConversionFunnel } from '@/components/analytics/ConversionFunnel';
@@ -66,6 +67,10 @@ export default function Analytics() {
   const { isLoading } = useWinLossAnalysis();
 
   return (
+    <Helmet>
+      <title>Analytics | Promo Champions</title>
+      <meta name="description" content="Análises avançadas de vendas e performance" />
+    </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<AnalyticsPageLoadingSkeleton />} duration={400}>
       <PageTransition>
         <div className="space-y-6">

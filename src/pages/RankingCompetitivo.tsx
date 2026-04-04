@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Trophy, TrendingUp, Star, Target, Calendar, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +76,10 @@ const RankingCompetitivo = () => {
   const leader = ranking?.[0];
 
   return (
+    <Helmet>
+      <title>Ranking Competitivo | Promo Champions</title>
+      <meta name="description" content="Rankings e competições entre vendedores" />
+    </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<RankingLoadingSkeleton />} duration={400}>
       <div className="p-6 space-y-6 animate-fade-in">
         {/* Header */}

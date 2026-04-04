@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,6 +70,10 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
   return (
+    <Helmet>
+      <title>Dashboard Vendedor | Promo Champions</title>
+      <meta name="description" content="Painel de performance do vendedor" />
+    </Helmet>
     <div className={cn("glass rounded-xl p-5", variant === "primary" && "gradient-border glow-primary", variant === "success" && "border-success/30 bg-success/5")}>
       <div className="flex items-center gap-3 mb-3">
         <div className={cn("p-2 rounded-lg", variant === "primary" ? "gradient-primary" : variant === "success" ? "bg-success/20" : "bg-muted")}>

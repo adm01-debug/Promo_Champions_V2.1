@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { TaskQueue } from '@/components/tasks/TaskQueue';
 import { NextBestAction } from '@/components/tasks/NextBestAction';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,10 @@ export default function Tarefas() {
   const { isLoading } = useTodayTasks();
 
   return (
+    <Helmet>
+      <title>Tarefas | Promo Champions</title>
+      <meta name="description" content="Gestão de tarefas e atividades pendentes" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<TarefasLoadingSkeleton />}

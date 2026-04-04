@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { useCloserMetrics, PeriodFilter } from "@/hooks/useCloserMetrics";
 import { CloserStatCard } from "@/components/closer/CloserStatCard";
@@ -30,6 +31,10 @@ export default function CloserDashboard() {
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   return (
+    <Helmet>
+      <title>Dashboard Closer | Promo Champions</title>
+      <meta name="description" content="Painel de performance do Closer" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<CloserDashboardLoadingSkeleton />}

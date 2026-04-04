@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { ShieldX, ArrowLeft, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,10 @@ const AccessDenied = () => {
   };
 
   return (
+    <Helmet>
+      <title>Acesso Negado | Promo Champions</title>
+      <meta name="description" content="Você não tem permissão para acessar esta página" />
+    </Helmet>
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="text-center max-w-md">
         <div className="mx-auto w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mb-6">
