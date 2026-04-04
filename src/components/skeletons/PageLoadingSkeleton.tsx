@@ -70,36 +70,124 @@ export const PageHeaderSkeleton: FC = () => (
   </div>
 );
 
-// Dashboard loading skeleton — matches real dashboard layout
+// Content-aware KPI card skeleton
+const KPICardSkeleton: FC<{ hero?: boolean }> = ({ hero }) => (
+  <Card className={cn("overflow-hidden", hero && "relative")}>
+    <CardContent className={cn("p-4 sm:p-6", hero && "sm:p-8")}>
+      <div className="flex items-start justify-between">
+        <div className="space-y-3 flex-1">
+          <Shimmer className={cn("h-3 rounded-md", hero ? "w-24" : "w-16")} />
+          <Shimmer className={cn("rounded-md", hero ? "h-10 w-44" : "h-7 w-24")} />
+          <div className="flex items-center gap-2">
+            <Shimmer className="h-5 w-14 rounded-md" />
+            <Shimmer className="h-3 w-16 rounded-md" />
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <Shimmer className={cn("rounded-xl", hero ? "h-14 w-14" : "h-10 w-10")} />
+          {!hero && <Shimmer className="h-5 w-14 rounded-md" />}
+        </div>
+      </div>
+      {hero && <Shimmer className="h-8 w-full mt-3 rounded-md" />}
+    </CardContent>
+  </Card>
+);
+
+// Content-aware chart skeleton
+const ChartCardSkeleton: FC<{ className?: string }> = ({ className }) => (
+  <Card className={className}>
+    <CardHeader className="pb-2">
+      <div className="flex items-center justify-between">
+        <Shimmer className="h-5 w-32" />
+        <div className="flex gap-1.5">
+          <Shimmer className="h-7 w-10 rounded-md" />
+          <Shimmer className="h-7 w-10 rounded-md" />
+          <Shimmer className="h-7 w-10 rounded-md" />
+        </div>
+      </div>
+    </CardHeader>
+    <CardContent>
+      {/* Chart bars simulation */}
+      <div className="flex items-end gap-1.5 h-48 pt-4">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <Shimmer
+            key={i}
+            className="flex-1 rounded-t-md"
+            style={{ height: `${30 + Math.sin(i * 0.8) * 40 + 30}%` }}
+          />
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+// Content-aware goal skeleton
+const GoalCardSkeleton: FC = () => (
+  <Card>
+    <CardHeader className="pb-2">
+      <Shimmer className="h-5 w-28" />
+    </CardHeader>
+    <CardContent className="flex flex-col items-center gap-4 py-6">
+      {/* Circular progress ring skeleton */}
+      <div className="relative h-28 w-28">
+        <Shimmer className="absolute inset-0 rounded-full" />
+        <div className="absolute inset-3 rounded-full bg-card" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Shimmer className="h-6 w-12 rounded-md" />
+        </div>
+      </div>
+      <Shimmer className="h-3 w-36" />
+      <Shimmer className="h-2 w-full rounded-full" />
+    </CardContent>
+  </Card>
+);
+
+// Dashboard loading skeleton — content-faithful shimmer
 export const DashboardLoadingSkeleton: FC = () => (
-  <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6">
+  <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6" aria-busy="true" aria-label="Carregando dashboard">
     {/* Header */}
     <div className="flex items-center justify-between">
       <div className="space-y-2">
-        <Skeleton className="h-8 w-56" />
-        <Skeleton className="h-4 w-80" />
+        <Shimmer className="h-8 w-56 rounded-lg" />
+        <Shimmer className="h-4 w-80 rounded-md" />
       </div>
-      <Skeleton className="h-9 w-28 rounded-lg" />
+      <Shimmer className="h-9 w-28 rounded-lg" />
     </div>
-    {/* Hero KPIs — 2+1+1+1 grid */}
+
+    {/* Hero KPIs — 2+1+1+1 grid (content-aware) */}
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-6">
       <div className="col-span-2">
-        <Skeleton className="h-36 w-full rounded-xl" />
+        <KPICardSkeleton hero />
       </div>
-      <Skeleton className="h-28 w-full rounded-xl" />
-      <Skeleton className="h-28 w-full rounded-xl" />
-      <Skeleton className="h-28 w-full rounded-xl" />
+      <KPICardSkeleton />
+      <KPICardSkeleton />
+      <KPICardSkeleton />
     </div>
-    {/* Chart + Goal */}
+
+    {/* Chart + Goal (content-aware) */}
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6">
-      <Skeleton className="lg:col-span-2 h-72 rounded-xl" />
-      <Skeleton className="h-72 rounded-xl" />
+      <ChartCardSkeleton className="lg:col-span-2" />
+      <GoalCardSkeleton />
     </div>
-    {/* Secondary row */}
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <Skeleton key={i} className="h-48 rounded-xl" />
-      ))}
+
+    {/* Collapsible section skeleton */}
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 py-2">
+        <Shimmer className="h-4 w-4 rounded" />
+        <Shimmer className="h-5 w-24 rounded-md" />
+        <Shimmer className="h-5 w-12 rounded-full" />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i}>
+            <CardContent className="p-4 space-y-3">
+              <Shimmer className="h-4 w-20" />
+              <Shimmer className="h-24 w-full rounded-lg" />
+              <Shimmer className="h-3 w-3/4" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   </div>
 );
