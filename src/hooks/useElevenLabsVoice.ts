@@ -169,7 +169,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
       setTranscript('');
     };
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: Event & { results: SpeechRecognitionResultList }) => {
       const result = event.results[0][0].transcript;
       setTranscript(result);
     };
