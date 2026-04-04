@@ -107,10 +107,10 @@ export const CohortAnalysis: FC = () => {
   });
 
   const getColor = (value: number) => {
-    if (value >= 80) return 'bg-emerald-500/80 text-white';
-    if (value >= 60) return 'bg-emerald-500/50 text-foreground';
-    if (value >= 40) return 'bg-amber-500/50 text-foreground';
-    if (value >= 20) return 'bg-amber-500/30 text-foreground';
+    if (value >= 80) return 'bg-success/80 text-success-foreground';
+    if (value >= 60) return 'bg-success/50 text-foreground';
+    if (value >= 40) return 'bg-warning/50 text-foreground';
+    if (value >= 20) return 'bg-warning/30 text-foreground';
     if (value > 0) return 'bg-destructive/20 text-foreground';
     return 'bg-muted/30 text-muted-foreground';
   };
