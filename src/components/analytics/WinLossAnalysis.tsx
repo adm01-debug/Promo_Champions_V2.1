@@ -50,8 +50,8 @@ export const WinLossAnalysis: FC = () => {
         </Card>
         <Card className="glass border-border/40">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-red-500/10">
-              <XCircle className="h-5 w-5 text-red-500" />
+            <div className="p-2 rounded-lg bg-destructive/10">
+              <XCircle className="h-5 w-5 text-destructive" />
             </div>
             <div>
               <p className="text-2xl font-bold">{data.totalLosses}</p>
