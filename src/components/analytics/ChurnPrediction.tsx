@@ -26,7 +26,7 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
   if (error) {
     return (
       <Card className="p-6">
-        <div className="text-red-500">Erro ao carregar dados</div>
+        <div className="text-destructive">Erro ao carregar dados</div>
       </Card>
     );
   }

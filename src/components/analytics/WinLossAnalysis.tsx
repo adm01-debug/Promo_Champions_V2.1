@@ -124,7 +124,7 @@ export const WinLossAnalysis: FC = () => {
           <Card className="glass border-border/40">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <XCircle className="h-4 w-4 text-red-500" />
+                <XCircle className="h-4 w-4 text-destructive" />
                 Top Motivos de Perda
               </CardTitle>
             </CardHeader>

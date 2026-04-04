@@ -236,7 +236,7 @@ export function ChurnPredictionPanel({
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <div className="w-2 h-2 rounded-full bg-yellow-500" />
+            <div className="w-2 h-2 rounded-full bg-warning" />
             <span className="text-muted-foreground">
               {mediumRiskCount} médio risco
             </span>

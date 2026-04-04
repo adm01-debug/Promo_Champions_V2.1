@@ -200,7 +200,7 @@ export function CompetencyRadar({
                   {change !== 0 && (
                     <span className={cn(
                       "flex items-center gap-0.5",
-                      change > 0 ? "text-green-500" : "text-destructive"
+                      change > 0 ? "text-success" : "text-destructive"
                     )}>
                       {change > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                       {change > 0 ? "+" : ""}{change}

@@ -142,7 +142,7 @@ export function WeeklyPerformanceComparison({
                 transition={{ delay: index * 0.05 }}
                 className={cn(
                   "p-3 rounded-lg border bg-card",
-                  change > 0 && "border-green-500/20",
+                  change > 0 && "border-success/20",
                   change < 0 && "border-destructive/20"
                 )}
               >
