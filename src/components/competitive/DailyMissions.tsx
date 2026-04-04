@@ -18,10 +18,10 @@ const missionIcons: Record<string, typeof Target> = {
 };
 
 const missionGradients: Record<string, string> = {
-  calls: 'from-blue-500/15 to-blue-500/5 border-blue-500/20',
-  emails: 'from-violet-500/15 to-violet-500/5 border-violet-500/20',
-  meetings: 'from-emerald-500/15 to-emerald-500/5 border-emerald-500/20',
-  sales: 'from-amber-500/15 to-amber-500/5 border-amber-500/20',
+  calls: 'from-info/15 to-info/5 border-info/20',
+  emails: 'from-primary/15 to-primary/5 border-primary/20',
+  meetings: 'from-success/15 to-success/5 border-success/20',
+  sales: 'from-coins/15 to-coins/5 border-coins/20',
   default: 'from-primary/15 to-primary/5 border-primary/20',
 };
 
@@ -67,22 +67,22 @@ export const DailyMissions: FC<DailyMissionsProps> = ({ salespersonId, className
       <Card className="border-none shadow-md overflow-hidden">
         <div className={cn(
           'bg-gradient-to-r',
-          allCompleted ? 'from-emerald-500/15 to-emerald-500/5' : 'from-primary/15 to-accent/5'
+          allCompleted ? 'from-success/15 to-success/5' : 'from-primary/15 to-accent/5'
         )}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <div className={cn(
                   'h-8 w-8 rounded-lg flex items-center justify-center',
-                  allCompleted ? 'bg-emerald-500' : 'bg-gradient-to-br from-primary to-accent'
+                  allCompleted ? 'bg-success' : 'bg-gradient-to-br from-primary to-accent'
                 )}>
-                  {allCompleted ? <Check className="h-4 w-4 text-white" /> : <Target className="h-4 w-4 text-white" />}
+                  {allCompleted ? <Check className="h-4 w-4 text-success-foreground" /> : <Target className="h-4 w-4 text-primary-foreground" />}
                 </div>
                 Missões do Dia
               </CardTitle>
               <Badge variant="outline" className={cn(
                 'text-xs',
-                allCompleted && 'bg-emerald-500/20 text-emerald-600 border-emerald-500/30'
+                allCompleted && 'bg-success/20 text-success border-success/30'
               )}>
                 {allCompleted ? '✅ Tudo completo!' : `${completedCount}/${totalCount}`}
               </Badge>
@@ -94,7 +94,7 @@ export const DailyMissions: FC<DailyMissionsProps> = ({ salespersonId, className
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium"
+                className="flex items-center gap-2 mt-2 text-xs text-success font-medium"
               >
                 <Flame className="h-3 w-3" />
                 Parabéns! Todas as missões completas hoje!
@@ -125,10 +125,10 @@ export const DailyMissions: FC<DailyMissionsProps> = ({ salespersonId, className
               )}>
                 <div className={cn(
                   'h-10 w-10 rounded-xl flex items-center justify-center shrink-0',
-                  mission.completed ? 'bg-emerald-500/20' : 'bg-background/60'
+                  mission.completed ? 'bg-success/20' : 'bg-background/60'
                 )}>
                   {mission.completed ? (
-                    <Check className="h-5 w-5 text-emerald-500" />
+                    <Check className="h-5 w-5 text-success" />
                   ) : (
                     <Icon className="h-5 w-5 text-primary" />
                   )}
@@ -170,7 +170,7 @@ export const DailyMissions: FC<DailyMissionsProps> = ({ salespersonId, className
                     </Button>
                   )}
                   {mission.xp_claimed && (
-                    <span className="text-[10px] text-emerald-500 font-medium">✓ Coletado</span>
+                    <span className="text-[10px] text-success font-medium">✓ Coletado</span>
                   )}
                 </div>
               </div>

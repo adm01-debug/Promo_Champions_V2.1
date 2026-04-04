@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 
 const RANK_COLORS = [
-  'from-amber-400 to-yellow-600',
-  'from-slate-300 to-slate-500',
-  'from-amber-600 to-orange-800',
+  'from-rank-gold to-coins',
+  'from-rank-silver to-rank-silver/70',
+  'from-rank-bronze to-streak',
 ];
 
 interface LiveScoreboardProps {
@@ -29,7 +29,6 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
     return () => clearInterval(id);
   }, []);
 
-  // Simulate last deal from top performer
   useEffect(() => {
     if (ranking?.length && ranking[0].totalSales > 0) {
       setLastDeal({ name: ranking[0].name, value: ranking[0].totalSales });
@@ -67,7 +66,7 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                  <Monitor className="h-5 w-5 text-white" />
+                  <Monitor className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div>
                   <span className="block">Placar ao Vivo</span>
@@ -92,14 +91,14 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">Receita do Time</p>
               </div>
-              <div className="bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 rounded-xl p-4 text-center border border-emerald-500/20">
-                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              <div className="bg-gradient-to-br from-success/15 to-success/5 rounded-xl p-4 text-center border border-success/20">
+                <p className="text-2xl font-bold text-success">
                   {totalDeals}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">Deals Fechados</p>
               </div>
-              <div className="bg-gradient-to-br from-amber-500/15 to-amber-500/5 rounded-xl p-4 text-center border border-amber-500/20">
-                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+              <div className="bg-gradient-to-br from-coins/15 to-coins/5 rounded-xl p-4 text-center border border-coins/20">
+                <p className="text-2xl font-bold text-coins">
                   {ranking?.length || 0}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">Competidores</p>
@@ -111,12 +110,12 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl"
+                className="flex items-center gap-2 px-4 py-2 bg-success/10 border border-success/20 rounded-xl"
               >
-                <Flame className="h-4 w-4 text-emerald-500 animate-pulse" />
+                <Flame className="h-4 w-4 text-success animate-pulse" />
                 <span className="text-sm text-foreground">
                   <strong>{lastDeal.name}</strong> lidera com{' '}
-                  <strong className="text-emerald-600 dark:text-emerald-400">
+                  <strong className="text-success">
                     R$ {lastDeal.value.toLocaleString('pt-BR')}
                   </strong>
                 </span>
@@ -139,7 +138,7 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
                       transition={{ delay: i * 0.1, type: 'spring', stiffness: 200 }}
                       className={cn(
                         'relative flex items-center gap-4 p-4 rounded-xl border overflow-hidden',
-                        i === 0 && 'bg-gradient-to-r from-amber-500/10 to-transparent border-amber-500/30',
+                        i === 0 && 'bg-gradient-to-r from-rank-gold/10 to-transparent border-rank-gold/30',
                         i > 0 && 'bg-muted/20 border-border/30',
                       )}
                     >
@@ -156,7 +155,7 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
 
                       <div className={cn(
                         'relative z-10 h-12 w-12 rounded-xl flex items-center justify-center font-bold text-lg',
-                        i < 3 ? `bg-gradient-to-br ${RANK_COLORS[i]} text-white shadow-lg` : 'bg-muted text-muted-foreground'
+                        i < 3 ? `bg-gradient-to-br ${RANK_COLORS[i]} text-primary-foreground shadow-lg` : 'bg-muted text-muted-foreground'
                       )}>
                         {i < 3 ? (
                           <Crown className={cn('h-6 w-6', i === 0 && 'animate-bounce')} />
@@ -182,7 +181,7 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="text-[10px]">{person.dealsCount} deals</Badge>
                           {person.dealsCount >= 5 && (
-                            <span className="text-[10px] text-amber-500 font-medium flex items-center gap-0.5">
+                            <span className="text-[10px] text-coins font-medium flex items-center gap-0.5">
                               <Flame className="h-3 w-3" /> On Fire
                             </span>
                           )}
@@ -192,7 +191,7 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
                       <div className="relative z-10 text-right">
                         <p className={cn(
                           'font-bold',
-                          i === 0 ? 'text-2xl text-amber-600 dark:text-amber-400' : 'text-lg text-foreground'
+                          i === 0 ? 'text-2xl text-rank-gold' : 'text-lg text-foreground'
                         )}>
                           R$ {(person.totalSales / 1000).toFixed(0)}k
                         </p>
