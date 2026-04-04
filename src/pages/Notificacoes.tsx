@@ -407,7 +407,7 @@ export default function Notificacoes() {
                       <CardTitle className="text-base">{pref.email}</CardTitle>
                       <CardDescription className="flex items-center gap-2 mt-1">
                         <Clock className="h-3 w-3" />
-                        {frequencyLabels[pref.frequency]} às {pref.preferred_time.slice(0, 5)}
+                        {frequencyLabels[pref.frequency as keyof typeof frequencyLabels]} às {pref.preferred_time.slice(0, 5)}
                       </CardDescription>
                     </div>
                   </div>

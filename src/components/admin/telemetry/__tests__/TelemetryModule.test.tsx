@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { TelemetryCharts } from "@/components/admin/telemetry/TelemetryCharts";
 
 // ─── Helpers ───
-function makeTelemetryRow(overrides: Partial<any> = {}) {
+function makeTelemetryRow(overrides: Partial<Record<string, unknown>> = {}) {
   return {
     id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36),
     operation: "select",

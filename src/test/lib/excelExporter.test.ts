@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('exceljs', () => {
   class MockWorkbook {
     addWorksheet() {
-      return { columns: null, addRow: vi.fn() };
+      return { columns: null as unknown, addRow: vi.fn() };
     }
     xlsx = { writeBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(100)) };
   }

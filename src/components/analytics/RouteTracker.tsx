@@ -55,7 +55,7 @@ function getPageTitle(pathname: string): string {
   return segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : "Página";
 }
 
-export function RouteTracker() {
+export function RouteTracker(): null {
   const location = useLocation();
   const { salesperson } = useAuth();
   const prevPathRef = useRef<string | null>(null);

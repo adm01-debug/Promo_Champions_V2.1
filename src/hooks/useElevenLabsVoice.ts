@@ -174,7 +174,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
       setTranscript(result);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (import.meta.env.DEV) {
         console.error('Speech recognition error:', event.error);
       }
