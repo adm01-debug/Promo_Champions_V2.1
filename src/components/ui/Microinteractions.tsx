@@ -89,7 +89,7 @@ export const staggerItem = {
  */
 export function CountUpText({
   value,
-= 1.2,
+  duration: _duration = 1.2,
   className,
   prefix = "",
   suffix = "",

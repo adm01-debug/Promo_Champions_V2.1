@@ -45,7 +45,7 @@ const _riskLabels: Record<string, string> = {
   critical: 'Crítico',
 };
 
-export const SalesForecast: FC<SalesForecastProps> = ({= 'month' }) => {
+export const SalesForecast: FC<SalesForecastProps> = () => {
   const queryClient = useQueryClient();
 
   // Fetch existing forecasts from database

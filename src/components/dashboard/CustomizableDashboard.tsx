@@ -24,7 +24,6 @@ import {
   Settings2,
   Save,
   RotateCcw,
-  _GripVertical,
 } from "lucide-react";
 import { toast } from "sonner";
 

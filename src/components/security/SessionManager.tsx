@@ -10,7 +10,7 @@ import {
   Tablet, 
   Globe, 
   Clock, 
-  _MapPin, 
+   
   LogOut,
   Shield,
   RefreshCw

@@ -5,9 +5,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { 
-  _FileText, TrendingUp, _TrendingDown, Target, Users, DollarSign, 
+  TrendingUp, Target, Users, DollarSign, 
   BarChart3, PieChart, Activity, Award, AlertTriangle, CheckCircle2,
-  _Download, _RefreshCw, Brain, Sparkles, Calendar
+  Brain, Sparkles, Calendar
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';

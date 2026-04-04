@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronLeft, ChevronRight, Calendar as CalendarIcon,
   Phone, Mail, Users, Reply, FileText, CheckCircle2,
-  _Clock, GripVertical, _MoreHorizontal,
+  GripVertical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";

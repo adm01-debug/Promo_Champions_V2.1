@@ -160,6 +160,7 @@ interface MiniLeaderboardProps {
 
 export const MiniLeaderboard: FC<MiniLeaderboardProps> = ({
   entries,
+  currentUserId: _currentUserId,
   className
 }) => {
   const top3 = entries.slice(0, 3);
