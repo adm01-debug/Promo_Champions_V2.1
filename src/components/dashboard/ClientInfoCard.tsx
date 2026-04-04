@@ -35,7 +35,7 @@ const statusLabels = {
   churned: { label: 'Perdido', variant: 'destructive' as const },
 };
 
-export const ClientInfoCard: FC<ClientInfoCardProps> = ({
+const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
   client,
   showActions = true,
   onCall,
