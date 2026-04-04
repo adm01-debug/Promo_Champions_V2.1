@@ -22,7 +22,7 @@ const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
   closer: { label: "Closer", color: "bg-green-500/10 text-green-500 border-green-500/20" },
   hybrid: { label: "Híbrido", color: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
 };
-
+const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
       return <Crown className="h-6 w-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />;
