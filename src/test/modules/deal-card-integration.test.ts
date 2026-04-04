@@ -98,7 +98,7 @@ describe("ICP badge display", () => {
   });
 
   it("hidden when icpData is undefined", () => {
-    const icpData: undefined = undefined;
+    const icpData: { is_icp_match: boolean } | undefined = undefined;
     expect(icpData?.is_icp_match).toBeUndefined();
   });
 });
