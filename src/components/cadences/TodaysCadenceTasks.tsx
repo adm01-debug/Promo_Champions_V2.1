@@ -155,7 +155,7 @@ export function TodaysCadenceTasks() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-display font-medium group-hover:gradient-text transition-colors">{step?.title}</span>
+                          <span className="text-sm font-display font-medium group-hover:gradient-text transition-colors">{String(step?.title || '')}</span>
                           <Badge variant="outline" className={`text-[10px] font-medium shadow-sm ${actionColors[step?.action_type as ActionType] || ""}`}>
                             {actionLabels[step?.action_type as ActionType] || "Ação"}
                           </Badge>
