@@ -115,6 +115,7 @@ const sdrGroupedItems: MenuGroup[] = [
     icon: Search,
     items: [
       { title: "Cadências", url: "/cadencias", icon: Activity },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
     ],
