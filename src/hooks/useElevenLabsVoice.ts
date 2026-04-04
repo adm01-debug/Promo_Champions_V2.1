@@ -38,8 +38,6 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
-  const _mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const _audioChunksRef = useRef<Blob[]>([]);
 
   // Check if ElevenLabs API is configured (we'll assume it is for now)
   const isApiConfigured = true;

@@ -24,7 +24,6 @@ import { useICPByClientName } from "@/hooks/useICPData";
 export const PipelineBoard = () => {
   const { data: dealsByStage, isLoading, refetch, isRefetching } = usePipelineDeals();
   const moveDeal = useMoveDeal();
-  const _queryClient = useQueryClient();
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
 
   const allDealIds = useMemo(() => {

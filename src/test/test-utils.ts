@@ -8,20 +8,6 @@ import React from 'react';
 // SUPABASE MOCK
 // ==========================================
 
-const _mockFrom = vi.fn();
-const _mockSelect = vi.fn();
-const _mockInsert = vi.fn();
-const _mockUpdate = vi.fn();
-const _mockDelete = vi.fn();
-const _mockEq = vi.fn();
-const _mockNeq = vi.fn();
-const _mockGte = vi.fn();
-const _mockLte = vi.fn();
-const _mockIn = vi.fn();
-const _mockOrder = vi.fn();
-const _mockLimit = vi.fn();
-const _mockSingle = vi.fn();
-const _mockMaybeSingle = vi.fn();
 
 function createChain(resolveValue: any = { data: [], error: null }) {
   const chain: any = {

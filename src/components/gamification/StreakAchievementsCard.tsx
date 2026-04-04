@@ -93,7 +93,6 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
         <div className={`grid ${compact ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-3`}>
           {STREAK_MILESTONES.map((milestone) => {
             const isAchieved = achievedTypes.includes(milestone.type);
-            const _achievement = achievements?.find(a => a.streak_type === milestone.type);
             
             return (
               <motion.div

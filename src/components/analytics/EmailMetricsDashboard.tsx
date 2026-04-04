@@ -23,7 +23,6 @@ const FUNCTION_LABELS: Record<string, string> = {
   'check-lead-sla': 'Lead SLA'
 };
 
-const _COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--status-success))',
   'hsl(var(--status-warning))',

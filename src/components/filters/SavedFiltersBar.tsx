@@ -15,7 +15,7 @@ interface SavedFiltersBarProps {
 }
 
 export function SavedFiltersBar({ entityType, currentFilters, onApplyFilter }: SavedFiltersBarProps) {
-  const { filters, saveFilter, deleteFilter, _updateFilter, _isLoading } = useSavedFilters(entityType);
+  const { filters, saveFilter, deleteFilter } = useSavedFilters(entityType);
   const [newName, setNewName] = useState('');
   const [isDefault, setIsDefault] = useState(false);
   const [open, setOpen] = useState(false);

@@ -127,7 +127,6 @@ const emptyStates = {
 
 export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
   const state = emptyStates[type];
-  const _Icon = state.icon;
 
   return (
     <motion.div

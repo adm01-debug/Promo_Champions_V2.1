@@ -115,7 +115,6 @@ describe('Edge Cases - Empty & Null Handling', () => {
 });
 
 describe('Edge Cases - Timezone Handling', () => {
-  const _normalizeToUTC = (dateStr: string, offsetHours: number = -3): string => {
     const date = new Date(dateStr);
     date.setHours(date.getHours() - offsetHours);
     return date.toISOString();
