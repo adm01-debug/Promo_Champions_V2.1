@@ -27,7 +27,7 @@ const TYPE_COLORS: Record<QuestionType, string> = {
   strategy: 'bg-purple-500/20 text-purple-500',
 };
 
-export function DealChatHistory({ dealId, _clientName, onSelectQuestion }: DealChatHistoryProps) {
+export function DealChatHistory({ dealId,onSelectQuestion }: DealChatHistoryProps) {
   const { history, allHistory, isLoading, deleteEntry, filterType, setFilterType } = useDealChatHistory(dealId);
 
   if (isLoading) {

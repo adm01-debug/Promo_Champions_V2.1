@@ -41,7 +41,6 @@ export function VoiceControls({
   isLoadingTTS,
   onManualSpeak,
   showSpeakButton,
-  _isApiConfigured,
   responseMode = 'text',
   className,
 }: VoiceControlsProps) {

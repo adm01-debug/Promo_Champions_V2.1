@@ -126,7 +126,6 @@ export const WinLossReasonChart: FC<WinLossReasonChartProps> = ({
 const ReasonList: FC<{ data: WinLossData[]; colors: string[]; type: 'win' | 'loss' }> = ({
   data,
   colors,
-  _type,
 }) => (
   <div className="space-y-3">
     {data.map((item, index) => (
