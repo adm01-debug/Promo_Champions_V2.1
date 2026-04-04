@@ -106,7 +106,7 @@ export const SeasonAndPowerUps: FC = () => {
                         {powerUpLabels[pu.power_up_type] || pu.power_up_type}
                       </p>
                       <p className="text-[10px] text-muted-foreground truncate">
-                        {(pu.salespeople as any)?.name} • {pu.multiplier}x
+                        {(pu as Record<string, unknown> & { salespeople?: { name: string } }).salespeople?.name} • {pu.multiplier}x
                       </p>
                     </div>
                     <span className="text-[10px] text-muted-foreground shrink-0">
