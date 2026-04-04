@@ -68,7 +68,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.salesCount,
       previous: previousWeek.salesCount,
       format: (v: number) => v.toString(),
-      color: "text-blue-500",
+      color: "text-info",
     },
     {
       label: "Conversão",
