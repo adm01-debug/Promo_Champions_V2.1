@@ -206,6 +206,7 @@ const gestaoGroupedItems: MenuGroup[] = [
     items: [
       { title: "Times", url: "/times", icon: Building2 },
       { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
     ],
