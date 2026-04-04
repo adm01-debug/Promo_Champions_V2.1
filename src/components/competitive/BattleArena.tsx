@@ -7,6 +7,23 @@ import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useSalesBattles } from '@/hooks/useSalesBattles';
 
+interface BattleParticipant {
+  id: string;
+  current_score: number;
+  salespeople?: { name: string } | null;
+}
+
+interface Battle {
+  id: string;
+  title: string;
+  metric: string;
+  battle_type: string;
+  status: string;
+  ends_at: string;
+  xp_reward: number;
+  battle_participants?: BattleParticipant[];
+}
+
 function useCountdown(endDate: string) {
   const [timeLeft, setTimeLeft] = useState('');
   useEffect(() => {
