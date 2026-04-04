@@ -174,4 +174,4 @@ export const EnhancedStatCard = React.memo<EnhancedStatCardProps>(function Enhan
       </Card>
     </motion.div>
   );
-};
+});
