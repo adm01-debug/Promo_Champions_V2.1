@@ -76,7 +76,7 @@ export function SDRAlertHistory() {
       setIsEditingThreshold(false);
       queryClient.invalidateQueries({ queryKey: ["notification-preferences-threshold"] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error("Erro ao atualizar threshold", { description: error.message });
     },
   });
