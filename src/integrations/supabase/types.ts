@@ -2659,6 +2659,7 @@ export type Database = {
           preferred_time: string
           stagnant_threshold_days: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           consecutive_days_threshold?: number
@@ -2674,6 +2675,7 @@ export type Database = {
           preferred_time?: string
           stagnant_threshold_days?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           consecutive_days_threshold?: number
@@ -2689,6 +2691,7 @@ export type Database = {
           preferred_time?: string
           stagnant_threshold_days?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
