@@ -24,8 +24,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { motion } from "framer-motion";
 import { useVendasMacro } from "@/hooks/useVendasMacro";
+import { TopSellersRankList } from "./TopSellersRankList";
 
 const formatCurrency = (value: number) =>
   `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
