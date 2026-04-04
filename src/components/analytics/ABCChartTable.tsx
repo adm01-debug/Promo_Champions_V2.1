@@ -36,7 +36,6 @@ function ABCTooltip({ active, payload }: RechartsTooltipProps) {
       <Badge variant="outline" className="mt-2 font-bold" style={{ borderColor: COLORS[data.classification], color: COLORS[data.classification] }}>
         Classe {data.classification}
       </Badge>
-      </Badge>
     </div>
   );
 }
