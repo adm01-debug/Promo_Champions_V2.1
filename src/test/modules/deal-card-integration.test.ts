@@ -112,7 +112,7 @@ describe("Active cadence display in DealCard", () => {
   });
 
   it("hidden when no active cadence", () => {
-    const cadence = undefined;
+    const cadence: undefined = undefined;
     expect(cadence).toBeUndefined();
   });
 });
