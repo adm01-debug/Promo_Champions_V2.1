@@ -41,7 +41,7 @@ const calculateChange = (current: number, previous: number): number => {
   return ((current - previous) / previous) * 100;
 };
 
-export const BIMetricCard: FC<BIMetricCardProps> = ({
+export const BIMetricCard: FC<BIMetricCardProps> = React.memo(({
   title,
   value,
   icon: Icon,
