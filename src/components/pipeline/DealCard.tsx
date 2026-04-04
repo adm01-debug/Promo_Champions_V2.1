@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
 import { DollarSign, Calendar, Target, Zap, Users } from "lucide-react";
+import { StagnantDealAlert } from "./StagnantDealAlert";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -134,6 +135,13 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
             <span className="ml-1">• Etapa {activeCadence.currentStep}</span>
           </div>
         )}
+
+        {/* AI Copilot - Stagnant Deal Alert */}
+        <StagnantDealAlert
+          updatedAt={deal.updated_at || deal.created_at}
+          clientName={deal.client_name}
+          amount={deal.amount}
+        />
 
         {/* Date */}
         <div className="mt-2 pt-2 border-t border-border/30 flex items-center gap-1 text-[10px] text-muted-foreground">
