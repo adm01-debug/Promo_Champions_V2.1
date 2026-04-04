@@ -1,6 +1,6 @@
 /**
  * MainLayout Structure Tests
- * Verifies: tooltips on top bar, breadcrumbs, skip links, focus mode, notifications
+ * Verifies: layout architecture, accessibility, lazy loading, delegation to DesktopTopBar
  */
 import { describe, it, expect } from 'vitest';
 import fs from 'fs';
@@ -8,6 +8,11 @@ import path from 'path';
 
 const layoutSource = fs.readFileSync(
   path.resolve(__dirname, '../../components/layout/MainLayout.tsx'),
+  'utf-8'
+);
+
+const topBarSource = fs.readFileSync(
+  path.resolve(__dirname, '../../components/layout/DesktopTopBar.tsx'),
   'utf-8'
 );
 
@@ -24,36 +29,36 @@ describe('MainLayout Structure', () => {
     expect(layoutSource).toContain('aria-label="Conteúdo principal"');
   });
 
-  it('includes Breadcrumbs', () => {
-    expect(layoutSource).toContain('Breadcrumbs');
+  it('delegates Breadcrumbs to DesktopTopBar', () => {
+    expect(topBarSource).toContain('Breadcrumbs');
   });
 
-  it('includes TooltipProvider for top bar icons', () => {
-    expect(layoutSource).toContain('TooltipProvider');
+  it('delegates TooltipProvider to DesktopTopBar', () => {
+    expect(topBarSource).toContain('TooltipProvider');
   });
 
-  it('has tooltip for sidebar trigger', () => {
-    expect(layoutSource).toContain('Alternar menu lateral');
+  it('has tooltip for sidebar trigger (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('Alternar menu lateral');
   });
 
-  it('has tooltip for search', () => {
-    expect(layoutSource).toContain('Buscar (⌘K)');
+  it('has tooltip for search (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('Buscar (⌘K)');
   });
 
-  it('has tooltip for theme toggle', () => {
-    expect(layoutSource).toContain('Alternar tema');
+  it('has tooltip for theme toggle (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('Alternar tema');
   });
 
-  it('has tooltip for focus mode', () => {
-    expect(layoutSource).toContain('Modo foco');
+  it('has tooltip for focus mode (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('Modo foco');
   });
 
-  it('has tooltip for language toggle', () => {
-    expect(layoutSource).toContain('Idioma');
+  it('has tooltip for language toggle (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('Idioma');
   });
 
-  it('has tooltip for notifications', () => {
-    expect(layoutSource).toContain('Notificações');
+  it('has tooltip for notifications (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('Notificações');
   });
 
   it('includes ScrollToTop component', () => {
@@ -93,9 +98,9 @@ describe('MainLayout Structure', () => {
     expect(layoutSource).toContain('ErrorBoundary');
   });
 
-  it('has NotificationBadge with pulse for high counts', () => {
-    expect(layoutSource).toContain('NotificationBadge');
-    expect(layoutSource).toContain('pulse');
+  it('has NotificationBadge with pulse (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('NotificationBadge');
+    expect(topBarSource).toContain('pulse');
   });
 
   it('sidebar is hidden on mobile', () => {
@@ -110,9 +115,9 @@ describe('MainLayout Structure', () => {
     expect(layoutSource).toContain('MobilePageHeader');
   });
 
-  it('has sticky top bar with backdrop blur', () => {
-    expect(layoutSource).toContain('sticky top-0');
-    expect(layoutSource).toContain('backdrop-blur');
+  it('has sticky top bar with backdrop blur (in DesktopTopBar)', () => {
+    expect(topBarSource).toContain('sticky top-0');
+    expect(topBarSource).toContain('backdrop-blur');
   });
 
   it('has CelebrationOverlayProvider for gamification', () => {

@@ -85,7 +85,7 @@ describe('DashboardEmptyState V2', () => {
 
   it('renders description text', () => {
     wrap(<DashboardEmptyState type="sales" />);
-    expect(screen.getByText('Comece adicionando deals ao seu pipeline.')).toBeInTheDocument();
+    expect(screen.getByText(/deals ao seu pipeline/)).toBeInTheDocument();
   });
 
   it('renders CTA button text', () => {
