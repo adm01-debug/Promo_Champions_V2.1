@@ -42,8 +42,8 @@ export const StreakTracker: FC<StreakTrackerProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-              <Flame className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-streak to-destructive flex items-center justify-center">
+              <Flame className="h-4 w-4 text-primary-foreground" />
             </div>
             Streak de Vendas
             <Badge variant="outline" className="text-xs ml-auto">
