@@ -24,7 +24,7 @@ const formatCurrency = (value: number) =>
 
 function ABCTooltip({ active, payload }: RechartsTooltipProps) {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload;
+  const data = payload[0].payload as ABCItem;
   return (
     <div className="glass rounded-xl p-4 border border-border/50 shadow-xl animate-fade-in">
       <p className="font-display font-semibold text-foreground gradient-text">{data.name}</p>
@@ -33,8 +33,9 @@ function ABCTooltip({ active, payload }: RechartsTooltipProps) {
         <p className="text-sm text-muted-foreground">Participação: <span className="text-foreground font-medium">{data.percentage.toFixed(1)}%</span></p>
         <p className="text-sm text-muted-foreground">Acumulado: <span className="text-foreground font-medium">{data.cumulativePercentage.toFixed(1)}%</span></p>
       </div>
-      <Badge variant="outline" className="mt-2 font-bold" style={{ borderColor: COLORS[data.classification as keyof typeof COLORS], color: COLORS[data.classification as keyof typeof COLORS] }}>
+      <Badge variant="outline" className="mt-2 font-bold" style={{ borderColor: COLORS[data.classification], color: COLORS[data.classification] }}>
         Classe {data.classification}
+      </Badge>
       </Badge>
     </div>
   );

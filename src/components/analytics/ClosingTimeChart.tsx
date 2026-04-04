@@ -26,7 +26,7 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
           Média: <span className="font-semibold text-primary">{payload[0].value} dias</span>
         </p>
         <p className="text-xs text-muted-foreground">
-          {payload[0].payload.deals} deals analisados
+          {(payload[0].payload as Record<string, number>).deals} deals analisados
         </p>
       </div>
     );
