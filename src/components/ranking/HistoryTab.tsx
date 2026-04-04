@@ -91,4 +91,4 @@ export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurre
       </Card>
     </div>
   );
-}
+});

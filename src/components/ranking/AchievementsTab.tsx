@@ -66,4 +66,4 @@ export const AchievementsTab = memo(function AchievementsTab({ achievements }: A
       })}
     </div>
   );
-}
+});

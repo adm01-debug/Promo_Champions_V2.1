@@ -98,4 +98,4 @@ export const RankingTab = memo(function RankingTab({ ranking, leader, formatCurr
       ))}
     </div>
   );
-}
+});
