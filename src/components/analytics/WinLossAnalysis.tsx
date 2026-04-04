@@ -39,8 +39,8 @@ export const WinLossAnalysis: FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="glass border-border/40">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-500/10">
-              <Trophy className="h-5 w-5 text-green-500" />
+            <div className="p-2 rounded-lg bg-success/10">
+              <Trophy className="h-5 w-5 text-success" />
             </div>
             <div>
               <p className="text-2xl font-bold">{data.totalWins}</p>
