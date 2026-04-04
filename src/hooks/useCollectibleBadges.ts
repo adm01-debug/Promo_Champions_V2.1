@@ -70,7 +70,7 @@ export function useCollectibleBadges(salespersonId?: string) {
       if (error) throw error;
 
       const countMap = new Map<string, number>();
-      (data || []).forEach((r: any) => {
+      (data || []).forEach((r: { salesperson_id: string; badge?: { rarity: string } | null }) => {
         countMap.set(r.salesperson_id, (countMap.get(r.salesperson_id) || 0) + 1);
       });
 

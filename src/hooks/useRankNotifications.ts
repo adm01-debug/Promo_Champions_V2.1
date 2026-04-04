@@ -27,7 +27,7 @@ export function useRankNotifications(salespersonId?: string) {
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
-      return (data || []).map((n: any) => ({
+      return (data || []).map((n: Record<string, unknown> & { overtaker?: { name?: string } }) => ({
         ...n,
         overtaker_name: n.overtaker?.name || 'Alguém',
       }));

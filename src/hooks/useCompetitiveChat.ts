@@ -27,7 +27,7 @@ export function useCompetitiveChat() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data || []).map((m: any) => ({
+      return (data || []).map((m: Record<string, unknown> & { sender?: { name?: string; avatar_url?: string }; reactions?: Record<string, number> }) => ({
         ...m,
         sender_name: m.sender?.name || 'Anônimo',
         sender_avatar: m.sender?.avatar_url,

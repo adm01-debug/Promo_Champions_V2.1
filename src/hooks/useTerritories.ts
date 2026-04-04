@@ -56,7 +56,7 @@ export function useTerritoryHistory(territoryId?: string) {
         .order('conquered_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((h: any) => ({
+      return (data || []).map((h: Record<string, unknown> & { salespeople?: { name: string } | null }) => ({
         ...h,
         salesperson: h.salespeople || null,
         salespeople: undefined,
