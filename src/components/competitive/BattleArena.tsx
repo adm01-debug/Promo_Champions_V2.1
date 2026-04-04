@@ -42,11 +42,11 @@ function useCountdown(endDate: string) {
   return timeLeft;
 }
 
-const BattleCard: FC<{ battle: any }> = ({ battle }) => {
+const BattleCard: FC<{ battle: Battle }> = ({ battle }) => {
   const countdown = useCountdown(battle.ends_at);
   const participants = battle.battle_participants || [];
   const isActive = battle.status === 'active';
-  const maxScore = Math.max(...participants.map((p: any) => p.current_score), 1);
+  const maxScore = Math.max(...participants.map((p: BattleParticipant) => p.current_score), 1);
 
   return (
     <Card className={cn(
@@ -81,8 +81,8 @@ const BattleCard: FC<{ battle: any }> = ({ battle }) => {
 
       <CardContent className="space-y-3">
         {participants
-          .sort((a: any, b: any) => b.current_score - a.current_score)
-          .map((p: any, i: number) => (
+          .sort((a: BattleParticipant, b: BattleParticipant) => b.current_score - a.current_score)
+          .map((p: BattleParticipant, i: number) => (
             <motion.div
               key={p.id}
               className="flex items-center gap-3"
@@ -100,7 +100,7 @@ const BattleCard: FC<{ battle: any }> = ({ battle }) => {
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium truncate">
-                    {(p.salespeople as any)?.name || 'Vendedor'}
+                    {p.salespeople?.name || 'Vendedor'}
                   </span>
                   <span className="text-sm font-bold text-primary">{p.current_score}</span>
                 </div>
@@ -141,8 +141,8 @@ export const BattleArena: FC<BattleArenaProps> = ({ className }) => {
     );
   }
 
-  const activeBattles = battles?.filter((b: any) => b.status === 'active') || [];
-  const completedBattles = battles?.filter((b: any) => b.status === 'completed') || [];
+  const activeBattles = battles?.filter((b: Battle) => b.status === 'active') || [];
+  const completedBattles = battles?.filter((b: Battle) => b.status === 'completed') || [];
 
   if (!battles?.length) {
     return (
@@ -164,7 +164,7 @@ export const BattleArena: FC<BattleArenaProps> = ({ className }) => {
             <Swords className="h-4 w-4 text-primary" />
             Batalhas Ativas ({activeBattles.length})
           </h3>
-          {activeBattles.map((b: any) => <BattleCard key={b.id} battle={b} />)}
+          {activeBattles.map((b: Battle) => <BattleCard key={b.id} battle={b} />)}
         </div>
       )}
 
@@ -174,7 +174,7 @@ export const BattleArena: FC<BattleArenaProps> = ({ className }) => {
             <Trophy className="h-4 w-4" />
             Encerradas
           </h3>
-          {completedBattles.slice(0, 3).map((b: any) => <BattleCard key={b.id} battle={b} />)}
+          {completedBattles.slice(0, 3).map((b: Battle) => <BattleCard key={b.id} battle={b} />)}
         </div>
       )}
     </div>
