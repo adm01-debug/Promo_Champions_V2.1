@@ -100,7 +100,7 @@ export function WeeklyPerformanceComparison({
       current: currentWeek.newClients,
       previous: previousWeek.newClients,
       format: (v: number) => v.toString(),
-      color: "text-cyan-500",
+      color: "text-info",
     },
   ], [currentWeek, previousWeek]);
 
