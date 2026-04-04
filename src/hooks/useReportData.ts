@@ -219,12 +219,17 @@ export function useReportMetrics(dateRange: DateRange) {
     return Object.entries(grouped).map(([dia, vendas]) => ({ dia, vendas }));
   };
 
+  const metrics = useMemo(() => calculateMetrics(), [salesQuery.data, metricsQuery.data]);
+  const revenueData = useMemo(() => formatRevenueData(), [metricsQuery.data]);
+  const categoryData = useMemo(() => formatCategoryData(), [categoryQuery.data]);
+  const salesData = useMemo(() => formatSalesData(), [salesQuery.data]);
+
   return {
     sales: salesQuery.data || [],
-    metrics: calculateMetrics(),
-    revenueData: formatRevenueData(),
-    categoryData: formatCategoryData(),
-    salesData: formatSalesData(),
+    metrics,
+    revenueData,
+    categoryData,
+    salesData,
     isLoading: salesQuery.isLoading || metricsQuery.isLoading || categoryQuery.isLoading,
     error: salesQuery.error || metricsQuery.error || categoryQuery.error,
   };
