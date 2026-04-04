@@ -44,7 +44,7 @@ interface CadenceCardProps {
   isDeleting?: boolean;
 }
 
-const CadenceCardInner = ({ cadence, steps, onDelete, onSelect, isSelected, isDeleting }: CadenceCardProps) {
+export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleting }: CadenceCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);

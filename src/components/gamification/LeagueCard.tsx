@@ -7,7 +7,7 @@ import { Trophy, Zap, Shield } from "lucide-react";
 import { useLeagues, LEAGUE_CONFIG, type LeagueTier } from "@/hooks/useLeagues";
 import { cn } from "@/lib/utils";
 
-const LeagueCardInner = () {
+export function LeagueCard() {
   const { data: members, isLoading } = useLeagues();
 
   if (isLoading) {

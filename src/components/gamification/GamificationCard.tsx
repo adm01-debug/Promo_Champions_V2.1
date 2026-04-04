@@ -47,7 +47,7 @@ const getRankBadgeColor = (rank: number) => {
 const avatarSizes = { sm: "h-10 w-10", md: "h-14 w-14", lg: "h-16 w-16" };
 const sizeClasses = { sm: "p-3", md: "p-4", lg: "p-5" };
 
-const GamificationCardInner = ({
+export function GamificationCard({
   name, avatarUrl, level, totalXP, xpProgress, xpToNext,
   levelTitle, levelEmoji, levelColor, rank,
   streak = 0, streakRecord = 0, achievements = 0,

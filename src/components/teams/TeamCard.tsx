@@ -21,7 +21,7 @@ interface TeamCardProps {
   onDelete: (team: Team) => void;
 }
 
-const TeamCardInner = ({ team, onEdit, onDelete }: TeamCardProps) {
+export function TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
   const closerCount = team.closers?.length || 0;
   const hasSDR = !!team.sdr;
   const isComplete = hasSDR && closerCount >= 2;

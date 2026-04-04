@@ -11,7 +11,7 @@ interface PortfolioStatsCardsProps {
   isLoading: boolean;
 }
 
-const PortfolioStatsCardsInner = ({ stats, isLoading }: PortfolioStatsCardsProps) {
+export function PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
   const cards = [
     {
       title: "Total de Clientes",

@@ -17,7 +17,7 @@ interface StreakAchievementsCardProps {
   compact?: boolean;
 }
 
-const StreakAchievementsCardInner = ({ salespersonId, compact = false }: StreakAchievementsCardProps) {
+export function StreakAchievementsCard({ salespersonId, compact = false }: StreakAchievementsCardProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
 

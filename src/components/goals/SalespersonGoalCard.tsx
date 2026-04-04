@@ -28,7 +28,7 @@ const roleLabels: Record<string, string> = {
   hybrid: "Híbrido",
 };
 
-const SalespersonGoalCardInner = ({
+export function SalespersonGoalCard({
   name,
   avatar_url,
   role,
