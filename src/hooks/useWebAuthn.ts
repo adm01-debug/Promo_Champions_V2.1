@@ -38,7 +38,7 @@ export function useWebAuthn() {
       if (optionsError) throw optionsError;
 
       const credential = await navigator.credentials.create({
-        publicKey: { ...options, challenge: base64urlToBuffer(options.challenge), user: { ...options.user, id: new TextEncoder().encode(options.user.id) }, excludeCredentials: options.excludeCredentials?.map((c: any) => ({ ...c, id: base64urlToBuffer(c.id) })) },
+        publicKey: { ...options, challenge: base64urlToBuffer(options.challenge), user: { ...options.user, id: new TextEncoder().encode(options.user.id) }, excludeCredentials: options.excludeCredentials?.map((c: { id: string; type: string }) => ({ ...c, id: base64urlToBuffer(c.id) })) },
       }) as PublicKeyCredential;
       if (!credential) throw new Error('Falha ao criar credencial');
 
