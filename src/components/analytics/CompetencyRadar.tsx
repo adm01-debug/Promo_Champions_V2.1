@@ -47,9 +47,9 @@ const renderCustomTooltip = ({ active, payload }: any) => {
     const percentage = Math.round((data.value / data.maxValue) * 100);
     const status =
       percentage >= 70
-        ? { label: "Excelente", color: "text-green-500" }
+        ? { label: "Excelente", color: "text-success" }
         : percentage >= 40
-        ? { label: "Em Desenvolvimento", color: "text-yellow-500" }
+        ? { label: "Em Desenvolvimento", color: "text-warning" }
         : { label: "Gap Identificado", color: "text-destructive" };
 
     return (
