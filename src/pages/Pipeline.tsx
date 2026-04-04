@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
 import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
 import { Kanban } from "lucide-react";
@@ -11,6 +12,11 @@ export default function Pipeline() {
   const { isLoading } = usePipelineDeals();
 
   return (
+    <>
+    <Helmet>
+      <title>Pipeline | Promo Champions</title>
+      <meta name="description" content="Funil de vendas e gestão de deals" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<PipelineLoadingSkeleton />}
@@ -58,5 +64,6 @@ export default function Pipeline() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

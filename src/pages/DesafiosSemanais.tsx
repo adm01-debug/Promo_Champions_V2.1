@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { CreateChallengeDialog } from "@/components/gamification/CreateChallengeDialog";
@@ -43,6 +44,11 @@ export default function DesafiosSemanais() {
   };
 
   return (
+    <>
+    <Helmet>
+      <title>Desafios Semanais | Promo Champions</title>
+      <meta name="description" content="Desafios gamificados da semana" />
+    </Helmet>
     <PageTransition>
       <div className="container mx-auto py-6 space-y-6">
         {/* Header */}
@@ -229,5 +235,6 @@ export default function DesafiosSemanais() {
         </Tabs>
       </div>
     </PageTransition>
+  </>
   );
 }

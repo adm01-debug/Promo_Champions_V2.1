@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,6 +75,11 @@ export default function MetasAtividades() {
   ];
 
   return (
+    <>
+    <Helmet>
+      <title>Metas de Atividades | Promo Champions</title>
+      <meta name="description" content="Metas e objetivos de atividades" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<MetasAtividadesLoadingSkeleton />}
@@ -238,5 +244,6 @@ export default function MetasAtividades() {
       )}
     </div>
     </SkeletonTransition>
+  </>
   );
 }

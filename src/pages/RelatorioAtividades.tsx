@@ -119,7 +119,6 @@ export default function RelatorioAtividades() {
   };
 
   return (
-    <>
       <SkeletonTransition
         isLoading={isLoading || trendLoading}
         skeleton={<RelatorioAtividadesLoadingSkeleton />}
@@ -209,6 +208,5 @@ export default function RelatorioAtividades() {
           </div>
         </div>
       </SkeletonTransition>
-    </>
   );
 }

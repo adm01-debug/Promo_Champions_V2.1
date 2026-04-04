@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { ShoppingCart, Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -99,6 +100,11 @@ const Vendas = () => {
   } = usePagination(filteredAndSortedSales, { initialItemsPerPage: 10 });
 
   return (
+    <>
+    <Helmet>
+      <title>Vendas | Promo Champions</title>
+      <meta name="description" content="Registro e acompanhamento de vendas" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<VendasLoadingSkeleton />}
@@ -225,6 +231,7 @@ const Vendas = () => {
         </div>
       </div>
     </SkeletonTransition>
+  </>
   );
 };
 

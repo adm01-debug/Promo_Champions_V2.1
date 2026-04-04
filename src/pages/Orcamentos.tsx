@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,11 @@ export default function Orcamentos() {
   ];
 
   return (
+    <>
+    <Helmet>
+      <title>Orçamentos | Promo Champions</title>
+      <meta name="description" content="Gestão de orçamentos e propostas" />
+    </Helmet>
     <PageTransition>
       <div className="space-y-6">
         <motion.div className="flex items-center justify-between" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
@@ -106,5 +112,6 @@ export default function Orcamentos() {
         <QuoteDetailDialog quote={selectedQuote} open={!!selectedQuote} onOpenChange={(open) => !open && setSelectedQuote(null)} />
       </div>
     </PageTransition>
+  </>
   );
 }

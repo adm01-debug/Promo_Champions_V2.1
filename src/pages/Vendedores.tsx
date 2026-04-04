@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid } from "lucide-react";
@@ -102,6 +103,11 @@ const Vendedores = () => {
   };
 
   return (
+    <>
+    <Helmet>
+      <title>Vendedores | Promo Champions</title>
+      <meta name="description" content="Gestão da equipe de vendedores" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<VendedoresLoadingSkeleton />}
@@ -284,6 +290,7 @@ const Vendedores = () => {
       </div>
     </div>
     </SkeletonTransition>
+  </>
   );
 };
 

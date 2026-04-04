@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Bell, Plus, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,11 @@ export default function Notificacoes() {
   };
 
   return (
+    <>
+    <Helmet>
+      <title>Notificações | Promo Champions</title>
+      <meta name="description" content="Central de notificações e alertas" />
+    </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<NotificacoesLoadingSkeleton />} duration={400}>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -169,5 +175,6 @@ export default function Notificacoes() {
         </Tabs>
       </div>
     </SkeletonTransition>
+  </>
   );
 }

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Package, Search, Star, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -121,6 +122,11 @@ const Produtos = () => {
   };
 
   return (
+    <>
+    <Helmet>
+      <title>Produtos | Promo Champions</title>
+      <meta name="description" content="Catálogo e gestão de produtos" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<ProdutosLoadingSkeleton />}
@@ -288,6 +294,7 @@ const Produtos = () => {
         isDeleting={deleteProduct.isPending}
       />
     </SkeletonTransition>
+  </>
   );
 };
 

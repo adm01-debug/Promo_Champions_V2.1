@@ -17,7 +17,7 @@ interface EmailTemplate {
   tone: 'formal' | 'casual' | 'urgent';
 }
 
-export function generateNextActions(deal: any, insights: SalesInsight[]): string[] {
+export function generateNextActions(deal: Record<string, unknown>, insights: SalesInsight[]): string[] {
   const actions: string[] = [];
 
   switch (deal.status) {
@@ -50,7 +50,7 @@ export function generateNextActions(deal: any, insights: SalesInsight[]): string
   return actions.slice(0, 5);
 }
 
-export function analyzeSentiment(activities: any[]): 'positive' | 'neutral' | 'negative' {
+export function analyzeSentiment(activities: Array<Record<string, unknown>>): 'positive' | 'neutral' | 'negative' {
   const recentActivities = activities.slice(0, 5);
   
   const sentiments = recentActivities
@@ -69,7 +69,7 @@ export function analyzeSentiment(activities: any[]): 'positive' | 'neutral' | 'n
 
 export function createEmailTemplate(
   purpose: string,
-  deal: any,
+  deal: Record<string, unknown>,
   context?: string
 ): EmailTemplate {
   const clientName = deal.client_name || 'there';

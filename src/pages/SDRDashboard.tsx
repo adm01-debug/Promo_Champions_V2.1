@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { useSDRMetrics, PeriodFilter } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "@/components/sdr/SDRStatCard";
@@ -36,6 +37,11 @@ export default function SDRDashboard() {
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
 
   return (
+    <>
+    <Helmet>
+      <title>Dashboard SDR | Promo Champions</title>
+      <meta name="description" content="Painel de performance do SDR" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<SDRDashboardLoadingSkeleton />}
@@ -229,5 +235,6 @@ export default function SDRDashboard() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

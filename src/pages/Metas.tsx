@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { TeamGoalProgress } from "@/components/goals/TeamGoalProgress";
 import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
@@ -35,6 +36,11 @@ export default function Metas() {
   const exceededCount = data?.salespeople.filter(sp => sp.progress >= 100).length || 0;
 
   return (
+    <>
+    <Helmet>
+      <title>Metas | Promo Champions</title>
+      <meta name="description" content="Acompanhamento de metas de vendas" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<MetasLoadingSkeleton />}
@@ -186,5 +192,6 @@ export default function Metas() {
         </div>
       </PageTransition>
     </SkeletonTransition>
+  </>
   );
 }

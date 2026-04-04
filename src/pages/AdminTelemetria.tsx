@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -117,6 +118,11 @@ export default function AdminTelemetriaPage() {
   }, [rows]);
 
   return (
+    <>
+    <Helmet>
+      <title>Telemetria | Promo Champions</title>
+      <meta name="description" content="Métricas e monitoramento de performance do sistema" />
+    </Helmet>
     <MainLayout>
       <div className="space-y-6 p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -179,5 +185,6 @@ export default function AdminTelemetriaPage() {
         <TelemetryTable rows={rows} isLoading={isLoading} />
       </div>
     </MainLayout>
+  </>
   );
 }

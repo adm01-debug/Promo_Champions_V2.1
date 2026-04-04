@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { LeadSourceMetrics } from "@/components/analytics/LeadSourceMetrics";
 import { LeadSourceTrendChart } from "@/components/analytics/LeadSourceTrendChart";
 import { LeadSourceDistribution } from "@/components/analytics/LeadSourceDistribution";
@@ -22,6 +23,11 @@ export default function FonteLeads() {
     : 0;
 
   return (
+    <>
+    <Helmet>
+      <title>Fonte de Leads | Promo Champions</title>
+      <meta name="description" content="Análise de origens de leads" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<FonteLeadsLoadingSkeleton />}
@@ -153,5 +159,6 @@ export default function FonteLeads() {
       </div>
     </div>
     </SkeletonTransition>
+  </>
   );
 }

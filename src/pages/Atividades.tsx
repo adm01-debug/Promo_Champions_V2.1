@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { ActivityList } from "@/components/activities/ActivityList";
 import { ActivityStats } from "@/components/activities/ActivityStats";
@@ -10,6 +11,11 @@ export default function Atividades() {
   const { isLoading } = useActivities();
 
   return (
+    <>
+    <Helmet>
+      <title>Atividades | Promo Champions</title>
+      <meta name="description" content="Registro e acompanhamento de atividades comerciais" />
+    </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
       skeleton={<AtividadesLoadingSkeleton />}
@@ -50,5 +56,6 @@ export default function Atividades() {
       </div>
     </div>
     </SkeletonTransition>
+  </>
   );
 }
