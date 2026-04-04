@@ -49,9 +49,9 @@ export const CompetitiveTVDashboard: FC = () => {
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true));
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false));
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
     }
   };
 

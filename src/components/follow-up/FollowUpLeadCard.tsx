@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +32,7 @@ const statusLabels: Record<string, string> = {
   open: 'Aberto',
 };
 
-export function FollowUpLeadCard({ lead, index, isSelected, onToggle, onCreateTask, isCreating }: FollowUpLeadCardProps) {
+const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelected, onToggle, onCreateTask, isCreating }: FollowUpLeadCardProps) {
   const config = temperatureConfig[lead.temperature];
   const channel = channelIcons[lead.suggested_channel] || channelIcons.email;
   const ChannelIcon = channel.icon;
@@ -126,3 +127,4 @@ export function FollowUpLeadCard({ lead, index, isSelected, onToggle, onCreateTa
     </motion.div>
   );
 }
+export const FollowUpLeadCard = memo(FollowUpLeadCardInner);
