@@ -15,7 +15,7 @@ import { useSystemSoundSettings, SystemSoundType } from "@/hooks/useSystemSoundS
 import { toast } from "sonner";
 
 // Preload confetti module
-type ConfettiFunction = (options?: Record<string, unknown>) => Promise<null>;
+type ConfettiFunction = ((options?: Record<string, unknown>) => Promise<unknown> | null) | null;
 
 export function SoundSettingsTabs() {
   // Celebration sound settings
