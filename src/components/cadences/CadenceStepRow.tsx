@@ -82,8 +82,8 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({ step, onSave,
           </div>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button size="icon" variant="ghost" className="h-6 w-6 hover:bg-primary/10 hover:text-primary" onClick={() => { setIsEditing(true); setEditData({}); }}><Pencil className="h-3 w-3" /></Button>
-          <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive hover:bg-destructive/10" onClick={() => onDelete(step.id)}><Trash2 className="h-3 w-3" /></Button>
+          <Button size="icon" aria-label="Editar" variant="ghost" className="h-6 w-6 hover:bg-primary/10 hover:text-primary" onClick={() => { setIsEditing(true); setEditData({}); }}><Pencil className="h-3 w-3" /></Button>
+          <Button size="icon" aria-label="Excluir" variant="ghost" className="h-6 w-6 text-destructive hover:bg-destructive/10" onClick={() => onDelete(step.id)}><Trash2 className="h-3 w-3" /></Button>
         </div>
       </div>
     </div>

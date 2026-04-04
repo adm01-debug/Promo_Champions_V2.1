@@ -85,10 +85,10 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
             className="flex-1 h-8 text-sm"
             autoFocus
           />
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleSave}>
+          <Button variant="ghost" size="icon" aria-label="Salvar" className="h-6 w-6" onClick={handleSave}>
             <Check className="h-3 w-3 text-status-success" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCancel}>
+          <Button variant="ghost" size="icon" aria-label="Cancelar" className="h-6 w-6" onClick={handleCancel}>
             <X className="h-3 w-3 text-muted-foreground" />
           </Button>
         </div>

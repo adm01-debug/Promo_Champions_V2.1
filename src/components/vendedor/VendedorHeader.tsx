@@ -23,13 +23,13 @@ export const VendedorHeader = memo(function VendedorHeader({ salesperson, goalPr
           <div className="relative">
             <Avatar className="h-24 w-24 ring-4 ring-primary/30 shadow-xl">
               <AvatarImage src={salesperson.avatar_url || undefined} alt={salesperson.name} />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-2xl font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold">
                 {salesperson.name.split(" ").map(n => n[0]).join("")}
               </AvatarFallback>
             </Avatar>
             {goalProgress >= 100 && (
               <div className="absolute -top-1 -right-1 p-1.5 bg-success rounded-full shadow-lg">
-                <Star className="h-4 w-4 text-white" />
+                <Star className="h-4 w-4 text-primary-foreground" />
               </div>
             )}
           </div>

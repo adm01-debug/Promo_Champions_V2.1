@@ -45,7 +45,7 @@ export default function Times() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-xl gradient-primary">
-            <GitBranch className="h-6 w-6 text-white" />
+            <GitBranch className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
             <h1 className="text-3xl font-bold gradient-text font-display">

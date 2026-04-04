@@ -72,7 +72,7 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
     <div className={cn("glass rounded-xl p-5", variant === "primary" && "gradient-border glow-primary", variant === "success" && "border-success/30 bg-success/5")}>
       <div className="flex items-center gap-3 mb-3">
         <div className={cn("p-2 rounded-lg", variant === "primary" ? "gradient-primary" : variant === "success" ? "bg-success/20" : "bg-muted")}>
-          <Icon className={cn("h-4 w-4", variant === "primary" || variant === "success" ? "text-white" : "text-muted-foreground")} />
+          <Icon className={cn("h-4 w-4", variant === "primary" || variant === "success" ? "text-primary-foreground" : "text-muted-foreground")} />
         </div>
         <span className="text-sm text-muted-foreground">{title}</span>
         {change !== undefined && (

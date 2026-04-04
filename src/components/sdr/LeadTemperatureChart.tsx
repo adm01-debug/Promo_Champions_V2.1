@@ -13,7 +13,7 @@ export function LeadTemperatureChart() {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-streak to-status-error shadow-lg shadow-streak/20 animate-pulse">
-              <Thermometer className="h-4 w-4 text-white" />
+              <Thermometer className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Temperatura dos Leads</span>
           </CardTitle>
@@ -44,7 +44,7 @@ export function LeadTemperatureChart() {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
           <div className="p-1.5 rounded-lg bg-gradient-to-br from-streak to-status-error shadow-lg shadow-streak/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-streak/40">
-            <Thermometer className="h-4 w-4 text-white" />
+            <Thermometer className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="gradient-text">Temperatura dos Leads</span>
         </CardTitle>

@@ -57,7 +57,7 @@ export function XPProgressBar({ totalXP, showDetails = true, size = "md" }: XPPr
               </div>
               {/* Progress indicator dot */}
               <div 
-                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-lg border-2 border-primary opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100"
+                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-background shadow-lg border-2 border-primary opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100"
                 style={{ left: `calc(${Math.min(progress, 100)}% - 6px)` }}
               />
             </div>

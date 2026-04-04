@@ -59,7 +59,7 @@ export function EmailMetricsDashboard() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 group/header">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110">
-            <Mail className="h-5 w-5 text-white" />
+            <Mail className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="text-lg font-display font-semibold gradient-text">Métricas de Emails</span>
         </div>
@@ -81,7 +81,7 @@ export function EmailMetricsDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className={`p-2.5 rounded-xl ${card.gradient ? `bg-gradient-to-br ${card.gradient}` : card.iconBg} shadow-md transition-all duration-300 group-hover:scale-110`}>
-                    <Icon className={`h-4 w-4 ${card.gradient ? 'text-white' : card.iconColor}`} />
+                    <Icon className={`h-4 w-4 ${card.gradient ? 'text-primary-foreground' : card.iconColor}`} />
                   </div>
                   <div>
                     <p className={`text-2xl font-bold font-display ${card.textClass}`}>{card.value}</p>
@@ -122,7 +122,7 @@ export function EmailMetricsDashboard() {
             <Card variant="elevated" className="glass border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><TrendingUp className="h-4 w-4 text-white" /></div>
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><TrendingUp className="h-4 w-4 text-primary-foreground" /></div>
                   <span className="gradient-text">Volume de Emails por Dia</span>
                 </CardTitle>
               </CardHeader>
@@ -158,7 +158,7 @@ export function EmailMetricsDashboard() {
               <Card variant="elevated" className="glass border-border/40 dark:border-glow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><Activity className="h-4 w-4 text-white" /></div>
+                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><Activity className="h-4 w-4 text-primary-foreground" /></div>
                     <span className="gradient-text">Emails por Função</span>
                   </CardTitle>
                 </CardHeader>
@@ -181,7 +181,7 @@ export function EmailMetricsDashboard() {
               <Card variant="elevated" className="glass border-border/40 dark:border-glow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><Users className="h-4 w-4 text-white" /></div>
+                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><Users className="h-4 w-4 text-primary-foreground" /></div>
                     <span className="gradient-text">Top Destinatários</span>
                   </CardTitle>
                 </CardHeader>

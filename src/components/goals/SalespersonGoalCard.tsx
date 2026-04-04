@@ -62,13 +62,13 @@ export function SalespersonGoalCard({
         <div className="relative">
           <Avatar className={`h-12 w-12 shadow-md ${isTopPerformer ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-2 border-background"}`}>
             <AvatarImage src={avatar_url || undefined} />
-            <AvatarFallback className="text-sm font-display font-medium gradient-primary text-white">
+            <AvatarFallback className="text-sm font-display font-medium gradient-primary text-primary-foreground">
               {name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           {isTopPerformer && (
             <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full gradient-primary flex items-center justify-center shadow-md">
-              <span className="text-[11px] font-display font-bold text-white">{rank}</span>
+              <span className="text-[11px] font-display font-bold text-primary-foreground">{rank}</span>
             </div>
           )}
         </div>

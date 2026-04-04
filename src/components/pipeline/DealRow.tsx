@@ -65,7 +65,7 @@ export const DealRow = React.memo(function DealRow({ deal, onAnalyze, isAnalyzin
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Vendedor: <span className="text-foreground font-medium">{deal.salespersonName}</span></span>
             <Button size="sm" variant="glow" className="shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleAnalyze(); }} disabled={isAnalyzing}>
-              <Sparkles className={`h-4 w-4 mr-1 ${isAnalyzing ? "animate-pulse text-white" : ""}`} />Analisar com IA
+              <Sparkles className={`h-4 w-4 mr-1 ${isAnalyzing ? "animate-pulse text-primary-foreground" : ""}`} />Analisar com IA
             </Button>
           </div>
           {aiAnalysis && (

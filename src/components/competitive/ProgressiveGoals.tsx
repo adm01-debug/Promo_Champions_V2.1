@@ -54,7 +54,7 @@ export const ProgressiveGoals: FC<ProgressiveGoalsProps> = ({ salespersonId }) =
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-                <Target className="h-4 w-4 text-white" />
+                <Target className="h-4 w-4 text-primary-foreground" />
               </div>
               Metas Progressivas
             </CardTitle>
@@ -89,7 +89,7 @@ export const ProgressiveGoals: FC<ProgressiveGoalsProps> = ({ salespersonId }) =
                     <div>
                       <p className="text-sm font-bold text-foreground">{label.label}</p>
                       <div className="flex items-center gap-1.5">
-                        <Badge className={cn('text-[10px] h-4 bg-gradient-to-r text-white border-0', levelColor)}>
+                        <Badge className={cn('text-[10px] h-4 bg-gradient-to-r text-primary-foreground border-0', levelColor)}>
                           Nv.{goal.current_level} • {levelTitle}
                         </Badge>
                       </div>

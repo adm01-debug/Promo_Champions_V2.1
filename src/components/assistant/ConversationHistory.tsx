@@ -92,7 +92,7 @@ export function ConversationHistory({
     <Card className="flex flex-col h-[700px] border-border/50 bg-card/50 backdrop-blur-sm">
       <CardHeader className="border-b border-border/50 pb-4 space-y-3">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button variant="ghost" size="icon" aria-label="Fechar" onClick={onClose}>
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -105,7 +105,7 @@ export function ConversationHistory({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar conversas..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 pr-9" />
             {searchQuery && (
-              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => setSearchQuery('')}>
+              <Button variant="ghost" size="icon" aria-label="Limpar busca" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => setSearchQuery('')}>
                 <X className="h-4 w-4" />
               </Button>
             )}

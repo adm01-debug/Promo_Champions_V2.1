@@ -98,8 +98,8 @@ export function ApiIntegrationSettings() {
                         </div>
                         <div className="flex items-center gap-2 mb-2">
                           <code className="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">{visibleTokens.has(token.id) ? token.token : "••••••••••••••••••••••••"}</code>
-                          <Button size="icon" variant="ghost" onClick={() => toggleVisibility(token.id)}>{visibleTokens.has(token.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
-                          <Button size="icon" variant="ghost" onClick={() => copyToken(token.token)}><Copy className="h-4 w-4" /></Button>
+                          <Button size="icon" aria-label="Alternar visibilidade" variant="ghost" onClick={() => toggleVisibility(token.id)}>{visibleTokens.has(token.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
+                          <Button size="icon" aria-label="Copiar token" variant="ghost" onClick={() => copyToken(token.token)}><Copy className="h-4 w-4" /></Button>
                         </div>
                         <div className="flex gap-4 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1"><Clock className="h-3 w-3" />Criado: {format(new Date(token.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</span>

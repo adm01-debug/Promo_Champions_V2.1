@@ -87,7 +87,7 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
                   )}
                 >
                   <div className={cn(
-                    'h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br text-white shadow-lg',
+                    'h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br text-primary-foreground shadow-lg',
                     config?.gradient || 'from-muted to-muted'
                   )}>
                     <Icon className={cn('h-5 w-5', i === 0 && 'animate-bounce')} />

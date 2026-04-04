@@ -9,7 +9,7 @@ export default function Assistente() {
         {/* Header */}
         <div className="animate-fade-in flex items-center gap-3">
           <div className="p-2.5 rounded-xl gradient-primary">
-            <Sparkles className="h-6 w-6 text-white" />
+            <Sparkles className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
             <h1 className="text-2xl font-bold gradient-text">Assistente de Vendas</h1>

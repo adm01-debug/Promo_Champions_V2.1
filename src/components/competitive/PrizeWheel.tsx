@@ -110,7 +110,7 @@ export const PrizeWheel: FC<PrizeWheelProps> = ({ salespersonId, className }) =>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-              <Gift className="h-4 w-4 text-white" />
+              <Gift className="h-4 w-4 text-primary-foreground" />
             </div>
             Roda da Sorte
             <Badge variant="outline" className="text-xs ml-auto">
@@ -159,7 +159,7 @@ export const PrizeWheel: FC<PrizeWheelProps> = ({ salespersonId, className }) =>
               onClick={handleSpin}
               disabled={isSpinning || availableSpins <= 0 || !salespersonId}
               size="lg"
-              className="gap-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white shadow-lg"
+              className="gap-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-primary-foreground shadow-lg"
             >
               <RotateCw className={cn('h-4 w-4', isSpinning && 'animate-spin')} />
               {isSpinning ? 'Girando...' : availableSpins > 0 ? 'Girar a Roda!' : 'Sem giros'}

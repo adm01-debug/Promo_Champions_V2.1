@@ -66,7 +66,7 @@ export const ABCChartTable = React.memo(function ABCChartTable({ items, chartTit
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
-              <TrendingUp className="h-4 w-4 text-white" />
+              <TrendingUp className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">{chartTitle}</span>
           </CardTitle>

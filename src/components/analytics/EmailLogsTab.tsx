@@ -34,7 +34,7 @@ export const EmailLogsTab = React.memo(function EmailLogsTab({ recentLogs }: Ema
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
-            <Clock className="h-4 w-4 text-white" />
+            <Clock className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="gradient-text">Histórico de Emails</span>
           {recentLogs && (

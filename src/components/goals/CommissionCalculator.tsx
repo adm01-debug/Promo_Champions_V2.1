@@ -62,7 +62,7 @@ export function CommissionCalculator({
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-display font-semibold flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-status-success to-status-success/70 shadow-md">
-              <DollarSign className="h-5 w-5 text-white" />
+              <DollarSign className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="gradient-text">Calculadora de Comissão</span>
           </CardTitle>
@@ -110,7 +110,7 @@ export function CommissionCalculator({
                   <div className="relative">
                     <Avatar className={`h-10 w-10 border-2 shadow-md ${index === 0 ? 'border-rank-gold' : 'border-background'}`}>
                       <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="gradient-primary text-white text-sm font-display">
+                      <AvatarFallback className="gradient-primary text-primary-foreground text-sm font-display">
                         {sp.name.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>

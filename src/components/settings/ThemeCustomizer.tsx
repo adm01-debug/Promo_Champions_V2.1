@@ -100,7 +100,7 @@ export function ThemeCustomizer() {
                     animate={{ scale: 1 }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
-                    <Check className="h-5 w-5 text-white drop-shadow-md" />
+                    <Check className="h-5 w-5 text-primary-foreground drop-shadow-md" />
                   </motion.div>
                 )}
               </motion.button>

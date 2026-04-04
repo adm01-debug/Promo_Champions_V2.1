@@ -66,7 +66,7 @@ export function CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, is
             <div className="flex-1">
               <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
                 <div className={`p-1.5 rounded-lg transition-all duration-300 group-hover:scale-110 ${isSelected ? 'bg-gradient-to-br from-primary to-accent shadow-md shadow-primary/30' : 'bg-gradient-to-br from-primary/80 to-accent/80 shadow-sm'}`}>
-                  <ListTodo className="h-3.5 w-3.5 text-white" />
+                  <ListTodo className="h-3.5 w-3.5 text-primary-foreground" />
                 </div>
                 <span className={`transition-all duration-300 ${isSelected ? 'gradient-text' : 'group-hover:text-primary'}`}>{cadence.name}</span>
                 <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-primary/20 to-primary/10 text-primary border-primary/30 font-medium shadow-sm">

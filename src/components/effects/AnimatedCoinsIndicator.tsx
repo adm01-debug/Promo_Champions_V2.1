@@ -65,7 +65,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
           animate={{ opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />
-        <Star className="relative z-10 text-white" style={{ width: containerSize * 0.25, height: containerSize * 0.25 }} />
+        <Star className="relative z-10 text-primary-foreground" style={{ width: containerSize * 0.25, height: containerSize * 0.25 }} />
       </motion.div>
 
       {/* Sparkles for wealthy */}
@@ -91,7 +91,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
 
       {/* Count badge */}
       <motion.div
-        className="absolute -bottom-1 bg-rank-gold text-white rounded-full flex items-center justify-center font-black shadow-md"
+        className="absolute -bottom-1 bg-rank-gold text-primary-foreground rounded-full flex items-center justify-center font-black shadow-md"
         style={{
           minWidth: containerSize * 0.45,
           height: containerSize * 0.3,

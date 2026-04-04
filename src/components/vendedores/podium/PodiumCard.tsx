@@ -111,7 +111,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
         <HexFrame glowColor={config.neonColor} size={config.hexSize} isChampion={isChampion}>
           <Avatar className={cn(config.avatarSize, "rounded-none w-full h-full")}>
             <AvatarImage src={person.avatar_url || undefined} alt={person.name} className="object-cover" />
-            <AvatarFallback className={cn("bg-gradient-to-br text-white font-bold rounded-none w-full h-full", config.bgGradient, isChampion ? "text-3xl" : "text-lg")}>
+            <AvatarFallback className={cn("bg-gradient-to-br text-primary-foreground font-bold rounded-none w-full h-full", config.bgGradient, isChampion ? "text-3xl" : "text-lg")}>
               {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
             </AvatarFallback>
           </Avatar>
@@ -124,7 +124,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
           </motion.div>
         )}
         <motion.div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: config.delay + 0.5, type: "spring", bounce: 0.6 }}>
-          <div className={cn("px-2.5 py-1 rounded-lg text-[11px] font-black shadow-lg border text-white", config.badgeBg, config.borderColor)} style={{ boxShadow: `0 0 15px ${config.glowColor}` }}>
+          <div className={cn("px-2.5 py-1 rounded-lg text-[11px] font-black shadow-lg border text-primary-foreground", config.badgeBg, config.borderColor)} style={{ boxShadow: `0 0 15px ${config.glowColor}` }}>
             #{config.rank}
           </div>
         </motion.div>

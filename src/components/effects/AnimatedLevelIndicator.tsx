@@ -91,7 +91,7 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
         />
 
         {/* Level number */}
-        <span className="relative z-10 font-black text-white" style={{ fontSize: containerSize * 0.22 }}>
+        <span className="relative z-10 font-black text-primary-foreground" style={{ fontSize: containerSize * 0.22 }}>
           {level}
         </span>
 

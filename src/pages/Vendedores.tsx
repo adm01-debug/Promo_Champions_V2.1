@@ -47,13 +47,13 @@ const getRankStyles = (rank: number) => {
       return {
         card: "bg-gradient-to-r from-slate-400/10 via-slate-300/5 to-slate-400/10 border-2 border-slate-400/30",
         avatar: "ring-4 ring-slate-300/50",
-        badge: "bg-gradient-to-r from-slate-400 to-slate-500 text-white font-bold",
+        badge: "bg-gradient-to-r from-slate-400 to-slate-500 text-primary-foreground font-bold",
       };
     case 3:
       return {
         card: "bg-gradient-to-r from-rank-gold/10 via-amber-500/5 to-amber-600/10 border-2 border-rank-gold/30",
         avatar: "ring-4 ring-rank-gold/50",
-        badge: "bg-gradient-to-r from-rank-gold to-amber-600 text-white font-bold",
+        badge: "bg-gradient-to-r from-rank-gold to-amber-600 text-primary-foreground font-bold",
       };
     default:
       return {
@@ -113,7 +113,7 @@ const Vendedores = () => {
         <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl gradient-primary">
-              <Trophy className="h-6 w-6 text-white" />
+              <Trophy className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold gradient-text">Ranking de Vendedores</h1>

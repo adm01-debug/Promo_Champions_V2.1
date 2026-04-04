@@ -75,7 +75,7 @@ function ChallengeItem({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
-      className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${gradientClass} text-white shadow-lg`}
+      className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${gradientClass} text-primary-foreground shadow-lg`}
     >
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12" />
@@ -88,10 +88,10 @@ function ChallengeItem({
             <span className="text-3xl">{icon}</span>
             <div>
               <h4 className="font-bold">{challenge.title}</h4>
-              <p className="text-xs text-white/80">{challenge.description}</p>
+              <p className="text-xs text-primary-foreground/80">{challenge.description}</p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-white/20 text-white border-0">
+          <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-0">
             <Zap className="h-3 w-3 mr-1" />
             +{challenge.xp_reward} XP
           </Badge>
@@ -110,14 +110,14 @@ function ChallengeItem({
               initial={{ width: 0 }}
               animate={{ width: `${challenge.percentage}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute inset-y-0 left-0 bg-white rounded-full"
+              className="absolute inset-y-0 left-0 bg-primary-foreground rounded-full"
             />
           </div>
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-1 text-xs text-white/80">
+          <div className="flex items-center gap-1 text-xs text-primary-foreground/80">
             <Clock className="h-3 w-3" />
             <span>
               {challenge.daysRemaining === 0
@@ -151,7 +151,7 @@ function ChallengeItem({
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="flex items-center gap-1 text-white font-medium"
+                className="flex items-center gap-1 text-primary-foreground font-medium"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 Resgatado

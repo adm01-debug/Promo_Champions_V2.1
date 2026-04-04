@@ -64,7 +64,7 @@ export const RankingTab = memo(function RankingTab({ ranking, leader, formatCurr
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-lg truncate">{person.name}</h3>
                   {person.title && (
-                    <Badge className={`bg-gradient-to-r ${person.color} text-white border-0`}>
+                    <Badge className={`bg-gradient-to-r ${person.color} text-primary-foreground border-0`}>
                       {person.emoji} {person.title}
                     </Badge>
                   )}

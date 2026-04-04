@@ -46,7 +46,7 @@ const Relatorios = () => {
           {/* Header */}
           <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl gradient-primary"><BarChart3 className="h-6 w-6 text-white" /></div>
+              <div className="p-2.5 rounded-xl gradient-primary"><BarChart3 className="h-6 w-6 text-primary-foreground" /></div>
               <div>
                 <h1 className="text-2xl font-bold gradient-text">Relatórios</h1>
                 <p className="text-sm text-muted-foreground">Análises e métricas do negócio{isLoading && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}</p>
@@ -59,12 +59,12 @@ const Relatorios = () => {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-wrap gap-2">
                 {[{ key: "7d", label: "7 dias" }, { key: "30d", label: "30 dias" }, { key: "90d", label: "90 dias" }].map((period) => (
-                  <Button key={period.key} variant={selectedPeriod === period.key ? "default" : "outline"} size="sm" onClick={() => handlePeriodClick(period.key)} className={cn(selectedPeriod === period.key ? "gradient-primary text-white" : "glass hover:bg-muted/50")}>{period.label}</Button>
+                  <Button key={period.key} variant={selectedPeriod === period.key ? "default" : "outline"} size="sm" onClick={() => handlePeriodClick(period.key)} className={cn(selectedPeriod === period.key ? "gradient-primary text-primary-foreground" : "glass hover:bg-muted/50")}>{period.label}</Button>
                 ))}
               </div>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className={cn("justify-start text-left font-normal", selectedPeriod === "custom" ? "gradient-primary text-white" : "glass", !dateRange.from && "text-muted-foreground")}>
+                  <Button variant="outline" size="sm" className={cn("justify-start text-left font-normal", selectedPeriod === "custom" ? "gradient-primary text-primary-foreground" : "glass", !dateRange.from && "text-muted-foreground")}>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {dateRange.from ? (dateRange.to ? <>{format(dateRange.from, "dd MMM", { locale: ptBR })} - {format(dateRange.to, "dd MMM yyyy", { locale: ptBR })}</> : format(dateRange.from, "dd MMM yyyy", { locale: ptBR })) : <span>Período personalizado</span>}
                   </Button>
@@ -85,7 +85,7 @@ const Relatorios = () => {
               <div key={metric.title} className="opacity-0 animate-fade-in-up glass rounded-xl p-5 border border-border/40 dark:border-glow hover-lift cursor-pointer group" style={{ animationDelay: `${100 + index * 50}ms` }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className={`p-2.5 rounded-xl ${index === 0 ? 'gradient-primary' : 'bg-muted/50 group-hover:bg-muted/80'} transition-colors`}>
-                    <metric.icon className={`h-4 w-4 ${index === 0 ? 'text-white' : 'text-muted-foreground group-hover:text-primary'} transition-colors`} />
+                    <metric.icon className={`h-4 w-4 ${index === 0 ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-primary'} transition-colors`} />
                   </div>
                   <span className={`text-sm font-medium flex items-center gap-1 px-2 py-1 rounded-full ${metric.positive ? 'bg-status-success/20 text-status-success' : 'bg-status-error/20 text-status-error'}`}>
                     {metric.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}{Math.abs(metric.change)}%

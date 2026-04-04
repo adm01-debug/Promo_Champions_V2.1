@@ -50,7 +50,7 @@ export function CompetitiveLeaderboard({ showAll: _showAll = false }: Competitiv
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
             <div className="p-2 rounded-xl gradient-primary shadow-md">
-              <Crown className="h-4 w-4 text-white" />
+              <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Arena de Vendas</span>
           </CardTitle>
@@ -72,7 +72,7 @@ export function CompetitiveLeaderboard({ showAll: _showAll = false }: Competitiv
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
             <div className="p-2 rounded-xl gradient-primary shadow-md">
-              <Crown className="h-4 w-4 text-white" />
+              <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Arena de Vendas</span>
           </CardTitle>
@@ -123,7 +123,7 @@ export function CompetitiveLeaderboard({ showAll: _showAll = false }: Competitiv
                       <div className="flex items-center gap-2">
                         <Avatar className={`h-9 w-9 border-2 shadow-md ${isTopThree ? 'border-primary/30' : 'border-background'}`}>
                           <AvatarImage src={person.avatar_url || undefined} alt={person.name} />
-                          <AvatarFallback className="text-xs font-display font-medium gradient-primary text-white">
+                          <AvatarFallback className="text-xs font-display font-medium gradient-primary text-primary-foreground">
                             {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>

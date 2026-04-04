@@ -60,7 +60,7 @@ export function CompactGamificationCard({
             )}
           </div>
         </div>
-        <div className={cn("absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-[8px] font-bold text-white bg-gradient-to-br shadow-sm border border-background", levelColor)}>{level}</div>
+        <div className={cn("absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-[8px] font-bold text-primary-foreground bg-gradient-to-br shadow-sm border border-background", levelColor)}>{level}</div>
       </div>
 
       <div className="flex-1 min-w-0">

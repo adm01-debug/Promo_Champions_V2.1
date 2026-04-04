@@ -191,7 +191,7 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
                       </div>
                     </div>
                     <div className="flex gap-1 shrink-0">
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleCopy(tpl)}>
+                      <Button variant="ghost" size="icon" aria-label="Copiar template" className="h-7 w-7" onClick={() => handleCopy(tpl)}>
                         <Copy className="h-3 w-3" />
                       </Button>
                       <Button

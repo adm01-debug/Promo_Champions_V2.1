@@ -91,7 +91,7 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
           transition={{ delay: 0.2, type: 'spring', stiffness: 400 }}
           className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center"
         >
-          <Icon className="h-5 w-5 text-white" />
+          <Icon className="h-5 w-5 text-primary-foreground" />
         </motion.div>
 
         <div className="flex-1">
@@ -101,14 +101,14 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
             transition={{ delay: 0.1 }}
             className="flex items-baseline gap-1"
           >
-            <span className="text-2xl font-bold text-white">+{amount}</span>
-            <span className="text-sm font-medium text-white/80">XP</span>
+            <span className="text-2xl font-bold text-primary-foreground">+{amount}</span>
+            <span className="text-sm font-medium text-primary-foreground/80">XP</span>
           </motion.div>
           <motion.p
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-xs text-white/70 truncate max-w-[150px]"
+            className="text-xs text-primary-foreground/70 truncate max-w-[150px]"
           >
             {reason}
           </motion.p>
@@ -137,7 +137,7 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
                   delay: 0.1 + i * 0.05,
                   ease: 'easeOut'
                 }}
-                className="absolute w-1 h-1 bg-white rounded-full"
+                className="absolute w-1 h-1 bg-primary-foreground rounded-full"
               />
             ))}
           </div>
