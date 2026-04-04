@@ -180,6 +180,7 @@ const gestaoGroupedItems: MenuGroup[] = [
     icon: Gauge,
     items: [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+      { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Forecast", url: "/forecast", icon: TrendingUp },
       { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
