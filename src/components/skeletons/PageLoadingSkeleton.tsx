@@ -1,6 +1,12 @@
 import { FC } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+/** Shimmer skeleton with custom sizing for content-aware loading */
+const Shimmer: FC<{ className?: string }> = ({ className }) => (
+  <Skeleton className={cn("animate-pulse", className)} />
+);
 
 // Generic skeleton card
 export const SkeletonCard: FC<{ className?: string }> = ({ className }) => (
