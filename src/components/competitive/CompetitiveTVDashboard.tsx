@@ -91,7 +91,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'ranking' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <Trophy className="h-6 w-6 text-amber-500" />
+                  <Trophy className="h-6 w-6 text-rank-gold" />
                   <h2 className="text-xl font-bold text-foreground">Ranking do Mês</h2>
                 </div>
                 <div className="space-y-3">
