@@ -103,9 +103,9 @@ export const CompetitiveTVDashboard: FC = () => {
                       transition={{ delay: i * 0.1 }}
                       className={cn(
                         'flex items-center gap-4 p-3 rounded-xl',
-                        i === 0 && 'bg-amber-500/10 border border-amber-500/30',
-                        i === 1 && 'bg-gray-300/10 border border-gray-400/20',
-                        i === 2 && 'bg-amber-700/10 border border-amber-700/20',
+                        i === 0 && 'bg-rank-gold/10 border border-rank-gold/30',
+                        i === 1 && 'bg-rank-silver/10 border border-rank-silver/20',
+                        i === 2 && 'bg-rank-bronze/10 border border-rank-bronze/20',
                         i > 2 && 'bg-muted/20',
                       )}
                     >
