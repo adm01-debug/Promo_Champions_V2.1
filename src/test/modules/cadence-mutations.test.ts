@@ -239,7 +239,7 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should skip task with reason', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = skipTaskWithNotes(task, 'Cliente não disponível');
     expect(result.status).toBe('skipped');
     expect(result.notes).toBe('Cliente não disponível');
