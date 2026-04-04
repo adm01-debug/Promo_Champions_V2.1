@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
 import { DollarSign, Calendar, Target, Zap, Users } from "lucide-react";
+import { StagnantDealAlert } from "./StagnantDealAlert";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
