@@ -20,9 +20,9 @@ const RARITY_STYLES: Record<string, string> = {
 };
 
 const RARITY_LABELS: Record<string, { label: string; color: string }> = {
-  legendary: { label: 'Lendário', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  epic: { label: 'Épico', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-  rare: { label: 'Raro', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+  legendary: { label: 'Lendário', color: 'bg-coins/20 text-coins border-coins/30' },
+  epic: { label: 'Épico', color: 'bg-primary/20 text-primary border-primary/30' },
+  rare: { label: 'Raro', color: 'bg-info/20 text-info border-info/30' },
   common: { label: 'Comum', color: 'bg-muted text-muted-foreground' },
 };
 
