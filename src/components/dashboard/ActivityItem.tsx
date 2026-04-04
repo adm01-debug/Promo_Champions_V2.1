@@ -147,7 +147,8 @@ export const ActivityItem: FC<ActivityItemProps> = React.memo(({
       </div>
     </motion.div>
   );
-};
+});
+ActivityItem.displayName = "ActivityItem";
 
 interface ActivityListProps {
   activities: Activity[];
