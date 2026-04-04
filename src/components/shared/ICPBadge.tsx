@@ -45,7 +45,7 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
             "flex items-center font-bold border transition-all",
             "bg-gradient-to-r from-status-success/20 to-emerald-500/20",
             "text-status-success border-status-success/40",
-            "hover:from-status-success/30 hover:to-emerald-500/30",
+            "hover:from-success/30 hover:to-success/20",
             sizeClasses[size],
             className
           )}
@@ -65,7 +65,7 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
             "flex items-center font-bold border transition-all",
             "bg-gradient-to-r from-status-warning/20 to-amber-500/20",
             "text-status-warning border-status-warning/40",
-            "hover:from-status-warning/30 hover:to-amber-500/30",
+            "hover:from-warning/30 hover:to-warning/20",
             sizeClasses[size],
             className
           )}

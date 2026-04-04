@@ -108,13 +108,13 @@ export function CelebrationTab({ selectedSound, setSelectedSound, volume, setVol
             Meta
           </Button>
           <Button onClick={handleTestLevelUp} size="sm"
-            className={`gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-primary-foreground transition-all ${activeCelebration === 'levelup' ? 'animate-pulse ring-2 ring-amber-400' : ''}`}
+            className={`gap-1.5 bg-gradient-to-r from-rank-gold to-streak hover:from-rank-gold/90 hover:to-streak/90 text-primary-foreground transition-all ${activeCelebration === 'levelup' ? 'animate-pulse ring-2 ring-rank-gold' : ''}`}
             disabled={isDisabled || (activeCelebration !== null && activeCelebration !== 'levelup') || isLoading}>
             {isLoading && activeCelebration === 'levelup' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Crown className="h-3.5 w-3.5" />}
             Level Up
           </Button>
           <Button onClick={handleTestStreakRecord} size="sm"
-            className={`gap-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-primary-foreground transition-all ${activeCelebration === 'record' ? 'animate-pulse ring-2 ring-yellow-400' : ''}`}
+            className={`gap-1.5 bg-gradient-to-r from-coins to-rank-gold hover:from-coins/90 hover:to-rank-gold/90 text-primary-foreground transition-all ${activeCelebration === 'record' ? 'animate-pulse ring-2 ring-coins' : ''}`}
             disabled={isDisabled || (activeCelebration !== null && activeCelebration !== 'record') || isLoading}>
             {isLoading && activeCelebration === 'record' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trophy className="h-3.5 w-3.5" />}
             Recorde

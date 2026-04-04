@@ -29,7 +29,7 @@ interface BadgeDisplayProps {
 const rarityColors = {
   common: 'from-slate-400 to-slate-600',
   rare: 'from-blue-400 to-blue-600',
-  epic: 'from-purple-400 to-purple-600',
+  epic: 'from-primary to-primary-glow',
   legendary: 'from-rank-gold to-orange-500'
 };
 

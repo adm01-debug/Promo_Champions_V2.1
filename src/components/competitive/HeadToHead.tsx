@@ -42,7 +42,7 @@ export const HeadToHead: FC<HeadToHeadProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-destructive to-primary-glow flex items-center justify-center">
               <Swords className="h-4 w-4 text-primary-foreground" />
             </div>
             Head-to-Head Semanal
@@ -89,7 +89,7 @@ export const HeadToHead: FC<HeadToHeadProps> = ({ className }) => {
 
                   {/* VS */}
                   <div className="flex flex-col items-center gap-1">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-lg">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-destructive to-primary-glow flex items-center justify-center shadow-lg">
                       <span className="text-primary-foreground font-black text-sm">VS</span>
                     </div>
                   </div>
