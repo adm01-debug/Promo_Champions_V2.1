@@ -20,8 +20,8 @@ const LEVEL_COLORS: Record<number, string> = {
   6: 'from-destructive to-destructive/80',
   7: 'from-accent to-secondary',
   8: 'from-coins to-coins/80',
-  9: 'from-cyan-400 to-cyan-600',
-  10: 'from-violet-400 to-violet-600',
+  9: 'from-accent to-accent/80',
+  10: 'from-primary-glow to-primary',
 };
 
 export const ProgressiveGoals: FC<ProgressiveGoalsProps> = ({ salespersonId }) => {

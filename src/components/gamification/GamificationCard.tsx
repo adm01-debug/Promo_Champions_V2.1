@@ -36,9 +36,9 @@ const getRankIcon = (rank: number) => {
 
 const getRankBadgeColor = (rank: number) => {
   switch (rank) {
-    case 1: return "bg-gradient-to-r from-rank-gold to-yellow-400 text-background shadow-glow-gold";
+    case 1: return "bg-gradient-to-r from-rank-gold to-coins text-background shadow-glow-gold";
     case 2: return "bg-gradient-to-r from-rank-silver to-gray-300 text-background";
-    case 3: return "bg-gradient-to-r from-rank-bronze to-orange-400 text-background";
+    case 3: return "bg-gradient-to-r from-rank-bronze to-streak text-background";
     default: return "bg-muted text-muted-foreground";
   }
 };

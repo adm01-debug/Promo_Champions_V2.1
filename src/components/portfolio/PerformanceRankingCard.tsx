@@ -37,11 +37,11 @@ const getRankIcon = (rank: number) => {
 const getRankBadgeStyle = (rank: number) => {
   switch (rank) {
     case 1:
-      return "bg-gradient-to-r from-yellow-500/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins";
+      return "bg-gradient-to-r from-coins/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins";
     case 2:
       return "bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/30 text-muted-foreground dark:text-muted-foreground";
     case 3:
-      return "bg-gradient-to-r from-rank-gold/20 to-orange-500/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold";
+      return "bg-gradient-to-r from-rank-gold/20 to-streak/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold";
     default:
       return "bg-muted";
   }

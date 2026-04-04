@@ -51,9 +51,9 @@ const getRankStyles = (rank: number) => {
       };
     case 3:
       return {
-        card: "bg-gradient-to-r from-rank-gold/10 via-amber-500/5 to-amber-600/10 border-2 border-rank-gold/30",
+        card: "bg-gradient-to-r from-rank-gold/10 via-rank-gold/5 to-rank-gold/10 border-2 border-rank-gold/30",
         avatar: "ring-4 ring-rank-gold/50",
-        badge: "bg-gradient-to-r from-rank-gold to-amber-600 text-primary-foreground font-bold",
+        badge: "bg-gradient-to-r from-rank-gold to-rank-gold text-primary-foreground font-bold",
       };
     default:
       return {

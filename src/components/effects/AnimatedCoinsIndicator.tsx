@@ -20,7 +20,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
     <div className={`relative inline-flex items-center justify-center ${className}`} style={{ width: containerSize, height: containerSize }}>
       {/* Golden glow */}
       <motion.div
-        className="absolute inset-0 rounded-full bg-gradient-to-t from-yellow-500/30 to-rank-gold/10 blur-sm"
+        className="absolute inset-0 rounded-full bg-gradient-to-t from-coins/30 to-rank-gold/10 blur-sm"
         animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.9, 1.1, 0.9] }}
         transition={{ duration: 2, repeat: Infinity }}
       />

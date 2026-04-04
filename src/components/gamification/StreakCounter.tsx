@@ -55,7 +55,7 @@ export const StreakCounter: FC<StreakCounterProps> = ({
     <Card className={cn(
       "relative overflow-hidden",
       sizeClasses[size],
-      isOnFire && "bg-gradient-to-br from-orange-500/10 to-red-500/10 border-streak/30",
+      isOnFire && "bg-gradient-to-br from-streak/10 to-destructive/10 border-streak/30",
       className
     )}>
       <div className="flex items-center gap-4">
@@ -98,7 +98,7 @@ export const StreakCounter: FC<StreakCounterProps> = ({
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${milestoneProgress}%` }}
-                className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
+                className="h-full bg-gradient-to-r from-streak to-destructive rounded-full"
               />
             </div>
           </div>

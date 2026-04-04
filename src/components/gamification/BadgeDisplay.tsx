@@ -28,9 +28,9 @@ interface BadgeDisplayProps {
 
 const rarityColors = {
   common: 'from-slate-400 to-slate-600',
-  rare: 'from-blue-400 to-blue-600',
+  rare: 'from-info to-info/80',
   epic: 'from-primary to-primary-glow',
-  legendary: 'from-rank-gold to-orange-500'
+  legendary: 'from-rank-gold to-streak'
 };
 
 const rarityGlow = {

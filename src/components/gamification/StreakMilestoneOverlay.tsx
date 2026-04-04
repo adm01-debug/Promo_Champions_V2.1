@@ -73,8 +73,8 @@ export function StreakMilestoneOverlay({
             transition={{ type: "spring", duration: 0.7, bounce: 0.5 }}
             className="relative"
           >
-            <div className="absolute inset-0 -m-16 rounded-full bg-gradient-to-t from-red-600 via-orange-500 to-coins opacity-40 blur-3xl animate-pulse" />
-            <div className="absolute inset-0 -m-8 rounded-full bg-gradient-to-t from-orange-600 via-amber-500 to-yellow-300 opacity-30 blur-2xl" />
+            <div className="absolute inset-0 -m-16 rounded-full bg-gradient-to-t from-destructive via-streak to-coins opacity-40 blur-3xl animate-pulse" />
+            <div className="absolute inset-0 -m-8 rounded-full bg-gradient-to-t from-streak via-rank-gold to-coins opacity-30 blur-2xl" />
             
             <div className={cn(
               "relative glass-card p-10 rounded-3xl text-center",
@@ -99,13 +99,13 @@ export function StreakMilestoneOverlay({
                     </motion.div>
 
                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, type: "spring", bounce: 0.6 }} className="relative mb-2">
-                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-streak to-red-500 bg-clip-text text-transparent">{streakDays}</span>
+                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-streak to-destructive bg-clip-text text-transparent">{streakDays}</span>
                       <span className="text-2xl font-bold text-streak ml-2">dias</span>
                     </motion.div>
 
                     {xpReward > 0 && (
                       <motion.div initial={{ scale: 0, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ delay: 0.6, type: "spring" }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rank-gold/20 to-orange-500/20 border border-rank-gold/30 mb-3">
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rank-gold/20 to-streak/20 border border-rank-gold/30 mb-3">
                         <Zap className="h-5 w-5 text-rank-gold" /><span className="text-lg font-bold text-rank-gold">+{xpReward} XP</span>
                       </motion.div>
                     )}

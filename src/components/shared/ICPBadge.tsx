@@ -43,7 +43,7 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
           variant="outline"
           className={cn(
             "flex items-center font-bold border transition-all",
-            "bg-gradient-to-r from-status-success/20 to-emerald-500/20",
+            "bg-gradient-to-r from-status-success/20 to-success/20",
             "text-status-success border-status-success/40",
             "hover:from-success/30 hover:to-success/20",
             sizeClasses[size],
@@ -63,7 +63,7 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
           variant="outline"
           className={cn(
             "flex items-center font-bold border transition-all",
-            "bg-gradient-to-r from-status-warning/20 to-amber-500/20",
+            "bg-gradient-to-r from-status-warning/20 to-warning/20",
             "text-status-warning border-status-warning/40",
             "hover:from-warning/30 hover:to-warning/20",
             sizeClasses[size],
