@@ -105,6 +105,7 @@ export function useCategoryMetrics(dateRange: DateRange) {
 }
 
 export function useReportMetrics(dateRange: DateRange) {
+  // All computed values are memoized based on query data
   const salesQuery = useSales(dateRange);
   const metricsQuery = useDailyMetrics(dateRange);
   const categoryQuery = useCategoryMetrics(dateRange);
