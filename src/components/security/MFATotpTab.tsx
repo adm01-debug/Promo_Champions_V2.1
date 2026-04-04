@@ -61,7 +61,7 @@ export const MFATotpTab = React.memo(function MFATotpTab({
   if (qrCodeUrl) {
     return (
       <div className="space-y-4">
-        <div className="flex justify-center p-4 bg-white rounded-lg">
+        <div className="flex justify-center p-4 bg-background rounded-lg">
           <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeUrl)}`} alt="QR Code TOTP" className="w-48 h-48" />
         </div>
         <p className="text-sm text-muted-foreground text-center">Escaneie o QR code com seu app autenticador (Google Authenticator, Authy, etc.)</p>

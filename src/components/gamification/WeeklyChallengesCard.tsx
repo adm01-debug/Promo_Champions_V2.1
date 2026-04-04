@@ -110,7 +110,7 @@ function ChallengeItem({
               initial={{ width: 0 }}
               animate={{ width: `${challenge.percentage}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute inset-y-0 left-0 bg-white rounded-full"
+              className="absolute inset-y-0 left-0 bg-primary-foreground rounded-full"
             />
           </div>
         </div>

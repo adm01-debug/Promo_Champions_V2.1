@@ -137,7 +137,7 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
                   delay: 0.1 + i * 0.05,
                   ease: 'easeOut'
                 }}
-                className="absolute w-1 h-1 bg-white rounded-full"
+                className="absolute w-1 h-1 bg-primary-foreground rounded-full"
               />
             ))}
           </div>
