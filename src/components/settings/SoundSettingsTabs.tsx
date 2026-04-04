@@ -15,7 +15,7 @@ import { useSystemSoundSettings, SystemSoundType } from "@/hooks/useSystemSoundS
 import { toast } from "sonner";
 
 // Preload confetti module
-type ConfettiFunction = (options?: Record<string, unknown>) => Promise<null>;
+type ConfettiFunction = ((options?: Record<string, unknown>) => Promise<unknown> | null) | null;
 
 export function SoundSettingsTabs() {
   // Celebration sound settings
@@ -74,7 +74,7 @@ export function SoundSettingsTabs() {
       setIsLoading(true);
       setActiveCelebration('meta');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('meta');
@@ -128,7 +128,7 @@ export function SoundSettingsTabs() {
       setIsLoading(true);
       setActiveCelebration('levelup');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('levelup');
@@ -191,7 +191,7 @@ export function SoundSettingsTabs() {
       setIsLoading(true);
       setActiveCelebration('record');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('record');

@@ -10,7 +10,7 @@ import { useSoundSettings, SoundType, soundOptions } from "@/hooks/useSoundSetti
 import { toast } from "sonner";
 
 // Preload confetti module
-type ConfettiFunction = (options?: Record<string, unknown>) => Promise<null>;
+type ConfettiFunction = ((options?: Record<string, unknown>) => Promise<unknown> | null) | null;
 
 const READY_SOUND_KEY = 'celebration-ready-sound-enabled';
 
@@ -75,7 +75,7 @@ export function SoundSettings() {
       setIsLoading(true);
       setActiveCelebration('meta');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('meta');
@@ -129,7 +129,7 @@ export function SoundSettings() {
       setIsLoading(true);
       setActiveCelebration('levelup');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('levelup');
@@ -192,7 +192,7 @@ export function SoundSettings() {
       setIsLoading(true);
       setActiveCelebration('record');
       confetti = (await import('canvas-confetti')).default;
-      confettiRef.current = confetti;
+      confettiRef.current = confetti as unknown as ConfettiFunction;
       setIsLoading(false);
     } else {
       setActiveCelebration('record');
