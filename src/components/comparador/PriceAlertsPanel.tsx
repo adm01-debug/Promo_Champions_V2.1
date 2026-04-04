@@ -14,8 +14,8 @@ interface PriceAlert {
   price_change_percent: number;
   is_read: boolean;
   created_at: string;
-  product_name?: string;
-  supplier_name?: string;
+  products?: { name: string };
+  suppliers?: { name: string };
 }
 
 interface PriceAlertsPanelProps {

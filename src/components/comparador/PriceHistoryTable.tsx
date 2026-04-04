@@ -10,9 +10,10 @@ interface PriceHistoryEntry {
   id: string;
   old_price: number;
   new_price: number;
-  changed_at: string;
-  product_name?: string;
-  supplier_name?: string;
+  price_change_percent: number;
+  recorded_at: string;
+  products?: { name: string };
+  suppliers?: { name: string };
 }
 
 interface PriceHistoryTableProps {
