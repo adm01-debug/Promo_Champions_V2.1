@@ -84,7 +84,7 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
   return y + 30;
 }
 
-function addTopDeals(doc: jsPDF, autoTable: any, deals: ReportData["topDeals"], startY: number): number {
+function addTopDeals(doc: jsPDF, autoTable: (doc: jsPDF, options: Record<string, unknown>) => void, deals: ReportData["topDeals"], startY: number): number {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...BRAND_DARK);
