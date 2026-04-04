@@ -191,7 +191,7 @@ export function EnhancedTVMode() {
             {currentScreen === 'goals' && (
               <motion.div key="gl" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
                 className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {goals.slice(0, 6).map((goal: any, i: number) => {
+                {goals.slice(0, 6).map((goal: { id: string; goal_amount: number; current_amount: number; salespeople?: { name: string } }, i: number) => {
                   const progress = goal.goal_amount > 0 ? Math.min((goal.current_amount / goal.goal_amount) * 100, 100) : 0;
                   return (
                     <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>

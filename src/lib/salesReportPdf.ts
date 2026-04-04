@@ -112,7 +112,7 @@ function addTopDeals(doc: jsPDF, autoTable: (doc: jsPDF, options: Record<string,
     : startY + 60;
 }
 
-function addTeamRanking(doc: jsPDF, autoTable: any, team: ReportData["teamRanking"], startY: number): number {
+function addTeamRanking(doc: jsPDF, autoTable: (doc: jsPDF, options: Record<string, unknown>) => void, team: ReportData["teamRanking"], startY: number): number {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...BRAND_DARK);

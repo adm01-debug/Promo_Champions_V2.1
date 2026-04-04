@@ -69,7 +69,7 @@ export function useWebAuthn() {
       if (optionsError) throw optionsError;
 
       const credential = await navigator.credentials.get({
-        publicKey: { ...options, challenge: base64urlToBuffer(options.challenge), allowCredentials: options.allowCredentials?.map((c: any) => ({ ...c, id: base64urlToBuffer(c.id) })) },
+        publicKey: { ...options, challenge: base64urlToBuffer(options.challenge), allowCredentials: options.allowCredentials?.map((c: { id: string; type: string }) => ({ ...c, id: base64urlToBuffer(c.id) })) },
       }) as PublicKeyCredential;
       if (!credential) throw new Error('Falha na autenticação');
 

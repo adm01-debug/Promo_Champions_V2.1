@@ -87,7 +87,7 @@ export default function Fornecedores() {
             <CardContent>
               {riskAssessments && riskAssessments.length > 0 ? (
                 <div className="space-y-4">
-                  {riskAssessments.slice(0, 5).map((assessment: any) => (
+                  {riskAssessments.slice(0, 5).map((assessment: { id: string; suppliers?: { name: string }; assessment_date: string; overall_risk: number | null; risk_level: string }) => (
                     <div key={assessment.id} className="flex items-center justify-between p-4 rounded-lg border border-border/30">
                       <div><div className="font-medium">{assessment.suppliers?.name}</div><div className="text-sm text-muted-foreground">Avaliado em {new Date(assessment.assessment_date).toLocaleDateString('pt-BR')}</div></div>
                       <div className="flex items-center gap-4"><div className="text-right"><div className="text-sm text-muted-foreground">Risco Geral</div><div className="font-medium">{Math.round((assessment.overall_risk || 0) * 100)}%</div></div>{getRiskBadge(assessment.risk_level)}</div>

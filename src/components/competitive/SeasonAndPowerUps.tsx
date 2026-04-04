@@ -86,7 +86,7 @@ export const SeasonAndPowerUps: FC = () => {
             Power-ups Ativos
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {powerUps.map((pu: any, i: number) => {
+            {powerUps.map((pu: { id: string; power_up_type: string; multiplier: number; expires_at: string; source: string | null }, i: number) => {
               const Icon = powerUpIcons[pu.power_up_type] || Zap;
               const color = powerUpColors[pu.power_up_type] || powerUpColors.xp_boost;
               return (

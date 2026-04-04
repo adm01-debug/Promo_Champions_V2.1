@@ -135,7 +135,7 @@ export function TodaysCadenceTasks() {
                 <p className="text-xs text-muted-foreground mt-1">As próximas tarefas aparecerão aqui</p>
               </div>
             ) : (
-              tasks.map((task: any, index: number) => {
+              tasks.map((task: { id: string; cadence_step: Record<string, unknown> | null; prospect_cadence: Record<string, unknown> | null; scheduled_date: string; status: string; notes: string | null }, index: number) => {
                 const step = task.cadence_step;
                 const prospectCadence = task.prospect_cadence;
                 const sale = prospectCadence?.sale;

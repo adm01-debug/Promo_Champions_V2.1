@@ -127,7 +127,7 @@ export function ApiIntegrationSettings() {
                   {logs.length === 0 ? (
                     <p className="text-muted-foreground text-sm">Nenhuma alteração registrada</p>
                   ) : (
-                    logs.map((log: any, i: number) => (
+                    logs.map((log: { id: string; operation: string; field_name: string; changed_by: string; old_value: string | null; new_value: string | null; created_at: string; salespeople?: { name: string } }, i: number) => (
                       <motion.div key={log.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="flex items-center justify-between p-3 rounded-lg border bg-card">
                         <div className="flex items-center gap-3">
                           <Badge variant={log.operation === "ADD" ? "default" : log.operation === "REM" ? "destructive" : "secondary"}>{log.operation}</Badge>
