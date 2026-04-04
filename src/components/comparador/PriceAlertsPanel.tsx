@@ -6,8 +6,20 @@ import { AlertTriangle, TrendingDown, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+interface PriceAlert {
+  id: string;
+  alert_type: string;
+  old_price: number;
+  new_price: number;
+  price_change_percent: number;
+  is_read: boolean;
+  created_at: string;
+  product_name?: string;
+  supplier_name?: string;
+}
+
 interface PriceAlertsPanelProps {
-  alerts: any[];
+  alerts: PriceAlert[];
   unreadCount: number;
   onMarkAllRead: () => void;
   formatCurrency: (value: number) => string;

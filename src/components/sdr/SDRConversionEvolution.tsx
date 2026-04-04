@@ -42,7 +42,7 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
       const chartData = intervals.map(date => {
         const dateKey = format(date, 'yyyy-MM-dd');
         const label = useWeekly ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}` : format(date, 'dd/MM', { locale: ptBR });
-        const point: any = { date: dateKey, label, teamAverage: 0, teamMeetings: 0, teamLeads: 0, details: {} };
+        const point: Record<string, unknown> = { date: dateKey, label, teamAverage: 0, teamMeetings: 0, teamLeads: 0, details: {} as Record<string, unknown> };
         let totalMeetings = 0, totalLeads = 0;
 
         sdrs.forEach(sdr => {

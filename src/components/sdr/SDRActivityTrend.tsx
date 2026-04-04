@@ -209,7 +209,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
-                const total = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
+                const total = payload.reduce((sum: number, entry: { value?: number }) => sum + (entry.value || 0), 0);
                 return (
                   <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
                     <div className="flex items-center justify-between gap-4">
