@@ -165,7 +165,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'matchups' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <Swords className="h-6 w-6 text-purple-500" />
+                  <Swords className="h-6 w-6 text-primary" />
                   <h2 className="text-xl font-bold text-foreground">Duelos da Semana</h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
