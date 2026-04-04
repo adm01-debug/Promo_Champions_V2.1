@@ -8,35 +8,10 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Link } from "react-router-dom";
 
-interface AccessDeniedEntry {
-  id: string;
-  user_email: string | null;
-  attempted_path: string;
-  created_at: string;
-  user_role: string | null;
-}
-
-interface SecurityAlertEntry {
-  id: string;
-  alert_type: string;
-  severity: string;
-  details: string | null;
-  created_at: string;
-  resolved: boolean;
-}
-
-interface SDRAlertEntry {
-  id: string;
-  alert_type: string;
-  severity: string;
-  message: string | null;
-  created_at: string;
-}
-
 interface AdminSecurityPanelProps {
-  recentAccessDenied: AccessDeniedEntry[];
-  recentSecurityAlerts: SecurityAlertEntry[];
-  recentSDRAlerts: SDRAlertEntry[];
+  recentAccessDenied: Array<Record<string, unknown>>;
+  recentSecurityAlerts: Array<Record<string, unknown>>;
+  recentSDRAlerts: Array<Record<string, unknown>>;
 }
 
 export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, recentSDRAlerts }: AdminSecurityPanelProps) {
