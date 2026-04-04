@@ -103,7 +103,7 @@ export const WinLossAnalysis: FC = () => {
           <Card className="glass border-border/40">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-green-500" />
+                <Trophy className="h-4 w-4 text-success" />
                 Top Motivos de Vitória
               </CardTitle>
             </CardHeader>
