@@ -167,24 +167,21 @@ export const useCreateInteraction = () => {
 
       // If template was used, increment usage count
       if (interaction.template_id) {
-        await supabase.rpc('increment_template_usage' as any, {
-          template_id: interaction.template_id,
-        }).catch(() => {
-          // Fallback: manual increment
-          supabase
+        try {
+          const { data: tpl } = await supabase
             .from('message_templates')
             .select('usage_count')
-            .eq('id', interaction.template_id!)
-            .single()
-            .then(({ data: tpl }) => {
-              if (tpl) {
-                supabase
-                  .from('message_templates')
-                  .update({ usage_count: ((tpl as any).usage_count || 0) + 1 } as any)
-                  .eq('id', interaction.template_id!);
-              }
-            });
-        });
+            .eq('id', interaction.template_id)
+            .single();
+          if (tpl) {
+            await supabase
+              .from('message_templates')
+              .update({ usage_count: ((tpl as any).usage_count || 0) + 1 } as any)
+              .eq('id', interaction.template_id);
+          }
+        } catch {
+          // Silent fail — usage count is non-critical
+        }
       }
 
       return data;
