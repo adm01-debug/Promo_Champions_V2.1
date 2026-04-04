@@ -212,7 +212,8 @@ export const BIMetricCard: FC<BIMetricCardProps> = React.memo(({
       </Card>
     </motion.div>
   );
-};
+});
+BIMetricCard.displayName = "BIMetricCard";
 
 // Grid wrapper for metrics
 export const BIMetricsGrid: FC<{ children: React.ReactNode; cols?: 2 | 3 | 4 | 6 }> = ({ 
