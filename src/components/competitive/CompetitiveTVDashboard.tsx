@@ -175,7 +175,7 @@ export const CompetitiveTVDashboard: FC = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.15 }}
-                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20"
+                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
                     >
                       <div className="text-center flex-1">
                         <p className="font-bold text-foreground">{(matchup.player1 as any)?.name || '?'}</p>
