@@ -14,6 +14,10 @@ import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
 import { AppRoutes } from "@/routes/AppRoutes";
+import { initErrorTracking } from "@/lib/errorTracking";
+
+// Initialize error tracking on app load
+initErrorTracking();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,16 +34,6 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  useEffect(() => {
-    const handler = (event: PromiseRejectionEvent) => {
-      if (import.meta.env.DEV) {
-        console.error("Unhandled rejection:", event.reason);
-      }
-      event.preventDefault();
-    };
-    window.addEventListener("unhandledrejection", handler);
-    return () => window.removeEventListener("unhandledrejection", handler);
-  }, []);
 
   return (
     <HelmetProvider>
