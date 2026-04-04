@@ -1,5 +1,6 @@
 import { ListTodo, DollarSign, RefreshCw, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { SystemSoundType } from "@/hooks/useSystemSoundSettings";
 import { VolumeControl } from "./VolumeControl";
 import { SystemSoundRow } from "./SystemSoundRow";
