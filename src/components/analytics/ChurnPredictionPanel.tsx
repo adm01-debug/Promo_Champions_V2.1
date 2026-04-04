@@ -158,7 +158,7 @@ const PredictionCard = ({
               {/* Suggested Actions */}
               <div>
                 <p className="text-xs font-medium mb-1 flex items-center gap-1">
-                  <Lightbulb className="h-3 w-3 text-yellow-500" />
+                  <Lightbulb className="h-3 w-3 text-warning" />
                   Ações Sugeridas
                 </p>
                 <ul className="space-y-1">
