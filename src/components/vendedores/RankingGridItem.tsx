@@ -130,4 +130,4 @@ export const RankingGridItem = React.memo(function RankingGridItem({
       </Link>
     </motion.div>
   );
-}
+});
