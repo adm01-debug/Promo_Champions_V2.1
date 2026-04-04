@@ -106,7 +106,7 @@ describe("ICP badge display", () => {
 // ─── Active Cadence display ────────────────────────────────────────
 describe("Active cadence display in DealCard", () => {
   it("shows cadence name and step", () => {
-    const cadence = { cadenceName: "Outbound B2B", currentStep: 3, status: "active" as const };
+    const cadence: { cadenceName: string; currentStep: number; status: string } = { cadenceName: "Outbound B2B", currentStep: 3, status: "active" };
     expect(cadence.cadenceName).toBe("Outbound B2B");
     expect(cadence.currentStep).toBe(3);
   });
