@@ -43,7 +43,7 @@ export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, r
             <ScrollArea className="h-[280px]">
               {recentAccessDenied.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-success" />
                   <p className="text-sm">Nenhum acesso negado recente</p>
                 </div>
               ) : (
@@ -67,7 +67,7 @@ export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, r
             <ScrollArea className="h-[280px]">
               {recentSecurityAlerts.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-success" />
                   <p className="text-sm">Nenhum alerta de segurança recente</p>
                 </div>
               ) : (
@@ -88,7 +88,7 @@ export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, r
             <ScrollArea className="h-[280px]">
               {recentSDRAlerts.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-success" />
                   <p className="text-sm">Nenhum alerta SDR recente</p>
                 </div>
               ) : (

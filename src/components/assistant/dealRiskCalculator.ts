@@ -68,7 +68,7 @@ export function calculateRiskLevel(
   let icon: React.ReactNode;
 
   if (riskScore >= 4) {
-    level = 'high'; label = 'Alto Risco'; color = 'text-red-500'; bgColor = 'bg-red-500/10';
+    level = 'high'; label = 'Alto Risco'; color = 'text-destructive'; bgColor = 'bg-destructive/10';
     icon = React.createElement(AlertTriangle, { className: "h-3.5 w-3.5" });
   } else if (riskScore >= 2) {
     level = 'medium'; label = 'Atenção'; color = 'text-amber-500'; bgColor = 'bg-amber-500/10';
@@ -84,11 +84,11 @@ export function calculateRiskLevel(
 
 export const STATUS_LABELS: Record<string, { label: string; color: string; icon: string }> = {
   lead: { label: 'Lead', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30', icon: '🎯' },
-  qualified: { label: 'Qualificado', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: '✅' },
+  qualified: { label: 'Qualificado', color: 'bg-info/20 text-info border-info/30', icon: '✅' },
   proposal: { label: 'Proposta', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', icon: '📄' },
-  negotiation: { label: 'Negociação', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', icon: '🤝' },
+  negotiation: { label: 'Negociação', color: 'bg-primary/20 text-primary border-primary/30', icon: '🤝' },
   closed_won: { label: 'Fechado', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: '🎉' },
-  closed_lost: { label: 'Perdido', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: '❌' },
+  closed_lost: { label: 'Perdido', color: 'bg-destructive/20 text-destructive border-destructive/30', icon: '❌' },
 };
 
 export const ACTIVITY_TYPE_LABELS: Record<string, string> = {

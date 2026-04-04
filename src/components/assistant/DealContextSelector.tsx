@@ -39,11 +39,11 @@ interface DealContextSelectorProps {
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   lead: { label: 'Lead', color: 'bg-slate-500/20 text-slate-400' },
-  qualified: { label: 'Qualificado', color: 'bg-blue-500/20 text-blue-400' },
+  qualified: { label: 'Qualificado', color: 'bg-info/20 text-info' },
   proposal: { label: 'Proposta', color: 'bg-amber-500/20 text-amber-400' },
-  negotiation: { label: 'Negociação', color: 'bg-purple-500/20 text-purple-400' },
+  negotiation: { label: 'Negociação', color: 'bg-primary/20 text-primary' },
   closed_won: { label: 'Fechado', color: 'bg-emerald-500/20 text-emerald-400' },
-  closed_lost: { label: 'Perdido', color: 'bg-red-500/20 text-red-400' },
+  closed_lost: { label: 'Perdido', color: 'bg-destructive/20 text-destructive' },
 };
 
 export function DealContextSelector({

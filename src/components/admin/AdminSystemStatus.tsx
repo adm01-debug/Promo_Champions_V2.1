@@ -44,7 +44,7 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
           <div className="grid grid-cols-2 gap-2">
             {EDGE_FUNCTIONS.map((fn) => (
               <div key={fn.name} className="flex items-center gap-2 p-2 rounded-md bg-muted/30">
-                <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-success flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate">{fn.name}</p>
                   <p className="text-[10px] text-muted-foreground">{fn.schedule}</p>
@@ -78,7 +78,7 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
               <Activity className="h-4 w-4 text-chart-4" /><span className="text-sm font-medium">Circuit Breakers</span>
             </div>
             {edgeStatus?.openCircuits?.length === 0 ? (
-              <Badge variant="default" className="bg-green-500/20 text-green-500 border-green-500/30">Todos fechados</Badge>
+              <Badge variant="default" className="bg-green-500/20 text-success border-green-500/30">Todos fechados</Badge>
             ) : (
               <Badge variant="destructive">{edgeStatus?.openCircuits?.length} aberto(s)</Badge>
             )}
