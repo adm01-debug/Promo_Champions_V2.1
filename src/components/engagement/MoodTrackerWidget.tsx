@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +18,7 @@ const MOODS = [
   { emoji: "🤩", label: "Excelente", value: 5, color: "bg-success/20 hover:bg-success/30 border-success/30" },
 ];
 
-export function MoodTrackerWidget({ className }: { className?: string }) {
+function _MoodTrackerWidget({ className }: { className?: string }) {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
@@ -117,3 +118,5 @@ export function MoodTrackerWidget({ className }: { className?: string }) {
     </Card>
   );
 }
+
+export const MoodTrackerWidget = React.memo(_MoodTrackerWidget);

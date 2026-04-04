@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +15,7 @@ const RANK_CONFIG = [
   { icon: Trophy, color: "text-rank-bronze", bg: "bg-rank-bronze/15", border: "border-rank-bronze/30" },
 ];
 
-export function MiniLeaderboard() {
+function _MiniLeaderboard() {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
 
@@ -105,3 +106,5 @@ export function MiniLeaderboard() {
     </Card>
   );
 }
+
+export const MiniLeaderboard = React.memo(_MiniLeaderboard);

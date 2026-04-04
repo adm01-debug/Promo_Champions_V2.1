@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +9,7 @@ import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { cn } from "@/lib/utils";
 
-export function TopClosersRanking() {
+function _TopClosersRanking() {
   const { data: closers } = useTopClosers();
   const { data: xpData } = useAllSalespeopleXP();
 
@@ -138,3 +139,5 @@ export function TopClosersRanking() {
     </Card>
   );
 }
+
+export const TopClosersRanking = React.memo(_TopClosersRanking);

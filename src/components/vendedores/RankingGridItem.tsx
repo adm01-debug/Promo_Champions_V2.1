@@ -36,7 +36,7 @@ const getRankDecor = (rank: number) => {
     case 3:
       return {
         icon: <Award className="h-4 w-4 text-rank-gold" />,
-        border: "border-amber-600/40",
+        border: "border-rank-gold/40",
         bg: "from-rank-gold/10 to-transparent",
         rankBg: "bg-gradient-to-br from-rank-gold to-rank-gold/80 text-primary-foreground",
       };

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -84,18 +85,22 @@ export function useCollectibleBadges(salespersonId?: string) {
     },
   });
 
-  const earnedIds = new Set(earnedBadges.data?.map(e => e.badge_id) || []);
+  const { badgesByCategory, earnedIds } = useMemo(() => {
+    const ids = new Set(earnedBadges.data?.map(e => e.badge_id) || []);
 
-  const badgesByCategory = (allBadges.data || []).reduce((acc, badge) => {
-    if (!acc[badge.category]) acc[badge.category] = [];
-    acc[badge.category].push({ ...badge, earned: earnedIds.has(badge.id) });
-    return acc;
-  }, {} as Record<string, (CollectibleBadge & { earned: boolean })[]>);
+    const byCategory = (allBadges.data || []).reduce((acc, badge) => {
+      if (!acc[badge.category]) acc[badge.category] = [];
+      acc[badge.category].push({ ...badge, earned: ids.has(badge.id) });
+      return acc;
+    }, {} as Record<string, (CollectibleBadge & { earned: boolean })[]>);
 
-  // Sort each category by rarity
-  Object.values(badgesByCategory).forEach(badges => {
-    badges.sort((a, b) => (RARITY_ORDER[a.rarity] ?? 99) - (RARITY_ORDER[b.rarity] ?? 99));
-  });
+    // Sort each category by rarity
+    Object.values(byCategory).forEach(badges => {
+      badges.sort((a, b) => (RARITY_ORDER[a.rarity] ?? 99) - (RARITY_ORDER[b.rarity] ?? 99));
+    });
+
+    return { badgesByCategory: byCategory, earnedIds: ids };
+  }, [allBadges.data, earnedBadges.data]);
 
   return {
     allBadges: allBadges.data || [],

@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,7 @@ import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { cn } from "@/lib/utils";
 
-export function TopSDRsRanking() {
+function _TopSDRsRanking() {
   const { data: xpData } = useAllSalespeopleXP();
 
   const getXPInfo = (salespersonId: string) => {
@@ -187,3 +188,5 @@ export function TopSDRsRanking() {
     </Card>
   );
 }
+
+export const TopSDRsRanking = React.memo(_TopSDRsRanking);

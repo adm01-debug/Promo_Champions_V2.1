@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,7 @@ interface ActivityListProps {
   showFilters?: boolean;
 }
 
-export function ActivityList({ limit = 100, showHeader = true, showPagination = true, showFilters = true }: ActivityListProps) {
+function _ActivityList({ limit = 100, showHeader = true, showPagination = true, showFilters = true }: ActivityListProps) {
   const { data: activities, isLoading } = useRecentActivities(limit);
   const { data: salespeople } = useSalespeople();
 
@@ -204,3 +205,5 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
     </Badge>
   );
 }
+
+export const ActivityList = React.memo(_ActivityList);

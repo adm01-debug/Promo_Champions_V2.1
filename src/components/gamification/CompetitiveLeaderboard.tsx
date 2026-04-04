@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,7 +26,7 @@ interface CompetitiveLeaderboardProps {
   showAll?: boolean;
 }
 
-export function CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeaderboardProps) {
+function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeaderboardProps) {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
   const { data: xpData } = useAllSalespeopleXP();
@@ -184,3 +185,5 @@ export function CompetitiveLeaderboard({ showAll: _showAll = false }: Competitiv
     </Card>
   );
 }
+
+export const CompetitiveLeaderboard = React.memo(_CompetitiveLeaderboard);

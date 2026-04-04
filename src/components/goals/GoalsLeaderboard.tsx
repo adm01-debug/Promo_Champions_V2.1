@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SalespersonGoalCard } from "./SalespersonGoalCard";
@@ -25,7 +26,7 @@ interface GoalsLeaderboardProps {
   isLoading?: boolean;
 }
 
-export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
+function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
   const { data: xpData } = useAllSalespeopleXP();
 
   const getXPInfo = (salespersonId: string) => {
@@ -140,3 +141,5 @@ export function GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardPro
     </Card>
   );
 }
+
+export const GoalsLeaderboard = React.memo(_GoalsLeaderboard);

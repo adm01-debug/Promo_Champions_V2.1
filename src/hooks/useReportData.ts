@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, endOfDay } from "date-fns";
@@ -105,6 +106,7 @@ export function useCategoryMetrics(dateRange: DateRange) {
 }
 
 export function useReportMetrics(dateRange: DateRange) {
+  // All computed values are memoized based on query data
   const salesQuery = useSales(dateRange);
   const metricsQuery = useDailyMetrics(dateRange);
   const categoryQuery = useCategoryMetrics(dateRange);
@@ -217,12 +219,17 @@ export function useReportMetrics(dateRange: DateRange) {
     return Object.entries(grouped).map(([dia, vendas]) => ({ dia, vendas }));
   };
 
+  const metrics = useMemo(() => calculateMetrics(), [salesQuery.data, metricsQuery.data]);
+  const revenueData = useMemo(() => formatRevenueData(), [metricsQuery.data]);
+  const categoryData = useMemo(() => formatCategoryData(), [categoryQuery.data]);
+  const salesData = useMemo(() => formatSalesData(), [salesQuery.data]);
+
   return {
     sales: salesQuery.data || [],
-    metrics: calculateMetrics(),
-    revenueData: formatRevenueData(),
-    categoryData: formatCategoryData(),
-    salesData: formatSalesData(),
+    metrics,
+    revenueData,
+    categoryData,
+    salesData,
     isLoading: salesQuery.isLoading || metricsQuery.isLoading || categoryQuery.isLoading,
     error: salesQuery.error || metricsQuery.error || categoryQuery.error,
   };

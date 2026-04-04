@@ -61,7 +61,7 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
           className={cn(
             "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold",
             glowStyles[currentTierIndex] || "",
-            currentTierIndex >= 2 ? "border-orange-500/30" : "border-border/50"
+            currentTierIndex >= 2 ? "border-streak/30" : "border-border/50"
           )}
           style={{ borderColor: `${currentTier.color}40` }}
         >

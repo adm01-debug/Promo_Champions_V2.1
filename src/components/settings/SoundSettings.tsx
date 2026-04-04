@@ -110,7 +110,7 @@ export function SoundSettings() {
           </div>
           <div className="flex items-center justify-center gap-2">
             {isConfettiReady ? (
-              <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in"><Check className="h-3 w-3 animate-scale-in" />Pronto</span>
+              <span className="flex items-center gap-1 text-xs text-success dark:text-success animate-fade-in"><Check className="h-3 w-3 animate-scale-in" />Pronto</span>
             ) : (
               <span className="flex items-center gap-1 text-xs text-muted-foreground"><Loader2 className="h-3 w-3 animate-spin" />Carregando...</span>
             )}

@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -111,7 +112,7 @@ function useSDRConversionRanking(period: PeriodFilter) {
   });
 }
 
-export function SDRConversionRanking({ period }: SDRConversionRankingProps) {
+function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
   const { data: sdrs, isLoading } = useSDRConversionRanking(period);
 
   const periodLabel = period === "week" ? "esta semana" : period === "month" ? "este mês" : "este trimestre";
@@ -274,3 +275,4 @@ export function SDRConversionRanking({ period }: SDRConversionRankingProps) {
     </Card>
   );
 }
+export const SDRConversionRanking = React.memo(_SDRConversionRanking);
