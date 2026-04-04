@@ -20,7 +20,7 @@ describe('Cadence Update Operations', () => {
   });
 
   it('should update cadence description', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { description: 'New description' });
     expect(result.description).toBe('New description');
   });
