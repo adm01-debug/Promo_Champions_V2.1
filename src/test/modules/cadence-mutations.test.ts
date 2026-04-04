@@ -232,7 +232,7 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should complete task without notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = completeTaskWithNotes(task);
     expect(result.status).toBe('completed');
     expect(result.notes).toBeNull();
