@@ -26,7 +26,7 @@ describe('Cadence Update Operations', () => {
   });
 
   it('should toggle cadence active status to inactive', () => {
-    const cadence = { id: '1', name: 'Test', description: null, is_active: true };
+    const cadence = { id: '1', name: 'Test', description: null as string | null, is_active: true };
     const result = simulateUpdateCadence(cadence, { is_active: false });
     expect(result.is_active).toBe(false);
   });
