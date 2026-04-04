@@ -1,34 +1,19 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { 
-  Scale, 
-  TrendingDown, 
-  TrendingUp, 
-  Star,
-  Package,
-  DollarSign,
-  Bell,
-  BellOff,
-  History,
-  AlertTriangle
-} from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Scale, TrendingDown, Star, Package, DollarSign, Bell, BellOff, History } from "lucide-react";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useProducts } from "@/hooks/useProducts";
 import { usePriceAlerts, usePriceHistory } from "@/hooks/usePriceHistory";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { PriceAlertsPanel } from "@/components/comparador/PriceAlertsPanel";
+import { PriceHistoryTable } from "@/components/comparador/PriceHistoryTable";
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
 export default function ComparadorPrecos() {
   const { supplierProducts, productsLoading, getPriceComparison, getBestSupplier } = useSuppliers();
@@ -38,39 +23,22 @@ export default function ComparadorPrecos() {
   const [showAlerts, setShowAlerts] = useState(false);
 
   const products = productsData || [];
-  const productGroups = products?.map(product => {
-    const comparison = getPriceComparison(product.id);
-    const best = getBestSupplier(product.id);
-    
-    const priceRange = comparison.length > 0 
-      ? {
-          min: Math.min(...comparison.map(c => c.unit_price)),
-          max: Math.max(...comparison.map(c => c.unit_price)),
-        }
-      : null;
-
-    const savings = priceRange 
-      ? ((priceRange.max - priceRange.min) / priceRange.max * 100).toFixed(1)
-      : 0;
-
-    return {
-      product,
-      comparison,
-      best,
-      priceRange,
-      savings,
-      supplierCount: comparison.length,
-    };
-  }).filter(g => g.supplierCount > 0) || [];
+  const productGroups = products
+    .map((product) => {
+      const comparison = getPriceComparison(product.id);
+      const best = getBestSupplier(product.id);
+      const priceRange = comparison.length > 0
+        ? { min: Math.min(...comparison.map((c) => c.unit_price)), max: Math.max(...comparison.map((c) => c.unit_price)) }
+        : null;
+      const savings = priceRange ? ((priceRange.max - priceRange.min) / priceRange.max * 100).toFixed(1) : 0;
+      return { product, comparison, best, priceRange, savings, supplierCount: comparison.length };
+    })
+    .filter((g) => g.supplierCount > 0);
 
   const totalProducts = productGroups.length;
   const avgSavings = productGroups.length > 0
     ? (productGroups.reduce((sum, g) => sum + parseFloat(String(g.savings)), 0) / productGroups.length).toFixed(1)
     : 0;
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  };
 
   return (
     <>
@@ -78,177 +46,42 @@ export default function ComparadorPrecos() {
         <title>Comparador de Preços | PROMO CHAMPIONS</title>
         <meta name="description" content="Compare preços entre fornecedores e encontre as melhores ofertas" />
       </Helmet>
-      
+
       <div className="min-h-screen bg-background">
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Scale className="h-6 w-6 text-primary" />
                 Comparador de Preços
               </h1>
-              <p className="text-muted-foreground">
-                Compare preços entre fornecedores e otimize suas compras
-              </p>
+              <p className="text-muted-foreground">Compare preços entre fornecedores e otimize suas compras</p>
             </div>
-            <Button
-              variant={showAlerts ? "default" : "outline"}
-              onClick={() => setShowAlerts(!showAlerts)}
-              className="gap-2"
-            >
-              {unreadCount > 0 ? (
-                <>
-                  <Bell className="h-4 w-4" />
-                  {unreadCount} Alertas
-                </>
-              ) : (
-                <>
-                  <BellOff className="h-4 w-4" />
-                  Alertas
-                </>
-              )}
+            <Button variant={showAlerts ? "default" : "outline"} onClick={() => setShowAlerts(!showAlerts)} className="gap-2">
+              {unreadCount > 0 ? (<><Bell className="h-4 w-4" />{unreadCount} Alertas</>) : (<><BellOff className="h-4 w-4" />Alertas</>)}
             </Button>
           </div>
 
-          {/* Price Alerts Panel */}
-          {showAlerts && (
-            <Card className="glass border-status-warning/30 bg-status-warning/5">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-status-warning" />
-                    Alertas de Preço
-                  </CardTitle>
-                  {unreadCount > 0 && (
-                    <Button variant="ghost" size="sm" onClick={() => markAllAsRead.mutate()}>
-                      Marcar todos como lidos
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                {alerts.length > 0 ? (
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {alerts.slice(0, 10).map((alert) => (
-                      <div 
-                        key={alert.id} 
-                        className={`p-3 rounded-lg border ${alert.is_read ? 'bg-muted/30' : 'bg-background'}`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {alert.alert_type === 'price_drop' ? (
-                              <TrendingDown className="h-4 w-4 text-status-success" />
-                            ) : (
-                              <TrendingUp className="h-4 w-4 text-destructive" />
-                            )}
-                            <span className="font-medium">{alert.products?.name}</span>
-                            <span className="text-muted-foreground">•</span>
-                            <span className="text-sm text-muted-foreground">{alert.suppliers?.name}</span>
-                          </div>
-                          <Badge variant={alert.alert_type === 'price_drop' ? 'default' : 'destructive'}>
-                            {alert.price_change_percent?.toFixed(1)}%
-                          </Badge>
-                        </div>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {alert.old_price && formatCurrency(alert.old_price)} → {formatCurrency(alert.new_price)}
-                          <span className="ml-2">•</span>
-                          <span className="ml-2">
-                            {formatDistanceToNow(new Date(alert.created_at), { addSuffix: true, locale: ptBR })}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    Nenhum alerta de preço. Alertas são criados automaticamente quando preços variam mais de 5%.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          {showAlerts && <PriceAlertsPanel alerts={alerts} unreadCount={unreadCount} onMarkAllRead={() => markAllAsRead.mutate()} formatCurrency={formatCurrency} />}
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <Card className="glass border-border/40">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  Produtos Comparados
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{totalProducts}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-border/40">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  Total de Cotações
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{supplierProducts?.length || 0}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-status-success/30 bg-status-success/5">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-status-success flex items-center gap-2">
-                  <TrendingDown className="h-4 w-4" />
-                  Economia Média
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-status-success">{avgSavings}%</div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-border/40">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Star className="h-4 w-4" />
-                  Fornecedores Ativos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {new Set(supplierProducts?.map(sp => sp.supplier_id)).size}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-border/40">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <History className="h-4 w-4" />
-                  Histórico de Preços
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{priceHistory?.length || 0}</div>
-              </CardContent>
-            </Card>
+            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" />Produtos Comparados</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{totalProducts}</div></CardContent></Card>
+            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><DollarSign className="h-4 w-4" />Total de Cotações</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{supplierProducts?.length || 0}</div></CardContent></Card>
+            <Card className="glass border-status-success/30 bg-status-success/5"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-status-success flex items-center gap-2"><TrendingDown className="h-4 w-4" />Economia Média</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-status-success">{avgSavings}%</div></CardContent></Card>
+            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Star className="h-4 w-4" />Fornecedores Ativos</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{new Set(supplierProducts?.map((sp) => sp.supplier_id)).size}</div></CardContent></Card>
+            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><History className="h-4 w-4" />Histórico de Preços</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{priceHistory?.length || 0}</div></CardContent></Card>
           </div>
 
           {/* Price Comparison by Product */}
           <Card className="glass border-border/40">
             <CardHeader>
               <CardTitle>Comparação por Produto</CardTitle>
-              <CardDescription>
-                Veja todos os fornecedores e preços para cada produto
-              </CardDescription>
+              <CardDescription>Veja todos os fornecedores e preços para cada produto</CardDescription>
             </CardHeader>
             <CardContent>
               {productsLoading ? (
-                <div className="space-y-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-20 w-full" />
-                  ))}
-                </div>
+                <div className="space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}</div>
               ) : productGroups.length > 0 ? (
                 <div className="space-y-6">
                   {productGroups.map(({ product, comparison, best, priceRange, savings }) => (
@@ -258,24 +91,13 @@ export default function ComparadorPrecos() {
                           <h3 className="font-semibold text-lg">{product.name}</h3>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>{comparison.length} fornecedores</span>
-                            {priceRange && (
-                              <>
-                                <span>•</span>
-                                <span>
-                                  {formatCurrency(priceRange.min)} - {formatCurrency(priceRange.max)}
-                                </span>
-                              </>
-                            )}
+                            {priceRange && (<><span>•</span><span>{formatCurrency(priceRange.min)} - {formatCurrency(priceRange.max)}</span></>)}
                           </div>
                         </div>
                         {parseFloat(String(savings)) > 0 && (
-                          <Badge className="bg-status-success">
-                            <TrendingDown className="h-3 w-3 mr-1" />
-                            Economia de {savings}%
-                          </Badge>
+                          <Badge className="bg-status-success"><TrendingDown className="h-3 w-3 mr-1" />Economia de {savings}%</Badge>
                         )}
                       </div>
-
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -289,36 +111,13 @@ export default function ComparadorPrecos() {
                         </TableHeader>
                         <TableBody>
                           {comparison.map((sp, index: number) => (
-                            <TableRow key={sp.id} className={best?.id === sp.id ? 'bg-status-success/10' : ''}>
-                              <TableCell className="font-medium">
-                                {sp.suppliers?.name}
-                                {sp.is_preferred && (
-                                  <Badge variant="outline" className="ml-2">Preferido</Badge>
-                                )}
-                              </TableCell>
-                              <TableCell className="text-right font-mono">
-                                {formatCurrency(sp.unit_price)}
-                                {index === 0 && comparison.length > 1 && (
-                                  <Badge className="ml-2 bg-status-success text-xs">Menor</Badge>
-                                )}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {sp.min_order_quantity} un
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {sp.suppliers?.lead_time_days || '-'} dias
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {Math.round((sp.suppliers?.reliability_score || 0) * 100)}%
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {best?.id === sp.id && (
-                                  <Badge className="bg-primary">
-                                    <Star className="h-3 w-3 mr-1" />
-                                    Melhor Opção
-                                  </Badge>
-                                )}
-                              </TableCell>
+                            <TableRow key={sp.id} className={best?.id === sp.id ? "bg-status-success/10" : ""}>
+                              <TableCell className="font-medium">{sp.suppliers?.name}{sp.is_preferred && <Badge variant="outline" className="ml-2">Preferido</Badge>}</TableCell>
+                              <TableCell className="text-right font-mono">{formatCurrency(sp.unit_price)}{index === 0 && comparison.length > 1 && <Badge className="ml-2 bg-status-success text-xs">Menor</Badge>}</TableCell>
+                              <TableCell className="text-center">{sp.min_order_quantity} un</TableCell>
+                              <TableCell className="text-center">{sp.suppliers?.lead_time_days || "-"} dias</TableCell>
+                              <TableCell className="text-center">{Math.round((sp.suppliers?.reliability_score || 0) * 100)}%</TableCell>
+                              <TableCell className="text-center">{best?.id === sp.id && <Badge className="bg-primary"><Star className="h-3 w-3 mr-1" />Melhor Opção</Badge>}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -336,61 +135,7 @@ export default function ComparadorPrecos() {
             </CardContent>
           </Card>
 
-          {/* Recent Price History */}
-          {priceHistory && priceHistory.length > 0 && (
-            <Card className="glass border-border/40">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5" />
-                  Histórico Recente de Preços
-                </CardTitle>
-                <CardDescription>
-                  Últimas alterações de preço dos fornecedores
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Fornecedor</TableHead>
-                      <TableHead className="text-right">Preço Anterior</TableHead>
-                      <TableHead className="text-right">Novo Preço</TableHead>
-                      <TableHead className="text-center">Variação</TableHead>
-                      <TableHead className="text-center">Data</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {priceHistory.slice(0, 10).map((record) => (
-                      <TableRow key={record.id}>
-                        <TableCell className="font-medium">{record.products?.name}</TableCell>
-                        <TableCell>{record.suppliers?.name}</TableCell>
-                        <TableCell className="text-right font-mono">
-                          {formatCurrency(record.old_price)}
-                        </TableCell>
-                        <TableCell className="text-right font-mono">
-                          {formatCurrency(record.new_price)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={record.price_change_percent < 0 ? 'default' : 'destructive'}>
-                            {record.price_change_percent < 0 ? (
-                              <TrendingDown className="h-3 w-3 mr-1" />
-                            ) : (
-                              <TrendingUp className="h-3 w-3 mr-1" />
-                            )}
-                            {record.price_change_percent.toFixed(1)}%
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center text-sm text-muted-foreground">
-                          {formatDistanceToNow(new Date(record.recorded_at), { addSuffix: true, locale: ptBR })}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          )}
+          <PriceHistoryTable priceHistory={priceHistory || []} formatCurrency={formatCurrency} />
         </div>
       </div>
     </>
