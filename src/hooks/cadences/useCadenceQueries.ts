@@ -70,7 +70,7 @@ export function useCadences() {
 export function useCadenceSteps(cadenceId: string | undefined) {
   return useQuery({
     queryKey: ["cadence-steps", cadenceId],
-    enabled: !!cadenceId,,
+    enabled: !!cadenceId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cadence_steps")
