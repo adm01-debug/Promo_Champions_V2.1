@@ -36,6 +36,7 @@ const ROUTE_TITLES: Record<string, string> = {
   "/territorios": "Territórios",
   "/dashboard-custom": "Dashboard Personalizado",
   "/lead-scoring": "Lead Scoring",
+  "/multichannel": "Multichannel",
 };
 
 function getPageTitle(pathname: string): string {

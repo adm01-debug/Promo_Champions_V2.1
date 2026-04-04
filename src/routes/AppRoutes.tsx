@@ -192,6 +192,7 @@ export function AppRoutes() {
                       <ProtectedRoute requireAdminOrManager><RelatoriosExecutivos /></ProtectedRoute>
                     } />
                     <Route path="/lead-scoring" element={<LeadScoring />} />
+                    <Route path="/multichannel" element={<Multichannel />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
