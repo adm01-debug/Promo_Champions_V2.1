@@ -70,7 +70,7 @@ export const StreakCounter: FC<StreakCounterProps> = ({
             isOnFire ? "text-streak" : "text-muted-foreground"
           )}
         >
-          <Flame size={iconSizes[size]} className={isOnFire ? "fill-orange-500" : ""} />
+          <Flame size={iconSizes[size]} className={isOnFire ? "fill-streak" : ""} />
         </motion.div>
 
         <div className="flex-1">

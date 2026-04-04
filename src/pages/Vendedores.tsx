@@ -40,7 +40,7 @@ const getRankStyles = (rank: number) => {
     case 1:
       return {
         card: "bg-gradient-to-r from-coins/15 via-yellow-400/10 to-rank-gold/15 border-2 border-warning/40 shadow-[0_0_30px_rgba(250,204,21,0.15)]",
-        avatar: "ring-4 ring-yellow-400/50 shadow-[0_0_20px_rgba(250,204,21,0.4)]",
+        avatar: "ring-4 ring-coins/50 shadow-[0_0_20px_hsl(var(--coins) / 0.4)]",
         badge: "bg-gradient-to-r from-coins to-rank-gold text-foreground font-bold",
       };
     case 2:

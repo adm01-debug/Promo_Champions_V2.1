@@ -107,7 +107,7 @@ function _LeagueCard() {
                     className={cn(
                       "flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors",
                       idx === 0 && tier === "legendary" ? "bg-streak/5 border border-streak/20" :
-                      idx === 0 && tier === "diamond" ? "bg-accent/5 border border-cyan-500/20" :
+                      idx === 0 && tier === "diamond" ? "bg-accent/5 border border-accent/20" :
                       idx === 0 && tier === "gold" ? "bg-warning/5 border border-warning/20" : ""
                     )}
                   >

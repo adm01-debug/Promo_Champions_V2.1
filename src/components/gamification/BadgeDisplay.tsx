@@ -35,9 +35,9 @@ const rarityColors = {
 
 const rarityGlow = {
   common: '',
-  rare: 'shadow-blue-500/30',
-  epic: 'shadow-purple-500/30',
-  legendary: 'shadow-amber-500/50'
+  rare: 'shadow-info/30',
+  epic: 'shadow-primary/30',
+  legendary: 'shadow-rank-gold/50'
 };
 
 export const BadgeDisplay: FC<BadgeDisplayProps> = ({

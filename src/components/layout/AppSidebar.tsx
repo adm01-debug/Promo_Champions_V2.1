@@ -126,7 +126,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar/95 backdrop-blur-sm">
       <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-info flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25">
+          <div className="h-10 w-10 rounded-xl bg-info flex items-center justify-center flex-shrink-0 shadow-lg shadow-info/25">
             <Crown className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
