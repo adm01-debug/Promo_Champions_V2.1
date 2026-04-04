@@ -705,6 +705,80 @@ export type Database = {
           },
         ]
       }
+      channel_interactions: {
+        Row: {
+          channel: string
+          contact_info: string | null
+          contact_name: string
+          created_at: string
+          deal_id: string | null
+          direction: string
+          id: string
+          message_preview: string | null
+          metadata: Json | null
+          salesperson_id: string
+          status: string | null
+          template_id: string | null
+        }
+        Insert: {
+          channel?: string
+          contact_info?: string | null
+          contact_name: string
+          created_at?: string
+          deal_id?: string | null
+          direction?: string
+          id?: string
+          message_preview?: string | null
+          metadata?: Json | null
+          salesperson_id: string
+          status?: string | null
+          template_id?: string | null
+        }
+        Update: {
+          channel?: string
+          contact_info?: string | null
+          contact_name?: string
+          created_at?: string
+          deal_id?: string | null
+          direction?: string
+          id?: string
+          message_preview?: string | null
+          metadata?: Json | null
+          salesperson_id?: string
+          status?: string | null
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_interactions_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_interactions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_interactions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_interactions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "message_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_conversations: {
         Row: {
           created_at: string
@@ -2362,6 +2436,66 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      message_templates: {
+        Row: {
+          body: string
+          category: string | null
+          channel: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          salesperson_id: string
+          subject: string | null
+          updated_at: string
+          usage_count: number | null
+          variables: string[] | null
+        }
+        Insert: {
+          body: string
+          category?: string | null
+          channel?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          salesperson_id: string
+          subject?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          variables?: string[] | null
+        }
+        Update: {
+          body?: string
+          category?: string | null
+          channel?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          salesperson_id?: string
+          subject?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          variables?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_templates_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mfa_verification_attempts: {
         Row: {
