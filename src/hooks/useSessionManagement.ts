@@ -242,7 +242,7 @@ export const useSessionManagement = () => {
       if (needsRefresh) {
         const refreshed = await refreshSession();
         if (refreshed && import.meta.env.DEV) {
-          console.log('Session refreshed automatically');
+          void 0;
         }
       }
     };
