@@ -53,7 +53,7 @@ export const PERIOD_OPTIONS: PeriodOption[] = [
   { value: "custom", label: "Personalizado", shortLabel: "Custom" },
 ];
 
-export function getDateRangeForPeriod(period: PeriodType, customRange?: DateRange): DateRange {
+function getDateRangeForPeriod(period: PeriodType, customRange?: DateRange): DateRange {
   const now = new Date();
   
   switch (period) {
