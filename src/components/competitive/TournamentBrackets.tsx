@@ -110,7 +110,7 @@ export function TournamentBrackets() {
   const statusConfig: Record<string, { label: string; color: string }> = {
     upcoming: { label: 'Em Breve', color: 'bg-muted text-muted-foreground' },
     active: { label: 'Ativo', color: 'bg-primary/20 text-primary' },
-    completed: { label: 'Finalizado', color: 'bg-green-500/20 text-green-500' },
+    completed: { label: 'Finalizado', color: 'bg-success/20 text-success' },
   };
 
   const metricLabels: Record<string, string> = {
