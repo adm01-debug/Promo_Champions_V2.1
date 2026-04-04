@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import {
   FileText,
@@ -11,7 +10,6 @@ import {
   Percent,
   TrendingUp,
   BarChart3,
-  Crown,
 } from "lucide-react";
 import {
   ComposedChart,
