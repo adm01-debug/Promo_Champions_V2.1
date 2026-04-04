@@ -147,7 +147,7 @@ export const CompetitiveTVDashboard: FC = () => {
                       <div className="text-3xl">🔥</div>
                       <div>
                         <p className="font-bold text-foreground">{(streak.salespeople as any)?.name || 'Vendedor'}</p>
-                        <p className="text-2xl font-black text-orange-500">{streak.current_streak} dias</p>
+                        <p className="text-2xl font-black text-streak">{streak.current_streak} dias</p>
                         <p className="text-xs text-muted-foreground">Multiplicador: {streak.xp_multiplier}x</p>
                       </div>
                     </motion.div>
