@@ -74,7 +74,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
   return (
     <div className="space-y-3">
       <AnimatePresence mode="popLayout">
-        {feedItems.map((item: any, index: number) => {
+        {feedItems.map((item: Record<string, unknown>, index: number) => {
           const Icon = eventIcons[item.event_type] || Trophy;
           const gradient = eventColors[item.event_type] || eventColors.sale;
           const reactions = item.feed_reactions || [];
@@ -82,7 +82,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
           const isShowingComments = showComments[item.id];
 
           // Group reactions by emoji
-          const reactionCounts = reactions.reduce((acc: Record<string, number>, r: any) => {
+          const reactionCounts = reactions.reduce((acc: Record<string, number>, r: { reaction: string }) => {
             acc[r.reaction] = (acc[r.reaction] || 0) + 1;
             return acc;
           }, {});
@@ -105,7 +105,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-foreground text-sm">
-                            {(item.salespeople as any)?.name || 'Vendedor'}
+                            {((item.salespeople as Record<string, string> | null))?.name || 'Vendedor'}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: ptBR })}
@@ -128,7 +128,7 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
                       {REACTIONS.map(emoji => {
                         const count = reactionCounts[emoji] || 0;
                         const hasReacted = reactions.some(
-                          (r: any) => r.reaction === emoji && r.salesperson_id === currentSalespersonId
+                          (r: { reaction: string; salesperson_id: string }) => r.reaction === emoji && r.salesperson_id === currentSalespersonId
                         );
                         return (
                           <button
@@ -167,9 +167,9 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
                           className="overflow-hidden"
                         >
                           <div className="mt-3 space-y-2 border-t border-border/20 pt-3">
-                            {comments.map((c: any) => (
+                            {comments.map((c: Record<string, unknown>) => (
                               <div key={c.id} className="flex gap-2 text-xs">
-                                <span className="font-semibold text-foreground">{(c.salespeople as any)?.name || '?'}:</span>
+                                <span className="font-semibold text-foreground">{((c.salespeople as Record<string, string> | null))?.name || '?'}:</span>
                                 <span className="text-muted-foreground">{c.content}</span>
                               </div>
                             ))}
