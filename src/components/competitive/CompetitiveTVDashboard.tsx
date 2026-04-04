@@ -132,7 +132,7 @@ export const CompetitiveTVDashboard: FC = () => {
             {slideKey === 'streaks' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
-                  <Flame className="h-6 w-6 text-orange-500" />
+                  <Flame className="h-6 w-6 text-streak" />
                   <h2 className="text-xl font-bold text-foreground">Streaks Ativos</h2>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
