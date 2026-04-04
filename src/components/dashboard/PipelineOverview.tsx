@@ -6,7 +6,7 @@ interface PipelineOverviewProps {
   showValue?: boolean;
 }
 
-export const PipelineOverview: FC<PipelineOverviewProps> = ({ 
+const PipelineOverviewBase: FC<PipelineOverviewProps> = ({ 
   pipelineId,
   showValue = true
 }) => {
