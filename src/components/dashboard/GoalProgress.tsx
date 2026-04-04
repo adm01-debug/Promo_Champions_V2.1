@@ -8,7 +8,7 @@ interface GoalProgressProps {
   goal: number;
 }
 
-export const GoalProgress = ({ current, goal }: GoalProgressProps) => {
+export const GoalProgress = React.memo(function GoalProgress({ current, goal }: GoalProgressProps) {
   const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
   const remaining = Math.max(goal - current, 0);
 
