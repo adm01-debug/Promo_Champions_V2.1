@@ -1,26 +1,20 @@
 // MainLayout - primary layout wrapper (performance-optimized)
 import { useRef, lazy, Suspense } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "./ThemeToggle";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchTrigger } from "./SearchTrigger";
+import { ThemeToggle } from "./ThemeToggle";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 import { SkipLinks } from "@/components/accessibility/SkipLinks";
-import { FocusModeToggle, FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
-import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
-import { LanguageToggle } from "@/components/layout/LanguageToggle";
-import { NotificationBadge } from "@/components/ui/NotificationBadge";
+import { FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
+import { DesktopTopBar } from "@/components/layout/DesktopTopBar";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
-import { Bell } from "lucide-react";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import type { GlobalSearchHandle } from "./GlobalSearch";
 
-// Lazy load non-critical components that aren't needed for initial render
+// Lazy load non-critical components
 const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
 const RoleAwareSidebar = lazy(() => import("./RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
 const LayoutRealtimeEffects = lazy(() => import("./LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
@@ -40,7 +34,6 @@ export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
-  const { data: unreadCount = 0 } = useUnreadNotificationsCount();
 
   const sidebarFallback = (
     <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
@@ -62,20 +55,16 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Suspense>
       </ErrorBoundary>
 
-      {/* Product Analytics Route Tracker */}
       <Suspense fallback={null}>
         <RouteTracker />
       </Suspense>
 
-      {/* Offline indicator at top */}
       <Suspense fallback={null}>
         <OfflineIndicator />
       </Suspense>
       
-      {/* Skip Links for Accessibility */}
       <SkipLinks />
       <div className="min-h-screen flex w-full bg-background">
-        {/* Hide sidebar on mobile */}
         <ErrorBoundary fallback={sidebarFallback}>
           <Suspense fallback={sidebarFallback}>
             <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
@@ -93,7 +82,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           role="main"
           aria-label="Conteúdo principal"
         >
-          {/* Mobile Header with back navigation */}
+          {/* Mobile Header */}
           <MobilePageHeader 
             title={currentPageInfo.title}
             subtitle={currentPageInfo.subtitle}
@@ -105,62 +94,8 @@ export function MainLayout({ children }: MainLayoutProps) {
             }
           />
           
-          {/* Desktop Top Bar - Sticky Glass */}
-          <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
-            <div className="flex items-center gap-2">
-              <TooltipProvider delayDuration={300}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <SidebarTrigger className="h-9 w-9 rounded-lg hover:bg-muted/80 transition-colors" />
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Alternar menu lateral</p></TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <TooltipProvider delayDuration={300}>
-              <div className="flex items-center gap-1.5">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span><FocusModeToggle /></span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Modo foco</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link to="/notificacoes" className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors" aria-label="Notificações">
-                      <Bell className={cn("h-4 w-4 transition-colors", unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground")} />
-                      <NotificationBadge 
-                        count={unreadCount} 
-                        size="sm" 
-                        pulse={unreadCount > 5}
-                        variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
-                        className="absolute -top-1 -right-1" 
-                      />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Notificações{unreadCount > 0 ? ` (${unreadCount} novas)` : ''}</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span><SearchTrigger onClick={() => searchRef.current?.open()} /></span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Buscar (⌘K)</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span><LanguageToggle /></span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Idioma</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span><ThemeToggle /></span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom"><p>Alternar tema</p></TooltipContent>
-                </Tooltip>
-              </div>
-            </TooltipProvider>
-          </div>
+          {/* Desktop Top Bar — clean, grouped */}
+          <DesktopTopBar searchRef={searchRef} />
           
           <ErrorBoundary fallback={null}>
             <Suspense fallback={null}>
@@ -168,42 +103,31 @@ export function MainLayout({ children }: MainLayoutProps) {
             </Suspense>
           </ErrorBoundary>
           
-          {/* Breadcrumbs */}
-          <div className="px-4 lg:px-6 pt-3">
-            <Breadcrumbs />
-          </div>
-          
           {/* Main content area */}
           <div className="flex-1">
             {children}
           </div>
         </main>
         
-        {/* Mobile bottom navigation - lazy */}
         <Suspense fallback={null}>
           <MobileNavigation />
         </Suspense>
         
-        {/* Global celebration overlays - lazy */}
         <Suspense fallback={null}>
           <CelebrationOverlayProvider />
         </Suspense>
         
-        {/* Focus mode break reminder */}
         <FocusModeBreakReminder />
         
-        {/* PWA prompts - lazy */}
         <Suspense fallback={null}>
           <InstallPrompt variant="card" />
           <UpdatePrompt />
         </Suspense>
         
-        {/* AI Copilot FAB - lazy */}
         <Suspense fallback={null}>
           <AICopilotFab />
         </Suspense>
         
-        {/* Scroll to top */}
         <ScrollToTop />
       </div>
     </SidebarProvider>
