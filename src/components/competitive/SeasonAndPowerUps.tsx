@@ -86,7 +86,7 @@ export const SeasonAndPowerUps: FC = () => {
             Power-ups Ativos
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {powerUps.map((pu: any, i: number) => {
+            {powerUps.map((pu, i: number) => {
               const Icon = powerUpIcons[pu.power_up_type] || Zap;
               const color = powerUpColors[pu.power_up_type] || powerUpColors.xp_boost;
               return (
@@ -106,7 +106,7 @@ export const SeasonAndPowerUps: FC = () => {
                         {powerUpLabels[pu.power_up_type] || pu.power_up_type}
                       </p>
                       <p className="text-[10px] text-muted-foreground truncate">
-                        {(pu.salespeople as any)?.name} • {pu.multiplier}x
+                        {(pu as Record<string, unknown> & { salespeople?: { name: string } }).salespeople?.name} • {pu.multiplier}x
                       </p>
                     </div>
                     <span className="text-[10px] text-muted-foreground shrink-0">

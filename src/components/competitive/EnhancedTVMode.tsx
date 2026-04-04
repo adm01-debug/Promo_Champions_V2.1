@@ -191,8 +191,9 @@ export function EnhancedTVMode() {
             {currentScreen === 'goals' && (
               <motion.div key="gl" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
                 className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {goals.slice(0, 6).map((goal: any, i: number) => {
-                  const progress = goal.goal_amount > 0 ? Math.min((goal.current_amount / goal.goal_amount) * 100, 100) : 0;
+                {goals.slice(0, 6).map((goal, i: number) => {
+                  const goalWithAmount = goal as typeof goal & { current_amount?: number };
+                  const progress = goal.goal_amount > 0 ? Math.min(((goalWithAmount.current_amount || 0) / goal.goal_amount) * 100, 100) : 0;
                   return (
                     <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
                       <Card>
@@ -205,7 +206,7 @@ export function EnhancedTVMode() {
                             <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1.5, ease: 'easeOut' }} />
                           </div>
                           <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                            <span>R$ {((goal.current_amount || 0) / 1000).toFixed(1)}k</span>
+                            <span>R$ {((goalWithAmount.current_amount || 0) / 1000).toFixed(1)}k</span>
                             <span>R$ {((goal.goal_amount || 0) / 1000).toFixed(1)}k</span>
                           </div>
                         </CardContent>

@@ -60,6 +60,7 @@ export function VoiceControls({
                 isProcessingSTT && 'opacity-50'
               )}
               onClick={onToggleListening}
+              aria-label={isListening ? "Parar gravação" : "Iniciar gravação de voz"}
               disabled={isProcessingSTT}
             >
               {isProcessingSTT ? (
@@ -90,6 +91,7 @@ export function VoiceControls({
                   isSpeaking && 'text-primary bg-primary/10 animate-pulse'
                 )}
                 onClick={onManualSpeak}
+                aria-label={isSpeaking ? "Parar reprodução" : "Reproduzir resposta"}
                 disabled={isLoadingTTS}
               >
                 {isLoadingTTS ? (

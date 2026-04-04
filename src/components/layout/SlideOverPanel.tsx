@@ -140,6 +140,7 @@ export const CollapsibleSidebar: FC<CollapsibleSidebarProps> = ({
         variant="ghost"
         size="icon"
         onClick={onToggle}
+        aria-label={expanded ? "Fechar painel" : "Abrir painel"}
         className={cn(
           'absolute top-3 z-10 h-6 w-6',
           side === 'left' ? 'right-2' : 'left-2'

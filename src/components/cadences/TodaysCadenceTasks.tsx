@@ -135,11 +135,11 @@ export function TodaysCadenceTasks() {
                 <p className="text-xs text-muted-foreground mt-1">As próximas tarefas aparecerão aqui</p>
               </div>
             ) : (
-              tasks.map((task: any, index: number) => {
-                const step = task.cadence_step;
-                const prospectCadence = task.prospect_cadence;
-                const sale = prospectCadence?.sale;
-                const cadence = prospectCadence?.cadence;
+              tasks.map((task, index: number) => {
+                const step = task.cadence_step as Record<string, unknown> | null;
+                const prospectCadence = task.prospect_cadence as Record<string, unknown> | null;
+                const sale = prospectCadence?.sale as Record<string, unknown> | null;
+                const cadence = prospectCadence?.cadence as Record<string, unknown> | null;
                 const Icon = actionIcons[step?.action_type as ActionType] || MoreHorizontal;
                 const isNotesOpen = notesTaskId === task.id;
 
@@ -155,17 +155,17 @@ export function TodaysCadenceTasks() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-display font-medium group-hover:gradient-text transition-colors">{step?.title}</span>
+                          <span className="text-sm font-display font-medium group-hover:gradient-text transition-colors">{String(step?.title || '')}</span>
                           <Badge variant="outline" className={`text-[10px] font-medium shadow-sm ${actionColors[step?.action_type as ActionType] || ""}`}>
                             {actionLabels[step?.action_type as ActionType] || "Ação"}
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          <span className="gradient-text font-medium">{sale?.client_name}</span> • <span className="text-primary/80 font-medium">{cadence?.name}</span>
+                          <span className="gradient-text font-medium">{String((sale as Record<string, unknown>)?.client_name || '')}</span> • <span className="text-primary/80 font-medium">{String((cadence as Record<string, unknown>)?.name || '')}</span>
                         </p>
                         {step?.description && (
                           <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1.5 border border-border/20 shadow-inner">
-                            {step.description}
+                            {String(step.description)}
                           </p>
                         )}
                       </div>

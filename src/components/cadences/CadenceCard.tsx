@@ -89,6 +89,7 @@ function _CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleti
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-110"
+                aria-label="Editar cadência"
                 onClick={(e) => {
                   e.stopPropagation();
                   setEditOpen(true);
