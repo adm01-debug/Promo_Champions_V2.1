@@ -1,6 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths, format, parseISO, differenceInDays } from "date-fns";
+import { startOfMonth, endOfMonth, subMonths, format, differenceInDays } from "date-fns";
+import {
+  buildSalespeoplePerformance,
+  computePipelineHealth,
+  computeForecast,
+  buildRevenueByMonth,
+  buildDealsBySource,
+  buildABCAnalysis,
+} from "./biGestorHelpers";
 
 export interface SalespersonPerformanceData {
   id: string;
