@@ -24,7 +24,7 @@ const formatCurrency = (value: number) =>
 
 function ABCTooltip({ active, payload }: RechartsTooltipProps) {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload as ABCItem;
+  const data = payload[0].payload as unknown as ABCItem;
   return (
     <div className="glass rounded-xl p-4 border border-border/50 shadow-xl animate-fade-in">
       <p className="font-display font-semibold text-foreground gradient-text">{data.name}</p>

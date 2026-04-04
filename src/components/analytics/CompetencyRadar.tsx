@@ -44,7 +44,7 @@ const DEFAULT_DATA: CompetencyData[] = [
 
 const renderCustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload as CompetencyData;
+    const data = payload[0].payload as unknown as CompetencyData;
     const percentage = Math.round((data.value / data.maxValue) * 100);
     const status =
       percentage >= 70
