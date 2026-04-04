@@ -3,15 +3,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { History, Users, AlertTriangle, Clock, Mail, Settings2, Check, X, Calendar } from "lucide-react";
-import { format, subDays, subMonths, startOfDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { History, AlertTriangle, Settings2, Check, X, Calendar } from "lucide-react";
+import { subDays, subMonths, startOfDay } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { AlertHistoryItem } from "./AlertHistoryItem";
 
 interface SDRDetail {
   id: string;
