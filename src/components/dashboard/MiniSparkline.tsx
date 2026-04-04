@@ -14,7 +14,7 @@ interface MiniSparklineProps {
  * A tiny SVG sparkline for inline KPI trend visualization.
  * Renders a smooth polyline + gradient fill area.
  */
-export function MiniSparkline({
+export const MiniSparkline = React.memo(function MiniSparkline({
   data,
   className,
   width = 56,
