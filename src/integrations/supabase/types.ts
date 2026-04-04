@@ -1775,6 +1775,42 @@ export type Database = {
           },
         ]
       }
+      feature_flags: {
+        Row: {
+          allowed_roles: string[] | null
+          created_at: string
+          description: string | null
+          id: string
+          is_enabled: boolean
+          key: string
+          metadata: Json | null
+          rollout_percentage: number
+          updated_at: string
+        }
+        Insert: {
+          allowed_roles?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_enabled?: boolean
+          key: string
+          metadata?: Json | null
+          rollout_percentage?: number
+          updated_at?: string
+        }
+        Update: {
+          allowed_roles?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_enabled?: boolean
+          key?: string
+          metadata?: Json | null
+          rollout_percentage?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       feed_comments: {
         Row: {
           content: string
