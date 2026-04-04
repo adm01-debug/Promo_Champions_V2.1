@@ -11,7 +11,7 @@ interface MFATotpTabProps {
   totpEnabled: boolean;
   preferredMethod?: string;
   qrCodeUrl: string | null;
-  onInitialize: () => Promise<void>;
+  onInitialize: () => Promise<unknown>;
   onVerify: (code: string) => Promise<boolean>;
   onDisable: () => void;
   onSetPreferred: (method: string) => void;
