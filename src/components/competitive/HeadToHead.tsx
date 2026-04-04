@@ -140,7 +140,7 @@ export const HeadToHead: FC<HeadToHeadProps> = ({ className }) => {
                   <span className={cn('font-bold', m.winner_id === m.salesperson_b.id ? 'text-primary' : 'text-muted-foreground')}>
                     {m.score_b} {m.salesperson_b.name.split(' ')[0]}
                   </span>
-                  {m.winner_id && <Crown className="h-3 w-3 text-amber-500 ml-auto" />}
+                  {m.winner_id && <Crown className="h-3 w-3 text-rank-gold ml-auto" />}
                 </div>
               ))}
             </div>

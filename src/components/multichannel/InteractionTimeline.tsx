@@ -8,7 +8,7 @@ import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const STATUS_COLORS: Record<string, string> = {
-  sent: "bg-blue-500/20 text-blue-500 border-blue-500/30",
+  sent: "bg-info/20 text-info border-info/30",
   delivered: "bg-status-info/20 text-status-info border-status-info/30",
   read: "bg-status-success/20 text-status-success border-status-success/30",
   replied: "bg-primary/20 text-primary border-primary/30",

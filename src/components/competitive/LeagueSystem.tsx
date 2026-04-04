@@ -107,7 +107,7 @@ export const LeagueSystem: FC<LeagueSystemProps> = ({ className }) => {
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-medium truncate text-foreground">{member.name}</span>
                         {(member as any).promoted_at && (
-                          <TrendingUp className="h-3 w-3 text-emerald-500 shrink-0" />
+                          <TrendingUp className="h-3 w-3 text-success shrink-0" />
                         )}
                         {(member as any).demoted_at && (
                           <TrendingDown className="h-3 w-3 text-destructive shrink-0" />

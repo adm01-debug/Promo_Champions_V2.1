@@ -93,7 +93,7 @@ export const Benchmarking: FC = () => {
                   <CardContent className="p-3 space-y-2">
                     <p className="text-xs font-semibold text-muted-foreground text-center">{m.label}</p>
                     <div className="flex items-center gap-3">
-                      <span className={cn('text-sm font-bold w-16 text-right', aWins ? 'text-emerald-500' : 'text-foreground')}>
+                      <span className={cn('text-sm font-bold w-16 text-right', aWins ? 'text-success' : 'text-foreground')}>
                         {m.format(m.a)}
                       </span>
                       <div className="flex-1 flex gap-1">
@@ -101,18 +101,18 @@ export const Benchmarking: FC = () => {
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${m.invert ? (max > 0 ? ((max - m.a + 1) / (max + 1)) * 100 : 50) : (m.a / max) * 100}%` }}
-                            className={cn('h-full rounded-full', aWins ? 'bg-emerald-500' : 'bg-primary/50')}
+                            className={cn('h-full rounded-full', aWins ? 'bg-success' : 'bg-primary/50')}
                           />
                         </div>
                         <div className="flex-1 h-3 rounded-full bg-muted/30 overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${m.invert ? (max > 0 ? ((max - m.b + 1) / (max + 1)) * 100 : 50) : (m.b / max) * 100}%` }}
-                            className={cn('h-full rounded-full', bWins ? 'bg-emerald-500' : 'bg-primary/50')}
+                            className={cn('h-full rounded-full', bWins ? 'bg-success' : 'bg-primary/50')}
                           />
                         </div>
                       </div>
-                      <span className={cn('text-sm font-bold w-16', bWins ? 'text-emerald-500' : 'text-foreground')}>
+                      <span className={cn('text-sm font-bold w-16', bWins ? 'text-success' : 'text-foreground')}>
                         {m.format(m.b)}
                       </span>
                     </div>

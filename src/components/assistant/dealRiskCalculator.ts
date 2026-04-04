@@ -71,10 +71,10 @@ export function calculateRiskLevel(
     level = 'high'; label = 'Alto Risco'; color = 'text-destructive'; bgColor = 'bg-destructive/10';
     icon = React.createElement(AlertTriangle, { className: "h-3.5 w-3.5" });
   } else if (riskScore >= 2) {
-    level = 'medium'; label = 'Atenção'; color = 'text-amber-500'; bgColor = 'bg-amber-500/10';
+    level = 'medium'; label = 'Atenção'; color = 'text-rank-gold'; bgColor = 'bg-rank-gold/10';
     icon = React.createElement(AlertCircle, { className: "h-3.5 w-3.5" });
   } else {
-    level = 'low'; label = 'Baixo Risco'; color = 'text-emerald-500'; bgColor = 'bg-emerald-500/10';
+    level = 'low'; label = 'Baixo Risco'; color = 'text-success'; bgColor = 'bg-success/10';
     icon = React.createElement(CheckCircle, { className: "h-3.5 w-3.5" });
   }
 
@@ -85,9 +85,9 @@ export function calculateRiskLevel(
 export const STATUS_LABELS: Record<string, { label: string; color: string; icon: string }> = {
   lead: { label: 'Lead', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30', icon: '🎯' },
   qualified: { label: 'Qualificado', color: 'bg-info/20 text-info border-info/30', icon: '✅' },
-  proposal: { label: 'Proposta', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', icon: '📄' },
+  proposal: { label: 'Proposta', color: 'bg-rank-gold/20 text-rank-gold border-rank-gold/30', icon: '📄' },
   negotiation: { label: 'Negociação', color: 'bg-primary/20 text-primary border-primary/30', icon: '🤝' },
-  closed_won: { label: 'Fechado', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: '🎉' },
+  closed_won: { label: 'Fechado', color: 'bg-success/20 text-success border-success/30', icon: '🎉' },
   closed_lost: { label: 'Perdido', color: 'bg-destructive/20 text-destructive border-destructive/30', icon: '❌' },
 };
 

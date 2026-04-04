@@ -54,22 +54,22 @@ export default function MetasAtividades() {
       label: "No Caminho",
       value: onTrack,
       icon: TrendingUp,
-      color: "text-blue-400",
-      bgColor: "bg-blue-400/10",
+      color: "text-info",
+      bgColor: "bg-info/10",
     },
     {
       label: "Meta Batida",
       value: completed,
       icon: CheckCircle,
-      color: "text-green-400",
-      bgColor: "bg-green-400/10",
+      color: "text-success",
+      bgColor: "bg-success/10",
     },
     {
       label: "Atenção",
       value: needsAttention,
       icon: AlertTriangle,
-      color: "text-red-400",
-      bgColor: "bg-red-400/10",
+      color: "text-destructive",
+      bgColor: "bg-destructive/10",
     },
   ];
 

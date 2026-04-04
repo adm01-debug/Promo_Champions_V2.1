@@ -28,7 +28,7 @@ function FieldBadge({ field }: { field: CustomFieldWithValue }) {
   const displayValue = () => {
     if (field.fieldType === 'boolean') {
       return field.booleanValue ? (
-        <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+        <CheckCircle2 className="h-3 w-3 text-success" />
       ) : (
         <XCircle className="h-3 w-3 text-muted-foreground" />
       );

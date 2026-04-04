@@ -201,11 +201,11 @@ export function PermissionMatrix() {
                         const isDisabled = !isAdmin || (selectedRole === "admin" && perm.name === "manage_roles");
 
                         return (
-                          <div key={perm.id} className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${hasPerm ? "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900" : "bg-background border-border"}`}>
+                          <div key={perm.id} className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${hasPerm ? "bg-success/10 dark:bg-success/10/20 border-success/30 dark:border-success/30" : "bg-background border-border"}`}>
                             {isAdmin ? (
                               <Checkbox id={perm.id} checked={hasPerm} disabled={isDisabled || togglePermissionMutation.isPending} onCheckedChange={() => { if (!isDisabled) togglePermissionMutation.mutate({ role: selectedRole, permissionId: perm.id, hasPermission: hasPerm }); }} />
                             ) : hasPerm ? (
-                              <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                              <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                             ) : (
                               <XCircle className="h-4 w-4 text-muted-foreground shrink-0" />
                             )}

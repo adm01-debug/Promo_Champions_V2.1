@@ -78,7 +78,7 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
               <Activity className="h-4 w-4 text-chart-4" /><span className="text-sm font-medium">Circuit Breakers</span>
             </div>
             {edgeStatus?.openCircuits?.length === 0 ? (
-              <Badge variant="default" className="bg-green-500/20 text-success border-green-500/30">Todos fechados</Badge>
+              <Badge variant="default" className="bg-success/20 text-success border-success/30">Todos fechados</Badge>
             ) : (
               <Badge variant="destructive">{edgeStatus?.openCircuits?.length} aberto(s)</Badge>
             )}

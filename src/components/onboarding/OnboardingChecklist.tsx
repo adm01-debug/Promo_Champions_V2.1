@@ -51,7 +51,7 @@ export function OnboardingChecklist() {
                 whileHover={{ x: step.completed ? 0 : 4 }}
               >
                 {step.completed ? (
-                  <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                  <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
                 ) : (
                   <Circle className={cn("h-5 w-5 shrink-0", isNext ? "text-primary" : "text-muted-foreground")} />
                 )}

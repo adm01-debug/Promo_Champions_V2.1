@@ -137,7 +137,7 @@ export function BackendAutomationMonitor() {
                 {result && (
                   <div className="flex items-center gap-1.5 mt-2">
                     {result.status === 'success' ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                     ) : (
                       <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
                     )}

@@ -39,8 +39,8 @@ export function PulseSurveyWidget({ className }: { className?: string }) {
   };
 
   const getENPSCategory = (score: number) => {
-    if (score >= 9) return { label: "Promotor", color: "text-green-600 dark:text-green-400" };
-    if (score >= 7) return { label: "Neutro", color: "text-yellow-600 dark:text-yellow-400" };
+    if (score >= 9) return { label: "Promotor", color: "text-success dark:text-success" };
+    if (score >= 7) return { label: "Neutro", color: "text-warning dark:text-coins" };
     return { label: "Detrator", color: "text-destructive" };
   };
 
@@ -137,7 +137,7 @@ export function PulseSurveyWidget({ className }: { className?: string }) {
                     className={cn(
                       "h-9 text-xs hover:text-primary-foreground transition-colors",
                       val <= 6 && "hover:bg-destructive",
-                      val >= 7 && val <= 8 && "hover:bg-yellow-500",
+                      val >= 7 && val <= 8 && "hover:bg-warning",
                       val >= 9 && "hover:bg-primary"
                     )}
                   >

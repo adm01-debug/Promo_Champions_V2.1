@@ -123,9 +123,9 @@ export function GeoBlockingManager() {
         </CardHeader>
         <CardContent>
           {isWhitelistMode ? (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20"><Shield className="h-5 w-5 text-emerald-600" /><span className="text-sm text-emerald-700 dark:text-emerald-400">Modo Whitelist ativo: Somente países listados abaixo podem acessar o sistema.</span></div>
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-success/10 border border-success/20"><Shield className="h-5 w-5 text-success" /><span className="text-sm text-success dark:text-success">Modo Whitelist ativo: Somente países listados abaixo podem acessar o sistema.</span></div>
           ) : (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20"><AlertTriangle className="h-5 w-5 text-amber-600" /><span className="text-sm text-amber-700 dark:text-amber-400">Modo Whitelist desativado: Todos os países podem acessar o sistema.</span></div>
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-rank-gold/10 border border-rank-gold/20"><AlertTriangle className="h-5 w-5 text-rank-gold" /><span className="text-sm text-rank-gold dark:text-rank-gold">Modo Whitelist desativado: Todos os países podem acessar o sistema.</span></div>
           )}
         </CardContent>
       </Card>
@@ -165,7 +165,7 @@ export function GeoBlockingManager() {
             <ScrollArea className="h-[400px]">
               <div className="space-y-2">
                 {filteredCountries.map((country) => (
-                  <div key={country.id} className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${country.is_active ? "bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10" : "bg-muted/50 border-border hover:bg-muted"}`}>
+                  <div key={country.id} className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${country.is_active ? "bg-success/5 border-success/20 hover:bg-success/10" : "bg-muted/50 border-border hover:bg-muted"}`}>
                     <div className="flex items-center gap-4">
                       <span className="text-2xl">{getFlagEmoji(country.country_code)}</span>
                       <div>

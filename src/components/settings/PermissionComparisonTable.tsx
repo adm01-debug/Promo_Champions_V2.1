@@ -67,7 +67,7 @@ export const PermissionComparisonTable = React.memo(function PermissionCompariso
                         return (
                           <td key={role} className="text-center py-2 px-4">
                             {hasPerm ? (
-                              <Check className="h-4 w-4 text-green-500 mx-auto" />
+                              <Check className="h-4 w-4 text-success mx-auto" />
                             ) : (
                               <X className="h-4 w-4 text-muted-foreground mx-auto" />
                             )}

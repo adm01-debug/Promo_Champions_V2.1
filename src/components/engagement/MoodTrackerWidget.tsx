@@ -11,10 +11,10 @@ import { toast } from "sonner";
 
 const MOODS = [
   { emoji: "😡", label: "Péssimo", value: 1, color: "bg-destructive/20 hover:bg-destructive/30 border-destructive/30" },
-  { emoji: "😟", label: "Ruim", value: 2, color: "bg-orange-500/20 hover:bg-orange-500/30 border-orange-500/30" },
+  { emoji: "😟", label: "Ruim", value: 2, color: "bg-streak/20 hover:bg-streak/30 border-streak/30" },
   { emoji: "😐", label: "Neutro", value: 3, color: "bg-muted hover:bg-muted/80 border-border" },
   { emoji: "😊", label: "Bom", value: 4, color: "bg-primary/20 hover:bg-primary/30 border-primary/30" },
-  { emoji: "🤩", label: "Excelente", value: 5, color: "bg-green-500/20 hover:bg-green-500/30 border-green-500/30" },
+  { emoji: "🤩", label: "Excelente", value: 5, color: "bg-success/20 hover:bg-success/30 border-success/30" },
 ];
 
 export function MoodTrackerWidget({ className }: { className?: string }) {

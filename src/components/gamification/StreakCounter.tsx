@@ -55,7 +55,7 @@ export const StreakCounter: FC<StreakCounterProps> = ({
     <Card className={cn(
       "relative overflow-hidden",
       sizeClasses[size],
-      isOnFire && "bg-gradient-to-br from-orange-500/10 to-red-500/10 border-orange-500/30",
+      isOnFire && "bg-gradient-to-br from-orange-500/10 to-red-500/10 border-streak/30",
       className
     )}>
       <div className="flex items-center gap-4">
@@ -67,7 +67,7 @@ export const StreakCounter: FC<StreakCounterProps> = ({
           transition={{ repeat: Infinity, duration: 1.5 }}
           className={cn(
             "flex items-center justify-center rounded-full",
-            isOnFire ? "text-orange-500" : "text-muted-foreground"
+            isOnFire ? "text-streak" : "text-muted-foreground"
           )}
         >
           <Flame size={iconSizes[size]} className={isOnFire ? "fill-orange-500" : ""} />
@@ -106,9 +106,9 @@ export const StreakCounter: FC<StreakCounterProps> = ({
 
         {showBest && bestStreak > 0 && (
           <div className="text-center">
-            <Trophy size={16} className="text-amber-500 mx-auto mb-1" />
+            <Trophy size={16} className="text-rank-gold mx-auto mb-1" />
             <div className="text-xs text-muted-foreground">Recorde</div>
-            <div className="font-bold text-amber-500">{bestStreak}</div>
+            <div className="font-bold text-rank-gold">{bestStreak}</div>
           </div>
         )}
       </div>
@@ -119,7 +119,7 @@ export const StreakCounter: FC<StreakCounterProps> = ({
           {[...Array(5)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-orange-500/50 rounded-full"
+              className="absolute w-2 h-2 bg-streak/50 rounded-full"
               initial={{ 
                 x: Math.random() * 100, 
                 y: 100,
@@ -155,7 +155,7 @@ export const MiniStreak: FC<MiniStreakProps> = ({ streak, className }) => {
     <div className={cn(
       "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
       isOnFire 
-        ? "bg-orange-500/20 text-orange-500" 
+        ? "bg-streak/20 text-streak" 
         : "bg-muted text-muted-foreground",
       className
     )}>

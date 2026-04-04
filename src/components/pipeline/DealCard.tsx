@@ -58,7 +58,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     switch (category) {
       case 'hot': return 'bg-status-error/20 text-status-error border-status-error/30';
       case 'warm': return 'bg-status-warning/20 text-status-warning border-status-warning/30';
-      case 'cold': return 'bg-blue-500/20 text-blue-500 border-blue-500/30';
+      case 'cold': return 'bg-info/20 text-info border-info/30';
       default: return 'bg-muted text-muted-foreground border-border';
     }
   };

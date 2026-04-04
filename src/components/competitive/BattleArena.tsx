@@ -75,7 +75,7 @@ const BattleCard: FC<{ battle: any }> = ({ battle }) => {
             >
               <div className={cn(
                 'h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
-                i === 0 && isActive && 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                i === 0 && isActive && 'bg-rank-gold/20 text-rank-gold dark:bg-rank-gold/30/30 dark:text-rank-gold',
                 i > 0 && 'bg-muted text-muted-foreground'
               )}>
                 {i + 1}
@@ -93,14 +93,14 @@ const BattleCard: FC<{ battle: any }> = ({ battle }) => {
                 />
               </div>
               {i === 0 && isActive && (
-                <Trophy className="h-4 w-4 text-amber-500 shrink-0 animate-bounce" />
+                <Trophy className="h-4 w-4 text-rank-gold shrink-0 animate-bounce" />
               )}
             </motion.div>
           ))}
 
         {!isActive && battle.winner_id && (
-          <div className="text-center py-2 bg-amber-50/50 dark:bg-amber-900/10 rounded-lg">
-            <Trophy className="h-5 w-5 mx-auto text-amber-500 mb-1" />
+          <div className="text-center py-2 bg-rank-gold/10/50 dark:bg-rank-gold/30/10 rounded-lg">
+            <Trophy className="h-5 w-5 mx-auto text-rank-gold mb-1" />
             <p className="text-xs font-semibold text-foreground">Batalha encerrada!</p>
           </div>
         )}

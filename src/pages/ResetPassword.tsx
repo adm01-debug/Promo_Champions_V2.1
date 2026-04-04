@@ -72,8 +72,8 @@ export default function ResetPassword() {
         <Card className="w-full max-w-md glass border-border/40">
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
-                <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="mx-auto w-16 h-16 rounded-full bg-success/20 flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
               <h2 className="text-xl font-semibold">Senha Atualizada!</h2>
               <p className="text-muted-foreground">

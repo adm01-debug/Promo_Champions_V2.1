@@ -28,7 +28,7 @@ export const PushNotificationSettings: React.FC = () => {
   const getPermissionBadge = () => {
     switch (permission) {
       case 'granted':
-        return <Badge variant="default" className="bg-green-600">Permitido</Badge>;
+        return <Badge variant="default" className="bg-success">Permitido</Badge>;
       case 'denied':
         return <Badge variant="destructive">Bloqueado</Badge>;
       default:
@@ -58,7 +58,7 @@ export const PushNotificationSettings: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {isSubscribed ? (
-              <BellRing className="h-5 w-5 text-green-600" />
+              <BellRing className="h-5 w-5 text-success" />
             ) : (
               <BellOff className="h-5 w-5 text-muted-foreground" />
             )}
@@ -99,8 +99,8 @@ export const PushNotificationSettings: React.FC = () => {
             <span className="flex items-center gap-1">
               {isSubscribed ? (
                 <>
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-green-600 font-medium">Ativas</span>
+                  <CheckCircle className="h-4 w-4 text-success" />
+                  <span className="text-success font-medium">Ativas</span>
                 </>
               ) : (
                 <>

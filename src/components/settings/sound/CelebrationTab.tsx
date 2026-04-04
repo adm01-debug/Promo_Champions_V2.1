@@ -122,7 +122,7 @@ export function CelebrationTab({ selectedSound, setSelectedSound, volume, setVol
         </div>
         <div className="flex items-center justify-center gap-2">
           {isConfettiReady ? (
-            <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in">
+            <span className="flex items-center gap-1 text-xs text-success dark:text-success animate-fade-in">
               <Check className="h-3 w-3 animate-scale-in" /> Pronto
             </span>
           ) : (

@@ -86,7 +86,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
       <Card className={compact ? "h-full" : ""}>
         <CardHeader className={compact ? "pb-2" : ""}>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Zap className="h-5 w-5 text-amber-500" />
+            <Zap className="h-5 w-5 text-rank-gold" />
             Desafios do Dia
           </CardTitle>
         </CardHeader>
@@ -122,7 +122,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
       <CardHeader className={compact ? "pb-2" : ""}>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Zap className="h-5 w-5 text-amber-500" />
+            <Zap className="h-5 w-5 text-rank-gold" />
             Desafios do Dia
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
                 isClaimed 
                   ? 'bg-muted/50 border-muted' 
                   : challenge.isCompleted 
-                    ? 'bg-green-500/10 border-green-500/30' 
+                    ? 'bg-success/10 border-success/30' 
                     : 'bg-card'
               }`}
             >
@@ -173,7 +173,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
                     <h4 className={`font-medium text-sm truncate ${isClaimed ? 'line-through text-muted-foreground' : ''}`}>
                       {challenge.title}
                     </h4>
-                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                    <span className="text-xs font-medium text-rank-gold dark:text-rank-gold whitespace-nowrap">
                       +{challenge.xp_reward} XP
                     </span>
                   </div>
@@ -207,7 +207,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
                   )}
 
                   {isClaimed && (
-                    <span className="text-xs text-green-600 dark:text-green-400 mt-2 inline-block">
+                    <span className="text-xs text-success dark:text-success mt-2 inline-block">
                       ✓ Completado
                     </span>
                   )}

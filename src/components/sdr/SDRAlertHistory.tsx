@@ -190,7 +190,7 @@ export function SDRAlertHistory() {
                   onClick={handleSaveThreshold}
                   disabled={updateThresholdMutation.isPending}
                 >
-                  <Check className="h-3.5 w-3.5 text-green-500" />
+                  <Check className="h-3.5 w-3.5 text-success" />
                 </Button>
                 <Button
                   size="icon"

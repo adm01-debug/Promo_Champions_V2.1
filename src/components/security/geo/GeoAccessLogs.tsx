@@ -56,7 +56,7 @@ export const GeoAccessLogs = React.memo(function GeoAccessLogs({ accessLogs, isL
                 <div
                   key={log.id}
                   className={`flex items-center justify-between p-3 rounded-lg border ${
-                    log.blocked ? "bg-destructive/5 border-destructive/20" : "bg-emerald-500/5 border-emerald-500/20"
+                    log.blocked ? "bg-destructive/5 border-destructive/20" : "bg-success/5 border-success/20"
                   }`}
                 >
                   <div className="flex items-center gap-3">

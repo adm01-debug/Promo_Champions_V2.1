@@ -34,23 +34,23 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
       <div className="relative px-6 pt-6 pb-2 text-center">
         <motion.div initial={{ opacity: 0, y: -15, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: "spring", bounce: 0.4 }} className="flex items-center justify-center gap-3 mb-1">
           <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>
-            <Swords className="h-5 w-5 text-amber-500" style={{ filter: "drop-shadow(0 0 8px rgba(245,158,11,0.6))" }} />
+            <Swords className="h-5 w-5 text-rank-gold" style={{ filter: "drop-shadow(0 0 8px rgba(245,158,11,0.6))" }} />
           </motion.div>
           <div className="flex items-center gap-2">
             <Shield className="h-3.5 w-3.5 text-primary/60" />
-            <NeonText color="rgba(251,191,36,0.5)" className="text-sm font-black uppercase tracking-[0.25em] text-amber-500/90">
+            <NeonText color="rgba(251,191,36,0.5)" className="text-sm font-black uppercase tracking-[0.25em] text-rank-gold/90">
               Arena dos Campeões
             </NeonText>
             <Shield className="h-3.5 w-3.5 text-primary/60" />
           </div>
           <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}>
-            <Swords className="h-5 w-5 text-amber-500" style={{ filter: "drop-shadow(0 0 8px rgba(245,158,11,0.6))" }} />
+            <Swords className="h-5 w-5 text-rank-gold" style={{ filter: "drop-shadow(0 0 8px rgba(245,158,11,0.6))" }} />
           </motion.div>
         </motion.div>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-xs text-muted-foreground/50 flex items-center justify-center gap-1 uppercase tracking-widest">
-          <Zap className="h-3 w-3 text-amber-500/40" />
+          <Zap className="h-3 w-3 text-rank-gold/40" />
           Os guerreiros de elite
-          <Zap className="h-3 w-3 text-amber-500/40" />
+          <Zap className="h-3 w-3 text-rank-gold/40" />
         </motion.p>
       </div>
 

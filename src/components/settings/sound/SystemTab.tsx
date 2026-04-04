@@ -31,7 +31,7 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
       <div className="space-y-4">
         <Label className="text-sm font-medium">Notificações</Label>
         <SystemSoundRow
-          icon={ListTodo} iconColor="text-blue-500" iconBg="bg-blue-500/10"
+          icon={ListTodo} iconColor="text-info" iconBg="bg-info/10"
           label="Nova Tarefa" description="Toca quando uma nova tarefa é criada"
           sound={preferences.newTask.sound} enabled={preferences.newTask.enabled} volume={volume}
           soundOptions={soundOptions}
@@ -40,7 +40,7 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
           onPreview={previewSound}
         />
         <SystemSoundRow
-          icon={DollarSign} iconColor="text-emerald-500" iconBg="bg-emerald-500/10"
+          icon={DollarSign} iconColor="text-success" iconBg="bg-success/10"
           label="Nova Venda" description="Toca quando uma nova venda é registrada"
           sound={preferences.newSale.sound} enabled={preferences.newSale.enabled} volume={volume}
           soundOptions={soundOptions}
@@ -49,7 +49,7 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
           onPreview={previewSound}
         />
         <SystemSoundRow
-          icon={RefreshCw} iconColor="text-amber-500" iconBg="bg-amber-500/10"
+          icon={RefreshCw} iconColor="text-rank-gold" iconBg="bg-rank-gold/10"
           label="Atualização de Deal" description="Toca quando um deal muda de estágio"
           sound={preferences.dealUpdate.sound} enabled={preferences.dealUpdate.enabled} volume={volume}
           soundOptions={soundOptions}

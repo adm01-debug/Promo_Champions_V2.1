@@ -46,13 +46,13 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
     <Card className={compact ? "h-full" : ""}>
       <CardHeader className={compact ? "pb-2" : ""}>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Flame className="h-5 w-5 text-orange-500" />
+          <Flame className="h-5 w-5 text-streak" />
           Conquistas de Streak
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Current Streak Display */}
-        <div className="bg-gradient-to-r from-orange-500/10 via-red-500/10 to-amber-500/10 rounded-xl p-4 border border-orange-500/20">
+        <div className="bg-gradient-to-r from-orange-500/10 via-red-500/10 to-rank-gold/10 rounded-xl p-4 border border-streak/20">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
@@ -62,7 +62,7 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-amber-500 flex items-center justify-center text-sm"
+                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-rank-gold flex items-center justify-center text-sm"
                 >
                   🔥
                 </motion.div>
@@ -101,7 +101,7 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
                 animate={{ opacity: 1, scale: 1 }}
                 className={`relative rounded-lg border p-3 text-center transition-all ${
                   isAchieved 
-                    ? 'bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30' 
+                    ? 'bg-gradient-to-br from-rank-gold/10 to-orange-500/10 border-rank-gold/30' 
                     : 'bg-muted/30 opacity-60'
                 }`}
               >
@@ -116,7 +116,7 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
                 </p>
                 <Badge 
                   variant={isAchieved ? "default" : "secondary"}
-                  className={`mt-1 text-[10px] ${isAchieved ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30' : ''}`}
+                  className={`mt-1 text-[10px] ${isAchieved ? 'bg-rank-gold/20 text-rank-gold dark:text-rank-gold border-rank-gold/30' : ''}`}
                 >
                   <Gift className="h-2.5 w-2.5 mr-0.5" />
                   {milestone.xp} XP
@@ -124,7 +124,7 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
                 
                 {isAchieved ? (
                   <div className="absolute top-1 right-1">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <CheckCircle className="h-4 w-4 text-success" />
                   </div>
                 ) : (
                   <div className="absolute top-1 right-1">
@@ -156,7 +156,7 @@ export function StreakAchievementsCard({ salespersonId, compact = false }: Strea
                       {new Date(achievement.achieved_at).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
-                  <Badge variant="secondary" className="bg-amber-500/20 text-amber-600">
+                  <Badge variant="secondary" className="bg-rank-gold/20 text-rank-gold">
                     +{achievement.xp_awarded} XP
                   </Badge>
                 </div>

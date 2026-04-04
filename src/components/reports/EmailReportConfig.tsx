@@ -235,28 +235,28 @@ export function EmailReportConfig() {
             <Separator />
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-success" />
                 <span>Resumo de vendas do período</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-success" />
                 <span>Performance individual vs meta</span>
               </div>
               {currentValues.notify_stagnant_deals && (
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                   <span>Lista de deals estagnados</span>
                 </div>
               )}
               {currentValues.notify_inactive_clients && (
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                   <span>Clientes inativos para reengajamento</span>
                 </div>
               )}
               {currentValues.notify_at_risk_goals && (
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                   <span>Metas em risco de não cumprimento</span>
                 </div>
               )}

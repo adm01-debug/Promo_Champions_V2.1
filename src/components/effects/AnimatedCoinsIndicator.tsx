@@ -20,7 +20,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
     <div className={`relative inline-flex items-center justify-center ${className}`} style={{ width: containerSize, height: containerSize }}>
       {/* Golden glow */}
       <motion.div
-        className="absolute inset-0 rounded-full bg-gradient-to-t from-yellow-500/30 to-amber-500/10 blur-sm"
+        className="absolute inset-0 rounded-full bg-gradient-to-t from-yellow-500/30 to-rank-gold/10 blur-sm"
         animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.9, 1.1, 0.9] }}
         transition={{ duration: 2, repeat: Infinity }}
       />
@@ -29,7 +29,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
       {Array.from({ length: coinCount }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-yellow-400 font-bold"
+          className="absolute text-coins font-bold"
           style={{ fontSize: containerSize * 0.18 }}
           initial={{ opacity: 0, y: -10 }}
           animate={{
@@ -72,7 +72,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
       {isWealthy && Array.from({ length: 4 }).map((_, i) => (
         <motion.div
           key={`sparkle-${i}`}
-          className="absolute w-1 h-1 rounded-full bg-yellow-300"
+          className="absolute w-1 h-1 rounded-full bg-coins"
           style={{
             left: `${25 + i * 18}%`,
             top: `${20 + (i % 2) * 60}%`,
@@ -91,7 +91,7 @@ export const AnimatedCoinsIndicator = ({ coins, className = "", size = "md" }: A
 
       {/* Count badge */}
       <motion.div
-        className="absolute -bottom-1 bg-amber-500 text-white rounded-full flex items-center justify-center font-black shadow-md"
+        className="absolute -bottom-1 bg-rank-gold text-white rounded-full flex items-center justify-center font-black shadow-md"
         style={{
           minWidth: containerSize * 0.45,
           height: containerSize * 0.3,

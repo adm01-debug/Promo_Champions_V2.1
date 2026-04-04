@@ -158,7 +158,7 @@ export const KnownDevices = () => {
                         {device.device_name || `${device.browser} em ${device.os}`}
                       </p>
                       {device.is_trusted && (
-                        <Badge variant="default" className="text-xs bg-green-500">
+                        <Badge variant="default" className="text-xs bg-success">
                           <ShieldCheck className="h-3 w-3 mr-1" />
                           Confiável
                         </Badge>

@@ -226,7 +226,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                             <div className="flex items-center gap-2">
                               <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.stroke }} />
                               <span className="text-xs text-muted-foreground">{sdr?.name || entry.dataKey}</span>
-                              <span className={`text-xs font-semibold ml-auto ${goal > 0 ? diff >= 0 ? 'text-emerald-500' : 'text-red-500' : ''}`}>{entry.value}</span>
+                              <span className={`text-xs font-semibold ml-auto ${goal > 0 ? diff >= 0 ? 'text-success' : 'text-destructive' : ''}`}>{entry.value}</span>
                             </div>
                             {goal > 0 && (<div className="ml-4 text-[10px] text-muted-foreground">Meta: {goal} | {diff >= 0 ? '+' : ''}{diff}</div>)}
                           </div>

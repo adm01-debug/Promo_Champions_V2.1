@@ -55,7 +55,7 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                 <Badge variant="outline" className={cn(
                   "gap-1",
                   expirationDays < 0 ? "text-destructive border-destructive/30" :
-                  expirationDays <= 3 ? "text-yellow-400 border-yellow-400/30" :
+                  expirationDays <= 3 ? "text-coins border-yellow-400/30" :
                   "text-muted-foreground"
                 )}>
                   <Clock className="h-3 w-3" />

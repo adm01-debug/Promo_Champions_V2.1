@@ -106,7 +106,7 @@ export function TerritoryWars() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <Crown className="h-4 w-4 text-amber-500" /> Maiores Conquistadores
+              <Crown className="h-4 w-4 text-rank-gold" /> Maiores Conquistadores
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -154,7 +154,7 @@ export function TerritoryWars() {
                   <div className="p-2 rounded-lg bg-primary/5 border border-primary/20 mb-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
-                        <Crown className="h-3.5 w-3.5 text-amber-500" />
+                        <Crown className="h-3.5 w-3.5 text-rank-gold" />
                         <span className="text-sm font-semibold">{territory.currentOwner.name}</span>
                       </div>
                       <span className="text-xs font-mono text-primary">R$ {(territory.currentOwner.revenue / 1000).toFixed(1)}k</span>

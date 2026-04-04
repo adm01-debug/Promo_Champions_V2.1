@@ -30,7 +30,7 @@ const rarityColors = {
   common: 'from-slate-400 to-slate-600',
   rare: 'from-blue-400 to-blue-600',
   epic: 'from-purple-400 to-purple-600',
-  legendary: 'from-amber-400 to-orange-500'
+  legendary: 'from-rank-gold to-orange-500'
 };
 
 const rarityGlow = {
@@ -96,9 +96,9 @@ export const BadgeDisplay: FC<BadgeDisplayProps> = ({
               {badge.emoji} {badge.name}
               <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded capitalize",
-                badge.rarity === 'legendary' && "bg-amber-500/20 text-amber-500",
-                badge.rarity === 'epic' && "bg-purple-500/20 text-purple-500",
-                badge.rarity === 'rare' && "bg-blue-500/20 text-blue-500",
+                badge.rarity === 'legendary' && "bg-rank-gold/20 text-rank-gold",
+                badge.rarity === 'epic' && "bg-primary/20 text-primary",
+                badge.rarity === 'rare' && "bg-info/20 text-info",
                 badge.rarity === 'common' && "bg-slate-500/20 text-slate-500"
               )}>
                 {badge.rarity}
@@ -106,7 +106,7 @@ export const BadgeDisplay: FC<BadgeDisplayProps> = ({
             </p>
             <p className="text-xs text-muted-foreground">{badge.description}</p>
             {badge.unlocked && badge.unlockedAt && (
-              <p className="text-xs text-green-500">
+              <p className="text-xs text-success">
                 ✓ Desbloqueado em {badge.unlockedAt.toLocaleDateString('pt-BR')}
               </p>
             )}

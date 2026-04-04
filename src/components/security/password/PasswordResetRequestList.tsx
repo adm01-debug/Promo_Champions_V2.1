@@ -58,7 +58,7 @@ export const PasswordResetRequestList = React.memo(function PasswordResetRequest
     <ScrollArea className="h-[500px]">
       <div className="space-y-3">
         {filteredRequests.map((request) => (
-          <div key={request.id} className={`p-4 rounded-lg border transition-colors ${request.status === "pending" && !isExpired(request.expires_at) ? "bg-amber-500/5 border-amber-500/20" : "bg-muted/30 border-border"}`}>
+          <div key={request.id} className={`p-4 rounded-lg border transition-colors ${request.status === "pending" && !isExpired(request.expires_at) ? "bg-rank-gold/5 border-rank-gold/20" : "bg-muted/30 border-border"}`}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
@@ -76,10 +76,10 @@ export const PasswordResetRequestList = React.memo(function PasswordResetRequest
               {request.status === "pending" && !isExpired(request.expires_at) && (
                 <div className="flex gap-2 ml-4">
                   <AlertDialog>
-                    <AlertDialogTrigger asChild><Button size="sm" variant="default" className="bg-emerald-600 hover:bg-emerald-700"><Check className="h-4 w-4 mr-1" />Aprovar</Button></AlertDialogTrigger>
+                    <AlertDialogTrigger asChild><Button size="sm" variant="default" className="bg-success hover:bg-success/90"><Check className="h-4 w-4 mr-1" />Aprovar</Button></AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader><AlertDialogTitle>Aprovar Reset de Senha?</AlertDialogTitle><AlertDialogDescription>Um email de reset de senha será enviado para <strong>{request.user_email}</strong>.</AlertDialogDescription></AlertDialogHeader>
-                      <AlertDialogFooter><AlertDialogCancel>Cancelar</AlertDialogCancel><AlertDialogAction onClick={() => approveMutation.mutate(request.id)} className="bg-emerald-600 hover:bg-emerald-700">Aprovar e Enviar Email</AlertDialogAction></AlertDialogFooter>
+                      <AlertDialogFooter><AlertDialogCancel>Cancelar</AlertDialogCancel><AlertDialogAction onClick={() => approveMutation.mutate(request.id)} className="bg-success hover:bg-success/90">Aprovar e Enviar Email</AlertDialogAction></AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
                   <Dialog open={rejectDialogOpen && selectedRequest?.id === request.id} onOpenChange={(open) => { setRejectDialogOpen(open); if (!open) { setSelectedRequest(null); setRejectionReason(""); } }}>

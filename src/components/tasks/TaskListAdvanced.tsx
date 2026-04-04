@@ -42,9 +42,9 @@ export const TaskListAdvanced: FC<TaskListAdvancedProps> = ({
   onAddTask
 }) => {
   const priorityConfig = {
-    low: { color: 'text-green-500', bg: 'bg-green-500/10', label: 'Baixa' },
-    medium: { color: 'text-yellow-500', bg: 'bg-yellow-500/10', label: 'Média' },
-    high: { color: 'text-red-500', bg: 'bg-red-500/10', label: 'Alta' }
+    low: { color: 'text-success', bg: 'bg-success/10', label: 'Baixa' },
+    medium: { color: 'text-warning', bg: 'bg-warning/10', label: 'Média' },
+    high: { color: 'text-destructive', bg: 'bg-destructive/10', label: 'Alta' }
   };
 
   const pendingTasks = tasks.filter(t => !t.isCompleted);

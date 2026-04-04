@@ -162,9 +162,9 @@ export function EmailTrackingDashboard() {
                         <div className={cn(
                           "p-1.5 rounded-md",
                           event.event_type === 'sent' && "bg-primary/10",
-                          event.event_type === 'opened' && "bg-green-500/10",
-                          event.event_type === 'clicked' && "bg-blue-500/10",
-                          event.event_type === 'replied' && "bg-purple-500/10",
+                          event.event_type === 'opened' && "bg-success/10",
+                          event.event_type === 'clicked' && "bg-info/10",
+                          event.event_type === 'replied' && "bg-primary/10",
                           event.event_type === 'bounced' && "bg-destructive/10",
                           !['sent','opened','clicked','replied','bounced'].includes(event.event_type) && "bg-muted/10"
                         )}>

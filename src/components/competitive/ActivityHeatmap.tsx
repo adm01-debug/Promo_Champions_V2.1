@@ -77,10 +77,10 @@ export const ActivityHeatmap: FC = () => {
   const getColor = (val: number, max: number) => {
     if (val === 0) return 'bg-muted/20';
     const intensity = val / max;
-    if (intensity > 0.75) return 'bg-emerald-500';
-    if (intensity > 0.5) return 'bg-emerald-400';
-    if (intensity > 0.25) return 'bg-emerald-300';
-    return 'bg-emerald-200';
+    if (intensity > 0.75) return 'bg-success';
+    if (intensity > 0.5) return 'bg-success/80';
+    if (intensity > 0.25) return 'bg-success/60';
+    return 'bg-success/40';
   };
 
   const renderHeatmap = (data: { grid: number[][]; maxVal: number; total: number } | undefined, title: string, emoji: string) => (
@@ -125,7 +125,7 @@ export const ActivityHeatmap: FC = () => {
             {/* Legend */}
             <div className="flex items-center gap-2 mt-3 justify-end">
               <span className="text-[9px] text-muted-foreground">Menos</span>
-              {['bg-muted/20', 'bg-emerald-200', 'bg-emerald-300', 'bg-emerald-400', 'bg-emerald-500'].map(c => (
+              {['bg-muted/20', 'bg-success/40', 'bg-success/60', 'bg-success/80', 'bg-success'].map(c => (
                 <div key={c} className={cn('h-3 w-3 rounded-sm', c)} />
               ))}
               <span className="text-[9px] text-muted-foreground">Mais</span>

@@ -46,7 +46,7 @@ export const PointsDisplay: FC<PointsDisplayProps> = ({
     <div className={cn("inline-flex items-center", sizeClasses[size], className)}>
       <Icon 
         size={iconSizes[size]} 
-        className="text-amber-500 fill-amber-500" 
+        className="text-coins fill-coins" 
       />
       <motion.span 
         key={points}
@@ -66,7 +66,7 @@ export const PointsDisplay: FC<PointsDisplayProps> = ({
             exit={{ opacity: 0, y: -10 }}
             className={cn(
               "ml-1 text-xs font-medium",
-              delta > 0 ? "text-green-500" : "text-red-500"
+              delta > 0 ? "text-success" : "text-destructive"
             )}
           >
             {delta > 0 ? '+' : ''}{delta}

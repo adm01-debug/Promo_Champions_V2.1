@@ -37,10 +37,10 @@ export const GoalTracker: FC<GoalTrackerProps> = ({ goal, onEdit, showDetails = 
   const progress = Math.min((goal.current / goal.target) * 100, 100);
   
   const statusConfig = {
-    on_track: { label: 'No caminho', color: 'bg-green-500', icon: TrendingUp },
-    at_risk: { label: 'Em risco', color: 'bg-yellow-500', icon: AlertCircle },
-    behind: { label: 'Atrasado', color: 'bg-red-500', icon: TrendingDown },
-    completed: { label: 'Concluído', color: 'bg-blue-500', icon: CheckCircle2 }
+    on_track: { label: 'No caminho', color: 'bg-success', icon: TrendingUp },
+    at_risk: { label: 'Em risco', color: 'bg-warning', icon: AlertCircle },
+    behind: { label: 'Atrasado', color: 'bg-destructive', icon: TrendingDown },
+    completed: { label: 'Concluído', color: 'bg-info', icon: CheckCircle2 }
   };
 
   const status = statusConfig[goal.status];
@@ -148,14 +148,14 @@ export const MilestoneTracker: FC<MilestoneProps> = ({ milestones, onComplete })
           <div 
             key={milestone.id}
             className={`flex items-start gap-3 p-3 rounded-lg ${
-              milestone.isCompleted ? 'bg-green-500/10' : 'bg-muted/50'
+              milestone.isCompleted ? 'bg-success/10' : 'bg-muted/50'
             }`}
           >
             <button
               onClick={() => !milestone.isCompleted && onComplete?.(milestone.id)}
               className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                 milestone.isCompleted 
-                  ? 'bg-green-500 border-green-500 text-white' 
+                  ? 'bg-success border-success text-white' 
                   : 'border-muted-foreground hover:border-primary'
               }`}
             >

@@ -103,7 +103,7 @@ export default function HistoricoDesafiosDiarios() {
       <div className="min-h-screen bg-background p-6 lg:p-8 space-y-8">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3"><Zap className="h-8 w-8 text-amber-500" />Histórico de Desafios Diários</h1>
+            <h1 className="text-3xl font-bold flex items-center gap-3"><Zap className="h-8 w-8 text-rank-gold" />Histórico de Desafios Diários</h1>
             <p className="text-muted-foreground mt-1">Acompanhe seu progresso nos desafios dos últimos 30 dias</p>
           </div>
           <Button onClick={handleGenerateDailyChallenges} disabled={isGenerating} className="gap-2"><RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />Gerar Desafios (Teste)</Button>
@@ -160,7 +160,7 @@ export default function HistoricoDesafiosDiarios() {
                         </CardTitle>
                         <div className="flex items-center gap-2">
                           {allCompleted ? (
-                            <Badge variant="default" className="bg-green-500/20 text-green-500 border-green-500/30"><CheckCircle className="h-3 w-3 mr-1" />Todos Completados</Badge>
+                            <Badge variant="default" className="bg-success/20 text-success border-success/30"><CheckCircle className="h-3 w-3 mr-1" />Todos Completados</Badge>
                           ) : (
                             <Badge variant="secondary">{completedCount}/{challenges.length} completados</Badge>
                           )}

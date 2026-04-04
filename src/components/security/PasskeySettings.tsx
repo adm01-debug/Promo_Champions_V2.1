@@ -75,7 +75,7 @@ export const PasskeySettings: React.FC = () => {
             <Fingerprint className="h-5 w-5 text-primary" />
             <CardTitle>Passkeys / Login Biométrico</CardTitle>
           </div>
-          <Badge variant="secondary" className="bg-green-100 text-green-700">
+          <Badge variant="secondary" className="bg-success/20 text-success">
             Suportado
           </Badge>
         </div>
@@ -87,7 +87,7 @@ export const PasskeySettings: React.FC = () => {
         {/* Benefits Section */}
         <div className="grid gap-3 p-4 rounded-lg bg-muted/50">
           <h4 className="font-medium flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-4 w-4 text-success" />
             Por que usar Passkeys?
           </h4>
           <ul className="text-sm text-muted-foreground space-y-1 ml-6">

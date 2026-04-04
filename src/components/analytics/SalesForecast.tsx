@@ -26,13 +26,13 @@ interface ForecastItem {
 }
 
 const trendIcons: Record<string, JSX.Element> = {
-  increasing: <TrendingUp className="h-4 w-4 text-emerald-500" />,
+  increasing: <TrendingUp className="h-4 w-4 text-success" />,
   stable: <Minus className="h-4 w-4 text-muted-foreground" />,
   decreasing: <TrendingDown className="h-4 w-4 text-destructive" />,
 };
 
 const _riskStyles: Record<string, string> = {
-  low: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  low: 'bg-success/10 text-success border-success/20',
   medium: 'bg-accent text-accent-foreground border-border',
   high: 'bg-destructive/10 text-destructive border-destructive/20',
   critical: 'bg-destructive text-destructive-foreground',

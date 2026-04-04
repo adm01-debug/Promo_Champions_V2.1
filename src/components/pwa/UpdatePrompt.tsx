@@ -29,8 +29,8 @@ export function UpdatePrompt({ className }: UpdatePromptProps) {
         )}
       >
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-            <RefreshCw className="h-5 w-5 text-blue-500" />
+          <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center shrink-0">
+            <RefreshCw className="h-5 w-5 text-info" />
           </div>
           
           <div className="flex-1">
