@@ -246,7 +246,7 @@ describe('Cadence Task Notes', () => {
   });
 
   it('should skip task without notes', () => {
-    const task = { id: '1', status: 'pending', notes: null };
+    const task = { id: '1', status: 'pending', notes: null as string | null };
     const result = skipTaskWithNotes(task);
     expect(result.status).toBe('skipped');
   });
