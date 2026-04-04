@@ -17,7 +17,7 @@ interface AchievementsTabProps {
   achievements: AchievementData[];
 }
 
-export function AchievementsTab({ achievements }: AchievementsTabProps) {
+export const AchievementsTab = memo(function AchievementsTab({ achievements }: AchievementsTabProps) {
   if (!achievements || achievements.length === 0) {
     return (
       <Card className="glass border-border/50">

@@ -41,7 +41,7 @@ const getRankGradient = (rank: number) => {
   return "from-muted/20 to-transparent border-border/50";
 };
 
-export function RankingTab({ ranking, leader, formatCurrency }: RankingTabProps) {
+export const RankingTab = memo(function RankingTab({ ranking, leader, formatCurrency }: RankingTabProps) {
   return (
     <div className="space-y-4">
       {ranking.map((person) => (
