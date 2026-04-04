@@ -53,7 +53,7 @@ export function useCollectibleBadges(salespersonId?: string) {
         .eq('salesperson_id', salespersonId)
         .order('earned_at', { ascending: false });
       if (error) throw error;
-      return (data || []).map((eb: { badge_id: string; earned_at: string }) => ({
+      return (data || []).map((eb: any) => ({
         ...eb,
         badge: eb.badge as CollectibleBadge,
       })) as EarnedBadge[];
@@ -70,7 +70,7 @@ export function useCollectibleBadges(salespersonId?: string) {
       if (error) throw error;
 
       const countMap = new Map<string, number>();
-      (data || []).forEach((r: { salesperson_id: string; badge_count: number }) => {
+      (data || []).forEach((r: any) => {
         countMap.set(r.salesperson_id, (countMap.get(r.salesperson_id) || 0) + 1);
       });
 

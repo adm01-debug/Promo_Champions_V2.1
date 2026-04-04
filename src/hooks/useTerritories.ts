@@ -35,7 +35,7 @@ export function useTerritories() {
         .order('total_revenue', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((t: { id: string; name: string; region: string; assigned_to: string | null; metadata: Record<string, unknown> | null; created_at: string }) => ({
+      return (data || []).map((t: any) => ({
         ...t,
         owner: t.salespeople || null,
         salespeople: undefined,
@@ -56,7 +56,7 @@ export function useTerritoryHistory(territoryId?: string) {
         .order('conquered_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((h: { id: string; territory_id: string; salesperson_id: string; assigned_at: string; salespeople?: { name: string } | null }) => ({
+      return (data || []).map((h: any) => ({
         ...h,
         salesperson: h.salespeople || null,
         salespeople: undefined,

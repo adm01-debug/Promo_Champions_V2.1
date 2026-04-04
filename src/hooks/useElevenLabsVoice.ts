@@ -239,8 +239,8 @@ export default useElevenLabsVoice;
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SpeechRecognition: new () => SpeechRecognition;
+    SpeechRecognition: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    webkitSpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: any;
   }
 }
