@@ -5,10 +5,12 @@ import { motion } from 'framer-motion';
 
 interface NavItem {
   icon: ReactNode;
+  filledIcon?: ReactNode;
   label: string;
   href: string;
   isActive: boolean;
   onClick?: () => void;
+  badge?: number;
 }
 
 interface MobileBottomNavProps {
@@ -16,28 +18,38 @@ interface MobileBottomNavProps {
   className?: string;
 }
 
-const NavButton: FC<{ item: NavItem; index: number }> = ({ item, index }) => {
+const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
+  const displayIcon = item.isActive && item.filledIcon ? item.filledIcon : item.icon;
+
   const content = (
     <>
+      {/* Sliding pill background */}
+      {item.isActive && (
+        <motion.div
+          layoutId="mobile-nav-pill"
+          className="absolute inset-x-2 top-1.5 bottom-1.5 rounded-xl bg-primary/10"
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        />
+      )}
       <motion.div
-        animate={item.isActive ? { scale: 1.15, y: -2 } : { scale: 1, y: 0 }}
+        animate={item.isActive ? { scale: 1.1, y: -1 } : { scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        className="relative"
       >
-        {item.icon}
+        {displayIcon}
+        {/* Notification badge */}
+        {item.badge && item.badge > 0 && (
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold leading-none">
+            {item.badge > 99 ? '99+' : item.badge}
+          </span>
+        )}
       </motion.div>
       <span className={cn(
-        "mt-1 truncate text-[10px] font-medium transition-colors",
-        item.isActive && "text-primary"
+        "mt-0.5 truncate text-[10px] font-medium transition-colors relative z-10",
+        item.isActive ? "text-primary font-semibold" : "text-muted-foreground"
       )}>
         {item.label}
       </span>
-      {item.isActive && (
-        <motion.div
-          layoutId="mobile-nav-indicator"
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary"
-          transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-        />
-      )}
     </>
   );
 
@@ -54,7 +66,6 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item, index }) => {
   if (item.onClick) {
     return (
       <button
-        key={index}
         onClick={item.onClick}
         type="button"
         className={baseClasses}
@@ -67,7 +78,6 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item, index }) => {
 
   return (
     <Link
-      key={index}
       to={item.href}
       className={baseClasses}
       aria-label={item.label}
@@ -80,7 +90,8 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item, index }) => {
 
 export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) => {
   return (
-    <nav
+    <motion.nav
+      layout
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50",
         "bg-background/95 backdrop-blur-lg border-t border-border/50",
@@ -93,8 +104,8 @@ export const MobileBottomNav: FC<MobileBottomNavProps> = ({ items, className }) 
       aria-label="Navegação principal mobile"
     >
       {items.map((item, index) => (
-        <NavButton key={index} item={item} index={index} />
+        <NavButton key={item.href} item={item} index={index} />
       ))}
-    </nav>
+    </motion.nav>
   );
 };

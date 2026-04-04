@@ -29,6 +29,7 @@ import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDashboardPriorities } from "@/hooks/useDashboardPriorities";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion } from "framer-motion";
@@ -48,6 +49,7 @@ const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
+  const priorities = useDashboardPriorities();
   
   useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
 
@@ -96,9 +98,9 @@ const Index = () => {
               <CompetitiveStatusBar />
             </motion.div>
 
-            {/* ===== HERO KPIs — Always visible ===== */}
+            {/* ===== HERO KPIs ===== */}
             <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-6"
+              className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -164,9 +166,9 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* ===== CHARTS & GOALS — Always visible ===== */}
+            {/* ===== CHARTS & GOALS ===== */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -182,13 +184,13 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* ===== ANALYTICS — Collapsible ===== */}
+            {/* ===== ANALYTICS — role-aware default ===== */}
             <DashboardSection
               title="Análises"
               icon={<BarChart3 className="h-4 w-4" />}
-              defaultOpen={true}
+              defaultOpen={priorities.showAnalyticsOpen}
             >
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <FunnelChart />
                 <SalesForecast />
                 <div className="col-span-2 lg:col-span-1">
@@ -200,15 +202,15 @@ const Index = () => {
               </div>
             </DashboardSection>
 
-            {/* ===== GAMIFICATION — Collapsible ===== */}
+            {/* ===== GAMIFICATION — role-aware default ===== */}
             <DashboardSection
               title="Competição & Conquistas"
               icon={<Trophy className="h-4 w-4" />}
-              defaultOpen={true}
+              defaultOpen={priorities.showGamificationOpen}
               badge="Ativo"
             >
               <div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
                 data-tour="gamification"
               >
                 <RecentDeals />
@@ -220,14 +222,14 @@ const Index = () => {
               </div>
             </DashboardSection>
 
-            {/* ===== PERFORMANCE INTELLIGENCE — Collapsible, default closed ===== */}
+            {/* ===== PERFORMANCE INTELLIGENCE ===== */}
             <DashboardSection
               title="Performance Inteligente"
               icon={<Zap className="h-4 w-4" />}
-              defaultOpen={false}
+              defaultOpen={priorities.showPerformanceOpen}
               teaser="📊 Descubra seu Score de Velocidade, qualidade de atividades e micro-metas"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <MicroGoalsWidget />
                 <VelocityScoreWidget />
                 <ActivityQualityWidget />
@@ -235,14 +237,14 @@ const Index = () => {
               </div>
             </DashboardSection>
 
-            {/* ===== ENGAGEMENT — Collapsible, default closed ===== */}
+            {/* ===== ENGAGEMENT ===== */}
             <DashboardSection
               title="Engajamento & Aprendizado"
               icon={<Heart className="h-4 w-4" />}
-              defaultOpen={false}
+              defaultOpen={priorities.showEngagementOpen}
               teaser="💡 Registre seu humor, responda pesquisas e complete quizzes diários"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <MoodTrackerWidget />
                 <PulseSurveyWidget />
                 <DailyQuizWidget />
