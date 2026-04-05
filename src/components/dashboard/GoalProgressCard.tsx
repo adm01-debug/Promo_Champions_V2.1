@@ -104,7 +104,7 @@ interface GoalsSummaryProps {
   className?: string;
 }
 
-export const GoalsSummary: FC<GoalsSummaryProps> = ({ goals, className }) => {
+export const GoalsSummary: FC<GoalsSummaryProps> = React.memo(({ goals, className }) => {
   const completed = goals.filter(g => g.status === 'completed').length;
   const onTrack = goals.filter(g => g.status === 'on-track').length;
   const atRisk = goals.filter(g => g.status === 'at-risk').length;
@@ -130,4 +130,5 @@ export const GoalsSummary: FC<GoalsSummaryProps> = ({ goals, className }) => {
       </div>
     </div>
   );
-};
+});
+GoalsSummary.displayName = "GoalsSummary";
