@@ -157,7 +157,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className={`rounded-lg border p-3 ${
+              className={`rounded-lg border p-3 transition-colors ${
                 isClaimed 
                   ? 'bg-muted/50 border-muted' 
                   : challenge.isCompleted 
@@ -165,8 +165,8 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
                     : 'bg-card'
               }`}
             >
-              <div className="flex items-start gap-3">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-primary-foreground text-lg shrink-0`}>
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-primary-foreground text-base sm:text-lg shrink-0`}>
                   {getDailyChallengeIcon(challenge.challenge_type)}
                 </div>
                 
