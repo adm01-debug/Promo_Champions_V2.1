@@ -58,8 +58,8 @@ export function useLeagues() {
           league: getLeagueTier(points),
           points,
           league_id: member?.league_id || null,
-          promoted_at: null,
-          demoted_at: null,
+          promoted_at: null as string | null,
+          demoted_at: null as string | null,
         };
       }).sort((a, b) => b.points - a.points);
     },
