@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid } from "lucide-react";
+import { Trophy, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid, UserPlus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { useGamificationData } from "@/hooks/useGamificationData";
@@ -14,6 +14,7 @@ import { CelebrationTestButtons } from "@/components/gamification/CelebrationTes
 import { RankingPodium } from "@/components/vendedores/RankingPodium";
 import { LeagueCard } from "@/components/gamification/LeagueCard";
 import { RankingGridItem } from "@/components/vendedores/RankingGridItem";
+import { SummaryCards } from "@/components/vendedores/SummaryCards";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -140,37 +141,11 @@ const Vendedores = () => {
         )}
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="opacity-0 animate-fade-in-up glass rounded-xl p-5" style={{ animationDelay: "100ms" }}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-primary/20">
-                <DollarSign className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-sm text-muted-foreground">Total Vendido</span>
-            </div>
-            <p className="text-2xl font-bold">R$ {totalSales.toLocaleString("pt-BR")}</p>
-          </div>
-
-          <div className="opacity-0 animate-fade-in-up glass rounded-xl p-5" style={{ animationDelay: "150ms" }}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-secondary/20">
-                <Target className="h-4 w-4 text-secondary" />
-              </div>
-              <span className="text-sm text-muted-foreground">Média de Metas</span>
-            </div>
-            <p className="text-2xl font-bold">{avgGoalProgress.toFixed(1)}%</p>
-          </div>
-
-          <div className="opacity-0 animate-fade-in-up glass rounded-xl p-5" style={{ animationDelay: "200ms" }}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-success/20">
-                <TrendingUp className="h-4 w-4 text-success" />
-              </div>
-              <span className="text-sm text-muted-foreground">Comissões Totais</span>
-            </div>
-            <p className="text-2xl font-bold">R$ {totalCommissions.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}</p>
-          </div>
-        </div>
+        <SummaryCards
+          totalSales={totalSales}
+          avgGoalProgress={avgGoalProgress}
+          totalCommissions={totalCommissions}
+        />
 
         {/* Sales Chart */}
         {salespeople && salespeople.length > 0 && (
@@ -226,8 +201,20 @@ const Vendedores = () => {
               ))}
             </div>
           ) : error ? (
-            <div className="p-5 text-center text-muted-foreground">
-              Erro ao carregar vendedores
+            <div className="p-10 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-3">
+                <Trophy className="h-6 w-6 text-destructive" />
+              </div>
+              <p className="font-medium text-foreground">Erro ao carregar vendedores</p>
+              <p className="text-sm text-muted-foreground mt-1">Verifique sua conexão e tente novamente</p>
+            </div>
+          ) : !salespeople || salespeople.length === 0 ? (
+            <div className="p-10 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                <UserPlus className="h-6 w-6 text-primary" />
+              </div>
+              <p className="font-medium text-foreground">Nenhum vendedor cadastrado</p>
+              <p className="text-sm text-muted-foreground mt-1">Adicione vendedores para iniciar o ranking</p>
             </div>
           ) : viewMode === "gamified" ? (
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

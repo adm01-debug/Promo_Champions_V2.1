@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Crown, Medal, Award } from "lucide-react";
+import { Crown, Medal, Award, Flame, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -121,11 +121,21 @@ export const RankingGridItem = React.memo(function RankingGridItem({
             </span>
           </div>
 
-          {remaining > 0 && (
+          {goalProgress >= 120 ? (
+            <div className="flex items-center gap-1 mt-0.5">
+              <Flame className="h-3 w-3 text-streak" />
+              <span className="text-[10px] font-bold text-streak">Em Chamas!</span>
+            </div>
+          ) : goalProgress >= 100 ? (
+            <div className="flex items-center gap-1 mt-0.5">
+              <Star className="h-3 w-3 text-success" />
+              <span className="text-[10px] font-bold text-success">Meta Batida!</span>
+            </div>
+          ) : remaining > 0 ? (
             <p className="text-[10px] text-muted-foreground mt-0.5">
               Faltam: R$ {remaining.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
             </p>
-          )}
+          ) : null}
         </div>
       </Link>
     </motion.div>
