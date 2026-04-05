@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { triggerHaptic } from "@/lib/haptics";
-import { toast } from "sonner";
 import {
   useDailyChallengesWithProgress,
   useClaimDailyChallengeReward,
