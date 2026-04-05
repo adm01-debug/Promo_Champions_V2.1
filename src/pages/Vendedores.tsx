@@ -14,6 +14,7 @@ import { CelebrationTestButtons } from "@/components/gamification/CelebrationTes
 import { RankingPodium } from "@/components/vendedores/RankingPodium";
 import { LeagueCard } from "@/components/gamification/LeagueCard";
 import { RankingGridItem } from "@/components/vendedores/RankingGridItem";
+import { SummaryCards } from "@/components/vendedores/SummaryCards";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";
