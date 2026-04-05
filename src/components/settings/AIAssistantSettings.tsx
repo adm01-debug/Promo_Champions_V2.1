@@ -246,6 +246,7 @@ export function AIAssistantSettings() {
               <Button 
                 variant="outline" 
                 size="icon"
+                aria-label="Testar voz"
                 onClick={handleTestVoice}
                 disabled={isTestingVoice}
                 title="Testar voz"

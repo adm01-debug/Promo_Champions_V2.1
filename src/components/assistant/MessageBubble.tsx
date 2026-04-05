@@ -57,13 +57,13 @@ export function MessageBubble({
             <Button
               variant="ghost"
               size="icon"
+              aria-label={isSpeaking ? "Parar áudio" : "Ouvir mensagem"}
               className={cn(
                 'h-5 w-5 opacity-60 hover:opacity-100 transition-opacity',
                 isSpeaking && 'text-primary opacity-100'
               )}
               onClick={() => onPlayAudio?.(message.content)}
               disabled={isLoadingTTS}
-              aria-label={isSpeaking ? "Parar áudio" : "Reproduzir mensagem"}
             >
               {isLoadingTTS ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
