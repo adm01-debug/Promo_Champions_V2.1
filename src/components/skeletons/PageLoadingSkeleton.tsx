@@ -120,7 +120,32 @@ export const ProdutosLoadingSkeleton: FC = () => (
 );
 
 export const VendedoresLoadingSkeleton: FC = () => (
-  <div className="space-y-6 p-6"><PageHeaderSkeleton /><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}</div></div>
+  <div className="space-y-6 p-6">
+    <PageHeaderSkeleton />
+    {/* Podium skeleton — mimics 2nd/1st/3rd layout */}
+    <div className="flex items-end justify-center gap-4 py-8">
+      <div className="flex flex-col items-center gap-2">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-24 w-28 rounded-t-lg" />
+      </div>
+      <div className="flex flex-col items-center gap-2 -mt-6">
+        <Skeleton className="h-6 w-6 rounded-full" />
+        <Skeleton className="h-20 w-20 rounded-full" />
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="h-32 w-32 rounded-t-lg" />
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-20 w-28 rounded-t-lg" />
+      </div>
+    </div>
+    {/* Grid skeleton */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+    </div>
+  </div>
 );
 
 export const ConfiguracoesLoadingSkeleton: FC = () => (
