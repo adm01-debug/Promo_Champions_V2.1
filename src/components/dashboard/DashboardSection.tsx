@@ -121,11 +121,21 @@ export function DashboardSection({
               setIsOpen(true);
               persistSectionState(sectionId, true);
             }}
-            className="w-full text-left px-3 py-2.5 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group/teaser"
+            className="w-full text-left px-4 py-3 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group/teaser"
           >
-            <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors">
-              {teaser} <span className="text-primary font-medium">→ Expandir</span>
-            </p>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1">
+                <div className="h-1.5 w-6 rounded-full bg-primary/30" />
+                <div className="h-1.5 w-4 rounded-full bg-primary/20" />
+                <div className="h-1.5 w-5 rounded-full bg-primary/15" />
+              </div>
+              <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors flex-1">
+                {teaser}
+              </p>
+              <span className="text-primary font-medium text-xs shrink-0 group-hover/teaser:translate-x-0.5 transition-transform">
+                → Expandir
+              </span>
+            </div>
           </motion.button>
         ) : null}
       </AnimatePresence>

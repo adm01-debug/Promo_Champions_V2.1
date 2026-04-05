@@ -109,7 +109,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
         {/* Meta info */}
         <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground">
           {deal.category && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted/50">
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted/70 text-foreground/80 border border-border/50">
               {deal.category}
             </Badge>
           )}
