@@ -54,12 +54,12 @@ export const DashboardHeader = () => {
             </span>
           </h1>
         </div>
-        <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground capitalize">{today}</p>
-          <span className="text-muted-foreground/30">·</span>
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            <Sparkles className="h-3 w-3 text-primary/60" />
-            {tip}
+        <div className="flex items-center gap-2 min-w-0">
+          <p className="text-sm text-muted-foreground capitalize shrink-0">{today}</p>
+          <span className="text-muted-foreground/30 hidden sm:inline">·</span>
+          <p className="text-sm text-muted-foreground items-center gap-1 truncate hidden sm:flex">
+            <Sparkles className="h-3 w-3 text-primary/60 shrink-0" />
+            <span className="truncate">{tip}</span>
           </p>
         </div>
       </div>
