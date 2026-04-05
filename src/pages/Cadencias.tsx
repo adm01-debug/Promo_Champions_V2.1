@@ -134,7 +134,7 @@ export default function Cadencias() {
                       className="h-8 pl-8 text-xs bg-muted/30 border-border/50 focus:border-primary"
                     />
                   </div>
-                  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+                  <Select value={statusFilter} onValueChange={(v: string) => setStatusFilter(v as "all" | "active" | "inactive")}>
                     <SelectTrigger className="h-8 w-[120px] text-xs bg-muted/30 border-border/50">
                       <Filter className="h-3 w-3 mr-1" />
                       <SelectValue />
