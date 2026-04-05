@@ -48,7 +48,7 @@ export const DashboardHeader = () => {
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <GreetingIcon className="h-5 w-5 text-warning hidden sm:block" />
-          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-display tracking-tight">
             <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
               {greeting}, {firstName}!
             </span>
