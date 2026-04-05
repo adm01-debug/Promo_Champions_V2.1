@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Target, DollarSign, TrendingUp, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid } from "lucide-react";
+import { Trophy, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid, UserPlus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { useGamificationData } from "@/hooks/useGamificationData";
@@ -140,37 +140,11 @@ const Vendedores = () => {
         )}
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="opacity-0 animate-fade-in-up glass rounded-xl p-5" style={{ animationDelay: "100ms" }}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-primary/20">
-                <DollarSign className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-sm text-muted-foreground">Total Vendido</span>
-            </div>
-            <p className="text-2xl font-bold">R$ {totalSales.toLocaleString("pt-BR")}</p>
-          </div>
-
-          <div className="opacity-0 animate-fade-in-up glass rounded-xl p-5" style={{ animationDelay: "150ms" }}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-secondary/20">
-                <Target className="h-4 w-4 text-secondary" />
-              </div>
-              <span className="text-sm text-muted-foreground">Média de Metas</span>
-            </div>
-            <p className="text-2xl font-bold">{avgGoalProgress.toFixed(1)}%</p>
-          </div>
-
-          <div className="opacity-0 animate-fade-in-up glass rounded-xl p-5" style={{ animationDelay: "200ms" }}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-success/20">
-                <TrendingUp className="h-4 w-4 text-success" />
-              </div>
-              <span className="text-sm text-muted-foreground">Comissões Totais</span>
-            </div>
-            <p className="text-2xl font-bold">R$ {totalCommissions.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}</p>
-          </div>
-        </div>
+        <SummaryCards
+          totalSales={totalSales}
+          avgGoalProgress={avgGoalProgress}
+          totalCommissions={totalCommissions}
+        />
 
         {/* Sales Chart */}
         {salespeople && salespeople.length > 0 && (
