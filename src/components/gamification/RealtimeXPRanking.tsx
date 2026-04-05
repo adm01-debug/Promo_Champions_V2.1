@@ -43,7 +43,7 @@ export function RealtimeXPRanking() {
 
   useEffect(() => {
     const channel = supabase.channel('xp-ranking-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'salesperson_xp' }, (payload) => {
-      const salespersonId = (payload.new as any)?.salesperson_id;
+      const salespersonId = (payload.new as Record<string, unknown>)?.salesperson_id as string | undefined;
       if (salespersonId) {
         setRecentChanges(prev => new Set([...prev, salespersonId]));
         setTimeout(() => { setRecentChanges(prev => { const next = new Set(prev); next.delete(salespersonId); return next; }); }, 2000);
