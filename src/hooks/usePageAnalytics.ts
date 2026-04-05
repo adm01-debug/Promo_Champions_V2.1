@@ -73,8 +73,8 @@ export function usePageAnalytics(days: number = 30) {
         usage.avg_duration = usage.total_visits > 0
           ? Math.round(usage.total_duration / usage.total_visits)
           : 0;
-        delete (usage as any)._sessions;
-        results.push(usage);
+        const { _sessions: _, ...cleanUsage } = usage;
+        results.push(cleanUsage);
       }
 
       return results.sort((a, b) => b.total_visits - a.total_visits);
