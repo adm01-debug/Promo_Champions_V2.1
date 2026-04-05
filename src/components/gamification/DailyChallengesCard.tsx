@@ -8,6 +8,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { triggerHaptic } from "@/lib/haptics";
+import { toast } from "sonner";
 import {
   useDailyChallengesWithProgress,
   useClaimDailyChallengeReward,
@@ -38,6 +40,7 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
 
   const handleClaimReward = (challengeId: string, xpReward: number) => {
     if (!salespersonId) return;
+    triggerHaptic('success');
     claimReward.mutate({ challengeId, salespersonId, xpReward });
   };
 
