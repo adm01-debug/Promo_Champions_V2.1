@@ -167,8 +167,8 @@ export function LeadSourceMetrics() {
                     value={source.percentageOfTotal} 
                     className="h-2 shadow-inner"
                     style={{ 
-                      ["--progress-background" as any]: sourceColors[source.source] 
-                    }}
+                      "--progress-background": sourceColors[source.source] 
+                    } as React.CSSProperties}
                   />
                 </div>
               </div>
