@@ -35,7 +35,7 @@ export const StatCardCompact: FC<StatCardCompactProps> = React.memo(({
   };
 
   return (
-    <Card className={cn('p-3', className)}>
+    <Card className={cn('p-3 backdrop-blur-sm bg-card/80 border-border/50 hover:border-primary/20 transition-all duration-200', className)}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1">

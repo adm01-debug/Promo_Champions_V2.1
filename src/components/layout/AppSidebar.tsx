@@ -194,18 +194,28 @@ export function AppSidebar() {
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group">
-            <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType])}>
-              {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm font-semibold truncate">{salesperson?.name || "Usuário"}</p>
-                <UserRoleBadge />
-              </div>
-              <p className="text-[11px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
+                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType])}>
+                    {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-semibold truncate">{salesperson?.name || "Usuário"}</p>
+                      <UserRoleBadge />
+                    </div>
+                    <p className="text-[11px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px]">
+                <p className="font-medium">{salesperson?.name || "Usuário"}</p>
+                <p className="text-xs text-muted-foreground">{salesperson?.email || ""}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </SidebarFooter>
     </Sidebar>
