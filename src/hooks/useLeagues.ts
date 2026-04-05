@@ -11,6 +11,8 @@ export interface LeagueMember {
   league: LeagueTier;
   points: number;
   league_id: string | null;
+  promoted_at?: string | null;
+  demoted_at?: string | null;
 }
 
 export const LEAGUE_CONFIG: Record<LeagueTier, { label: string; emoji: string; color: string; gradient: string; minPoints: number; xpBonus: number }> = {
