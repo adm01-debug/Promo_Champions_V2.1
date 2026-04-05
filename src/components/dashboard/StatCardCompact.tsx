@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Card } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,7 +15,7 @@ interface StatCardCompactProps {
   className?: string;
 }
 
-export const StatCardCompact: FC<StatCardCompactProps> = ({
+export const StatCardCompact: FC<StatCardCompactProps> = React.memo(({
   title,
   value,
   change,
@@ -74,7 +74,8 @@ export const StatCardCompact: FC<StatCardCompactProps> = ({
       )}
     </Card>
   );
-};
+});
+StatCardCompact.displayName = "StatCardCompact";
 
 interface MiniStatProps {
   label: string;
@@ -82,7 +83,7 @@ interface MiniStatProps {
   trend?: 'up' | 'down' | 'neutral';
 }
 
-export const MiniStat: FC<MiniStatProps> = ({ label, value, trend }) => (
+export const MiniStat: FC<MiniStatProps> = React.memo(({ label, value, trend }) => (
   <div className="text-center">
     <p className="text-xs text-muted-foreground">{label}</p>
     <div className="flex items-center justify-center gap-1">
@@ -91,4 +92,5 @@ export const MiniStat: FC<MiniStatProps> = ({ label, value, trend }) => (
       {trend === 'down' && <TrendingDown size={12} className="text-destructive" />}
     </div>
   </div>
-);
+));
+MiniStat.displayName = "MiniStat";
