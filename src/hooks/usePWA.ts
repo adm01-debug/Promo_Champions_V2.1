@@ -33,7 +33,7 @@ export function usePWA(): UsePWAReturn {
       // Check display-mode for standalone
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       // Check iOS standalone
-      const isIOSStandalone = (navigator as any).standalone === true;
+      const isIOSStandalone = 'standalone' in navigator && (navigator as Navigator & { standalone?: boolean }).standalone === true;
       setIsInstalled(isStandalone || isIOSStandalone);
     };
 
