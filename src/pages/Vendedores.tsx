@@ -201,8 +201,20 @@ const Vendedores = () => {
               ))}
             </div>
           ) : error ? (
-            <div className="p-5 text-center text-muted-foreground">
-              Erro ao carregar vendedores
+            <div className="p-10 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-3">
+                <Trophy className="h-6 w-6 text-destructive" />
+              </div>
+              <p className="font-medium text-foreground">Erro ao carregar vendedores</p>
+              <p className="text-sm text-muted-foreground mt-1">Verifique sua conexão e tente novamente</p>
+            </div>
+          ) : !salespeople || salespeople.length === 0 ? (
+            <div className="p-10 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                <UserPlus className="h-6 w-6 text-primary" />
+              </div>
+              <p className="font-medium text-foreground">Nenhum vendedor cadastrado</p>
+              <p className="text-sm text-muted-foreground mt-1">Adicione vendedores para iniciar o ranking</p>
             </div>
           ) : viewMode === "gamified" ? (
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
