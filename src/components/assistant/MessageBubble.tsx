@@ -64,7 +64,6 @@ export function MessageBubble({
               )}
               onClick={() => onPlayAudio?.(message.content)}
               disabled={isLoadingTTS}
-              aria-label={isSpeaking ? "Parar áudio" : "Reproduzir mensagem"}
             >
               {isLoadingTTS ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
