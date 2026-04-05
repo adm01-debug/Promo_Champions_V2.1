@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Crown, Medal, Award } from "lucide-react";
+import { Crown, Medal, Award, Flame, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
