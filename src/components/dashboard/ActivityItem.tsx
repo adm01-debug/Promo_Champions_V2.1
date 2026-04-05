@@ -158,7 +158,7 @@ interface ActivityListProps {
   groupByDate?: boolean;
 }
 
-export const ActivityList: FC<ActivityListProps> = ({
+export const ActivityList: FC<ActivityListProps> = React.memo(({
   activities,
   onActivityClick,
   onActivityComplete,
@@ -187,4 +187,5 @@ export const ActivityList: FC<ActivityListProps> = ({
       ))}
     </div>
   );
-};
+});
+ActivityList.displayName = "ActivityList";

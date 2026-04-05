@@ -255,7 +255,8 @@ export function getAlertConfig() {
 
 // Expose metrics helpers only in development
 if (typeof window !== "undefined" && import.meta.env.DEV) {
-  (window as any).__queryMetrics = {
+  const w = window as Window & { __queryMetrics?: Record<string, unknown> };
+  w.__queryMetrics = {
     get: getQueryMetrics,
     clear: clearQueryMetrics,
     log: logQueryMetrics,

@@ -110,7 +110,7 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
       return (
         <Slot 
           className={cn(buttonVariants({ variant, size, className }))} 
-          ref={ref as any} 
+          ref={ref as React.Ref<HTMLElement>} 
           {...props}
         >
           {children}

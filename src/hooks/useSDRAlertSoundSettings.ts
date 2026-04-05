@@ -46,7 +46,8 @@ export function useSDRAlertSoundSettings() {
   const playSound = useCallback((soundType: SDRAlertSoundType = selectedSound) => {
     if (soundType === 'none' || volume === 0) return;
 
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const audioContext = new AudioCtx();
     const now = audioContext.currentTime;
     
     const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.3, type: OscillatorType = 'sine') => {
