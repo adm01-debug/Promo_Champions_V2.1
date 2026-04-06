@@ -121,6 +121,21 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
           </div>
         )}
 
+        {/* 7-Day Mini Heatmap */}
+        <div className="flex items-center justify-center gap-1.5 mt-3 pt-3 border-t border-streak/10">
+          {weekDays.map((day, i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <div
+                className={cn(
+                  "h-5 w-5 rounded-md transition-colors",
+                  day.isActive ? "bg-streak/60" : "bg-muted/30",
+                  day.isToday && "ring-1 ring-streak/50"
+                )}
+              />
+              <span className="text-[9px] text-muted-foreground/70">{day.dayLabel}</span>
+            </div>
+          ))}
+        </div>
         {!nextMilestone && streak > 0 && (
           <p className="text-xs text-center text-rank-gold font-medium">
             🏆 Todas as conquistas de streak alcançadas!
