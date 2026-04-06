@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -11,6 +11,30 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import type { GlobalSearchHandle } from "./GlobalSearch";
+import { useMemo } from "react";
+
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Dashboard',
+  '/pipeline': 'Pipeline',
+  '/vendas': 'Vendas',
+  '/clientes': 'Clientes',
+  '/produtos': 'Produtos',
+  '/tarefas': 'Tarefas',
+  '/atividades': 'Atividades',
+  '/cadencias': 'Cadências',
+  '/metas': 'Metas',
+  '/analytics': 'Analytics',
+  '/relatorios': 'Relatórios',
+  '/ranking': 'Ranking',
+  '/vendedores': 'Vendedores',
+  '/forecast': 'Forecast',
+  '/calendario': 'Calendário',
+  '/automacoes': 'Automações',
+  '/configuracoes': 'Configurações',
+  '/notificacoes': 'Notificações',
+  '/assistente': 'Assistente IA',
+  '/admin': 'Admin',
+};
 
 interface DesktopTopBarProps {
   searchRef: RefObject<GlobalSearchHandle>;
