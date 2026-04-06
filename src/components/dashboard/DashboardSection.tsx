@@ -51,6 +51,7 @@ export function DashboardSection({
   className,
   badge,
   teaser,
+  previewStats,
   alwaysOpen = false,
   persistId,
 }: DashboardSectionProps) {
