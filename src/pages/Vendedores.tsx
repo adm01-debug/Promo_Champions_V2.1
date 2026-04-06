@@ -163,15 +163,17 @@ const Vendedores = () => {
 
 
         {/* Ranking List */}
-        <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "300ms" }}>
-          <div className="p-5 border-b border-border/50">
+        <div className="opacity-0 animate-fade-in-up glass rounded-xl overflow-hidden" style={{ animationDelay: "300ms" }}>
+          <div className="p-5 border-b border-border/40 bg-gradient-to-r from-primary/[0.03] to-transparent">
             <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-primary/10">
                   <Users className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold">Ranking Completo</h2>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">Quem será o próximo a subir? 🔥</p>
+                <div>
+                  <h2 className="text-lg font-semibold tracking-tight">Ranking Completo</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">Quem será o próximo a subir? 🔥</p>
+                </div>
               </div>
               <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "classic" | "gamified")}>
                 <TabsList className="h-8">
