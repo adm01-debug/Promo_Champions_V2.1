@@ -80,8 +80,8 @@ const ROIDashboard = () => {
               </CardContent>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="border-none shadow-lg"><CardContent className="p-6 text-center"><TrendingUp className="h-8 w-8 mx-auto text-success mb-3" /><p className="text-3xl font-bold text-foreground">{formatCurrency(summary.totalRevenue)}</p><p className="text-sm text-muted-foreground mt-1">Receita Total</p></CardContent></Card>
-              <Card className="border-none shadow-lg"><CardContent className="p-6 text-center"><TrendingDown className="h-8 w-8 mx-auto text-destructive mb-3" /><p className="text-3xl font-bold text-foreground">{formatCurrency(summary.totalCosts)}</p><p className="text-sm text-muted-foreground mt-1">Custo Total</p></CardContent></Card>
+              <Card className="border-none shadow-lg"><CardContent className="p-6 text-center"><TrendingUp className="h-8 w-8 mx-auto text-success mb-3" /><p className="text-metric-lg text-foreground">{formatCurrency(summary.totalRevenue)}</p><p className="text-sm text-muted-foreground mt-1">Receita Total</p></CardContent></Card>
+              <Card className="border-none shadow-lg"><CardContent className="p-6 text-center"><TrendingDown className="h-8 w-8 mx-auto text-destructive mb-3" /><p className="text-metric-lg text-foreground">{formatCurrency(summary.totalCosts)}</p><p className="text-sm text-muted-foreground mt-1">Custo Total</p></CardContent></Card>
             </div>
           </TabsContent>
 

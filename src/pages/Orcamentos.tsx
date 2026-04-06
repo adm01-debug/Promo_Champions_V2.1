@@ -58,7 +58,7 @@ export default function Orcamentos() {
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-xl gradient-primary"><FileText className="h-6 w-6 text-primary-foreground" /></div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text">Orçamentos</h1>
+              <h1 className="text-page-title gradient-text">Orçamentos</h1>
               <p className="text-muted-foreground">Acompanhe propostas, status e validade dos orçamentos</p>
             </div>
           </div>

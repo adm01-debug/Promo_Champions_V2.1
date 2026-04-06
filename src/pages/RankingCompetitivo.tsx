@@ -86,7 +86,7 @@ const RankingCompetitivo = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
+            <h1 className="text-page-title flex items-center gap-3">
               <Trophy className="h-8 w-8 text-rank-gold" />
               Ranking <span className="gradient-text">Competitivo</span>
             </h1>

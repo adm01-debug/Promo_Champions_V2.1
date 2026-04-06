@@ -96,7 +96,7 @@ export default function Portfolio() {
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+            <h1 className="text-page-title flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center"><Briefcase className="h-5 w-5 text-primary-foreground" /></div>
               Portfólio de Clientes
             </h1>

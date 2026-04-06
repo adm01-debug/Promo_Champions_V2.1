@@ -136,7 +136,7 @@ export function TeamAchievementStats() {
                 <div className="text-right">
                   <div className="flex items-center gap-1 text-rank-gold">
                     <Flame className="h-6 w-6" />
-                    <span className="text-3xl font-bold">{stats.teamBestStreak}</span>
+                    <span className="text-metric-lg">{stats.teamBestStreak}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">dias seguidos</p>
                 </div>

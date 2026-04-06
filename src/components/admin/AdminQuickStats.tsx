@@ -21,7 +21,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Usuários Totais</p>
-              <p className="text-3xl font-bold gradient-text">{stats.totalUsers}</p>
+              <p className="text-metric-lg gradient-text">{stats.totalUsers}</p>
               <div className="flex gap-2 mt-2">
                 <Badge variant="outline" className="text-xs">{stats.roleDistribution.admin} admin</Badge>
                 <Badge variant="outline" className="text-xs">{stats.roleDistribution.manager} manager</Badge>
@@ -39,7 +39,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Vendedores Ativos</p>
-              <p className="text-3xl font-bold gradient-text">{stats.totalSalespeople}</p>
+              <p className="text-metric-lg gradient-text">{stats.totalSalespeople}</p>
               <p className="text-xs text-muted-foreground mt-2">Contas de vendedores ativos</p>
             </div>
             <div className="p-3 rounded-xl bg-gradient-to-br from-chart-2/20 to-chart-2/5">
@@ -54,7 +54,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Acessos Negados (7d)</p>
-              <p className="text-3xl font-bold text-destructive">{stats.accessDeniedCount}</p>
+              <p className="text-metric-lg text-destructive">{stats.accessDeniedCount}</p>
               <p className="text-xs text-muted-foreground mt-2">Tentativas de acesso bloqueadas</p>
             </div>
             <div className="p-3 rounded-xl bg-gradient-to-br from-destructive/20 to-destructive/5">
@@ -69,7 +69,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Alertas Enviados (7d)</p>
-              <p className="text-3xl font-bold text-warning">
+              <p className="text-metric-lg text-warning">
                 {stats.securityAlertsCount + stats.sdrAlertsCount}
               </p>
               <div className="flex gap-2 mt-2">
