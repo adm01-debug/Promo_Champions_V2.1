@@ -80,11 +80,13 @@ export function CompetitiveStatusBar() {
 
   return (
     <div 
-      className={`glass rounded-xl p-4 border transition-all card-elevated ${
+      className={cn(
+        "rounded-xl p-4 transition-all border backdrop-blur-sm",
+        "bg-gradient-to-r from-card via-card to-primary/[0.03]",
         isTopThree 
-          ? "border-primary/40 dark:border-glow glow-primary" 
-          : "border-border/40 dark:border-glow"
-      }`}
+          ? "border-primary/30 shadow-md shadow-primary/5" 
+          : "border-border/40 shadow-sm"
+      )}
     >
       <div className="flex items-center gap-4 flex-wrap">
         {/* === RANK POSITION (Primary - visually prominent) === */}

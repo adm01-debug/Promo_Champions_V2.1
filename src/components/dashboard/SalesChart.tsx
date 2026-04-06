@@ -48,9 +48,9 @@ const periodLabels: Record<Period, string> = {
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; name?: string; color?: string }>; label?: string }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-border/50 bg-popover px-3 py-2 shadow-xl backdrop-blur-sm">
-      <p className="text-xs font-medium text-muted-foreground mb-0.5">{label}</p>
-      <p className="text-sm font-bold text-foreground">
+    <div className="rounded-xl border border-primary/20 bg-popover/95 px-4 py-3 shadow-xl backdrop-blur-md">
+      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-base font-bold text-foreground font-display">
         R$ {payload[0].value.toLocaleString("pt-BR")}
       </p>
     </div>

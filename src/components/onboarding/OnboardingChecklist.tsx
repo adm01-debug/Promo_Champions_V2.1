@@ -24,7 +24,7 @@ export function OnboardingChecklist() {
       exit={{ opacity: 0, height: 0, marginBottom: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/[0.03] to-transparent p-4">
+      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-card to-accent/5 p-4 backdrop-blur-sm shadow-sm">
         {/* Compact Header — always visible */}
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/15 shrink-0">
