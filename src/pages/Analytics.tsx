@@ -27,7 +27,7 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { useState, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
-const TAB_CATEGORIES = [
+const TAB_CATEGORIES: Array<{ label: string; tabs: Array<{ value: string; label: string; icon: React.FC<{ className?: string }> }> }> = [
   {
     label: 'Performance',
     tabs: [
