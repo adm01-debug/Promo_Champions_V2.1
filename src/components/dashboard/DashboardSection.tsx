@@ -78,15 +78,15 @@ export function DashboardSection({
     <div className={cn("space-y-3", className)}>
       <button
         onClick={toggle}
-        className="flex items-center gap-2.5 group w-full text-left py-1 px-1 rounded-lg hover:bg-muted/30 transition-colors -mx-1"
+        className="flex items-center gap-3 group w-full text-left py-2 px-2 rounded-xl hover:bg-muted/40 transition-all duration-200 -mx-2"
         aria-expanded={isOpen}
       >
         {icon && (
-          <span className="text-primary/70 group-hover:text-primary transition-colors">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15 transition-colors shrink-0">
             {icon}
           </span>
         )}
-        <h2 className="text-sm font-semibold text-foreground/80 group-hover:text-foreground transition-colors">
+        <h2 className="text-sm font-semibold text-foreground/85 group-hover:text-foreground transition-colors">
           {title}
         </h2>
         {badge && (
@@ -94,7 +94,7 @@ export function DashboardSection({
             {badge}
           </span>
         )}
-        <div className="flex-1 h-px bg-border/40 mx-2" />
+        <div className="flex-1 h-px bg-gradient-to-r from-border/40 via-border/20 to-transparent mx-2" />
         <motion.span
           animate={{ rotate: isOpen ? 0 : -90 }}
           transition={{ duration: 0.2 }}
