@@ -16,7 +16,7 @@ const motivationalTips = [
 
 export const DashboardHeader = () => {
   const { salesperson } = useAuth();
-  const today = format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR });
+  const today = format(new Date(), "EEEE, d 'De' MMMM", { locale: ptBR });
   const [exporting, setExporting] = useState(false);
 
   const { greeting, icon: GreetingIcon } = useMemo(() => {
@@ -44,23 +44,27 @@ export const DashboardHeader = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <GreetingIcon className="h-5 w-5 text-warning hidden sm:block" />
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-display tracking-tight">
-            <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
-              {greeting}, {firstName}!
-            </span>
-          </h1>
-        </div>
-        <div className="flex items-center gap-2 min-w-0">
-          <p className="text-sm text-muted-foreground capitalize shrink-0">{today}</p>
-          <span className="text-muted-foreground/30 hidden sm:inline">·</span>
-          <p className="text-sm text-muted-foreground items-center gap-1 truncate hidden sm:flex">
-            <Sparkles className="h-3 w-3 text-primary/60 shrink-0" />
-            <span className="truncate">{tip}</span>
-          </p>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/10">
+            <GreetingIcon className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-display tracking-tight">
+              <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
+                {greeting}, {firstName}!
+              </span>
+            </h1>
+            <div className="flex items-center gap-2 min-w-0 mt-0.5">
+              <p className="text-sm text-muted-foreground capitalize shrink-0">{today}</p>
+              <span className="text-muted-foreground/30 hidden sm:inline">·</span>
+              <p className="text-sm text-muted-foreground items-center gap-1 truncate hidden sm:flex">
+                <Sparkles className="h-3 w-3 text-primary/60 shrink-0" />
+                <span className="truncate">{tip}</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
       <Button
