@@ -35,11 +35,11 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
   const daysToNext = nextMilestone ? nextMilestone.days - streak : 0;
 
   return (
-    <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20 overflow-hidden relative">
+    <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20 overflow-hidden relative h-full">
       {/* Animated fire glow effect */}
       <div className="absolute inset-0 bg-gradient-to-t from-streak/5 to-transparent pointer-events-none" />
       
-      <CardContent className="p-4 relative">
+      <CardContent className="p-4 relative flex flex-col h-full">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <motion.div
@@ -109,6 +109,25 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
           <p className="text-xs text-center text-rank-gold font-medium">
             🏆 Todas as conquistas de streak alcançadas!
           </p>
+        )}
+
+        {/* Motivational filler for zero-state */}
+        {streak === 0 && (
+          <div className="flex-1 flex flex-col items-center justify-center gap-2 mt-2 pt-3 border-t border-streak/10">
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map(i => (
+                <motion.div
+                  key={i}
+                  className="h-6 w-1.5 rounded-full bg-streak/15"
+                  animate={{ scaleY: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.2, delay: i * 0.15, repeat: Infinity }}
+                />
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
+              Registre atividades diárias para construir seu streak! 🔥
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
