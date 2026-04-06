@@ -205,10 +205,12 @@ export function AppSidebar() {
                   <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType])}>
                     {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold truncate">{salesperson?.name || "Usuário"}</p>
-                      <UserRoleBadge />
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <p className="text-sm font-semibold truncate max-w-[110px]" title={salesperson?.name || "Usuário"}>{salesperson?.name || "Usuário"}</p>
+                      <div className="flex-shrink-0">
+                        <UserRoleBadge />
+                      </div>
                     </div>
                     <p className="text-[11px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
                   </div>

@@ -199,7 +199,7 @@ export const PipelineBoard = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth">
+        <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory md:snap-none">
           {PIPELINE_STAGES.map((stage) => (
             <PipelineColumn
               key={stage.id}
