@@ -63,21 +63,16 @@ export const DashboardHeader = () => {
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportPDF}
-          disabled={exporting}
-          className="gap-1.5 text-xs"
-        >
-          <FileDown className="h-3.5 w-3.5" />
-          {exporting ? "Gerando..." : "Exportar PDF"}
-        </Button>
-        <kbd className="hidden sm:inline-flex h-7 select-none items-center gap-1 rounded border border-border/50 bg-muted/50 px-2 font-mono text-[10px] font-medium text-muted-foreground cursor-default">
-          <span className="text-xs">⌘</span>K busca
-        </kbd>
-      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleExportPDF}
+        disabled={exporting}
+        className="gap-1.5 text-xs self-start sm:self-auto"
+      >
+        <FileDown className="h-3.5 w-3.5" />
+        {exporting ? "Gerando..." : "Exportar PDF"}
+      </Button>
     </div>
   );
 };

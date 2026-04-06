@@ -92,8 +92,8 @@ export function FlashSalesBanner({ promotions: externalPromos, onBuy, className 
       animate={{ opacity: 1, scale: 1 }}
       className={className}
     >
-      <Card className="overflow-hidden border-streak/20 bg-gradient-to-r from-streak/5 via-destructive/5 to-primary-glow/5">
-        <CardContent className="p-4">
+      <Card className="overflow-hidden border-streak/20 bg-gradient-to-r from-streak/5 via-destructive/5 to-primary-glow/5 h-full">
+        <CardContent className="p-4 h-full flex flex-col justify-center">
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
