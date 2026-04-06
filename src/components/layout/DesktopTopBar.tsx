@@ -42,7 +42,10 @@ interface DesktopTopBarProps {
 
 export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
-
+  const location = useLocation();
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const isTopLevel = pathSegments.length < 2;
+  const pageTitle = useMemo(() => PAGE_TITLES[location.pathname] ?? null, [location.pathname]);
   return (
     <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
       {/* LEFT CLUSTER: Sidebar Toggle + Breadcrumbs */}
