@@ -47,13 +47,13 @@ const ROIDashboard = () => {
             <Card className="border-none shadow-lg bg-gradient-to-br from-primary/10 to-primary/5"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><DollarSign className="h-5 w-5 text-primary" />{summary.overallROI >= 0 ? <ArrowUpRight className="h-4 w-4 text-success" /> : <ArrowDownRight className="h-4 w-4 text-destructive" />}</div><p className="text-2xl font-bold text-foreground">{formatPercent(summary.overallROI)}</p><p className="text-xs text-muted-foreground mt-1">ROI Geral</p></CardContent></Card>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="border-none shadow-lg"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Target className="h-5 w-5 text-secondary" /></div><p className="text-2xl font-bold text-foreground">{formatCurrency(summary.avgCAC)}</p><p className="text-xs text-muted-foreground mt-1">CAC Médio</p></CardContent></Card>
+            <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Target className="h-5 w-5 text-secondary" /></div><p className="text-2xl font-bold text-foreground">{formatCurrency(summary.avgCAC)}</p><p className="text-xs text-muted-foreground mt-1">CAC Médio</p></CardContent></Card>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="border-none shadow-lg"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><TrendingUp className="h-5 w-5 text-accent" /></div><p className="text-2xl font-bold text-foreground">{formatCurrency(summary.avgLTV)}</p><p className="text-xs text-muted-foreground mt-1">LTV Médio</p></CardContent></Card>
+            <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><TrendingUp className="h-5 w-5 text-accent" /></div><p className="text-2xl font-bold text-foreground">{formatCurrency(summary.avgLTV)}</p><p className="text-xs text-muted-foreground mt-1">LTV Médio</p></CardContent></Card>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="border-none shadow-lg"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Timer className="h-5 w-5 text-rank-gold" /></div><p className="text-2xl font-bold text-foreground">{Math.round(summary.avgPayback)}d</p><p className="text-xs text-muted-foreground mt-1">Payback Médio</p></CardContent></Card>
+            <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Timer className="h-5 w-5 text-rank-gold" /></div><p className="text-2xl font-bold text-foreground">{Math.round(summary.avgPayback)}d</p><p className="text-xs text-muted-foreground mt-1">Payback Médio</p></CardContent></Card>
           </motion.div>
         </div>
 
@@ -63,7 +63,7 @@ const ROIDashboard = () => {
           <TabsContent value="ranking"><ROIRankingList roiData={roiData} /></TabsContent>
 
           <TabsContent value="charts" className="space-y-4">
-            <Card className="border-none shadow-lg">
+            <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader><CardTitle className="text-base flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" />ROI por Vendedor</CardTitle></CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
@@ -80,13 +80,13 @@ const ROIDashboard = () => {
               </CardContent>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="border-none shadow-lg"><CardContent className="p-6 text-center"><TrendingUp className="h-8 w-8 mx-auto text-success mb-3" /><p className="text-metric-lg text-foreground">{formatCurrency(summary.totalRevenue)}</p><p className="text-sm text-muted-foreground mt-1">Receita Total</p></CardContent></Card>
-              <Card className="border-none shadow-lg"><CardContent className="p-6 text-center"><TrendingDown className="h-8 w-8 mx-auto text-destructive mb-3" /><p className="text-metric-lg text-foreground">{formatCurrency(summary.totalCosts)}</p><p className="text-sm text-muted-foreground mt-1">Custo Total</p></CardContent></Card>
+              <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-6 text-center"><TrendingUp className="h-8 w-8 mx-auto text-success mb-3" /><p className="text-metric-lg text-foreground">{formatCurrency(summary.totalRevenue)}</p><p className="text-sm text-muted-foreground mt-1">Receita Total</p></CardContent></Card>
+              <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-6 text-center"><TrendingDown className="h-8 w-8 mx-auto text-destructive mb-3" /><p className="text-metric-lg text-foreground">{formatCurrency(summary.totalCosts)}</p><p className="text-sm text-muted-foreground mt-1">Custo Total</p></CardContent></Card>
             </div>
           </TabsContent>
 
           <TabsContent value="efficiency" className="space-y-4">
-            <Card className="border-none shadow-lg">
+            <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader><CardTitle className="text-base flex items-center gap-2"><Award className="h-4 w-4 text-accent" />Eficiência: Atividades × Receita</CardTitle></CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
@@ -102,7 +102,7 @@ const ROIDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card className="border-none shadow-lg">
+            <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader><CardTitle className="text-base">Receita por Atividade</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 {[...roiData].sort((a, b) => b.revenuePerActivity - a.revenuePerActivity).map((sp) => (
