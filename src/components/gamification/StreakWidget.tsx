@@ -30,6 +30,18 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
   const streak = currentStreak ?? 0;
   const achievedTypes = achievements?.map(a => a.streak_type) || [];
   const nextMilestone = getNextMilestone(streak, achievedTypes);
+
+  // Generate 7-day mini heatmap data
+  const weekDays = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = subDays(today, 6 - i);
+      const dayLabel = format(date, "EEE", { locale: ptBR }).charAt(0).toUpperCase();
+      const isActive = streak > 0 && (6 - i) < streak;
+      const isToday = i === 6;
+      return { dayLabel, isActive, isToday };
+    });
+  }, [streak]);
   
   const progressToNext = nextMilestone 
     ? Math.min((streak / nextMilestone.days) * 100, 100)
