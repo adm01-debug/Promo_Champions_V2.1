@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Flame, Trophy, Target } from "lucide-react";
 import { useCurrentStreak, useStreakAchievements, getNextMilestone } from "@/hooks/useDailyStreakAchievements";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { format, subDays } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface StreakWidgetProps {
   salespersonId?: string;
@@ -13,6 +16,20 @@ interface StreakWidgetProps {
 function _StreakWidget({ salespersonId }: StreakWidgetProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
+
+  const streak = currentStreak ?? 0;
+
+  // Generate 7-day mini heatmap data (must be before early returns)
+  const weekDays = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = subDays(today, 6 - i);
+      const dayLabel = format(date, "EEE", { locale: ptBR }).charAt(0).toUpperCase();
+      const isActive = streak > 0 && (6 - i) < streak;
+      const isToday = i === 6;
+      return { dayLabel, isActive, isToday };
+    });
+  }, [streak]);
 
   if (streakLoading || achievementsLoading) {
     return (
@@ -24,7 +41,6 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
     );
   }
 
-  const streak = currentStreak ?? 0;
   const achievedTypes = achievements?.map(a => a.streak_type) || [];
   const nextMilestone = getNextMilestone(streak, achievedTypes);
   
@@ -105,6 +121,21 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
           </div>
         )}
 
+        {/* 7-Day Mini Heatmap */}
+        <div className="flex items-center justify-center gap-1.5 mt-3 pt-3 border-t border-streak/10">
+          {weekDays.map((day, i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <div
+                className={cn(
+                  "h-5 w-5 rounded-md transition-colors",
+                  day.isActive ? "bg-streak/60" : "bg-muted/30",
+                  day.isToday && "ring-1 ring-streak/50"
+                )}
+              />
+              <span className="text-[9px] text-muted-foreground/70">{day.dayLabel}</span>
+            </div>
+          ))}
+        </div>
         {!nextMilestone && streak > 0 && (
           <p className="text-xs text-center text-rank-gold font-medium">
             🏆 Todas as conquistas de streak alcançadas!

@@ -80,7 +80,7 @@ const Index = () => {
     >
       <PageTransition>
         <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6">
+          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-6 space-y-6">
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -274,6 +274,11 @@ const Index = () => {
               icon={<Zap className="h-4 w-4" />}
               defaultOpen={priorities.showPerformanceOpen}
               teaser="📊 Descubra seu Score de Velocidade, qualidade de atividades e micro-metas"
+              previewStats={[
+                { label: "Velocidade", value: "—" },
+                { label: "Qualidade", value: "—" },
+                { label: "Micro-metas", value: "0/4" },
+              ]}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <MicroGoalsWidget />
@@ -289,6 +294,10 @@ const Index = () => {
               icon={<Heart className="h-4 w-4" />}
               defaultOpen={priorities.showEngagementOpen}
               teaser="💡 Registre seu humor, responda pesquisas e complete quizzes diários"
+              previewStats={[
+                { label: "Humor", value: "😊" },
+                { label: "Quiz", value: "Disponível" },
+              ]}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <MoodTrackerWidget />
