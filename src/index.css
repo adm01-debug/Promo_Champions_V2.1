@@ -217,9 +217,9 @@
     --secondary: 172 80% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    /* ===== MUTED - Higher contrast for WCAG AA ===== */
+    /* ===== MUTED - WCAG AA compliant (raised to 82% for better legibility) ===== */
     --muted: 230 15% 20%;
-    --muted-foreground: 220 10% 78%;
+    --muted-foreground: 220 8% 82%;
 
     /* ===== ACCENT - Neon Cyan ===== */
     --accent: 185 100% 50%;

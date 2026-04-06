@@ -80,8 +80,8 @@ const Index = () => {
     >
       <PageTransition>
         <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-6 space-y-6">
-            {/* Header */}
+          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-6 space-y-8">
+            {/* ── SECTION: Greeting ── */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -90,10 +90,10 @@ const Index = () => {
               <DashboardHeader />
             </motion.div>
 
-            {/* Onboarding Checklist */}
+            {/* ── SECTION: Onboarding ── */}
             <OnboardingChecklist />
 
-            {/* Seasonal Event + Flash Sales Banners */}
+            {/* ── SECTION: Event Banners ── */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               <SeasonalEventBanner />
               <FlashSalesBanner />
@@ -212,14 +212,14 @@ const Index = () => {
               </motion.div>
             )}
 
-            {/* ===== CHARTS & GOALS ===== */}
+            {/* ── SECTION: Charts & Goals ── */}
             <motion.div 
               className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-sm overflow-hidden">
+              <div className="lg:col-span-2 min-h-[280px] sm:min-h-[320px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-sm overflow-hidden">
                 <SalesChart />
               </div>
               <div className="min-h-[200px] rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-sm overflow-hidden" data-tour="goals">

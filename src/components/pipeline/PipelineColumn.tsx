@@ -50,7 +50,7 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col min-w-[280px] max-w-[320px] rounded-xl transition-all duration-300",
+        "flex flex-col min-w-[280px] max-w-[320px] rounded-xl transition-all duration-300 snap-center",
         isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02] shadow-lg shadow-primary/10"
       )}
     >
