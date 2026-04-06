@@ -55,15 +55,17 @@ export function SalesChart({ salespeople }: SalesChartProps) {
   }));
 
   return (
-    <Card className="glass dark:border-glow card-elevated">
+    <Card className="glass dark:border-glow card-elevated overflow-hidden">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-display font-semibold flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+        <CardTitle className="text-lg font-display font-semibold flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-sm">
             <BarChart3 className="h-5 w-5 text-primary" />
           </div>
-          <span className="gradient-text">Vendas por Vendedor</span>
+          <div>
+            <span className="gradient-text">Vendas por Vendedor</span>
+            <p className="text-xs text-muted-foreground font-normal mt-0.5">Comparativo de vendas vs meta mensal</p>
+          </div>
         </CardTitle>
-        <p className="text-sm text-muted-foreground">Comparativo de vendas vs meta mensal</p>
       </CardHeader>
       <CardContent>
         <div className="h-[300px] animate-fade-in">

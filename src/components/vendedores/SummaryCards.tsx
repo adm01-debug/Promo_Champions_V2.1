@@ -59,16 +59,16 @@ export const SummaryCards = React.memo(function SummaryCards({
         return (
           <div
             key={card.label}
-            className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:shadow-lg hover:border-primary/20 transition-all duration-300"
+            className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:shadow-lg hover:border-primary/20 transition-all duration-300 group"
             style={{ animationDelay: card.delay }}
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className={`p-2 rounded-lg ${card.iconBg}`}>
-                <Icon className={`h-4 w-4 ${card.iconColor}`} />
+              <div className={`p-2.5 rounded-xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                <Icon className={`h-4.5 w-4.5 ${card.iconColor}`} />
               </div>
-              <span className="text-sm text-muted-foreground">{card.label}</span>
+              <span className="text-sm text-muted-foreground font-medium">{card.label}</span>
             </div>
-            <p className="text-2xl font-bold tabular-nums">{card.content}</p>
+            <p className="text-2xl font-bold tabular-nums tracking-tight">{card.content}</p>
           </div>
         );
       })}
