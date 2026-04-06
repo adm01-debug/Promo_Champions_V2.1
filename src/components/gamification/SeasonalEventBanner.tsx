@@ -53,13 +53,13 @@ export function SeasonalEventBanner({ event: externalEvent, onClick, className }
     >
       <Card
         className={cn(
-          "cursor-pointer overflow-hidden transition-all hover:shadow-lg border-primary/20",
+          "cursor-pointer overflow-hidden transition-all hover:shadow-lg border-primary/20 h-full",
           "bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5",
           isUrgent && "border-destructive/30 animate-pulse"
         )}
         onClick={onClick}
       >
-        <CardContent className="p-4">
+        <CardContent className="p-4 h-full flex flex-col justify-center">
           <div className="flex items-center gap-4">
             {/* Icon */}
             <motion.div
