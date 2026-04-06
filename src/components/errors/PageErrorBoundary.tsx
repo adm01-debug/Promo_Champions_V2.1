@@ -50,7 +50,7 @@ export class PageErrorBoundary extends Component<Props, State> {
             </div>
             
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold">Erro na Página</h1>
+              <h1 className="text-metric">Erro na Página</h1>
               <p className="text-muted-foreground">
                 Ocorreu um erro ao carregar esta página. Por favor, tente novamente.
               </p>

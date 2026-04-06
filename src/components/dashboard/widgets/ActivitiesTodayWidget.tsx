@@ -39,7 +39,7 @@ export function ActivitiesTodayWidget() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold">{total}</p>
+        <p className="text-metric">{total}</p>
         <p className="text-xs text-muted-foreground mt-1">
           {positive} com resultado positivo
         </p>

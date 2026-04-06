@@ -137,7 +137,7 @@ const RelatoriosExecutivos = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {kpis.map((kpi, i) => (
               <motion.div key={kpi.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-2"><kpi.icon className={`h-5 w-5 ${kpi.color}`} /><span className="text-xs text-muted-foreground">{kpi.label}</span></div><div className="text-2xl font-bold">{kpi.value}</div></CardContent></Card>
+                <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-2"><kpi.icon className={`h-5 w-5 ${kpi.color}`} /><span className="text-xs text-muted-foreground">{kpi.label}</span></div><div className="text-metric">{kpi.value}</div></CardContent></Card>
               </motion.div>
             ))}
           </div>

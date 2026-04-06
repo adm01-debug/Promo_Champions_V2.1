@@ -162,7 +162,7 @@ export function WorkflowBuilder() {
       <div className="grid grid-cols-3 gap-4">
         <Card className="border-primary/20"><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">{rules?.length || 0}</p><p className="text-xs text-muted-foreground">Total de Regras</p></CardContent></Card>
         <Card className="border-status-success/20"><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-status-success">{rules?.filter(r => r.is_active).length || 0}</p><p className="text-xs text-muted-foreground">Ativas</p></CardContent></Card>
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">{rules?.reduce((s, r) => s + r.executions_count, 0) || 0}</p><p className="text-xs text-muted-foreground">Execuções</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-metric">{rules?.reduce((s, r) => s + r.executions_count, 0) || 0}</p><p className="text-xs text-muted-foreground">Execuções</p></CardContent></Card>
       </div>
 
       <ScrollArea className="max-h-[600px]">

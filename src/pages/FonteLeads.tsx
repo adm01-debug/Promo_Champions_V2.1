@@ -59,7 +59,7 @@ export default function FonteLeads() {
                 <Target className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{data?.totalLeads || 0}</p>
+                <p className="text-metric">{data?.totalLeads || 0}</p>
                 <p className="text-xs text-muted-foreground">Total de Leads</p>
               </div>
             </CardContent>
@@ -70,7 +70,7 @@ export default function FonteLeads() {
                 <TrendingUp className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{data?.totalClosed || 0}</p>
+                <p className="text-metric">{data?.totalClosed || 0}</p>
                 <p className="text-xs text-muted-foreground">Fechamentos</p>
               </div>
             </CardContent>
@@ -81,7 +81,7 @@ export default function FonteLeads() {
                 <Percent className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{overallConversion}%</p>
+                <p className="text-metric">{overallConversion}%</p>
                 <p className="text-xs text-muted-foreground">Conversão Geral</p>
               </div>
             </CardContent>
@@ -92,7 +92,7 @@ export default function FonteLeads() {
                 <DollarSign className="h-5 w-5 text-streak" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{formatCurrency(avgTicket)}</p>
+                <p className="text-metric">{formatCurrency(avgTicket)}</p>
                 <p className="text-xs text-muted-foreground">Ticket Médio</p>
               </div>
             </CardContent>

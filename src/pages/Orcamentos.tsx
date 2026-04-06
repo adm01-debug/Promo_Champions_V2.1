@@ -88,7 +88,7 @@ export default function Orcamentos() {
           {summaryCards.map((card) => (
             <Card key={card.label} className="p-4 flex items-center gap-3">
               <card.icon className={cn("h-5 w-5", card.color)} />
-              <div><p className="text-2xl font-bold">{card.value}</p><p className="text-xs text-muted-foreground">{card.label}</p></div>
+              <div><p className="text-metric">{card.value}</p><p className="text-xs text-muted-foreground">{card.label}</p></div>
             </Card>
           ))}
         </motion.div>

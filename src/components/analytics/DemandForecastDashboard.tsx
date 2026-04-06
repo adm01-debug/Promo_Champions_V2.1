@@ -91,7 +91,7 @@ export function DemandForecastDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-metric">
               {lastForecastResult?.total_products || storedForecasts?.length || 0}
             </div>
           </CardContent>

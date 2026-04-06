@@ -163,7 +163,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                 <div className="p-2.5 rounded-lg bg-primary/10 mb-2">
                   <Users className="h-5 w-5 text-primary" />
                 </div>
-                <span className="text-2xl font-bold font-display">{leads}</span>
+                <span className="text-metric">{leads}</span>
                 <span className="text-xs text-muted-foreground">Leads</span>
               </div>
               

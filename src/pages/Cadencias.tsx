@@ -74,7 +74,7 @@ export default function Cadencias() {
                 <GitBranch className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{activeCadences.length}</p>
+                <p className="text-metric">{activeCadences.length}</p>
                 <p className="text-xs text-muted-foreground">Cadências Ativas</p>
               </div>
             </CardContent>
@@ -85,7 +85,7 @@ export default function Cadencias() {
                 <Clock className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{cadenceStats?.prospectsInCadence ?? 0}</p>
+                <p className="text-metric">{cadenceStats?.prospectsInCadence ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Prospects em Cadência</p>
               </div>
             </CardContent>
@@ -96,7 +96,7 @@ export default function Cadencias() {
                 <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{cadenceStats?.tasksCompletedToday ?? 0}</p>
+                <p className="text-metric">{cadenceStats?.tasksCompletedToday ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Tarefas Concluídas Hoje</p>
               </div>
             </CardContent>

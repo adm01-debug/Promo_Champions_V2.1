@@ -104,7 +104,7 @@ export const ClosingTimeChart: FC = () => {
               <Clock className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{averageClosingTime} dias</p>
+              <p className="text-metric">{averageClosingTime} dias</p>
               <p className="text-xs text-muted-foreground">Média geral</p>
             </div>
           </div>

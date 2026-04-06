@@ -94,7 +94,7 @@ export function EmailTrackingDashboard() {
               <Reply className="h-3.5 w-3.5" />
               Taxa de Resposta
             </div>
-            <p className="text-2xl font-bold">{stats?.reply_rate || 0}%</p>
+            <p className="text-metric">{stats?.reply_rate || 0}%</p>
             <Progress value={stats?.reply_rate || 0} className="h-1.5 mt-2" />
           </CardContent>
         </Card>

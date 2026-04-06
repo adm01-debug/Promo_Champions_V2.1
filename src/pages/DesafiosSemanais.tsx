@@ -80,7 +80,7 @@ export default function DesafiosSemanais() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Desafios Ativos</p>
-                    <p className="text-2xl font-bold">{challenges.length}</p>
+                    <p className="text-metric">{challenges.length}</p>
                   </div>
                 </div>
               </CardContent>
@@ -100,7 +100,7 @@ export default function DesafiosSemanais() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Completados</p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-metric">
                       {challenges.filter((c) => c.isCompleted).length}
                     </p>
                   </div>
@@ -122,7 +122,7 @@ export default function DesafiosSemanais() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">XP Disponível</p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-metric">
                       {challenges.reduce((acc, c) => acc + c.xp_reward, 0)}
                     </p>
                   </div>
@@ -144,7 +144,7 @@ export default function DesafiosSemanais() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Participantes</p>
-                    <p className="text-2xl font-bold">{gamificationData?.length || 0}</p>
+                    <p className="text-metric">{gamificationData?.length || 0}</p>
                   </div>
                 </div>
               </CardContent>

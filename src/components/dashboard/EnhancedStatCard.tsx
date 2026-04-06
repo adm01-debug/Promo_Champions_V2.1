@@ -116,7 +116,7 @@ const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
           <div className="flex items-end justify-between">
             <div>
               <motion.div 
-                className="text-2xl font-bold"
+                className="text-metric"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >

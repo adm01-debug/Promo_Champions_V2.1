@@ -135,7 +135,7 @@ export default function MetasAtividades() {
                       <stat.icon className={`h-4 w-4 ${stat.color}`} />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold font-display">{stat.value}</p>
+                      <p className="text-metric">{stat.value}</p>
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
                     </div>
                   </div>

@@ -13,7 +13,7 @@ export const PlaybookAdherenceStats = () => {
       <Card className="glass border-border/40">
         <CardContent className="p-4 flex flex-col items-center gap-2">
           <Target className="h-5 w-5 text-primary" />
-          <span className="text-2xl font-bold font-display">{adherence.totalItems}</span>
+          <span className="text-metric">{adherence.totalItems}</span>
           <span className="text-xs text-muted-foreground">Total de Itens</span>
         </CardContent>
       </Card>
@@ -21,7 +21,7 @@ export const PlaybookAdherenceStats = () => {
       <Card className="glass border-border/40">
         <CardContent className="p-4 flex flex-col items-center gap-2">
           <CheckCircle className="h-5 w-5 text-status-success" />
-          <span className="text-2xl font-bold font-display">{adherence.completedItems}</span>
+          <span className="text-metric">{adherence.completedItems}</span>
           <span className="text-xs text-muted-foreground">Completados</span>
         </CardContent>
       </Card>

@@ -111,7 +111,7 @@ const RankingCompetitivo = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-metric">{stat.value}</p>
                     <p className={`text-sm ${stat.subColor || "text-muted-foreground"}`}>{stat.sub}</p>
                   </div>
                   <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${stat.bg} flex items-center justify-center`}>
@@ -147,7 +147,7 @@ const RankingCompetitivo = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">{stat.label}</p>
-                        <p className="text-2xl font-bold">{stat.value}</p>
+                        <p className="text-metric">{stat.value}</p>
                         <p className="text-sm text-muted-foreground">{stat.sub}</p>
                       </div>
                       <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${stat.bg} flex items-center justify-center`}>

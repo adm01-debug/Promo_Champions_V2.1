@@ -43,7 +43,7 @@ export const WinLossAnalysis: FC = () => {
               <Trophy className="h-5 w-5 text-success" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{data.totalWins}</p>
+              <p className="text-metric">{data.totalWins}</p>
               <p className="text-xs text-muted-foreground">Vitórias</p>
             </div>
           </CardContent>
@@ -54,7 +54,7 @@ export const WinLossAnalysis: FC = () => {
               <XCircle className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{data.totalLosses}</p>
+              <p className="text-metric">{data.totalLosses}</p>
               <p className="text-xs text-muted-foreground">Perdas</p>
             </div>
           </CardContent>
@@ -65,7 +65,7 @@ export const WinLossAnalysis: FC = () => {
               <TrendingUp className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{data.winRate}%</p>
+              <p className="text-metric">{data.winRate}%</p>
               <p className="text-xs text-muted-foreground">Win Rate</p>
             </div>
           </CardContent>
