@@ -127,14 +127,28 @@ export function DashboardSection({
             className="w-full text-left px-4 py-3 rounded-xl bg-gradient-to-r from-muted/30 to-muted/10 border border-border/30 hover:bg-muted/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300 group/teaser"
           >
             <div className="flex items-center gap-3">
-              <div className="flex gap-1">
-                <motion.div className="h-1.5 w-6 rounded-full bg-primary/30" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
-                <motion.div className="h-1.5 w-4 rounded-full bg-primary/20" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.3, repeat: Infinity }} />
-                <motion.div className="h-1.5 w-5 rounded-full bg-primary/15" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.6, repeat: Infinity }} />
-              </div>
-              <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors flex-1">
-                {teaser}
-              </p>
+              {previewStats && previewStats.length > 0 ? (
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  {previewStats.map((stat, i) => (
+                    <div key={i} className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-foreground/90">{stat.value}</span>
+                      <span className="text-[10px] text-muted-foreground">{stat.label}</span>
+                      {i < previewStats.length - 1 && <span className="text-muted-foreground/30 mx-0.5">·</span>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="flex gap-1">
+                    <motion.div className="h-1.5 w-6 rounded-full bg-primary/30" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+                    <motion.div className="h-1.5 w-4 rounded-full bg-primary/20" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.3, repeat: Infinity }} />
+                    <motion.div className="h-1.5 w-5 rounded-full bg-primary/15" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.6, repeat: Infinity }} />
+                  </div>
+                  <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors flex-1">
+                    {teaser}
+                  </p>
+                </>
+              )}
               <span className="text-primary font-medium text-xs shrink-0 group-hover/teaser:translate-x-1 transition-transform duration-200">
                 → Expandir
               </span>
