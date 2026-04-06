@@ -74,7 +74,7 @@ function _MiniLeaderboard() {
             <div
               key={person.id}
               className={cn(
-                "flex items-center gap-2.5 p-2 rounded-lg transition-all duration-200 hover:bg-muted/40",
+                "flex items-center gap-2.5 p-2 rounded-lg transition-all duration-200 hover:bg-muted/40 hover:shadow-sm hover:scale-[1.01]",
                 isCurrentUser && "bg-primary/10 border border-primary/20"
               )}
             >
