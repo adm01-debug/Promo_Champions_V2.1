@@ -144,20 +144,35 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
 
         {/* Motivational filler for zero-state */}
         {streak === 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center gap-2 mt-2 pt-3 border-t border-streak/10">
-            <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map(i => (
-                <motion.div
-                  key={i}
-                  className="h-6 w-1.5 rounded-full bg-streak/15"
-                  animate={{ scaleY: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1.2, delay: i * 0.15, repeat: Infinity }}
-                />
-              ))}
+          <div className="flex-1 flex flex-col items-center justify-center gap-3 mt-2 pt-3 border-t border-streak/10">
+            <div className="relative">
+              <div className="flex gap-1.5 items-end">
+                {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                  <motion.div
+                    key={i}
+                    className="w-2 rounded-full bg-gradient-to-t from-streak/25 to-streak/10"
+                    style={{ height: `${8 + i * 3}px` }}
+                    animate={{ opacity: [0.3, 0.8, 0.3], scaleY: [0.7, 1, 0.7] }}
+                    transition={{ duration: 1.8, delay: i * 0.12, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                ))}
+              </div>
+              <motion.div
+                className="absolute -top-1 -right-1"
+                animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Flame className="h-3.5 w-3.5 text-streak/40" />
+              </motion.div>
             </div>
-            <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-              Registre atividades diárias para construir seu streak! 🔥
-            </p>
+            <div className="text-center space-y-0.5">
+              <p className="text-[11px] font-medium text-foreground/70">
+                Comece sua sequência hoje!
+              </p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                Registre atividades diárias para construir seu streak 🔥
+              </p>
+            </div>
           </div>
         )}
       </CardContent>

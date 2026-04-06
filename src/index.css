@@ -1792,3 +1792,9 @@
     outline-offset: 2px;
   }
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

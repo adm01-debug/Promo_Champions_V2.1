@@ -219,10 +219,10 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px]">
+              <div className="lg:col-span-2 min-h-[250px] sm:min-h-[300px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-sm overflow-hidden">
                 <SalesChart />
               </div>
-              <div className="min-h-[200px]" data-tour="goals">
+              <div className="min-h-[200px] rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-sm overflow-hidden" data-tour="goals">
                 <GoalProgress 
                   current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
                   goal={goalsData?.totalGoal || 0} 

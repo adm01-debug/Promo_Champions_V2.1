@@ -3,9 +3,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-/** Shimmer skeleton with custom sizing for content-aware loading */
+/** Shimmer skeleton with gradient animation for premium loading feel */
 export const Shimmer: FC<{ className?: string; style?: React.CSSProperties }> = ({ className, style }) => (
-  <Skeleton className={cn("animate-pulse", className)} style={style} />
+  <div
+    className={cn(
+      "rounded-md bg-muted/60 relative overflow-hidden",
+      className
+    )}
+    style={style}
+  >
+    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-foreground/[0.04] to-transparent" />
+  </div>
 );
 
 export const SkeletonCard: FC<{ className?: string }> = ({ className }) => (
