@@ -92,24 +92,35 @@ export const SalesChart = () => {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.45} />
+                <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+                <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.9} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border/20 dark:stroke-border/15" vertical={false} />
             <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} dy={8} />
             <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} width={40} />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary) / 0.4)', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Area
               type="monotone"
               dataKey="value"
-              stroke="hsl(var(--primary))"
+              stroke="url(#strokeGradient)"
               fillOpacity={1}
               fill="url(#colorValue)"
               strokeWidth={2.5}
               dot={false}
-              activeDot={{ r: 6, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--background))', strokeWidth: 3 }}
+              activeDot={{ 
+                r: 6, 
+                fill: 'hsl(var(--primary))', 
+                stroke: 'hsl(var(--background))', 
+                strokeWidth: 3,
+                className: 'drop-shadow-md'
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>
