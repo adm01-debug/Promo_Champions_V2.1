@@ -64,7 +64,7 @@ const TAB_CATEGORIES: Array<{ label: string; tabs: Array<{ value: string; label:
       { value: 'competency', label: 'Competências', icon: Radar },
     ],
   },
-] as const;
+];
 
 const ALL_TABS = TAB_CATEGORIES.flatMap(c => c.tabs);
 
