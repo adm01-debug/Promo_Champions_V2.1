@@ -17,21 +17,9 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
 
-  if (streakLoading || achievementsLoading) {
-    return (
-      <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20">
-        <CardContent className="p-4">
-          <Skeleton className="h-16 w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
-
   const streak = currentStreak ?? 0;
-  const achievedTypes = achievements?.map(a => a.streak_type) || [];
-  const nextMilestone = getNextMilestone(streak, achievedTypes);
 
-  // Generate 7-day mini heatmap data
+  // Generate 7-day mini heatmap data (must be before early returns)
   const weekDays = useMemo(() => {
     const today = new Date();
     return Array.from({ length: 7 }, (_, i) => {
@@ -42,6 +30,19 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
       return { dayLabel, isActive, isToday };
     });
   }, [streak]);
+
+  if (streakLoading || achievementsLoading) {
+    return (
+      <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20">
+        <CardContent className="p-4">
+          <Skeleton className="h-16 w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const achievedTypes = achievements?.map(a => a.streak_type) || [];
+  const nextMilestone = getNextMilestone(streak, achievedTypes);
   
   const progressToNext = nextMilestone 
     ? Math.min((streak / nextMilestone.days) * 100, 100)
