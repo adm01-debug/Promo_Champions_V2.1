@@ -59,9 +59,13 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
           </Tooltip>
         </TooltipProvider>
 
-        {/* Breadcrumbs inline */}
+        {/* Page title chip (top-level) or Breadcrumbs (nested) */}
         <div className="min-w-0 overflow-hidden">
-          <Breadcrumbs />
+          {isTopLevel && pageTitle ? (
+            <span className="text-sm font-semibold text-foreground">{pageTitle}</span>
+          ) : (
+            <Breadcrumbs />
+          )}
         </div>
       </div>
 
