@@ -294,6 +294,10 @@ const Index = () => {
               icon={<Heart className="h-4 w-4" />}
               defaultOpen={priorities.showEngagementOpen}
               teaser="💡 Registre seu humor, responda pesquisas e complete quizzes diários"
+              previewStats={[
+                { label: "Humor", value: "😊" },
+                { label: "Quiz", value: "Disponível" },
+              ]}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <MoodTrackerWidget />
