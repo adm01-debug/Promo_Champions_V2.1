@@ -35,6 +35,8 @@ interface DashboardSectionProps {
   badge?: string;
   /** Teaser text shown when section is collapsed */
   teaser?: string;
+  /** Mini stats/preview shown inline when collapsed */
+  previewStats?: Array<{ label: string; value: string }>;
   /** If true, no collapsible wrapper — just render children directly */
   alwaysOpen?: boolean;
   /** Unique ID for state persistence. Defaults to slugified title. */
