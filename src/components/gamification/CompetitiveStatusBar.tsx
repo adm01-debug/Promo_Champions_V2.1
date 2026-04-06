@@ -80,11 +80,13 @@ export function CompetitiveStatusBar() {
 
   return (
     <div 
-      className={`glass rounded-xl p-4 border transition-all card-elevated ${
+      className={cn(
+        "rounded-xl p-4 transition-all border backdrop-blur-sm",
+        "bg-gradient-to-r from-card via-card to-primary/[0.03]",
         isTopThree 
-          ? "border-primary/40 dark:border-glow glow-primary" 
-          : "border-border/40 dark:border-glow"
-      }`}
+          ? "border-primary/30 shadow-md shadow-primary/5" 
+          : "border-border/40 shadow-sm"
+      )}
     >
       <div className="flex items-center gap-4 flex-wrap">
         {/* === RANK POSITION (Primary - visually prominent) === */}
@@ -103,7 +105,7 @@ export function CompetitiveStatusBar() {
               <span className={cn(
                 "inline-flex items-center justify-center font-display font-black text-lg min-w-[2.5rem] h-9 rounded-xl border-2 shadow-sm",
                 myRanking.rank === 1 && "bg-gradient-to-br from-coins to-rank-gold text-rank-gold-foreground border-rank-gold/60",
-                myRanking.rank === 2 && "bg-gradient-to-br from-slate-300 to-slate-400 text-slate-800 border-slate-200",
+                myRanking.rank === 2 && "bg-gradient-to-br from-rank-silver to-muted text-rank-silver-foreground border-rank-silver/60",
                 myRanking.rank === 3 && "bg-gradient-to-br from-streak to-rank-gold text-streak-foreground border-streak/60",
                 myRanking.rank > 3 && "bg-muted text-foreground border-border/50"
               )}>
