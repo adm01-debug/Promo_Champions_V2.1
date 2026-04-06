@@ -274,6 +274,11 @@ const Index = () => {
               icon={<Zap className="h-4 w-4" />}
               defaultOpen={priorities.showPerformanceOpen}
               teaser="📊 Descubra seu Score de Velocidade, qualidade de atividades e micro-metas"
+              previewStats={[
+                { label: "Velocidade", value: "—" },
+                { label: "Qualidade", value: "—" },
+                { label: "Micro-metas", value: "0/4" },
+              ]}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <MicroGoalsWidget />
