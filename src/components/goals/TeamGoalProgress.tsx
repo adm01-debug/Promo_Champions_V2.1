@@ -73,7 +73,7 @@ export function TeamGoalProgress({
             </div>
             <div className="text-right">
               <p className="text-3xl font-display font-bold gradient-text">{progress.toFixed(1)}%</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">atingido</p>
+              <p className="text-overline font-medium">atingido</p>
             </div>
           </div>
           
@@ -136,7 +136,7 @@ export function TeamGoalProgress({
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
             <p className="text-xl font-display font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mt-1">Média diária atual</p>
+            <p className="text-overline font-medium mt-1">Média diária atual</p>
           </div>
           <div 
             className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in"
@@ -150,7 +150,7 @@ export function TeamGoalProgress({
             <p className={`text-xl font-display font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mt-1">Necessário/dia</p>
+            <p className="text-overline font-medium mt-1">Necessário/dia</p>
           </div>
         </div>
 

@@ -136,7 +136,7 @@ export default function MetasAtividades() {
                     </div>
                     <div>
                       <p className="text-metric">{stat.value}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                      <p className="text-overline">{stat.label}</p>
                     </div>
                   </div>
                 </CardContent>
