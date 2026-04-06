@@ -78,7 +78,7 @@ export default function AssinaturaDigital() {
           <SignatureStatsCards total={documents.length} pending={documents.filter(d => d.status === 'pending').length} signed={documents.filter(d => d.status === 'signed').length} drafts={documents.filter(d => d.status === 'draft').length} isLoading={isLoading} />
 
           {/* Documents Table */}
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardHeader><CardTitle>Documentos</CardTitle><CardDescription>Lista de todos os documentos criados</CardDescription></CardHeader>
             <CardContent>
               {isLoading ? (

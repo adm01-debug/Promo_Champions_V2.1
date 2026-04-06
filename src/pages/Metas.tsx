@@ -88,7 +88,7 @@ export default function Metas() {
               animate="visible"
             >
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40">
+                <Card className="glass border-border/40 hover-lift-sm">
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-primary/10">
                       <Target className="h-5 w-5 text-primary" />
@@ -101,7 +101,7 @@ export default function Metas() {
                 </Card>
               </motion.div>
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40">
+                <Card className="glass border-border/40 hover-lift-sm">
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-success/10">
                       <TrendingUp className="h-5 w-5 text-success" />
@@ -114,7 +114,7 @@ export default function Metas() {
                 </Card>
               </motion.div>
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40">
+                <Card className="glass border-border/40 hover-lift-sm">
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-primary/10">
                       <Users className="h-5 w-5 text-primary" />
@@ -127,7 +127,7 @@ export default function Metas() {
                 </Card>
               </motion.div>
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40">
+                <Card className="glass border-border/40 hover-lift-sm">
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-warning/10">
                       <Zap className="h-5 w-5 text-warning" />

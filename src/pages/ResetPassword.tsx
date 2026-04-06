@@ -75,7 +75,7 @@ export default function ResetPassword() {
           <meta name="description" content="Redefina sua senha de acesso" />
         </Helmet>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
-        <Card className="w-full max-w-md glass border-border/40">
+        <Card className="w-full max-w-md glass border-border/40 hover-lift-sm">
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
               <div className="mx-auto w-16 h-16 rounded-full bg-success/20 flex items-center justify-center">
@@ -108,7 +108,7 @@ export default function ResetPassword() {
           </p>
         </div>
 
-        <Card className="glass border-border/40">
+        <Card className="glass border-border/40 hover-lift-sm">
           <CardHeader className="text-center">
             <CardTitle>Redefinir Senha</CardTitle>
             <CardDescription>

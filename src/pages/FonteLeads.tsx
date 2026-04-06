@@ -53,7 +53,7 @@ export default function FonteLeads() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-primary/10">
                 <Target className="h-5 w-5 text-primary" />
@@ -64,7 +64,7 @@ export default function FonteLeads() {
               </div>
             </CardContent>
           </Card>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-success/10">
                 <TrendingUp className="h-5 w-5 text-success" />
@@ -75,7 +75,7 @@ export default function FonteLeads() {
               </div>
             </CardContent>
           </Card>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-info/10">
                 <Percent className="h-5 w-5 text-info" />
@@ -86,7 +86,7 @@ export default function FonteLeads() {
               </div>
             </CardContent>
           </Card>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-streak/10">
                 <DollarSign className="h-5 w-5 text-streak" />
@@ -120,7 +120,7 @@ export default function FonteLeads() {
         {/* Insights */}
         {data && data.sources.length > 0 && (
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "500ms" }}>
-            <Card className="glass border-border/40">
+            <Card className="glass border-border/40 hover-lift-sm">
               <CardContent className="p-6">
                 <h3 className="text-sm font-medium mb-4">💡 Insights Automáticos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

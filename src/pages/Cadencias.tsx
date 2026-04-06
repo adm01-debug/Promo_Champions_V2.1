@@ -68,7 +68,7 @@ export default function Cadencias() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-primary/10">
                 <GitBranch className="h-5 w-5 text-primary" />
@@ -79,7 +79,7 @@ export default function Cadencias() {
               </div>
             </CardContent>
           </Card>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-info/10">
                 <Clock className="h-5 w-5 text-info" />
@@ -90,7 +90,7 @@ export default function Cadencias() {
               </div>
             </CardContent>
           </Card>
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-success/10">
                 <CheckCircle className="h-5 w-5 text-success" />
@@ -112,7 +112,7 @@ export default function Cadencias() {
 
           {/* Cadences List */}
           <div className="lg:col-span-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-            <Card className="glass border-border/40">
+            <Card className="glass border-border/40 hover-lift-sm">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">

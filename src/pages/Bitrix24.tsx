@@ -33,7 +33,7 @@ export default function Bitrix24() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Connection Status */}
-        <Card className="glass border-border/40">
+        <Card className="glass border-border/40 hover-lift-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function Bitrix24() {
         </Card>
 
         {/* Sync Card */}
-        <Card className="glass border-border/40">
+        <Card className="glass border-border/40 hover-lift-sm">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-secondary/20 flex items-center justify-center"><RefreshCw className="h-5 w-5 text-secondary" /></div>
@@ -116,7 +116,7 @@ export default function Bitrix24() {
           { icon: FileText, color: "bg-secondary/20 text-secondary", title: "Deals/Vendas", desc: "Sincroniza negócios do funil com mapeamento automático de estágios" },
           { icon: Clock, color: "bg-accent/20 text-accent", title: "CRON Automático", desc: "Sincronização bidirecional automática a cada hora" },
         ].map(({ icon: Icon, color, title, desc }) => (
-          <Card key={title} className="glass border-border/40">
+          <Card key={title} className="glass border-border/40 hover-lift-sm">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
                 <div className={`h-10 w-10 rounded-lg ${color.split(' ')[0]} flex items-center justify-center`}><Icon className={`h-5 w-5 ${color.split(' ')[1]}`} /></div>
@@ -128,7 +128,7 @@ export default function Bitrix24() {
       </div>
 
       {/* Stage Mapping */}
-      <Card className="glass border-border/40">
+      <Card className="glass border-border/40 hover-lift-sm">
         <CardHeader><CardTitle className="text-lg">Mapeamento de Estágios</CardTitle><CardDescription>Correspondência entre estágios do Bitrix24 e do Pipeline</CardDescription></CardHeader>
         <CardContent>
           <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
