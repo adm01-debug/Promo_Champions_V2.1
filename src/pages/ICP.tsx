@@ -101,7 +101,7 @@ export default function ICP() {
           </div>
 
           {/* Filters */}
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="relative flex-1">
@@ -118,7 +118,7 @@ export default function ICP() {
           </Card>
 
           {/* Table */}
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" />Dados ICP</CardTitle>
             </CardHeader>

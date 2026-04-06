@@ -178,7 +178,7 @@ export default function RelatorioAtividades() {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in" style={{ animationDelay: "100ms" }}>
             {stats.map((stat, index) => (
-              <Card key={index} className="glass border-border/40">
+              <Card key={index} className="glass border-border/40 hover-lift-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${stat.bgColor}`}>

@@ -72,15 +72,15 @@ export default function Fornecedores() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Building2 className="h-4 w-4" />Total de Fornecedores</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length || 0}</div></CardContent></Card>
+            <Card className="glass border-border/40 hover-lift-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Building2 className="h-4 w-4" />Total de Fornecedores</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length || 0}</div></CardContent></Card>
             <Card className="glass border-status-success/30 bg-status-success/5"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-status-success flex items-center gap-2"><TrendingUp className="h-4 w-4" />Fornecedores Ativos</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-status-success">{activeSuppliers.length}</div></CardContent></Card>
             <Card className="glass border-status-warning/30 bg-status-warning/5"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-status-warning flex items-center gap-2"><AlertTriangle className="h-4 w-4" />Alto Risco</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-status-warning">{highRiskSuppliers.length}</div></CardContent></Card>
-            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Star className="h-4 w-4" />Média Confiabilidade</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length ? Math.round((suppliers.reduce((sum, s) => sum + (s.reliability_score || 0), 0) / suppliers.length) * 100) : 0}%</div></CardContent></Card>
+            <Card className="glass border-border/40 hover-lift-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Star className="h-4 w-4" />Média Confiabilidade</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length ? Math.round((suppliers.reduce((sum, s) => sum + (s.reliability_score || 0), 0) / suppliers.length) * 100) : 0}%</div></CardContent></Card>
           </div>
 
           <SupplierTable suppliers={suppliers} isLoading={suppliersLoading} />
 
-          <Card className="glass border-border/40">
+          <Card className="glass border-border/40 hover-lift-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-primary" />Análises de Risco</CardTitle>
             </CardHeader>
