@@ -74,7 +74,7 @@ const BICloser = () => {
                       <m.icon className={`h-5 w-5 text-${m.color}`} />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{m.value}</p>
+                      <p className="text-metric">{m.value}</p>
                       <p className="text-xs text-muted-foreground">{m.label}</p>
                     </div>
                   </CardContent>

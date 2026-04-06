@@ -51,7 +51,7 @@ export default function Cadencias() {
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Gestão de Cadências</h1>
+              <h1 className="text-page-title gradient-text">Gestão de Cadências</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Crie sequências automáticas de contato para seus prospects
               </p>
@@ -74,7 +74,7 @@ export default function Cadencias() {
                 <GitBranch className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{activeCadences.length}</p>
+                <p className="text-metric">{activeCadences.length}</p>
                 <p className="text-xs text-muted-foreground">Cadências Ativas</p>
               </div>
             </CardContent>
@@ -85,7 +85,7 @@ export default function Cadencias() {
                 <Clock className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{cadenceStats?.prospectsInCadence ?? 0}</p>
+                <p className="text-metric">{cadenceStats?.prospectsInCadence ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Prospects em Cadência</p>
               </div>
             </CardContent>
@@ -96,7 +96,7 @@ export default function Cadencias() {
                 <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{cadenceStats?.tasksCompletedToday ?? 0}</p>
+                <p className="text-metric">{cadenceStats?.tasksCompletedToday ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Tarefas Concluídas Hoje</p>
               </div>
             </CardContent>

@@ -86,7 +86,7 @@ const RankingCompetitivo = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
+            <h1 className="text-page-title flex items-center gap-3">
               <Trophy className="h-8 w-8 text-rank-gold" />
               Ranking <span className="gradient-text">Competitivo</span>
             </h1>
@@ -111,7 +111,7 @@ const RankingCompetitivo = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-metric">{stat.value}</p>
                     <p className={`text-sm ${stat.subColor || "text-muted-foreground"}`}>{stat.sub}</p>
                   </div>
                   <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${stat.bg} flex items-center justify-center`}>
@@ -147,7 +147,7 @@ const RankingCompetitivo = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">{stat.label}</p>
-                        <p className="text-2xl font-bold">{stat.value}</p>
+                        <p className="text-metric">{stat.value}</p>
                         <p className="text-sm text-muted-foreground">{stat.sub}</p>
                       </div>
                       <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${stat.bg} flex items-center justify-center`}>

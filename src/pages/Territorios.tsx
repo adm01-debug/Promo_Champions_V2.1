@@ -17,7 +17,7 @@ export default function Territorios() {
             <MapPin className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold gradient-text">Territórios de Vendas</h1>
+            <h1 className="text-page-title gradient-text">Territórios de Vendas</h1>
             <p className="text-muted-foreground">
               Gerencie e acompanhe os territórios da equipe
             </p>

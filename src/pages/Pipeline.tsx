@@ -38,7 +38,7 @@ export default function Pipeline() {
               <Kanban className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold gradient-text">Pipeline de Vendas</h1>
+              <h1 className="text-page-title gradient-text">Pipeline de Vendas</h1>
               <p className="text-muted-foreground">
                 Arraste os deals entre as colunas para atualizar o status
               </p>

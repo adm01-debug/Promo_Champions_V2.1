@@ -59,7 +59,7 @@ export function ConversionRateWidget() {
       <CardContent className="space-y-2">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-2xl font-bold">{rate.toFixed(1)}%</p>
+            <p className="text-metric">{rate.toFixed(1)}%</p>
             <div className={cn("flex items-center gap-1 text-xs", isPositive ? "text-success" : "text-destructive")}>
               {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
               {isPositive ? "+" : ""}{change}%

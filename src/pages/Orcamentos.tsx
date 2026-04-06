@@ -58,7 +58,7 @@ export default function Orcamentos() {
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-xl gradient-primary"><FileText className="h-6 w-6 text-primary-foreground" /></div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text">Orçamentos</h1>
+              <h1 className="text-page-title gradient-text">Orçamentos</h1>
               <p className="text-muted-foreground">Acompanhe propostas, status e validade dos orçamentos</p>
             </div>
           </div>
@@ -88,7 +88,7 @@ export default function Orcamentos() {
           {summaryCards.map((card) => (
             <Card key={card.label} className="p-4 flex items-center gap-3">
               <card.icon className={cn("h-5 w-5", card.color)} />
-              <div><p className="text-2xl font-bold">{card.value}</p><p className="text-xs text-muted-foreground">{card.label}</p></div>
+              <div><p className="text-metric">{card.value}</p><p className="text-xs text-muted-foreground">{card.label}</p></div>
             </Card>
           ))}
         </motion.div>

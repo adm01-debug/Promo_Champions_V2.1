@@ -65,7 +65,7 @@ export function AuthFormCard(props: AuthFormCardProps) {
 
         {/* Desktop heading */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="hidden lg:block mb-8">
-          <h2 className="text-2xl font-bold font-display">Bem-vindo de volta</h2>
+          <h2 className="text-metric">Bem-vindo de volta</h2>
           <p className="text-muted-foreground mt-1">Faça login ou crie sua conta para competir</p>
         </motion.div>
 

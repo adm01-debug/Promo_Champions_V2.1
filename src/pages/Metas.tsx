@@ -57,7 +57,7 @@ export default function Metas() {
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold gradient-text">Dashboard de Metas</h1>
+                  <h1 className="text-page-title gradient-text">Dashboard de Metas</h1>
                   <p className="text-sm text-muted-foreground mt-1 capitalize">
                     {currentMonth} • Atualizado às {lastUpdate}
                   </p>
@@ -94,7 +94,7 @@ export default function Metas() {
                       <Target className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{formatCurrency(data?.totalGoal || 0)}</p>
+                      <p className="text-metric">{formatCurrency(data?.totalGoal || 0)}</p>
                       <p className="text-xs text-muted-foreground">Meta Total</p>
                     </div>
                   </CardContent>
@@ -107,7 +107,7 @@ export default function Metas() {
                       <TrendingUp className="h-5 w-5 text-success" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{formatCurrency(data?.totalSales || 0)}</p>
+                      <p className="text-metric">{formatCurrency(data?.totalSales || 0)}</p>
                       <p className="text-xs text-muted-foreground">Vendido</p>
                     </div>
                   </CardContent>
@@ -120,7 +120,7 @@ export default function Metas() {
                       <Users className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{onTrackCount}/{totalWithGoals}</p>
+                      <p className="text-metric">{onTrackCount}/{totalWithGoals}</p>
                       <p className="text-xs text-muted-foreground">No Caminho</p>
                     </div>
                   </CardContent>
@@ -133,7 +133,7 @@ export default function Metas() {
                       <Zap className="h-5 w-5 text-warning" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{exceededCount}</p>
+                      <p className="text-metric">{exceededCount}</p>
                       <p className="text-xs text-muted-foreground">Metas Batidas</p>
                     </div>
                   </CardContent>

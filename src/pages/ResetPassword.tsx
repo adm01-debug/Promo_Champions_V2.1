@@ -100,7 +100,7 @@ export default function ResetPassword() {
           <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
             <Lock className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold gradient-text">
+          <h1 className="text-page-title gradient-text">
             Nova Senha
           </h1>
           <p className="text-muted-foreground">

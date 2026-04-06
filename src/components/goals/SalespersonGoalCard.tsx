@@ -104,7 +104,7 @@ function _SalespersonGoalCard({
           <p className={`text-xl font-display font-bold ${hasExceededGoal ? "text-status-success" : "gradient-text"}`}>
             {progress.toFixed(0)}%
           </p>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">da meta</p>
+          <p className="text-overline font-medium">da meta</p>
         </div>
       </div>
 

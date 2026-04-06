@@ -41,7 +41,7 @@ export default function Fornecedores() {
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2"><Truck className="h-6 w-6 text-primary" />Gestão de Fornecedores</h1>
+              <h1 className="text-page-title flex items-center gap-2"><Truck className="h-6 w-6 text-primary" />Gestão de Fornecedores</h1>
               <p className="text-muted-foreground">Cadastre, compare e analise seus fornecedores</p>
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -72,10 +72,10 @@ export default function Fornecedores() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Building2 className="h-4 w-4" />Total de Fornecedores</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{suppliers?.length || 0}</div></CardContent></Card>
+            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Building2 className="h-4 w-4" />Total de Fornecedores</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length || 0}</div></CardContent></Card>
             <Card className="glass border-status-success/30 bg-status-success/5"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-status-success flex items-center gap-2"><TrendingUp className="h-4 w-4" />Fornecedores Ativos</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-status-success">{activeSuppliers.length}</div></CardContent></Card>
             <Card className="glass border-status-warning/30 bg-status-warning/5"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-status-warning flex items-center gap-2"><AlertTriangle className="h-4 w-4" />Alto Risco</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-status-warning">{highRiskSuppliers.length}</div></CardContent></Card>
-            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Star className="h-4 w-4" />Média Confiabilidade</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{suppliers?.length ? Math.round((suppliers.reduce((sum, s) => sum + (s.reliability_score || 0), 0) / suppliers.length) * 100) : 0}%</div></CardContent></Card>
+            <Card className="glass border-border/40"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Star className="h-4 w-4" />Média Confiabilidade</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length ? Math.round((suppliers.reduce((sum, s) => sum + (s.reliability_score || 0), 0) / suppliers.length) * 100) : 0}%</div></CardContent></Card>
           </div>
 
           <SupplierTable suppliers={suppliers} isLoading={suppliersLoading} />

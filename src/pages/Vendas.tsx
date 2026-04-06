@@ -119,7 +119,7 @@ const Vendas = () => {
                 <ShoppingCart className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold gradient-text">Vendas</h1>
+                <h1 className="text-page-title gradient-text">Vendas</h1>
                 <p className="text-sm text-muted-foreground">
                   Gerencie todas as vendas
                   {isLoading && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}

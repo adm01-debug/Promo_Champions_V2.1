@@ -39,7 +39,7 @@ export default function FonteLeads() {
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Análise de Fonte de Leads</h1>
+              <h1 className="text-page-title gradient-text">Análise de Fonte de Leads</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Identifique quais canais geram mais conversão e ROI
               </p>
@@ -59,7 +59,7 @@ export default function FonteLeads() {
                 <Target className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{data?.totalLeads || 0}</p>
+                <p className="text-metric">{data?.totalLeads || 0}</p>
                 <p className="text-xs text-muted-foreground">Total de Leads</p>
               </div>
             </CardContent>
@@ -70,7 +70,7 @@ export default function FonteLeads() {
                 <TrendingUp className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{data?.totalClosed || 0}</p>
+                <p className="text-metric">{data?.totalClosed || 0}</p>
                 <p className="text-xs text-muted-foreground">Fechamentos</p>
               </div>
             </CardContent>
@@ -81,7 +81,7 @@ export default function FonteLeads() {
                 <Percent className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{overallConversion}%</p>
+                <p className="text-metric">{overallConversion}%</p>
                 <p className="text-xs text-muted-foreground">Conversão Geral</p>
               </div>
             </CardContent>
@@ -92,7 +92,7 @@ export default function FonteLeads() {
                 <DollarSign className="h-5 w-5 text-streak" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{formatCurrency(avgTicket)}</p>
+                <p className="text-metric">{formatCurrency(avgTicket)}</p>
                 <p className="text-xs text-muted-foreground">Ticket Médio</p>
               </div>
             </CardContent>

@@ -88,7 +88,7 @@ const BISDR = () => {
                 <Card key={label} className="glass-card">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={`p-3 rounded-xl bg-${color}/15`}><Icon className={`h-5 w-5 text-${color}`} /></div>
-                    <div><p className="text-2xl font-bold">{value}</p><p className="text-xs text-muted-foreground">{label}</p></div>
+                    <div><p className="text-metric">{value}</p><p className="text-xs text-muted-foreground">{label}</p></div>
                   </CardContent>
                 </Card>
               ))}

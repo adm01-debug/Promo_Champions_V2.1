@@ -34,7 +34,7 @@ export default function Configuracoes() {
           <Settings className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold gradient-text">Configurações</h1>
+          <h1 className="text-page-title gradient-text">Configurações</h1>
           <p className="text-muted-foreground">Gerencie as configurações do sistema</p>
         </div>
       </div>

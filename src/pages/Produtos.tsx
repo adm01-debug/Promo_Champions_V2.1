@@ -141,7 +141,7 @@ const Produtos = () => {
                 <Package className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold gradient-text">Produtos</h1>
+                <h1 className="text-page-title gradient-text">Produtos</h1>
                 <p className="text-sm text-muted-foreground">
                   Gerencie seu catálogo de produtos
                   {isLoading && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}

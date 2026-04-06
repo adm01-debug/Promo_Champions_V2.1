@@ -91,7 +91,7 @@ export const PermissionRoleCards = React.memo(function PermissionRoleCards({
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-bold">{stats.granted}</span>
+                  <span className="text-metric">{stats.granted}</span>
                   <span className="text-muted-foreground">/{stats.total}</span>
                   <p className="text-xs text-muted-foreground">{stats.percentage}% ativo</p>
                 </div>

@@ -39,7 +39,7 @@ export default function Tarefas() {
                 <ListTodo className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold gradient-text">Fila de Tarefas</h1>
+                <h1 className="text-page-title gradient-text">Fila de Tarefas</h1>
                 <p className="text-muted-foreground">
                   Gerencie as tarefas diárias da sua equipe de vendas
                 </p>

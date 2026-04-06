@@ -123,7 +123,7 @@ const Vendedores = () => {
               <Trophy className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Ranking de Vendedores</h1>
+              <h1 className="text-page-title gradient-text">Ranking de Vendedores</h1>
               <p className="text-sm text-muted-foreground">Competição acirrada - {periodLabels[period]}</p>
             </div>
           </div>

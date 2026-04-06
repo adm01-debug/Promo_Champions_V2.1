@@ -40,7 +40,7 @@ export function FollowUpStatsGrid({ leads, onFilterChange }: FollowUpStatsGridPr
           >
             <CardContent className="p-4 text-center">
               <stat.icon className={`h-6 w-6 mx-auto mb-2 ${stat.colorClass} group-hover:scale-110 transition-transform`} />
-              <div className="text-2xl font-bold">{counts[stat.key]}</div>
+              <div className="text-metric">{counts[stat.key]}</div>
               <div className="text-xs text-muted-foreground">{stat.label}</div>
             </CardContent>
           </Card>

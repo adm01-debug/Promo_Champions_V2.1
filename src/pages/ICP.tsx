@@ -78,7 +78,7 @@ export default function ICP() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center"><Target className="h-5 w-5 text-primary-foreground" /></div>
-                  <div><p className="text-sm text-muted-foreground">Total Clientes ICP</p><p className="text-2xl font-bold">{stats.total}</p></div>
+                  <div><p className="text-sm text-muted-foreground">Total Clientes ICP</p><p className="text-metric">{stats.total}</p></div>
                 </div>
               </CardContent>
             </Card>

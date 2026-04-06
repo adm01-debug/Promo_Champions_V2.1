@@ -74,7 +74,7 @@ export default function Notificacoes() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold gradient-text">Notificações</h1>
+            <h1 className="text-page-title gradient-text">Notificações</h1>
             <p className="text-muted-foreground mt-1">Central de notificações e configurações de alertas</p>
           </div>
         </div>
