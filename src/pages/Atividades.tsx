@@ -27,7 +27,7 @@ export default function Atividades() {
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Log de Atividades</h1>
+              <h1 className="text-page-title gradient-text">Log de Atividades</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Registre e acompanhe todas as interações com prospects
               </p>

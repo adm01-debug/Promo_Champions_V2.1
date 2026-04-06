@@ -113,7 +113,7 @@ export default function Analytics() {
             <motion.div className="flex items-center gap-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}>
               <div className="p-2.5 rounded-xl gradient-primary"><BarChart3 className="h-6 w-6 text-primary-foreground" /></div>
               <div>
-                <h1 className="text-2xl font-bold gradient-text">Analytics de Vendas</h1>
+                <h1 className="text-page-title gradient-text">Analytics de Vendas</h1>
                 <p className="text-sm text-muted-foreground/80">Análises avançadas para otimizar sua performance de vendas</p>
               </div>
             </motion.div>

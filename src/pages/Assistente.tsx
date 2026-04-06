@@ -18,7 +18,7 @@ export default function Assistente() {
             <Sparkles className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold gradient-text">Assistente de Vendas</h1>
+            <h1 className="text-page-title gradient-text">Assistente de Vendas</h1>
             <p className="text-sm text-muted-foreground">
               Seu coach de vendas pessoal com IA
             </p>

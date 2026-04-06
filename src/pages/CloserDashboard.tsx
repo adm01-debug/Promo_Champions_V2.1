@@ -52,7 +52,7 @@ export default function CloserDashboard() {
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold gradient-text">Dashboard Closer</h1>
+                  <h1 className="text-page-title gradient-text">Dashboard Closer</h1>
                   <p className="text-sm text-muted-foreground mt-1">
                     Métricas de fechamento e conversão
                   </p>

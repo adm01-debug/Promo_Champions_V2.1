@@ -39,7 +39,7 @@ export default function FonteLeads() {
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Análise de Fonte de Leads</h1>
+              <h1 className="text-page-title gradient-text">Análise de Fonte de Leads</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Identifique quais canais geram mais conversão e ROI
               </p>

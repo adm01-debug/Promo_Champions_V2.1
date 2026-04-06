@@ -128,7 +128,7 @@ export default function AdminTelemetriaPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <Activity className="h-7 w-7 text-primary" />
-            <div><h1 className="text-2xl font-bold">Telemetria de Queries</h1><p className="text-sm text-muted-foreground">Monitoramento de performance do banco externo</p></div>
+            <div><h1 className="text-page-title">Telemetria de Queries</h1><p className="text-sm text-muted-foreground">Monitoramento de performance do banco externo</p></div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleExportCSV} disabled={rows.length === 0}><Download className="h-3.5 w-3.5 mr-1.5" />CSV</Button>

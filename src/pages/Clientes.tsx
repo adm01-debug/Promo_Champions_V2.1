@@ -118,7 +118,7 @@ const Clientes = () => {
                 <Users className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold gradient-text">Clientes</h1>
+                <h1 className="text-page-title gradient-text">Clientes</h1>
                 <p className="text-sm text-muted-foreground">
                   Gerencie sua base de clientes
                   {isLoading && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}

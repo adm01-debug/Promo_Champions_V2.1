@@ -51,7 +51,7 @@ export default function ComparadorPrecos() {
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
+              <h1 className="text-page-title flex items-center gap-2">
                 <Scale className="h-6 w-6 text-primary" />
                 Comparador de Preços
               </h1>

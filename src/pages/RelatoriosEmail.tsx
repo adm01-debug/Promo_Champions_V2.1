@@ -10,7 +10,7 @@ export default function RelatoriosEmail() {
       </Helmet>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Relatórios por Email</h1>
+          <h1 className="text-page-title">Relatórios por Email</h1>
           <p className="text-muted-foreground">Configure relatórios automáticos de vendas e performance</p>
         </div>
         <EmailReportConfig />

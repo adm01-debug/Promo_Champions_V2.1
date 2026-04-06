@@ -91,7 +91,7 @@ export default function MetasAtividades() {
         <div className="animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text font-display">Metas de Atividades Diárias</h1>
+              <h1 className="text-page-title gradient-text">Metas de Atividades Diárias</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Acompanhe o progresso diário de cada vendedor • {format(new Date(), "dd 'de' MMMM", { locale: ptBR })}
               </p>

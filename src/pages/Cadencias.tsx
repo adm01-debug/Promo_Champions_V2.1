@@ -51,7 +51,7 @@ export default function Cadencias() {
         <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Gestão de Cadências</h1>
+              <h1 className="text-page-title gradient-text">Gestão de Cadências</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Crie sequências automáticas de contato para seus prospects
               </p>
