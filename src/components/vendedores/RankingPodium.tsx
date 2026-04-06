@@ -23,7 +23,7 @@ export function RankingPodium({ top3 }: RankingPodiumProps) {
   const maxSales = top3[0]?.totalSales || 1;
 
   return (
-    <div className="relative rounded-2xl border border-border/20 overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
+    <div className="relative rounded-2xl border border-border/20 overflow-hidden bg-gradient-to-b from-background via-background to-background/95 shadow-sm">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,hsl(var(--primary)/0.05),transparent_60%)]" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)`, backgroundSize: "40px 40px" }} />

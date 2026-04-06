@@ -58,16 +58,16 @@ function _GamificationCard({
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -2 }}
+      whileHover={{ scale: 1.02, y: -3 }}
       whileTap={{ scale: 0.98 }}
       className={cn(
         "glass-card relative overflow-hidden cursor-pointer group",
         "border border-border/40 dark:border-glow rounded-xl",
-        "hover:shadow-elevated transition-all duration-300",
+        "hover:shadow-elevated hover:border-primary/20 transition-all duration-300",
         sizeClasses[size],
-        rank === 1 && "ring-2 ring-rank-gold/30 hover-glow-gold",
-        rank === 2 && "ring-1 ring-rank-silver/30",
-        rank === 3 && "ring-1 ring-rank-bronze/30"
+        rank === 1 && "ring-2 ring-rank-gold/30 hover-glow-gold shadow-[0_0_20px_hsl(var(--coins)/0.08)]",
+        rank === 2 && "ring-1 ring-rank-silver/30 shadow-[0_0_15px_rgba(148,163,184,0.06)]",
+        rank === 3 && "ring-1 ring-rank-bronze/30 shadow-[0_0_15px_hsl(var(--streak)/0.06)]"
       )}
       onClick={onClick}
     >

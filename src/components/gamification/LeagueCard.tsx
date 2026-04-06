@@ -38,14 +38,18 @@ function _LeagueCard() {
   return (
     <div className="glass rounded-xl border border-border/30 overflow-hidden">
       {/* Header */}
-      <div className="p-5 border-b border-border/50">
-        <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-bold">Sistema de Ligas</h2>
+      <div className="p-5 border-b border-border/40 bg-gradient-to-r from-primary/[0.03] to-transparent">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-primary/10">
+            <Shield className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold tracking-tight">Sistema de Ligas</h2>
+            <p className="text-xs text-muted-foreground">
+              Suba de liga para ganhar bônus de XP! 🏆
+            </p>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          Suba de liga para ganhar bônus de XP! 🏆
-        </p>
       </div>
 
       {/* League tiers overview */}
