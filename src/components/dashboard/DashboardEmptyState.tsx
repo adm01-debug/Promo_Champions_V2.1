@@ -138,6 +138,12 @@ export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
         {/* Gradient background */}
         <div className={`absolute inset-0 bg-gradient-to-br ${state.gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
         
+        {/* Animated border shimmer */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        </div>
+        
         <CardContent className="p-5 sm:p-6 flex flex-col items-center text-center gap-3 relative z-10 h-full justify-center">
           {/* SVG Illustration with float animation */}
           <motion.div
@@ -154,14 +160,14 @@ export function DashboardEmptyState({ type }: DashboardEmptyStateProps) {
             </motion.div>
           </motion.div>
           
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold">{state.title}</h3>
-            <p className="text-xs text-muted-foreground max-w-[240px] leading-relaxed">
+          <div className="space-y-1.5">
+            <h3 className="text-sm font-bold tracking-tight">{state.title}</h3>
+            <p className="text-xs text-muted-foreground/80 max-w-[240px] leading-relaxed">
               {state.description}
             </p>
           </div>
           
-          <Button asChild size="sm" variant={type === "revenue" ? "glow-pulse" : "glow"} className="mt-1 group/btn">
+          <Button asChild size="sm" variant={type === "revenue" ? "glow-pulse" : "glow"} className="mt-1.5 group/btn shadow-sm">
             <Link to={state.href}>
               <Plus className="h-3.5 w-3.5 mr-1 group-hover/btn:rotate-90 transition-transform duration-200" />
               {state.cta}
