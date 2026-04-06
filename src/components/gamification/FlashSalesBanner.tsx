@@ -44,12 +44,18 @@ function CountdownTimer({ endDate }: { endDate: string }) {
     [timeLeft.days, timeLeft.hours]
   );
 
+  const isCritical = useMemo(() =>
+    timeLeft.days === 0 && timeLeft.hours < 1,
+    [timeLeft.days, timeLeft.hours]
+  );
+
   return (
     <div className={cn(
       "flex items-center gap-1 font-mono text-xs font-bold",
-      isUrgent ? "text-destructive" : "text-primary"
+      isUrgent ? "text-destructive" : "text-primary",
+      isCritical && "animate-pulse"
     )}>
-      <Clock className="h-3 w-3" />
+      <Clock className={cn("h-3 w-3", isCritical && "animate-bounce")} />
       {timeLeft.days > 0 && (
         <span>{timeLeft.days}d</span>
       )}

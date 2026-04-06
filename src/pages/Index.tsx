@@ -44,7 +44,11 @@ import {
   Trophy,
   Zap,
   Heart,
+  Rocket,
+  Plus,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
@@ -61,6 +65,7 @@ const Index = () => {
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;
   const hasClients = (kpis?.current.newClients ?? 0) > 0;
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
+  const allEmpty = !hasRevenue && !hasSales && !hasClients && !hasConversion;
 
   return (
     <>
@@ -105,72 +110,107 @@ const Index = () => {
             </motion.div>
 
             {/* ===== HERO KPIs ===== */}
-            <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              data-tour="stats"
-            >
-              <motion.div variants={itemVariants} className="col-span-2">
-                {hasRevenue ? (
-                  <StatCard
-                    title="Faturamento"
-                    value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
-                    numericValue={kpis?.current.totalRevenue ?? 0}
-                    change={kpis?.changes.revenue ?? 0}
-                    previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
-                    icon={DollarSign}
-                    variant="primary"
-                    hero
-                  />
-                ) : (
-                  <DashboardEmptyState type="revenue" />
-                )}
+            {allEmpty ? (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="relative overflow-hidden rounded-xl border border-dashed border-primary/30 bg-gradient-to-r from-primary/5 via-card/80 to-accent/5 p-6"
+              >
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="p-3 rounded-xl bg-primary/10">
+                    <Rocket className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="flex-1 text-center sm:text-left">
+                    <h3 className="text-lg font-bold">Comece sua jornada de vendas!</h3>
+                    <p className="text-sm text-muted-foreground/80 mt-0.5">
+                      Registre sua primeira venda, adicione clientes e acompanhe seu faturamento em tempo real.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button asChild variant="outline" size="sm">
+                      <Link to="/clientes">
+                        <Users className="h-3.5 w-3.5 mr-1.5" />
+                        Adicionar Cliente
+                      </Link>
+                    </Button>
+                    <Button asChild size="sm">
+                      <Link to="/vendas">
+                        <Plus className="h-3.5 w-3.5 mr-1.5" />
+                        Registrar Venda
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
               </motion.div>
-              <motion.div variants={itemVariants}>
-                {hasSales ? (
-                  <StatCard
-                    title="Vendas"
-                    value={String(kpis?.current.totalSales ?? 0)}
-                    numericValue={kpis?.current.totalSales ?? 0}
-                    change={kpis?.changes.sales ?? 0}
-                    previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
-                    icon={ShoppingBag}
-                  />
-                ) : (
-                  <DashboardEmptyState type="sales" />
-                )}
+            ) : (
+              <motion.div 
+                className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                data-tour="stats"
+              >
+                <motion.div variants={itemVariants} className="col-span-2">
+                  {hasRevenue ? (
+                    <StatCard
+                      title="Faturamento"
+                      value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
+                      numericValue={kpis?.current.totalRevenue ?? 0}
+                      change={kpis?.changes.revenue ?? 0}
+                      previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
+                      icon={DollarSign}
+                      variant="primary"
+                      hero
+                    />
+                  ) : (
+                    <DashboardEmptyState type="revenue" />
+                  )}
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  {hasSales ? (
+                    <StatCard
+                      title="Vendas"
+                      value={String(kpis?.current.totalSales ?? 0)}
+                      numericValue={kpis?.current.totalSales ?? 0}
+                      change={kpis?.changes.sales ?? 0}
+                      previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
+                      icon={ShoppingBag}
+                    />
+                  ) : (
+                    <DashboardEmptyState type="sales" />
+                  )}
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  {hasClients ? (
+                    <StatCard
+                      title="Clientes"
+                      value={String(kpis?.current.newClients ?? 0)}
+                      numericValue={kpis?.current.newClients ?? 0}
+                      change={kpis?.changes.clients ?? 0}
+                      previousValue={kpis ? String(kpis.previous.newClients) : undefined}
+                      icon={Users}
+                    />
+                  ) : (
+                    <DashboardEmptyState type="clients" />
+                  )}
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  {hasConversion ? (
+                    <StatCard
+                      title="Conversão"
+                      value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                      numericValue={kpis?.current.conversionRate ?? 0}
+                      change={kpis?.changes.conversion ?? 0}
+                      previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
+                      icon={TrendingUp}
+                    />
+                  ) : (
+                    <DashboardEmptyState type="conversion" />
+                  )}
+                </motion.div>
               </motion.div>
-              <motion.div variants={itemVariants}>
-                {hasClients ? (
-                  <StatCard
-                    title="Clientes"
-                    value={String(kpis?.current.newClients ?? 0)}
-                    numericValue={kpis?.current.newClients ?? 0}
-                    change={kpis?.changes.clients ?? 0}
-                    previousValue={kpis ? String(kpis.previous.newClients) : undefined}
-                    icon={Users}
-                  />
-                ) : (
-                  <DashboardEmptyState type="clients" />
-                )}
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                {hasConversion ? (
-                  <StatCard
-                    title="Conversão"
-                    value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
-                    numericValue={kpis?.current.conversionRate ?? 0}
-                    change={kpis?.changes.conversion ?? 0}
-                    previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
-                    icon={TrendingUp}
-                  />
-                ) : (
-                  <DashboardEmptyState type="conversion" />
-                )}
-              </motion.div>
-            </motion.div>
+            )}
 
             {/* ===== CHARTS & GOALS ===== */}
             <motion.div 

@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -11,6 +11,30 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import type { GlobalSearchHandle } from "./GlobalSearch";
+import { useMemo } from "react";
+
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Dashboard',
+  '/pipeline': 'Pipeline',
+  '/vendas': 'Vendas',
+  '/clientes': 'Clientes',
+  '/produtos': 'Produtos',
+  '/tarefas': 'Tarefas',
+  '/atividades': 'Atividades',
+  '/cadencias': 'Cadências',
+  '/metas': 'Metas',
+  '/analytics': 'Analytics',
+  '/relatorios': 'Relatórios',
+  '/ranking': 'Ranking',
+  '/vendedores': 'Vendedores',
+  '/forecast': 'Forecast',
+  '/calendario': 'Calendário',
+  '/automacoes': 'Automações',
+  '/configuracoes': 'Configurações',
+  '/notificacoes': 'Notificações',
+  '/assistente': 'Assistente IA',
+  '/admin': 'Admin',
+};
 
 interface DesktopTopBarProps {
   searchRef: RefObject<GlobalSearchHandle>;
@@ -18,7 +42,10 @@ interface DesktopTopBarProps {
 
 export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
-
+  const location = useLocation();
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const isTopLevel = pathSegments.length < 2;
+  const pageTitle = useMemo(() => PAGE_TITLES[location.pathname] ?? null, [location.pathname]);
   return (
     <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
       {/* LEFT CLUSTER: Sidebar Toggle + Breadcrumbs */}
@@ -32,9 +59,13 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
           </Tooltip>
         </TooltipProvider>
 
-        {/* Breadcrumbs inline */}
+        {/* Page title chip (top-level) or Breadcrumbs (nested) */}
         <div className="min-w-0 overflow-hidden">
-          <Breadcrumbs />
+          {isTopLevel && pageTitle ? (
+            <span className="text-sm font-semibold text-foreground">{pageTitle}</span>
+          ) : (
+            <Breadcrumbs />
+          )}
         </div>
       </div>
 
