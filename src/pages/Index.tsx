@@ -44,7 +44,11 @@ import {
   Trophy,
   Zap,
   Heart,
+  Rocket,
+  Plus,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const { data: kpis, isLoading } = useDashboardKPIs();
