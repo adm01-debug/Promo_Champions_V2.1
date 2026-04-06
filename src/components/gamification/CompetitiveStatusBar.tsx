@@ -86,9 +86,9 @@ export function CompetitiveStatusBar() {
           : "border-border/40 dark:border-glow"
       }`}
     >
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        {/* Rank e título */}
-        <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4 flex-wrap">
+        {/* === RANK POSITION (Primary - visually prominent) === */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           <div 
             className={`p-2.5 rounded-xl shadow-lg ${
               myRanking.color 
@@ -118,7 +118,7 @@ export function CompetitiveStatusBar() {
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground/80 mt-0.5">
               Olá, <span className="font-medium text-foreground">{salesperson.name}</span>! 
               {myRanking.rank === 1 
                 ? " Você é o líder! 👑"
@@ -128,19 +128,22 @@ export function CompetitiveStatusBar() {
           </div>
         </div>
 
-        {/* Stats rápidas */}
-        <div className="flex items-center gap-4">
+        {/* === DIVIDER === */}
+        <div className="hidden md:block w-px h-10 bg-border/50" />
+
+        {/* === STATS (Secondary - compact, aligned right) === */}
+        <div className="flex items-center gap-3 ml-auto">
           <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vendas</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Vendas</p>
             <p className="font-display font-bold gradient-text">{formatCurrency(myRanking.totalSales)}</p>
           </div>
           <div className="text-center px-3 py-1.5 rounded-lg bg-muted/50 border border-border/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Deals</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Deals</p>
             <p className="font-display font-bold">{myRanking.dealsCount}</p>
           </div>
           {myRanking.leadsCount > 0 && (
             <div className="text-center px-3 py-1.5 rounded-lg bg-status-info/10 border border-status-info/20">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium flex items-center justify-center gap-1">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium flex items-center justify-center gap-1">
                 <Target className="h-3 w-3" />
                 Leads
               </p>
@@ -149,27 +152,27 @@ export function CompetitiveStatusBar() {
           )}
           
           {myRanking.rank > 1 && (
-            <div className="hidden md:block pl-4 border-l border-border/50">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Para subir</p>
+            <div className="hidden md:block pl-3 border-l border-border/50">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Para subir</p>
               <p className="font-display font-medium text-sm text-status-warning">
                 +{formatCurrency(myRanking.gapToNext)}
               </p>
             </div>
           )}
-        </div>
 
-        {/* CTA */}
-        {myRanking.leadsCount > 0 && (
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="hidden lg:flex gap-2 border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
-            onClick={() => navigate("/pipeline")}
-          >
-            <Target className="h-4 w-4" />
-            {myRanking.leadsCount} leads abertos
-          </Button>
-        )}
+          {/* CTA */}
+          {myRanking.leadsCount > 0 && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="hidden lg:flex gap-2 border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
+              onClick={() => navigate("/pipeline")}
+            >
+              <Target className="h-4 w-4" />
+              {myRanking.leadsCount} leads abertos
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
