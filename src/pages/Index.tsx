@@ -80,7 +80,7 @@ const Index = () => {
     >
       <PageTransition>
         <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6">
+          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-6 space-y-6">
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
