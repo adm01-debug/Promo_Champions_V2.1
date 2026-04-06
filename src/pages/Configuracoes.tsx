@@ -41,7 +41,8 @@ export default function Configuracoes() {
 
       <Tabs defaultValue="roles" className="w-full">
         <ScrollArea className="w-full whitespace-nowrap">
-          <TabsList className="inline-flex w-max">
+          <TabsList className="inline-flex w-max gap-1">
+            {/* Personalização */}
             <TabsTrigger value="roles" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               Roles
@@ -64,29 +65,33 @@ export default function Configuracoes() {
             </TabsTrigger>
             {isAdmin && (
               <>
+                {/* Visual separator */}
+                <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
                 <TabsTrigger value="api-integration" className="flex items-center gap-2">
                   <Plug className="h-4 w-4" />
-                  API & Integrações
+                  API
                 </TabsTrigger>
                 <TabsTrigger value="custom-fields" className="flex items-center gap-2">
                   <Settings2 className="h-4 w-4" />
-                  Campos Adicionais
+                  Campos
                 </TabsTrigger>
                 <TabsTrigger value="permissions" className="flex items-center gap-2">
                   <Key className="h-4 w-4" />
                   Permissões
                 </TabsTrigger>
+                {/* Visual separator */}
+                <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
                 <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
                   <Globe className="h-4 w-4" />
-                  IP Whitelist
+                  IP
                 </TabsTrigger>
                 <TabsTrigger value="geo-blocking" className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  Geo Blocking
+                  Geo
                 </TabsTrigger>
                 <TabsTrigger value="password-reset" className="flex items-center gap-2">
                   <KeyRound className="h-4 w-4" />
-                  Reset Senha
+                  Senha
                 </TabsTrigger>
                 <TabsTrigger value="audit" className="flex items-center gap-2">
                   <FileWarning className="h-4 w-4" />
@@ -99,7 +104,7 @@ export default function Configuracoes() {
               </>
             )}
           </TabsList>
-          <ScrollBar orientation="horizontal" />
+          <ScrollBar orientation="horizontal" className="h-1.5" />
         </ScrollArea>
 
         <TabsContent value="roles" className="mt-6">
