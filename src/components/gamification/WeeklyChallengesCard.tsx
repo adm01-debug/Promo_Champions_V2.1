@@ -190,7 +190,7 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
 
   if (!challenges.length) {
     return (
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
@@ -198,10 +198,17 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <Trophy className="h-12 w-12 mx-auto mb-2 opacity-30" />
-            <p>Nenhum desafio ativo no momento</p>
-            <p className="text-sm">Novos desafios em breve!</p>
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="relative mb-4">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center">
+                <Trophy className="h-8 w-8 text-primary/40" />
+              </div>
+              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-muted flex items-center justify-center">
+                <Clock className="h-3 w-3 text-muted-foreground" />
+              </div>
+            </div>
+            <p className="text-sm font-medium text-foreground/70">Nenhum desafio ativo no momento</p>
+            <p className="text-xs text-muted-foreground mt-1">Novos desafios em breve!</p>
           </div>
         </CardContent>
       </Card>
