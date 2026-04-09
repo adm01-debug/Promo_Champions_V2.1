@@ -127,6 +127,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
       { title: "Calendário", url: "/calendario", icon: Calendar },
       { title: "Portfólio", url: "/portfolio", icon: Target },
+      { title: "Estoque", url: "/estoque", icon: Package },
     ],
   },
   {
