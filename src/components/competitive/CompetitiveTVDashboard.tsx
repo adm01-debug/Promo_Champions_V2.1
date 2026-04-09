@@ -73,6 +73,7 @@ export const CompetitiveTVDashboard: FC = () => {
               <button
                 key={s}
                 onClick={() => setCurrentSlide(i)}
+                aria-label={`Slide ${i + 1}: ${s}`}
                 className={cn(
                   'h-2 rounded-full transition-all',
                   i === currentSlide ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/30',
