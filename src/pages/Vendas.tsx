@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { ShoppingCart, Search, Loader2 } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";

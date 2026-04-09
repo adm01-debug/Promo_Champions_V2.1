@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, History } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

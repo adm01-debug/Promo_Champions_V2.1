@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Trophy, TrendingUp, Star, Target, Calendar, Sparkles } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
