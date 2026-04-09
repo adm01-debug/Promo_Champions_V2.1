@@ -150,7 +150,17 @@ export default function Estoque() {
             <Card>
               <CardContent className="p-0">
                 {loadingInv ? (
-                  <div className="p-8 text-center text-muted-foreground">Carregando inventário...</div>
+                  <div className="p-4 space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <div className="h-4 w-32 bg-muted/70 rounded animate-pulse" />
+                        <div className="h-4 w-16 bg-muted/70 rounded animate-pulse" />
+                        <div className="h-4 w-20 bg-muted/70 rounded animate-pulse" />
+                        <div className="h-2 w-32 bg-muted/70 rounded-full animate-pulse" />
+                        <div className="h-5 w-16 bg-muted/70 rounded-full animate-pulse" />
+                      </div>
+                    ))}
+                  </div>
                 ) : inventory.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground">Nenhum item no inventário</div>
                 ) : (
@@ -203,7 +213,16 @@ export default function Estoque() {
             <Card>
               <CardContent className="p-0">
                 {loadingMov ? (
-                  <div className="p-8 text-center text-muted-foreground">Carregando movimentações...</div>
+                  <div className="p-4 space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <div className="h-4 w-24 bg-muted/70 rounded animate-pulse" />
+                        <div className="h-4 w-32 bg-muted/70 rounded animate-pulse" />
+                        <div className="h-5 w-16 bg-muted/70 rounded-full animate-pulse" />
+                        <div className="h-4 w-12 bg-muted/70 rounded animate-pulse" />
+                      </div>
+                    ))}
+                  </div>
                 ) : movements.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground">Nenhuma movimentação registrada</div>
                 ) : (
