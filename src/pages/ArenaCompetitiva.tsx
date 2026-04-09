@@ -110,6 +110,7 @@ const ArenaCompetitiva = () => {
           <TabsContent value="evolution"><EvolutionChart /></TabsContent>
         </Tabs>
       </div>
+      </PageTransition>
     </>
   );
 };
