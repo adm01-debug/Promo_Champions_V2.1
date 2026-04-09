@@ -64,6 +64,10 @@ export default function Configuracoes() {
               <Palette className="h-4 w-4" />
               Skins
             </TabsTrigger>
+            <TabsTrigger value="passkeys" className="flex items-center gap-2">
+              <Fingerprint className="h-4 w-4" />
+              Passkeys
+            </TabsTrigger>
             {isAdmin && (
               <>
                 {/* Visual separator */}
