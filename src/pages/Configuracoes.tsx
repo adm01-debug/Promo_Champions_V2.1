@@ -132,6 +132,10 @@ export default function Configuracoes() {
           <ThemeCustomizer />
         </TabsContent>
 
+        <TabsContent value="passkeys" className="mt-6">
+          <PasskeySettings />
+        </TabsContent>
+
         {isAdmin && (
           <>
             <TabsContent value="api-integration" className="mt-6">
