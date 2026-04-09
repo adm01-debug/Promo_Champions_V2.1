@@ -85,7 +85,6 @@ export function OnboardingChecklist() {
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Expandir checklist"
               className="h-6 w-6 text-muted-foreground hover:text-foreground"
               onClick={() => setExpanded(!expanded)}
               aria-label={expanded ? "Recolher detalhes" : "Expandir detalhes"}
@@ -95,7 +94,6 @@ export function OnboardingChecklist() {
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Dispensar checklist"
               className="h-6 w-6 text-muted-foreground hover:text-foreground"
               onClick={() => setDismissed(true)}
               aria-label="Fechar onboarding"

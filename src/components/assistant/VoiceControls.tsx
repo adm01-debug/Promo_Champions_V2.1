@@ -54,7 +54,6 @@ export function VoiceControls({
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Iniciar gravação de voz"
               className={cn(
                 'h-7 w-7 transition-colors',
                 isListening && 'text-destructive bg-destructive/10 animate-pulse',
@@ -87,7 +86,6 @@ export function VoiceControls({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Parar gravação"
                 className={cn(
                   'h-7 w-7 transition-colors',
                   isSpeaking && 'text-primary bg-primary/10 animate-pulse'

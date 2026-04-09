@@ -27,7 +27,6 @@ export const FocusModeToggle = forwardRef<HTMLDivElement, FocusModeToggleProps>(
           <Button
             variant={isEnabled ? "default" : "ghost"}
             size="icon"
-            aria-label="Alternar modo foco"
             onClick={toggleFocusMode}
             aria-label={isEnabled ? "Desativar modo foco" : "Ativar modo foco"}
             className={cn(
