@@ -20,7 +20,7 @@ import { PortfolioValueChart } from "@/components/portfolio/PortfolioValueChart"
 import { PortfolioICPFilters } from "@/components/portfolio/PortfolioICPFilters";
 import { PortfolioCloserGrid } from "@/components/portfolio/PortfolioCloserGrid";
 import { Briefcase, Plus, Search, Filter, Zap, History } from "lucide-react";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Portfolio() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>("all");

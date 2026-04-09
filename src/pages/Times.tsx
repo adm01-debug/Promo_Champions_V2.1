@@ -11,7 +11,7 @@ import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { useTeams, useDeleteTeam, Team } from "@/hooks/useTeams";
 import { TimesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Times() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

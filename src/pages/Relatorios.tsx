@@ -13,7 +13,7 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { downloadSalesReport, downloadClientsReport, downloadProductsReport } from "@/utils/reportDownload";
 import { toast } from "sonner";
 import { ReportCharts } from "@/components/reports/ReportCharts";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 type DateRange = { from: Date | undefined; to: Date | undefined };
 

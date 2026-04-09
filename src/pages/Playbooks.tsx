@@ -3,7 +3,7 @@ import { PlaybooksManager } from "@/components/playbooks/PlaybooksManager";
 import { usePlaybooks } from "@/hooks/usePlaybooks";
 import { PlaybooksLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Playbooks() {
   const { isLoading } = usePlaybooks();

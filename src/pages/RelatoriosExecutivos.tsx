@@ -11,7 +11,7 @@ import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell } from 'recharts';
 import { ExecInsightsBanner } from '@/components/reports/ExecInsightsBanner';
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(142 71% 45%)', 'hsl(var(--destructive))', 'hsl(var(--secondary))'];
 

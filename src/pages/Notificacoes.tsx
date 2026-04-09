@@ -26,7 +26,7 @@ import { NotificationPreferenceCard } from "@/components/notifications/Notificat
 import { toast } from "sonner";
 import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const DEFAULT_PREF: {
   email: string; frequency: "realtime" | "daily" | "weekly"; notify_stagnant_deals: boolean;

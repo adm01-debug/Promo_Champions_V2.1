@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { useROIDashboard } from '@/hooks/useROIDashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis, Legend } from 'recharts';
 import { ROIRankingList } from '@/components/roi/ROIRankingList';
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
 const formatPercent = (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;

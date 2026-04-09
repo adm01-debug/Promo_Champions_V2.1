@@ -6,7 +6,7 @@ import { ClipboardList } from "lucide-react";
 import { useActivities } from "@/hooks/useActivities";
 import { AtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Atividades() {
   const { isLoading } = useActivities();

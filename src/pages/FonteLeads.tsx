@@ -7,7 +7,7 @@ import { useLeadSourceAnalysis, sourceLabels } from "@/hooks/useLeadSourceAnalys
 import { Target, TrendingUp, DollarSign, Percent } from "lucide-react";
 import { FonteLeadsLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function FonteLeads() {
   const { data, isLoading } = useLeadSourceAnalysis(3);

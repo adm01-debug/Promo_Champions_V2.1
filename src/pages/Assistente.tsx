@@ -2,7 +2,7 @@
 import { SalesAssistantChat } from '@/components/assistant/SalesAssistantChat';
 import { Helmet } from "react-helmet-async";
 import { Sparkles } from 'lucide-react';
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Assistente() {
   return (

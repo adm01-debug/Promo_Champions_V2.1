@@ -13,7 +13,7 @@ import { NextBestActionCard } from "@/components/ai/NextBestActionCard";
 import { VendedorHeader } from "@/components/vendedor/VendedorHeader";
 import { VendedorCharts } from "@/components/vendedor/VendedorCharts";
 import { VendedorBottomRow } from "@/components/vendedor/VendedorBottomRow";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 interface Sale {
   id: string;

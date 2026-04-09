@@ -16,7 +16,7 @@ import { AdminSecurityPanel } from "@/components/admin/AdminSecurityPanel";
 import { AdminSystemStatus } from "@/components/admin/AdminSystemStatus";
 import { AdminQuickLinks } from "@/components/admin/AdminQuickLinks";
 import { useAdminStats, useEdgeFunctionsStatus } from "@/hooks/useAdminStats";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 function AdminDashboardContent() {
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useAdminStats();

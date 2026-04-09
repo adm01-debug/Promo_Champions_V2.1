@@ -11,7 +11,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { usePriceAlerts, usePriceHistory } from "@/hooks/usePriceHistory";
 import { PriceAlertsPanel } from "@/components/comparador/PriceAlertsPanel";
 import { PriceHistoryTable } from "@/components/comparador/PriceHistoryTable";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);

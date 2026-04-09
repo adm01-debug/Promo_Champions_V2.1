@@ -18,7 +18,7 @@ import { SummaryCards } from "@/components/vendedores/SummaryCards";
 import { VendedoresLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const _roleLabels: Record<SalespersonRole, { label: string; color: string }> = {
   sdr: { label: "SDR", color: "bg-info/10 text-info border-info/20" },

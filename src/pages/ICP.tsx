@@ -10,7 +10,7 @@ import { TableSkeleton, PageHeaderSkeleton, SkeletonCard } from "@/components/sk
 import { Target, Search, CheckCircle2, XCircle, Filter } from "lucide-react";
 import { ICPTable } from "@/components/icp/ICPTable";
 import { ICPEditDialog } from "@/components/icp/ICPEditDialog";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function ICP() {
   const { data: icpData, isLoading: isLoadingICP } = useICPData();

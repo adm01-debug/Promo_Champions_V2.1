@@ -11,7 +11,7 @@ import { GitBranch, Zap, Clock, CheckCircle, Search, Filter } from "lucide-react
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();

@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PenTool, Plus, FileSignature, Clock, CheckCircle2, XCircle, Send, Download, Eye, Trash2, Loader2 } from "lucide-react";
 import { useDigitalSignatures } from "@/hooks/useDigitalSignatures";
 import { SignatureStatsCards } from "@/components/signature/SignatureStatsCards";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const getStatusBadge = (status: string) => {
   const configs: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string; icon: React.ReactNode }> = {

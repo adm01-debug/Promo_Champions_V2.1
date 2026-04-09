@@ -1,6 +1,6 @@
 import { ActivityCalendar } from "@/components/calendar/ActivityCalendar";
 import { Helmet } from "react-helmet-async";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Calendario() {
   return (

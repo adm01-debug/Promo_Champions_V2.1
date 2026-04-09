@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { MultichannelDashboard } from "@/components/multichannel/MultichannelDashboard";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Multichannel() {
   return (

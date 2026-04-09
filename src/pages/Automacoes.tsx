@@ -1,6 +1,6 @@
 import { WorkflowBuilder } from "@/components/automations/WorkflowBuilder";
 import { Helmet } from "react-helmet-async";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Automacoes() {
   return (

@@ -14,7 +14,7 @@ import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageL
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { exportToCSV } from "@/utils/csvExport";
 import { toast } from "sonner";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 type OutcomeFilter = 'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';
 
