@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,7 @@ type TVScreen = 'leaderboard' | 'latest-sales' | 'goals' | 'streaks';
 
 const ROTATION_INTERVAL = 15000; // 15 seconds
 
-export function EnhancedTVMode() {
+function EnhancedTVModeComponent() {
   const [currentScreen, setCurrentScreen] = useState<TVScreen>('leaderboard');
   const [_isFullscreen, setIsFullscreen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -241,3 +242,6 @@ export function EnhancedTVMode() {
     </div>
   );
 }
+
+
+export const EnhancedTVMode = React.memo(EnhancedTVModeComponent);

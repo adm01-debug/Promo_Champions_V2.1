@@ -1,8 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import { EmailReportConfig } from '@/components/reports/EmailReportConfig';
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function RelatoriosEmail() {
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Relatórios por Email | PROMO CHAMPIONS</title>
@@ -16,5 +18,6 @@ export default function RelatoriosEmail() {
         <EmailReportConfig />
       </div>
     </>
+    </PageTransition>
   );
 }

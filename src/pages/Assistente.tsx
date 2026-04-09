@@ -2,9 +2,11 @@
 import { SalesAssistantChat } from '@/components/assistant/SalesAssistantChat';
 import { Helmet } from "react-helmet-async";
 import { Sparkles } from 'lucide-react';
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Assistente() {
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Assistente IA | Promo Champions</title>
@@ -32,5 +34,6 @@ export default function Assistente() {
       </div>
     </>
     </>
+    </PageTransition>
   );
 }

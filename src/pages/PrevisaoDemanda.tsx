@@ -1,8 +1,10 @@
 import { Helmet } from "react-helmet-async";
 import { DemandForecastDashboard } from "@/components/analytics/DemandForecastDashboard";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function PrevisaoDemanda() {
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Previsão de Demanda | PROMO CHAMPIONS</title>
@@ -14,5 +16,6 @@ export default function PrevisaoDemanda() {
         </div>
       </div>
     </>
+    </PageTransition>
   );
 }

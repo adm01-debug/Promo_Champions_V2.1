@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 7); // 7h - 18h
 
-export const ActivityHeatmap: FC = () => {
+const ActivityHeatmapComponent: FC = () => {
   const { data: heatmapData, isLoading } = useQuery({
     queryKey: ['activity-heatmap'],
     queryFn: async () => {
@@ -159,3 +159,6 @@ export const ActivityHeatmap: FC = () => {
     </div>
   );
 };
+
+
+export const ActivityHeatmap = React.memo(ActivityHeatmapComponent);

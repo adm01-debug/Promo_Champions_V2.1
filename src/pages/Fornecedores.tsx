@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Truck, Plus, AlertTriangle, Star, Building2, TrendingUp, Shield } from "lucide-react";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { SupplierTable } from "@/components/fornecedores/SupplierTable";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Fornecedores() {
   const { suppliers, suppliersLoading, riskAssessments, createSupplier, isCreating } = useSuppliers();
@@ -31,6 +32,7 @@ export default function Fornecedores() {
   const highRiskSuppliers = riskAssessments?.filter(r => r.risk_level === 'high' || r.risk_level === 'critical') || [];
 
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Fornecedores | PROMO CHAMPIONS</title>
@@ -102,5 +104,6 @@ export default function Fornecedores() {
         </div>
       </div>
     </>
+    </PageTransition>
   );
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +18,7 @@ const TERRITORY_COLORS = [
   'hsl(340 75% 55%)',
 ];
 
-export function TerritoryWars() {
+function TerritoryWarsComponent() {
   const { data: salesData = [] } = useQuery({
     queryKey: ['territory-wars-sales'],
     queryFn: async () => {
@@ -206,3 +207,6 @@ export function TerritoryWars() {
     </div>
   );
 }
+
+
+export const TerritoryWars = React.memo(TerritoryWarsComponent);

@@ -11,6 +11,7 @@ import { GitBranch, Zap, Clock, CheckCircle, Search, Filter } from "lucide-react
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
@@ -35,7 +36,8 @@ export default function Cadencias() {
   }, [cadences, searchTerm, statusFilter]);
 
   return (
-    <>
+    <PageTransition>
+      <>
       <Helmet>
         <title>Cadências | Promo Champions</title>
         <meta name="description" content="Gerenciamento de cadências de prospecção" />
@@ -177,7 +179,8 @@ export default function Cadencias() {
       </div>
     </div>
     </SkeletonTransition>
-    </>
+      </>
+    </PageTransition>
   );
 }
 

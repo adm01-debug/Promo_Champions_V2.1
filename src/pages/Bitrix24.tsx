@@ -7,6 +7,7 @@ import { Link2, RefreshCw, CheckCircle2, XCircle, AlertTriangle, Building2, File
 import { useBitrix24 } from "@/hooks/useBitrix24";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BitrixSyncHistory } from "@/components/bitrix/BitrixSyncHistory";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Bitrix24() {
   const { isLoadingStatus, isConnected, needsReauth, domain, authorize, isAuthorizing, sync, isSyncing, refreshToken, isRefreshing, syncLogs, isLoadingLogs } = useBitrix24();
@@ -20,6 +21,7 @@ export default function Bitrix24() {
   const StatusIcon = status.icon;
 
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Bitrix24 | Promo Champions</title>
@@ -143,5 +145,6 @@ export default function Bitrix24() {
       </Card>
     </div>
     </>
+    </PageTransition>
   );
 }

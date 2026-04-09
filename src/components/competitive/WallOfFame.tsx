@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Send, Pin, Heart } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +19,7 @@ interface WallOfFameProps {
   salespersonId?: string;
 }
 
-export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
+const WallOfFameComponent: FC<WallOfFameProps> = ({ salespersonId }) => {
   const { kudos, isLoading, sendKudos, KUDOS_TYPES } = useKudos();
   const [toId, setToId] = useState('');
   const [message, setMessage] = useState('');
@@ -153,3 +153,6 @@ export const WallOfFame: FC<WallOfFameProps> = ({ salespersonId }) => {
     </div>
   );
 };
+
+
+export const WallOfFame = React.memo(WallOfFameComponent);

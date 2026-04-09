@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, AlertTriangle, TrendingDown, TrendingUp, CheckCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,7 @@ interface RankNotificationsProps {
   className?: string;
 }
 
-export const RankNotifications: FC<RankNotificationsProps> = ({ salespersonId, className }) => {
+const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId, className }) => {
   const { notifications, unreadCount, isLoading, markAsRead, markAllRead } = useRankNotifications(salespersonId);
 
   if (isLoading) {
@@ -121,3 +121,6 @@ export const RankNotifications: FC<RankNotificationsProps> = ({ salespersonId, c
     </div>
   );
 };
+
+
+export const RankNotifications = React.memo(RankNotificationsComponent);

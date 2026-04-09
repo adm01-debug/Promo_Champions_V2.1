@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, TrendingUp, TrendingDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,7 @@ interface LeagueSystemProps {
 
 const LEAGUE_ORDER: LeagueTier[] = ['diamond', 'gold', 'silver', 'bronze'];
 
-export const LeagueSystem: FC<LeagueSystemProps> = ({ className }) => {
+const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
   const { data: members, isLoading } = useLeagues();
 
   if (isLoading) {
@@ -139,3 +139,6 @@ export const LeagueSystem: FC<LeagueSystemProps> = ({ className }) => {
     </div>
   );
 };
+
+
+export const LeagueSystem = React.memo(LeagueSystemComponent);

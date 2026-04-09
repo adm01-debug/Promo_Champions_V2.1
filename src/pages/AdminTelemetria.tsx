@@ -15,6 +15,7 @@ import { TelemetryTable } from "@/components/admin/telemetry/TelemetryTable";
 import { TelemetryTopOffenders } from "@/components/admin/telemetry/TelemetryTopOffenders";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 interface TelemetryRow {
   id: string; operation: string; table_name: string | null; rpc_name: string | null;
@@ -118,6 +119,7 @@ export default function AdminTelemetriaPage() {
   }, [rows]);
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Telemetria | Promo Champions</title>
@@ -186,5 +188,6 @@ export default function AdminTelemetriaPage() {
       </div>
     </MainLayout>
   </>
+    </PageTransition>
   );
 }

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, ArrowLeftRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 
-export const Benchmarking: FC = () => {
+const BenchmarkingComponent: FC = () => {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const [spA, setSpA] = useState('');
   const [spB, setSpB] = useState('');
@@ -133,3 +133,6 @@ export const Benchmarking: FC = () => {
     </div>
   );
 };
+
+
+export const Benchmarking = React.memo(BenchmarkingComponent);

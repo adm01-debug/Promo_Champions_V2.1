@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, MessageCircle, Smile } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +24,7 @@ const TRASH_TALK = [
   '👑 O trono é meu!',
 ];
 
-export const CompetitiveChat: FC<CompetitiveChatProps> = ({ salespersonId }) => {
+const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) => {
   const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat();
   const [newMessage, setNewMessage] = useState('');
   const [showQuickMessages, setShowQuickMessages] = useState(false);
@@ -202,3 +202,6 @@ export const CompetitiveChat: FC<CompetitiveChatProps> = ({ salespersonId }) => 
     </Card>
   );
 };
+
+
+export const CompetitiveChat = React.memo(CompetitiveChatComponent);

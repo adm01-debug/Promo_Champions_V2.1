@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Zap, Check, Gift, Flame, Phone, Mail, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,7 +30,7 @@ interface DailyMissionsProps {
   className?: string;
 }
 
-export const DailyMissions: FC<DailyMissionsProps> = ({ salespersonId, className }) => {
+const DailyMissionsComponent: FC<DailyMissionsProps> = ({ salespersonId, className }) => {
   const { missions, isLoading, claimXP, completedCount, totalCount } = useDailyMissions(salespersonId);
 
   const handleClaim = (missionId: string, xp: number) => {
@@ -181,3 +181,6 @@ export const DailyMissions: FC<DailyMissionsProps> = ({ salespersonId, className
     </div>
   );
 };
+
+
+export const DailyMissions = React.memo(DailyMissionsComponent);

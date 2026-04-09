@@ -13,6 +13,7 @@ import { NextBestActionCard } from "@/components/ai/NextBestActionCard";
 import { VendedorHeader } from "@/components/vendedor/VendedorHeader";
 import { VendedorCharts } from "@/components/vendedor/VendedorCharts";
 import { VendedorBottomRow } from "@/components/vendedor/VendedorBottomRow";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 interface Sale {
   id: string;
@@ -70,11 +71,6 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
   return (
-    <>
-      <Helmet>
-        <title>Dashboard Vendedor | Promo Champions</title>
-        <meta name="description" content="Painel de performance do vendedor" />
-      </Helmet>
     <div className={cn("glass rounded-xl p-5", variant === "primary" && "gradient-border glow-primary", variant === "success" && "border-success/30 bg-success/5")}>
       <div className="flex items-center gap-3 mb-3">
         <div className={cn("p-2 rounded-lg", variant === "primary" ? "gradient-primary" : variant === "success" ? "bg-success/20" : "bg-muted")}>
@@ -91,7 +87,6 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
       </div>
       <p className={cn("text-2xl font-bold", variant === "primary" && "gradient-text")}>{value}</p>
     </div>
-    </>
   );
 };
 
@@ -136,49 +131,55 @@ const VendedorDashboard = () => {
   const dailyRequired = goal > 0 && daysRemaining > 0 ? Math.max(0, (goal - totalRevenue) / daysRemaining) : 0;
 
   return (
-    <SkeletonTransition isLoading={isLoading} skeleton={<VendedorDashboardLoadingSkeleton />} duration={400}>
-      <div className="min-h-screen bg-background p-6 lg:p-8">
-        <div className="max-w-[1400px] mx-auto space-y-6">
-          <VendedorHeader salesperson={salesperson} goalProgress={goalProgress} salespersonId={id} />
+    <PageTransition>
+      <Helmet>
+        <title>Dashboard Vendedor | Promo Champions</title>
+        <meta name="description" content="Painel de performance do vendedor" />
+      </Helmet>
+      <SkeletonTransition isLoading={isLoading} skeleton={<VendedorDashboardLoadingSkeleton />} duration={400}>
+        <div className="min-h-screen bg-background p-6 lg:p-8">
+          <div className="max-w-[1400px] mx-auto space-y-6">
+            <VendedorHeader salesperson={salesperson} goalProgress={goalProgress} salespersonId={id} />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { title: "Faturamento", value: `R$ ${totalRevenue.toLocaleString("pt-BR")}`, change: Number(revenueChange.toFixed(1)), icon: DollarSign, variant: "primary" as const, delay: "100ms" },
-              { title: "Meta", value: `R$ ${goal.toLocaleString("pt-BR")}`, icon: Target, variant: "default" as const, delay: "150ms" },
-              { title: "Comissão", value: `R$ ${commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, icon: TrendingUp, variant: "success" as const, delay: "200ms" },
-              { title: "Pipeline", value: `R$ ${pipelineValue.toLocaleString("pt-BR")}`, icon: ShoppingBag, variant: "default" as const, delay: "250ms" },
-            ].map((stat) => (
-              <div key={stat.title} className="opacity-0 animate-fade-in-up" style={{ animationDelay: stat.delay }}>
-                <StatCard title={stat.title} value={stat.value} change={stat.change} icon={stat.icon} variant={stat.variant} />
-              </div>
-            ))}
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { title: "Faturamento", value: `R$ ${totalRevenue.toLocaleString("pt-BR")}`, change: Number(revenueChange.toFixed(1)), icon: DollarSign, variant: "primary" as const, delay: "100ms" },
+                { title: "Meta", value: `R$ ${goal.toLocaleString("pt-BR")}`, icon: Target, variant: "default" as const, delay: "150ms" },
+                { title: "Comissão", value: `R$ ${commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, icon: TrendingUp, variant: "success" as const, delay: "200ms" },
+                { title: "Pipeline", value: `R$ ${pipelineValue.toLocaleString("pt-BR")}`, icon: ShoppingBag, variant: "default" as const, delay: "250ms" },
+              ].map((stat) => (
+                <div key={stat.title} className="opacity-0 animate-fade-in-up" style={{ animationDelay: stat.delay }}>
+                  <StatCard title={stat.title} value={stat.value} change={stat.change} icon={stat.icon} variant={stat.variant} />
+                </div>
+              ))}
+            </div>
 
-          {dailyRequired > 0 && goalProgress < 100 && (
-            <div className="opacity-0 animate-fade-in-up glass rounded-xl p-4 border border-warning/30 bg-warning/5" style={{ animationDelay: "300ms" }}>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-warning/20"><Calendar className="h-5 w-5 text-warning" /></div>
-                <div>
-                  <p className="font-medium">Para bater a meta</p>
-                  <p className="text-sm text-muted-foreground">
-                    Faltam <span className="font-bold text-warning">{daysRemaining} dias</span> •
-                    Você precisa vender <span className="font-bold text-warning">R$ {dailyRequired.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}/dia</span>
-                  </p>
+            {dailyRequired > 0 && goalProgress < 100 && (
+              <div className="opacity-0 animate-fade-in-up glass rounded-xl p-4 border border-warning/30 bg-warning/5" style={{ animationDelay: "300ms" }}>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-warning/20"><Calendar className="h-5 w-5 text-warning" /></div>
+                  <div>
+                    <p className="font-medium">Para bater a meta</p>
+                    <p className="text-sm text-muted-foreground">
+                      Faltam <span className="font-bold text-warning">{daysRemaining} dias</span> •
+                      Você precisa vender <span className="font-bold text-warning">R$ {dailyRequired.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}/dia</span>
+                    </p>
+                  </div>
                 </div>
               </div>
+            )}
+
+            <VendedorCharts chartData={chartData} categoryData={categoryData} />
+
+            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "430ms" }}>
+              <NextBestActionCard salespersonId={id} />
             </div>
-          )}
 
-          <VendedorCharts chartData={chartData} categoryData={categoryData} />
-
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "430ms" }}>
-            <NextBestActionCard salespersonId={id} />
+            <VendedorBottomRow recentDeals={recentDeals} staleTasks={staleTasks} />
           </div>
-
-          <VendedorBottomRow recentDeals={recentDeals} staleTasks={staleTasks} />
         </div>
-      </div>
-    </SkeletonTransition>
+      </SkeletonTransition>
+    </PageTransition>
   );
 };
 

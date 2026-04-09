@@ -20,6 +20,7 @@ import { PortfolioValueChart } from "@/components/portfolio/PortfolioValueChart"
 import { PortfolioICPFilters } from "@/components/portfolio/PortfolioICPFilters";
 import { PortfolioCloserGrid } from "@/components/portfolio/PortfolioCloserGrid";
 import { Briefcase, Plus, Search, Filter, Zap, History } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function Portfolio() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>("all");
@@ -87,6 +88,7 @@ export default function Portfolio() {
   }, [portfolio, searchTerm, statusFilter, icpMatchOnly, ramoFilter, nichoFilter, minCapital, minColaboradores, icpMap]);
 
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Portfólio de Clientes | PROMO CHAMPIONS</title>
@@ -179,5 +181,6 @@ export default function Portfolio() {
       <AssignClientDialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen} />
       <AutoRouteDialog open={routeDialogOpen} onOpenChange={setRouteDialogOpen} />
     </>
+    </PageTransition>
   );
 }

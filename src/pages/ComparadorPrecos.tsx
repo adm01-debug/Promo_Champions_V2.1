@@ -11,6 +11,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { usePriceAlerts, usePriceHistory } from "@/hooks/usePriceHistory";
 import { PriceAlertsPanel } from "@/components/comparador/PriceAlertsPanel";
 import { PriceHistoryTable } from "@/components/comparador/PriceHistoryTable";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -41,6 +42,7 @@ export default function ComparadorPrecos() {
     : 0;
 
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Comparador de Preços | PROMO CHAMPIONS</title>
@@ -139,5 +141,6 @@ export default function ComparadorPrecos() {
         </div>
       </div>
     </>
+    </PageTransition>
   );
 }

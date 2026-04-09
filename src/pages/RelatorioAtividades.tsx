@@ -14,6 +14,7 @@ import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageL
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { exportToCSV } from "@/utils/csvExport";
 import { toast } from "sonner";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 type OutcomeFilter = 'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';
 
@@ -33,15 +34,15 @@ export default function RelatorioAtividades() {
 
   if (error) {
     return (
-      <>
+      <PageTransition>
         <Helmet>
           <title>Relatório de Atividades | Promo Champions</title>
           <meta name="description" content="Relatórios detalhados de atividades" />
         </Helmet>
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-destructive">Erro ao carregar relatório</p>
-      </div>
-      </>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <p className="text-destructive">Erro ao carregar relatório</p>
+        </div>
+      </PageTransition>
     );
   }
 
@@ -126,6 +127,7 @@ export default function RelatorioAtividades() {
   };
 
   return (
+    <PageTransition>
       <SkeletonTransition
         isLoading={isLoading || trendLoading}
         skeleton={<RelatorioAtividadesLoadingSkeleton />}
@@ -215,5 +217,6 @@ export default function RelatorioAtividades() {
           </div>
         </div>
       </SkeletonTransition>
+    </PageTransition>
   );
 }

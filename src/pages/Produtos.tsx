@@ -15,6 +15,7 @@ import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { EmptyStateProducts } from "@/components/shared/EmptyStateProducts";
+import { PageTransition } from "@/components/transitions/PageTransition";
 const statusColors: Record<string, string> = {
   ativo: "bg-status-success/20 text-status-success border-status-success/30",
   pausado: "bg-warning/20 text-warning border-warning/30",
@@ -122,6 +123,7 @@ const Produtos = () => {
   };
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Produtos | Promo Champions</title>
@@ -295,6 +297,7 @@ const Produtos = () => {
       />
     </SkeletonTransition>
   </>
+    </PageTransition>
   );
 };
 

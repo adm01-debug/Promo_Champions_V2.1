@@ -10,6 +10,7 @@ import { TableSkeleton, PageHeaderSkeleton, SkeletonCard } from "@/components/sk
 import { Target, Search, CheckCircle2, XCircle, Filter } from "lucide-react";
 import { ICPTable } from "@/components/icp/ICPTable";
 import { ICPEditDialog } from "@/components/icp/ICPEditDialog";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 export default function ICP() {
   const { data: icpData, isLoading: isLoadingICP } = useICPData();
@@ -57,6 +58,7 @@ export default function ICP() {
   const isLoading = isLoadingICP || isLoadingClients;
 
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>ICP - Perfil Ideal de Cliente | PROMO CHAMPIONS</title>
@@ -131,5 +133,6 @@ export default function ICP() {
 
       <ICPEditDialog open={!!editingICP} onClose={() => setEditingICP(null)} form={editForm} onFormChange={setEditForm} onSave={handleSave} isPending={updateICP.isPending} />
     </>
+    </PageTransition>
   );
 }

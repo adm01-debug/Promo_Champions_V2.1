@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Shield, Star, Flame, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +26,7 @@ const powerUpColors: Record<string, string> = {
   double_points: 'from-rank-gold/20 to-rank-gold/5 border-rank-gold/30',
 };
 
-export const SeasonAndPowerUps: FC = () => {
+const SeasonAndPowerUpsComponent: FC = () => {
   const { currentSeason, powerUps, isLoading } = useCompetitiveSeasons();
 
   if (isLoading) {
@@ -122,3 +122,6 @@ export const SeasonAndPowerUps: FC = () => {
     </div>
   );
 };
+
+
+export const SeasonAndPowerUps = React.memo(SeasonAndPowerUpsComponent);
