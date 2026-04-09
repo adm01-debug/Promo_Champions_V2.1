@@ -139,6 +139,7 @@ export const CollapsibleSidebar: FC<CollapsibleSidebarProps> = ({
       <Button
         variant="ghost"
         size="icon"
+        aria-label="Alternar painel lateral"
         onClick={onToggle}
         aria-label={expanded ? "Fechar painel" : "Abrir painel"}
         className={cn(
