@@ -32,6 +32,7 @@ export function useWeeklyMatchups() {
 
       if (error) throw error;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((m: any) => ({
         id: m.id,
         salesperson_a: m.sp_a || { id: m.salesperson_a_id, name: 'Vendedor A', avatar_url: null },
