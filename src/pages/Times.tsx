@@ -11,6 +11,7 @@ import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
 import { useTeams, useDeleteTeam, Team } from "@/hooks/useTeams";
 import { TimesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { PageTransition } from "@/components/ui/page-transition";
 
 export default function Times() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -36,6 +37,7 @@ export default function Times() {
   const incompleteTeams = totalTeams - completeTeams;
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Times | Promo Champions</title>
@@ -180,5 +182,6 @@ export default function Times() {
     </div>
     </SkeletonTransition>
   </>
+    </PageTransition>
   );
 }

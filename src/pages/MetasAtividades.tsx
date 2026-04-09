@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetasAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/ui/page-transition";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
@@ -75,6 +76,7 @@ export default function MetasAtividades() {
   ];
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Metas de Atividades | Promo Champions</title>
@@ -245,5 +247,6 @@ export default function MetasAtividades() {
     </div>
     </SkeletonTransition>
   </>
+    </PageTransition>
   );
 }

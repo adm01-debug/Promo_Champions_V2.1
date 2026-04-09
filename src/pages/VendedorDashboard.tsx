@@ -13,6 +13,7 @@ import { NextBestActionCard } from "@/components/ai/NextBestActionCard";
 import { VendedorHeader } from "@/components/vendedor/VendedorHeader";
 import { VendedorCharts } from "@/components/vendedor/VendedorCharts";
 import { VendedorBottomRow } from "@/components/vendedor/VendedorBottomRow";
+import { PageTransition } from "@/components/ui/page-transition";
 
 interface Sale {
   id: string;
@@ -70,6 +71,7 @@ const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Dashboard Vendedor | Promo Champions</title>
@@ -179,6 +181,7 @@ const VendedorDashboard = () => {
         </div>
       </div>
     </SkeletonTransition>
+    </PageTransition>
   );
 };
 

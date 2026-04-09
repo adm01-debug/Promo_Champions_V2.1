@@ -7,6 +7,7 @@ import { useLeadSourceAnalysis, sourceLabels } from "@/hooks/useLeadSourceAnalys
 import { Target, TrendingUp, DollarSign, Percent } from "lucide-react";
 import { FonteLeadsLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { PageTransition } from "@/components/ui/page-transition";
 
 export default function FonteLeads() {
   const { data, isLoading } = useLeadSourceAnalysis(3);
@@ -23,6 +24,7 @@ export default function FonteLeads() {
     : 0;
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Fonte de Leads | Promo Champions</title>
@@ -160,5 +162,6 @@ export default function FonteLeads() {
     </div>
     </SkeletonTransition>
   </>
+    </PageTransition>
   );
 }

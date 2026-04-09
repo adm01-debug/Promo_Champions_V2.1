@@ -16,6 +16,7 @@ import { AdminSecurityPanel } from "@/components/admin/AdminSecurityPanel";
 import { AdminSystemStatus } from "@/components/admin/AdminSystemStatus";
 import { AdminQuickLinks } from "@/components/admin/AdminQuickLinks";
 import { useAdminStats, useEdgeFunctionsStatus } from "@/hooks/useAdminStats";
+import { PageTransition } from "@/components/ui/page-transition";
 
 function AdminDashboardContent() {
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useAdminStats();
@@ -24,6 +25,7 @@ function AdminDashboardContent() {
 
   if (statsLoading || edgeLoading) {
     return (
+      <PageTransition>
       <>
         <Helmet>
           <title>Painel Administrativo | Promo Champions</title>
@@ -87,5 +89,6 @@ export default function AdminDashboard() {
     <ProtectedRoute requireAdminOrManager>
       <AdminDashboardContent />
     </ProtectedRoute>
+    </PageTransition>
   );
 }

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { useROIDashboard } from '@/hooks/useROIDashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis, Legend } from 'recharts';
 import { ROIRankingList } from '@/components/roi/ROIRankingList';
+import { PageTransition } from "@/components/ui/page-transition";
 
 const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
 const formatPercent = (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
@@ -20,6 +21,7 @@ const ROIDashboard = () => {
 
   if (isLoading) {
     return (
+      <PageTransition>
       <div className="p-4 lg:p-8 space-y-6">
         <Skeleton className="h-10 w-64" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32 rounded-xl" />)}</div>
@@ -117,6 +119,7 @@ const ROIDashboard = () => {
         </Tabs>
       </div>
     </>
+    </PageTransition>
   );
 };
 

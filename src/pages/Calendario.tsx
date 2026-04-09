@@ -1,8 +1,10 @@
 import { ActivityCalendar } from "@/components/calendar/ActivityCalendar";
 import { Helmet } from "react-helmet-async";
+import { PageTransition } from "@/components/ui/page-transition";
 
 export default function Calendario() {
   return (
+    <PageTransition>
     <>
       <Helmet>
         <title>Calendário de Atividades | PROMO CHAMPIONS</title>
@@ -12,5 +14,6 @@ export default function Calendario() {
         <ActivityCalendar />
       </div>
     </>
+    </PageTransition>
   );
 }

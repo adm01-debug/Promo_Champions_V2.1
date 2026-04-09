@@ -14,6 +14,7 @@ import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageL
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { exportToCSV } from "@/utils/csvExport";
 import { toast } from "sonner";
+import { PageTransition } from "@/components/ui/page-transition";
 
 type OutcomeFilter = 'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';
 
@@ -33,6 +34,7 @@ export default function RelatorioAtividades() {
 
   if (error) {
     return (
+      <PageTransition>
       <>
         <Helmet>
           <title>Relatório de Atividades | Promo Champions</title>
@@ -215,5 +217,6 @@ export default function RelatorioAtividades() {
           </div>
         </div>
       </SkeletonTransition>
+    </PageTransition>
   );
 }

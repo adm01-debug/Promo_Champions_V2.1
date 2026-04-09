@@ -6,11 +6,13 @@ import { ClipboardList } from "lucide-react";
 import { useActivities } from "@/hooks/useActivities";
 import { AtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { PageTransition } from "@/components/ui/page-transition";
 
 export default function Atividades() {
   const { isLoading } = useActivities();
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Atividades | Promo Champions</title>
@@ -57,5 +59,6 @@ export default function Atividades() {
     </div>
     </SkeletonTransition>
   </>
+    </PageTransition>
   );
 }

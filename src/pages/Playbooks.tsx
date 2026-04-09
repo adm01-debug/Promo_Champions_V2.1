@@ -3,11 +3,13 @@ import { PlaybooksManager } from "@/components/playbooks/PlaybooksManager";
 import { usePlaybooks } from "@/hooks/usePlaybooks";
 import { PlaybooksLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { PageTransition } from "@/components/ui/page-transition";
 
 export default function Playbooks() {
   const { isLoading } = usePlaybooks();
 
   return (
+    <PageTransition>
     <>
     <Helmet>
       <title>Playbooks | Promo Champions</title>
@@ -23,5 +25,6 @@ export default function Playbooks() {
       </div>
     </SkeletonTransition>
   </>
+    </PageTransition>
   );
 }
