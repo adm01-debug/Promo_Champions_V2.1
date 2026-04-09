@@ -26,10 +26,10 @@ export function ExternalDBSettings() {
       setTestResult("success");
       setResult(data);
       toast.success("Conexão com banco externo OK");
-    } catch (e: any) {
+    } catch (e: unknown) {
       setTestResult("error");
-      setResult(e.message);
-      toast.error("Falha: " + e.message);
+      setResult((e as Error).message);
+      toast.error("Falha: " + (e as Error).message);
     } finally {
       setTesting(false);
     }
