@@ -27,6 +27,7 @@ export function useCompetitiveChat() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((m: any) => ({
         ...m,
         sender_name: m.sender?.name || 'Anônimo',

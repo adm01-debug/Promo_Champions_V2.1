@@ -70,6 +70,7 @@ export function useCollectibleBadges(salespersonId?: string) {
       if (error) throw error;
 
       const countMap = new Map<string, number>();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (data || []).forEach((r: any) => {
         countMap.set(r.salesperson_id, (countMap.get(r.salesperson_id) || 0) + 1);
       });

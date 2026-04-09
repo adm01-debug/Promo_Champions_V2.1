@@ -37,6 +37,7 @@ export function useKudos() {
         .order('created_at', { ascending: false })
         .limit(30);
       if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((k: any) => ({
         ...k,
         from_name: k.from?.name || 'Alguém',

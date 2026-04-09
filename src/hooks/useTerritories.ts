@@ -35,6 +35,7 @@ export function useTerritories() {
         .order('total_revenue', { ascending: false });
 
       if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((t: any) => ({
         ...t,
         owner: t.salespeople || null,
@@ -56,6 +57,7 @@ export function useTerritoryHistory(territoryId?: string) {
         .order('conquered_at', { ascending: false });
 
       if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((h: any) => ({
         ...h,
         salesperson: h.salespeople || null,
