@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Package, ArrowUpCircle, ArrowDownCircle, AlertTriangle, TrendingUp, History, Plus } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { useInventoryLevels, useStockMovements, useAddStockMovement } from "@/hooks/useInventory";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -52,6 +53,7 @@ export default function Estoque() {
         <title>Estoque | Promo Champions</title>
         <meta name="description" content="Gestão de estoque e movimentações" />
       </Helmet>
+      <PageTransition>
       <div className="space-y-6 p-4 md:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -272,6 +274,7 @@ export default function Estoque() {
           </TabsContent>
         </Tabs>
       </div>
+      </PageTransition>
     </>
   );
 }

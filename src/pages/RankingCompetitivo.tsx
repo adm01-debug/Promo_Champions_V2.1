@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Trophy, TrendingUp, Star, Target, Calendar, Sparkles } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -82,7 +83,8 @@ const RankingCompetitivo = () => {
       <meta name="description" content="Rankings e competições entre vendedores" />
     </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<RankingLoadingSkeleton />} duration={400}>
-      <div className="p-6 space-y-6 animate-fade-in">
+      <PageTransition>
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -222,6 +224,7 @@ const RankingCompetitivo = () => {
           </TabsContent>
         </Tabs>
       </div>
+      </PageTransition>
     </SkeletonTransition>
   </>
   );

@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, History } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -109,6 +110,7 @@ const Clientes = () => {
       skeleton={<ClientesLoadingSkeleton />}
       duration={400}
     >
+      <PageTransition>
       <div className="min-h-screen bg-background p-6 lg:p-8">
         <div className="max-w-[1400px] mx-auto space-y-6">
           {/* Header */}
@@ -290,6 +292,7 @@ const Clientes = () => {
           )}
         </DialogContent>
       </Dialog>
+    </PageTransition>
     </SkeletonTransition>
   </>
   );

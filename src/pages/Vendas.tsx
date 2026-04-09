@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { ShoppingCart, Search, Loader2 } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -110,6 +111,7 @@ const Vendas = () => {
       skeleton={<VendasLoadingSkeleton />}
       duration={400}
     >
+      <PageTransition>
       <div className="min-h-screen bg-background p-6 lg:p-8">
         <div className="max-w-[1400px] mx-auto space-y-6">
           {/* Header */}
@@ -230,6 +232,7 @@ const Vendas = () => {
           )}
         </div>
       </div>
+      </PageTransition>
     </SkeletonTransition>
   </>
   );

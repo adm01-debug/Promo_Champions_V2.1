@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { PageTransition } from '@/components/transitions/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User, Crown, Coins, MapPin } from 'lucide-react';
 import {
@@ -39,6 +40,7 @@ const ArenaCompetitiva = () => {
         <meta name="description" content="Feed de vitórias, duelos ao vivo, missões diárias, ranking semanal e placar em tempo real" />
       </Helmet>
 
+      <PageTransition>
       <div className="p-4 lg:p-8 space-y-6">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold font-display text-foreground">
@@ -108,6 +110,7 @@ const ArenaCompetitiva = () => {
           <TabsContent value="evolution"><EvolutionChart /></TabsContent>
         </Tabs>
       </div>
+      </PageTransition>
     </>
   );
 };
