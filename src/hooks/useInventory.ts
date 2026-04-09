@@ -13,7 +13,7 @@ export interface InventoryLevel {
   last_restock_date: string | null;
   created_at: string;
   updated_at: string;
-  products?: { name: string; sku: string | null } | null;
+  products?: { name: string } | null;
 }
 
 export interface StockMovement {
@@ -34,7 +34,7 @@ export function useInventoryLevels() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("inventory_levels")
-        .select("*, products(name, sku)")
+        .select("*, products(name)")
         .order("updated_at", { ascending: false });
       if (error) throw error;
       return data as InventoryLevel[];
