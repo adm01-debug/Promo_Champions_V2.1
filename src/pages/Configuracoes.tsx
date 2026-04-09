@@ -17,6 +17,7 @@ import { ApiIntegrationSettings } from "@/components/settings/ApiIntegrationSett
 import { CustomFieldsManager } from "@/components/settings/CustomFieldsManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -29,6 +30,7 @@ export default function Configuracoes() {
         <title>Configurações | Promo Champions</title>
         <meta name="description" content="Preferências e configurações do sistema" />
       </Helmet>
+    <PageTransition>
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
@@ -175,6 +177,7 @@ export default function Configuracoes() {
         )}
       </Tabs>
     </div>
+    </PageTransition>
     </>
   );
 }

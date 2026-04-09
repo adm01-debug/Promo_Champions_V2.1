@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Package, ArrowUpCircle, ArrowDownCircle, AlertTriangle, TrendingUp, History, Plus } from "lucide-react";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { useInventoryLevels, useStockMovements, useAddStockMovement } from "@/hooks/useInventory";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
