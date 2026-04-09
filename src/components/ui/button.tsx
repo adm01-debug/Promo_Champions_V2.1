@@ -19,11 +19,11 @@ const buttonVariants = cva(
         // Glow variants for CTAs
         glow: "bg-primary text-primary-foreground hover:bg-primary/90 hover-glow shadow-md",
         "glow-secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover-glow-secondary shadow-md",
-        "glow-success": "bg-status-success text-white hover:bg-status-success/90 hover-glow-success shadow-md",
+        "glow-success": "bg-status-success text-primary-foreground hover:bg-status-success/90 hover-glow-success shadow-md",
         "glow-accent": "bg-accent text-accent-foreground hover:bg-accent/90 hover-glow-accent shadow-md",
         // Animated glow pulse for primary CTAs
         "glow-pulse": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md animate-glow-pulse",
-        "glow-pulse-success": "bg-status-success text-white hover:bg-status-success/90 shadow-md animate-glow-pulse",
+        "glow-pulse-success": "bg-status-success text-primary-foreground hover:bg-status-success/90 shadow-md animate-glow-pulse",
         "glow-pulse-accent": "bg-accent text-accent-foreground hover:bg-accent/90 shadow-md animate-glow-pulse",
       },
       size: {
