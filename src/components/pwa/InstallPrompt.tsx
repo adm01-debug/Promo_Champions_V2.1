@@ -172,7 +172,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
             </Button>
             <button
               onClick={handleDismiss}
-              className="p-1 rounded-full hover:bg-white/10 transition-colors"
+              className="p-1 rounded-full hover:bg-primary-foreground/10 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>

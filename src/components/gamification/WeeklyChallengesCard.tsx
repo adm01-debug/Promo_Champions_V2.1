@@ -78,8 +78,8 @@ function ChallengeItem({
       className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${gradientClass} text-primary-foreground shadow-lg`}
     >
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12" />
-      <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-8 -translate-x-8" />
+      <div className="absolute top-0 right-0 w-24 h-24 bg-primary-foreground/10 rounded-full -translate-y-12 translate-x-12" />
+      <div className="absolute bottom-0 left-0 w-16 h-16 bg-primary-foreground/10 rounded-full translate-y-8 -translate-x-8" />
 
       <div className="relative z-10">
         {/* Header */}
@@ -91,7 +91,7 @@ function ChallengeItem({
               <p className="text-xs text-primary-foreground/80">{challenge.description}</p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-0">
+          <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-0">
             <Zap className="h-3 w-3 mr-1" />
             +{challenge.xp_reward} XP
           </Badge>
@@ -105,7 +105,7 @@ function ChallengeItem({
               {challenge.progress?.current_value || 0} / {challenge.target_value}
             </span>
           </div>
-          <div className="relative h-3 bg-white/20 rounded-full overflow-hidden">
+          <div className="relative h-3 bg-primary-foreground/20 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${challenge.percentage}%` }}
@@ -140,7 +140,7 @@ function ChallengeItem({
                   variant="secondary"
                   onClick={handleClaim}
                   disabled={claimReward.isPending}
-                  className="bg-white text-primary hover:bg-white/90 font-bold"
+                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-bold"
                 >
                   <Gift className="h-4 w-4 mr-1" />
                   Resgatar
