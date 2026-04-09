@@ -83,7 +83,8 @@ const RankingCompetitivo = () => {
       <meta name="description" content="Rankings e competições entre vendedores" />
     </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<RankingLoadingSkeleton />} duration={400}>
-      <div className="p-6 space-y-6 animate-fade-in">
+      <PageTransition>
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -223,6 +224,7 @@ const RankingCompetitivo = () => {
           </TabsContent>
         </Tabs>
       </div>
+      </PageTransition>
     </SkeletonTransition>
   </>
   );
