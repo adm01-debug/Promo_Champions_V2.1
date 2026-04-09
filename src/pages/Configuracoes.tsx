@@ -10,12 +10,13 @@ import { PermissionMatrix } from "@/components/settings/PermissionMatrix";
 import { IPWhitelistManager } from "@/components/security/IPWhitelistManager";
 import { GeoBlockingManager } from "@/components/security/GeoBlockingManager";
 import { PasswordResetApproval } from "@/components/security/PasswordResetApproval";
+import { PasskeySettings } from "@/components/security/PasskeySettings";
 import { AIAssistantSettings } from "@/components/settings/AIAssistantSettings";
 import { ThemeCustomizer } from "@/components/settings/ThemeCustomizer";
 import { ApiIntegrationSettings } from "@/components/settings/ApiIntegrationSettings";
 import { CustomFieldsManager } from "@/components/settings/CustomFieldsManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2 } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint } from "lucide-react";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
