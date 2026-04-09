@@ -10,9 +10,9 @@ import { Link } from "react-router-dom";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface AdminSecurityPanelProps {
-  recentAccessDenied: Record<string, unknown>[];
-  recentSecurityAlerts: Record<string, unknown>[];
-  recentSDRAlerts: Record<string, unknown>[];
+  recentAccessDenied: any[];
+  recentSecurityAlerts: any[];
+  recentSDRAlerts: any[];
 }
 
 export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, recentSDRAlerts }: AdminSecurityPanelProps) {

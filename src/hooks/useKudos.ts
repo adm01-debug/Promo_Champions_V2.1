@@ -37,7 +37,7 @@ export function useKudos() {
         .order('created_at', { ascending: false })
         .limit(30);
       if (error) throw error;
-      return (data || []).map((k: Record<string, unknown>) => ({
+      return (data || []).map((k: any) => ({
         ...k,
         from_name: k.from?.name || 'Alguém',
         from_avatar: k.from?.avatar_url,
