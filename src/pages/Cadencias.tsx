@@ -37,7 +37,7 @@ export default function Cadencias() {
 
   return (
     <PageTransition>
-    <>
+      <>
       <Helmet>
         <title>Cadências | Promo Champions</title>
         <meta name="description" content="Gerenciamento de cadências de prospecção" />
@@ -179,7 +179,8 @@ export default function Cadencias() {
       </div>
     </div>
     </SkeletonTransition>
-    </>
+      </>
+    </PageTransition>
   );
 }
 
@@ -201,6 +202,5 @@ function CadenceCardWithSteps({
       onDelete={onDelete}
       isDeleting={isDeleting}
     />
-    </PageTransition>
   );
 }
