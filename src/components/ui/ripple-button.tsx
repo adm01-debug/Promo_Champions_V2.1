@@ -135,7 +135,7 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
               animate={{ opacity: 0, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="absolute rounded-full bg-white/30 pointer-events-none"
+              className="absolute rounded-full bg-primary-foreground/30 pointer-events-none"
               style={{
                 left: r.x,
                 top: r.y,
