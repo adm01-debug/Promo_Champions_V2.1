@@ -40,6 +40,7 @@ const ArenaCompetitiva = () => {
         <meta name="description" content="Feed de vitórias, duelos ao vivo, missões diárias, ranking semanal e placar em tempo real" />
       </Helmet>
 
+      <PageTransition>
       <div className="p-4 lg:p-8 space-y-6">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold font-display text-foreground">
