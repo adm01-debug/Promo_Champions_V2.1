@@ -42,7 +42,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
             className="relative w-[90vw] max-w-sm rounded-2xl border border-rank-gold/30 bg-gradient-to-b from-background via-background to-rank-gold/5 p-8 shadow-2xl text-center overflow-hidden"
           >
             {/* Close */}
-            <button onClick={onClose} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground">
+            <button onClick={onClose} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground" aria-label="Fechar celebração">
               <X className="h-5 w-5" />
             </button>
 

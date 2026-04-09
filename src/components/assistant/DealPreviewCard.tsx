@@ -99,7 +99,7 @@ const DealPreviewCardInner = function DealPreviewCard({ dealId, clientName, prod
             </div>
             {onAskAssistant && (
               <button onClick={() => onAskAssistant(`Como posso "${riskLevel.action.text.toLowerCase()}" para o cliente ${clientName}? Me dê dicas práticas e um script.`)}
-                className="shrink-0 p-1.5 rounded-md transition-colors hover:bg-primary/10 text-primary flex items-center gap-1 text-[10px] font-medium" title="Perguntar ao assistente">
+                className="shrink-0 p-1.5 rounded-md transition-colors hover:bg-primary/10 text-primary flex items-center gap-1 text-[10px] font-medium" title="Perguntar ao assistente" aria-label="Perguntar ao assistente de IA">
                 <Sparkles className="h-3.5 w-3.5" /><span className="hidden sm:inline">Perguntar</span>
               </button>
             )}
