@@ -3,7 +3,7 @@ import {
   Phone, Activity, Handshake, Target, Bot, TrendingUp, Settings, LucideIcon,
   ShieldCheck, LineChart, Building2, Sparkles, FileText, Calendar, Zap,
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
-  Briefcase, Search, Gauge, MessageSquare,
+  Briefcase, Search, Gauge, MessageSquare, Package,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -127,6 +127,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
       { title: "Calendário", url: "/calendario", icon: Calendar },
       { title: "Portfólio", url: "/portfolio", icon: Target },
+      { title: "Estoque", url: "/estoque", icon: Package },
     ],
   },
   {

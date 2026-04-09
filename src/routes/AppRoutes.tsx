@@ -79,6 +79,7 @@ const MapaClientes = lazy(() => import("@/pages/MapaClientes"));
 const AdminTelemetria = lazy(() => import("@/pages/AdminTelemetria"));
 const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 const Multichannel = lazy(() => import("@/pages/Multichannel"));
+const Estoque = lazy(() => import("@/pages/Estoque"));
 
 export { PageLoadingFallback };
 
@@ -193,6 +194,9 @@ export function AppRoutes() {
                     } />
                     <Route path="/lead-scoring" element={<LeadScoring />} />
                     <Route path="/multichannel" element={<Multichannel />} />
+                    <Route path="/estoque" element={
+                      <ProtectedRoute requireAdminOrManager><Estoque /></ProtectedRoute>
+                    } />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
