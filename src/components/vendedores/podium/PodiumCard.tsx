@@ -175,7 +175,7 @@ export const PodiumCard = React.memo(function PodiumCard({ person, config, sales
           <motion.span className={cn("font-black relative z-10", config.labelSize)} style={{ color: config.neonColor, textShadow: `0 0 20px ${config.neonColor}80, 0 0 40px ${config.neonColor}40` }} animate={isChampion ? { scale: [1, 1.06, 1] } : {}} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
             {config.label}
           </motion.span>
-          <div className="w-3/4 h-1.5 bg-white/5 rounded-full mt-3 overflow-hidden relative z-10 border border-white/5">
+          <div className="w-3/4 h-1.5 bg-primary-foreground/5 rounded-full mt-3 overflow-hidden relative z-10 border border-primary-foreground/5">
             <motion.div initial={{ width: 0 }} animate={{ width: `${salesPercent}%` }} transition={{ delay: config.delay + 0.8, duration: 1.2, ease: "easeOut" }} className="h-full rounded-full relative overflow-hidden" style={{ background: `linear-gradient(90deg, ${config.neonColor}60, ${config.neonColor})`, boxShadow: `0 0 10px ${config.neonColor}60` }}>
               <motion.div className="absolute inset-0" style={{ background: `linear-gradient(90deg, transparent, ${config.neonColor}40, transparent)` }} animate={{ x: ["-100%", "100%"] }} transition={{ duration: 1.5, repeat: Infinity }} />
             </motion.div>

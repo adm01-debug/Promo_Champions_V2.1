@@ -171,7 +171,7 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
           rightAction.color
         )}
       >
-        <div className="text-white text-center">
+        <div className="text-primary-foreground text-center">
           {rightAction.icon}
           <p className="text-xs mt-0.5">{rightAction.label}</p>
         </div>
