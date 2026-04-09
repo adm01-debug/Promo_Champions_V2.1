@@ -22,11 +22,12 @@ const ROIDashboard = () => {
   if (isLoading) {
     return (
       <PageTransition>
-      <div className="p-4 lg:p-8 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32 rounded-xl" />)}</div>
-        <Skeleton className="h-96 rounded-xl" />
-      </div>
+        <div className="p-4 lg:p-8 space-y-6">
+          <Skeleton className="h-10 w-64" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32 rounded-xl" />)}</div>
+          <Skeleton className="h-96 rounded-xl" />
+        </div>
+      </PageTransition>
     );
   }
 
@@ -34,7 +35,7 @@ const ROIDashboard = () => {
   const efficiencyData = roiData.map((r) => ({ name: r.name.split(' ')[0], x: r.activitiesCount, y: r.totalRevenue, z: r.wonDeals || 1, roi: r.roi }));
 
   return (
-    <>
+    <PageTransition>
       <Helmet><title>ROI por Vendedor | PROMO CHAMPIONS</title><meta name="description" content="Dashboard de ROI por vendedor com CAC, LTV e payback period" /></Helmet>
       <div className="p-4 lg:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -118,7 +119,6 @@ const ROIDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </>
     </PageTransition>
   );
 };
