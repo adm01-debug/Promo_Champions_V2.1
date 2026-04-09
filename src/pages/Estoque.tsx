@@ -77,7 +77,7 @@ export default function Estoque() {
                   <SelectContent>
                     {inventory.map(i => (
                       <SelectItem key={i.id} value={i.product_id || i.id}>
-                        {i.products?.name || "Produto"} {i.products?.sku ? `(${i.products.sku})` : ""}
+                        {i.products?.name || "Produto"} {}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -172,7 +172,7 @@ export default function Estoque() {
                           return (
                             <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                               <td className="p-3 font-medium">{item.products?.name || "—"}</td>
-                              <td className="p-3 text-muted-foreground font-mono text-sm">{item.products?.sku || "—"}</td>
+                              <td className="p-3 text-muted-foreground font-mono text-sm">{"—"}</td>
                               <td className="p-3">
                                 <span className="text-metric text-base">{item.current_stock}</span>
                                 <span className="text-muted-foreground text-xs ml-1">/ {item.max_stock_level}</span>
