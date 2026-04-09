@@ -25,7 +25,6 @@ function AdminDashboardContent() {
 
   if (statsLoading || edgeLoading) {
     return (
-      <PageTransition>
       <>
         <Helmet>
           <title>Painel Administrativo | Promo Champions</title>
@@ -87,8 +86,9 @@ function AdminDashboardContent() {
 export default function AdminDashboard() {
   return (
     <ProtectedRoute requireAdminOrManager>
-      <AdminDashboardContent />
+      <PageTransition>
+        <AdminDashboardContent />
+      </PageTransition>
     </ProtectedRoute>
-    </PageTransition>
   );
 }
