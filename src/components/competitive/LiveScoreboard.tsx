@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, TrendingUp, Flame, Monitor, Maximize2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,7 @@ interface LiveScoreboardProps {
   className?: string;
 }
 
-export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
+const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [clock, setClock] = useState(new Date());
@@ -213,3 +213,6 @@ export const LiveScoreboard: FC<LiveScoreboardProps> = ({ className }) => {
     </div>
   );
 };
+
+
+export const LiveScoreboard = React.memo(LiveScoreboardComponent);

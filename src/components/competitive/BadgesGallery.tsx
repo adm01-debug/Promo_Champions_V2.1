@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Lock, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,7 +38,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   general: '⭐ Geral',
 };
 
-export const BadgesGallery: FC<BadgesGalleryProps> = ({ salespersonId }) => {
+const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
   const { badgesByCategory, earnedCount, totalCount, leaderboard, isLoading } = useCollectibleBadges(salespersonId);
 
   if (isLoading) {
@@ -144,3 +144,6 @@ export const BadgesGallery: FC<BadgesGalleryProps> = ({ salespersonId }) => {
     </div>
   );
 };
+
+
+export const BadgesGallery = React.memo(BadgesGalleryComponent);

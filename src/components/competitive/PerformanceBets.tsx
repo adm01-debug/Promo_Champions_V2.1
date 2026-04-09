@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,7 @@ interface PerformanceBet {
   created_at: string;
   salespeople?: { id: string; name: string } | null;
 }
-export function PerformanceBets() {
+function PerformanceBetsComponent() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [betForm, setBetForm] = useState({
@@ -272,3 +273,6 @@ export function PerformanceBets() {
     </div>
   );
 }
+
+
+export const PerformanceBets = React.memo(PerformanceBetsComponent);

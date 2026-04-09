@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
@@ -20,7 +20,7 @@ const periodOptions = [
   { label: '90d', value: 90 },
 ];
 
-export const EvolutionChart: FC = () => {
+const EvolutionChartComponent: FC = () => {
   const [period, setPeriod] = useState(30);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { chartData, salespeople, isLoading } = useEvolutionCurves(period, selectedIds);
@@ -136,3 +136,6 @@ export const EvolutionChart: FC = () => {
     </Card>
   );
 };
+
+
+export const EvolutionChart = React.memo(EvolutionChartComponent);

@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Monitor, Trophy, Flame, Swords, TrendingUp, Maximize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ type _Slide = typeof SLIDES[number];
 
 const SLIDE_DURATION = 8000; // 8s per slide
 
-export const CompetitiveTVDashboard: FC = () => {
+const CompetitiveTVDashboardComponent: FC = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { data: ranking } = useCompetitiveRanking();
@@ -249,3 +249,6 @@ export const CompetitiveTVDashboard: FC = () => {
     </div>
   );
 };
+
+
+export const CompetitiveTVDashboard = React.memo(CompetitiveTVDashboardComponent);

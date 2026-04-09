@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swords, Timer, Trophy, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -131,7 +131,7 @@ interface BattleArenaProps {
   className?: string;
 }
 
-export const BattleArena: FC<BattleArenaProps> = ({ className }) => {
+const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
   const { battles, isLoading } = useSalesBattles();
 
   if (isLoading) {
@@ -181,3 +181,6 @@ export const BattleArena: FC<BattleArenaProps> = ({ className }) => {
     </div>
   );
 };
+
+
+export const BattleArena = React.memo(BattleArenaComponent);

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Target, TrendingUp, Zap, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +24,7 @@ const LEVEL_COLORS: Record<number, string> = {
   10: 'from-primary-glow to-primary',
 };
 
-export const ProgressiveGoals: FC<ProgressiveGoalsProps> = ({ salespersonId }) => {
+const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId }) => {
   const { goals, isLoading, getLabel, getLevelTitle } = useProgressiveGoals(salespersonId);
 
   if (isLoading) {
@@ -137,3 +137,6 @@ export const ProgressiveGoals: FC<ProgressiveGoalsProps> = ({ salespersonId }) =
     </div>
   );
 };
+
+
+export const ProgressiveGoals = React.memo(ProgressiveGoalsComponent);

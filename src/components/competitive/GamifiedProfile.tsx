@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Flame, Shield, Award, Swords, Star, TrendingUp, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,7 +20,7 @@ const LEAGUE_STYLES: Record<string, { color: string; icon: string }> = {
 
 const XP_PER_LEVEL = 500;
 
-export const GamifiedProfile: FC<GamifiedProfileProps> = ({ salespersonId }) => {
+const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) => {
   const { data: profile, isLoading } = useGamifiedProfile(salespersonId);
 
   if (isLoading) {
@@ -143,3 +143,6 @@ export const GamifiedProfile: FC<GamifiedProfileProps> = ({ salespersonId }) => 
     </div>
   );
 };
+
+
+export const GamifiedProfile = React.memo(GamifiedProfileComponent);

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Medal, Trophy, TrendingUp, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +19,7 @@ interface WeeklyRankingProps {
   className?: string;
 }
 
-export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
+const WeeklyRankingComponent: FC<WeeklyRankingProps> = ({ className }) => {
   const { data: ranking, isLoading } = useWeeklyRanking();
   const [celebrated, setCelebrated] = useState(false);
 
@@ -151,3 +151,6 @@ export const WeeklyRanking: FC<WeeklyRankingProps> = ({ className }) => {
     </div>
   );
 };
+
+
+export const WeeklyRanking = React.memo(WeeklyRankingComponent);

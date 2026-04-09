@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Gift, Sparkles, RotateCw, History } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +16,7 @@ interface PrizeWheelProps {
   className?: string;
 }
 
-export const PrizeWheel: FC<PrizeWheelProps> = ({ salespersonId, className }) => {
+const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) => {
   const { availableSpins, history, spin } = usePrizeWheel(salespersonId);
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -193,3 +193,6 @@ export const PrizeWheel: FC<PrizeWheelProps> = ({ salespersonId, className }) =>
     </div>
   );
 };
+
+
+export const PrizeWheel = React.memo(PrizeWheelComponent);

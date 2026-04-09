@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Swords, Zap, Trophy, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ interface HeadToHeadProps {
   className?: string;
 }
 
-export const HeadToHead: FC<HeadToHeadProps> = ({ className }) => {
+const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
   const { data: matchups, isLoading } = useWeeklyMatchups();
 
   if (isLoading) {
@@ -150,3 +150,6 @@ export const HeadToHead: FC<HeadToHeadProps> = ({ className }) => {
     </div>
   );
 };
+
+
+export const HeadToHead = React.memo(HeadToHeadComponent);

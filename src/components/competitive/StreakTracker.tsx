@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Zap, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +22,7 @@ interface StreakTrackerProps {
   className?: string;
 }
 
-export const StreakTracker: FC<StreakTrackerProps> = ({ className }) => {
+const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
   const { data: streaks, isLoading } = useSalesStreaks();
 
   if (isLoading) {
@@ -138,3 +138,6 @@ export const StreakTracker: FC<StreakTrackerProps> = ({ className }) => {
     </div>
   );
 };
+
+
+export const StreakTracker = React.memo(StreakTrackerComponent);

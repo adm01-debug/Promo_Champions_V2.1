@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -30,7 +30,7 @@ interface VictoryFeedProps {
   currentSalespersonId?: string;
 }
 
-export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
+const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
   const { feedItems, isLoading, addReaction, addComment } = useVictoryFeed();
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [showComments, setShowComments] = useState<Record<string, boolean>>({});
@@ -205,3 +205,6 @@ export const VictoryFeed: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
     </div>
   );
 };
+
+
+export const VictoryFeed = React.memo(VictoryFeedComponent);

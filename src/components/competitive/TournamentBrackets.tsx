@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export function TournamentBrackets() {
+function TournamentBracketsComponent() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [newTournament, setNewTournament] = useState({ name: '', metric_type: 'revenue', round_duration_days: 7, starts_at: '' });
@@ -253,3 +254,6 @@ export function TournamentBrackets() {
     </div>
   );
 }
+
+
+export const TournamentBrackets = React.memo(TournamentBracketsComponent);
