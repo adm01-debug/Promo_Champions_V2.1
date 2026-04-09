@@ -59,7 +59,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
           className={cn(
             "absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center rounded-l-xl",
             leftColor,
-            "text-white"
+            "text-primary-foreground"
           )}
         >
           {leftIcon}
@@ -74,7 +74,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
           className={cn(
             "absolute inset-y-0 right-0 w-20 flex flex-col items-center justify-center rounded-r-xl",
             rightColor,
-            "text-white"
+            "text-primary-foreground"
           )}
         >
           {rightIcon}
@@ -157,7 +157,7 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
           leftAction.color
         )}
       >
-        <div className="text-white text-center">
+        <div className="text-primary-foreground text-center">
           {leftAction.icon}
           <p className="text-xs mt-0.5">{leftAction.label}</p>
         </div>

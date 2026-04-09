@@ -89,7 +89,7 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
           initial={{ rotate: -180, scale: 0 }}
           animate={{ rotate: 0, scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 400 }}
-          className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center"
+          className="h-10 w-10 rounded-full bg-primary-foreground/20 flex items-center justify-center"
         >
           <Icon className="h-5 w-5 text-primary-foreground" />
         </motion.div>
