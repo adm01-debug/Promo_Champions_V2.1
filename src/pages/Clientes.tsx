@@ -110,6 +110,7 @@ const Clientes = () => {
       skeleton={<ClientesLoadingSkeleton />}
       duration={400}
     >
+      <PageTransition>
       <div className="min-h-screen bg-background p-6 lg:p-8">
         <div className="max-w-[1400px] mx-auto space-y-6">
           {/* Header */}
@@ -291,6 +292,7 @@ const Clientes = () => {
           )}
         </DialogContent>
       </Dialog>
+    </PageTransition>
     </SkeletonTransition>
   </>
   );
