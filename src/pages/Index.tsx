@@ -70,8 +70,19 @@ const Index = () => {
   return (
     <>
     <Helmet>
-      <title>Dashboard | Promo Champions</title>
-      <meta name="description" content="Painel principal do Promo Champions" />
+      <title>Dashboard | Promo Champions - CRM Gamificado de Vendas</title>
+      <meta name="description" content="Acompanhe suas vendas, metas e rankings em tempo real. CRM gamificado para equipes de vendas de alta performance." />
+      <meta name="keywords" content="CRM, vendas, gamificação, dashboard, metas, ranking" />
+      <link rel="canonical" href="https://championgifts.lovable.app/" />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Promo Champions",
+        "description": "CRM gamificado para equipes de vendas de alta performance",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
+      })}</script>
     </Helmet>
     <SkeletonTransition
       isLoading={isLoading}
