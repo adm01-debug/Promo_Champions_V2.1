@@ -40,7 +40,7 @@ export function usePushNotifications() {
       return registration;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Service Worker registration failed:', error);
+        if (import.meta.env.DEV) console.error('Service Worker registration failed:', error);
       }
       return null;
     }
@@ -57,7 +57,7 @@ export function usePushNotifications() {
       return data.vapidPublicKey;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Failed to get VAPID key:', error);
+        if (import.meta.env.DEV) console.error('Failed to get VAPID key:', error);
       }
       return null;
     }
@@ -144,7 +144,7 @@ export function usePushNotifications() {
       return true;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Push subscription failed:', error);
+        if (import.meta.env.DEV) console.error('Push subscription failed:', error);
       }
       // Fall back to browser notifications
       if (Notification.permission === 'granted') {
@@ -185,7 +185,7 @@ export function usePushNotifications() {
       return true;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Push unsubscribe failed:', error);
+        if (import.meta.env.DEV) console.error('Push unsubscribe failed:', error);
       }
       toast.error('Erro ao desativar notificações');
       setState(prev => ({ ...prev, isLoading: false }));
@@ -239,7 +239,7 @@ export function usePushNotifications() {
           }
         } catch (error) {
           if (import.meta.env.DEV) {
-            console.error('Error checking subscription:', error);
+            if (import.meta.env.DEV) console.error('Error checking subscription:', error);
           }
         }
       }

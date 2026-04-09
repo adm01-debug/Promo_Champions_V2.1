@@ -129,7 +129,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
       await audioRef.current.play();
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('TTS error:', error);
+        if (import.meta.env.DEV) console.error('TTS error:', error);
       }
       // Fallback to browser TTS
       speakWithBrowserTTS(text);
@@ -176,7 +176,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
 
     recognition.onerror = (event: Event & { error: string }) => {
       if (import.meta.env.DEV) {
-        console.error('Speech recognition error:', event.error);
+        if (import.meta.env.DEV) console.error('Speech recognition error:', event.error);
       }
       setIsListening(false);
       if (event.error !== 'no-speech') {

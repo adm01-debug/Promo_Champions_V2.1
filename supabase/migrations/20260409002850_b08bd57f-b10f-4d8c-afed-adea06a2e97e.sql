@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Admins and managers can view sdr_alert_history" ON public.sdr_alert_history;

@@ -72,8 +72,8 @@ export const NotificationPreferenceCard = React.memo(function NotificationPrefer
             className="h-6 w-14 text-xs px-1 text-center" autoFocus
             onKeyDown={(e) => { if (e.key === 'Enter') handleSaveThreshold(); if (e.key === 'Escape') setEditingThreshold(null); }}
           />
-          <button onClick={handleSaveThreshold} className="p-0.5 rounded hover:bg-primary/20 transition-colors"><Check className="h-3.5 w-3.5 text-status-success" /></button>
-          <button onClick={() => setEditingThreshold(null)} className="p-0.5 rounded hover:bg-destructive/20 transition-colors"><X className="h-3.5 w-3.5 text-destructive" /></button>
+          <button onClick={handleSaveThreshold} className="p-0.5 rounded hover:bg-primary/20 transition-colors" aria-label="Salvar limite"><Check className="h-3.5 w-3.5 text-status-success" /></button>
+          <button onClick={() => setEditingThreshold(null)} className="p-0.5 rounded hover:bg-destructive/20 transition-colors" aria-label="Cancelar edição"><X className="h-3.5 w-3.5 text-destructive" /></button>
         </div>
       );
     }
@@ -88,7 +88,8 @@ export const NotificationPreferenceCard = React.memo(function NotificationPrefer
       >
         {icon}<span>{label}</span>
         <button onClick={(e) => { e.stopPropagation(); setEditingThreshold({ field, value }); }}
-          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-background/50 hover:bg-background/80 transition-colors ml-1">
+          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-background/50 hover:bg-background/80 transition-colors ml-1"
+          aria-label={`Editar limite de ${label}`}>
           <span>{value}d</span><Pencil className="h-2.5 w-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
       </button>

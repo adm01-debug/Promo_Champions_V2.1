@@ -63,7 +63,7 @@ export const useSessionManagement = () => {
       return data.id;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error creating session:', error);
+        if (import.meta.env.DEV) console.error('Error creating session:', error);
       }
       return null;
     }
@@ -94,7 +94,7 @@ export const useSessionManagement = () => {
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error fetching sessions:', error);
+        if (import.meta.env.DEV) console.error('Error fetching sessions:', error);
       }
     } finally {
       setIsLoading(false);
@@ -113,7 +113,7 @@ export const useSessionManagement = () => {
         .eq('id', sessionId);
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error updating activity:', error);
+        if (import.meta.env.DEV) console.error('Error updating activity:', error);
       }
     }
   }, [user]);
@@ -137,7 +137,7 @@ export const useSessionManagement = () => {
       return false;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error refreshing session:', error);
+        if (import.meta.env.DEV) console.error('Error refreshing session:', error);
       }
       return false;
     }
@@ -162,7 +162,7 @@ export const useSessionManagement = () => {
       return { valid: false, needsRefresh: false };
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error validating session:', error);
+        if (import.meta.env.DEV) console.error('Error validating session:', error);
       }
       return { valid: false, needsRefresh: false };
     }
@@ -191,7 +191,7 @@ export const useSessionManagement = () => {
       return true;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error terminating session:', error);
+        if (import.meta.env.DEV) console.error('Error terminating session:', error);
       }
       toast.error('Erro ao encerrar sessão');
       return false;
@@ -218,7 +218,7 @@ export const useSessionManagement = () => {
       return true;
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error terminating other sessions:', error);
+        if (import.meta.env.DEV) console.error('Error terminating other sessions:', error);
       }
       toast.error('Erro ao encerrar sessões');
       return false;

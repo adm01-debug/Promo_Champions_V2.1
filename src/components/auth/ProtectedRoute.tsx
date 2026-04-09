@@ -39,7 +39,7 @@ export function ProtectedRoute({
       });
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error("Failed to log access denied:", error);
+        if (import.meta.env.DEV) console.error("Failed to log access denied:", error);
       }
     }
   };
