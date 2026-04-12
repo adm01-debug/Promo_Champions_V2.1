@@ -1,6 +1,27 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+Format: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) | [Semantic Versioning](https://semver.org/)
+
+## [3.0.0] - 2026-04-12
+
+### Added
+- ✅ TypeScript strict mode (`strict: true`, `strictNullChecks: true`) — zero erros
+- 🔧 Husky + lint-staged — pre-commit hooks automatizados
+- 📝 Commitlint — Conventional Commits enforced
+- 🚫 ESLint `no-console` rule — previne logs em produção
+- 📋 PR template com checklists de qualidade, segurança, performance e acessibilidade
+- 📊 Script `build:analyze` — monitoramento de bundle size
+- 📖 Runbook operacional (`docs/RUNBOOK.md`)
+- 🔒 CORS centralizado em `_shared/cors.ts` para todas Edge Functions
+- 🧪 2.636 testes (130 suites, 100% passing)
+
+### Security
+- Edge Functions CORS hardened (origin-restricted)
+- Realtime policies audited
+
+### Fixed
+- 44 TypeScript strict mode errors across 30 files
 
 ## [2.0.0] - 2026-01-04
 

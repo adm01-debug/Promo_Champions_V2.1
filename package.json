@@ -13,9 +13,22 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "health": "tsc --noEmit && eslint src/ && vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "build:analyze": "vite build && node -e \"const fs=require('fs');const p='dist/assets/';const files=fs.readdirSync(p).filter(f=>f.endsWith('.js'));let total=0;files.forEach(f=>{const s=fs.statSync(p+f).size;total+=s;console.log(f+': '+(s/1024).toFixed(1)+'KB')});console.log('\\nTotal JS: '+(total/1024).toFixed(1)+'KB')\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
@@ -60,11 +73,13 @@
     "exceljs": "^4.4.0",
     "framer-motion": "^12.23.26",
     "fuse.js": "^7.1.0",
+    "husky": "^9.1.7",
     "jsdom": "^20.0.3",
     "jspdf": "4.2.1",
     "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
+    "lint-staged": "^16.4.0",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "papaparse": "^5.5.3",

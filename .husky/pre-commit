@@ -1,14 +1,1 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-echo "🔍 Running pre-commit checks..."
-
-# Type check
-echo "📝 Type checking..."
-npx tsc --noEmit
-
-# Lint
-echo "🔍 Linting..."
-npm run lint
-
-echo "✅ Pre-commit checks passed!"
+npx lint-staged
