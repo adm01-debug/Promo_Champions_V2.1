@@ -2,23 +2,11 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
-
-// Simple Web Push implementation using fetch
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
   payload: string,
-  vapidPublicKey: string,
-  vapidPrivateKey: string
 ): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
-    // For Web Push, we need to use the web-push library
-    // Since we're in Deno, we'll use a simpler approach with FCM/native browser push
-    // The subscription endpoint will handle the push delivery
-    
     const response = await fetch(subscription.endpoint, {
       method: 'POST',
       headers: {
@@ -48,18 +36,31 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY') || '';
-    const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY') || '';
-
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { user_ids, title, body, icon, tag, url, data } = await req.json();
+    const body = await req.json();
+    const { user_ids, title, body: notifBody, icon, tag, url, data } = body;
 
+    // Input validation
     if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0) {
-      throw new Error('user_ids array is required');
+      return new Response(
+        JSON.stringify({ error: 'user_ids array is required and must not be empty' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (user_ids.length > 100) {
+      return new Response(
+        JSON.stringify({ error: 'Maximum 100 user_ids per request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (title && typeof title !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'title must be a string' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Get push subscriptions for the users
     const { data: subscriptions, error: fetchError } = await supabase
       .from('push_subscriptions')
       .select('*')
@@ -68,7 +69,6 @@ serve(async (req) => {
     if (fetchError) throw fetchError;
 
     if (!subscriptions || subscriptions.length === 0) {
-      console.log('No push subscriptions found for users:', user_ids);
       return new Response(
         JSON.stringify({ success: true, sent: 0, message: 'No subscriptions found' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -77,68 +77,36 @@ serve(async (req) => {
 
     const payload = JSON.stringify({
       title: title || 'Nova Notificação',
-      body: body || 'Você tem uma nova notificação',
+      body: notifBody || 'Você tem uma nova notificação',
       icon: icon || '/favicon.ico',
       badge: '/favicon.ico',
       tag: tag || 'notification',
-      data: {
-        url: url || '/',
-        ...data
-      },
+      data: { url: url || '/', ...data },
       requireInteraction: true
     });
 
     const results = await Promise.allSettled(
       subscriptions.map(async (sub) => {
-        try {
-          const result = await sendWebPushNotification(
-            {
-              endpoint: sub.endpoint,
-              p256dh: sub.p256dh,
-              auth: sub.auth
-            },
-            payload,
-            vapidPublicKey,
-            vapidPrivateKey
-          );
+        const result = await sendWebPushNotification(
+          { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
+          payload,
+        );
 
-          if (!result.success) {
-            // If subscription is invalid, remove it
-            if (result.status === 404 || result.status === 410) {
-              await supabase
-                .from('push_subscriptions')
-                .delete()
-                .eq('id', sub.id);
-              console.log('Removed invalid subscription:', sub.id);
-            }
-            throw new Error(result.error || `Push failed: ${result.status}`);
-          }
-
-          return { success: true, user_id: sub.user_id };
-        } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : 'Unknown error';
-          console.error('Push error for user', sub.user_id, ':', message);
-          return { success: false, user_id: sub.user_id, error: message };
+        if (!result.success && (result.status === 404 || result.status === 410)) {
+          await supabase.from('push_subscriptions').delete().eq('id', sub.id);
         }
+
+        return { success: result.success, user_id: sub.user_id };
       })
     );
 
     const sent = results.filter(r => r.status === 'fulfilled' && (r.value as { success: boolean }).success).length;
-    const failed = results.length - sent;
-
-    console.log(`Push notifications sent: ${sent} success, ${failed} failed`);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        sent, 
-        failed,
-        total: subscriptions.length 
-      }),
+      JSON.stringify({ success: true, sent, failed: results.length - sent, total: subscriptions.length }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
-    console.error('Send push notification error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

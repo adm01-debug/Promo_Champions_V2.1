@@ -105,7 +105,23 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const data: NewDeviceAlertRequest = await req.json();
-    console.log("Processing new device alert for:", data.user_email);
+
+    // Input validation
+    if (!data.user_id || typeof data.user_id !== 'string') {
+      return new Response(JSON.stringify({ error: 'user_id is required' }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!data.user_email || !data.user_email.includes('@')) {
+      return new Response(JSON.stringify({ error: 'Valid user_email is required' }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!data.device_fingerprint) {
+      return new Response(JSON.stringify({ error: 'device_fingerprint is required' }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Check if device is already known
     const { data: existingDevice } = await supabase
@@ -256,10 +272,11 @@ const handler = async (req: Request): Promise<Response> => {
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in new-device-alert function:", error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
