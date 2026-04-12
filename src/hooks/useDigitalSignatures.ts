@@ -59,7 +59,7 @@ export function useDigitalSignatures() {
       const { data: salesperson } = await supabase
         .from('salespeople')
         .select('id')
-        .eq('auth_user_id', (await supabase.auth.getUser()).data.user?.id)
+        .eq('auth_user_id', (await supabase.auth.getUser()).data.user?.id ?? '')
         .single();
 
       // Create document

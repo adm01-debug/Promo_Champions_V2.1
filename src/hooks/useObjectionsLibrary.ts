@@ -7,8 +7,8 @@ interface Objection {
   objection: string;
   response: string;
   category: string;
-  effectiveness_score: number;
-  usage_count: number;
+  effectiveness_score: number | null;
+  usage_count: number | null;
   created_by: string | null;
   created_at: string;
 }

@@ -94,7 +94,7 @@ export function SalesChart({ salespeople }: SalesChartProps) {
                 tickLine={false}
                 tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
               />
-              <Tooltip content={CustomTooltipContent} cursor={{ fill: "hsl(var(--muted))", opacity: 0.2 }} />
+              <Tooltip content={CustomTooltipContent as never} cursor={{ fill: "hsl(var(--muted))", opacity: 0.2 }} />
               <Bar 
                 dataKey="totalSales" 
                 radius={[8, 8, 0, 0]}

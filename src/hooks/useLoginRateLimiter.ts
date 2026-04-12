@@ -91,7 +91,7 @@ export function useLoginRateLimiter() {
       return { canAttempt: true, lockoutStatus: status };
     }
 
-    const lastAttemptTime = new Date(lastFailedAttempt.created_at);
+    const lastAttemptTime = new Date(lastFailedAttempt.created_at ?? Date.now());
     const lockoutEndTime = new Date(lastAttemptTime.getTime() + lockoutDuration * 1000);
     const now = new Date();
 

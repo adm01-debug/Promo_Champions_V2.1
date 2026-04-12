@@ -27,9 +27,9 @@ interface KnownDevice {
   os: string | null;
   ip_address: string | null;
   location: string | null;
-  first_seen_at: string;
-  last_seen_at: string;
-  is_trusted: boolean;
+  first_seen_at: string | null;
+  last_seen_at: string | null;
+  is_trusted: boolean | null;
 }
 
 export const KnownDevices = () => {

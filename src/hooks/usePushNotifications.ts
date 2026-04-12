@@ -231,7 +231,7 @@ export function usePushNotifications() {
       // Check for existing service worker
       if ('serviceWorker' in navigator) {
         try {
-          registration = await navigator.serviceWorker.getRegistration('/');
+          registration = (await navigator.serviceWorker.getRegistration('/')) ?? null;
           
           if (registration && permission === 'granted') {
             const subscription = await registration.pushManager.getSubscription();

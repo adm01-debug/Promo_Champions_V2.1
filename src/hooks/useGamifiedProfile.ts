@@ -63,7 +63,7 @@ export function useGamifiedProfile(salespersonId?: string) {
       
       const salesBySp = new Map<string, number>();
       (allSales || []).forEach(s => {
-        salesBySp.set(s.salesperson_id, (salesBySp.get(s.salesperson_id) || 0) + Number(s.amount));
+        salesBySp.set(s.salesperson_id ?? '', (salesBySp.get(s.salesperson_id ?? '') || 0) + Number(s.amount));
       });
       const sortedSales = [...salesBySp.entries()].sort((a, b) => b[1] - a[1]);
       const rank = sortedSales.findIndex(([id]) => id === salespersonId) + 1;

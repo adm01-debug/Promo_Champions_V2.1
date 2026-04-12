@@ -39,7 +39,7 @@ export const SDRConversionTooltip = React.memo(function SDRConversionTooltip({
         {payload.map((entry: { name?: string; value?: number; color?: string; dataKey?: string; stroke?: string }) => {
           const isTeamAverage = entry.dataKey === 'teamAverage';
           const sdr = sdrs.find(s => s.id === entry.dataKey);
-          const details = dataPoint?.details?.[entry.dataKey];
+          const details = dataPoint?.details?.[String(entry.dataKey ?? '')];
           const teamAvg = dataPoint?.teamAverage ?? 0;
           const diff = !isTeamAverage ? (entry.value as number) - teamAvg : 0;
 
