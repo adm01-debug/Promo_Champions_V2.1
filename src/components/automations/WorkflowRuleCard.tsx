@@ -60,7 +60,7 @@ export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onT
 
             <div className="flex items-center gap-2 flex-wrap">
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 text-xs font-medium">
-                <span>{(trigger as { icon?: React.ReactNode })?.icon}</span>
+                <span>{trigger?.icon as never}</span>
                 <span className="text-primary">{trigger?.label}</span>
                 {(rule.trigger_config as Record<string, unknown>)?.days && (
                   <Badge variant="outline" className="text-[9px] h-4 px-1">
@@ -70,7 +70,7 @@ export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onT
               </div>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-status-success/10 text-xs font-medium">
-                <span>{action?.icon as React.ReactNode}</span>
+                <span>{action?.icon as never}</span>
                 <span className="text-status-success">{action?.label}</span>
               </div>
             </div>
