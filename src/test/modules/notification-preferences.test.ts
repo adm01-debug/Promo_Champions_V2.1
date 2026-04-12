@@ -17,8 +17,8 @@ describe('Notification Preferences', () => {
     system_alert: true,
   };
 
-  const mergePrefs = (defaults: NotifPrefs, userPrefs: Partial<NotifPrefs>): NotifPrefs => {
-    return { ...defaults, ...userPrefs };
+  const mergePrefs = (defaults: NotifPrefs, userPrefs: Record<string, boolean | undefined>): NotifPrefs => {
+    return { ...defaults, ...Object.fromEntries(Object.entries(userPrefs).filter(([, v]) => v !== undefined)) } as NotifPrefs;
   };
 
   it('should use defaults when no user prefs', () => {

@@ -93,7 +93,7 @@ describe("ICP badge display", () => {
   });
 
   it("hidden when is_icp_match is false", () => {
-    const icpData = { is_icp_match: false };
+    const icpData: { is_icp_match: boolean } = { is_icp_match: false };
     expect(icpData.is_icp_match).toBe(false);
   });
 

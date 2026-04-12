@@ -96,7 +96,7 @@ export const MFASetup = () => {
                 onInitialize={initializeTOTP}
                 onVerify={verifyAndEnableTOTP}
                 onDisable={disableTOTP}
-                onSetPreferred={setPreferredMethod}
+                onSetPreferred={(method: string) => setPreferredMethod(method as 'totp' | 'sms')}
               />
             </TabsContent>
 
