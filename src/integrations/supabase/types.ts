@@ -5833,6 +5833,18 @@ export type Database = {
       }
     }
     Functions: {
+      add_league_weekly_xp: {
+        Args: { p_salesperson_id: string; p_xp: number }
+        Returns: boolean
+      }
+      add_salesperson_xp: {
+        Args: {
+          p_salesperson_id: string
+          p_source?: string
+          p_xp_amount: number
+        }
+        Returns: boolean
+      }
       calculate_daily_challenge_streak: {
         Args: { p_salesperson_id: string }
         Returns: number
@@ -5908,6 +5920,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_combo: { Args: { p_salesperson_id: string }; Returns: boolean }
+      increment_goal_progress: {
+        Args: { p_goal_id: string; p_increment?: number }
+        Returns: boolean
+      }
+      increment_sales_streak: {
+        Args: { p_salesperson_id: string }
+        Returns: boolean
+      }
       initialize_totp: {
         Args: { p_email: string }
         Returns: {
@@ -5943,6 +5964,16 @@ export type Database = {
       update_own_profile: {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
+      }
+      update_own_sale: {
+        Args: {
+          p_category?: string
+          p_client_name?: string
+          p_product_name?: string
+          p_sale_id: string
+          p_source?: string
+        }
+        Returns: boolean
       }
       update_user_mfa_settings: {
         Args: {
