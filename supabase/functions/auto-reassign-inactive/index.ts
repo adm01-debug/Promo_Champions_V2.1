@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from 'https://esm.sh/@supabase/supabase-js@2.49.1/dist/module/lib/cors.js'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
