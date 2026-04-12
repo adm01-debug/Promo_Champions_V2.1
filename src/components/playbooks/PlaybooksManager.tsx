@@ -50,8 +50,9 @@ export const PlaybooksManager = () => {
 
   const groupedByStage = filteredPlaybooks.reduce(
     (acc, playbook) => {
-      if (!acc[playbook.stage]) acc[playbook.stage] = [];
-      acc[playbook.stage].push(playbook);
+      const stage = playbook.stage;
+      if (!acc[stage]) acc[stage] = [];
+      acc[stage]!.push(playbook);
       return acc;
     },
     {} as Record<string, typeof playbooks>

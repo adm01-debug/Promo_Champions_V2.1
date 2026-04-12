@@ -57,7 +57,8 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
   };
 
   const handleSaveStep = async (step: CadenceStep, editData: Partial<CadenceStep>) => {
-    await updateStep.mutateAsync({ id: step.id, cadence_id: cadence.id, ...editData });
+    const { description, template_content, ...rest } = editData;
+    await updateStep.mutateAsync({ id: step.id, cadence_id: cadence.id, ...rest, description: description ?? undefined, template_content: template_content ?? undefined });
   };
 
   const addNewStep = () => {

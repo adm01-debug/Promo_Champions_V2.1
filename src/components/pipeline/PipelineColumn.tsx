@@ -88,7 +88,7 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
                 probability={probabilities?.[deal.id]}
                 leadScore={leadScores?.[deal.id]}
                 activeCadence={activeCadences?.[deal.id]}
-                icpData={icpByClientName?.get(deal.client_name.toLowerCase())}
+                icpData={icpByClientName?.get(deal.client_name.toLowerCase()) as { is_icp_match: boolean; grupo_nicho?: string } | undefined}
               />
             ))
           )}

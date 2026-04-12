@@ -163,7 +163,7 @@ export function TodaysCadenceTasks() {
                         <p className="text-xs text-muted-foreground mt-0.5">
                           <span className="gradient-text font-medium">{String((sale as Record<string, unknown>)?.client_name || '')}</span> • <span className="text-primary/80 font-medium">{String((cadence as Record<string, unknown>)?.name || '')}</span>
                         </p>
-                        {step?.description && (
+                        {(step?.description as string | undefined) && (
                           <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1.5 border border-border/20 shadow-inner">
                             {String(step.description)}
                           </p>

@@ -221,7 +221,7 @@ export const PipelineBoard = () => {
                 probability={probabilities?.[activeDeal.id]}
                 leadScore={leadScores?.[activeDeal.id]}
                 activeCadence={activeCadences?.[activeDeal.id]}
-                icpData={icpByClientName?.get(activeDeal.client_name.toLowerCase())}
+                icpData={icpByClientName?.get(activeDeal.client_name.toLowerCase()) as { is_icp_match: boolean; grupo_nicho?: string } | undefined}
               />
             </div>
           )}

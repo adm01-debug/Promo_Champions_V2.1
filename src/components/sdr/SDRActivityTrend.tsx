@@ -185,11 +185,11 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <span className="text-xs font-medium text-muted-foreground">Total: {(dataPoint as Record<string, number>)?.total ?? 0}</span>
                     </div>
                     <div className="space-y-1">
-                      {payload.map((entry: { name?: string; value?: number; color?: string; dataKey?: string; stroke?: string }) => (
-                        <div key={entry.dataKey} className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.stroke }} />
-                          <span className="text-xs text-muted-foreground">{ACTIVITY_LABELS[entry.dataKey] || entry.dataKey}</span>
-                          <span className="text-xs font-semibold ml-auto">{entry.value}</span>
+                      {payload.map((entry) => (
+                        <div key={String(entry.dataKey)} className="flex items-center gap-2">
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: String(entry.stroke ?? entry.color ?? '') }} />
+                          <span className="text-xs text-muted-foreground">{ACTIVITY_LABELS[String(entry.dataKey)] || String(entry.dataKey)}</span>
+                          <span className="text-xs font-semibold ml-auto">{Number(entry.value ?? 0)}</span>
                         </div>
                       ))}
                     </div>
@@ -209,7 +209,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
-                const total = payload.reduce((sum: number, entry: { value?: number }) => sum + (entry.value || 0), 0);
+                const total = payload.reduce((sum: number, entry) => sum + (Number(entry.value ?? 0)), 0);
                 return (
                   <div className="bg-card border border-border rounded-lg shadow-lg p-3 space-y-2">
                     <div className="flex items-center justify-between gap-4">
@@ -217,16 +217,18 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                       <span className="text-xs font-medium text-muted-foreground">Total: {total}</span>
                     </div>
                     <div className="space-y-1">
-                      {payload.sort((a: { value?: number }, b: { value?: number }) => (b.value || 0) - (a.value || 0)).map((entry: { name?: string; value?: number; color?: string; dataKey?: string; stroke?: string }) => {
-                        const sdr = sdrs.find(s => s.id === entry.dataKey);
-                        const goal = sdrGoals[entry.dataKey] || 0;
-                        const diff = goal > 0 ? (entry.value as number) - goal : 0;
+                      {[...payload].sort((a, b) => Number(b.value ?? 0) - Number(a.value ?? 0)).map((entry) => {
+                        const dk = String(entry.dataKey ?? '');
+                        const sdr = sdrs.find(s => s.id === dk);
+                        const goal = sdrGoals[dk] || 0;
+                        const entryVal = Number(entry.value ?? 0);
+                        const diff = goal > 0 ? entryVal - goal : 0;
                         return (
-                          <div key={entry.dataKey} className="flex flex-col gap-0.5">
+                          <div key={dk} className="flex flex-col gap-0.5">
                             <div className="flex items-center gap-2">
-                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.stroke }} />
-                              <span className="text-xs text-muted-foreground">{sdr?.name || entry.dataKey}</span>
-                              <span className={`text-xs font-semibold ml-auto ${goal > 0 ? diff >= 0 ? 'text-success' : 'text-destructive' : ''}`}>{entry.value}</span>
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: String(entry.stroke ?? entry.color ?? '') }} />
+                              <span className="text-xs text-muted-foreground">{sdr?.name || dk}</span>
+                              <span className={`text-xs font-semibold ml-auto ${goal > 0 ? diff >= 0 ? 'text-success' : 'text-destructive' : ''}`}>{entryVal}</span>
                             </div>
                             {goal > 0 && (<div className="ml-4 text-[10px] text-muted-foreground">Meta: {goal} | {diff >= 0 ? '+' : ''}{diff}</div>)}
                           </div>
