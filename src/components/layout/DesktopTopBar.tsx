@@ -119,29 +119,14 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
           </Tooltip>
 
           {/* Focus Mode */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span><FocusModeToggle /></span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom"><p>Modo foco</p></TooltipContent>
-          </Tooltip>
+          <FocusModeToggle />
 
           {/* Divider */}
           <div className="w-px h-5 bg-border/50 mx-1.5" />
 
           {/* Settings cluster */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span><LanguageToggle /></span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom"><p>Idioma</p></TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span><ThemeToggle /></span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom"><p>Alternar tema</p></TooltipContent>
-          </Tooltip>
+          <LanguageToggle />
+          <ThemeToggle />
         </div>
       </TooltipProvider>
     </div>
