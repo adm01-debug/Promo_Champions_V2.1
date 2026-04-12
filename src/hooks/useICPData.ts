@@ -10,7 +10,7 @@ export interface ICPData {
   grupo_nicho: string | null;
   capital_social: number | null;
   num_colaboradores: number | null;
-  is_icp_match: boolean;
+  is_icp_match: boolean | null;
 }
 
 interface ICPDataWithClient extends ICPData {

@@ -123,7 +123,7 @@ function _StreakRanking() {
                       <span className="font-medium truncate">{person.name ?? ""}</span>
                       <SalespersonLevelBadge level={xpInfo.level} totalXP={xpInfo.totalXP} size="xs" />
                       <Badge variant="outline" className="text-[10px]">
-                        {roleLabels[person.role] || person.role}
+                        {(person.role ? roleLabels[person.role] : undefined) || person.role}
                       </Badge>
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -146,7 +146,7 @@ function _StreakRanking() {
 
                     {/* Best Streak */}
                     <div className="text-center">
-                      <div className={`px-3 py-1.5 rounded-lg border ${getStreakBadgeColor(person.bestStreak)} flex items-center gap-1.5 animate-bounce-in hover:animate-pop`}>
+                      <div className={`px-3 py-1.5 rounded-lg border ${getStreakBadgeColor(person.bestStreak ?? 0)} flex items-center gap-1.5 animate-bounce-in hover:animate-pop`}>
                         <Trophy className="h-4 w-4 group-hover:animate-wiggle" />
                         <span className="font-bold">{person.bestStreak}</span>
                       </div>

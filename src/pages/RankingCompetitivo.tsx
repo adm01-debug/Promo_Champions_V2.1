@@ -134,7 +134,7 @@ const RankingCompetitivo = () => {
           </TabsList>
 
           <TabsContent value="ranking">
-            <RankingTab ranking={ranking || []} leader={leader} formatCurrency={formatCurrency} />
+            <RankingTab ranking={(ranking || []) as never[]} leader={leader as never} formatCurrency={formatCurrency} />
           </TabsContent>
 
           <TabsContent value="xp" className="space-y-4">

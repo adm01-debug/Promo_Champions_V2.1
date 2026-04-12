@@ -186,7 +186,7 @@ export const useMFA = () => {
     try {
       const { data, error } = await supabase.rpc('verify_mfa_code', {
         p_code: method === 'backup_code' ? code.toUpperCase() : code,
-        p_method: method || null,
+        p_method: method || undefined,
       });
 
       if (error) throw error;

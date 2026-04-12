@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useRateLimitSettings, useRateLimitLogs, useRateLimitStats } from "@/hooks/useRateLimit";
+import { useRateLimitSettings, useRateLimitLogs, useRateLimitStats, type RateLimitSetting } from "@/hooks/useRateLimit";
 import { Settings, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -30,7 +30,7 @@ export function RateLimitDashboard() {
   const [editingSetting, setEditingSetting] = useState<string | null>(null);
   const [editValues, setEditValues] = useState({ max_requests: 0, window_seconds: 0, block_duration_seconds: 0 });
 
-  const handleEditSetting = (setting: typeof settings extends (infer T)[] ? T : never) => {
+  const handleEditSetting = (setting: RateLimitSetting) => {
     setEditingSetting(setting.id);
     setEditValues({ max_requests: setting.max_requests, window_seconds: setting.window_seconds, block_duration_seconds: setting.block_duration_seconds });
   };

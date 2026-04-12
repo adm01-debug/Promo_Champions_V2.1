@@ -172,7 +172,7 @@ export function CompetencyRadar({
                 strokeWidth={2}
               />
 
-              <Tooltip content={renderCustomTooltip} />
+              <Tooltip content={renderCustomTooltip as never} />
             </RadarChart>
           </ResponsiveContainer>
         </motion.div>

@@ -27,9 +27,9 @@ interface KnownDevice {
   os: string | null;
   ip_address: string | null;
   location: string | null;
-  first_seen_at: string;
-  last_seen_at: string;
-  is_trusted: boolean;
+  first_seen_at: string | null;
+  last_seen_at: string | null;
+  is_trusted: boolean | null;
 }
 
 export const KnownDevices = () => {
@@ -180,10 +180,10 @@ export const KnownDevices = () => {
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        Primeiro acesso: {formatDistanceToNow(new Date(device.first_seen_at), { addSuffix: true, locale: ptBR })}
+                        Primeiro acesso: {device.first_seen_at ? formatDistanceToNow(new Date(device.first_seen_at), { addSuffix: true, locale: ptBR }) : 'N/A'}
                       </span>
                       <span>
-                        Último acesso: {formatDistanceToNow(new Date(device.last_seen_at), { addSuffix: true, locale: ptBR })}
+                        Último acesso: {device.last_seen_at ? formatDistanceToNow(new Date(device.last_seen_at), { addSuffix: true, locale: ptBR }) : 'N/A'}
                       </span>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ export const KnownDevices = () => {
                   <Button
                     variant={device.is_trusted ? "secondary" : "outline"}
                     size="sm"
-                    onClick={() => toggleTrust(device.id, device.is_trusted)}
+                    onClick={() => toggleTrust(device.id, !!device.is_trusted)}
                   >
                     {device.is_trusted ? (
                       <Shield className="h-4 w-4" />

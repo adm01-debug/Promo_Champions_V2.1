@@ -9,7 +9,7 @@ import { Trash2, Globe, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-interface WhitelistedIP {
+export interface WhitelistedIP {
   id: string;
   ip_address: string;
   description: string | null;

@@ -101,7 +101,7 @@ export function SoundSettingsTabs() {
           <TabsContent value="system" className="mt-0">
             <SystemTab
               preferences={systemPreferences}
-              updatePreference={updateSystemPreference}
+              updatePreference={(key: string, patch) => updateSystemPreference(key as 'newTask' | 'newSale' | 'dealUpdate' | 'ready', patch)}
               volume={systemVolume}
               setVolume={setSystemVolume}
               previewSound={previewSystemSound}

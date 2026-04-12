@@ -80,7 +80,7 @@ export default function Fornecedores() {
             <Card className="glass border-border/40 hover-lift-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Star className="h-4 w-4" />Média Confiabilidade</CardTitle></CardHeader><CardContent><div className="text-metric">{suppliers?.length ? Math.round((suppliers.reduce((sum, s) => sum + (s.reliability_score || 0), 0) / suppliers.length) * 100) : 0}%</div></CardContent></Card>
           </div>
 
-          <SupplierTable suppliers={suppliers} isLoading={suppliersLoading} />
+          <SupplierTable suppliers={suppliers as never[]} isLoading={suppliersLoading} />
 
           <Card className="glass border-border/40 hover-lift-sm">
             <CardHeader>
@@ -89,10 +89,10 @@ export default function Fornecedores() {
             <CardContent>
               {riskAssessments && riskAssessments.length > 0 ? (
                 <div className="space-y-4">
-                  {riskAssessments.slice(0, 5).map((assessment: { id: string; suppliers?: { name: string }; assessment_date: string; overall_risk: number | null; risk_level: string }) => (
+                  {riskAssessments.slice(0, 5).map((assessment) => (
                     <div key={assessment.id} className="flex items-center justify-between p-4 rounded-lg border border-border/30">
                       <div><div className="font-medium">{assessment.suppliers?.name}</div><div className="text-sm text-muted-foreground">Avaliado em {new Date(assessment.assessment_date).toLocaleDateString('pt-BR')}</div></div>
-                      <div className="flex items-center gap-4"><div className="text-right"><div className="text-sm text-muted-foreground">Risco Geral</div><div className="font-medium">{Math.round((assessment.overall_risk || 0) * 100)}%</div></div>{getRiskBadge(assessment.risk_level)}</div>
+                      <div className="flex items-center gap-4"><div className="text-right"><div className="text-sm text-muted-foreground">Risco Geral</div><div className="font-medium">{Math.round((assessment.overall_risk || 0) * 100)}%</div></div>{getRiskBadge(assessment.risk_level ?? 'low')}</div>
                     </div>
                   ))}
                 </div>

@@ -93,12 +93,12 @@ describe("ICP badge display", () => {
   });
 
   it("hidden when is_icp_match is false", () => {
-    const icpData = { is_icp_match: false };
+    const icpData: { is_icp_match: boolean } = { is_icp_match: false };
     expect(icpData.is_icp_match).toBe(false);
   });
 
   it("hidden when icpData is undefined", () => {
-    const icpData: { is_icp_match: boolean } | undefined = undefined;
+    const icpData = undefined as { is_icp_match: boolean } | undefined;
     expect(icpData?.is_icp_match).toBeUndefined();
   });
 });

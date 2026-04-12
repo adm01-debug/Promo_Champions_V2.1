@@ -64,7 +64,7 @@ export default function ComparadorPrecos() {
             </Button>
           </div>
 
-          {showAlerts && <PriceAlertsPanel alerts={alerts} unreadCount={unreadCount} onMarkAllRead={() => markAllAsRead.mutate()} formatCurrency={formatCurrency} />}
+          {showAlerts && <PriceAlertsPanel alerts={alerts as never[]} unreadCount={unreadCount} onMarkAllRead={() => markAllAsRead.mutate()} formatCurrency={formatCurrency} />}
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">

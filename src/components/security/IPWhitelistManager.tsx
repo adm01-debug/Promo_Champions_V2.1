@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { toast } from "sonner";
 import { Shield, Plus, ShieldCheck } from "lucide-react";
 import { z } from "zod";
-import { IPWhitelistTable } from "./IPWhitelistTable";
+import { IPWhitelistTable, type WhitelistedIP } from "./IPWhitelistTable";
 
 const ipSchema = z.object({
   ip_address: z.string().trim().min(7, "IP inválido").max(45, "IP muito longo")
@@ -125,7 +125,7 @@ export function IPWhitelistManager() {
       </CardHeader>
       <CardContent>
         {whitelistedIPs && whitelistedIPs.length > 0 ? (
-          <IPWhitelistTable whitelistedIPs={whitelistedIPs} onRemove={(id) => removeIPMutation.mutate(id)} />
+          <IPWhitelistTable whitelistedIPs={whitelistedIPs as WhitelistedIP[]} onRemove={(id) => removeIPMutation.mutate(id)} />
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <ShieldCheck className="h-12 w-12 text-muted-foreground mb-4" />

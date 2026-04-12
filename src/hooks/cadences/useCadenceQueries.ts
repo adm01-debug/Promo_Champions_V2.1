@@ -75,7 +75,7 @@ export function useCadenceSteps(cadenceId: string | undefined) {
       const { data, error } = await supabase
         .from("cadence_steps")
         .select("*")
-        .eq("cadence_id", cadenceId)
+        .eq("cadence_id", cadenceId!)
         .order("step_order", { ascending: true });
 
       if (error) throw error;
