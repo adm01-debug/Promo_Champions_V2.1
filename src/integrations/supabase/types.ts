@@ -5944,6 +5944,16 @@ export type Database = {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
       }
+      update_own_sale: {
+        Args: {
+          p_category?: string
+          p_client_name?: string
+          p_product_name?: string
+          p_sale_id: string
+          p_source?: string
+        }
+        Returns: boolean
+      }
       update_user_mfa_settings: {
         Args: {
           p_backup_codes?: string[]
