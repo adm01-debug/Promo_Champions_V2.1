@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { corsHeaders } from 'https://esm.sh/@supabase/supabase-js@2.49.1/dist/module/lib/cors.js'
+import { corsHeaders } from "../_shared/cors.ts";
 
 const SLOW_QUERY_THRESHOLD_MS = 3000;
 const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;

@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { corsHeaders } from 'https://esm.sh/@supabase/supabase-js@2.49.1/dist/module/lib/cors.js'
+import { corsHeaders } from "../_shared/cors.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

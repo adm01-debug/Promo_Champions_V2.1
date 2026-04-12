@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { corsHeaders } from 'https://esm.sh/@supabase/supabase-js@2.49.1/dist/module/lib/cors.js'
+import { corsHeaders } from "../_shared/cors.ts";
 
 async function validateToken(token: string) {
   const supabase = createClient(

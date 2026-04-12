@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { corsHeaders } from 'https://esm.sh/@supabase/supabase-js@2.49.1/dist/module/lib/cors.js'
+import { corsHeaders } from "../_shared/cors.ts";
 
 const BITRIX24_DOMAIN = Deno.env.get("BITRIX24_DOMAIN");
 const BITRIX24_CLIENT_ID = Deno.env.get("BITRIX24_CLIENT_ID");
