@@ -5833,6 +5833,18 @@ export type Database = {
       }
     }
     Functions: {
+      add_league_weekly_xp: {
+        Args: { p_salesperson_id: string; p_xp: number }
+        Returns: boolean
+      }
+      add_salesperson_xp: {
+        Args: {
+          p_salesperson_id: string
+          p_source?: string
+          p_xp_amount: number
+        }
+        Returns: boolean
+      }
       calculate_daily_challenge_streak: {
         Args: { p_salesperson_id: string }
         Returns: number
@@ -5906,6 +5918,15 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      increment_combo: { Args: { p_salesperson_id: string }; Returns: boolean }
+      increment_goal_progress: {
+        Args: { p_goal_id: string; p_increment?: number }
+        Returns: boolean
+      }
+      increment_sales_streak: {
+        Args: { p_salesperson_id: string }
         Returns: boolean
       }
       initialize_totp: {
