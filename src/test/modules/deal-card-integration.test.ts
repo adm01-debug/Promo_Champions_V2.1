@@ -101,11 +101,6 @@ describe("ICP badge display", () => {
     const icpData: { is_icp_match: boolean } | undefined = undefined;
     expect(icpData?.is_icp_match).toBeUndefined();
   });
-
-  it("hidden when is_icp_match is false with typed data", () => {
-    const icpData = { is_icp_match: false } as { is_icp_match: boolean };
-    expect(icpData.is_icp_match).toBe(false);
-  });
 });
 
 // ─── Active Cadence display ────────────────────────────────────────

@@ -62,7 +62,7 @@ export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onT
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 text-xs font-medium">
                 <span>{trigger?.icon as never}</span>
                 <span className="text-primary">{trigger?.label}</span>
-                {(rule.trigger_config as Record<string, unknown>)?.days && (
+                {((rule.trigger_config as Record<string, unknown>)?.days as number | undefined) && (
                   <Badge variant="outline" className="text-[9px] h-4 px-1">
                     {String((rule.trigger_config as Record<string, unknown>).days)}d
                   </Badge>
