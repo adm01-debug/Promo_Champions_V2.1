@@ -88,16 +88,16 @@ describe('DesktopTopBar', () => {
     expect(source).toContain('Notificações');
   });
 
-  it('has tooltip for focus mode: "Modo foco"', () => {
-    expect(source).toContain('Modo foco');
+  it('includes FocusModeToggle component (tooltip delegated)', () => {
+    expect(source).toContain('FocusModeToggle');
   });
 
-  it('has tooltip for language: "Idioma"', () => {
-    expect(source).toContain('Idioma');
+  it('includes LanguageToggle component (tooltip delegated)', () => {
+    expect(source).toContain('LanguageToggle');
   });
 
-  it('has tooltip for theme: "Alternar tema"', () => {
-    expect(source).toContain('Alternar tema');
+  it('includes ThemeToggle component (tooltip delegated)', () => {
+    expect(source).toContain('ThemeToggle');
   });
 
   // === Visual Dividers ===

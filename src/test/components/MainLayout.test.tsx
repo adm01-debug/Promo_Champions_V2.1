@@ -45,16 +45,16 @@ describe('MainLayout Structure', () => {
     expect(topBarSource).toContain('Buscar (⌘K)');
   });
 
-  it('has tooltip for theme toggle (in DesktopTopBar)', () => {
-    expect(topBarSource).toContain('Alternar tema');
+  it('delegates ThemeToggle to DesktopTopBar', () => {
+    expect(topBarSource).toContain('ThemeToggle');
   });
 
-  it('has tooltip for focus mode (in DesktopTopBar)', () => {
-    expect(topBarSource).toContain('Modo foco');
+  it('delegates FocusModeToggle to DesktopTopBar', () => {
+    expect(topBarSource).toContain('FocusModeToggle');
   });
 
-  it('has tooltip for language toggle (in DesktopTopBar)', () => {
-    expect(topBarSource).toContain('Idioma');
+  it('delegates LanguageToggle to DesktopTopBar', () => {
+    expect(topBarSource).toContain('LanguageToggle');
   });
 
   it('has tooltip for notifications (in DesktopTopBar)', () => {
