@@ -207,6 +207,16 @@ export function AppRoutes() {
                     <Route path="/usage-analytics" element={
                       <ProtectedRoute requiredRole="admin"><UsageAnalytics /></ProtectedRoute>
                     } />
+                    <Route path="/relatorios-agendados" element={
+                      <ProtectedRoute requireAdminOrManager><ScheduledReports /></ProtectedRoute>
+                    } />
+                    <Route path="/deduplicacao" element={
+                      <ProtectedRoute requireAdminOrManager><Deduplication /></ProtectedRoute>
+                    } />
+                    <Route path="/importar-exportar" element={
+                      <ProtectedRoute requireAdminOrManager><ImportExport /></ProtectedRoute>
+                    } />
+                    <Route path="/onboarding-tracking" element={<OnboardingTracking />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
