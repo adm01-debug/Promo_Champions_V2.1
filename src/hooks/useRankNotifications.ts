@@ -31,9 +31,10 @@ export function useRankNotifications(salespersonId?: string) {
         const overtaker = n.overtaker as unknown as Record<string, string> | null;
         return {
           ...n,
+          is_read: n.is_read ?? false,
           overtaker_name: overtaker?.name || 'Alguém',
         };
-      });
+      }) as RankNotification[];
     },
     enabled: !!salespersonId,
   });

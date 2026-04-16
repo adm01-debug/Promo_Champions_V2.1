@@ -58,9 +58,9 @@ export function useTerritoryHistory(territoryId?: string) {
       if (error) throw error;
       return (data || []).map((h) => ({
         ...h,
-        salesperson: (h as Record<string, unknown>).salespeople || null,
+        salesperson: (h as unknown as Record<string, unknown>).salespeople || null,
         salespeople: undefined,
-      })) as TerritoryHistory[];
+      })) as unknown as TerritoryHistory[];
     },
     enabled: !!territoryId,
   });
