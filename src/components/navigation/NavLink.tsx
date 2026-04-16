@@ -1,6 +1,30 @@
 import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { forwardRef } from "react";
+import { forwardRef, useCallback, useRef } from "react";
 import { cn } from "@/lib/utils";
+
+// Route-to-lazy-import mapping for prefetch
+const ROUTE_MODULES: Record<string, () => Promise<unknown>> = {
+  '/vendas': () => import('@/pages/Vendas'),
+  '/clientes': () => import('@/pages/Clientes'),
+  '/produtos': () => import('@/pages/Produtos'),
+  '/pipeline': () => import('@/pages/Pipeline'),
+  '/analytics': () => import('@/pages/Analytics'),
+  '/atividades': () => import('@/pages/Atividades'),
+  '/ranking': () => import('@/pages/RankingCompetitivo'),
+  '/arena': () => import('@/pages/ArenaCompetitiva'),
+  '/assistente': () => import('@/pages/Assistente'),
+  '/bi-vendedor': () => import('@/pages/BIVendedor'),
+  '/bi-gestor': () => import('@/pages/BIGestor'),
+  '/metas-atividades': () => import('@/pages/MetasAtividades'),
+  '/configuracoes': () => import('@/pages/Configuracoes'),
+  '/desafios': () => import('@/pages/DesafiosSemanais'),
+  '/follow-up': () => import('@/pages/FollowUpInteligente'),
+  '/lead-scoring': () => import('@/pages/LeadScoring'),
+  '/multichannel': () => import('@/pages/Multichannel'),
+  '/calendario': () => import('@/pages/Calendario'),
+};
+
+const prefetched = new Set<string>();
 
 interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
   className?: string;
@@ -10,10 +34,33 @@ interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
 
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   ({ className, activeClassName, pendingClassName, to, ...props }, ref) => {
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleMouseEnter = useCallback(() => {
+      const path = typeof to === 'string' ? to : to.pathname || '';
+      if (prefetched.has(path)) return;
+      timerRef.current = setTimeout(() => {
+        const loader = ROUTE_MODULES[path];
+        if (loader) {
+          prefetched.add(path);
+          loader();
+        }
+      }, 100);
+    }, [to]);
+
+    const handleMouseLeave = useCallback(() => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    }, []);
+
     return (
       <RouterNavLink
         ref={ref}
         to={to}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={({ isActive, isPending }) =>
           cn(className, isActive && activeClassName, isPending && pendingClassName)
         }
