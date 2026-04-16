@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -7,6 +7,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { FocusModeToggle } from "@/components/focus/FocusModeToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";
+import { NotificationPopover } from "@/components/notifications";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
@@ -95,23 +96,25 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
           {/* Notifications */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link
-                to="/notificacoes"
-                className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
-                aria-label="Notificações"
-              >
-                <Bell className={cn(
-                  "h-4 w-4 transition-colors",
-                  unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground"
-                )} />
-                <NotificationBadge
-                  count={unreadCount}
-                  size="sm"
-                  pulse={unreadCount > 5}
-                  variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
-                  className="absolute -top-1 -right-1"
-                />
-              </Link>
+              <NotificationPopover>
+                <button
+                  type="button"
+                  className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
+                  aria-label="Notificações"
+                >
+                  <Bell className={cn(
+                    "h-4 w-4 transition-colors",
+                    unreadCount > 5 ? "text-destructive" : unreadCount > 0 ? "text-warning" : "text-muted-foreground"
+                  )} />
+                  <NotificationBadge
+                    count={unreadCount}
+                    size="sm"
+                    pulse={unreadCount > 5}
+                    variant={unreadCount > 5 ? "destructive" : unreadCount > 0 ? "warning" : "default"}
+                    className="absolute -top-1 -right-1"
+                  />
+                </button>
+              </NotificationPopover>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>Notificações{unreadCount > 0 ? ` (${unreadCount} novas)` : ''}</p>
