@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TrendingUp } from "lucide-react";
@@ -25,7 +25,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
   );
 };
 
-export const SalesChart = () => {
+export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
   const [period, setPeriod] = useState<Period>("90d");
   const { data: liveData, isLoading } = useSalesChartData(period);
 
@@ -33,7 +33,7 @@ export const SalesChart = () => {
   const data = liveData && liveData.length > 0 ? liveData : [];
 
   return (
-    <Card className="h-full">
+    <Card ref={ref} className="h-full">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -100,4 +100,5 @@ export const SalesChart = () => {
       </CardContent>
     </Card>
   );
-};
+});
+SalesChart.displayName = "SalesChart";

@@ -3,11 +3,11 @@ import { useOnboardingChecklist } from '@/hooks/useOnboardingChecklist';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, ArrowRight, Rocket, X, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function OnboardingChecklist() {
+export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
   const { steps, completedCount, totalSteps, progress, isComplete } = useOnboardingChecklist();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
@@ -18,7 +18,7 @@ export function OnboardingChecklist() {
   const nextStep = steps.find((s, i) => !s.completed && steps.slice(0, i).every(st => st.completed));
 
   return (
-    <motion.div
+    <motion.div ref={ref}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -154,4 +154,5 @@ export function OnboardingChecklist() {
       </div>
     </motion.div>
   );
-}
+});
+OnboardingChecklist.displayName = "OnboardingChecklist";
