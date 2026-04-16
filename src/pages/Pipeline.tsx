@@ -58,14 +58,14 @@ export default function Pipeline() {
               <PipelineBoard />
             </div>
             
-            {/* Collapsible Risk Panel — Desktop */}
+            {/* Collapsible Side Panel — Desktop */}
             <div className="hidden xl:flex items-start gap-1 shrink-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setRiskPanelOpen(!riskPanelOpen)}
                 className="h-8 w-8 p-0 mt-2 shrink-0"
-                aria-label={riskPanelOpen ? "Recolher painel de risco" : "Expandir painel de risco"}
+                aria-label={riskPanelOpen ? "Recolher painel lateral" : "Expandir painel lateral"}
               >
                 <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${riskPanelOpen ? "rotate-0" : "rotate-180"}`} />
               </Button>
@@ -73,22 +73,50 @@ export default function Pipeline() {
                 {riskPanelOpen && (
                   <motion.div
                     initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 320, opacity: 1 }}
+                    animate={{ width: 340, opacity: 1 }}
                     exit={{ width: 0, opacity: 0 }}
                     transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="w-[320px]">
-                      <AtRiskDealsPanel />
+                    <div className="w-[340px]">
+                      <Tabs defaultValue="risk" className="w-full">
+                        <TabsList className="w-full mb-3">
+                          <TabsTrigger value="risk" className="flex-1 text-xs">
+                            <Kanban className="h-3 w-3 mr-1" />
+                            Em Risco
+                          </TabsTrigger>
+                          <TabsTrigger value="sla" className="flex-1 text-xs">
+                            <Clock className="h-3 w-3 mr-1" />
+                            SLA
+                          </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="risk">
+                          <AtRiskDealsPanel />
+                        </TabsContent>
+                        <TabsContent value="sla">
+                          <SLADashboard />
+                        </TabsContent>
+                      </Tabs>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Mobile/Tablet: risk panel below */}
-            <div className="xl:hidden">
-              <AtRiskDealsPanel />
+            {/* Mobile/Tablet: panels below */}
+            <div className="xl:hidden space-y-4">
+              <Tabs defaultValue="risk" className="w-full">
+                <TabsList className="w-full mb-3">
+                  <TabsTrigger value="risk" className="flex-1 text-xs">Em Risco</TabsTrigger>
+                  <TabsTrigger value="sla" className="flex-1 text-xs">SLA</TabsTrigger>
+                </TabsList>
+                <TabsContent value="risk">
+                  <AtRiskDealsPanel />
+                </TabsContent>
+                <TabsContent value="sla">
+                  <SLADashboard />
+                </TabsContent>
+              </Tabs>
             </div>
           </motion.div>
         </div>
