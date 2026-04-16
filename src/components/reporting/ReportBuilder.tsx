@@ -12,11 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReportFieldPicker } from "./ReportFieldPicker";
 import { ReportFilterBuilder } from "./ReportFilterBuilder";
 import { ReportPreview } from "./ReportPreview";
+import { CrossObjectJoinPanel } from "./CrossObjectJoinPanel";
 import { useReportExecution } from "@/hooks/reporting/useReportExecution";
 import { useCreateCustomReport, useUpdateCustomReport, type CustomReport } from "@/hooks/reporting/useCustomReports";
 import {
   ENTITY_LABELS, VIZ_LABELS, defaultConfigForEntity,
-  type ReportEntity, type ReportConfig, type VizType,
+  type ReportEntity, type ReportConfig, type VizType, type CrossBaseEntity, type ReportJoin,
 } from "@/hooks/reporting/reportBuilderHelpers";
 import { Save, Play, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -103,6 +104,14 @@ export function ReportBuilder({ initialReport, onSaved }: Props) {
                 </SelectContent>
               </Select>
             </div>
+            {entity === "cross" && (
+              <CrossObjectJoinPanel
+                base={(config.base ?? "sales") as CrossBaseEntity}
+                joins={config.joins ?? []}
+                onBaseChange={(b) => setConfig({ ...config, base: b, columns: [] })}
+                onJoinsChange={(j: ReportJoin[]) => setConfig({ ...config, joins: j })}
+              />
+            )}
             <div>
               <Label className="text-xs">Colunas ({config.columns.length})</Label>
               <div className="mt-1">
@@ -110,6 +119,8 @@ export function ReportBuilder({ initialReport, onSaved }: Props) {
                   entity={entity}
                   selected={config.columns}
                   onChange={(cols) => setConfig({ ...config, columns: cols })}
+                  base={config.base}
+                  joins={config.joins}
                 />
               </div>
             </div>
@@ -120,6 +131,8 @@ export function ReportBuilder({ initialReport, onSaved }: Props) {
               entity={entity}
               filters={config.filters ?? []}
               onChange={(filters) => setConfig({ ...config, filters })}
+              base={config.base}
+              joins={config.joins}
             />
           </TabsContent>
 

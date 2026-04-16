@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,19 +6,29 @@ import { Plus, Trash2 } from "lucide-react";
 import {
   ENTITY_FIELDS,
   FILTER_OP_LABELS,
+  buildCrossEntityFields,
   type ReportEntity,
   type ReportFilter,
   type FilterOp,
+  type CrossBaseEntity,
+  type ReportJoin,
 } from "@/hooks/reporting/reportBuilderHelpers";
 
 interface Props {
   entity: ReportEntity;
   filters: ReportFilter[];
   onChange: (filters: ReportFilter[]) => void;
+  base?: CrossBaseEntity;
+  joins?: ReportJoin[];
 }
 
-export const ReportFilterBuilder = memo(({ entity, filters, onChange }: Props) => {
-  const fields = entity === "cross" ? [] : ENTITY_FIELDS[entity] ?? [];
+export const ReportFilterBuilder = memo(({ entity, filters, onChange, base, joins }: Props) => {
+  const fields = useMemo(() => {
+    if (entity === "cross") {
+      return base ? buildCrossEntityFields(base, joins ?? []) : [];
+    }
+    return ENTITY_FIELDS[entity] ?? [];
+  }, [entity, base, joins]);
 
   const addFilter = () => {
     const first = fields[0]?.key ?? "id";
