@@ -19,7 +19,7 @@ import {
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
   // Analytics & BI
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
-  RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports,
+  RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
   TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub,
   // Gamificação & Social
@@ -138,6 +138,8 @@ export function AppRoutes() {
                     <Route path="/relatorios-email" element={<RelatoriosEmail />} />
                     <Route path="/relatorios-executivos" element={<Manager><RelatoriosExecutivos /></Manager>} />
                     <Route path="/relatorios-agendados" element={<Manager><ScheduledReports /></Manager>} />
+                    <Route path="/relatorios-custom" element={<CustomReports />} />
+                    <Route path="/relatorios-custom/:id" element={<CustomReports />} />
                     <Route path="/roi" element={<Manager><ROIDashboard /></Manager>} />
                     <Route path="/forecast" element={<Manager><ForecastPonderado /></Manager>} />
                     <Route path="/previsao-demanda" element={<Manager><PrevisaoDemanda /></Manager>} />

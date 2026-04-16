@@ -66,6 +66,7 @@ export const RelatorioAtividades = lazy(() => import("@/pages/RelatorioAtividade
 export const RelatoriosEmail = lazy(() => import("@/pages/RelatoriosEmail"));
 export const RelatoriosExecutivos = lazy(() => import("@/pages/RelatoriosExecutivos"));
 export const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
+export const CustomReports = lazy(() => import("@/pages/CustomReports"));
 export const ROIDashboard = lazy(() => import("@/pages/ROIDashboard"));
 export const ForecastPonderado = lazy(() => import("@/pages/ForecastPonderado"));
 export const PrevisaoDemanda = lazy(() => import("@/pages/PrevisaoDemanda"));
