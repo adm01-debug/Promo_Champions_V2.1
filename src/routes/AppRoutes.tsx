@@ -115,6 +115,7 @@ export function AppRoutes() {
                     <Route path="/aprovacoes" element={<ApprovalWorkflows />} />
                     <Route path="/webhooks" element={<Manager><Webhooks /></Manager>} />
                     <Route path="/audit-logs" element={<Manager><AuditLogs /></Manager>} />
+                    <Route path="/sla-tracking" element={<Manager><SLATracking /></Manager>} />
 
                     {/* ─── Analytics & BI ────────────────────────── */}
                     <Route path="/analytics" element={<Manager><Analytics /></Manager>} />
