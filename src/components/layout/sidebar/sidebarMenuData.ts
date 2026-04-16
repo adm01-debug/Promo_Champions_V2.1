@@ -159,6 +159,7 @@ export const systemItems: MenuItem[] = [
 export const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
+  { title: "Usage Analytics", url: "/usage-analytics", icon: BarChart3 },
 ];
 
 export const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
