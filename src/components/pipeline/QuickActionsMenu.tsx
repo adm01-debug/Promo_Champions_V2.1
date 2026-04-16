@@ -93,25 +93,25 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
             break;
 
           case "create_task":
-            await supabase.from("tasks").insert({
+            await supabase.from("tasks").insert([{
               title: `${action.params.title} - ${deal.client_name}`,
               priority: action.params.priority || "medium",
               task_type: action.params.task_type || "follow_up",
               sale_id: deal.id,
               salesperson_id: deal.salesperson_id,
               due_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-            });
+            }]);
             break;
 
           case "log_activity":
-            await supabase.from("activities").insert({
+            await supabase.from("activities").insert([{
               activity_type: action.params.type as "call" | "email" | "meeting",
               outcome: action.params.outcome as "successful" | "callback",
               notes: action.params.notes,
               sale_id: deal.id,
               salesperson_id: deal.salesperson_id,
               contact_name: deal.client_name,
-            });
+            }]);
             break;
         }
       }
