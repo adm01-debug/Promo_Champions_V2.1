@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase } from "lucide-react";
 import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSuccess360";
 import { formatBRL, daysUntil, renewalSemaphore, RENEWAL_STATUS_LABEL, TICKET_STATUS_LABEL, ONBOARDING_STATUS_LABEL, EXPANSION_TYPE_LABEL } from "./cs360Helpers";
+import { HelpdeskConnectorPanel } from "./HelpdeskConnectorPanel";
 
 const fadeIn = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } };
 
@@ -81,6 +82,7 @@ export function CustomerSuccess360Hub() {
           <TabsTrigger value="expansion">Expansion</TabsTrigger>
           <TabsTrigger value="surveys">CSAT/CES</TabsTrigger>
           <TabsTrigger value="qbr">QBR</TabsTrigger>
+          <TabsTrigger value="integrations">Integrações</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 mt-4">
@@ -278,6 +280,10 @@ export function CustomerSuccess360Hub() {
               ))}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="integrations" className="mt-4">
+          <HelpdeskConnectorPanel />
         </TabsContent>
       </Tabs>
     </div>
