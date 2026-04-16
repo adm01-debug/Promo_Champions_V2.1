@@ -95,8 +95,8 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
           case "create_task":
             await supabase.from("tasks").insert([{
               title: `${action.params.title} - ${deal.client_name}`,
-              priority: action.params.priority || "medium",
-              task_type: action.params.task_type || "follow_up",
+              priority: (action.params.priority || "medium") as "high" | "medium" | "low",
+              task_type: (action.params.task_type || "follow_up") as "call" | "email" | "follow_up" | "meeting" | "other" | "proposal",
               sale_id: deal.id,
               salesperson_id: deal.salesperson_id,
               due_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
@@ -106,7 +106,7 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
           case "log_activity":
             await supabase.from("activities").insert([{
               activity_type: action.params.type as "call" | "email" | "meeting",
-              outcome: action.params.outcome as "successful" | "callback",
+              outcome: (action.params.outcome || "connected") as "connected" | "callback" | "no_answer" | "not_interested" | "qualified" | "scheduled" | "voicemail" | "busy",
               notes: action.params.notes,
               sale_id: deal.id,
               salesperson_id: deal.salesperson_id,
