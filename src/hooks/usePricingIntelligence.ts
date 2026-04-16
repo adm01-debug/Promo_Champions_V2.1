@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface PricingKPIs {
   total_revenue: number;
@@ -53,23 +52,15 @@ export function usePricingIntelligence(days: 30 | 60 | 90 = 30) {
   return useQuery<PricingIntelligenceResponse>({
     queryKey: ["pricing-intelligence", days],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("pricing-intelligence", {
-        body: undefined,
-        method: "GET" as never,
-      } as never).catch(async () => {
-        // Fallback to direct fetch with query string (functions.invoke doesn't support GET query)
-        const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pricing-intelligence?days=${days}`;
-        const resp = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          },
-        });
-        if (!resp.ok) throw new Error(`Pricing intelligence failed: ${resp.status}`);
-        return { data: await resp.json(), error: null };
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pricing-intelligence?days=${days}`;
+      const resp = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
       });
-      if (error) throw error;
-      return data as PricingIntelligenceResponse;
+      if (!resp.ok) throw new Error(`Pricing intelligence failed: ${resp.status}`);
+      return (await resp.json()) as PricingIntelligenceResponse;
     },
     staleTime: 5 * 60 * 1000,
   });
