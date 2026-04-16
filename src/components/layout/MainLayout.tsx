@@ -26,6 +26,7 @@ const UpdatePrompt = lazy(() => import("@/components/pwa/UpdatePrompt").then(m =
 const OfflineIndicator = lazy(() => import("@/components/pwa/OfflineIndicator").then(m => ({ default: m.OfflineIndicator })));
 const RouteTracker = lazy(() => import("@/components/analytics/RouteTracker").then(m => ({ default: m.RouteTracker })));
 const ConsentBanner = lazy(() => import("@/components/lgpd/ConsentBanner").then(m => ({ default: m.ConsentBanner })));
+const PerformanceMonitor = lazy(() => import("@/components/admin/PerformanceMonitor").then(m => ({ default: m.PerformanceMonitor })));
 
 interface MainLayoutProps {
   children: React.ReactNode;
