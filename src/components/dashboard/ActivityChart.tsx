@@ -76,8 +76,6 @@ export const ActivityChart: FC<ActivityChartProps> = React.memo(({
     staleTime: 60_000,
   });
 
-  if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
-
   const allTypes = useMemo(() => {
     const types = new Set<string>();
     (data || []).forEach((d) => {
@@ -87,6 +85,8 @@ export const ActivityChart: FC<ActivityChartProps> = React.memo(({
     });
     return types;
   }, [data]);
+
+  if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
   return (
     <Card className="h-full">
