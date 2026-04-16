@@ -76,6 +76,7 @@ export const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
 export const HistoricalBenchmark = lazy(() => import("@/pages/HistoricalBenchmark"));
 export const ClientHealthScore = lazy(() => import("@/pages/ClientHealthScore"));
 export const InteligenciaPreditiva = lazy(() => import("@/pages/InteligenciaPreditiva"));
+export const CoachingInteligente = lazy(() => import("@/pages/CoachingInteligente"));
 
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
