@@ -50,6 +50,212 @@ export type Database = {
         }
         Relationships: []
       }
+      account_activities: {
+        Row: {
+          account_id: string
+          activity_type: string
+          contact_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          occurred_at: string
+          salesperson_id: string | null
+          title: string
+        }
+        Insert: {
+          account_id: string
+          activity_type: string
+          contact_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          occurred_at?: string
+          salesperson_id?: string | null
+          title: string
+        }
+        Update: {
+          account_id?: string
+          activity_type?: string
+          contact_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          occurred_at?: string
+          salesperson_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_activities_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_activities_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "account_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_activities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_activities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_contacts: {
+        Row: {
+          account_id: string
+          buying_role: string
+          created_at: string
+          department: string | null
+          email: string | null
+          id: string
+          influence_level: number
+          job_title: string | null
+          last_contacted_at: string | null
+          linkedin_url: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          sentiment: string
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          buying_role?: string
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          id?: string
+          influence_level?: number
+          job_title?: string | null
+          last_contacted_at?: string | null
+          linkedin_url?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          sentiment?: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          buying_role?: string
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          id?: string
+          influence_level?: number
+          job_title?: string | null
+          last_contacted_at?: string | null
+          linkedin_url?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          sentiment?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_contacts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounts: {
+        Row: {
+          account_score: number
+          annual_revenue: number | null
+          country: string | null
+          created_at: string
+          employee_count: number | null
+          health_status: string
+          id: string
+          industry: string | null
+          name: string
+          notes: string | null
+          owner_id: string | null
+          parent_account_id: string | null
+          tier: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          account_score?: number
+          annual_revenue?: number | null
+          country?: string | null
+          created_at?: string
+          employee_count?: number | null
+          health_status?: string
+          id?: string
+          industry?: string | null
+          name: string
+          notes?: string | null
+          owner_id?: string | null
+          parent_account_id?: string | null
+          tier?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          account_score?: number
+          annual_revenue?: number | null
+          country?: string | null
+          created_at?: string
+          employee_count?: number | null
+          health_status?: string
+          id?: string
+          industry?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string | null
+          parent_account_id?: string | null
+          tier?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       achievements: {
         Row: {
           achievement_date: string
@@ -7288,6 +7494,10 @@ export type Database = {
           rule_id: string
           strategy: string
         }[]
+      }
+      calculate_account_score: {
+        Args: { p_account_id: string }
+        Returns: number
       }
       calculate_daily_challenge_streak: {
         Args: { p_salesperson_id: string }
