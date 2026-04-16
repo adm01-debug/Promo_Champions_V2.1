@@ -100,4 +100,5 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
       </CardContent>
     </Card>
   );
-};
+});
+SalesChart.displayName = "SalesChart";
