@@ -33,6 +33,7 @@ import {
   // Admin
   AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
+  CustomerSuccess360Page,
 } from "./lazyPages";
 
 const PageLoadingFallback = () => (
@@ -152,6 +153,7 @@ export function AppRoutes() {
                     <Route path="/sales-enablement" element={<SalesEnablementHubPage />} />
                     <Route path="/pricing-intelligence" element={<Manager><PricingIntelligenceHubPage /></Manager>} />
                     <Route path="/territory-optimization" element={<Manager><TerritoryOptimizationHubPage /></Manager>} />
+                    <Route path="/customer-success-360" element={<Manager><CustomerSuccess360Page /></Manager>} />
 
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
