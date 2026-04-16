@@ -82,6 +82,10 @@ const Multichannel = lazy(() => import("@/pages/Multichannel"));
 const Estoque = lazy(() => import("@/pages/Estoque"));
 const NPSDashboard = lazy(() => import("@/pages/NPSDashboard"));
 const UsageAnalytics = lazy(() => import("@/pages/UsageAnalytics"));
+const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
+const Deduplication = lazy(() => import("@/pages/Deduplication"));
+const ImportExport = lazy(() => import("@/pages/ImportExport"));
+const OnboardingTracking = lazy(() => import("@/pages/OnboardingTracking"));
 
 export { PageLoadingFallback };
 
@@ -203,6 +207,16 @@ export function AppRoutes() {
                     <Route path="/usage-analytics" element={
                       <ProtectedRoute requiredRole="admin"><UsageAnalytics /></ProtectedRoute>
                     } />
+                    <Route path="/relatorios-agendados" element={
+                      <ProtectedRoute requireAdminOrManager><ScheduledReports /></ProtectedRoute>
+                    } />
+                    <Route path="/deduplicacao" element={
+                      <ProtectedRoute requireAdminOrManager><Deduplication /></ProtectedRoute>
+                    } />
+                    <Route path="/importar-exportar" element={
+                      <ProtectedRoute requireAdminOrManager><ImportExport /></ProtectedRoute>
+                    } />
+                    <Route path="/onboarding-tracking" element={<OnboardingTracking />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

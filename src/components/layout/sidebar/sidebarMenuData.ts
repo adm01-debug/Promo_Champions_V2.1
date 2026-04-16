@@ -3,7 +3,7 @@ import {
   Phone, Activity, Handshake, Target, Bot, TrendingUp, Settings, LucideIcon,
   ShieldCheck, LineChart, Building2, Sparkles, FileText, Calendar, Zap,
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
-  Briefcase, Search, Gauge, MessageSquare, Package,
+  Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -118,6 +118,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
+      { title: "Relatórios Agendados", url: "/relatorios-agendados", icon: Calendar },
     ],
   },
   {
@@ -129,6 +130,9 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Portfólio", url: "/portfolio", icon: Target },
       { title: "Estoque", url: "/estoque", icon: Package },
       { title: "NPS", url: "/nps", icon: MessageSquare },
+      { title: "Deduplicação", url: "/deduplicacao", icon: Merge },
+      { title: "Import/Export", url: "/importar-exportar", icon: Upload },
+      { title: "Onboarding", url: "/onboarding-tracking", icon: Rocket },
     ],
   },
   {
