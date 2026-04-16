@@ -128,6 +128,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Calendário", url: "/calendario", icon: Calendar },
       { title: "Portfólio", url: "/portfolio", icon: Target },
       { title: "Estoque", url: "/estoque", icon: Package },
+      { title: "NPS", url: "/nps", icon: MessageSquare },
     ],
   },
   {

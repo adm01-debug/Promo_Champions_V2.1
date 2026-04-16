@@ -22,6 +22,7 @@ const ROUTE_MODULES: Record<string, () => Promise<unknown>> = {
   '/lead-scoring': () => import('@/pages/LeadScoring'),
   '/multichannel': () => import('@/pages/Multichannel'),
   '/calendario': () => import('@/pages/Calendario'),
+  '/nps': () => import('@/pages/NPSDashboard'),
 };
 
 const prefetched = new Set<string>();
