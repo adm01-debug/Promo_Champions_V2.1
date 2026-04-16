@@ -573,6 +573,48 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          changes: Json | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          changes?: Json | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          changes?: Json | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       available_spins: {
         Row: {
           id: string
@@ -6581,6 +6623,16 @@ export type Database = {
         Returns: boolean
       }
       is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
+      log_audit_event: {
+        Args: {
+          _action: string
+          _changes?: Json
+          _entity_id?: string
+          _entity_type: string
+          _metadata?: Json
+        }
+        Returns: string
+      }
       log_rate_limit: {
         Args: {
           p_action: string
