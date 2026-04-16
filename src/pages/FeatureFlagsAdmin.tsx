@@ -1,0 +1,174 @@
+import React, { useState, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
+import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { Flag, Plus, Trash2, Settings2, Users, Percent } from "lucide-react";
+import { toast } from "sonner";
+
+const FeatureFlagsAdmin = () => {
+  const queryClient = useQueryClient();
+  const [showAdd, setShowAdd] = useState(false);
+  const [newKey, setNewKey] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+
+  const { data: flags, isLoading } = useQuery({
+    queryKey: ["feature-flags-admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("feature_flags").select("*").order("key");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
+      const { error } = await supabase.from("feature_flags").update({ is_enabled, updated_at: new Date().toISOString() }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      toast.success("Flag atualizada");
+    },
+  });
+
+  const rolloutMutation = useMutation({
+    mutationFn: async ({ id, rollout_percentage }: { id: string; rollout_percentage: number }) => {
+      const { error } = await supabase.from("feature_flags").update({ rollout_percentage, updated_at: new Date().toISOString() }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      toast.success("Rollout atualizado");
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async () => {
+      if (!newKey.trim()) throw new Error("Key obrigatória");
+      const { error } = await supabase.from("feature_flags").insert({
+        key: newKey.trim().toLowerCase().replace(/\s+/g, "_"),
+        description: newDesc || null,
+        is_enabled: false,
+        rollout_percentage: 100,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      setNewKey("");
+      setNewDesc("");
+      setShowAdd(false);
+      toast.success("Feature flag criada");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("feature_flags").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      toast.success("Feature flag removida");
+    },
+  });
+
+  return (
+    <>
+      <Helmet>
+        <title>Feature Flags | Promo Champions</title>
+        <meta name="description" content="Gerencie feature flags e rollout progressivo." />
+      </Helmet>
+      <PageTransition>
+        <div className="container max-w-4xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+          <motion.div variants={itemVariants} className="flex items-center justify-between">
+            <div>
+              <h1 className="text-page-title font-display">Feature Flags</h1>
+              <p className="text-sm text-muted-foreground mt-1">Controle de funcionalidades com rollout progressivo</p>
+            </div>
+            <Button onClick={() => setShowAdd(!showAdd)} size="sm" className="gap-2">
+              <Plus className="h-4 w-4" /> Nova Flag
+            </Button>
+          </motion.div>
+
+          {showAdd && (
+            <motion.div variants={itemVariants}>
+              <Card className="p-4 glass border-border/40 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <Input placeholder="key_da_feature" value={newKey} onChange={(e) => setNewKey(e.target.value)} />
+                  <Input placeholder="Descrição (opcional)" value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" size="sm" onClick={() => setShowAdd(false)}>Cancelar</Button>
+                  <Button size="sm" onClick={() => createMutation.mutate()}>Criar</Button>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {isLoading ? (
+            <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
+          ) : !flags?.length ? (
+            <Card className="p-8 text-center glass border-border/40">
+              <Flag className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="font-display font-semibold">Nenhuma feature flag</p>
+            </Card>
+          ) : (
+            <motion.div variants={itemVariants} className="space-y-3">
+              {flags.map((flag: any) => (
+                <Card key={flag.id} className={cn("p-4 glass border-border/40", !flag.is_enabled && "opacity-60")}>
+                  <div className="flex items-center gap-4">
+                    <div className={cn("p-2 rounded-lg", flag.is_enabled ? "bg-status-success/10" : "bg-muted")}>
+                      <Flag className={cn("h-4 w-4", flag.is_enabled ? "text-status-success" : "text-muted-foreground")} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <code className="text-sm font-mono font-semibold">{flag.key}</code>
+                        <Badge variant={flag.is_enabled ? "default" : "secondary"} className="text-[10px]">
+                          {flag.is_enabled ? "ON" : "OFF"}
+                        </Badge>
+                      </div>
+                      {flag.description && <p className="text-xs text-muted-foreground mt-0.5">{flag.description}</p>}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 min-w-[140px]">
+                        <Percent className="h-3 w-3 text-muted-foreground" />
+                        <Slider
+                          value={[flag.rollout_percentage]}
+                          onValueCommit={(v) => rolloutMutation.mutate({ id: flag.id, rollout_percentage: v[0] })}
+                          max={100}
+                          step={5}
+                          className="w-20"
+                        />
+                        <span className="text-xs font-mono w-8 text-right">{flag.rollout_percentage}%</span>
+                      </div>
+                      <Switch
+                        checked={flag.is_enabled}
+                        onCheckedChange={(checked) => toggleMutation.mutate({ id: flag.id, is_enabled: checked })}
+                      />
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(flag.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </PageTransition>
+    </>
+  );
+};
+
+export default FeatureFlagsAdmin;
