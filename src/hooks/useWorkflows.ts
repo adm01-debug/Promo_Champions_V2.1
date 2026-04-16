@@ -79,12 +79,12 @@ export const useSaveWorkflow = () => {
   return useMutation({
     mutationFn: async (wf: Partial<Workflow> & { id?: string }) => {
       const payload = {
-        name: wf.name,
-        description: wf.description,
+        name: wf.name ?? "Sem nome",
+        description: wf.description ?? null,
         trigger_type: wf.trigger_type ?? "manual",
-        trigger_config: wf.trigger_config ?? {},
-        nodes: wf.nodes ?? [],
-        edges: wf.edges ?? [],
+        trigger_config: (wf.trigger_config ?? {}) as never,
+        nodes: (wf.nodes ?? []) as never,
+        edges: (wf.edges ?? []) as never,
         is_active: wf.is_active ?? false,
       };
       if (wf.id) {
