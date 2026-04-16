@@ -18,6 +18,7 @@ const PROVIDERS: { id: Provider; label: string; secrets: string[] }[] = [
 export function HelpdeskConnectorPanel() {
   const [syncing, setSyncing] = useState<Provider | null>(null);
   const [renewalRunning, setRenewalRunning] = useState(false);
+  const [expansionRunning, setExpansionRunning] = useState(false);
 
   async function handleSync(provider: Provider) {
     setSyncing(provider);
@@ -45,6 +46,21 @@ export function HelpdeskConnectorPanel() {
       toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
     } finally {
       setRenewalRunning(false);
+    }
+  }
+
+  async function handleExpansion() {
+    setExpansionRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("expansion-detector", { body: {} });
+      if (error) throw error;
+      const d = data as { opportunities_created: number; skipped_existing: number; playbooks: number; error?: string };
+      if (d.error) throw new Error(d.error);
+      toast.success(`Expansion: ${d.playbooks} playbooks • ${d.opportunities_created} novas oportunidades • ${d.skipped_existing} já existiam`);
+    } catch (err) {
+      toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
+    } finally {
+      setExpansionRunning(false);
     }
   }
 
