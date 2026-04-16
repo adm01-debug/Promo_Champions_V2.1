@@ -6956,6 +6956,25 @@ export type Database = {
         }[]
       }
       get_auto_paused_count: { Args: { _days?: number }; Returns: number }
+      get_cadence_metrics: {
+        Args: { _cadence_id?: string; _days?: number }
+        Returns: {
+          active_count: number
+          auto_paused_count: number
+          cadence_id: string
+          cadence_name: string
+          cancelled_count: number
+          completed_count: number
+          completion_rate: number
+          conversion_rate: number
+          paused_count: number
+          reply_rate: number
+          tasks_completed: number
+          tasks_skipped: number
+          total_enrolled: number
+          total_tasks: number
+        }[]
+      }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_mfa_status: {
