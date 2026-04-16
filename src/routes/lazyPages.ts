@@ -46,6 +46,7 @@ export const AdminComissoes = lazy(() => import("@/pages/AdminComissoes"));
 export const ApprovalWorkflows = lazy(() => import("@/pages/ApprovalWorkflowsPage"));
 export const Webhooks = lazy(() => import("@/pages/WebhooksPage"));
 export const AuditLogs = lazy(() => import("@/pages/AuditLogsPage"));
+export const SLATracking = lazy(() => import("@/pages/SLATrackingPage"));
 
 // ─── Analytics & BI ─────────────────────────────────────────────────
 export const Analytics = lazy(() => import("@/pages/Analytics"));

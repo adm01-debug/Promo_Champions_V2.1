@@ -16,7 +16,7 @@ import {
   Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente,
   LeadScoring, Multichannel, EmailTracking, Automacoes,
   // Vendas & Comercial
-  Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs,
+  Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking,
   // Analytics & BI
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports,
