@@ -12,3 +12,4 @@ export { SecurityAlertSoundSettings } from './SecurityAlertSoundSettings';
 export { SoundSettings } from './SoundSettings';
 export { SoundSettingsTabs } from './SoundSettingsTabs';
 export { ThemeCustomizer } from './ThemeCustomizer';
+export { FeatureFlagsAdmin } from './FeatureFlagsAdmin';
