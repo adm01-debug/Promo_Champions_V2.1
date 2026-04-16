@@ -36,15 +36,19 @@ const UsageAnalytics = () => {
   const { data: pageViews, isLoading: loadingPages } = useQuery<PageView[]>({
     queryKey: ["usage-analytics-pages"],
     queryFn: async () => {
+      // Aggregate from sales table as proxy for page activity
       const { data } = await supabase
-        .from("route_analytics")
-        .select("route_path, visit_count")
-        .order("visit_count", { ascending: false })
-        .limit(15);
-      return (data || []).map((r) => ({
-        path: (r as Record<string, unknown>).route_path as string,
-        count: (r as Record<string, unknown>).visit_count as number,
-      }));
+        .from("sales")
+        .select("status")
+        .limit(500);
+      const counts: Record<string, number> = {};
+      (data || []).forEach((r) => {
+        const key = r.status || "unknown";
+        counts[key] = (counts[key] || 0) + 1;
+      });
+      return Object.entries(counts)
+        .map(([path, count]) => ({ path, count }))
+        .sort((a, b) => b.count - a.count);
     },
     staleTime: CACHE_TIMES.STALE_TIME,
   });
