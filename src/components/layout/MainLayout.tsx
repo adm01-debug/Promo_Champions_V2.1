@@ -135,6 +135,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Suspense fallback={null}>
           <ConsentBanner />
         </Suspense>
+        
+        <Suspense fallback={null}>
+          <PerformanceMonitor />
+        </Suspense>
       </div>
     </SidebarProvider>
   );
