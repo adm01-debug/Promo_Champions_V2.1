@@ -21,7 +21,7 @@ import {
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
@@ -108,6 +108,7 @@ export function AppRoutes() {
                     <Route path="/abm" element={<AccountBasedSelling />} />
                     <Route path="/workflow-builder" element={<Manager><AutomationBuilder /></Manager>} />
                     <Route path="/automacao-inteligente" element={<Manager><AutomacaoInteligente /></Manager>} />
+                    <Route path="/coaching-inteligente" element={<Manager><CoachingInteligente /></Manager>} />
 
                     {/* ─── Vendas & Comercial ────────────────────── */}
                     <Route path="/orcamentos" element={<Orcamentos />} />

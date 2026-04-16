@@ -165,6 +165,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
     items: [
       { title: "Times", url: "/times", icon: Building2 },
       { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
+      { title: "Coaching Inteligente", url: "/coaching-inteligente", icon: Brain },
       { title: "Automação Inteligente", url: "/automacao-inteligente", icon: Sparkles },
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Workflow Builder", url: "/workflow-builder", icon: Workflow },
