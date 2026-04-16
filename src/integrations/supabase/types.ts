@@ -821,6 +821,98 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_runs: {
+        Row: {
+          actions_executed: Json | null
+          completed_at: string | null
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          started_at: string
+          status: string
+          trigger_payload: Json | null
+          workflow_id: string
+        }
+        Insert: {
+          actions_executed?: Json | null
+          completed_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+          trigger_payload?: Json | null
+          workflow_id: string
+        }
+        Update: {
+          actions_executed?: Json | null
+          completed_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+          trigger_payload?: Json | null
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_runs_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "automation_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_workflows: {
+        Row: {
+          actions: Json
+          conditions: Json
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          name: string
+          run_count: number
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name: string
+          run_count?: number
+          trigger_config?: Json
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name?: string
+          run_count?: number
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       available_spins: {
         Row: {
           id: string
@@ -7708,6 +7800,10 @@ export type Database = {
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      toggle_workflow_active: {
+        Args: { p_active: boolean; p_workflow_id: string }
+        Returns: boolean
+      }
       update_own_profile: {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
