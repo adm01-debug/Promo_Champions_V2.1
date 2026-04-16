@@ -46,7 +46,7 @@ const MACROS: MacroConfig[] = [
     icon: Send,
     actions: [
       { type: "change_stage", params: { stage: "proposal" } },
-      { type: "log_activity", params: { type: "email", outcome: "successful", notes: "Proposta enviada" } },
+      { type: "log_activity", params: { type: "email", outcome: "connected", notes: "Proposta enviada" } },
     ],
   },
   {
@@ -67,7 +67,7 @@ const MACROS: MacroConfig[] = [
     color: "text-green-500",
     actions: [
       { type: "change_stage", params: { stage: "closed" } },
-      { type: "log_activity", params: { type: "meeting", outcome: "successful", notes: "Deal fechado com sucesso!" } },
+      { type: "log_activity", params: { type: "meeting", outcome: "connected", notes: "Deal fechado com sucesso!" } },
     ],
   },
 ];
