@@ -1,4 +1,4 @@
 
-## Verificação de Implementação — Dashboards
+## Verificação — Pipeline de Vendas
 
-Vou auditar cada item da lista contra o código real (rotas, componentes, hooks e tabelas) antes de responder.
+Vou auditar cada item contra o código (componentes, hooks, edge functions e tabelas) antes de responder com confirmação detalhada.
