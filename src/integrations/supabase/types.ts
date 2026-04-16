@@ -2944,6 +2944,86 @@ export type Database = {
         }
         Relationships: []
       }
+      pipeline_stages: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          is_final: boolean
+          label: string
+          name: string
+          pipeline_id: string
+          probability: number
+          stage_order: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          is_final?: boolean
+          label: string
+          name: string
+          pipeline_id: string
+          probability?: number
+          stage_order?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          is_final?: boolean
+          label?: string
+          name?: string
+          pipeline_id?: string
+          probability?: number
+          stage_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_stages_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipelines: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       playbook_items: {
         Row: {
           content: string
@@ -3842,6 +3922,7 @@ export type Database = {
           client_name: string
           created_at: string
           id: string
+          pipeline_id: string | null
           product_name: string
           salesperson_id: string | null
           source: string | null
@@ -3854,6 +3935,7 @@ export type Database = {
           client_name: string
           created_at?: string
           id?: string
+          pipeline_id?: string | null
           product_name: string
           salesperson_id?: string | null
           source?: string | null
@@ -3866,6 +3948,7 @@ export type Database = {
           client_name?: string
           created_at?: string
           id?: string
+          pipeline_id?: string | null
           product_name?: string
           salesperson_id?: string | null
           source?: string | null
@@ -3873,6 +3956,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_salesperson_id_fkey"
             columns: ["salesperson_id"]
