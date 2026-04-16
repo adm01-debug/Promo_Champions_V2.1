@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plug, RefreshCw, Calendar, Sparkles } from "lucide-react";
+import { Loader2, Plug, RefreshCw, Calendar, Sparkles, Rocket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -19,6 +19,7 @@ export function HelpdeskConnectorPanel() {
   const [syncing, setSyncing] = useState<Provider | null>(null);
   const [renewalRunning, setRenewalRunning] = useState(false);
   const [expansionRunning, setExpansionRunning] = useState(false);
+  const [onboardingRunning, setOnboardingRunning] = useState(false);
 
   async function handleSync(provider: Provider) {
     setSyncing(provider);
@@ -46,6 +47,20 @@ export function HelpdeskConnectorPanel() {
       toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
     } finally {
       setRenewalRunning(false);
+    }
+  }
+
+  async function handleOnboardingAuto() {
+    setOnboardingRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("onboarding-launcher", { body: { action: "auto_launch_new_accounts" } });
+      if (error) throw error;
+      const d = data as { accounts_evaluated: number; journeys_launched: number };
+      toast.success(`Onboarding: ${d.accounts_evaluated} contas avaliadas • ${d.journeys_launched} jornadas iniciadas`);
+    } catch (err) {
+      toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
+    } finally {
+      setOnboardingRunning(false);
     }
   }
 
@@ -121,6 +136,24 @@ export function HelpdeskConnectorPanel() {
           </Button>
           <p className="text-xs text-muted-foreground">
             Usa <code className="text-xs">trigger_type</code> (tier, health_score, usage_threshold) para casar contas a playbooks.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base"><Rocket className="h-4 w-4" />Onboarding Automático</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Cria jornadas de onboarding (standard / enterprise) para contas novas dos últimos 7 dias sem journey ativa.
+          </p>
+          <Button onClick={handleOnboardingAuto} disabled={onboardingRunning} className="w-full">
+            {onboardingRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+            <span className="ml-2">Lançar jornadas</span>
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Templates: <code className="text-xs">standard</code> (6 etapas), <code className="text-xs">enterprise</code> (7 etapas), <code className="text-xs">selfserve</code> (4 etapas).
           </p>
         </CardContent>
       </Card>
