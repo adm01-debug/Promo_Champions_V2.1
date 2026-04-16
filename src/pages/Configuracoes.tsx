@@ -178,6 +178,10 @@ export default function Configuracoes() {
             <TabsContent value="circuits" className="mt-6">
               <CircuitBreakerDashboard />
             </TabsContent>
+
+            <TabsContent value="feature-flags" className="mt-6">
+              <FeatureFlagsAdmin />
+            </TabsContent>
           </>
         )}
       </Tabs>
