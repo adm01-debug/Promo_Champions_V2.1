@@ -94,6 +94,10 @@ const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
 const PriceEvolution = lazy(() => import("@/pages/PriceEvolution"));
 const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
 const CompetitiveSeasonsAdmin = lazy(() => import("@/pages/CompetitiveSeasonsAdmin"));
+const InactivityTriggers = lazy(() => import("@/pages/InactivityTriggers"));
+const HistoricalBenchmark = lazy(() => import("@/pages/HistoricalBenchmark"));
+const TeamActivityFeed = lazy(() => import("@/pages/TeamActivityFeed"));
+const ClientHealthScore = lazy(() => import("@/pages/ClientHealthScore"));
 
 export { PageLoadingFallback };
 
@@ -241,6 +245,12 @@ export function AppRoutes() {
                     <Route path="/temporadas" element={
                       <ProtectedRoute requireAdminOrManager><CompetitiveSeasonsAdmin /></ProtectedRoute>
                     } />
+                    <Route path="/gatilhos-inatividade" element={
+                      <ProtectedRoute requireAdminOrManager><InactivityTriggers /></ProtectedRoute>
+                    } />
+                    <Route path="/benchmarking" element={<HistoricalBenchmark />} />
+                    <Route path="/feed-equipe" element={<TeamActivityFeed />} />
+                    <Route path="/health-score" element={<ClientHealthScore />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

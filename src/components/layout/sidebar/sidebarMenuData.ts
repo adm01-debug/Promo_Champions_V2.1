@@ -5,6 +5,7 @@ import {
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
   Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
+  Timer, HeartPulse, Rss,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -121,6 +122,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Top Produtos", url: "/top-produtos", icon: Crown },
       { title: "Métricas Categoria", url: "/metricas-categoria", icon: PieChart },
       { title: "Evolução Preços", url: "/evolucao-precos", icon: ArrowUpDown },
+      { title: "Benchmarking", url: "/benchmarking", icon: BarChart3 },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
       { title: "Relatórios Agendados", url: "/relatorios-agendados", icon: Calendar },
@@ -138,6 +140,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Deduplicação", url: "/deduplicacao", icon: Merge },
       { title: "Import/Export", url: "/importar-exportar", icon: Upload },
       { title: "Onboarding", url: "/onboarding-tracking", icon: Rocket },
+      { title: "Health Score", url: "/health-score", icon: HeartPulse },
     ],
   },
   {
@@ -155,6 +158,8 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+      { title: "Feed Equipe", url: "/feed-equipe", icon: Rss },
+      { title: "Inatividade", url: "/gatilhos-inatividade", icon: Timer },
     ],
   },
   {
