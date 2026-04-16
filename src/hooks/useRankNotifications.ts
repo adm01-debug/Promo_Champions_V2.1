@@ -27,11 +27,13 @@ export function useRankNotifications(salespersonId?: string) {
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (data || []).map((n: any) => ({
-        ...n,
-        overtaker_name: n.overtaker?.name || 'Alguém',
-      }));
+      return (data || []).map((n) => {
+        const overtaker = n.overtaker as unknown as Record<string, string> | null;
+        return {
+          ...n,
+          overtaker_name: overtaker?.name || 'Alguém',
+        };
+      });
     },
     enabled: !!salespersonId,
   });
