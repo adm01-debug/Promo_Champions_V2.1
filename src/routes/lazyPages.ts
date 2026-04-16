@@ -36,6 +36,7 @@ export const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
 export const Automacoes = lazy(() => import("@/pages/Automacoes"));
 export const ConversationalIntelligence = lazy(() => import("@/pages/ConversationalIntelligence"));
 export const RevenueIntelligence = lazy(() => import("@/pages/RevenueIntelligence"));
+export const AccountBasedSelling = lazy(() => import("@/pages/AccountBasedSelling"));
 
 // ─── Vendas & Comercial ─────────────────────────────────────────────
 export const Orcamentos = lazy(() => import("@/pages/Orcamentos"));
