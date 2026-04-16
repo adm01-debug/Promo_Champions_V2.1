@@ -781,6 +781,111 @@ export type Database = {
         }
         Relationships: []
       }
+      cadence_ab_assignments: {
+        Row: {
+          ab_test_id: string
+          assigned_at: string
+          id: string
+          prospect_cadence_id: string
+          variant: string
+        }
+        Insert: {
+          ab_test_id: string
+          assigned_at?: string
+          id?: string
+          prospect_cadence_id: string
+          variant: string
+        }
+        Update: {
+          ab_test_id?: string
+          assigned_at?: string
+          id?: string
+          prospect_cadence_id?: string
+          variant?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_ab_assignments_ab_test_id_fkey"
+            columns: ["ab_test_id"]
+            isOneToOne: false
+            referencedRelation: "cadence_ab_tests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cadence_ab_assignments_prospect_cadence_id_fkey"
+            columns: ["prospect_cadence_id"]
+            isOneToOne: false
+            referencedRelation: "prospect_cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cadence_ab_tests: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          ended_at: string | null
+          hypothesis: string | null
+          id: string
+          name: string
+          started_at: string | null
+          status: string
+          traffic_split: number
+          updated_at: string
+          variant_a_id: string
+          variant_b_id: string
+          winner_variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ended_at?: string | null
+          hypothesis?: string | null
+          id?: string
+          name: string
+          started_at?: string | null
+          status?: string
+          traffic_split?: number
+          updated_at?: string
+          variant_a_id: string
+          variant_b_id: string
+          winner_variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ended_at?: string | null
+          hypothesis?: string | null
+          id?: string
+          name?: string
+          started_at?: string | null
+          status?: string
+          traffic_split?: number
+          updated_at?: string
+          variant_a_id?: string
+          variant_b_id?: string
+          winner_variant?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_ab_tests_variant_a_id_fkey"
+            columns: ["variant_a_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cadence_ab_tests_variant_b_id_fkey"
+            columns: ["variant_b_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_enrollment_rules: {
         Row: {
           cadence_id: string
@@ -3110,6 +3215,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           name: string
+          pipeline_stage: string | null
           salesperson_id: string
           subject: string | null
           updated_at: string
@@ -3124,6 +3230,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           name: string
+          pipeline_stage?: string | null
           salesperson_id: string
           subject?: string | null
           updated_at?: string
@@ -3138,6 +3245,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           name?: string
+          pipeline_stage?: string | null
           salesperson_id?: string
           subject?: string | null
           updated_at?: string
@@ -6893,6 +7001,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      assign_cadence_variant: { Args: { _ab_test_id: string }; Returns: string }
       auto_assign_lead: {
         Args: { _sale_id: string }
         Returns: {
@@ -6945,6 +7054,19 @@ export type Database = {
         Returns: string
       }
       generate_mfa_backup_codes: { Args: never; Returns: string[] }
+      get_ab_test_results: {
+        Args: { _ab_test_id: string }
+        Returns: {
+          cadence_name: string
+          completed: number
+          conversion_rate: number
+          converted: number
+          enrolled: number
+          replied: number
+          reply_rate: number
+          variant: string
+        }[]
+      }
       get_active_salespeople: {
         Args: never
         Returns: {

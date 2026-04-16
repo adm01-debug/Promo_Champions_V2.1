@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, Linkedin, MessageCircle, Users } from "lucide-react";
 import { CadenceStep, ActionType } from "@/hooks/cadences/useCadenceQueries";
+import { MergeTagPicker } from "./MergeTagPicker";
 
 const ACTION_TYPES: { value: ActionType; label: string; icon: typeof Phone }[] = [
   { value: "email", label: "E-mail", icon: Mail },
@@ -61,6 +62,22 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({ step, onSave,
         <div className="space-y-1">
           <Label className="text-xs">Descrição</Label>
           <Textarea defaultValue={step.description || ""} onChange={(e) => setEditData(d => ({ ...d, description: e.target.value }))} className="min-h-[50px] text-sm resize-none bg-background/50" />
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs">Template da mensagem</Label>
+            <MergeTagPicker
+              preview={editData.template_content ?? step.template_content ?? ""}
+              onInsert={(token) => setEditData(d => ({ ...d, template_content: (d.template_content ?? step.template_content ?? "") + token }))}
+            />
+          </div>
+          <Textarea
+            value={editData.template_content ?? step.template_content ?? ""}
+            onChange={(e) => setEditData(d => ({ ...d, template_content: e.target.value }))}
+            placeholder="Olá {{cliente.nome}}, sou {{vendedor.nome}}..."
+            className="min-h-[80px] text-sm resize-none bg-background/50 font-mono text-xs"
+          />
+          <p className="text-[10px] text-muted-foreground">Use variáveis como {`{{cliente.nome}}`}, {`{{negocio.valor}}`}</p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="glow" className="h-7 text-xs gap-1 flex-1" onClick={handleSave} disabled={isSaving}><Save className="h-3 w-3" /> Salvar</Button>
