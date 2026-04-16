@@ -65,7 +65,7 @@ export function HelpdeskConnectorPanel() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid gap-4 md:grid-cols-2">
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base"><Plug className="h-4 w-4" />Conectores de Helpdesk</CardTitle>
