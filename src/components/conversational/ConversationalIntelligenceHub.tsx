@@ -1,0 +1,237 @@
+import { useState, useMemo } from "react";
+import { useConversationalIntelligence } from "@/hooks/useConversationalIntelligence";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import { Headphones, Search, Mic, MessageSquare, TrendingUp, Clock, AlertTriangle, Sparkles } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+const sentimentColor = (label: string | null) => {
+  if (label === "positive") return "bg-emerald-500/10 text-emerald-600 border-emerald-500/30";
+  if (label === "negative") return "bg-destructive/10 text-destructive border-destructive/30";
+  return "bg-muted text-muted-foreground";
+};
+
+export const ConversationalIntelligenceHub = () => {
+  const [horizon, setHorizon] = useState(30);
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useConversationalIntelligence(horizon);
+
+  const filteredRecordings = useMemo(() => {
+    if (!data) return [];
+    return data.recordings.filter(
+      (r) =>
+        !search ||
+        r.title.toLowerCase().includes(search.toLowerCase()) ||
+        r.summary?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [data, search]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-page-title font-bold flex items-center gap-2">
+            <Headphones className="size-7 text-primary" />
+            Conversational Intelligence
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Insights de IA sobre suas chamadas: sentimento, talk ratio, objeções e próximos passos
+          </p>
+        </div>
+        <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(Number(v))}>
+          <TabsList>
+            <TabsTrigger value="7">7 dias</TabsTrigger>
+            <TabsTrigger value="30">30 dias</TabsTrigger>
+            <TabsTrigger value="90">90 dias</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-lg" />
+          ))}
+        </div>
+      ) : data ? (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <KPICard icon={Mic} label="Chamadas" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% analisadas pela IA`} />
+            <KPICard icon={Clock} label="Tempo total" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} />
+            <KPICard icon={TrendingUp} label="Sentimento médio" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala -1 a +1" />
+            <KPICard icon={MessageSquare} label="Talk ratio (vendedor)" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} perguntas / call`} />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Sparkles className="size-4 text-primary" />
+                  Distribuição de sentimento
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {(["positive", "neutral", "negative"] as const).map((k) => {
+                  const v = data.sentiment_distribution[k];
+                  const total =
+                    data.sentiment_distribution.positive +
+                    data.sentiment_distribution.neutral +
+                    data.sentiment_distribution.negative;
+                  const pct = total > 0 ? Math.round((v / total) * 100) : 0;
+                  return (
+                    <div key={k}>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="capitalize">{k === "positive" ? "Positivo" : k === "negative" ? "Negativo" : "Neutro"}</span>
+                        <span className="text-muted-foreground">{v} ({pct}%)</span>
+                      </div>
+                      <Progress value={pct} className="h-2" />
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <AlertTriangle className="size-4 text-amber-500" />
+                  Top objeções
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.top_objections.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhuma objeção registrada.</p>
+                ) : (
+                  data.top_objections.map((o) => (
+                    <div key={o.label} className="flex justify-between items-center text-sm">
+                      <span className="truncate">{o.label}</span>
+                      <Badge variant="secondary">{o.count}</Badge>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Top tópicos</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.top_topics.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhum tópico identificado.</p>
+                ) : (
+                  data.top_topics.map((t) => (
+                    <div key={t.label} className="flex justify-between items-center text-sm">
+                      <span className="truncate">{t.label}</span>
+                      <Badge variant="outline">{t.count}</Badge>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <CardTitle>Biblioteca de chamadas</CardTitle>
+                  <CardDescription>Pesquise por título ou resumo gerado por IA</CardDescription>
+                </div>
+                <div className="relative w-full sm:w-72">
+                  <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar chamadas..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {filteredRecordings.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Headphones className="size-12 mx-auto mb-3 opacity-50" />
+                  <p>Nenhuma chamada encontrada no período.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredRecordings.map((r) => (
+                    <div key={r.id} className="border border-border rounded-lg p-4 hover:bg-muted/40 transition-colors">
+                      <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-semibold truncate">{r.title}</h3>
+                            {r.sentiment_label && (
+                              <Badge variant="outline" className={sentimentColor(r.sentiment_label)}>
+                                {r.sentiment_label}
+                              </Badge>
+                            )}
+                            {!r.has_insights && (
+                              <Badge variant="outline" className="text-xs">Sem análise IA</Badge>
+                            )}
+                          </div>
+                          {r.summary && (
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{r.summary}</p>
+                          )}
+                          <div className="flex gap-4 mt-2 text-xs text-muted-foreground flex-wrap">
+                            <span>{format(new Date(r.recorded_at), "dd MMM yyyy 'às' HH:mm", { locale: ptBR })}</span>
+                            <span>{Math.round(r.duration_seconds / 60)}min</span>
+                            {r.questions_asked != null && <span>{r.questions_asked} perguntas</span>}
+                            {r.objections_count > 0 && <span className="text-amber-600">{r.objections_count} objeções</span>}
+                            {r.next_steps_count > 0 && <span className="text-emerald-600">{r.next_steps_count} próximos passos</span>}
+                          </div>
+                        </div>
+                        {r.talk_ratio_salesperson != null && (
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground">Talk ratio</p>
+                            <p className="text-sm font-semibold">
+                              {Math.round(r.talk_ratio_salesperson * 100)}% / {Math.round((r.talk_ratio_client ?? 0) * 100)}%
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
+    </div>
+  );
+};
+
+const KPICard = ({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string | number;
+  hint?: string;
+}) => (
+  <Card>
+    <CardContent className="pt-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
+          <p className="text-2xl font-bold mt-1">{value}</p>
+          {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
+        </div>
+        <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+          <Icon className="size-5" />
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
