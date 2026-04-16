@@ -91,6 +91,9 @@ const VictoryFeedPage = lazy(() => import("@/pages/VictoryFeedPage"));
 const FeatureFlagsAdmin = lazy(() => import("@/pages/FeatureFlagsAdmin"));
 const SecurityDashboard = lazy(() => import("@/pages/SecurityDashboard"));
 const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
+const PriceEvolution = lazy(() => import("@/pages/PriceEvolution"));
+const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
+const CompetitiveSeasonsAdmin = lazy(() => import("@/pages/CompetitiveSeasonsAdmin"));
 
 export { PageLoadingFallback };
 
@@ -231,6 +234,13 @@ export function AppRoutes() {
                       <ProtectedRoute requiredRole="admin"><SecurityDashboard /></ProtectedRoute>
                     } />
                     <Route path="/top-produtos" element={<TopProductsRanking />} />
+                    <Route path="/evolucao-precos" element={
+                      <ProtectedRoute requireAdminOrManager><PriceEvolution /></ProtectedRoute>
+                    } />
+                    <Route path="/metricas-categoria" element={<CategoryMetrics />} />
+                    <Route path="/temporadas" element={
+                      <ProtectedRoute requireAdminOrManager><CompetitiveSeasonsAdmin /></ProtectedRoute>
+                    } />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
