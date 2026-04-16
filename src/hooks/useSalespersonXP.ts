@@ -182,8 +182,7 @@ export function useAddXP() {
       salespersonName?: string;
     }) => {
       // Get or create XP record
-      // eslint-disable-next-line prefer-const
-      let { data: xpRecord, error: fetchError } = await supabase
+      const { data: xpRecord, error: fetchError } = await supabase
         .from("salesperson_xp")
         .select("*")
         .eq("salesperson_id", salespersonId)

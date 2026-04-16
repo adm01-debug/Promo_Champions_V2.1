@@ -40,8 +40,7 @@ export async function triggerConfetti(saleAmount: number) {
 export async function awardSaleXP(
   salespersonId: string, xpAmount: number, saleId: string, saleAmount: number, salespersonName: string
 ): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
-  // eslint-disable-next-line prefer-const
-  let { data: xpRecord } = await supabase
+  const { data: xpRecord } = await supabase
     .from("salesperson_xp").select("*").eq("salesperson_id", salespersonId).maybeSingle();
 
   const previousLevel = xpRecord?.current_level || 1;
