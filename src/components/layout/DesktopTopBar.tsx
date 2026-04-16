@@ -39,6 +39,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/notificacoes': 'Notificações',
   '/assistente': 'Assistente IA',
   '/admin': 'Admin',
+  '/customer-success': 'Customer Success',
 };
 
 interface DesktopTopBarProps {
