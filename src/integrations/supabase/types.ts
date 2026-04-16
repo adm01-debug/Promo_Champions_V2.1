@@ -6860,8 +6860,23 @@ export type Database = {
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
+      search_products_semantic: {
+        Args: { _keywords: string[]; _limit?: number; _query?: string }
+        Returns: {
+          category: string
+          id: string
+          name: string
+          price: number
+          rating: number
+          sales_count: number
+          similarity_score: number
+          status: string
+        }[]
+      }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       update_own_profile: {
         Args: { p_avatar_url?: string; p_name?: string }
         Returns: undefined
