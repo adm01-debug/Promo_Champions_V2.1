@@ -48,6 +48,7 @@ export const usePermissions = () => {
         permissions: perms,
       };
     },
+    ...CONFIG_QUERY_OPTIONS,
   });
 
   const hasPermission = (permission: Permission): boolean => {
