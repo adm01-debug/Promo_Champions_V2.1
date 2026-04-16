@@ -32,6 +32,7 @@ import {
   Assistente, Notificacoes, Configuracoes, SmartSearch,
   // Admin
   AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard,
+  CustomerSuccessHubPage,
 } from "./lazyPages";
 
 const PageLoadingFallback = () => (
@@ -145,6 +146,7 @@ export function AppRoutes() {
                     <Route path="/metricas-categoria" element={<CategoryMetrics />} />
                     <Route path="/benchmarking" element={<HistoricalBenchmark />} />
                     <Route path="/health-score" element={<ClientHealthScore />} />
+                    <Route path="/customer-success" element={<Manager><CustomerSuccessHubPage /></Manager>} />
 
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />

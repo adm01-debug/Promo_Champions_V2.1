@@ -150,6 +150,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Import/Export", url: "/importar-exportar", icon: Upload },
       { title: "Onboarding", url: "/onboarding-tracking", icon: Rocket },
       { title: "Health Score", url: "/health-score", icon: HeartPulse },
+      { title: "Customer Success", url: "/customer-success", icon: HeartPulse },
     ],
   },
   {

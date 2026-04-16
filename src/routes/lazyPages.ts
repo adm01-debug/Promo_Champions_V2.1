@@ -112,3 +112,4 @@ export const AdminTelemetria = lazy(() => import("@/pages/AdminTelemetria"));
 export const UsageAnalytics = lazy(() => import("@/pages/UsageAnalytics"));
 export const FeatureFlagsAdmin = lazy(() => import("@/pages/FeatureFlagsAdmin"));
 export const SecurityDashboard = lazy(() => import("@/pages/SecurityDashboard"));
+export const CustomerSuccessHubPage = lazy(() => import("@/pages/CustomerSuccessHub"));
