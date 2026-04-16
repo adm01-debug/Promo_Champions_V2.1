@@ -5,7 +5,7 @@ import {
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
   Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
-  Timer, HeartPulse, Rss, Wallet, CalendarClock,
+  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -187,6 +187,7 @@ export const adminOnlyItems: MenuItem[] = [
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Usage Analytics", url: "/usage-analytics", icon: BarChart3 },
   { title: "Feature Flags", url: "/feature-flags", icon: Flag },
+  { title: "Webhooks", url: "/webhooks", icon: Webhook },
   { title: "Segurança", url: "/seguranca", icon: Shield },
 ];
 
