@@ -2348,6 +2348,53 @@ export type Database = {
         }
         Relationships: []
       }
+      csat_ces_surveys: {
+        Row: {
+          account_id: string | null
+          comment: string | null
+          contact_email: string | null
+          id: string
+          metadata: Json
+          responded_at: string | null
+          score: number | null
+          sent_at: string
+          survey_type: Database["public"]["Enums"]["cs_survey_type"]
+          trigger_event: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          comment?: string | null
+          contact_email?: string | null
+          id?: string
+          metadata?: Json
+          responded_at?: string | null
+          score?: number | null
+          sent_at?: string
+          survey_type?: Database["public"]["Enums"]["cs_survey_type"]
+          trigger_event?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          comment?: string | null
+          contact_email?: string | null
+          id?: string
+          metadata?: Json
+          responded_at?: string | null
+          score?: number | null
+          sent_at?: string
+          survey_type?: Database["public"]["Enums"]["cs_survey_type"]
+          trigger_event?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "csat_ces_surveys_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_challenge_progress: {
         Row: {
           challenge_id: string
@@ -3072,6 +3119,116 @@ export type Database = {
           url?: string | null
           user_agent?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      expansion_opportunities: {
+        Row: {
+          account_id: string
+          confidence_score: number
+          created_at: string
+          estimated_value: number
+          id: string
+          notes: string | null
+          owner_salesperson_id: string | null
+          playbook_id: string | null
+          status: Database["public"]["Enums"]["expansion_opp_status"]
+          type: Database["public"]["Enums"]["expansion_type"]
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          confidence_score?: number
+          created_at?: string
+          estimated_value?: number
+          id?: string
+          notes?: string | null
+          owner_salesperson_id?: string | null
+          playbook_id?: string | null
+          status?: Database["public"]["Enums"]["expansion_opp_status"]
+          type?: Database["public"]["Enums"]["expansion_type"]
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          confidence_score?: number
+          created_at?: string
+          estimated_value?: number
+          id?: string
+          notes?: string | null
+          owner_salesperson_id?: string | null
+          playbook_id?: string | null
+          status?: Database["public"]["Enums"]["expansion_opp_status"]
+          type?: Database["public"]["Enums"]["expansion_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expansion_opportunities_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expansion_opportunities_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expansion_opportunities_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expansion_opportunities_playbook_id_fkey"
+            columns: ["playbook_id"]
+            isOneToOne: false
+            referencedRelation: "expansion_playbooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expansion_playbooks: {
+        Row: {
+          created_at: string
+          description: string | null
+          expansion_type: Database["public"]["Enums"]["expansion_type"]
+          id: string
+          is_active: boolean
+          name: string
+          recommended_action: string | null
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expansion_type?: Database["public"]["Enums"]["expansion_type"]
+          id?: string
+          is_active?: boolean
+          name: string
+          recommended_action?: string | null
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expansion_type?: Database["public"]["Enums"]["expansion_type"]
+          id?: string
+          is_active?: boolean
+          name?: string
+          recommended_action?: string | null
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -4232,6 +4389,114 @@ export type Database = {
           },
         ]
       }
+      onboarding_journeys: {
+        Row: {
+          account_id: string
+          completed_at: string | null
+          created_at: string
+          current_step: number
+          id: string
+          owner_salesperson_id: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["onboarding_status"]
+          template_key: string
+          total_steps: number
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          owner_salesperson_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["onboarding_status"]
+          template_key?: string
+          total_steps?: number
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          owner_salesperson_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["onboarding_status"]
+          template_key?: string
+          total_steps?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_journeys_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_journeys_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_journeys_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_steps: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          journey_id: string
+          order_index: number
+          status: string
+          title: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          journey_id: string
+          order_index?: number
+          status?: string
+          title: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          journey_id?: string
+          order_index?: number
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_steps_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_analytics: {
         Row: {
           created_at: string
@@ -4850,6 +5115,85 @@ export type Database = {
           },
         ]
       }
+      product_usage_events: {
+        Row: {
+          account_id: string
+          event_type: string
+          feature_key: string
+          id: string
+          metadata: Json
+          occurred_at: string
+          user_email: string | null
+        }
+        Insert: {
+          account_id: string
+          event_type?: string
+          feature_key: string
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          user_email?: string | null
+        }
+        Update: {
+          account_id?: string
+          event_type?: string
+          feature_key?: string
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          user_email?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_usage_events_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_usage_summary: {
+        Row: {
+          account_id: string
+          adoption_score: number
+          computed_at: string
+          dau: number
+          last_login_at: string | null
+          mau: number
+          top_features: Json
+          wau: number
+        }
+        Insert: {
+          account_id: string
+          adoption_score?: number
+          computed_at?: string
+          dau?: number
+          last_login_at?: string | null
+          mau?: number
+          top_features?: Json
+          wau?: number
+        }
+        Update: {
+          account_id?: string
+          adoption_score?: number
+          computed_at?: string
+          dau?: number
+          last_login_at?: string | null
+          mau?: number
+          top_features?: Json
+          wau?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_usage_summary_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string
@@ -5111,6 +5455,67 @@ export type Database = {
           {
             foreignKeyName: "qbr_reports_salesperson_id_fkey"
             columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qbr_schedule: {
+        Row: {
+          account_id: string
+          auto_generate: boolean
+          created_at: string
+          frequency: Database["public"]["Enums"]["qbr_frequency"]
+          id: string
+          is_active: boolean
+          last_qbr_at: string | null
+          next_qbr_at: string | null
+          owner_salesperson_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          auto_generate?: boolean
+          created_at?: string
+          frequency?: Database["public"]["Enums"]["qbr_frequency"]
+          id?: string
+          is_active?: boolean
+          last_qbr_at?: string | null
+          next_qbr_at?: string | null
+          owner_salesperson_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          auto_generate?: boolean
+          created_at?: string
+          frequency?: Database["public"]["Enums"]["qbr_frequency"]
+          id?: string
+          is_active?: boolean
+          last_qbr_at?: string | null
+          next_qbr_at?: string | null
+          owner_salesperson_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qbr_schedule_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qbr_schedule_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qbr_schedule_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
             referencedColumns: ["id"]
@@ -5488,6 +5893,73 @@ export type Database = {
           verified_at?: string | null
         }
         Relationships: []
+      }
+      renewals: {
+        Row: {
+          account_id: string
+          auto_renew: boolean
+          contract_value: number
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          notice_period_days: number
+          owner_salesperson_id: string | null
+          renewal_date: string
+          status: Database["public"]["Enums"]["renewal_status"]
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          auto_renew?: boolean
+          contract_value?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          notice_period_days?: number
+          owner_salesperson_id?: string | null
+          renewal_date: string
+          status?: Database["public"]["Enums"]["renewal_status"]
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          auto_renew?: boolean
+          contract_value?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          notice_period_days?: number
+          owner_salesperson_id?: string | null
+          renewal_date?: string
+          status?: Database["public"]["Enums"]["renewal_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "renewals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "renewals_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "renewals_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       role_permissions: {
         Row: {
@@ -6754,6 +7226,71 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          account_id: string
+          assignee_email: string | null
+          created_at: string
+          description: string | null
+          external_id: string | null
+          id: string
+          metadata: Json
+          priority: Database["public"]["Enums"]["support_ticket_priority"]
+          requester_email: string | null
+          resolved_at: string | null
+          sentiment: string | null
+          source: string
+          status: Database["public"]["Enums"]["support_ticket_status"]
+          subject: string
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          assignee_email?: string | null
+          created_at?: string
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json
+          priority?: Database["public"]["Enums"]["support_ticket_priority"]
+          requester_email?: string | null
+          resolved_at?: string | null
+          sentiment?: string | null
+          source?: string
+          status?: Database["public"]["Enums"]["support_ticket_status"]
+          subject: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          assignee_email?: string | null
+          created_at?: string
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json
+          priority?: Database["public"]["Enums"]["support_ticket_priority"]
+          requester_email?: string | null
+          resolved_at?: string | null
+          sentiment?: string | null
+          source?: string
+          status?: Database["public"]["Enums"]["support_ticket_status"]
+          subject?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           completed_at: string | null
@@ -7929,6 +8466,19 @@ export type Database = {
           processed: number
         }[]
       }
+      compute_customer_health_v2: {
+        Args: { _account_id: string }
+        Returns: {
+          account_id: string
+          csat_factor: number
+          health_score: number
+          nps_factor: number
+          recommended_action: string
+          renewal_factor: number
+          ticket_factor: number
+          usage_factor: number
+        }[]
+      }
       compute_forecast_rollup: {
         Args: { _horizon_days?: number }
         Returns: {
@@ -7947,6 +8497,7 @@ export type Database = {
         Args: { check_email: string }
         Returns: number
       }
+      detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
       find_matching_cadence_rule: {
@@ -8103,6 +8654,7 @@ export type Database = {
       mark_all_notifications_read: { Args: never; Returns: number }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
+      schedule_next_qbrs: { Args: never; Returns: number }
       search_products_semantic: {
         Args: { _keywords: string[]; _limit?: number; _query?: string }
         Returns: {
@@ -8215,14 +8767,27 @@ export type Database = {
         | "whatsapp"
         | "other"
       app_role: "admin" | "manager" | "salesperson"
+      cs_survey_type: "csat" | "ces"
+      expansion_opp_status:
+        | "identified"
+        | "qualified"
+        | "proposed"
+        | "won"
+        | "lost"
+      expansion_type: "upsell" | "cross_sell" | "expansion"
       forecast_category:
         | "commit"
         | "best_case"
         | "pipeline"
         | "omitted"
         | "closed"
+      onboarding_status: "not_started" | "in_progress" | "completed" | "stalled"
+      qbr_frequency: "monthly" | "quarterly" | "biannual" | "annual"
+      renewal_status: "upcoming" | "at_risk" | "renewed" | "churned" | "lost"
       sales_league: "bronze" | "silver" | "gold" | "diamond"
       salesperson_role: "sdr" | "closer" | "hybrid"
+      support_ticket_priority: "low" | "normal" | "high" | "urgent"
+      support_ticket_status: "open" | "pending" | "resolved" | "closed"
       task_priority: "high" | "medium" | "low"
       task_status: "pending" | "in_progress" | "completed" | "cancelled"
       task_type:
@@ -8378,6 +8943,15 @@ export const Constants = {
         "other",
       ],
       app_role: ["admin", "manager", "salesperson"],
+      cs_survey_type: ["csat", "ces"],
+      expansion_opp_status: [
+        "identified",
+        "qualified",
+        "proposed",
+        "won",
+        "lost",
+      ],
+      expansion_type: ["upsell", "cross_sell", "expansion"],
       forecast_category: [
         "commit",
         "best_case",
@@ -8385,8 +8959,13 @@ export const Constants = {
         "omitted",
         "closed",
       ],
+      onboarding_status: ["not_started", "in_progress", "completed", "stalled"],
+      qbr_frequency: ["monthly", "quarterly", "biannual", "annual"],
+      renewal_status: ["upcoming", "at_risk", "renewed", "churned", "lost"],
       sales_league: ["bronze", "silver", "gold", "diamond"],
       salesperson_role: ["sdr", "closer", "hybrid"],
+      support_ticket_priority: ["low", "normal", "high", "urgent"],
+      support_ticket_status: ["open", "pending", "resolved", "closed"],
       task_priority: ["high", "medium", "low"],
       task_status: ["pending", "in_progress", "completed", "cancelled"],
       task_type: ["call", "meeting", "follow_up", "email", "proposal", "other"],
