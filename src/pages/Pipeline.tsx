@@ -84,11 +84,15 @@ export default function Pipeline() {
                         <TabsList className="w-full mb-3">
                           <TabsTrigger value="risk" className="flex-1 text-xs">
                             <Kanban className="h-3 w-3 mr-1" />
-                            Em Risco
+                            Risco
                           </TabsTrigger>
                           <TabsTrigger value="sla" className="flex-1 text-xs">
                             <Clock className="h-3 w-3 mr-1" />
                             SLA
+                          </TabsTrigger>
+                          <TabsTrigger value="inactive" className="flex-1 text-xs">
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            Inativos
                           </TabsTrigger>
                         </TabsList>
                         <TabsContent value="risk">
@@ -96,6 +100,9 @@ export default function Pipeline() {
                         </TabsContent>
                         <TabsContent value="sla">
                           <SLADashboard />
+                        </TabsContent>
+                        <TabsContent value="inactive">
+                          <InactivityPanel />
                         </TabsContent>
                       </Tabs>
                     </div>
@@ -108,14 +115,18 @@ export default function Pipeline() {
             <div className="xl:hidden space-y-4">
               <Tabs defaultValue="risk" className="w-full">
                 <TabsList className="w-full mb-3">
-                  <TabsTrigger value="risk" className="flex-1 text-xs">Em Risco</TabsTrigger>
+                  <TabsTrigger value="risk" className="flex-1 text-xs">Risco</TabsTrigger>
                   <TabsTrigger value="sla" className="flex-1 text-xs">SLA</TabsTrigger>
+                  <TabsTrigger value="inactive" className="flex-1 text-xs">Inativos</TabsTrigger>
                 </TabsList>
                 <TabsContent value="risk">
                   <AtRiskDealsPanel />
                 </TabsContent>
                 <TabsContent value="sla">
                   <SLADashboard />
+                </TabsContent>
+                <TabsContent value="inactive">
+                  <InactivityPanel />
                 </TabsContent>
               </Tabs>
             </div>
