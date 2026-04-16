@@ -58,6 +58,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Cadências", url: "/cadencias", icon: Activity },
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
+      { title: "Conv. Intelligence", url: "/conversational-intelligence", icon: Sparkles },
       { title: "Automações", url: "/automacoes", icon: Zap },
     ],
   },
