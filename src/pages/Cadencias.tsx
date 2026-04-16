@@ -1,6 +1,7 @@
 import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord } from "@/hooks/useCadences";
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
+import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +64,7 @@ export default function Cadencias() {
                 <Zap className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
+              <EnrollmentRulesDialog />
               <CreateCadenceDialog />
             </div>
           </div>
