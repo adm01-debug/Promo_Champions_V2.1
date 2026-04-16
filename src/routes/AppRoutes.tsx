@@ -14,7 +14,7 @@ import {
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
   Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente,
-  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence,
+  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, AccountBasedSelling, AutomationBuilder,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
   // Analytics & BI
@@ -105,6 +105,8 @@ export function AppRoutes() {
                     <Route path="/automacoes" element={<Automacoes />} />
                     <Route path="/conversational-intelligence" element={<ConversationalIntelligence />} />
                     <Route path="/revenue-intelligence" element={<Manager><RevenueIntelligence /></Manager>} />
+                    <Route path="/abm" element={<AccountBasedSelling />} />
+                    <Route path="/workflow-builder" element={<Manager><AutomationBuilder /></Manager>} />
 
                     {/* ─── Vendas & Comercial ────────────────────── */}
                     <Route path="/orcamentos" element={<Orcamentos />} />
