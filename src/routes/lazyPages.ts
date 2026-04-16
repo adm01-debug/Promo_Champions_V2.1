@@ -34,7 +34,7 @@ export const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 export const Multichannel = lazy(() => import("@/pages/Multichannel"));
 export const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
 export const Automacoes = lazy(() => import("@/pages/Automacoes"));
-export const ConversationalIntelligence = lazy(() => import("@/pages/ConversationalIntelligence"));
+export const ConversationalIntelligence = lazy(() => import("@/pages/ConversationalIntelligenceHub"));
 export const RevenueIntelligence = lazy(() => import("@/pages/RevenueIntelligence"));
 export const AccountBasedSelling = lazy(() => import("@/pages/AccountBasedSelling"));
 export const AutomationBuilder = lazy(() => import("@/pages/AutomationBuilder"));
