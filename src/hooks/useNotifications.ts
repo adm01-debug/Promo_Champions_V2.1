@@ -165,12 +165,12 @@ export function useSendNotification() {
         p_user_id: input.user_id,
         p_type: input.type,
         p_title: input.title,
-        p_message: input.message ?? null,
+        p_message: input.message,
         p_category: input.category ?? "general",
         p_priority: input.priority ?? "medium",
-        p_action_url: input.action_url ?? null,
-        p_action_label: input.action_label ?? null,
-        p_metadata: input.metadata ?? {},
+        p_action_url: input.action_url,
+        p_action_label: input.action_label,
+        p_metadata: (input.metadata ?? {}) as never,
       });
       if (error) throw error;
       return data as string;
