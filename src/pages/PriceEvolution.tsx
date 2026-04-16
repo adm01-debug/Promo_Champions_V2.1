@@ -213,8 +213,8 @@ const PriceEvolution = () => {
                             )}
                           </div>
                           <div>
-                            <p className="text-xs font-medium">{(h as any).products?.name || "Produto"}</p>
-                            <p className="text-[10px] text-muted-foreground">{(h as any).suppliers?.name}</p>
+                            <p className="text-xs font-medium">{h.products?.name || "Produto"}</p>
+                            <p className="text-[10px] text-muted-foreground">{h.suppliers?.name}</p>
                           </div>
                         </div>
                         <div className="text-right">
