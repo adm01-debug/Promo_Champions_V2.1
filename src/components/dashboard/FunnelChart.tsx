@@ -1,4 +1,5 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +23,7 @@ const STAGE_COLORS = [
   "hsl(var(--success))",
 ];
 
-export const FunnelChart: FC = () => {
+export const FunnelChart: FC = React.memo(() => {
   const { data, isLoading } = useQuery({
     queryKey: ["funnel-chart-real"],
     queryFn: async () => {
@@ -102,4 +103,6 @@ export const FunnelChart: FC = () => {
       </CardContent>
     </Card>
   );
-};
+});
+
+FunnelChart.displayName = "FunnelChart";

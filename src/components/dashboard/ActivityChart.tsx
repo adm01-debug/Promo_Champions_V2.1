@@ -1,4 +1,4 @@
-import { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +30,7 @@ const TYPE_LABELS: Record<string, string> = {
   follow_up: "Follow-ups",
 };
 
-export const ActivityChart: FC<ActivityChartProps> = ({
+export const ActivityChart: FC<ActivityChartProps> = React.memo(({
   userId,
   timeRange = "month",
 }) => {
@@ -78,13 +78,15 @@ export const ActivityChart: FC<ActivityChartProps> = ({
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
-  // Get all activity types present
-  const allTypes = new Set<string>();
-  (data || []).forEach((d) => {
-    Object.keys(d).forEach((k) => {
-      if (k !== "date") allTypes.add(k);
+  const allTypes = useMemo(() => {
+    const types = new Set<string>();
+    (data || []).forEach((d) => {
+      Object.keys(d).forEach((k) => {
+        if (k !== "date") types.add(k);
+      });
     });
-  });
+    return types;
+  }, [data]);
 
   return (
     <Card className="h-full">
@@ -140,4 +142,6 @@ export const ActivityChart: FC<ActivityChartProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+ActivityChart.displayName = "ActivityChart";
