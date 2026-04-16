@@ -4,6 +4,7 @@ import {
   ShieldCheck, LineChart, Building2, Sparkles, FileText, Calendar, Zap,
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
+  Filter, PartyPopper, Flag, Shield, Crown,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -113,9 +114,11 @@ export const gestaoGroupedItems: MenuGroup[] = [
     label: "Análises", icon: Gauge,
     items: [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+      { title: "Análise de Funil", url: "/funil", icon: Filter },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Forecast", url: "/forecast", icon: TrendingUp },
       { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
+      { title: "Top Produtos", url: "/top-produtos", icon: Crown },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
       { title: "Relatórios Agendados", url: "/relatorios-agendados", icon: Calendar },
@@ -136,11 +139,17 @@ export const gestaoGroupedItems: MenuGroup[] = [
     ],
   },
   {
+    label: "Social", icon: PartyPopper,
+    items: [
+      { title: "Feed de Vitórias", url: "/feed-vitorias", icon: Trophy },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
+    ],
+  },
+  {
     label: "Gestão de Equipe", icon: Building2,
     items: [
       { title: "Times", url: "/times", icon: Building2 },
       { title: "Metas Atividades", url: "/metas-atividades", icon: Target },
-      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
     ],
@@ -164,6 +173,8 @@ export const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Usage Analytics", url: "/usage-analytics", icon: BarChart3 },
+  { title: "Feature Flags", url: "/feature-flags", icon: Flag },
+  { title: "Segurança", url: "/seguranca", icon: Shield },
 ];
 
 export const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
