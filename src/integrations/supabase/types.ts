@@ -2665,6 +2665,65 @@ export type Database = {
           },
         ]
       }
+      lead_assignments: {
+        Row: {
+          assigned_at: string
+          id: string
+          metadata: Json | null
+          rule_id: string | null
+          sale_id: string
+          salesperson_id: string
+          strategy_used: string
+        }
+        Insert: {
+          assigned_at?: string
+          id?: string
+          metadata?: Json | null
+          rule_id?: string | null
+          sale_id: string
+          salesperson_id: string
+          strategy_used: string
+        }
+        Update: {
+          assigned_at?: string
+          id?: string
+          metadata?: Json | null
+          rule_id?: string | null
+          sale_id?: string
+          salesperson_id?: string
+          strategy_used?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_assignments_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "lead_routing_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_assignments_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_assignments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_assignments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_routing_log: {
         Row: {
           client_id: string | null
@@ -2730,6 +2789,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lead_routing_rules: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          filter_min_value: number | null
+          filter_role: string | null
+          filter_source: string | null
+          filter_state: string | null
+          id: string
+          is_active: boolean
+          name: string
+          priority: number
+          strategy: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          filter_min_value?: number | null
+          filter_role?: string | null
+          filter_source?: string | null
+          filter_state?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          priority?: number
+          strategy?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          filter_min_value?: number | null
+          filter_role?: string | null
+          filter_source?: string | null
+          filter_state?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          priority?: number
+          strategy?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       lead_scores: {
         Row: {
@@ -6612,6 +6719,14 @@ export type Database = {
           p_xp_amount: number
         }
         Returns: boolean
+      }
+      auto_assign_lead: {
+        Args: { _sale_id: string }
+        Returns: {
+          assigned_to: string
+          rule_id: string
+          strategy: string
+        }[]
       }
       calculate_daily_challenge_streak: {
         Args: { p_salesperson_id: string }
