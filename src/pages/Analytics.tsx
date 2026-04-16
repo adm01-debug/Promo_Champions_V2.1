@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { WinLossAnalysis } from '@/components/analytics/WinLossAnalysis';
 import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
 import { ConversionFunnel } from '@/components/analytics/ConversionFunnel';
+import { RevenueForecast } from '@/components/analytics/RevenueForecast';
 import { ObjectionsLibrary } from '@/components/analytics/ObjectionsLibrary';
 import { ABCAnalysis } from '@/components/analytics/ABCAnalysis';
 import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
