@@ -3,41 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const mockData7d = [
-  { name: "Seg", value: 8500 },
-  { name: "Ter", value: 12000 },
-  { name: "Qua", value: 9800 },
-  { name: "Qui", value: 14200 },
-  { name: "Sex", value: 11500 },
-  { name: "Sáb", value: 6800 },
-  { name: "Dom", value: 3200 },
-];
-
-const mockData30d = [
-  { name: "Sem 1", value: 45000 },
-  { name: "Sem 2", value: 52000 },
-  { name: "Sem 3", value: 48000 },
-  { name: "Sem 4", value: 61000 },
-];
-
-const mockData90d = [
-  { name: "Jan", value: 45000 },
-  { name: "Fev", value: 52000 },
-  { name: "Mar", value: 48000 },
-  { name: "Abr", value: 61000 },
-  { name: "Mai", value: 55000 },
-  { name: "Jun", value: 67000 },
-  { name: "Jul", value: 72000 },
-];
+import { useSalesChartData } from "@/hooks/useSalesChartData";
 
 type Period = "7d" | "30d" | "90d";
-
-const periodData: Record<Period, typeof mockData7d> = {
-  "7d": mockData7d,
-  "30d": mockData30d,
-  "90d": mockData90d,
-};
 
 const periodLabels: Record<Period, string> = {
   "7d": "7 dias",
@@ -45,7 +13,7 @@ const periodLabels: Record<Period, string> = {
   "90d": "90 dias",
 };
 
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; name?: string; color?: string }>; label?: string }) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-xl border border-primary/20 bg-popover/95 px-4 py-3 shadow-xl backdrop-blur-md">
@@ -59,7 +27,10 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 
 export const SalesChart = () => {
   const [period, setPeriod] = useState<Period>("90d");
-  const data = periodData[period];
+  const { data: liveData, isLoading } = useSalesChartData(period);
+
+  // Fallback to empty if no data
+  const data = liveData && liveData.length > 0 ? liveData : [];
 
   return (
     <Card className="h-full">
@@ -88,42 +59,44 @@ export const SalesChart = () => {
         </div>
       </CardHeader>
       <CardContent className="pb-4">
-        <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={data}>
-            <defs>
-              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.45} />
-                <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={1} />
-                <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.9} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border/20 dark:stroke-border/15" vertical={false} />
-            <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} dy={8} />
-            <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} width={40} />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary) / 0.4)', strokeWidth: 1, strokeDasharray: '4 4' }} />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="url(#strokeGradient)"
-              fillOpacity={1}
-              fill="url(#colorValue)"
-              strokeWidth={2.5}
-              dot={false}
-              activeDot={{ 
-                r: 6, 
-                fill: 'hsl(var(--primary))', 
-                stroke: 'hsl(var(--background))', 
-                strokeWidth: 3,
-                className: 'drop-shadow-md'
-              }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        {isLoading ? (
+          <div className="h-[220px] animate-pulse bg-muted/20 rounded-lg" />
+        ) : data.length === 0 ? (
+          <div className="h-[220px] flex items-center justify-center text-sm text-muted-foreground">
+            Sem dados de vendas no período
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={data}>
+              <defs>
+                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.45} />
+                  <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+                  <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                  <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.9} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
+              <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} dy={8} />
+              <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} width={40} />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary) / 0.4)', strokeWidth: 1, strokeDasharray: '4 4' }} />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="url(#strokeGradient)"
+                fillOpacity={1}
+                fill="url(#colorValue)"
+                strokeWidth={2.5}
+                dot={false}
+                activeDot={{ r: 6, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--background))', strokeWidth: 3, className: 'drop-shadow-md' }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

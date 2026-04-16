@@ -15,8 +15,9 @@ import { AIAssistantSettings } from "@/components/settings/AIAssistantSettings";
 import { ThemeCustomizer } from "@/components/settings/ThemeCustomizer";
 import { ApiIntegrationSettings } from "@/components/settings/ApiIntegrationSettings";
 import { CustomFieldsManager } from "@/components/settings/CustomFieldsManager";
+import { FeatureFlagsAdmin } from "@/components/settings/FeatureFlagsAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint, Flag } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -108,6 +109,10 @@ export default function Configuracoes() {
                   <Activity className="h-4 w-4" />
                   Circuits
                 </TabsTrigger>
+                <TabsTrigger value="feature-flags" className="flex items-center gap-2">
+                  <Flag className="h-4 w-4" />
+                  Flags
+                </TabsTrigger>
               </>
             )}
           </TabsList>
@@ -172,6 +177,10 @@ export default function Configuracoes() {
             
             <TabsContent value="circuits" className="mt-6">
               <CircuitBreakerDashboard />
+            </TabsContent>
+
+            <TabsContent value="feature-flags" className="mt-6">
+              <FeatureFlagsAdmin />
             </TabsContent>
           </>
         )}
