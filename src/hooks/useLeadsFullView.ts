@@ -46,15 +46,8 @@ export const useLeadsFullView = (options: UseLeadsFullViewOptions = {}) => {
       const { data, error } = await query;
       if (error) throw error;
 
-      const { data: icpData } = await supabase
-        .from('icp_matches')
-        .select('client_name, is_icp_match')
-        .limit(1000);
-
+      // ICP enrichment can be added by joining with useICPData on consumer side
       const icpMap = new Map<string, boolean>();
-      (icpData || []).forEach((i: { client_name: string; is_icp_match: boolean }) => {
-        icpMap.set(i.client_name.toLowerCase(), i.is_icp_match);
-      });
 
       const now = Date.now();
       return (data || []).map((row) => {

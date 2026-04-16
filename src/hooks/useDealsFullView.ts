@@ -77,7 +77,7 @@ export const useDealsFullView = (options: UseDealsFullViewOptions = {}) => {
         const sp = (row as { salespeople?: { name: string } | null }).salespeople;
         const dealHistory = historyMap.get(row.id) || [];
         const currentEntry = dealHistory.find((h) => !h.exited_at);
-        const currentEnteredAt = currentEntry?.entered_at || row.updated_at;
+        const currentEnteredAt: string = currentEntry?.entered_at ?? row.updated_at ?? row.created_at;
         const daysInStage = Math.floor(
           (now - new Date(currentEnteredAt).getTime()) / (1000 * 60 * 60 * 24),
         );
