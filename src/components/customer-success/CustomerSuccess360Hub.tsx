@@ -281,6 +281,10 @@ export function CustomerSuccess360Hub() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="integrations" className="mt-4">
+          <HelpdeskConnectorPanel />
+        </TabsContent>
       </Tabs>
     </div>
   );
