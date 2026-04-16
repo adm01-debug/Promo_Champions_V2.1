@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, Linkedin, MessageCircle, Users } from "lucide-react";
 import { CadenceStep, ActionType } from "@/hooks/cadences/useCadenceQueries";
+import { MergeTagPicker } from "./MergeTagPicker";
 
 const ACTION_TYPES: { value: ActionType; label: string; icon: typeof Phone }[] = [
   { value: "email", label: "E-mail", icon: Mail },
