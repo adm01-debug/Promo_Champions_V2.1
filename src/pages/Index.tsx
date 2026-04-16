@@ -9,6 +9,7 @@ import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { BenchmarkPanel } from "@/components/analytics/BenchmarkPanel";
+import { TeamActivityFeed } from "@/components/collaboration/TeamActivityFeed";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
@@ -254,8 +255,9 @@ const Index = () => {
                 <KPIGrid />
                 <AlertsPanel />
               </div>
-              <div className="mt-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                 <BenchmarkPanel />
+                <TeamActivityFeed />
               </div>
             </DashboardSection>
 
