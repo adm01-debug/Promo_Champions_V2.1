@@ -82,6 +82,10 @@ const Multichannel = lazy(() => import("@/pages/Multichannel"));
 const Estoque = lazy(() => import("@/pages/Estoque"));
 const NPSDashboard = lazy(() => import("@/pages/NPSDashboard"));
 const UsageAnalytics = lazy(() => import("@/pages/UsageAnalytics"));
+const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
+const Deduplication = lazy(() => import("@/pages/Deduplication"));
+const ImportExport = lazy(() => import("@/pages/ImportExport"));
+const OnboardingTracking = lazy(() => import("@/pages/OnboardingTracking"));
 
 export { PageLoadingFallback };
 
