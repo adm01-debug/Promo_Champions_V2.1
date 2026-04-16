@@ -62,9 +62,9 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   {expirationDays < 0 ? "Expirado" : `Expira em ${expirationDays}d`}
                 </Badge>
               )}
-              {(quote as any).pdf_url ? (
+              {quote.pdf_url ? (
                 <Button size="sm" variant="outline" className="gap-1" asChild>
-                  <a href={(quote as any).pdf_url} target="_blank" rel="noopener noreferrer">
+                  <a href={quote.pdf_url} target="_blank" rel="noopener noreferrer">
                     <FileDown className="h-4 w-4" />
                     PDF Original
                   </a>

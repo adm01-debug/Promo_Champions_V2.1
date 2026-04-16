@@ -69,7 +69,7 @@ export const useCreateTemplate = () => {
     }) => {
       const { data, error } = await supabase
         .from('message_templates')
-        .insert(template as any)
+        .insert(template)
         .select()
         .single();
       if (error) throw error;
@@ -89,7 +89,7 @@ export const useUpdateTemplate = () => {
     mutationFn: async ({ id, ...updates }: { id: string } & Partial<MessageTemplate>) => {
       const { error } = await supabase
         .from('message_templates')
-        .update(updates as any)
+        .update(updates)
         .eq('id', id);
       if (error) throw error;
     },
@@ -160,7 +160,7 @@ export const useCreateInteraction = () => {
     }) => {
       const { data, error } = await supabase
         .from('channel_interactions')
-        .insert(interaction as any)
+        .insert(interaction)
         .select()
         .single();
       if (error) throw error;
@@ -176,7 +176,7 @@ export const useCreateInteraction = () => {
           if (tpl) {
             await supabase
               .from('message_templates')
-              .update({ usage_count: ((tpl as any).usage_count || 0) + 1 } as any)
+              .update({ usage_count: (tpl.usage_count || 0) + 1 })
               .eq('id', interaction.template_id);
           }
         } catch {
