@@ -37,6 +37,7 @@ export const Automacoes = lazy(() => import("@/pages/Automacoes"));
 export const ConversationalIntelligence = lazy(() => import("@/pages/ConversationalIntelligence"));
 export const RevenueIntelligence = lazy(() => import("@/pages/RevenueIntelligence"));
 export const AccountBasedSelling = lazy(() => import("@/pages/AccountBasedSelling"));
+export const AutomationBuilder = lazy(() => import("@/pages/AutomationBuilder"));
 
 // ─── Vendas & Comercial ─────────────────────────────────────────────
 export const Orcamentos = lazy(() => import("@/pages/Orcamentos"));
