@@ -76,7 +76,7 @@ const SecurityDashboard = () => {
                   ) : !loginAttempts?.length ? (
                     <p className="text-sm text-muted-foreground text-center py-4">Sem dados de login</p>
                   ) : (
-                    loginAttempts.map((attempt: any) => (
+                    loginAttempts.map((attempt) => (
                       <div key={attempt.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-muted/30 text-xs">
                         {attempt.success ? (
                           <Check className="h-3.5 w-3.5 text-status-success shrink-0" />

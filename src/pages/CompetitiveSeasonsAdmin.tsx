@@ -121,7 +121,7 @@ const CompetitiveSeasonsAdmin = () => {
             </Card>
           ) : (
             <motion.div variants={itemVariants} className="space-y-3">
-              {seasons.map((season: any) => {
+              {seasons.map((season) => {
                 const cfg = statusConfig[season.status] || statusConfig.upcoming;
                 return (
                   <Card key={season.id} className={cn("p-4 glass border-border/40", season.status === "active" && "border-primary/30")}>

@@ -125,7 +125,7 @@ const FeatureFlagsAdmin = () => {
             </Card>
           ) : (
             <motion.div variants={itemVariants} className="space-y-3">
-              {flags.map((flag: any) => (
+              {flags.map((flag) => (
                 <Card key={flag.id} className={cn("p-4 glass border-border/40", !flag.is_enabled && "opacity-60")}>
                   <div className="flex items-center gap-4">
                     <div className={cn("p-2 rounded-lg", flag.is_enabled ? "bg-status-success/10" : "bg-muted")}>

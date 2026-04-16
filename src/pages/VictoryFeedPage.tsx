@@ -63,7 +63,7 @@ const VictoryFeedPage = () => {
             </Card>
           ) : (
             <motion.div variants={itemVariants} className="space-y-4">
-              {feedItems.map((item: any) => {
+              {feedItems.map((item) => {
                 const eventConfig = EVENT_ICONS[item.event_type] || EVENT_ICONS.sale;
                 const Icon = eventConfig.icon;
                 const reactions = item.feed_reactions || [];
@@ -105,7 +105,7 @@ const VictoryFeedPage = () => {
                       {/* Reactions */}
                       <div className="flex items-center gap-1 flex-wrap">
                         {REACTION_EMOJIS.map(emoji => {
-                          const count = reactions.filter((r: any) => r.reaction === emoji).length;
+                          const count = reactions.filter((r: { reaction: string }) => r.reaction === emoji).length;
                           return (
                             <Button
                               key={emoji}
@@ -138,7 +138,7 @@ const VictoryFeedPage = () => {
                       {/* Comments section */}
                       {isExpanded && (
                         <div className="space-y-2 pt-2 border-t border-border/30 animate-in fade-in-0 slide-in-from-top-1">
-                          {comments.map((comment: any) => (
+                          {comments.map((comment: { id: string; content: string; salespeople?: { name: string } | null }) => (
                             <div key={comment.id} className="flex gap-2 text-xs">
                               <span className="font-semibold">{comment.salespeople?.name || "Anônimo"}</span>
                               <span className="text-muted-foreground flex-1">{comment.content}</span>
