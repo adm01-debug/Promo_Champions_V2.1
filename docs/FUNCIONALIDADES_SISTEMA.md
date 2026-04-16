@@ -561,6 +561,15 @@ Todos os hooks em `src/hooks/` estão conectados a dados reais do Supabase — n
 - Construtor no-code: gatilho → condições → ações.
 - Edge Function `execute-workflow` orquestra criação de tarefas, atualização de estágio e log de atividade.
 - Histórico de runs com duração, status e payload.
+- **Painel de Regras de Automação** (`AutomationRulesPanel`) no Admin Dashboard — listagem, toggle ativar/pausar (RPC `toggle_workflow_active`) e logs de execução em tempo real.
+- Hook unificado `useAutomationRules` + `useAutomationLogs` + `useToggleAutomationRule`.
+
+### 🧠 Análise Comportamental Automática (DISC + EQ + Vieses)
+- Edge Function `behavioral-analysis` (Gemini 2.5 Flash) analisa interações com 100+ caracteres.
+- Retorna **perfil DISC** (primário/secundário + scores), **Inteligência Emocional** (empatia, autoconsciência, social) e **vieses cognitivos** (anchoring, confirmation, etc.) com severidade.
+- Recomendação estratégica de abordagem por contato.
+- UI integrada ao `ClientTimeline` via `BehavioralAnalysisDialog` — botão "IA" em cada interação elegível.
+- Persistência automática em `automation_runs` quando vinculado a uma interação.
 
 ---
 
