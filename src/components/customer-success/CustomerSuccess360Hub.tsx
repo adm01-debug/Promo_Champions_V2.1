@@ -82,6 +82,7 @@ export function CustomerSuccess360Hub() {
           <TabsTrigger value="expansion">Expansion</TabsTrigger>
           <TabsTrigger value="surveys">CSAT/CES</TabsTrigger>
           <TabsTrigger value="qbr">QBR</TabsTrigger>
+          <TabsTrigger value="integrations">Integrações</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 mt-4">
