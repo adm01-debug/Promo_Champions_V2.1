@@ -43,6 +43,7 @@ export const ComparadorPrecos = lazy(() => import("@/pages/ComparadorPrecos"));
 export const Comissoes = lazy(() => import("@/pages/Comissoes"));
 export const Agenda = lazy(() => import("@/pages/Agenda"));
 export const AdminComissoes = lazy(() => import("@/pages/AdminComissoes"));
+export const ApprovalWorkflows = lazy(() => import("@/pages/ApprovalWorkflowsPage"));
 
 // ─── Analytics & BI ─────────────────────────────────────────────────
 export const Analytics = lazy(() => import("@/pages/Analytics"));

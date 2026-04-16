@@ -87,6 +87,7 @@ export const closerGroupedItems: MenuGroup[] = [
     label: "Vendas", icon: DollarSign,
     items: [
       { title: "Assinatura Digital", url: "/assinatura-digital", icon: Target },
+      { title: "Aprovações", url: "/aprovacoes", icon: ShieldCheck },
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
