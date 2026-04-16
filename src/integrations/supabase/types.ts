@@ -2007,6 +2007,45 @@ export type Database = {
         }
         Relationships: []
       }
+      cohort_analyses: {
+        Row: {
+          cohort_field: string
+          config: Json
+          created_at: string
+          description: string | null
+          id: string
+          metric_field: string
+          name: string
+          owner_id: string
+          period_type: string
+          updated_at: string
+        }
+        Insert: {
+          cohort_field?: string
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          metric_field?: string
+          name: string
+          owner_id: string
+          period_type?: string
+          updated_at?: string
+        }
+        Update: {
+          cohort_field?: string
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          metric_field?: string
+          name?: string
+          owner_id?: string
+          period_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       collectible_badges: {
         Row: {
           category: string
@@ -2394,6 +2433,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      custom_reports: {
+        Row: {
+          config: Json
+          created_at: string
+          description: string | null
+          entity: string
+          id: string
+          is_shared: boolean
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          entity: string
+          id?: string
+          is_shared?: boolean
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          entity?: string
+          id?: string
+          is_shared?: boolean
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       daily_challenge_progress: {
         Row: {
@@ -3076,6 +3151,53 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      embedded_report_tokens: {
+        Row: {
+          allowed_domains: string[] | null
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          last_viewed_at: string | null
+          public_token: string
+          report_id: string
+          view_count: number
+        }
+        Insert: {
+          allowed_domains?: string[] | null
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          last_viewed_at?: string | null
+          public_token?: string
+          report_id: string
+          view_count?: number
+        }
+        Update: {
+          allowed_domains?: string[] | null
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          last_viewed_at?: string | null
+          public_token?: string
+          report_id?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embedded_report_tokens_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
             referencedColumns: ["id"]
           },
         ]
@@ -5961,6 +6083,119 @@ export type Database = {
           },
         ]
       }
+      report_executions: {
+        Row: {
+          duration_ms: number | null
+          error_message: string | null
+          executed_at: string
+          file_url: string | null
+          id: string
+          recipients_sent: string[] | null
+          report_id: string
+          rows_count: number | null
+          schedule_id: string | null
+          status: string
+        }
+        Insert: {
+          duration_ms?: number | null
+          error_message?: string | null
+          executed_at?: string
+          file_url?: string | null
+          id?: string
+          recipients_sent?: string[] | null
+          report_id: string
+          rows_count?: number | null
+          schedule_id?: string | null
+          status?: string
+        }
+        Update: {
+          duration_ms?: number | null
+          error_message?: string | null
+          executed_at?: string
+          file_url?: string | null
+          id?: string
+          recipients_sent?: string[] | null
+          report_id?: string
+          rows_count?: number | null
+          schedule_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_executions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_executions_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "report_schedules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_schedules: {
+        Row: {
+          created_at: string
+          created_by: string
+          day_of_month: number | null
+          day_of_week: number | null
+          format: string
+          frequency: string
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          next_run_at: string | null
+          recipients: string[]
+          report_id: string
+          time_of_day: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          format?: string
+          frequency: string
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          next_run_at?: string | null
+          recipients?: string[]
+          report_id: string
+          time_of_day?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          format?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          next_run_at?: string | null
+          recipients?: string[]
+          report_id?: string
+          time_of_day?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_schedules_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           created_at: string
@@ -8466,6 +8701,15 @@ export type Database = {
           processed: number
         }[]
       }
+      compute_cohort_retention: {
+        Args: { _cohort_id: string; _periods?: number }
+        Returns: {
+          cohort_period: string
+          customers: number
+          period_offset: number
+          retention_pct: number
+        }[]
+      }
       compute_customer_health_v2: {
         Args: { _account_id: string }
         Returns: {
@@ -8559,6 +8803,17 @@ export type Database = {
       }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
+      get_embedded_report_by_token: {
+        Args: { _token: string }
+        Returns: {
+          is_valid: boolean
+          reason: string
+          report_config: Json
+          report_entity: string
+          report_id: string
+          report_name: string
+        }[]
+      }
       get_mfa_status: {
         Args: never
         Returns: {
