@@ -23,7 +23,7 @@ import { useUserRoles } from "@/hooks/useUserRoles";
 import { CheckCircle, XCircle, Clock, ShieldCheck, Plus, FileCheck, AlertTriangle, DollarSign, Percent } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { PageTransition } from "@/components/ui/page-transition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
