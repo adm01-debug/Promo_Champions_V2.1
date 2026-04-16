@@ -1,94 +1,96 @@
 
-Vou auditar o que existe vs o que falta no Customer Success.
+Vou auditar o que existe antes de planejar.
 
-**Auditado:**
-- ✅ `/client-health` (`ClientHealthPanel`) — Health Score básico
-- ✅ `CustomerSuccessHub.tsx` em `/customer-success-hub` — Health, churn risk, expansão (parcial)
-- ✅ Edge function `customer-success-hub` — score baseado em atividade/tier
-- ✅ NPS já existe (`nps_surveys` mencionado em memória)
-- ✅ QBR generator (`qbr-generator` edge function) — implementado anteriormente
-- ❌ Tickets/Support — sem integração (Zendesk/Intercom/Freshdesk)
-- ❌ Renewal management — sem alertas/automações de renovação
-- ❌ Product usage tracking — sem tabela/coleta
-- ❌ Onboarding workflows — sem fluxo de novos clientes
-- ❌ Expansion playbooks — sem playbooks de upsell/cross-sell
-- ❌ CSAT/CES surveys — só NPS existe
-- ❌ QBR scheduling automatizado — geração existe, agendamento não
+**Auditado (já existe):**
+- ✅ `MentionInput.tsx` + `MentionText` — input com @mentions e highlight
+- ✅ `useDealChatHistory` — chat por deal (não-threaded)
+- ✅ `usePlaybooks` — playbooks sem versionamento
+- ✅ Notificações via `send_notification` RPC
 
-## Plano de Implementação — Customer Success 360º
+**Gaps a implementar:**
+- ❌ @mentions com **notificação real** disparada (hoje só renderiza)
+- ❌ **Threaded comments** (parent_id, respostas aninhadas) em deals/clientes
+- ❌ **Document collaboration** (embed Google Docs / Office 365 via URL)
+- ❌ **Video messages** (gravação via MediaRecorder + upload Storage, estilo Loom)
+- ❌ **Co-selling** (múltiplos owners + split %  de comissão)
+- ❌ **Shared playbooks** com versionamento (snapshots imutáveis)
+- ❌ **Deal rooms** (espaço compartilhado cliente↔vendedor com token público)
 
-### 1. Database (1 migration)
-- `support_tickets` — id, account_id, external_id, source (zendesk/intercom/freshdesk/internal), subject, status (open/pending/resolved/closed), priority, sentiment, created_at, resolved_at
-- `renewals` — id, account_id, contract_value, renewal_date, status (upcoming/at_risk/renewed/churned/lost), notice_period_days, auto_renew, owner_salesperson_id
-- `product_usage_events` — id, account_id, user_email, feature_key, event_type (login/feature_use/api_call), occurred_at, metadata
-- `product_usage_summary` (view materializada ou tabela agregada) — account_id, dau, wau, mau, last_login_at, top_features, adoption_score
-- `onboarding_journeys` — id, account_id, template_key, status (not_started/in_progress/completed/stalled), current_step, started_at, completed_at, owner_salesperson_id
-- `onboarding_steps` — id, journey_id, title, description, order_index, status, due_date, completed_at
-- `expansion_playbooks` — id, name, trigger_type (usage_threshold/tier/health_score/custom), trigger_config jsonb, recommended_action, is_active
-- `expansion_opportunities` — id, account_id, playbook_id, type (upsell/cross_sell/expansion), estimated_value, status (identified/qualified/proposed/won/lost), confidence_score
-- `csat_ces_surveys` — id, account_id, contact_email, survey_type (csat/ces), score, comment, sent_at, responded_at, trigger_event
-- `qbr_schedule` — id, account_id, frequency (monthly/quarterly/biannual), next_qbr_at, last_qbr_at, owner_salesperson_id, auto_generate, is_active
-- RLS: admin/manager total; salesperson vê suas contas
+## Plano — Colaboração Avançada 360º
 
-### 2. RPCs / Funções
-- `compute_customer_health_v2(account_id)` — Health Score robusto: tickets abertos, NPS, CSAT, usage adoption, renewal proximity, payment status
-- `detect_renewal_risks()` — atualiza status de renewals próximas (90/60/30d) e dispara alertas
-- `evaluate_expansion_playbooks()` — avalia playbooks ativos contra contas e cria `expansion_opportunities`
-- `schedule_next_qbrs()` — calcula `next_qbr_at` por frequência
+### 1. Migration (database)
 
-### 3. Edge Functions (5)
-- `customer-success-360` — agrega tudo: health v2, tickets, renewals, usage, NPS/CSAT/CES, onboarding status, expansion ops
-- `support-ticket-sync` — webhook + pull para Zendesk/Intercom/Freshdesk (via connector ou API key)
-- `renewal-automation` — cron diário: detecta renovações 90/60/30d, cria notificações/tasks
-- `expansion-detector` — cron semanal: roda playbooks e gera oportunidades
-- `csat-ces-trigger` — dispara survey após eventos (ticket resolvido, milestone)
+**Tabelas novas:**
+- `deal_comments` — id, deal_id, parent_comment_id (threaded), author_id, body, mentions uuid[], attachments jsonb, created_at, updated_at, edited_at
+- `client_comments` — mesma estrutura para clientes/accounts
+- `comment_reactions` — id, comment_id, user_id, emoji, created_at
+- `deal_documents` — id, deal_id, title, provider (google_docs/office365/notion/figma), embed_url, added_by, created_at
+- `video_messages` — id, owner_salesperson_id, deal_id (nullable), client_id (nullable), title, storage_path, duration_seconds, thumbnail_path, view_count, created_at
+- `video_message_views` — id, video_id, viewer_email, viewed_at, watch_seconds
+- `deal_co_owners` — id, deal_id, salesperson_id, role (primary/co_owner/sdr/specialist), commission_split_pct (numeric 0-100), created_at — constraint: soma <= 100 por deal (validação via trigger)
+- `playbook_versions` — id, playbook_id, version_number, snapshot jsonb (items completos), changelog text, created_by, created_at
+- `deal_rooms` — id, deal_id, public_token (uuid), title, welcome_message, is_active, expires_at, created_by, created_at
+- `deal_room_resources` — id, room_id, type (document/video/proposal/link), title, url, sort_order
+- `deal_room_messages` — id, room_id, sender_type (internal/client), sender_name, sender_email, body, created_at
+- `deal_room_views` — id, room_id, viewer_ip, viewer_email, viewed_at
 
-### 4. Hooks (`src/hooks/customer-success/`)
-- `useCustomerSuccess360.ts` — fetch consolidado
-- `useSupportTickets.ts` — CRUD + filtros
-- `useRenewals.ts` — listagem, atualização de status
-- `useProductUsage.ts` — métricas de adoção
-- `useOnboardingJourneys.ts` — CRUD jornadas + steps
-- `useExpansionPlaybooks.ts` — listagem playbooks + ops
-- `useCSATCESSurveys.ts` — enviar/listar surveys
-- `useQBRSchedule.ts` — agendamento
+**Storage bucket:** `video-messages` (público para leitura via signed URL); `room-attachments`.
 
-### 5. UI Components (`src/components/customer-success/`)
-- `CustomerSuccess360Hub.tsx` — Hub principal com tabs:
-  - **Visão Geral**: KPIs + health distribution + alertas críticos
-  - **Health Score v2**: drill-down por conta com fatores (tickets/NPS/usage/renewal)
-  - **Renovações**: pipeline de renovação com semáforo 90/60/30d
-  - **Tickets**: lista de tickets abertos por conta + sentimento
-  - **Adoção de Produto**: DAU/WAU/MAU, top features, contas inativas
-  - **Onboarding**: jornadas ativas + progresso por step
-  - **Expansion**: oportunidades identificadas + playbooks ativos
-  - **CSAT/CES**: scores + comentários + tendência
-  - **QBR**: agenda + últimos QBRs gerados
-- Componentes auxiliares: `RenewalPipelineBoard`, `TicketsByAccountTable`, `ProductAdoptionChart`, `OnboardingJourneyCard`, `ExpansionOpportunityCard`, `SurveyResponseCard`, `QBRScheduleCalendar`
+**RPC:**
+- `notify_mentions(_comment_id, _entity_type)` — lê mentions e dispara `send_notification` para cada mencionado.
+- `validate_co_owners_split()` (trigger) — garante soma ≤ 100.
+- `snapshot_playbook_version(_playbook_id, _changelog)` — cria versão com snapshot dos items.
+- `get_deal_room_by_token(_token)` (SECURITY DEFINER, anon-safe) — retorna room + resources + messages para acesso público.
 
-### 6. Página + Rota
-- `/customer-success-360` em `AppRoutes.tsx` + `lazyPages.ts`
-- Item sidebar "Análises" → "Customer Success 360"
-- Breadcrumb `DesktopTopBar.tsx`
-- Helmet/SEO + ProtectedRoute (admin/manager)
+**RLS:** admin/manager total; salesperson vê comentários/co_owners de seus deals; deal_rooms públicas via token (sem auth).
 
-### 7. Integrações de Tickets
-- Suporte inicial via API Key manual (Zendesk/Intercom/Freshdesk) com secrets
-- Webhook endpoint para receber eventos em tempo real
-- Tela de "Conectar Helpdesk" em Configurações (não bloqueante para esta entrega)
+### 2. Edge Functions
+- `mention-notifier` — recebe comment_id, extrai mentions, cria notifications + envia push se inscrito.
+- `deal-room-public` — endpoint público (verify_jwt=false) que valida token e retorna dados do room para o cliente externo (sem login).
 
-### 8. Padrões obrigatórios
-- Sora títulos / Inter body, tokens semânticos, dark theme
-- Framer motion, skeleton loading, memoization
-- ≤400 linhas por arquivo (helpers em `*Helpers.ts`)
-- Strict TS, RLS respeitado, zero console errors
+### 3. Hooks (`src/hooks/collaboration/`)
+- `useDealComments.ts` / `useClientComments.ts` — listagem threaded, criar resposta, reagir
+- `useDealDocuments.ts` — CRUD docs colaborativos
+- `useVideoMessages.ts` — listar/criar (com upload Storage)
+- `useDealCoOwners.ts` — adicionar/remover co-owners + split
+- `usePlaybookVersions.ts` — listar versões, criar snapshot, restaurar
+- `useDealRooms.ts` — CRUD rooms + recursos + mensagens
+- `useVideoRecorder.ts` — wrapper MediaRecorder (screen+camera)
+
+### 4. Componentes (`src/components/collaboration/`)
+- `ThreadedCommentsPanel.tsx` — árvore de comentários com replies, reactions, @mentions (reaproveita `MentionInput`)
+- `CommentThread.tsx` — node recursivo
+- `DocumentCollaborationPanel.tsx` — lista + add embed (Google Docs/Office365/Notion) + iframe seguro
+- `VideoMessageRecorder.tsx` — UI de gravação (screen/cam/mic), preview, upload
+- `VideoMessagePlayer.tsx` — player + tracking de views
+- `CoOwnersManager.tsx` — UI para adicionar co-owners + sliders de split (validação 100%)
+- `PlaybookVersionsPanel.tsx` — timeline de versões + diff básico + restore
+- `DealRoomManager.tsx` — criar room, copiar link público, gerenciar recursos
+- `DealRoomPublicView.tsx` — página pública (rota separada) para cliente acessar via token
+
+### 5. Integração nas telas existentes
+- **DealDetailDialog/Drawer**: novas tabs "Comentários", "Documentos", "Vídeos", "Co-owners", "Deal Room"
+- **ClientDetail**: tab "Comentários"
+- **PlaybooksManager**: botão "Versões" + dialog `PlaybookVersionsPanel`
+
+### 6. Rotas
+- `/deal-room/:token` — pública (sem ProtectedRoute, sem layout) → renderiza `DealRoomPublicView`
+- Adicionar em `AppRoutes.tsx` + `lazyPages.ts`
+
+### 7. Padrões obrigatórios
+- ≤400 linhas/arquivo (helpers em `*Helpers.ts`)
+- Sora títulos / Inter body, tokens semânticos, dark
+- Framer motion, skeleton, React.memo
 - React Query 5min staleTime
-- toast (sonner) para feedback de mutations
+- Strict TS, RLS, zero console errors
+- Validação Zod em edge functions
+- Sonner toasts em mutations
 
-### 9. Validação pós-implementação
+### 8. Validação pós-implementação
 - Deploy edge functions
-- Smoke test endpoints com `curl_edge_functions`
-- Validar RLS via `read_query`
-- Verificar rota carrega sem erros
+- Smoke test endpoints (mention-notifier, deal-room-public)
+- Validar RLS via read_query
+- Testar gravação de vídeo + upload + playback
+- Testar criação de room + acesso público via token incógnito
 
-Após aprovação, executo na ordem: migration → edge functions → hooks → componentes → rota → testes.
+Ordem de execução: migration → storage buckets → edge functions → hooks → componentes → integração nas telas → rota pública → testes.
