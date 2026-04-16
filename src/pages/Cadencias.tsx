@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitBranch, Zap, Clock, CheckCircle, Search, Filter } from "lucide-react";
+import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
@@ -71,7 +71,7 @@ export default function Cadencias() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
           <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-primary/10">
@@ -102,6 +102,17 @@ export default function Cadencias() {
               <div>
                 <p className="text-metric">{cadenceStats?.tasksCompletedToday ?? 0}</p>
                 <p className="text-xs text-muted-foreground">Tarefas Concluídas Hoje</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="glass border-border/40 hover-lift-sm">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-status-warning/10">
+                <PauseCircle className="h-5 w-5 text-status-warning" />
+              </div>
+              <div>
+                <p className="text-metric">{cadenceStats?.autoPausedLast7Days ?? 0}</p>
+                <p className="text-xs text-muted-foreground">Auto-pausadas (7d)</p>
               </div>
             </CardContent>
           </Card>

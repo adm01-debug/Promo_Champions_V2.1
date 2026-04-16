@@ -181,9 +181,13 @@ export function useCadenceStats() {
         .gte("completed_at", `${today}T00:00:00`)
         .lte("completed_at", `${today}T23:59:59`);
 
+      const { data: autoPaused } = await supabase
+        .rpc("get_auto_paused_count", { _days: 7 });
+
       return {
         prospectsInCadence: prospectsInCadence || 0,
         tasksCompletedToday: tasksCompletedToday || 0,
+        autoPausedLast7Days: (autoPaused as number) || 0,
       };
     },
     refetchInterval: 60000,
