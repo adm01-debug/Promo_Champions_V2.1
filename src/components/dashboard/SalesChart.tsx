@@ -33,7 +33,7 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
   const data = liveData && liveData.length > 0 ? liveData : [];
 
   return (
-    <Card className="h-full">
+    <Card ref={ref} className="h-full">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
