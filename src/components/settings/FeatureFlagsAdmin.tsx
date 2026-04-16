@@ -120,10 +120,10 @@ export const FeatureFlagsAdmin: FC = () => {
                     checked={flag.is_enabled}
                     onCheckedChange={checked => toggleFlag.mutate({ id: flag.id, is_enabled: checked })}
                   />
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditFlag(flag)}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditFlag(flag)} aria-label={`Editar flag ${flag.key}`}>
                     <Pencil className="h-3 w-3" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteFlag.mutate(flag.id)}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteFlag.mutate(flag.id)} aria-label={`Excluir flag ${flag.key}`}>
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
