@@ -1,3 +1,4 @@
+import React from "react";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
@@ -5,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, ResponsiveContainer, ReferenceLine, XAxis, Tooltip } from "recharts";
 
-export function ForecastWidget() {
+export const ForecastWidget = React.memo(function ForecastWidget() {
   const { data, isLoading } = useGoalsDashboard();
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
@@ -83,4 +84,6 @@ export function ForecastWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+ForecastWidget.displayName = "ForecastWidget";

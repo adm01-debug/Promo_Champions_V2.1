@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +14,7 @@ const STATUS_LABELS: Record<string, string> = {
   negotiation: "Negociação",
 };
 
-export function TopDealsWidget() {
+export const TopDealsWidget = React.memo(function TopDealsWidget() {
   const { data, isLoading } = useQuery({
     queryKey: ["top-deals-widget"],
     queryFn: async () => {
@@ -62,4 +63,6 @@ export function TopDealsWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+TopDealsWidget.displayName = "TopDealsWidget";

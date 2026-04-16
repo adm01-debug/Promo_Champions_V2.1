@@ -1,3 +1,4 @@
+import React from "react";
 import { usePipelineVelocity } from "@/hooks/usePipelineVelocity";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +13,7 @@ const VELOCITY_COLORS = [
   "hsl(var(--muted-foreground))",
 ];
 
-export function VelocityScoreWidget() {
+export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
   const { data, isLoading } = usePipelineVelocity();
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
@@ -74,4 +75,6 @@ export function VelocityScoreWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+VelocityScoreWidget.displayName = "VelocityScoreWidget";

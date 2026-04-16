@@ -1,10 +1,11 @@
+import React from "react";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function RevenueKpiWidget() {
+export const RevenueKpiWidget = React.memo(function RevenueKpiWidget() {
   const { data: kpis, isLoading } = useDashboardKPIs();
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
@@ -32,4 +33,6 @@ export function RevenueKpiWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+RevenueKpiWidget.displayName = "RevenueKpiWidget";

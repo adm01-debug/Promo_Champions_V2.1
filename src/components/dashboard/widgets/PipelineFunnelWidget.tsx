@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +17,7 @@ const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
   lost: { label: "Perdido", color: "bg-destructive" },
 };
 
-export function PipelineFunnelWidget() {
+export const PipelineFunnelWidget = React.memo(function PipelineFunnelWidget() {
   const { data, isLoading } = useQuery({
     queryKey: ["pipeline-funnel-widget"],
     queryFn: async () => {
@@ -73,4 +74,6 @@ export function PipelineFunnelWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+PipelineFunnelWidget.displayName = "PipelineFunnelWidget";
