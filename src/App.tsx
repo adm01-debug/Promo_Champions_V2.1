@@ -14,6 +14,7 @@ import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
 import { AppRoutes } from "@/routes/AppRoutes";
+import { LGPDConsentBanner } from "@/components/compliance/LGPDConsentBanner";
 import { initErrorTracking } from "@/lib/errorTracking";
 
 // Initialize error tracking on app load
@@ -49,6 +50,7 @@ const App = () => {
                     <I18nProvider>
                       <CommandPalette />
                       <AppRoutes />
+                      <LGPDConsentBanner />
                     </I18nProvider>
                   </AuthProvider>
                 </KeyboardShortcutsProvider>
