@@ -20,18 +20,20 @@ const severityConfig = {
 };
 
 const InactivityTriggers = () => {
-  const { data: inactiveDeals, isLoading } = useInactiveDeals();
+  const { inactiveDeals } = useInactiveDeals();
 
   const handleNotify = (dealName: string) => {
     toast.success(`Notificação enviada para deal "${dealName}"`);
   };
 
+  const isLoading = false;
+
   const grouped = React.useMemo(() => {
-    if (!inactiveDeals?.length) return { critical: [], moderate: [], mild: [] };
+    if (!inactiveDeals?.length) return { critical: [] as typeof inactiveDeals, moderate: [] as typeof inactiveDeals, mild: [] as typeof inactiveDeals };
     return {
-      critical: inactiveDeals.filter(d => d.severity === "critical"),
-      moderate: inactiveDeals.filter(d => d.severity === "moderate"),
-      mild: inactiveDeals.filter(d => d.severity === "mild"),
+      critical: inactiveDeals.filter((d) => d.severity === "critical"),
+      moderate: inactiveDeals.filter((d) => d.severity === "moderate"),
+      mild: inactiveDeals.filter((d) => d.severity === "mild"),
     };
   }, [inactiveDeals]);
 
