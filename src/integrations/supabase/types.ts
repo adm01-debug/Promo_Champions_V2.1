@@ -2695,6 +2695,70 @@ export type Database = {
         }
         Relationships: []
       }
+      nps_surveys: {
+        Row: {
+          client_name: string
+          comment: string | null
+          created_at: string
+          id: string
+          responded_at: string | null
+          sale_id: string | null
+          salesperson_id: string | null
+          score: number | null
+          sent_at: string | null
+          status: string
+          survey_type: string
+        }
+        Insert: {
+          client_name: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          responded_at?: string | null
+          sale_id?: string | null
+          salesperson_id?: string | null
+          score?: number | null
+          sent_at?: string | null
+          status?: string
+          survey_type?: string
+        }
+        Update: {
+          client_name?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          responded_at?: string | null
+          sale_id?: string | null
+          salesperson_id?: string | null
+          score?: number | null
+          sent_at?: string | null
+          status?: string
+          survey_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nps_surveys_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nps_surveys_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nps_surveys_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       objections_library: {
         Row: {
           category: string
