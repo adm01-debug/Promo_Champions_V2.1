@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,7 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
   call: "Ligação", email: "Email", meeting: "Reunião", whatsapp: "WhatsApp", linkedin: "LinkedIn",
 };
 
-export function RecentActivitiesWidget() {
+export const RecentActivitiesWidget = React.memo(function RecentActivitiesWidget() {
   const { salesperson } = useAuth();
 
   const { data, isLoading } = useQuery({
@@ -57,4 +58,6 @@ export function RecentActivitiesWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+RecentActivitiesWidget.displayName = "RecentActivitiesWidget";

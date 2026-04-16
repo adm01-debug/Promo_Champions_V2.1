@@ -32,11 +32,11 @@ export function useWeeklyMatchups() {
 
       if (error) throw error;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (data || []).map((m: any) => ({
+      type SpRef = { id: string; name: string; avatar_url: string | null };
+      return (data || []).map((m) => ({
         id: m.id,
-        salesperson_a: m.sp_a || { id: m.salesperson_a_id, name: 'Vendedor A', avatar_url: null },
-        salesperson_b: m.sp_b || { id: m.salesperson_b_id, name: 'Vendedor B', avatar_url: null },
+        salesperson_a: (m.sp_a as unknown as SpRef) || { id: m.salesperson_a_id, name: 'Vendedor A', avatar_url: null },
+        salesperson_b: (m.sp_b as unknown as SpRef) || { id: m.salesperson_b_id, name: 'Vendedor B', avatar_url: null },
         score_a: Number(m.score_a) || 0,
         score_b: Number(m.score_b) || 0,
         winner_id: m.winner_id,

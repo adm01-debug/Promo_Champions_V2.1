@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 
-export function ConversionRateWidget() {
+export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs();
 
   // Fetch weekly conversion trend (last 8 weeks)
@@ -89,4 +90,6 @@ export function ConversionRateWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+ConversionRateWidget.displayName = "ConversionRateWidget";

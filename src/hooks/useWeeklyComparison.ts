@@ -29,9 +29,13 @@ export function useWeeklyComparison() {
         supabase.from('clients').select('id').gte('created_at', lastWeekStart.toISOString()).lte('created_at', lastWeekEnd.toISOString()),
       ]);
 
-      const buildMetrics = (sales: any[], activities: any[], clients: any[]): WeeklyMetrics => {
-        const completed = sales.filter((s: any) => s.status === 'completed');
-        const revenue = completed.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0);
+      const buildMetrics = (
+        sales: { id: string; amount: number | null; status: string | null }[],
+        activities: { id: string }[],
+        clients: { id: string }[]
+      ): WeeklyMetrics => {
+        const completed = sales.filter((s) => s.status === 'completed');
+        const revenue = completed.reduce((sum, s) => sum + Number(s.amount || 0), 0);
         const salesCount = completed.length;
         return {
           revenue,

@@ -1,3 +1,4 @@
+import React from "react";
 import { useActivityQualityScore } from "@/hooks/useActivityQualityScore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -5,7 +6,7 @@ import { Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-export function ActivityQualityWidget() {
+export const ActivityQualityWidget = React.memo(function ActivityQualityWidget() {
   const { data, isLoading } = useActivityQualityScore();
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
@@ -59,4 +60,6 @@ export function ActivityQualityWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+ActivityQualityWidget.displayName = "ActivityQualityWidget";

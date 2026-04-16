@@ -1,3 +1,4 @@
+import React from "react";
 import { useMicroGoals, MicroGoal } from "@/hooks/useMicroGoals";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +8,7 @@ import { Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function MicroGoalsWidget() {
+export const MicroGoalsWidget = React.memo(function MicroGoalsWidget() {
   const { salesperson } = useAuth();
   const { data: goals, isLoading } = useMicroGoals(salesperson?.id);
 
@@ -48,7 +49,9 @@ export function MicroGoalsWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+MicroGoalsWidget.displayName = "MicroGoalsWidget";
 
 function MicroGoalItem({ goal, index }: { goal: MicroGoal; index: number }) {
   return (

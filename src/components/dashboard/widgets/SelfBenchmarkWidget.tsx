@@ -1,3 +1,4 @@
+import React from "react";
 import { useSelfBenchmark } from "@/hooks/useSelfBenchmark";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ const TREND_CONFIG = {
   stable: { icon: Minus, color: "text-muted-foreground", bg: "bg-muted" },
 };
 
-export function SelfBenchmarkWidget() {
+export const SelfBenchmarkWidget = React.memo(function SelfBenchmarkWidget() {
   const { salesperson } = useAuth();
   const { data: metrics, isLoading } = useSelfBenchmark(salesperson?.id);
 
@@ -87,4 +88,6 @@ export function SelfBenchmarkWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+SelfBenchmarkWidget.displayName = "SelfBenchmarkWidget";

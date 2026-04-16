@@ -1,3 +1,4 @@
+import React from "react";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
@@ -12,7 +13,7 @@ const RANK_COLORS = [
   "hsl(262, 40%, 80%)",
 ];
 
-export function TeamRankingWidget() {
+export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
   const { data, isLoading } = useGoalsDashboard();
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
@@ -68,4 +69,6 @@ export function TeamRankingWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+TeamRankingWidget.displayName = "TeamRankingWidget";

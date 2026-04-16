@@ -1,3 +1,4 @@
+import React from "react";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,7 +6,7 @@ import { Target } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 
-export function GoalProgressWidget() {
+export const GoalProgressWidget = React.memo(function GoalProgressWidget() {
   const { data: goalsData, isLoading: goalsLoading } = useGoalsDashboard();
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs();
 
@@ -48,4 +49,6 @@ export function GoalProgressWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+GoalProgressWidget.displayName = "GoalProgressWidget";

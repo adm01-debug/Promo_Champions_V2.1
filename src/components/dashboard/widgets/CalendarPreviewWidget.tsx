@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format, addDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export function CalendarPreviewWidget() {
+export const CalendarPreviewWidget = React.memo(function CalendarPreviewWidget() {
   const { salesperson } = useAuth();
   const today = format(new Date(), "yyyy-MM-dd");
   const nextWeek = format(addDays(new Date(), 7), "yyyy-MM-dd");
@@ -57,4 +58,6 @@ export function CalendarPreviewWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+CalendarPreviewWidget.displayName = "CalendarPreviewWidget";
