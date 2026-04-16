@@ -781,6 +781,65 @@ export type Database = {
         }
         Relationships: []
       }
+      cadence_enrollment_rules: {
+        Row: {
+          cadence_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          max_amount: number | null
+          min_amount: number | null
+          name: string
+          priority: number
+          trigger_category: string | null
+          trigger_source: string | null
+          trigger_stage: string | null
+          updated_at: string
+        }
+        Insert: {
+          cadence_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_amount?: number | null
+          min_amount?: number | null
+          name: string
+          priority?: number
+          trigger_category?: string | null
+          trigger_source?: string | null
+          trigger_stage?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cadence_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_amount?: number | null
+          min_amount?: number | null
+          name?: string
+          priority?: number
+          trigger_category?: string | null
+          trigger_source?: string | null
+          trigger_stage?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_enrollment_rules_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_steps: {
         Row: {
           action_type: string
@@ -4010,8 +4069,12 @@ export type Database = {
           completed_at: string | null
           created_at: string
           current_step: number
+          enrolled_via_rule_id: string | null
+          enrollment_source: string
           id: string
           next_action_date: string | null
+          paused_at: string | null
+          paused_reason: string | null
           sale_id: string
           salesperson_id: string | null
           started_at: string
@@ -4023,8 +4086,12 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           current_step?: number
+          enrolled_via_rule_id?: string | null
+          enrollment_source?: string
           id?: string
           next_action_date?: string | null
+          paused_at?: string | null
+          paused_reason?: string | null
           sale_id: string
           salesperson_id?: string | null
           started_at?: string
@@ -4036,8 +4103,12 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           current_step?: number
+          enrolled_via_rule_id?: string | null
+          enrollment_source?: string
           id?: string
           next_action_date?: string | null
+          paused_at?: string | null
+          paused_reason?: string | null
           sale_id?: string
           salesperson_id?: string | null
           started_at?: string
@@ -4050,6 +4121,13 @@ export type Database = {
             columns: ["cadence_id"]
             isOneToOne: false
             referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospect_cadences_enrolled_via_rule_id_fkey"
+            columns: ["enrolled_via_rule_id"]
+            isOneToOne: false
+            referencedRelation: "cadence_enrollment_rules"
             referencedColumns: ["id"]
           },
           {
@@ -6853,6 +6931,14 @@ export type Database = {
       }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
+      find_matching_cadence_rule: {
+        Args: { _sale_id: string }
+        Returns: {
+          cadence_id: string
+          rule_id: string
+          rule_name: string
+        }[]
+      }
       generate_api_token: { Args: never; Returns: string }
       generate_device_fingerprint: {
         Args: { p_ip_address: string; p_user_agent: string }
@@ -6867,6 +6953,26 @@ export type Database = {
           is_active: boolean
           name: string
           role: string
+        }[]
+      }
+      get_auto_paused_count: { Args: { _days?: number }; Returns: number }
+      get_cadence_metrics: {
+        Args: { _cadence_id?: string; _days?: number }
+        Returns: {
+          active_count: number
+          auto_paused_count: number
+          cadence_id: string
+          cadence_name: string
+          cancelled_count: number
+          completed_count: number
+          completion_rate: number
+          conversion_rate: number
+          paused_count: number
+          reply_rate: number
+          tasks_completed: number
+          tasks_skipped: number
+          total_enrolled: number
+          total_tasks: number
         }[]
       }
       get_current_salesperson_id: { Args: never; Returns: string }

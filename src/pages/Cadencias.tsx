@@ -1,13 +1,15 @@
 import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord } from "@/hooks/useCadences";
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
+import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
+import { CadenceMetricsPanel } from "@/components/cadences/CadenceMetricsPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitBranch, Zap, Clock, CheckCircle, Search, Filter } from "lucide-react";
+import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
@@ -63,13 +65,14 @@ export default function Cadencias() {
                 <Zap className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
+              <EnrollmentRulesDialog />
               <CreateCadenceDialog />
             </div>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
           <Card className="glass border-border/40 hover-lift-sm">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-primary/10">
@@ -103,13 +106,25 @@ export default function Cadencias() {
               </div>
             </CardContent>
           </Card>
+          <Card className="glass border-border/40 hover-lift-sm">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-status-warning/10">
+                <PauseCircle className="h-5 w-5 text-status-warning" />
+              </div>
+              <div>
+                <p className="text-metric">{cadenceStats?.autoPausedLast7Days ?? 0}</p>
+                <p className="text-xs text-muted-foreground">Auto-pausadas (7d)</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Today's Tasks */}
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+          {/* Today's Tasks + Metrics */}
+          <div className="space-y-6 opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             <TodaysCadenceTasks />
+            <CadenceMetricsPanel />
           </div>
 
           {/* Cadences List */}
