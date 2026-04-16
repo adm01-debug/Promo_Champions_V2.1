@@ -3,6 +3,7 @@ import { ShieldX, ArrowLeft, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { motion } from "framer-motion";
 
 const AccessDenied = () => {
   const { currentUserRole } = useUserRoles();
@@ -20,7 +21,7 @@ const AccessDenied = () => {
       <meta name="description" content="Você não tem permissão para acessar esta página" />
     </Helmet>
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="text-center max-w-md">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-md">
         <div className="mx-auto w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mb-6">
           <ShieldX className="h-10 w-10 text-destructive" />
         </div>
@@ -64,7 +65,7 @@ const AccessDenied = () => {
             Voltar
           </Button>
         </div>
-      </div>
+      </motion.div>
     </div>
   </>
   );

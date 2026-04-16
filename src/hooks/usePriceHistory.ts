@@ -11,6 +11,8 @@ export interface PriceHistory {
   price_change_percent: number;
   recorded_at: string;
   created_at: string;
+  products?: { name: string } | null;
+  suppliers?: { name: string } | null;
 }
 
 export interface PriceAlert {

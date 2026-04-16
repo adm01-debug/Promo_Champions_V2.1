@@ -45,7 +45,7 @@ const PriceEvolution = () => {
     const grouped = new Map<string, { date: string; [supplier: string]: number | string }>();
     history.forEach((h) => {
       const dateKey = format(new Date(h.recorded_at), "dd/MM", { locale: ptBR });
-      const supplierName = (h as any).suppliers?.name || "Fornecedor";
+      const supplierName = h.suppliers?.name || "Fornecedor";
       if (!grouped.has(dateKey)) {
         grouped.set(dateKey, { date: dateKey });
       }
@@ -57,7 +57,7 @@ const PriceEvolution = () => {
   const supplierNames = React.useMemo(() => {
     if (!history?.length) return [];
     const names = new Set<string>();
-    history.forEach((h) => names.add((h as any).suppliers?.name || "Fornecedor"));
+    history.forEach((h) => names.add(h.suppliers?.name || "Fornecedor"));
     return Array.from(names);
   }, [history]);
 
@@ -213,8 +213,8 @@ const PriceEvolution = () => {
                             )}
                           </div>
                           <div>
-                            <p className="text-xs font-medium">{(h as any).products?.name || "Produto"}</p>
-                            <p className="text-[10px] text-muted-foreground">{(h as any).suppliers?.name}</p>
+                            <p className="text-xs font-medium">{h.products?.name || "Produto"}</p>
+                            <p className="text-[10px] text-muted-foreground">{h.suppliers?.name}</p>
                           </div>
                         </div>
                         <div className="text-right">

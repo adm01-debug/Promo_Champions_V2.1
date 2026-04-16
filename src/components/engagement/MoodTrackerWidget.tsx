@@ -31,13 +31,13 @@ function _MoodTrackerWidget({ className }: { className?: string }) {
     queryFn: async () => {
       if (!salesperson?.id) return null;
       const { data, error } = await supabase
-        .from("mood_entries" as any)
+        .from("mood_entries")
         .select("mood_value")
         .eq("salesperson_id", salesperson.id)
         .eq("entry_date", today)
         .maybeSingle();
       if (error || !data) return null;
-      return (data as any).mood_value as number;
+      return data.mood_value;
     },
     enabled: !!salesperson?.id,
   });
@@ -45,8 +45,8 @@ function _MoodTrackerWidget({ className }: { className?: string }) {
   const submitMood = useMutation({
     mutationFn: async (moodValue: number) => {
       if (!salesperson?.id) throw new Error("Not authenticated");
-      const { error } = await supabase.from("mood_entries" as any).upsert(
-        { salesperson_id: salesperson.id, entry_date: today, mood_value: moodValue } as any,
+      const { error } = await supabase.from("mood_entries").upsert(
+        { salesperson_id: salesperson.id, entry_date: today, mood_value: moodValue },
         { onConflict: "salesperson_id,entry_date" }
       );
       if (error) throw error;

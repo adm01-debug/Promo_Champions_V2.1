@@ -1,10 +1,38 @@
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import Index from "@/pages/Index";
+import {
+  // Auth & System
+  Auth, ResetPassword, NotFound, AccessDenied,
+  // Dashboards
+  SDRDashboard, CloserDashboard, DashboardCustom, VendedorDashboard,
+  // CRM Core
+  Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
+  // Prospecção & Atividades
+  Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente,
+  LeadScoring, Multichannel, EmailTracking, Automacoes,
+  // Vendas & Comercial
+  Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos,
+  // Analytics & BI
+  Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
+  RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports,
+  ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore,
+  // Gamificação & Social
+  RankingCompetitivo, ArenaCompetitiva, DesafiosSemanais, HistoricoDesafiosDiarios,
+  VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
+  // Gestão
+  Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
+  NPSDashboard, Deduplication, ImportExport, OnboardingTracking, InactivityTriggers, Bitrix24,
+  // Ferramentas & IA
+  Assistente, Notificacoes, Configuracoes,
+  // Admin
+  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard,
+} from "./lazyPages";
 
 const PageLoadingFallback = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -20,93 +48,25 @@ const PageLoadingFallback = () => (
   </div>
 );
 
-// Lazy load all pages
-const Vendas = lazy(() => import("@/pages/Vendas"));
-const Clientes = lazy(() => import("@/pages/Clientes"));
-const Produtos = lazy(() => import("@/pages/Produtos"));
-const Relatorios = lazy(() => import("@/pages/Relatorios"));
-const Vendedores = lazy(() => import("@/pages/Vendedores"));
-const VendedorDashboard = lazy(() => import("@/pages/VendedorDashboard"));
-const Analytics = lazy(() => import("@/pages/Analytics"));
-const Notificacoes = lazy(() => import("@/pages/Notificacoes"));
-const Pipeline = lazy(() => import("@/pages/Pipeline"));
-const Tarefas = lazy(() => import("@/pages/Tarefas"));
-const Playbooks = lazy(() => import("@/pages/Playbooks"));
-const SDRDashboard = lazy(() => import("@/pages/SDRDashboard"));
-const CloserDashboard = lazy(() => import("@/pages/CloserDashboard"));
-const Atividades = lazy(() => import("@/pages/Atividades"));
-const Cadencias = lazy(() => import("@/pages/Cadencias"));
-const Metas = lazy(() => import("@/pages/Metas"));
-const FonteLeads = lazy(() => import("@/pages/FonteLeads"));
-const RelatorioAtividades = lazy(() => import("@/pages/RelatorioAtividades"));
-const MetasAtividades = lazy(() => import("@/pages/MetasAtividades"));
-const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
-const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
-const Times = lazy(() => import("@/pages/Times"));
-const Bitrix24 = lazy(() => import("@/pages/Bitrix24"));
-const Auth = lazy(() => import("@/pages/Auth"));
-const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
-const AccessDenied = lazy(() => import("@/pages/AccessDenied"));
-const Portfolio = lazy(() => import("@/pages/Portfolio"));
-const ICP = lazy(() => import("@/pages/ICP"));
-const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
-const Assistente = lazy(() => import("@/pages/Assistente"));
-const BIVendedor = lazy(() => import("@/pages/BIVendedor"));
-const BIGestor = lazy(() => import("@/pages/BIGestor"));
-const BISDR = lazy(() => import("@/pages/BISDR"));
-const BICloser = lazy(() => import("@/pages/BICloser"));
-const DesafiosSemanais = lazy(() => import("@/pages/DesafiosSemanais"));
-const Territorios = lazy(() => import("@/pages/Territorios"));
-const HistoricoDesafiosDiarios = lazy(() => import("@/pages/HistoricoDesafiosDiarios"));
-const PrevisaoDemanda = lazy(() => import("@/pages/PrevisaoDemanda"));
-const ForecastPonderado = lazy(() => import("@/pages/ForecastPonderado"));
-const Calendario = lazy(() => import("@/pages/Calendario"));
-const Fornecedores = lazy(() => import("@/pages/Fornecedores"));
-const ComparadorPrecos = lazy(() => import("@/pages/ComparadorPrecos"));
-const AssinaturaDigital = lazy(() => import("@/pages/AssinaturaDigital"));
-const Orcamentos = lazy(() => import("@/pages/Orcamentos"));
-const Automacoes = lazy(() => import("@/pages/Automacoes"));
-const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
-const DashboardCustom = lazy(() => import("@/pages/DashboardCustom"));
-const KanbanClientes = lazy(() => import("@/pages/KanbanClientes"));
-const RelatoriosEmail = lazy(() => import("@/pages/RelatoriosEmail"));
-const ROIDashboard = lazy(() => import("@/pages/ROIDashboard"));
-const ArenaCompetitiva = lazy(() => import("@/pages/ArenaCompetitiva"));
-const FollowUpInteligente = lazy(() => import("@/pages/FollowUpInteligente"));
-const RelatoriosExecutivos = lazy(() => import("@/pages/RelatoriosExecutivos"));
-const MapaClientes = lazy(() => import("@/pages/MapaClientes"));
-const AdminTelemetria = lazy(() => import("@/pages/AdminTelemetria"));
-const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
-const Multichannel = lazy(() => import("@/pages/Multichannel"));
-const Estoque = lazy(() => import("@/pages/Estoque"));
-const NPSDashboard = lazy(() => import("@/pages/NPSDashboard"));
-const UsageAnalytics = lazy(() => import("@/pages/UsageAnalytics"));
-const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
-const Deduplication = lazy(() => import("@/pages/Deduplication"));
-const ImportExport = lazy(() => import("@/pages/ImportExport"));
-const OnboardingTracking = lazy(() => import("@/pages/OnboardingTracking"));
-const FunnelAnalysis = lazy(() => import("@/pages/FunnelAnalysis"));
-const VictoryFeedPage = lazy(() => import("@/pages/VictoryFeedPage"));
-const FeatureFlagsAdmin = lazy(() => import("@/pages/FeatureFlagsAdmin"));
-const SecurityDashboard = lazy(() => import("@/pages/SecurityDashboard"));
-const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
-const PriceEvolution = lazy(() => import("@/pages/PriceEvolution"));
-const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
-const CompetitiveSeasonsAdmin = lazy(() => import("@/pages/CompetitiveSeasonsAdmin"));
-const InactivityTriggers = lazy(() => import("@/pages/InactivityTriggers"));
-const HistoricalBenchmark = lazy(() => import("@/pages/HistoricalBenchmark"));
-const TeamActivityFeed = lazy(() => import("@/pages/TeamActivityFeed"));
-const ClientHealthScore = lazy(() => import("@/pages/ClientHealthScore"));
-
 export { PageLoadingFallback };
+
+// Helper to wrap admin-only routes
+const Admin = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>
+);
+const Manager = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute requireAdminOrManager>{children}</ProtectedRoute>
+);
 
 export function AppRoutes() {
   return (
     <Suspense fallback={<PageLoadingFallback />}>
       <Routes>
+        {/* Public auth routes */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* App routes within MainLayout */}
         <Route
           path="/*"
           element={
@@ -114,143 +74,100 @@ export function AppRoutes() {
               <ErrorBoundary>
                 <Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
+                    {/* ─── Dashboards ────────────────────────────── */}
                     <Route path="/" element={<Index />} />
+                    <Route path="/sdr" element={<SDRDashboard />} />
+                    <Route path="/closer" element={<CloserDashboard />} />
+                    <Route path="/dashboard-custom" element={<DashboardCustom />} />
+                    <Route path="/vendedor/:id" element={<VendedorDashboard />} />
+
+                    {/* ─── CRM Core ─────────────────────────────── */}
                     <Route path="/vendas" element={<Vendas />} />
                     <Route path="/clientes" element={<Clientes />} />
                     <Route path="/produtos" element={<Produtos />} />
-                    <Route path="/relatorios" element={
-                      <ProtectedRoute requireAdminOrManager><Relatorios /></ProtectedRoute>
-                    } />
-                    <Route path="/vendedores" element={
-                      <ProtectedRoute requireAdminOrManager><Vendedores /></ProtectedRoute>
-                    } />
-                    <Route path="/vendedor/:id" element={<VendedorDashboard />} />
-                    <Route path="/analytics" element={
-                      <ProtectedRoute requireAdminOrManager><Analytics /></ProtectedRoute>
-                    } />
-                    <Route path="/notificacoes" element={<Notificacoes />} />
                     <Route path="/pipeline" element={<Pipeline />} />
-                    <Route path="/tarefas" element={<Tarefas />} />
-                    <Route path="/playbooks" element={
-                      <ProtectedRoute requireAdminOrManager><Playbooks /></ProtectedRoute>
-                    } />
-                    <Route path="/sdr" element={<SDRDashboard />} />
-                    <Route path="/closer" element={<CloserDashboard />} />
+                    <Route path="/kanban-clientes" element={<KanbanClientes />} />
+                    <Route path="/mapa-clientes" element={<MapaClientes />} />
+                    <Route path="/calendario" element={<Calendario />} />
+                    <Route path="/portfolio" element={<Manager><Portfolio /></Manager>} />
+
+                    {/* ─── Prospecção & Atividades ───────────────── */}
                     <Route path="/atividades" element={<Atividades />} />
                     <Route path="/cadencias" element={<Cadencias />} />
-                    <Route path="/metas" element={
-                      <ProtectedRoute requireAdminOrManager><Metas /></ProtectedRoute>
-                    } />
-                    <Route path="/fonte-leads" element={
-                      <ProtectedRoute requireAdminOrManager><FonteLeads /></ProtectedRoute>
-                    } />
-                    <Route path="/relatorio-atividades" element={
-                      <ProtectedRoute requireAdminOrManager><RelatorioAtividades /></ProtectedRoute>
-                    } />
-                    <Route path="/metas-atividades" element={<MetasAtividades />} />
-                    <Route path="/ranking" element={<RankingCompetitivo />} />
-                    <Route path="/configuracoes" element={<Configuracoes />} />
-                    <Route path="/times" element={
-                      <ProtectedRoute requireAdminOrManager><Times /></ProtectedRoute>
-                    } />
-                    <Route path="/bitrix24" element={
-                      <ProtectedRoute requireAdminOrManager><Bitrix24 /></ProtectedRoute>
-                    } />
-                    <Route path="/acesso-negado" element={<AccessDenied />} />
-                    <Route path="/portfolio" element={
-                      <ProtectedRoute requireAdminOrManager><Portfolio /></ProtectedRoute>
-                    } />
-                    <Route path="/icp" element={
-                      <ProtectedRoute requireAdminOrManager><ICP /></ProtectedRoute>
-                    } />
-                    <Route path="/admin" element={
-                      <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
-                    } />
-                    <Route path="/admin/telemetria" element={
-                      <ProtectedRoute requireAdminOrManager><AdminTelemetria /></ProtectedRoute>
-                    } />
-                    <Route path="/assistente" element={<Assistente />} />
+                    <Route path="/tarefas" element={<Tarefas />} />
+                    <Route path="/icp" element={<Manager><ICP /></Manager>} />
+                    <Route path="/fonte-leads" element={<Manager><FonteLeads /></Manager>} />
+                    <Route path="/playbooks" element={<Manager><Playbooks /></Manager>} />
+                    <Route path="/follow-up" element={<FollowUpInteligente />} />
+                    <Route path="/lead-scoring" element={<LeadScoring />} />
+                    <Route path="/multichannel" element={<Multichannel />} />
+                    <Route path="/email-tracking" element={<EmailTracking />} />
+                    <Route path="/automacoes" element={<Automacoes />} />
+
+                    {/* ─── Vendas & Comercial ────────────────────── */}
+                    <Route path="/orcamentos" element={<Orcamentos />} />
+                    <Route path="/assinatura-digital" element={<Manager><AssinaturaDigital /></Manager>} />
+                    <Route path="/fornecedores" element={<Manager><Fornecedores /></Manager>} />
+                    <Route path="/comparador-precos" element={<Manager><ComparadorPrecos /></Manager>} />
+
+                    {/* ─── Analytics & BI ────────────────────────── */}
+                    <Route path="/analytics" element={<Manager><Analytics /></Manager>} />
+                    <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
                     <Route path="/bi-vendedor" element={<BIVendedor />} />
                     <Route path="/bi-sdr" element={<BISDR />} />
                     <Route path="/bi-closer" element={<BICloser />} />
-                    <Route path="/bi-gestor" element={
-                      <ProtectedRoute requireAdminOrManager><BIGestor /></ProtectedRoute>
-                    } />
+                    <Route path="/bi-gestor" element={<Manager><BIGestor /></Manager>} />
+                    <Route path="/relatorio-atividades" element={<Manager><RelatorioAtividades /></Manager>} />
+                    <Route path="/relatorios-email" element={<RelatoriosEmail />} />
+                    <Route path="/relatorios-executivos" element={<Manager><RelatoriosExecutivos /></Manager>} />
+                    <Route path="/relatorios-agendados" element={<Manager><ScheduledReports /></Manager>} />
+                    <Route path="/roi" element={<Manager><ROIDashboard /></Manager>} />
+                    <Route path="/forecast" element={<Manager><ForecastPonderado /></Manager>} />
+                    <Route path="/previsao-demanda" element={<Manager><PrevisaoDemanda /></Manager>} />
+                    <Route path="/funil" element={<FunnelAnalysis />} />
+                    <Route path="/top-produtos" element={<TopProductsRanking />} />
+                    <Route path="/evolucao-precos" element={<Manager><PriceEvolution /></Manager>} />
+                    <Route path="/metricas-categoria" element={<CategoryMetrics />} />
+                    <Route path="/benchmarking" element={<HistoricalBenchmark />} />
+                    <Route path="/health-score" element={<ClientHealthScore />} />
+
+                    {/* ─── Gamificação & Social ──────────────────── */}
+                    <Route path="/ranking" element={<RankingCompetitivo />} />
+                    <Route path="/arena" element={<ArenaCompetitiva />} />
                     <Route path="/desafios" element={<DesafiosSemanais />} />
                     <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
-                    <Route path="/previsao-demanda" element={
-                      <ProtectedRoute requireAdminOrManager><PrevisaoDemanda /></ProtectedRoute>
-                    } />
-                    <Route path="/forecast" element={
-                      <ProtectedRoute requireAdminOrManager><ForecastPonderado /></ProtectedRoute>
-                    } />
-                    <Route path="/calendario" element={<Calendario />} />
-                    <Route path="/fornecedores" element={
-                      <ProtectedRoute requireAdminOrManager><Fornecedores /></ProtectedRoute>
-                    } />
-                    <Route path="/comparador-precos" element={
-                      <ProtectedRoute requireAdminOrManager><ComparadorPrecos /></ProtectedRoute>
-                    } />
-                    <Route path="/assinatura-digital" element={
-                      <ProtectedRoute requireAdminOrManager><AssinaturaDigital /></ProtectedRoute>
-                    } />
-                    <Route path="/orcamentos" element={<Orcamentos />} />
-                    <Route path="/automacoes" element={<Automacoes />} />
-                    <Route path="/email-tracking" element={<EmailTracking />} />
-                    <Route path="/dashboard-custom" element={<DashboardCustom />} />
-                    <Route path="/kanban-clientes" element={<KanbanClientes />} />
-                    <Route path="/relatorios-email" element={<RelatoriosEmail />} />
-                    <Route path="/roi" element={
-                      <ProtectedRoute requireAdminOrManager><ROIDashboard /></ProtectedRoute>
-                    } />
-                    <Route path="/arena" element={<ArenaCompetitiva />} />
-                    <Route path="/follow-up" element={<FollowUpInteligente />} />
-                    <Route path="/territorios" element={<Territorios />} />
-                    <Route path="/mapa-clientes" element={<MapaClientes />} />
-                    <Route path="/relatorios-executivos" element={
-                      <ProtectedRoute requireAdminOrManager><RelatoriosExecutivos /></ProtectedRoute>
-                    } />
-                    <Route path="/lead-scoring" element={<LeadScoring />} />
-                    <Route path="/multichannel" element={<Multichannel />} />
-                    <Route path="/estoque" element={
-                      <ProtectedRoute requireAdminOrManager><Estoque /></ProtectedRoute>
-                    } />
-                    <Route path="/nps" element={<NPSDashboard />} />
-                    <Route path="/usage-analytics" element={
-                      <ProtectedRoute requiredRole="admin"><UsageAnalytics /></ProtectedRoute>
-                    } />
-                    <Route path="/relatorios-agendados" element={
-                      <ProtectedRoute requireAdminOrManager><ScheduledReports /></ProtectedRoute>
-                    } />
-                    <Route path="/deduplicacao" element={
-                      <ProtectedRoute requireAdminOrManager><Deduplication /></ProtectedRoute>
-                    } />
-                    <Route path="/importar-exportar" element={
-                      <ProtectedRoute requireAdminOrManager><ImportExport /></ProtectedRoute>
-                    } />
-                    <Route path="/onboarding-tracking" element={<OnboardingTracking />} />
-                    <Route path="/funil" element={<FunnelAnalysis />} />
                     <Route path="/feed-vitorias" element={<VictoryFeedPage />} />
-                    <Route path="/feature-flags" element={
-                      <ProtectedRoute requiredRole="admin"><FeatureFlagsAdmin /></ProtectedRoute>
-                    } />
-                    <Route path="/seguranca" element={
-                      <ProtectedRoute requiredRole="admin"><SecurityDashboard /></ProtectedRoute>
-                    } />
-                    <Route path="/top-produtos" element={<TopProductsRanking />} />
-                    <Route path="/evolucao-precos" element={
-                      <ProtectedRoute requireAdminOrManager><PriceEvolution /></ProtectedRoute>
-                    } />
-                    <Route path="/metricas-categoria" element={<CategoryMetrics />} />
-                    <Route path="/temporadas" element={
-                      <ProtectedRoute requireAdminOrManager><CompetitiveSeasonsAdmin /></ProtectedRoute>
-                    } />
-                    <Route path="/gatilhos-inatividade" element={
-                      <ProtectedRoute requireAdminOrManager><InactivityTriggers /></ProtectedRoute>
-                    } />
-                    <Route path="/benchmarking" element={<HistoricalBenchmark />} />
+                    <Route path="/temporadas" element={<Manager><CompetitiveSeasonsAdmin /></Manager>} />
                     <Route path="/feed-equipe" element={<TeamActivityFeed />} />
-                    <Route path="/health-score" element={<ClientHealthScore />} />
+
+                    {/* ─── Gestão ────────────────────────────────── */}
+                    <Route path="/vendedores" element={<Manager><Vendedores /></Manager>} />
+                    <Route path="/metas" element={<Manager><Metas /></Manager>} />
+                    <Route path="/metas-atividades" element={<MetasAtividades />} />
+                    <Route path="/times" element={<Manager><Times /></Manager>} />
+                    <Route path="/territorios" element={<Territorios />} />
+                    <Route path="/estoque" element={<Manager><Estoque /></Manager>} />
+                    <Route path="/nps" element={<NPSDashboard />} />
+                    <Route path="/deduplicacao" element={<Manager><Deduplication /></Manager>} />
+                    <Route path="/importar-exportar" element={<Manager><ImportExport /></Manager>} />
+                    <Route path="/onboarding-tracking" element={<OnboardingTracking />} />
+                    <Route path="/gatilhos-inatividade" element={<Manager><InactivityTriggers /></Manager>} />
+                    <Route path="/bitrix24" element={<Manager><Bitrix24 /></Manager>} />
+
+                    {/* ─── Ferramentas & IA ──────────────────────── */}
+                    <Route path="/assistente" element={<Assistente />} />
+                    <Route path="/notificacoes" element={<Notificacoes />} />
+                    <Route path="/configuracoes" element={<Configuracoes />} />
+
+                    {/* ─── Admin ─────────────────────────────────── */}
+                    <Route path="/admin" element={<Admin><AdminDashboard /></Admin>} />
+                    <Route path="/admin/telemetria" element={<Manager><AdminTelemetria /></Manager>} />
+                    <Route path="/usage-analytics" element={<Admin><UsageAnalytics /></Admin>} />
+                    <Route path="/feature-flags" element={<Admin><FeatureFlagsAdmin /></Admin>} />
+                    <Route path="/seguranca" element={<Admin><SecurityDashboard /></Admin>} />
+
+                    {/* ─── System ────────────────────────────────── */}
+                    <Route path="/acesso-negado" element={<AccessDenied />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
