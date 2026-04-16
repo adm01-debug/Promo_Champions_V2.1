@@ -81,6 +81,7 @@ const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 const Multichannel = lazy(() => import("@/pages/Multichannel"));
 const Estoque = lazy(() => import("@/pages/Estoque"));
 const NPSDashboard = lazy(() => import("@/pages/NPSDashboard"));
+const UsageAnalytics = lazy(() => import("@/pages/UsageAnalytics"));
 
 export { PageLoadingFallback };
 
@@ -199,6 +200,9 @@ export function AppRoutes() {
                       <ProtectedRoute requireAdminOrManager><Estoque /></ProtectedRoute>
                     } />
                     <Route path="/nps" element={<NPSDashboard />} />
+                    <Route path="/usage-analytics" element={
+                      <ProtectedRoute requiredRole="admin"><UsageAnalytics /></ProtectedRoute>
+                    } />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
