@@ -27,12 +27,15 @@ export function useCompetitiveChat() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data || []).map((m) => ({
-        ...m,
-        sender_name: (m.sender as Record<string, string> | null)?.name || 'Anônimo',
-        sender_avatar: (m.sender as Record<string, string> | null)?.avatar_url,
-        reactions: (m.reactions as Record<string, number>) || {},
-      })).reverse() as ChatMessage[];
+      return (data || []).map((m) => {
+        const sender = m.sender as unknown as Record<string, string> | null;
+        return {
+          ...m,
+          sender_name: sender?.name || 'Anônimo',
+          sender_avatar: sender?.avatar_url,
+          reactions: (m.reactions as unknown as Record<string, string[]>) || {},
+        };
+      }).reverse() as ChatMessage[];
     },
     refetchInterval: 30000,
     staleTime: 15000,

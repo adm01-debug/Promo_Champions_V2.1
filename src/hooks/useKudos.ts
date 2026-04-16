@@ -37,13 +37,17 @@ export function useKudos() {
         .order('created_at', { ascending: false })
         .limit(30);
       if (error) throw error;
-      return (data || []).map((k) => ({
-        ...k,
-        from_name: (k.from as Record<string, string> | null)?.name || 'Alguém',
-        from_avatar: (k.from as Record<string, string> | null)?.avatar_url,
-        to_name: (k.to as Record<string, string> | null)?.name || 'Alguém',
-        to_avatar: (k.to as Record<string, string> | null)?.avatar_url,
-      })) as Kudos[];
+      return (data || []).map((k) => {
+        const from = k.from as unknown as Record<string, string> | null;
+        const to = k.to as unknown as Record<string, string> | null;
+        return {
+          ...k,
+          from_name: from?.name || 'Alguém',
+          from_avatar: from?.avatar_url,
+          to_name: to?.name || 'Alguém',
+          to_avatar: to?.avatar_url,
+        };
+      }) as Kudos[];
     },
   });
 
