@@ -86,6 +86,4 @@ function MicroGoalItem({ goal, index }: { goal: MicroGoal; index: number }) {
       </div>
     </motion.div>
   );
-});
-
-MicroGoalsWidget.displayName = "MicroGoalsWidget";
+}
