@@ -540,4 +540,29 @@ Todos os hooks em `src/hooks/` estão conectados a dados reais do Supabase — n
 
 ---
 
+## 🚀 Módulos World-Class (10/10)
+
+### 🎙️ Conversational Intelligence (`/conversational-intelligence`)
+- Análise de gravações de chamadas via IA (Gemini 2.5 Flash).
+- Sentimento, talk-ratio, tópicos, objeções e dicas de coaching automáticas.
+- Storage privado (`call-recordings`) com RLS.
+
+### 📈 Revenue Intelligence (`/revenue-intelligence`) — Manager
+- Deal Health Score determinístico (RPC `calculate_deal_health`).
+- Forecast 30/60/90 ponderado vs. raw (RPC `get_revenue_forecast`).
+- Painel de sinais de risco com resolução manual.
+
+### 🏢 Account-Based Selling (`/abm`)
+- Hierarquia de contas (Strategic/Enterprise/Mid-Market/SMB).
+- Buying Committee (Decisor, Champion, Influenciador, Bloqueador).
+- Account Score automatizado via RPC `calculate_account_score`.
+
+### ⚡ Workflow Automation Builder (`/workflow-builder`) — Manager
+- Construtor no-code: gatilho → condições → ações.
+- Edge Function `execute-workflow` orquestra criação de tarefas, atualização de estágio e log de atividade.
+- Histórico de runs com duração, status e payload.
+
+---
+
 > **Este documento representa a fonte única de verdade para todas as funcionalidades do sistema Sales Arena.**
+
