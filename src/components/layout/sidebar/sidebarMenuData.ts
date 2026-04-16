@@ -5,7 +5,7 @@ import {
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
   Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
-  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook, ScrollText, Route, Workflow, Brain,
+  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook, ScrollText, Route, Workflow, Brain, BookOpen,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -61,6 +61,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Conv. Intelligence", url: "/conversational-intelligence", icon: Sparkles },
       { title: "ABM (Contas)", url: "/abm", icon: Building2 },
       { title: "Automações", url: "/automacoes", icon: Zap },
+      { title: "Sales Enablement", url: "/sales-enablement", icon: BookOpen },
     ],
   },
   {
@@ -94,6 +95,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
+      { title: "Sales Enablement", url: "/sales-enablement", icon: BookOpen },
     ],
   },
   {
