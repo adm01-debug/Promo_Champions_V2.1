@@ -1120,6 +1120,62 @@ export type Database = {
         }
         Relationships: []
       }
+      buying_committee_members: {
+        Row: {
+          committee_role: string
+          contact_email: string | null
+          contact_name: string
+          created_at: string
+          created_by: string | null
+          id: string
+          influence_level: number
+          is_single_threaded: boolean | null
+          job_title: string | null
+          notes: string | null
+          sale_id: string
+          sentiment: string
+          updated_at: string
+        }
+        Insert: {
+          committee_role?: string
+          contact_email?: string | null
+          contact_name: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          influence_level?: number
+          is_single_threaded?: boolean | null
+          job_title?: string | null
+          notes?: string | null
+          sale_id: string
+          sentiment?: string
+          updated_at?: string
+        }
+        Update: {
+          committee_role?: string
+          contact_email?: string | null
+          contact_name?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          influence_level?: number
+          is_single_threaded?: boolean | null
+          job_title?: string | null
+          notes?: string | null
+          sale_id?: string
+          sentiment?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buying_committee_members_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_ab_assignments: {
         Row: {
           ab_test_id: string
@@ -4374,6 +4430,50 @@ export type Database = {
         }
         Relationships: []
       }
+      pipeline_inspection_snapshots: {
+        Row: {
+          days_in_stage: number
+          days_since_activity: number | null
+          health_score: number | null
+          id: string
+          inspected_at: string
+          last_activity_at: string | null
+          risk_flags: Json
+          sale_id: string
+          stage: string
+        }
+        Insert: {
+          days_in_stage?: number
+          days_since_activity?: number | null
+          health_score?: number | null
+          id?: string
+          inspected_at?: string
+          last_activity_at?: string | null
+          risk_flags?: Json
+          sale_id: string
+          stage: string
+        }
+        Update: {
+          days_in_stage?: number
+          days_since_activity?: number | null
+          health_score?: number | null
+          id?: string
+          inspected_at?: string
+          last_activity_at?: string | null
+          risk_flags?: Json
+          sale_id?: string
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_inspection_snapshots_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_stages: {
         Row: {
           color: string
@@ -4963,6 +5063,60 @@ export type Database = {
         }
         Relationships: []
       }
+      qbr_reports: {
+        Row: {
+          ai_narrative: string | null
+          generated_at: string
+          generated_by: string | null
+          id: string
+          metrics: Json
+          period_end: string
+          period_label: string
+          period_start: string
+          recommendations: Json
+          salesperson_id: string | null
+        }
+        Insert: {
+          ai_narrative?: string | null
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          metrics?: Json
+          period_end: string
+          period_label: string
+          period_start: string
+          recommendations?: Json
+          salesperson_id?: string | null
+        }
+        Update: {
+          ai_narrative?: string | null
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          metrics?: Json
+          period_end?: string
+          period_label?: string
+          period_start?: string
+          recommendations?: Json
+          salesperson_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qbr_reports_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qbr_reports_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       query_telemetry: {
         Row: {
           count_mode: string | null
@@ -5370,6 +5524,9 @@ export type Database = {
           category: string
           client_name: string
           created_at: string
+          forecast_category:
+            | Database["public"]["Enums"]["forecast_category"]
+            | null
           id: string
           pipeline_id: string | null
           product_name: string
@@ -5383,6 +5540,9 @@ export type Database = {
           category?: string
           client_name: string
           created_at?: string
+          forecast_category?:
+            | Database["public"]["Enums"]["forecast_category"]
+            | null
           id?: string
           pipeline_id?: string | null
           product_name: string
@@ -5396,6 +5556,9 @@ export type Database = {
           category?: string
           client_name?: string
           created_at?: string
+          forecast_category?:
+            | Database["public"]["Enums"]["forecast_category"]
+            | null
           id?: string
           pipeline_id?: string | null
           product_name?: string
@@ -7766,6 +7929,16 @@ export type Database = {
           processed: number
         }[]
       }
+      compute_forecast_rollup: {
+        Args: { _horizon_days?: number }
+        Returns: {
+          category: Database["public"]["Enums"]["forecast_category"]
+          deal_count: number
+          total_amount: number
+          weighted_amount: number
+        }[]
+      }
+      compute_pipeline_inspection: { Args: never; Returns: number }
       count_failed_login_attempts: {
         Args: { check_email: string; check_ip: string; window_minutes?: number }
         Returns: number
@@ -8011,6 +8184,18 @@ export type Database = {
         Args: { p_code: string; p_method?: string }
         Returns: boolean
       }
+      win_rate_breakdown: {
+        Args: { _days?: number; _dimension?: string }
+        Returns: {
+          avg_deal_size: number
+          lost_deals: number
+          segment: string
+          total_deals: number
+          total_revenue: number
+          win_rate: number
+          won_deals: number
+        }[]
+      }
     }
     Enums: {
       activity_outcome:
@@ -8030,6 +8215,12 @@ export type Database = {
         | "whatsapp"
         | "other"
       app_role: "admin" | "manager" | "salesperson"
+      forecast_category:
+        | "commit"
+        | "best_case"
+        | "pipeline"
+        | "omitted"
+        | "closed"
       sales_league: "bronze" | "silver" | "gold" | "diamond"
       salesperson_role: "sdr" | "closer" | "hybrid"
       task_priority: "high" | "medium" | "low"
@@ -8187,6 +8378,13 @@ export const Constants = {
         "other",
       ],
       app_role: ["admin", "manager", "salesperson"],
+      forecast_category: [
+        "commit",
+        "best_case",
+        "pipeline",
+        "omitted",
+        "closed",
+      ],
       sales_league: ["bronze", "silver", "gold", "diamond"],
       salesperson_role: ["sdr", "closer", "hybrid"],
       task_priority: ["high", "medium", "low"],
