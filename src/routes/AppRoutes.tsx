@@ -94,6 +94,10 @@ const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
 const PriceEvolution = lazy(() => import("@/pages/PriceEvolution"));
 const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
 const CompetitiveSeasonsAdmin = lazy(() => import("@/pages/CompetitiveSeasonsAdmin"));
+const InactivityTriggers = lazy(() => import("@/pages/InactivityTriggers"));
+const HistoricalBenchmark = lazy(() => import("@/pages/HistoricalBenchmark"));
+const TeamActivityFeed = lazy(() => import("@/pages/TeamActivityFeed"));
+const ClientHealthScore = lazy(() => import("@/pages/ClientHealthScore"));
 
 export { PageLoadingFallback };
 
