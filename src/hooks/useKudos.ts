@@ -37,13 +37,12 @@ export function useKudos() {
         .order('created_at', { ascending: false })
         .limit(30);
       if (error) throw error;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (data || []).map((k: any) => ({
+      return (data || []).map((k) => ({
         ...k,
-        from_name: k.from?.name || 'Alguém',
-        from_avatar: k.from?.avatar_url,
-        to_name: k.to?.name || 'Alguém',
-        to_avatar: k.to?.avatar_url,
+        from_name: (k.from as Record<string, string> | null)?.name || 'Alguém',
+        from_avatar: (k.from as Record<string, string> | null)?.avatar_url,
+        to_name: (k.to as Record<string, string> | null)?.name || 'Alguém',
+        to_avatar: (k.to as Record<string, string> | null)?.avatar_url,
       })) as Kudos[];
     },
   });
