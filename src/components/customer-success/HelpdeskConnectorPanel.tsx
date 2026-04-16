@@ -172,6 +172,24 @@ export function HelpdeskConnectorPanel() {
           </p>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base"><CalendarCheck className="h-4 w-4" />QBR Scheduler</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Recalcula próximas QBRs ativas, cria eventos na agenda do owner (30 dias à frente) e dispara notificações.
+          </p>
+          <Button onClick={handleQbr} disabled={qbrRunning} className="w-full">
+            {qbrRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <CalendarCheck className="h-4 w-4" />}
+            <span className="ml-2">Agendar QBRs</span>
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Frequências suportadas: <code className="text-xs">monthly</code> · <code className="text-xs">quarterly</code> · <code className="text-xs">biannual</code> · <code className="text-xs">annual</code>.
+          </p>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }
