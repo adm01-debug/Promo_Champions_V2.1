@@ -95,9 +95,9 @@ const VictoryFeedPage = () => {
                       <div>
                         <p className="font-display font-semibold">{item.title}</p>
                         {item.description && <p className="text-sm text-muted-foreground mt-1">{item.description}</p>}
-                        {item.value > 0 && (
+                        {(item.value ?? 0) > 0 && (
                           <Badge className="mt-2 text-xs bg-status-success/10 text-status-success border-status-success/30" variant="outline">
-                            💰 {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(item.value)}
+                            💰 {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(item.value ?? 0)}
                           </Badge>
                         )}
                       </div>

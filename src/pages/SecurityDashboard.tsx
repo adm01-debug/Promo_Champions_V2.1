@@ -86,7 +86,7 @@ const SecurityDashboard = () => {
                         <span className="font-medium flex-1 truncate">{attempt.email}</span>
                         <span className="text-muted-foreground">{attempt.ip_address || "—"}</span>
                         <span className="text-muted-foreground shrink-0">
-                          {formatDistanceToNow(new Date(attempt.created_at), { addSuffix: true, locale: ptBR })}
+                          {formatDistanceToNow(new Date(attempt.created_at ?? new Date()), { addSuffix: true, locale: ptBR })}
                         </span>
                       </div>
                     ))
