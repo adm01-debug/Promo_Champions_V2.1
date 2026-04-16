@@ -78,6 +78,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
+      { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
     ],
   },
 ];
@@ -110,6 +111,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
+      { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
     ],
   },
 ];
