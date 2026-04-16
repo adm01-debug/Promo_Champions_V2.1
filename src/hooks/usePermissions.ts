@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CONFIG_QUERY_OPTIONS } from '@/config/queryOptions';
 
 type Permission = string;
 type Role = 'admin' | 'manager' | 'salesperson';
@@ -47,6 +48,7 @@ export const usePermissions = () => {
         permissions: perms,
       };
     },
+    ...CONFIG_QUERY_OPTIONS,
   });
 
   const hasPermission = (permission: Permission): boolean => {
