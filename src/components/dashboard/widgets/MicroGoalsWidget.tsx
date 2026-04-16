@@ -49,7 +49,9 @@ export const MicroGoalsWidget = React.memo(function MicroGoalsWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+MicroGoalsWidget.displayName = "MicroGoalsWidget";
 
 function MicroGoalItem({ goal, index }: { goal: MicroGoal; index: number }) {
   return (
