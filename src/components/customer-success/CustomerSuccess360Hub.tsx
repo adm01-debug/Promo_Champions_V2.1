@@ -9,6 +9,7 @@ import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activit
 import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSuccess360";
 import { formatBRL, daysUntil, renewalSemaphore, RENEWAL_STATUS_LABEL, TICKET_STATUS_LABEL, ONBOARDING_STATUS_LABEL, EXPANSION_TYPE_LABEL } from "./cs360Helpers";
 import { HelpdeskConnectorPanel } from "./HelpdeskConnectorPanel";
+import { SurveyTriggerDialog } from "./SurveyTriggerDialog";
 
 const fadeIn = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } };
 
@@ -243,7 +244,12 @@ export function CustomerSuccess360Hub() {
 
         <TabsContent value="surveys" className="mt-4">
           <Card>
-            <CardHeader><CardTitle>Respostas CSAT / CES</CardTitle></CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Respostas CSAT / CES</CardTitle>
+              {accounts[0] && (
+                <SurveyTriggerDialog accountId={accounts[0].id} accountName={accounts[0].name} />
+              )}
+            </CardHeader>
             <CardContent className="space-y-2">
               {surveys.filter((sv) => sv.responded_at).length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">Nenhuma resposta de CSAT/CES ainda.</p>
