@@ -121,9 +121,10 @@ export default function Cadencias() {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Today's Tasks */}
-          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+          {/* Today's Tasks + Metrics */}
+          <div className="space-y-6 opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             <TodaysCadenceTasks />
+            <CadenceMetricsPanel />
           </div>
 
           {/* Cadences List */}
