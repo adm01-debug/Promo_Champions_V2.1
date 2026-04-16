@@ -5,7 +5,7 @@ import {
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
   Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
-  Timer, HeartPulse, Rss,
+  Timer, HeartPulse, Rss, Wallet, CalendarClock,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -27,6 +27,7 @@ export const sdrMainItems: MenuItem[] = [
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Clientes", url: "/clientes", icon: Users },
+  { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Ranking", url: "/ranking", icon: Trophy },
   { title: "Arena", url: "/arena", icon: Swords },
 ];
@@ -36,6 +37,8 @@ export const closerMainItems: MenuItem[] = [
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
+  { title: "Comissões", url: "/comissoes", icon: Wallet },
+  { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Arena", url: "/arena", icon: Swords },
 ];
@@ -179,6 +182,7 @@ export const systemItems: MenuItem[] = [
 
 export const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
+  { title: "Comissões (Admin)", url: "/admin/comissoes", icon: Wallet },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Usage Analytics", url: "/usage-analytics", icon: BarChart3 },
   { title: "Feature Flags", url: "/feature-flags", icon: Flag },

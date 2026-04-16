@@ -40,6 +40,9 @@ export const Orcamentos = lazy(() => import("@/pages/Orcamentos"));
 export const AssinaturaDigital = lazy(() => import("@/pages/AssinaturaDigital"));
 export const Fornecedores = lazy(() => import("@/pages/Fornecedores"));
 export const ComparadorPrecos = lazy(() => import("@/pages/ComparadorPrecos"));
+export const Comissoes = lazy(() => import("@/pages/Comissoes"));
+export const Agenda = lazy(() => import("@/pages/Agenda"));
+export const AdminComissoes = lazy(() => import("@/pages/AdminComissoes"));
 
 // ─── Analytics & BI ─────────────────────────────────────────────────
 export const Analytics = lazy(() => import("@/pages/Analytics"));
