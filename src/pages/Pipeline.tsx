@@ -1,7 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
 import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
-import { Kanban, ChevronRight } from "lucide-react";
+import { SLADashboard } from "@/components/pipeline/SLADashboard";
+import { Kanban, ChevronRight, Clock } from "lucide-react";
 import { usePipelineDeals } from "@/hooks/usePipeline";
 import { PipelineLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -9,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Pipeline() {
   const { isLoading } = usePipelineDeals();
