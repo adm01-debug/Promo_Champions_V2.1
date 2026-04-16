@@ -5143,6 +5143,99 @@ export type Database = {
         }
         Relationships: []
       }
+      sla_policies: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          max_hours: number
+          stage: string
+          updated_at: string
+          warning_hours: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_hours?: number
+          stage: string
+          updated_at?: string
+          warning_hours?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_hours?: number
+          stage?: string
+          updated_at?: string
+          warning_hours?: number
+        }
+        Relationships: []
+      }
+      sla_violations: {
+        Row: {
+          created_at: string
+          detected_at: string
+          hours_in_stage: number
+          id: string
+          metadata: Json | null
+          policy_id: string | null
+          resolved_at: string | null
+          sale_id: string
+          stage: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          detected_at?: string
+          hours_in_stage?: number
+          id?: string
+          metadata?: Json | null
+          policy_id?: string | null
+          resolved_at?: string | null
+          sale_id: string
+          stage: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          detected_at?: string
+          hours_in_stage?: number
+          id?: string
+          metadata?: Json | null
+          policy_id?: string | null
+          resolved_at?: string | null
+          sale_id?: string
+          stage?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sla_violations_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "sla_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_violations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sms_verification_codes: {
         Row: {
           code: string
@@ -6530,6 +6623,14 @@ export type Database = {
           allowed: boolean
           remaining: number
           reset_at: string
+        }[]
+      }
+      check_sla_violations: {
+        Args: never
+        Returns: {
+          new_violations: number
+          new_warnings: number
+          processed: number
         }[]
       }
       count_failed_login_attempts: {
