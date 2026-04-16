@@ -106,6 +106,24 @@ export function HelpdeskConnectorPanel() {
           </p>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base"><Sparkles className="h-4 w-4" />Expansion Detector</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Avalia playbooks ativos contra contas e gera oportunidades de upsell/cross-sell com confidence score.
+          </p>
+          <Button onClick={handleExpansion} disabled={expansionRunning} className="w-full">
+            {expansionRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            <span className="ml-2">Detectar oportunidades</span>
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Usa <code className="text-xs">trigger_type</code> (tier, health_score, usage_threshold) para casar contas a playbooks.
+          </p>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }
