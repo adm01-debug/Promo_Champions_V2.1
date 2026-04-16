@@ -4,7 +4,7 @@ import {
   ShieldCheck, LineChart, Building2, Sparkles, FileText, Calendar, Zap,
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
-  Filter, PartyPopper, Flag, Shield, Crown,
+  Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -119,6 +119,8 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Forecast", url: "/forecast", icon: TrendingUp },
       { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
       { title: "Top Produtos", url: "/top-produtos", icon: Crown },
+      { title: "Métricas Categoria", url: "/metricas-categoria", icon: PieChart },
+      { title: "Evolução Preços", url: "/evolucao-precos", icon: ArrowUpDown },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Relatórios Email", url: "/relatorios-email", icon: MailCheck },
       { title: "Relatórios Agendados", url: "/relatorios-agendados", icon: Calendar },
@@ -143,6 +145,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
     items: [
       { title: "Feed de Vitórias", url: "/feed-vitorias", icon: Trophy },
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
+      { title: "Temporadas", url: "/temporadas", icon: Flame },
     ],
   },
   {
