@@ -29,6 +29,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/ranking': 'Ranking',
   '/vendedores': 'Vendedores',
   '/forecast': 'Forecast',
+  '/inteligencia-preditiva': 'Inteligência Preditiva',
   '/calendario': 'Calendário',
   '/automacoes': 'Automações',
   '/configuracoes': 'Configurações',

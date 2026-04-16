@@ -20,7 +20,7 @@ import {
   // Analytics & BI
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports,
-  ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis,
+  ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
   TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, DesafiosSemanais, HistoricoDesafiosDiarios,
@@ -137,6 +137,7 @@ export function AppRoutes() {
                     <Route path="/roi" element={<Manager><ROIDashboard /></Manager>} />
                     <Route path="/forecast" element={<Manager><ForecastPonderado /></Manager>} />
                     <Route path="/previsao-demanda" element={<Manager><PrevisaoDemanda /></Manager>} />
+                    <Route path="/inteligencia-preditiva" element={<InteligenciaPreditiva />} />
                     <Route path="/funil" element={<FunnelAnalysis />} />
                     <Route path="/top-produtos" element={<TopProductsRanking />} />
                     <Route path="/evolucao-precos" element={<Manager><PriceEvolution /></Manager>} />
