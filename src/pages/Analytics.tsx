@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { WinLossAnalysis } from '@/components/analytics/WinLossAnalysis';
 import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
 import { ConversionFunnel } from '@/components/analytics/ConversionFunnel';
+import { RevenueForecast } from '@/components/analytics/RevenueForecast';
 import { ObjectionsLibrary } from '@/components/analytics/ObjectionsLibrary';
 import { ABCAnalysis } from '@/components/analytics/ABCAnalysis';
 import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
@@ -18,7 +19,7 @@ import { CohortAnalysis } from '@/components/analytics/CohortAnalysis';
 import { LTVBySegment } from '@/components/analytics/LTVBySegment';
 import { AnimatedTabContent } from '@/components/analytics/AnimatedTabContent';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert, UserCheck, DollarSign, ChevronDown } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert, UserCheck, DollarSign, ChevronDown, LineChart } from 'lucide-react';
 import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
 import { AnalyticsPageLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
@@ -35,6 +36,7 @@ const TAB_CATEGORIES: Array<{ label: string; tabs: Array<{ value: string; label:
       { value: 'velocity', label: 'Velocidade', icon: Clock },
       { value: 'conversion', label: 'Conversão', icon: TrendingUp },
       { value: 'closing', label: 'Fechamento', icon: Timer },
+      { value: 'forecast', label: 'Forecast', icon: LineChart },
       { value: 'weekly', label: 'Semanal', icon: CalendarDays },
     ],
   },
@@ -75,6 +77,7 @@ const TAB_CONTENT: Record<string, React.FC> = {
   objections: ObjectionsLibrary,
   abc: ABCAnalysis,
   closing: ClosingTimeChart,
+  forecast: RevenueForecast,
   churn: ChurnPrediction,
   coaching: SalespersonCoaching,
   comparison: CoachingComparison,
