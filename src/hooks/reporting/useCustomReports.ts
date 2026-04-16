@@ -59,18 +59,18 @@ export function useCreateCustomReport() {
     }) => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("Não autenticado");
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as never as { from: (t: string) => { insert: (v: unknown) => { select: () => { single: () => Promise<{ data: unknown; error: unknown }> } } } })
         .from("custom_reports")
         .insert({
           owner_id: userData.user.id,
           name: input.name,
           description: input.description,
           entity: input.entity,
-          config: input.config as unknown as Record<string, unknown>,
+          config: input.config,
           is_shared: input.is_shared ?? false,
         })
         .select()
-        .single();
+        .single() as { data: CustomReport; error: { message: string } | null };
       if (error) throw error;
       return data as unknown as CustomReport;
     },
