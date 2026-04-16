@@ -1,5 +1,5 @@
-import { corsHeaders } from "@supabase/supabase-js/cors";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
 
 interface ActionDef {
   type: "create_task" | "send_notification" | "update_stage" | "log_activity" | "assign_owner";
