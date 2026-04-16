@@ -1,12 +1,14 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, TrendingUp, TrendingDown } from 'lucide-react';
+import { Shield, TrendingUp, TrendingDown, LogIn } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { useLeagues, LEAGUE_CONFIG, LeagueTier } from '@/hooks/useLeagues';
+import { useLeagues, useJoinLeague, LEAGUE_CONFIG, LeagueTier } from '@/hooks/useLeagues';
+import { toast } from 'sonner';
 
 interface LeagueSystemProps {
   className?: string;
@@ -16,6 +18,14 @@ const LEAGUE_ORDER: LeagueTier[] = ['diamond', 'gold', 'silver', 'bronze'];
 
 const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
   const { data: members, isLoading } = useLeagues();
+  const joinLeague = useJoinLeague();
+
+  const handleJoinLeague = (salespersonId: string, leagueId: string) => {
+    joinLeague.mutate({ salespersonId, leagueId }, {
+      onSuccess: () => toast.success("Entrou na liga!"),
+      onError: () => toast.error("Erro ao entrar na liga"),
+    });
+  };
 
   if (isLoading) {
     return (
@@ -129,9 +139,12 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
           })}
 
           {!members?.length && (
-            <div className="text-center py-6">
+            <div className="text-center py-6 space-y-3">
               <Shield className="h-8 w-8 mx-auto text-muted-foreground/30 mb-2" />
               <p className="text-sm text-muted-foreground">Sistema de ligas será ativado na próxima temporada</p>
+              <Button size="sm" className="gap-2" variant="outline" onClick={() => toast.info("Aguarde a próxima temporada para entrar em uma liga")}>
+                <LogIn className="h-4 w-4" /> Entrar na Liga
+              </Button>
             </div>
           )}
         </CardContent>
