@@ -16,7 +16,7 @@ import {
   Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente,
   LeadScoring, Multichannel, EmailTracking, Automacoes,
   // Vendas & Comercial
-  Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs,
+  Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking,
   // Analytics & BI
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports,
@@ -115,6 +115,7 @@ export function AppRoutes() {
                     <Route path="/aprovacoes" element={<ApprovalWorkflows />} />
                     <Route path="/webhooks" element={<Manager><Webhooks /></Manager>} />
                     <Route path="/audit-logs" element={<Manager><AuditLogs /></Manager>} />
+                    <Route path="/sla-tracking" element={<Manager><SLATracking /></Manager>} />
 
                     {/* ─── Analytics & BI ────────────────────────── */}
                     <Route path="/analytics" element={<Manager><Analytics /></Manager>} />

@@ -186,6 +186,7 @@ export const adminOnlyItems: MenuItem[] = [
   { title: "Comissões (Admin)", url: "/admin/comissoes", icon: Wallet },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Audit Trail", url: "/audit-logs", icon: ScrollText },
+  { title: "SLA Tracking", url: "/sla-tracking", icon: Timer },
   { title: "Usage Analytics", url: "/usage-analytics", icon: BarChart3 },
   { title: "Feature Flags", url: "/feature-flags", icon: Flag },
   { title: "Webhooks", url: "/webhooks", icon: Webhook },
