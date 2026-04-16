@@ -18,7 +18,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
   const nextStep = steps.find((s, i) => !s.completed && steps.slice(0, i).every(st => st.completed));
 
   return (
-    <motion.div
+    <motion.div ref={ref}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -154,4 +154,5 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
     </motion.div>
   );
-}
+});
+OnboardingChecklist.displayName = "OnboardingChecklist";
