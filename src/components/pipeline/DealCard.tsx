@@ -8,6 +8,7 @@ import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
 import { DollarSign, Calendar, Target, Zap, Users } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
+import { DealSummaryCard } from "./DealSummaryCard";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -146,6 +147,16 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           updatedAt={deal.updated_at || deal.created_at}
           clientName={deal.client_name}
           amount={deal.amount}
+        />
+
+        {/* AI Deal Summary */}
+        <DealSummaryCard
+          dealId={deal.id}
+          clientName={deal.client_name}
+          amount={deal.amount}
+          status={deal.status}
+          createdAt={deal.created_at}
+          updatedAt={deal.updated_at || deal.created_at}
         />
 
         {/* Date */}
