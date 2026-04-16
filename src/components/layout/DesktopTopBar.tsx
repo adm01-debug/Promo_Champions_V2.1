@@ -43,6 +43,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/sales-enablement': 'Sales Enablement',
   '/conversational-intelligence': 'Conversational Intelligence',
   '/pricing-intelligence': 'Pricing Intelligence',
+  '/territory-optimization': 'Territory Optimization',
 };
 
 interface DesktopTopBarProps {

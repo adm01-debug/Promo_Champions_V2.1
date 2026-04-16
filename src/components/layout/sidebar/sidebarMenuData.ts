@@ -131,6 +131,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Inteligência Preditiva", url: "/inteligencia-preditiva", icon: Brain },
       { title: "RevOps Hub", url: "/revops", icon: Gauge },
       { title: "Pricing Intelligence", url: "/pricing-intelligence", icon: DollarSign },
+      { title: "Territory Optimization", url: "/territory-optimization", icon: MapPin },
       { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
       { title: "Top Produtos", url: "/top-produtos", icon: Crown },
       { title: "Métricas Categoria", url: "/metricas-categoria", icon: PieChart },
