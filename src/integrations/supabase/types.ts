@@ -4073,6 +4073,8 @@ export type Database = {
           enrollment_source: string
           id: string
           next_action_date: string | null
+          paused_at: string | null
+          paused_reason: string | null
           sale_id: string
           salesperson_id: string | null
           started_at: string
@@ -4088,6 +4090,8 @@ export type Database = {
           enrollment_source?: string
           id?: string
           next_action_date?: string | null
+          paused_at?: string | null
+          paused_reason?: string | null
           sale_id: string
           salesperson_id?: string | null
           started_at?: string
@@ -4103,6 +4107,8 @@ export type Database = {
           enrollment_source?: string
           id?: string
           next_action_date?: string | null
+          paused_at?: string | null
+          paused_reason?: string | null
           sale_id?: string
           salesperson_id?: string | null
           started_at?: string
@@ -6949,6 +6955,7 @@ export type Database = {
           role: string
         }[]
       }
+      get_auto_paused_count: { Args: { _days?: number }; Returns: number }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_mfa_status: {
