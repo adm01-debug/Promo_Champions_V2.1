@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,11 +14,10 @@ interface StatCardProps {
   icon: LucideIcon;
   variant?: "default" | "primary" | "success" | "warning";
   hero?: boolean;
-  /** Optional 7-point data for mini sparkline */
   sparklineData?: number[];
 }
 
-export const StatCard = ({
+export const StatCard = React.memo(({
   title,
   value,
   numericValue,
@@ -37,32 +36,32 @@ export const StatCard = ({
     enabled: numericValue !== undefined,
   });
 
-  const variantStyles = {
+  const variantStyles = useMemo(() => ({
     default: "bg-card border-border/50 hover:border-border",
     primary: "bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 hover:border-primary/40",
     success: "bg-gradient-to-br from-success/10 via-success/5 to-transparent border-success/20 hover:border-success/40",
     warning: "bg-gradient-to-br from-warning/10 via-warning/5 to-transparent border-warning/20 hover:border-warning/40",
-  };
+  }), []);
 
-  const iconColors = {
+  const iconColors = useMemo(() => ({
     default: "bg-muted/50 text-muted-foreground",
     primary: "bg-primary/15 text-primary shadow-sm shadow-primary/10",
     success: "bg-success/15 text-success shadow-sm shadow-success/10",
     warning: "bg-warning/15 text-warning shadow-sm shadow-warning/10",
-  };
+  }), []);
 
-  const sparklineColors = {
+  const sparklineColors = useMemo(() => ({
     default: "text-muted-foreground",
     primary: "text-primary",
     success: "text-success",
     warning: "text-warning",
-  };
+  }), []);
 
   const heroStyles = hero
     ? "relative overflow-hidden ring-1 ring-primary/10 shadow-lg shadow-primary/5"
     : "";
 
-  const getDisplayValue = () => {
+  const displayValue = useMemo(() => {
     if (numericValue === undefined) return value;
     if (value.startsWith("R$")) {
       return `R$ ${animatedNum.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -71,7 +70,7 @@ export const StatCard = ({
       return `${animatedNum.toFixed(1)}%`;
     }
     return String(animatedNum);
-  };
+  }, [numericValue, value, animatedNum]);
 
   return (
     <Card className={cn(
@@ -92,7 +91,7 @@ export const StatCard = ({
               "text-lg sm:text-2xl font-bold tabular-nums font-display tracking-tight",
               hero && "text-2xl sm:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text"
             )}>
-              {getDisplayValue()}
+              {displayValue}
             </p>
             {change !== undefined && (
               <div className="flex items-center gap-1.5">
@@ -129,7 +128,6 @@ export const StatCard = ({
                 hero && "h-6 w-6 sm:h-8 sm:w-8"
               )} />
             </div>
-            {/* Mini sparkline for non-hero cards */}
             {!hero && sparklineData && sparklineData.length > 1 && (
               <MiniSparkline
                 data={sparklineData}
@@ -141,7 +139,6 @@ export const StatCard = ({
           </div>
         </div>
 
-        {/* Hero sparkline — full width at bottom */}
         {hero && sparklineData && sparklineData.length > 1 && (
           <div className="mt-3 -mb-2">
             <MiniSparkline
@@ -154,7 +151,6 @@ export const StatCard = ({
           </div>
         )}
 
-        {/* Hero decorative elements */}
         {hero && (
           <>
             <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
@@ -164,4 +160,6 @@ export const StatCard = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+StatCard.displayName = "StatCard";
