@@ -1064,6 +1064,183 @@ export type Database = {
         }
         Relationships: []
       }
+      call_insights: {
+        Row: {
+          ai_model: string | null
+          coaching_tips: Json | null
+          created_at: string
+          id: string
+          key_moments: Json | null
+          next_steps: Json | null
+          objections: Json | null
+          questions_asked: number | null
+          recording_id: string
+          sentiment_label: string | null
+          sentiment_score: number | null
+          summary: string | null
+          talk_ratio_client: number | null
+          talk_ratio_salesperson: number | null
+          topics: Json | null
+        }
+        Insert: {
+          ai_model?: string | null
+          coaching_tips?: Json | null
+          created_at?: string
+          id?: string
+          key_moments?: Json | null
+          next_steps?: Json | null
+          objections?: Json | null
+          questions_asked?: number | null
+          recording_id: string
+          sentiment_label?: string | null
+          sentiment_score?: number | null
+          summary?: string | null
+          talk_ratio_client?: number | null
+          talk_ratio_salesperson?: number | null
+          topics?: Json | null
+        }
+        Update: {
+          ai_model?: string | null
+          coaching_tips?: Json | null
+          created_at?: string
+          id?: string
+          key_moments?: Json | null
+          next_steps?: Json | null
+          objections?: Json | null
+          questions_asked?: number | null
+          recording_id?: string
+          sentiment_label?: string | null
+          sentiment_score?: number | null
+          summary?: string | null
+          talk_ratio_client?: number | null
+          talk_ratio_salesperson?: number | null
+          topics?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_insights_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_recordings: {
+        Row: {
+          audio_url: string | null
+          client_id: string | null
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          metadata: Json | null
+          participants: Json | null
+          recorded_at: string
+          sale_id: string | null
+          salesperson_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url?: string | null
+          client_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          metadata?: Json | null
+          participants?: Json | null
+          recorded_at?: string
+          sale_id?: string | null
+          salesperson_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string | null
+          client_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          metadata?: Json | null
+          participants?: Json | null
+          recorded_at?: string
+          sale_id?: string | null
+          salesperson_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_recordings_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_recordings_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_recordings_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_recordings_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_transcripts: {
+        Row: {
+          created_at: string
+          full_text: string
+          id: string
+          language: string | null
+          recording_id: string
+          segments: Json
+          word_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          full_text: string
+          id?: string
+          language?: string | null
+          recording_id: string
+          segments?: Json
+          word_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          full_text?: string
+          id?: string
+          language?: string | null
+          recording_id?: string
+          segments?: Json
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_transcripts_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       category_metrics: {
         Row: {
           category: string
