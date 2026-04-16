@@ -109,6 +109,10 @@ export default function Configuracoes() {
                   <Activity className="h-4 w-4" />
                   Circuits
                 </TabsTrigger>
+                <TabsTrigger value="feature-flags" className="flex items-center gap-2">
+                  <Flag className="h-4 w-4" />
+                  Flags
+                </TabsTrigger>
               </>
             )}
           </TabsList>
