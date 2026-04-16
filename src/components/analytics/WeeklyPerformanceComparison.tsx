@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, Minus, Zap, Target, Award, Flame, BarChart3 }
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useWeeklyComparison } from "@/hooks/useWeeklyComparison";
 
 interface WeeklyMetrics {
   revenue: number;
