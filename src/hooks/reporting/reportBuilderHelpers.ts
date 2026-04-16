@@ -1,6 +1,5 @@
 /**
  * Schema de entidades disponíveis no Custom Report Builder.
- * Mapeia cada entidade às colunas selecionáveis.
  */
 
 export type ReportEntity =
@@ -29,6 +28,11 @@ export interface ReportOrderBy {
 
 export type VizType = "table" | "bar" | "line" | "pie" | "funnel" | "heatmap" | "kpi";
 
+export interface ReportJoin {
+  entity: CrossJoinableEntity;
+  on?: string;
+}
+
 export interface ReportConfig {
   columns: string[];
   filters?: ReportFilter[];
@@ -36,7 +40,8 @@ export interface ReportConfig {
   order_by?: ReportOrderBy[];
   limit?: number;
   viz_type?: VizType;
-  joins?: { entity: ReportEntity; on: string }[];
+  base?: CrossBaseEntity;
+  joins?: ReportJoin[];
 }
 
 export interface EntityFieldDef {
@@ -136,9 +141,103 @@ export const FILTER_OP_LABELS: Record<FilterOp, string> = {
   is: "É (null/true/false)",
 };
 
+// ===== Cross-object joins =====
+
+export type CrossBaseEntity = "sales" | "activities" | "leads";
+export type CrossJoinableEntity = "accounts" | "salespeople" | "clients" | "sales";
+
+export interface JoinDef {
+  entity: CrossJoinableEntity;
+  /** Coluna FK na tabela base */
+  fk: string;
+  /** Tabela alvo no Postgres (alias usado no select embedded) */
+  target: string;
+  label: string;
+}
+
+export const JOIN_MAP: Record<CrossBaseEntity, JoinDef[]> = {
+  sales: [
+    { entity: "accounts", fk: "account_id", target: "accounts", label: "Conta" },
+    { entity: "salespeople", fk: "salesperson_id", target: "salespeople_public", label: "Vendedor" },
+    { entity: "clients", fk: "client_id", target: "clients", label: "Cliente" },
+  ],
+  activities: [
+    { entity: "salespeople", fk: "salesperson_id", target: "salespeople_public", label: "Vendedor" },
+    { entity: "sales", fk: "sale_id", target: "sales", label: "Venda" },
+  ],
+  leads: [
+    { entity: "salespeople", fk: "salesperson_id", target: "salespeople_public", label: "Vendedor" },
+  ],
+};
+
+/**
+ * Constrói lista de campos combinados (base + joins) com prefixo `target.field` para joined.
+ */
+export function buildCrossEntityFields(
+  base: CrossBaseEntity,
+  joins: ReportJoin[],
+): EntityFieldDef[] {
+  const baseFields = (ENTITY_FIELDS[base] ?? []).map((f) => ({ ...f, key: f.key, label: `${base}.${f.label}` }));
+  const joined: EntityFieldDef[] = [];
+  for (const j of joins) {
+    const def = JOIN_MAP[base]?.find((d) => d.entity === j.entity);
+    if (!def) continue;
+    const fields = ENTITY_FIELDS[j.entity] ?? [];
+    for (const f of fields) {
+      joined.push({
+        ...f,
+        key: `${def.target}.${f.key}`,
+        label: `${def.label}.${f.label}`,
+      });
+    }
+  }
+  return [...baseFields, ...joined];
+}
+
+/**
+ * Converte lista de colunas (algumas com prefixo `target.field`) em string select PostgREST embedded.
+ * Ex: ["id","amount","accounts.name","accounts.tier"] →
+ *     "id,amount,accounts(name,tier)"
+ */
+export function serializeCrossSelect(columns: string[], joins: ReportJoin[], base: CrossBaseEntity): string {
+  const baseCols: string[] = [];
+  const joinedCols = new Map<string, string[]>(); // target → [fields]
+
+  const targets = new Set(joins.map((j) => JOIN_MAP[base]?.find((d) => d.entity === j.entity)?.target).filter(Boolean) as string[]);
+
+  for (const col of columns) {
+    const dot = col.indexOf(".");
+    if (dot > 0) {
+      const target = col.slice(0, dot);
+      const field = col.slice(dot + 1);
+      if (targets.has(target)) {
+        const arr = joinedCols.get(target) ?? [];
+        arr.push(field);
+        joinedCols.set(target, arr);
+        continue;
+      }
+    }
+    baseCols.push(col);
+  }
+
+  const parts = [...baseCols];
+  for (const [target, fields] of joinedCols.entries()) {
+    parts.push(`${target}(${fields.join(",")})`);
+  }
+  // Sempre inclui PK das tabelas joined para evitar nulos silenciosos
+  return parts.join(",") || "*";
+}
+
 export function defaultConfigForEntity(entity: ReportEntity): ReportConfig {
   if (entity === "cross") {
-    return { columns: [], viz_type: "table", joins: [{ entity: "sales", on: "salesperson_id" }] };
+    return {
+      columns: ["id", "amount", "accounts.name", "accounts.tier"],
+      base: "sales",
+      joins: [{ entity: "accounts" }],
+      viz_type: "table",
+      filters: [],
+      order_by: [{ field: "created_at", direction: "desc" }],
+    };
   }
   const fields = ENTITY_FIELDS[entity] ?? [];
   return {

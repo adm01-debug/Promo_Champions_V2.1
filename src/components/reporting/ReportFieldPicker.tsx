@@ -1,17 +1,31 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ENTITY_FIELDS, type ReportEntity } from "@/hooks/reporting/reportBuilderHelpers";
+import {
+  ENTITY_FIELDS,
+  buildCrossEntityFields,
+  type ReportEntity,
+  type CrossBaseEntity,
+  type ReportJoin,
+} from "@/hooks/reporting/reportBuilderHelpers";
 
 interface Props {
   entity: ReportEntity;
   selected: string[];
   onChange: (cols: string[]) => void;
+  /** Necessário quando entity === "cross" */
+  base?: CrossBaseEntity;
+  joins?: ReportJoin[];
 }
 
-export const ReportFieldPicker = memo(({ entity, selected, onChange }: Props) => {
-  const fields = entity === "cross" ? [] : ENTITY_FIELDS[entity] ?? [];
+export const ReportFieldPicker = memo(({ entity, selected, onChange, base, joins }: Props) => {
+  const fields = useMemo(() => {
+    if (entity === "cross") {
+      return base ? buildCrossEntityFields(base, joins ?? []) : [];
+    }
+    return ENTITY_FIELDS[entity] ?? [];
+  }, [entity, base, joins]);
 
   const toggle = (key: string) => {
     onChange(selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key]);
