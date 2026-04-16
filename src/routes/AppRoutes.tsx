@@ -80,6 +80,7 @@ const AdminTelemetria = lazy(() => import("@/pages/AdminTelemetria"));
 const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 const Multichannel = lazy(() => import("@/pages/Multichannel"));
 const Estoque = lazy(() => import("@/pages/Estoque"));
+const NPSDashboard = lazy(() => import("@/pages/NPSDashboard"));
 
 export { PageLoadingFallback };
 
@@ -197,6 +198,7 @@ export function AppRoutes() {
                     <Route path="/estoque" element={
                       <ProtectedRoute requireAdminOrManager><Estoque /></ProtectedRoute>
                     } />
+                    <Route path="/nps" element={<NPSDashboard />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

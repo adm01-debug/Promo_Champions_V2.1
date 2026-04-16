@@ -1,4 +1,5 @@
 import React from "react";
+import { QuickActionsMenu } from "./QuickActionsMenu";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card } from "@/components/ui/card";
@@ -90,12 +91,15 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
               {deal.product_name}
             </p>
           </div>
-          {leadScore && (
-            <Badge variant="outline" className={cn("text-[10px] shrink-0", getScoreColor(leadScore.category))}>
-              <Target className="h-3 w-3 mr-1" />
-              {leadScore.score}
-            </Badge>
-          )}
+          <div className="flex items-center gap-1 shrink-0">
+            {leadScore && (
+              <Badge variant="outline" className={cn("text-[10px]", getScoreColor(leadScore.category))}>
+                <Target className="h-3 w-3 mr-1" />
+                {leadScore.score}
+              </Badge>
+            )}
+            <QuickActionsMenu deal={deal} />
+          </div>
         </div>
 
         {/* Value */}
