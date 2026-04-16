@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useRoutingRules, useLeadAssignments, useToggleRoutingRule } from "@/hooks/useLeadRouting";
+import { useRoutingRules, useLeadAssignments, useToggleRoutingRule, type RoutingRule, type LeadAssignment } from "@/hooks/useLeadRoutingEngine";
 import { Route, Users, Activity, Trophy, Shuffle, MapPin } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
