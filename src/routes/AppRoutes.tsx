@@ -245,6 +245,12 @@ export function AppRoutes() {
                     <Route path="/temporadas" element={
                       <ProtectedRoute requireAdminOrManager><CompetitiveSeasonsAdmin /></ProtectedRoute>
                     } />
+                    <Route path="/gatilhos-inatividade" element={
+                      <ProtectedRoute requireAdminOrManager><InactivityTriggers /></ProtectedRoute>
+                    } />
+                    <Route path="/benchmarking" element={<HistoricalBenchmark />} />
+                    <Route path="/feed-equipe" element={<TeamActivityFeed />} />
+                    <Route path="/health-score" element={<ClientHealthScore />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
