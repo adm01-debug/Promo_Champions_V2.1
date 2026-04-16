@@ -6572,6 +6572,53 @@ export type Database = {
           },
         ]
       }
+      workflow_executions: {
+        Row: {
+          duration_ms: number | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          input_payload: Json | null
+          started_at: string
+          status: string
+          step_log: Json
+          triggered_by: string | null
+          workflow_id: string
+        }
+        Insert: {
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          input_payload?: Json | null
+          started_at?: string
+          status?: string
+          step_log?: Json
+          triggered_by?: string | null
+          workflow_id: string
+        }
+        Update: {
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          input_payload?: Json | null
+          started_at?: string
+          status?: string
+          step_log?: Json
+          triggered_by?: string | null
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_executions_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_rules: {
         Row: {
           action_config: Json
@@ -6634,6 +6681,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      workflows: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          edges: Json
+          execution_count: number
+          id: string
+          is_active: boolean
+          last_executed_at: string | null
+          name: string
+          nodes: Json
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          edges?: Json
+          execution_count?: number
+          id?: string
+          is_active?: boolean
+          last_executed_at?: string | null
+          name: string
+          nodes?: Json
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          edges?: Json
+          execution_count?: number
+          id?: string
+          is_active?: boolean
+          last_executed_at?: string | null
+          name?: string
+          nodes?: Json
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       xp_history: {
         Row: {
