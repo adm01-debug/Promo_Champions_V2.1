@@ -48,9 +48,9 @@ const LeadRoutingPage = () => {
 
           <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {[
-              { label: "Regras Ativas", value: (rules ?? []).filter(r => r.is_active).length, icon: Route, color: "text-primary" },
+              { label: "Regras Ativas", value: (rules ?? []).filter((r: RoutingRule) => r.is_active).length, icon: Route, color: "text-primary" },
               { label: "Atribuições (recentes)", value: (assignments ?? []).length, icon: Activity, color: "text-status-info" },
-              { label: "Estratégias", value: new Set((rules ?? []).map(r => r.strategy)).size, icon: Shuffle, color: "text-status-success" },
+              { label: "Estratégias", value: new Set((rules ?? []).map((r: RoutingRule) => r.strategy)).size, icon: Shuffle, color: "text-status-success" },
             ].map(s => (
               <Card key={s.label} className="glass border-border/40">
                 <CardContent className="p-4 flex items-center gap-3">
@@ -75,7 +75,7 @@ const LeadRoutingPage = () => {
                 {lr ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-lg" />)
                 ) : (
-                  (rules ?? []).map(r => {
+                  (rules ?? []).map((r: RoutingRule) => {
                     const meta = STRATEGY_META[r.strategy] ?? STRATEGY_META.round_robin;
                     const Icon = meta.icon;
                     return (
@@ -116,7 +116,7 @@ const LeadRoutingPage = () => {
                     </CardContent>
                   </Card>
                 ) : (
-                  assignments.map(a => {
+                  assignments.map((a: LeadAssignment) => {
                     const meta = STRATEGY_META[a.strategy_used] ?? STRATEGY_META.round_robin;
                     const Icon = meta.icon;
                     return (
