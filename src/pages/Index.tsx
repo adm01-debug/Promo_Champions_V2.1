@@ -8,6 +8,7 @@ import { GoalProgress } from "@/components/dashboard/GoalProgress";
 import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { TopProducts } from "@/components/dashboard/TopProducts";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
+import { BenchmarkPanel } from "@/components/analytics/BenchmarkPanel";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
@@ -252,6 +253,9 @@ const Index = () => {
                 <SalesForecast />
                 <KPIGrid />
                 <AlertsPanel />
+              </div>
+              <div className="mt-4">
+                <BenchmarkPanel />
               </div>
             </DashboardSection>
 
