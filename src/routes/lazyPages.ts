@@ -34,6 +34,7 @@ export const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 export const Multichannel = lazy(() => import("@/pages/Multichannel"));
 export const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
 export const Automacoes = lazy(() => import("@/pages/Automacoes"));
+export const ConversationalIntelligence = lazy(() => import("@/pages/ConversationalIntelligence"));
 
 // ─── Vendas & Comercial ─────────────────────────────────────────────
 export const Orcamentos = lazy(() => import("@/pages/Orcamentos"));
