@@ -294,6 +294,86 @@ export type Database = {
           },
         ]
       }
+      agenda_events: {
+        Row: {
+          client_id: string | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          event_type: string
+          id: string
+          priority: string
+          reminder_minutes_before: number | null
+          sale_id: string | null
+          salesperson_id: string
+          scheduled_at: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          priority?: string
+          reminder_minutes_before?: number | null
+          sale_id?: string | null
+          salesperson_id: string
+          scheduled_at: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          priority?: string
+          reminder_minutes_before?: number | null
+          sale_id?: string | null
+          salesperson_id?: string
+          scheduled_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_events_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_tokens: {
         Row: {
           company_name: string
@@ -1080,6 +1160,152 @@ export type Database = {
           },
           {
             foreignKeyName: "combo_tracking_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commission_rules: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          max_amount: number | null
+          min_amount: number | null
+          name: string
+          percentage: number
+          priority: number
+          salesperson_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_amount?: number | null
+          min_amount?: number | null
+          name: string
+          percentage?: number
+          priority?: number
+          salesperson_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_amount?: number | null
+          min_amount?: number | null
+          name?: string
+          percentage?: number
+          priority?: number
+          salesperson_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_rules_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_rules_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commissions: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          base_amount: number
+          commission_amount: number
+          created_at: string
+          id: string
+          paid_at: string | null
+          paid_by: string | null
+          payment_notes: string | null
+          percentage: number
+          rule_id: string | null
+          sale_id: string
+          salesperson_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          base_amount: number
+          commission_amount: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          paid_by?: string | null
+          payment_notes?: string | null
+          percentage: number
+          rule_id?: string | null
+          sale_id: string
+          salesperson_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          base_amount?: number
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          paid_by?: string | null
+          payment_notes?: string | null
+          percentage?: number
+          rule_id?: string | null
+          sale_id?: string
+          salesperson_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commissions_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "commission_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
