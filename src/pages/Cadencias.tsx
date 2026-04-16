@@ -2,6 +2,7 @@ import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadenc
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
+import { ABTestDialog } from "@/components/cadences/ABTestDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
 import { CadenceMetricsPanel } from "@/components/cadences/CadenceMetricsPanel";
@@ -66,6 +67,7 @@ export default function Cadencias() {
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
               <EnrollmentRulesDialog />
+              <ABTestDialog />
               <CreateCadenceDialog />
             </div>
           </div>
