@@ -27,6 +27,7 @@ export interface Quote {
   items: string | null; // JSONB stored as string
   external_quote_id: string | null;
   sync_status: string | null;
+  pdf_url: string | null;
   // joined
   salespeople?: { name: string } | null;
   sales?: { client_name: string; product_name: string; status: string } | null;
