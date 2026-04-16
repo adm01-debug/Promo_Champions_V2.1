@@ -11,7 +11,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const sentimentColor = (label: string | null) => {
-  if (label === "positive") return "bg-emerald-500/10 text-emerald-600 border-emerald-500/30";
+  if (label === "positive") return "bg-success/10 text-success border-success/30";
   if (label === "negative") return "bg-destructive/10 text-destructive border-destructive/30";
   return "bg-muted text-muted-foreground";
 };
@@ -99,7 +99,7 @@ export const ConversationalIntelligenceHub = () => {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <AlertTriangle className="size-4 text-amber-500" />
+                  <AlertTriangle className="size-4 text-warning" />
                   Top objeções
                 </CardTitle>
               </CardHeader>
@@ -184,8 +184,8 @@ export const ConversationalIntelligenceHub = () => {
                             <span>{format(new Date(r.recorded_at), "dd MMM yyyy 'às' HH:mm", { locale: ptBR })}</span>
                             <span>{Math.round(r.duration_seconds / 60)}min</span>
                             {r.questions_asked != null && <span>{r.questions_asked} perguntas</span>}
-                            {r.objections_count > 0 && <span className="text-amber-600">{r.objections_count} objeções</span>}
-                            {r.next_steps_count > 0 && <span className="text-emerald-600">{r.next_steps_count} próximos passos</span>}
+                            {r.objections_count > 0 && <span className="text-warning">{r.objections_count} objeções</span>}
+                            {r.next_steps_count > 0 && <span className="text-success">{r.next_steps_count} próximos passos</span>}
                           </div>
                         </div>
                         {r.talk_ratio_salesperson != null && (
