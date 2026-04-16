@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plug, RefreshCw, Calendar, Sparkles, Rocket } from "lucide-react";
+import { Loader2, Plug, RefreshCw, Calendar, Sparkles, Rocket, CalendarCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ export function HelpdeskConnectorPanel() {
   const [renewalRunning, setRenewalRunning] = useState(false);
   const [expansionRunning, setExpansionRunning] = useState(false);
   const [onboardingRunning, setOnboardingRunning] = useState(false);
+  const [qbrRunning, setQbrRunning] = useState(false);
 
   async function handleSync(provider: Provider) {
     setSyncing(provider);
@@ -61,6 +62,20 @@ export function HelpdeskConnectorPanel() {
       toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
     } finally {
       setOnboardingRunning(false);
+    }
+  }
+
+  async function handleQbr() {
+    setQbrRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("qbr-scheduler", { body: {} });
+      if (error) throw error;
+      const d = data as { schedules_updated: number; upcoming_qbrs: number; events_created: number; notifications_created: number };
+      toast.success(`QBR: ${d.schedules_updated} agendas • ${d.events_created} eventos • ${d.notifications_created} alertas`);
+    } catch (err) {
+      toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
+    } finally {
+      setQbrRunning(false);
     }
   }
 
