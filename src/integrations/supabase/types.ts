@@ -421,6 +421,158 @@ export type Database = {
           },
         ]
       }
+      approval_decisions: {
+        Row: {
+          approver_id: string
+          comments: string | null
+          decided_at: string
+          decision: string
+          id: string
+          level: number
+          request_id: string
+        }
+        Insert: {
+          approver_id: string
+          comments?: string | null
+          decided_at?: string
+          decision: string
+          id?: string
+          level?: number
+          request_id: string
+        }
+        Update: {
+          approver_id?: string
+          comments?: string | null
+          decided_at?: string
+          decision?: string
+          id?: string
+          level?: number
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_decisions_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "approval_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      approval_requests: {
+        Row: {
+          created_at: string
+          current_level: number
+          deal_id: string | null
+          deal_name: string | null
+          discount_percentage: number | null
+          expires_at: string | null
+          id: string
+          justification: string | null
+          original_value: number | null
+          requested_value: number
+          requester_id: string
+          resolved_at: string | null
+          status: string
+          updated_at: string
+          workflow_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_level?: number
+          deal_id?: string | null
+          deal_name?: string | null
+          discount_percentage?: number | null
+          expires_at?: string | null
+          id?: string
+          justification?: string | null
+          original_value?: number | null
+          requested_value: number
+          requester_id: string
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+          workflow_id: string
+        }
+        Update: {
+          created_at?: string
+          current_level?: number
+          deal_id?: string | null
+          deal_name?: string | null
+          discount_percentage?: number | null
+          expires_at?: string | null
+          id?: string
+          justification?: string | null
+          original_value?: number | null
+          requested_value?: number
+          requester_id?: string
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "approval_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      approval_workflows: {
+        Row: {
+          auto_approve_below: number | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          required_approvers: number
+          threshold_amount: number | null
+          threshold_percentage: number | null
+          updated_at: string
+          workflow_type: string
+        }
+        Insert: {
+          auto_approve_below?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          required_approvers?: number
+          threshold_amount?: number | null
+          threshold_percentage?: number | null
+          updated_at?: string
+          workflow_type?: string
+        }
+        Update: {
+          auto_approve_below?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          required_approvers?: number
+          threshold_amount?: number | null
+          threshold_percentage?: number | null
+          updated_at?: string
+          workflow_type?: string
+        }
+        Relationships: []
+      }
       available_spins: {
         Row: {
           id: string
