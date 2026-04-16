@@ -3966,6 +3966,60 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          action_label: string | null
+          action_url: string | null
+          archived_at: string | null
+          category: string
+          created_at: string
+          expires_at: string | null
+          icon: string | null
+          id: string
+          message: string | null
+          metadata: Json | null
+          priority: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_label?: string | null
+          action_url?: string | null
+          archived_at?: string | null
+          category?: string
+          created_at?: string
+          expires_at?: string | null
+          icon?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          priority?: string
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action_label?: string | null
+          action_url?: string | null
+          archived_at?: string | null
+          category?: string
+          created_at?: string
+          expires_at?: string | null
+          icon?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          priority?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nps_surveys: {
         Row: {
           client_name: string
@@ -7781,6 +7835,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_all_notifications_read: { Args: never; Returns: number }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
       search_products_semantic: {
@@ -7795,6 +7850,20 @@ export type Database = {
           similarity_score: number
           status: string
         }[]
+      }
+      send_notification: {
+        Args: {
+          p_action_label?: string
+          p_action_url?: string
+          p_category?: string
+          p_message?: string
+          p_metadata?: Json
+          p_priority?: string
+          p_title: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: string
       }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
