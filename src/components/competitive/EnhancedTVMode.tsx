@@ -176,7 +176,7 @@ function EnhancedTVModeComponent() {
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold">{sale.client_name}</div>
-                      <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id) || 'N/A'}</div>
+                      <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id ?? '') || 'N/A'}</div>
                     </div>
                     <div className="text-xl font-bold text-success">
                       R$ {(sale.amount || 0).toLocaleString('pt-BR')}
