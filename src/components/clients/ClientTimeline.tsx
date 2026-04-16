@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Phone, Mail, Users, FileText, MessageSquare, Calendar, Clock, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { BehavioralAnalysisDialog } from '@/components/ai/BehavioralAnalysisDialog';
 
 interface TimelineEvent {
   id: string;
@@ -211,9 +212,20 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
                         </Badge>
                       )}
 
-                      <p className="text-[10px] text-muted-foreground/60 mt-1">
-                        {format(event.date, "dd/MM/yyyy HH:mm", { locale: ptBR })} • {formatDistanceToNow(event.date, { addSuffix: true, locale: ptBR })}
-                      </p>
+                      <div className="flex items-center justify-between gap-2 mt-1">
+                        <p className="text-[10px] text-muted-foreground/60">
+                          {format(event.date, "dd/MM/yyyy HH:mm", { locale: ptBR })} • {formatDistanceToNow(event.date, { addSuffix: true, locale: ptBR })}
+                        </p>
+                        {event.notes && event.notes.length >= 100 && (
+                          <BehavioralAnalysisDialog
+                            text={event.notes}
+                            interactionId={event.id}
+                            contactName={event.contactName}
+                            channel={event.type}
+                            triggerLabel="IA"
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
