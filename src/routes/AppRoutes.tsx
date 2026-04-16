@@ -86,6 +86,11 @@ const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
 const Deduplication = lazy(() => import("@/pages/Deduplication"));
 const ImportExport = lazy(() => import("@/pages/ImportExport"));
 const OnboardingTracking = lazy(() => import("@/pages/OnboardingTracking"));
+const FunnelAnalysis = lazy(() => import("@/pages/FunnelAnalysis"));
+const VictoryFeedPage = lazy(() => import("@/pages/VictoryFeedPage"));
+const FeatureFlagsAdmin = lazy(() => import("@/pages/FeatureFlagsAdmin"));
+const SecurityDashboard = lazy(() => import("@/pages/SecurityDashboard"));
+const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
 
 export { PageLoadingFallback };
 
@@ -217,6 +222,15 @@ export function AppRoutes() {
                       <ProtectedRoute requireAdminOrManager><ImportExport /></ProtectedRoute>
                     } />
                     <Route path="/onboarding-tracking" element={<OnboardingTracking />} />
+                    <Route path="/funil" element={<FunnelAnalysis />} />
+                    <Route path="/feed-vitorias" element={<VictoryFeedPage />} />
+                    <Route path="/feature-flags" element={
+                      <ProtectedRoute requiredRole="admin"><FeatureFlagsAdmin /></ProtectedRoute>
+                    } />
+                    <Route path="/seguranca" element={
+                      <ProtectedRoute requiredRole="admin"><SecurityDashboard /></ProtectedRoute>
+                    } />
+                    <Route path="/top-produtos" element={<TopProductsRanking />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
