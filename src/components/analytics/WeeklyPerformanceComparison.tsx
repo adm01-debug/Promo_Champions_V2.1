@@ -50,10 +50,14 @@ function ChangeIndicator({ current, previous, suffix = "" }: { current: number; 
 }
 
 export function WeeklyPerformanceComparison({
-  currentWeek = DEFAULT_CURRENT,
-  previousWeek = DEFAULT_PREVIOUS,
+  currentWeek: propCurrentWeek,
+  previousWeek: propPreviousWeek,
   className,
 }: WeeklyPerformanceComparisonProps) {
+  const { data: liveData } = useWeeklyComparison();
+  const currentWeek = propCurrentWeek || liveData?.currentWeek || DEFAULT_CURRENT;
+  const previousWeek = propPreviousWeek || liveData?.previousWeek || DEFAULT_PREVIOUS;
+
   const metrics = useMemo(() => [
     {
       label: "Receita",
