@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plug, RefreshCw, Calendar, Sparkles, Rocket } from "lucide-react";
+import { Loader2, Plug, RefreshCw, Calendar, Sparkles, Rocket, CalendarCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ export function HelpdeskConnectorPanel() {
   const [renewalRunning, setRenewalRunning] = useState(false);
   const [expansionRunning, setExpansionRunning] = useState(false);
   const [onboardingRunning, setOnboardingRunning] = useState(false);
+  const [qbrRunning, setQbrRunning] = useState(false);
 
   async function handleSync(provider: Provider) {
     setSyncing(provider);
@@ -61,6 +62,20 @@ export function HelpdeskConnectorPanel() {
       toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
     } finally {
       setOnboardingRunning(false);
+    }
+  }
+
+  async function handleQbr() {
+    setQbrRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("qbr-scheduler", { body: {} });
+      if (error) throw error;
+      const d = data as { schedules_updated: number; upcoming_qbrs: number; events_created: number; notifications_created: number };
+      toast.success(`QBR: ${d.schedules_updated} agendas • ${d.events_created} eventos • ${d.notifications_created} alertas`);
+    } catch (err) {
+      toast.error(`Falha: ${err instanceof Error ? err.message : "erro"}`);
+    } finally {
+      setQbrRunning(false);
     }
   }
 
@@ -154,6 +169,24 @@ export function HelpdeskConnectorPanel() {
           </Button>
           <p className="text-xs text-muted-foreground">
             Templates: <code className="text-xs">standard</code> (6 etapas), <code className="text-xs">enterprise</code> (7 etapas), <code className="text-xs">selfserve</code> (4 etapas).
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base"><CalendarCheck className="h-4 w-4" />QBR Scheduler</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Recalcula próximas QBRs ativas, cria eventos na agenda do owner (30 dias à frente) e dispara notificações.
+          </p>
+          <Button onClick={handleQbr} disabled={qbrRunning} className="w-full">
+            {qbrRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <CalendarCheck className="h-4 w-4" />}
+            <span className="ml-2">Agendar QBRs</span>
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Frequências suportadas: <code className="text-xs">monthly</code> · <code className="text-xs">quarterly</code> · <code className="text-xs">biannual</code> · <code className="text-xs">annual</code>.
           </p>
         </CardContent>
       </Card>
