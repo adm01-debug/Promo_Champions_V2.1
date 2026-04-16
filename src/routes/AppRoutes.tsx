@@ -29,7 +29,7 @@ import {
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
   NPSDashboard, Deduplication, ImportExport, OnboardingTracking, InactivityTriggers, Bitrix24,
   // Ferramentas & IA
-  Assistente, Notificacoes, Configuracoes,
+  Assistente, Notificacoes, Configuracoes, SmartSearch,
   // Admin
   AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard,
 } from "./lazyPages";
@@ -161,6 +161,7 @@ export function AppRoutes() {
 
                     {/* ─── Ferramentas & IA ──────────────────────── */}
                     <Route path="/assistente" element={<Assistente />} />
+                    <Route path="/busca-inteligente" element={<SmartSearch />} />
                     <Route path="/notificacoes" element={<Notificacoes />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
 

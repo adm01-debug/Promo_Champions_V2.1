@@ -92,6 +92,7 @@ export const Bitrix24 = lazy(() => import("@/pages/Bitrix24"));
 
 // ─── Ferramentas & IA ───────────────────────────────────────────────
 export const Assistente = lazy(() => import("@/pages/Assistente"));
+export const SmartSearch = lazy(() => import("@/pages/SmartSearch"));
 export const Notificacoes = lazy(() => import("@/pages/Notificacoes"));
 export const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
 
