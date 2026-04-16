@@ -57,7 +57,7 @@ export function useLogAuditEvent() {
       const { data, error } = await supabase.rpc("log_audit_event", {
         _action: params.action,
         _entity_type: params.entity_type,
-        _entity_id: params.entity_id ?? null,
+        _entity_id: params.entity_id,
         _changes: (params.changes ?? {}) as never,
         _metadata: (params.metadata ?? {}) as never,
       });

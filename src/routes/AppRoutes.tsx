@@ -114,6 +114,7 @@ export function AppRoutes() {
                     <Route path="/admin/comissoes" element={<Manager><AdminComissoes /></Manager>} />
                     <Route path="/aprovacoes" element={<ApprovalWorkflows />} />
                     <Route path="/webhooks" element={<Manager><Webhooks /></Manager>} />
+                    <Route path="/audit-logs" element={<Manager><AuditLogs /></Manager>} />
 
                     {/* ─── Analytics & BI ────────────────────────── */}
                     <Route path="/analytics" element={<Manager><Analytics /></Manager>} />
