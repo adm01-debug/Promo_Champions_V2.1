@@ -5,7 +5,7 @@ import {
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
   Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
-  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook, ScrollText, Route, Workflow,
+  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook, ScrollText, Route, Workflow, Brain,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -126,6 +126,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Análise de Funil", url: "/funil", icon: Filter },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Forecast", url: "/forecast", icon: TrendingUp },
+      { title: "Inteligência Preditiva", url: "/inteligencia-preditiva", icon: Brain },
       { title: "ROI Vendedores", url: "/roi", icon: DollarSign },
       { title: "Top Produtos", url: "/top-produtos", icon: Crown },
       { title: "Métricas Categoria", url: "/metricas-categoria", icon: PieChart },
