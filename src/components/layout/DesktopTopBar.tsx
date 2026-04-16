@@ -32,6 +32,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/inteligencia-preditiva': 'Inteligência Preditiva',
   '/calendario': 'Calendário',
   '/automacoes': 'Automações',
+  '/automacao-inteligente': 'Automação Inteligente',
   '/configuracoes': 'Configurações',
   '/notificacoes': 'Notificações',
   '/assistente': 'Assistente IA',
