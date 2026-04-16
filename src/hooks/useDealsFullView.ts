@@ -67,7 +67,8 @@ export const useDealsFullView = (options: UseDealsFullViewOptions = {}) => {
 
       const historyMap = new Map<string, { entered_at: string; exited_at: string | null }[]>();
       (history || []).forEach((h) => {
-        const arr = historyMap.get(h.sale_id) || [];
+        if (!h.sale_id) return;
+        const arr = historyMap.get(h.sale_id) ?? [];
         arr.push({ entered_at: h.entered_at, exited_at: h.exited_at });
         historyMap.set(h.sale_id, arr);
       });
