@@ -19,7 +19,7 @@ import { CohortAnalysis } from '@/components/analytics/CohortAnalysis';
 import { LTVBySegment } from '@/components/analytics/LTVBySegment';
 import { AnimatedTabContent } from '@/components/analytics/AnimatedTabContent';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert, UserCheck, DollarSign, ChevronDown } from 'lucide-react';
+import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert, UserCheck, DollarSign, ChevronDown, LineChart } from 'lucide-react';
 import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
 import { AnalyticsPageLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
