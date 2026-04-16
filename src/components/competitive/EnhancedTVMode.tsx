@@ -168,7 +168,7 @@ function EnhancedTVModeComponent() {
             {currentScreen === 'latest-sales' && (
               <motion.div key="ls" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
                 className="space-y-3">
-                {latestSales.map((sale: any, i: number) => (
+                {latestSales.map((sale, i) => (
                   <motion.div key={sale.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.15 }}
                     className="flex items-center gap-4 p-4 rounded-xl bg-success/5 border border-success/20">
                      <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
@@ -176,7 +176,7 @@ function EnhancedTVModeComponent() {
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold">{sale.client_name}</div>
-                      <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id) || 'N/A'}</div>
+                      <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id ?? '') || 'N/A'}</div>
                     </div>
                     <div className="text-xl font-bold text-success">
                       R$ {(sale.amount || 0).toLocaleString('pt-BR')}
