@@ -48,12 +48,12 @@ export function useCompetencyData(salespersonId?: string) {
       const completedSales = sales.filter(s => s.status === 'completed');
       const closingScore = Math.min(100, Math.round((completedSales.length / totalSales) * 140));
 
-      // Follow-up: meetings + follow-up activities
-      const followUpActivities = activities.filter(a => a.activity_type === 'meeting' || a.activity_type === 'follow_up');
+      // Follow-up: meetings ratio
+      const followUpActivities = activities.filter(a => a.activity_type === 'call' || a.activity_type === 'email' || a.activity_type === 'whatsapp');
       const followUpScore = Math.min(100, Math.round((followUpActivities.length / totalActivities) * 160));
 
-      // Presentation: successful outcomes
-      const successfulOutcomes = activities.filter(a => a.outcome === 'positive' || a.outcome === 'completed');
+      // Presentation: successful outcomes (connected, qualified, scheduled)
+      const successfulOutcomes = activities.filter(a => a.outcome === 'connected' || a.outcome === 'qualified' || a.outcome === 'scheduled');
       const presentationScore = Math.min(100, Math.round((successfulOutcomes.length / totalActivities) * 140));
 
       return [
