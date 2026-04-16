@@ -4,6 +4,7 @@ import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
+import { CadenceMetricsPanel } from "@/components/cadences/CadenceMetricsPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
