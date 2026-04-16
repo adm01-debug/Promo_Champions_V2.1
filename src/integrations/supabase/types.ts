@@ -779,6 +779,47 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_usage_logs: {
+        Row: {
+          action: string
+          asset_id: string
+          created_at: string
+          deal_id: string | null
+          id: string
+          metadata: Json | null
+          salesperson_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action?: string
+          asset_id: string
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          metadata?: Json | null
+          salesperson_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          asset_id?: string
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          metadata?: Json | null
+          salesperson_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_usage_logs_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "sales_enablement_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -5460,6 +5501,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sales_enablement_assets: {
+        Row: {
+          asset_type: string
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_url: string | null
+          funnel_stage: string | null
+          id: string
+          is_active: boolean
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          asset_type?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          funnel_stage?: string | null
+          id?: string
+          is_active?: boolean
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          asset_type?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          funnel_stage?: string | null
+          id?: string
+          is_active?: boolean
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
       }
       sales_goals: {
         Row: {
