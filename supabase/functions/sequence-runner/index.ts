@@ -8,6 +8,7 @@ interface Enrollment {
   contact_type: string;
   current_step: number;
   status: string;
+  send_time_optimization?: boolean;
 }
 
 interface Step {
@@ -88,14 +89,19 @@ Deno.serve(async (req) => {
   try {
     const { data: due, error: dueErr } = await supabase
       .from("sequence_enrollments")
-      .select("id, sequence_id, contact_id, contact_type, current_step, status")
+      .select("id, sequence_id, contact_id, contact_type, current_step, status, sequences!inner(send_time_optimization)")
       .eq("status", "active")
       .lte("next_action_at", new Date().toISOString())
       .limit(50);
 
     if (dueErr) throw dueErr;
 
-    for (const enr of (due ?? []) as Enrollment[]) {
+    type DueRow = Enrollment & { sequences?: { send_time_optimization?: boolean } };
+    for (const row of (due ?? []) as DueRow[]) {
+      const enr: Enrollment = {
+        ...row,
+        send_time_optimization: row.sequences?.send_time_optimization ?? true,
+      };
       processed++;
       try {
         const { data: steps, error: stepsErr } = await supabase
