@@ -19,8 +19,9 @@ import {
   ENTITY_LABELS, VIZ_LABELS, defaultConfigForEntity,
   type ReportEntity, type ReportConfig, type VizType, type CrossBaseEntity, type ReportJoin,
 } from "@/hooks/reporting/reportBuilderHelpers";
-import { Save, Play, Sparkles } from "lucide-react";
+import { Save, Play, Sparkles, Share2 } from "lucide-react";
 import { toast } from "sonner";
+import { EmbedTokenManagerDialog } from "./EmbedTokenManagerDialog";
 
 interface Props {
   initialReport?: CustomReport;
@@ -36,6 +37,7 @@ export function ReportBuilder({ initialReport, onSaved }: Props) {
     initialReport?.config ?? defaultConfigForEntity("sales"),
   );
   const [previewKey, setPreviewKey] = useState(0);
+  const [embedOpen, setEmbedOpen] = useState(false);
 
   const create = useCreateCustomReport();
   const update = useUpdateCustomReport();
@@ -151,8 +153,8 @@ export function ReportBuilder({ initialReport, onSaved }: Props) {
           </TabsContent>
         </Tabs>
 
-        <div className="flex gap-2 pt-2 border-t border-border/40">
-          <Button onClick={handleSave} className="gap-2 flex-1" disabled={create.isPending || update.isPending}>
+        <div className="flex gap-2 pt-2 border-t border-border/40 flex-wrap">
+          <Button onClick={handleSave} className="gap-2 flex-1 min-w-[140px]" disabled={create.isPending || update.isPending}>
             <Save className="h-4 w-4" />
             {initialReport ? "Salvar" : "Criar relatório"}
           </Button>
@@ -161,8 +163,17 @@ export function ReportBuilder({ initialReport, onSaved }: Props) {
               <Play className="h-4 w-4" /> Executar
             </Button>
           )}
+          {initialReport?.id && (
+            <Button variant="outline" onClick={() => setEmbedOpen(true)} className="gap-2" title="Compartilhar / Embutir">
+              <Share2 className="h-4 w-4" /> Embutir
+            </Button>
+          )}
         </div>
       </Card>
+
+      {initialReport?.id && (
+        <EmbedTokenManagerDialog open={embedOpen} onOpenChange={setEmbedOpen} reportId={initialReport.id} />
+      )}
 
       <div className="space-y-3" key={previewKey}>
         {canPreview ? (
