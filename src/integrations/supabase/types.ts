@@ -7179,6 +7179,208 @@ export type Database = {
         }
         Relationships: []
       }
+      sequence_enrollments: {
+        Row: {
+          completed_at: string | null
+          contact_id: string
+          contact_type: string
+          created_at: string
+          current_step: number
+          enrolled_by: string | null
+          exit_reason: string | null
+          id: string
+          last_executed_at: string | null
+          metadata: Json
+          next_action_at: string | null
+          sequence_id: string
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          contact_id: string
+          contact_type: string
+          created_at?: string
+          current_step?: number
+          enrolled_by?: string | null
+          exit_reason?: string | null
+          id?: string
+          last_executed_at?: string | null
+          metadata?: Json
+          next_action_at?: string | null
+          sequence_id: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          contact_id?: string
+          contact_type?: string
+          created_at?: string
+          current_step?: number
+          enrolled_by?: string | null
+          exit_reason?: string | null
+          id?: string
+          last_executed_at?: string | null
+          metadata?: Json
+          next_action_at?: string | null
+          sequence_id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_enrollments_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sequence_step_executions: {
+        Row: {
+          channel: string | null
+          created_at: string
+          engagement: Json
+          enrollment_id: string
+          error_message: string | null
+          executed_at: string
+          id: string
+          status: string
+          step_id: string
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          engagement?: Json
+          enrollment_id: string
+          error_message?: string | null
+          executed_at?: string
+          id?: string
+          status: string
+          step_id: string
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          engagement?: Json
+          enrollment_id?: string
+          error_message?: string | null
+          executed_at?: string
+          id?: string
+          status?: string
+          step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_step_executions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_step_executions_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sequence_steps: {
+        Row: {
+          body: string | null
+          channel: string
+          conditions: Json
+          created_at: string
+          delay_days: number
+          delay_hours: number
+          id: string
+          sequence_id: string
+          step_order: number
+          subject: string | null
+          template_id: string | null
+        }
+        Insert: {
+          body?: string | null
+          channel: string
+          conditions?: Json
+          created_at?: string
+          delay_days?: number
+          delay_hours?: number
+          id?: string
+          sequence_id: string
+          step_order: number
+          subject?: string | null
+          template_id?: string | null
+        }
+        Update: {
+          body?: string | null
+          channel?: string
+          conditions?: Json
+          created_at?: string
+          delay_days?: number
+          delay_hours?: number
+          id?: string
+          sequence_id?: string
+          step_order?: number
+          subject?: string | null
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sequences: {
+        Row: {
+          channel_mix: string[]
+          created_at: string
+          description: string | null
+          enabled: boolean
+          exit_on_meeting: boolean
+          exit_on_reply: boolean
+          id: string
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          channel_mix?: string[]
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          exit_on_meeting?: boolean
+          exit_on_reply?: boolean
+          id?: string
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          channel_mix?: string[]
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          exit_on_meeting?: boolean
+          exit_on_reply?: boolean
+          id?: string
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sla_policies: {
         Row: {
           created_at: string
