@@ -46,7 +46,7 @@ export function useUpsertSequenceStep() {
         subject: input.subject ?? null,
         body: input.body ?? null,
         template_id: input.template_id ?? null,
-        conditions: input.conditions ?? {},
+        conditions: (input.conditions ?? {}) as never,
       };
       if (input.id) {
         const { data, error } = await supabase
