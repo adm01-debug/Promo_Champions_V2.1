@@ -7615,32 +7615,38 @@ export type Database = {
       semantic_index: {
         Row: {
           content: string
+          content_hash: string | null
           embedding: string | null
           entity_id: string
           entity_type: string
           id: string
           metadata: Json
           salesperson_id: string | null
+          source_updated_at: string | null
           updated_at: string
         }
         Insert: {
           content: string
+          content_hash?: string | null
           embedding?: string | null
           entity_id: string
           entity_type: string
           id?: string
           metadata?: Json
           salesperson_id?: string | null
+          source_updated_at?: string | null
           updated_at?: string
         }
         Update: {
           content?: string
+          content_hash?: string | null
           embedding?: string | null
           entity_id?: string
           entity_type?: string
           id?: string
           metadata?: Json
           salesperson_id?: string | null
+          source_updated_at?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -9858,6 +9864,16 @@ export type Database = {
           weighted_revenue: number
         }[]
       }
+      get_semantic_coverage: {
+        Args: never
+        Returns: {
+          coverage_pct: number
+          entity_type: string
+          indexed_rows: number
+          last_indexed: string
+          total_rows: number
+        }[]
+      }
       get_user_permissions: {
         Args: never
         Returns: {
@@ -9933,6 +9949,10 @@ export type Database = {
         Returns: undefined
       }
       mark_all_notifications_read: { Args: never; Returns: number }
+      mark_entity_for_reindex: {
+        Args: { _entity_id: string; _entity_type: string }
+        Returns: boolean
+      }
       match_reply_to_enrollment: {
         Args: { _contact_email: string; _received_at?: string }
         Returns: string
