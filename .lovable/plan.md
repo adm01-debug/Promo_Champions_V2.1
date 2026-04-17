@@ -1,65 +1,58 @@
 
-Closing the AI Generativo Avançado section: **Predictive Scoring com Explainability (SHAP-style)**. Estado atual: existe `lead_scoring` edge function com 5 fatores rígidos e UI com `ScoreRing` — mas zero explicabilidade real (sem contribuição relativa, sem narrativa IA, sem ranking de drivers, sem recomendações acionáveis, sem histórico).
+Próxima atômica — **Sequences Multicanal com A/B Testing** (Sales Engagement #2, item 1 dos 8).
 
-## Próxima Melhoria — Predictive Scoring com Explainability
+## Estado atual
+- Existe `sequences` + `sequence_steps` + `sequence_enrollments` + `inbound_reply_events` (auto-pause já implementado).
+- Steps são lineares de canal único (email).
+- Sem variantes A/B, sem tracking de winner, sem multicanal nativo (LinkedIn/WhatsApp/Call task).
+- Sem métricas comparativas por variante (open/click/reply/meeting).
 
-### Estado atual
-- `lead-scoring` retorna 5 fatores brutos (dealValue, stageProgress, timeInPipeline, category, recentActivity) com labels textuais.
-- Dashboard mostra apenas o número do score; não mostra **por que** + **o que fazer**.
-- Sem baseline, sem contribuição percentual, sem direção (positivo/negativo), sem trend.
+## Mudanças
 
-### Mudanças
+### 1. Migration
+- `sequence_steps`: adicionar `channel text` (`email|linkedin|whatsapp|call|task`), `variant_group text` (NULL = sem A/B; mesmo valor = grupo de variantes), `variant_label text` (`A|B|C`), `variant_weight int default 50`.
+- `sequence_step_metrics` (nova): `step_id`, `variant_label`, `sent_count`, `opens`, `clicks`, `replies`, `meetings_booked`, `last_updated_at` — agregado materializado.
+- RPC `pick_variant(_step_id uuid)` SECURITY DEFINER → seleciona variante por peso ponderado, registra escolha em `sequence_step_assignments` (sale_id ↔ variant).
+- RPC `get_ab_winner(_variant_group text, _sequence_id uuid)` → retorna variante com maior reply_rate quando significância (n≥30 por braço).
+- RPC `record_step_event(_enrollment_id, _event_type)` para somar métricas por variante.
+- Trigger em `inbound_reply_events` incrementa `replies` da variante respondida.
 
-**1. Migration**
-- Tabela `lead_score_explanations`: `sale_id`, `score`, `baseline_score` (média da carteira), `top_drivers jsonb` (`[{factor, contribution_pct, direction, value, label}]`), `recommendations jsonb` (`[{action, expected_lift, priority}]`), `narrative text` (resumo IA), `model_version text`, `calculated_at`.
-- Tabela `lead_score_history`: `sale_id`, `score`, `factors jsonb`, `recorded_at` — populada por trigger AFTER UPDATE em `lead_scores`.
-- RPC `get_score_trend(_sale_id, _days)` retorna histórico para sparkline.
-- RLS: vendedor vê próprios via join com `sales.salesperson_id`; admin/manager veem tudo.
+### 2. Edge function `sequence-step-executor` (atualizar)
+- Ao executar step com `variant_group`, chama `pick_variant` para escolher.
+- Despacha conforme `channel`: email (já existe), LinkedIn (cria task `linkedin_message`), WhatsApp (cria task ou chama edge whatsapp se configurado), call (cria task de ligação), task (cria task genérica).
+- Registra `sent` em `sequence_step_metrics`.
 
-**2. Edge function `predictive-scoring-explain` (`verify_jwt=true`)**
-- Input: `{ sale_id }` ou `{ sale_ids: [...] }` (batch até 50).
-- Carrega deal + factors do `lead_scores` + carteira do vendedor (baseline).
-- **SHAP-style**: para cada fator, calcula `contribution = factor_value - baseline_factor_value`, normaliza para `contribution_pct = |contribution| / sum(|contributions|) * 100`, define `direction` (positivo/negativo).
-- Ordena top 5 drivers, gera 3 recomendações regra-baseadas (ex: "tempo no pipeline > 30d → agendar follow-up; lift esperado +8 pts").
-- Chama Gemini 2.5 Flash para gerar **narrativa em PT-BR** de 2-3 frases explicando score + próximo passo (com tratamento 429/402 e fallback determinístico).
-- Persiste em `lead_score_explanations`.
+### 3. Edge function nova `sequence-ab-promote` (admin)
+- Para cada `variant_group` de uma sequência, chama `get_ab_winner`; se houver winner, marca outras variantes como `is_paused=true` e amplia peso da winner para 100%.
 
-**3. Trigger**
-- AFTER UPDATE em `lead_scores` insere snapshot em `lead_score_history` (apenas se score mudou).
+### 4. Hooks
+- `useSequenceStepVariants(stepId)` — lista variantes + métricas + reply rate.
+- `useCreateVariant()` / `useUpdateVariant()` / `usePromoteWinner()`.
+- `useStepMetrics(sequenceId)` — agregado por step+variant.
 
-**4. Hooks**
-- `useLeadScoreExplanation(saleId)` — busca da tabela; se ausente/stale → invoca edge.
-- `useScoreTrend(saleId)` — usa RPC para sparkline.
-- `useExplainBatch()` — mutation para reexplicar lote (admin).
+### 5. UI (≤300L cada)
+- `StepChannelSelector.tsx` — chips de canal (email/linkedin/whatsapp/call/task) com ícones.
+- `VariantEditor.tsx` — form para adicionar variante B/C com subject + body + peso (slider).
+- `ABTestPanel.tsx` — tabela comparativa (variante, sent, open%, reply%, meeting%) com badge "Winner" e botão "Promover winner".
+- `SequenceStepCard.tsx` (atualizar) — mostra canal, badges de variantes, mini-stats inline.
+- `sequenceVariantHelpers.ts` — cálculo de reply_rate, formatação, threshold de significância.
 
-**5. UI (≤300L cada)**
-- `LeadScoreExplainCard.tsx`: card premium com
-  - Score grande + delta vs baseline (ex: "+18 pts acima da média da carteira")
-  - Mini-sparkline de 30d (`useScoreTrend`)
-  - Barras horizontais de contribuição (top 5 drivers, verde/vermelho conforme direção)
-  - Bloco "Por que esse score?" (narrativa IA)
-  - Lista "Próximas ações para subir o score" (recomendações com lift esperado)
-- `ScoreContributionBar.tsx`: barra com label, valor, % contribuição, direção.
-- `ScoreSparkline.tsx`: SVG inline (≤40 linhas) mostrando histórico.
-- `predictiveScoringHelpers.ts`: cores por direção, formatação de contribuição, label PT-BR de fatores.
+### 6. Integração
+- `SequenceBuilder` (página existente) — botão "Adicionar variante A/B" em cada step.
+- `SequenceDetail` — nova aba "A/B Testing" com `ABTestPanel`.
+- Lista de steps mostra ícone do canal + contador de variantes.
 
-**6. Integração**
-- `LeadScoringDashboard`: ao clicar num lead da tabela, abre dialog com `LeadScoreExplainCard`.
-- `DealCard` no Pipeline: badge de score já existe; adicionar tooltip on-hover com top 3 drivers + botão "Explicar".
-- `LeadDetailDrawer` / `ClientDetailDrawer`: nova aba "Score IA" com o card completo.
-- Página `LeadScoring`: header com botão "Reexplicar todos" (admin) que dispara `useExplainBatch`.
-
-**7. Validação**
-- `supabase--curl_edge_functions` em sale real → confere `lead_score_explanations` populado com narrativa não vazia.
-- `supabase--read_query`: confere trigger gerando histórico após update simulado.
+### 7. Validação
+- `supabase--curl_edge_functions` em sequência real → confere métricas populando.
+- `supabase--read_query`: confere distribuição de variantes ≈ pesos.
 - `supabase--linter` zero novos warnings.
-- Console limpo, zero TS errors.
 
 ### Arquivos
-- **Migration**: 1 (2 tabelas + 1 RPC + 1 trigger + RLS)
-- **Criar**: `supabase/functions/predictive-scoring-explain/index.ts`
-- **Criar**: `src/hooks/scoring/useLeadScoreExplanation.ts`, `useScoreTrend.ts`, `useExplainBatch.ts`
-- **Criar**: `src/components/lead-scoring/LeadScoreExplainCard.tsx`, `ScoreContributionBar.tsx`, `ScoreSparkline.tsx`, `predictiveScoringHelpers.ts`
-- **Editar**: `src/components/lead-scoring/LeadScoringDashboard.tsx` (dialog explain), `src/components/pipeline/DealCard.tsx` (tooltip), `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `src/pages/LeadScoring.tsx`, `supabase/config.toml` (nova função)
+- **Migration**: 1 (colunas + 1 tabela + 3 RPCs + trigger)
+- **Editar**: `supabase/functions/sequence-step-executor/index.ts`
+- **Criar**: `supabase/functions/sequence-ab-promote/index.ts`
+- **Criar**: `src/hooks/sequences/useSequenceStepVariants.ts`, `usePromoteWinner.ts`, `useStepMetrics.ts`
+- **Criar**: `src/components/sequences/StepChannelSelector.tsx`, `VariantEditor.tsx`, `ABTestPanel.tsx`, `sequenceVariantHelpers.ts`
+- **Editar**: `src/components/sequences/SequenceStepCard.tsx`, `SequenceBuilder.tsx`, `SequenceDetail.tsx`, `supabase/config.toml`
 
-Após esta entrega, a seção **AI Generativo Avançado** fica 10/10 (todos os 7 itens do gap #14 completos: NLQ, Email Composer, Meeting Summary, Semantic Search Universal, AI Agents, Next Step Suggestions e Predictive Scoring com Explainability). Sigo automaticamente para a próxima seção crítica do GAPS_CLASSE_MUNDIAL: **Sales Engagement Avançado** (#2) começando por Sequences multicanal com A/B testing.
+Após esta entrega, sigo automaticamente para: **AI Email Composer 1-to-many** → **Send Time Optimization** → **Email Engagement Scoring** → **Account-Based Engagement** → **Power Dialer** → **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
