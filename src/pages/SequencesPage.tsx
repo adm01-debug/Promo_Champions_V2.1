@@ -72,7 +72,18 @@ export default function SequencesPage() {
               </Button>
             </div>
           </div>
-          <SequenceBuilder sequenceId={selected.id} />
+          <Tabs defaultValue="builder">
+            <TabsList>
+              <TabsTrigger value="builder"><Settings2 className="h-4 w-4 mr-2" />Builder</TabsTrigger>
+              <TabsTrigger value="ab"><FlaskConical className="h-4 w-4 mr-2" />A/B Testing</TabsTrigger>
+            </TabsList>
+            <TabsContent value="builder" className="mt-4">
+              <SequenceBuilder sequenceId={selected.id} />
+            </TabsContent>
+            <TabsContent value="ab" className="mt-4">
+              <ABTestPanel sequenceId={selected.id} />
+            </TabsContent>
+          </Tabs>
           <SequenceEnrollmentsDrawer open={enrollOpen} onOpenChange={setEnrollOpen} sequenceId={selected.id} />
         </div>
       </>
