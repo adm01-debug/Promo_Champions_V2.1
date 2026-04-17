@@ -1,57 +1,61 @@
 
-Sales Engagement ✅ 10/10. Próxima fila: **Conversation Intelligence** (gap CRÍTICO, 20% cobertura). Fila de 7 melhorias atômicas — vou executar a 1ª agora.
+Próxima melhoria atômica da fila Conversation Intelligence: **2/7 — Audio Transcription Pipeline**.
 
-## Melhoria 1/7 — Call Recording Upload & Storage
+## Melhoria 2/7 — Audio Transcription Pipeline (Whisper via Lovable AI)
 
 ### Estado atual
-- Não existe módulo de gravação de chamadas no projeto.
-- Activities apenas registram metadata (tipo, duração) — sem áudio anexado.
-- Sem bucket de storage para áudio nem schema para gravações.
+- 1/7 ✅: upload de áudio + storage privado + player funcionando.
+- `call_recordings.status` aceita `'transcribing'|'transcribed'` mas nada popula automaticamente.
+- Transcrição hoje é manual (textarea cole-aqui) → fluxo quebra a promessa de "Conversation Intelligence".
+- Não há edge function de transcrição nem campo `transcript` persistido na gravação.
 
 ### Mudanças
 
 **1. Migration**
-- Tabela `call_recordings`:
-  - `id`, `owner_id`, `contact_id`, `contact_type` ('lead'|'client'), `deal_id`, `activity_id`
-  - `title`, `provider` ('upload'|'zoom'|'meet'|'teams'|'twilio'), `provider_call_id`
-  - `audio_url`, `audio_duration_sec`, `audio_size_bytes`, `mime_type`
-  - `status` ('uploading'|'ready'|'transcribing'|'transcribed'|'failed')
-  - `recorded_at`, `created_at`, `updated_at`, `metadata jsonb`
-- Storage bucket `call-recordings` (privado)
-- Policies: owner CRUD próprias gravações + admin/manager visualizam tudo
-- Storage policies análogas (path `{owner_id}/{recording_id}.{ext}`)
-- RPC `register_call_recording`: SECURITY DEFINER. Registra metadata após upload.
+- Coluna em `call_recordings`:
+  - `transcript text` — texto completo transcrito
+  - `transcript_language text default 'pt'`
+  - `transcribed_at timestamptz`
+  - `transcription_error text`
+- RPC `update_call_recording_transcript(_id, _transcript, _language, _error)`: SECURITY DEFINER. Atualiza transcript + status + timestamps; checa ownership.
 
-**2. Hooks**
-- `useCallRecordings(filters)` — lista gravações
-- `useUploadCallRecording()` — upload p/ storage + insert
-- `useDeleteCallRecording()` — remove arquivo + linha
-- `useCallRecording(id)` — single recording
+**2. Edge function `transcribe-call-recording` (nova)**
+- POST `{ recording_id }`
+- Busca gravação; valida ownership via JWT
+- Gera URL assinada do `audio_url` no bucket privado
+- Marca status='transcribing'
+- Chama Lovable AI Gateway com modelo `google/gemini-2.5-flash` enviando áudio (base64 ou URL) + prompt: "Transcreva esta chamada de vendas em PT-BR, mantendo turnos Vendedor:/Cliente: quando possível"
+- Persiste transcript via RPC; status='transcribed'
+- Em erro: status='failed' + `transcription_error` populado
+- Trata 429 (rate limit) e 402 (créditos) com mensagens específicas
 
-**3. Componentes UI (≤300L cada)**
-- `CallRecordingsPage.tsx` (`/conversation-intelligence`): grid de gravações com filtros, busca, status
-- `CallRecordingUploader.tsx`: dropzone + form (título, contato, deal opcional)
-- `CallRecordingCard.tsx`: thumbnail c/ duração, status, ações
-- `CallRecordingPlayer.tsx`: player HTML5 com waveform básico (Tailwind), controles
-- `callRecordingHelpers.ts`: formatação de duração, ícones por provider, badges de status
+**3. Hooks**
+- `useTranscribeRecording()` — dispara edge function e invalida cache
+- Atualizar `useCallRecordings` para retornar `transcript`, `transcript_language`, `transcribed_at`
 
-**4. Integração**
-- Nova rota `/conversation-intelligence` em `AppRoutes.tsx` (lazy)
-- Item de menu na sidebar (grupo CRM/Vendas)
-- Card no `ClientDetailDrawer` e `LeadDetailDrawer` mostrando gravações vinculadas
-- Botão "Anexar gravação" em `ActivityCard` quando type=call
+**4. Componentes UI**
+- `TranscribeButton.tsx`: botão "Transcrever com IA" no card da gravação selecionada (quando `status` ∈ {'ready','failed'})
+- `TranscriptViewer.tsx`: viewer expansível com highlight de turnos Vendedor/Cliente, contador de palavras, botão "Copiar"
+- Badge de status dinâmico: "Transcrevendo..." (loading), "Transcrito" (success), "Falha" (error tooltip com motivo)
+- Auto-trigger opcional: ao concluir upload, dispara transcrição automaticamente (toggle no uploader)
 
-**5. Validação**
-- Smoke RLS via `read_query` na nova tabela
-- Upload de arquivo MP3 teste → verifica bucket + linha criada
-- Player reproduz áudio
+**5. Integração**
+- `ConversationalIntelligence.tsx`: 
+  - Após upload: dispara `useTranscribeRecording` automaticamente se toggle ativo
+  - Coluna 3: substitui textarea manual por `TranscriptViewer` quando há transcript persistido; senão mostra `TranscribeButton`
+  - O fluxo "Analisar com IA" agora usa o transcript persistido como input, removendo o paste manual obrigatório
+
+**6. Validação**
+- Smoke RLS via `read_query` na coluna nova
+- Upload de MP3 curto → click Transcribe → verifica transcript populado
+- Verifica logs da edge function
 - Linter Supabase: zero novos warnings; console limpo
 
 ### Arquivos
-- Criar: migration (1 tabela + bucket + RLS + RPC)
-- Criar: `src/hooks/conversation/useCallRecordings.ts`
-- Criar: `src/components/conversation/CallRecordingUploader.tsx`, `CallRecordingCard.tsx`, `CallRecordingPlayer.tsx`, `callRecordingHelpers.ts`
-- Criar: `src/pages/ConversationIntelligence.tsx`
-- Editar: `src/routes/AppRoutes.tsx`, `src/components/layout/AppSidebar.tsx` (ou equivalente), `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`
+- Criar: migration (4 colunas + 1 RPC)
+- Criar: `supabase/functions/transcribe-call-recording/index.ts`
+- Criar: `src/hooks/conversational/useTranscribeRecording.ts`
+- Criar: `src/components/conversational/TranscribeButton.tsx`, `TranscriptViewer.tsx`
+- Editar: `src/hooks/conversational/useCallRecordings.ts`, `src/pages/ConversationalIntelligence.tsx`, `supabase/config.toml`
 
-Após esta entrega (1/7), sigo automaticamente para 2/7 — Audio Transcription Pipeline (Whisper via Lovable AI), depois 3/7 Diarization & Talk Ratio, 4/7 Key Moment Detection, 5/7 Sentiment Analysis, 6/7 Battle Cards Auto-Trigger, 7/7 Searchable Call Library. Fechando Conversation Intelligence em 10/10.
+Após esta entrega (2/7), sigo automaticamente para 3/7 — Diarization & Talk Ratio, depois 4/7 Key Moment Detection, 5/7 Sentiment Analysis, 6/7 Battle Cards Auto-Trigger, 7/7 Searchable Call Library. Fechando Conversation Intelligence em 10/10.
