@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { useLeadScoring } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info, Brain, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
+import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
@@ -51,6 +56,8 @@ function FactorBar({ label, value, maxValue }: { label: string; value: number; m
 
 export function LeadScoringDashboard() {
   const { data: leads, isLoading } = useLeadScoring();
+  const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const explainBatch = useExplainBatch();
 
   if (isLoading) {
     return (
@@ -78,16 +85,31 @@ export function LeadScoringDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-primary/10">
-          <Target className="h-6 w-6 text-primary" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-primary/10">
+            <Target className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
+            <p className="text-sm text-muted-foreground">
+              Classificação automática de {allLeads.length} leads por potencial de conversão
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
-          <p className="text-sm text-muted-foreground">
-            Classificação automática de {allLeads.length} leads por potencial de conversão
-          </p>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
+            if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
+          }}
+          disabled={explainBatch.isPending}
+          className="gap-2"
+        >
+          <RefreshCw className={cn("h-3.5 w-3.5", explainBatch.isPending && "animate-spin")} />
+          Reexplicar com IA
+        </Button>
       </div>
 
       {/* KPI Cards */}
@@ -221,6 +243,17 @@ export function LeadScoringDashboard() {
                       </Tooltip>
                     )}
 
+                    {/* Explain IA */}
+                    {lead.bestDealId && (
+                      <button
+                        onClick={() => setExplainSaleId(lead.bestDealId!)}
+                        className="p-1.5 rounded-md hover:bg-primary/10 shrink-0 group"
+                        aria-label="Explicar score com IA"
+                      >
+                        <Brain className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                      </button>
+                    )}
+
                     {/* Trend */}
                     <div className="hidden md:flex items-center gap-1 text-xs text-status-success shrink-0">
                       <TrendingUp className="h-3.5 w-3.5" />
@@ -233,6 +266,18 @@ export function LeadScoringDashboard() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={!!explainSaleId} onOpenChange={(o) => !o && setExplainSaleId(null)}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              Explicação do Score
+            </DialogTitle>
+          </DialogHeader>
+          {explainSaleId && <LeadScoreExplainCard saleId={explainSaleId} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

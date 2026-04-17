@@ -29,6 +29,7 @@ interface ScoredLead {
   factors: LeadScoreFactors | ServerScoreFactors;
   labels?: Record<string, string>;
   lastActivity?: Date;
+  bestDealId?: string;
 }
 
 /**
@@ -100,6 +101,7 @@ export const useLeadScoring = (leadId?: string) => {
         let bestScore = 0;
         let bestFactors: ServerScoreFactors | null = null;
         let bestLabels: Record<string, string> = {};
+        let bestDealId: string | undefined;
 
         dealIds.forEach(dealId => {
           const ss = serverScores[dealId];
@@ -107,6 +109,7 @@ export const useLeadScoring = (leadId?: string) => {
             bestScore = ss.score;
             bestFactors = ss.factors;
             bestLabels = ss.labels || {};
+            bestDealId = dealId;
           }
         });
 
@@ -121,6 +124,7 @@ export const useLeadScoring = (leadId?: string) => {
             category: bestScore >= 80 ? 'Hot' as const : bestScore >= 50 ? 'Warm' as const : 'Cold' as const,
             factors: bestFactors,
             labels: bestLabels,
+            bestDealId,
           };
         }
 
