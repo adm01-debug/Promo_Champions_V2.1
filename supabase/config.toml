@@ -174,3 +174,6 @@ verify_jwt = true
 [functions.analyze-sentiment-timeline]
 verify_jwt = true
 
+[functions.purchase-intelligence-forecast]
+verify_jwt = true
+
