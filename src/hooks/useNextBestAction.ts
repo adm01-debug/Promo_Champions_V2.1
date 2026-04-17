@@ -1,43 +1,52 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+export type NextActionPriority = 'high' | 'medium' | 'low';
+export type NextActionCategory = 'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
+export type NextActionChannel = 'phone' | 'email' | 'linkedin' | 'whatsapp' | 'in_person' | null;
+
 export interface NextBestAction {
   title: string;
   description: string;
+  rationale?: string;
   actionType: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: NextActionPriority;
+  confidence?: number;
+  channel?: NextActionChannel;
+  suggestedDate?: string | null;
+  suggestedTime?: string | null;
+  expectedImpact?: string;
+  category?: NextActionCategory;
   dealClient?: string | null;
+  dealId?: string | null;
   dealName?: string;
 }
 
 export interface NextBestActionResult {
   insight: string;
+  summary?: { totalDeals: number; atRisk: number; goalProgress: number };
   suggestions: NextBestAction[];
+}
+
+async function invokeNBA(salespersonId: string, limit = 5): Promise<NextBestActionResult> {
+  try {
+    const { data, error } = await supabase.functions.invoke('next-best-action', {
+      body: { salespersonId, limit },
+    });
+    if (!error && data?.suggestions) return data as NextBestActionResult;
+  } catch {
+    // fall through
+  }
+  return generateLocalSuggestions(salespersonId);
 }
 
 /**
  * Query hook — auto-fetches next best actions for a salesperson.
- * Tries the AI-powered edge function first, falls back to local heuristics.
  */
-export function useNextBestActionQuery(salespersonId?: string) {
+export function useNextBestActionQuery(salespersonId?: string, limit = 5) {
   return useQuery<NextBestActionResult>({
-    queryKey: ['next-best-action', salespersonId],
-    queryFn: async () => {
-      // Try edge function (AI-powered)
-      try {
-        const { data, error } = await supabase.functions.invoke('next-best-action', {
-          body: { salespersonId },
-        });
-
-        if (!error && data?.suggestions) {
-          return data as NextBestActionResult;
-        }
-      } catch {
-        // Fallback to local
-      }
-
-      return generateLocalSuggestions(salespersonId!);
-    },
+    queryKey: ['next-best-action', salespersonId, limit],
+    queryFn: () => invokeNBA(salespersonId!, limit),
     enabled: !!salespersonId,
     staleTime: 1000 * 60 * 10,
     retry: 1,
@@ -49,21 +58,7 @@ export function useNextBestActionQuery(salespersonId?: string) {
  */
 export const useNextBestAction = () => {
   return useMutation<NextBestActionResult, Error, string>({
-    mutationFn: async (salespersonId: string) => {
-      try {
-        const { data, error } = await supabase.functions.invoke('next-best-action', {
-          body: { salespersonId },
-        });
-
-        if (!error && data?.suggestions) {
-          return data as NextBestActionResult;
-        }
-      } catch {
-        // Fallback
-      }
-
-      return generateLocalSuggestions(salespersonId);
-    },
+    mutationFn: (salespersonId: string) => invokeNBA(salespersonId),
   });
 };
 
@@ -72,7 +67,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     .from('salespeople')
     .select('name')
     .eq('id', salespersonId)
-    .single();
+    .maybeSingle();
 
   const { data: sales } = await supabase
     .from('sales')
@@ -92,66 +87,94 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   const allActivities = activities || [];
   const suggestions: NextBestAction[] = [];
   const now = Date.now();
+  const todayIso = new Date().toISOString().slice(0, 10);
 
-  // Stagnant deals
   const stagnantDeals = allSales.filter(s => {
     if (s.status === 'completed' || s.status === 'lost') return false;
-    return (now - new Date(s.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7;
+    return (now - new Date(s.updated_at).getTime()) / 86400000 > 7;
   });
 
   stagnantDeals.slice(0, 3).forEach(deal => {
-    const days = Math.round((now - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.round((now - new Date(deal.updated_at).getTime()) / 86400000);
     suggestions.push({
       title: `Follow-up urgente: ${deal.client_name}`,
       description: `Deal sem atualização há ${days} dias. Recomenda-se contato imediato.`,
+      rationale: `Pipeline data: deal estagnado há ${days}d, valor R$ ${Number(deal.amount || 0).toLocaleString('pt-BR')}.`,
       actionType: 'follow_up',
       priority: days > 14 ? 'high' : 'medium',
+      confidence: 0.85,
+      category: 'urgent',
+      channel: 'phone',
+      suggestedDate: todayIso,
+      expectedImpact: `Reativar oportunidade de R$ ${Number(deal.amount || 0).toLocaleString('pt-BR')}.`,
       dealClient: deal.client_name,
+      dealId: deal.id,
     });
   });
 
-  // Activity volume check
-  const last7Days = allActivities.filter(a =>
-    (now - new Date(a.created_at).getTime()) / (1000 * 60 * 60 * 24) <= 7
+  const last7d = allActivities.filter(
+    a => (now - new Date(a.created_at).getTime()) / 86400000 <= 7,
   );
-
-  if (last7Days.length < 10) {
+  if (last7d.length < 10) {
     suggestions.push({
       title: 'Aumentar volume de atividades',
-      description: `Apenas ${last7Days.length} atividades nos últimos 7 dias. Meta recomendada: 15+.`,
+      description: `Apenas ${last7d.length} atividades nos últimos 7 dias. Meta recomendada: 15+.`,
+      rationale: `Velocidade abaixo do benchmark (${last7d.length}/15 sem 7d).`,
       actionType: 'call',
-      priority: last7Days.length < 5 ? 'high' : 'medium',
+      priority: last7d.length < 5 ? 'high' : 'medium',
+      confidence: 0.7,
+      category: 'prospecting',
+      channel: 'phone',
+      suggestedDate: todayIso,
+      expectedImpact: 'Aumentar conversão e fluxo de pipeline.',
     });
   }
 
-  // Proposal follow-up
-  const proposalDeals = allSales.filter(s => s.status === 'proposal' || s.status === 'Proposta');
-  if (proposalDeals.length > 0) {
+  const proposals = allSales.filter(s => s.status === 'proposal' || s.status === 'Proposta');
+  if (proposals.length > 0) {
     suggestions.push({
-      title: `Acompanhar ${proposalDeals.length} proposta(s) enviada(s)`,
+      title: `Acompanhar ${proposals.length} proposta(s) enviada(s)`,
       description: 'Propostas em aberto precisam de acompanhamento para avançar.',
+      rationale: `${proposals.length} propostas aguardando decisão.`,
       actionType: 'meeting',
       priority: 'medium',
+      confidence: 0.75,
+      category: 'growth',
+      channel: 'in_person',
+      suggestedDate: todayIso,
+      expectedImpact: 'Acelerar fechamento de propostas em aberto.',
     });
   }
 
-  // Pipeline health
   const openDeals = allSales.filter(s => s.status !== 'completed' && s.status !== 'lost');
   if (openDeals.length < 5) {
     suggestions.push({
       title: 'Reforçar prospecção',
       description: `Pipeline com apenas ${openDeals.length} deals ativos.`,
+      rationale: `Pipeline raso (${openDeals.length} deals < 5 saudável).`,
       actionType: 'email',
       priority: 'high',
+      confidence: 0.8,
+      category: 'prospecting',
+      channel: 'email',
+      suggestedDate: todayIso,
+      expectedImpact: 'Reabastecer pipeline para próximos ciclos.',
     });
   }
 
   const completedCount = allSales.filter(s => s.status === 'completed').length;
-  const totalRevenue = allSales.filter(s => s.status === 'completed').reduce((sum, s) => sum + (s.amount || 0), 0);
+  const totalRevenue = allSales
+    .filter(s => s.status === 'completed')
+    .reduce((sum, s) => sum + (s.amount || 0), 0);
 
-  const insight = suggestions.length === 0
-    ? `${sp?.name || 'Vendedor'} está com bom desempenho! ${completedCount} vendas fechadas com R$ ${totalRevenue.toLocaleString('pt-BR')} em receita.`
-    : `${sp?.name || 'Vendedor'} tem ${openDeals.length} deals ativos e ${stagnantDeals.length} estagnados. Foco nas ações recomendadas pode melhorar a conversão.`;
+  const insight =
+    suggestions.length === 0
+      ? `${sp?.name || 'Vendedor'} está com bom desempenho! ${completedCount} vendas fechadas com R$ ${totalRevenue.toLocaleString('pt-BR')} em receita.`
+      : `${sp?.name || 'Vendedor'} tem ${openDeals.length} deals ativos e ${stagnantDeals.length} estagnados. Foco nas ações recomendadas pode melhorar a conversão.`;
 
-  return { insight, suggestions: suggestions.slice(0, 5) };
+  return {
+    insight,
+    summary: { totalDeals: openDeals.length, atRisk: stagnantDeals.length, goalProgress: 0 },
+    suggestions: suggestions.slice(0, 5),
+  };
 }
