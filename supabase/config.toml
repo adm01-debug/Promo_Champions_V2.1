@@ -129,3 +129,6 @@ verify_jwt = true
 [functions.predictive-scoring-explain]
 verify_jwt = true
 
+[functions.sequence-ab-promote]
+verify_jwt = true
+
