@@ -1,67 +1,72 @@
 
-Próxima melhoria atômica da fila Sales Engagement: **5/7 — Email Engagement Scoring**.
+Próxima melhoria atômica da fila Sales Engagement: **6/7 — Reply Detection & Auto-Pause**.
 
-## Melhoria 5/7 — Email Engagement Scoring
+## Melhoria 6/7 — Reply Detection & Auto-Pause
 
 ### Estado atual
-- 1-4/7 ✅ entregues. Já capturamos `opens`/`clicks`/`replies` no `contact_send_time_profile` (granular por hora/dia).
-- Não há score consolidado por contato/deal nem visualização de "temperatura" de engajamento ao longo do tempo.
-- `lead_scores` existe mas mistura sinais ICP+atividade; não isola engajamento de email/sequence.
+- 1-5/7 ✅ entregues. `sequence-record-reply` grava replies manualmente e atualiza engagement.
+- Não há detecção automática de respostas via webhook de provedor de email (Resend/SendGrid/IMAP).
+- Sequências continuam disparando passos mesmo após o lead responder, gerando ruído e queimando contatos.
+- Replies via outras superfícies (atividade manual, WhatsApp inbound) não pausam a sequência.
 
 ### Mudanças
 
 **1. Migration**
-- Tabela `contact_engagement_score`:
-  - `id`, `contact_id`, `contact_type` ('lead'|'client'), `score` numeric (0-100), `tier` text ('cold'|'warm'|'hot'|'on_fire'), `total_opens`, `total_clicks`, `total_replies`, `last_signal_at timestamptz`, `decay_applied_at`, `updated_at`
-  - Unique (contact_id, contact_type)
-- Tabela `engagement_score_history`: snapshot diário (`contact_id`, `contact_type`, `score`, `tier`, `captured_at date`) p/ sparkline
-- View `engagement_score_leaderboard`: top contatos por score nas últimas 2 semanas (filtra por owner via JOIN)
-- RPC `recompute_engagement_score(_contact_id, _contact_type)`:
-  - SECURITY DEFINER. Score = soma ponderada dos sinais nos últimos 30d com decay exponencial (half-life 7d): open=1, click=3, reply=8, bounce=-5, unsub=-20. Normaliza para 0-100. Atualiza tier (0-20 cold, 21-50 warm, 51-80 hot, 81+ on_fire).
-- RPC `bulk_recompute_engagement(_owner_id uuid)`: recomputa para todos contatos do owner (cron-friendly)
-- Trigger em `contact_send_time_profile` AFTER INSERT/UPDATE → enfileira recomputação via `pg_notify` ou direta (chamada RPC)
-- RLS: SELECT para owner via has_role + ownership
+- Coluna em `sequence_enrollments`:
+  - `auto_paused_at timestamptz` — quando foi pausado automaticamente
+  - `auto_pause_reason text` — 'reply_detected' | 'bounce' | 'unsubscribe' | 'manual_activity'
+- Coluna em `sequences`:
+  - `auto_pause_on_reply boolean default true`
+  - `auto_pause_on_bounce boolean default true`
+- Tabela `inbound_reply_events`: log bruto de eventos recebidos (`provider`, `message_id`, `from_email`, `subject`, `received_at`, `matched_enrollment_id`, `payload jsonb`)
+- RPC `auto_pause_enrollment(_enrollment_id, _reason)`: SECURITY DEFINER. Atualiza status='paused', grava timestamp/reason, registra signal de reply, recompute engagement.
+- RPC `match_reply_to_enrollment(_contact_email, _received_at)`: encontra enrollment ativo recente do contato (via `sales.email`/`clients.email`)
+- RLS: SELECT/INSERT em `inbound_reply_events` para admin + service role
 
-**2. Edge function `engagement-score-recompute` (nova, verify_jwt=false, scheduled)**
-- POST `{ ownerId? }` → roda `bulk_recompute_engagement`
-- Após recompute: insere snapshot em `engagement_score_history` se score mudou ≥2pts
-- Retorna `{ updated, snapshots }`
+**2. Edge function `inbound-email-webhook` (nova, verify_jwt=false)**
+- POST genérico que aceita payloads Resend/SendGrid (detecta formato pelo header)
+- Extrai `from`, `subject`, `message_id`, `in_reply_to`
+- Chama `match_reply_to_enrollment` → se match, chama `auto_pause_enrollment` + `sequence-record-reply` interno
+- Sempre grava em `inbound_reply_events` (mesmo sem match) para auditoria
+- Retorna 200 sempre (evita retry storms)
 
-**3. Edge function `sequence-record-reply` (update)**
-- Após gravar reply + signal: chama `recompute_engagement_score` inline para o contato
+**3. Edge function `sequence-runner` (update)**
+- Antes de executar passo: verifica `enrollment.status` ≠ 'paused' E `auto_paused_at` IS NULL
+- Verifica também se houve `activity` do tipo 'reply'/'inbound' nas últimas 24h para o contato → auto-pausa por `manual_activity`
 
-**4. Edge function `sequence-runner` (update)**
-- Após registrar open/click sintético em `record_engagement_signal`: dispara `recompute_engagement_score`
+**4. Trigger em `activities`**
+- AFTER INSERT em `activities` WHERE type IN ('reply','email_received','whatsapp_inbound') → busca enrollments ativos do contato → chama `auto_pause_enrollment` se sequência tem `auto_pause_on_reply=true`
 
 **5. Hooks**
-- `useEngagementScore(contactId, contactType)` — score atual + histórico 30d
-- `useEngagementLeaderboard(limit=10)` — top contatos
-- `useRecomputeEngagement()` — botão manual
+- `useAutoPauseSettings(sequenceId)` — toggles de auto-pause
+- `useResumeEnrollment()` — retoma enrollment auto-pausado manualmente
+- `useInboundReplyEvents(limit)` — log de eventos para admin
 
-**6. Componentes UI (≤300L cada)**
-- `EngagementScoreBadge.tsx`: chip colorido (cold=blue, warm=yellow, hot=orange, on_fire=red) com score numérico e ícone (Snowflake/Sun/Flame/Zap)
-- `EngagementScoreCard.tsx`: card grande com score, tier, sparkline 30d (recharts), breakdown (opens/clicks/replies), última atividade
-- `EngagementLeaderboardWidget.tsx`: top 10 hot leads no Dashboard com link p/ contato
-- `engagementScoreHelpers.ts`: cálculo de cor/ícone/label por tier, formatação
+**6. Componentes UI (≤250L cada)**
+- `AutoPauseSettingsCard.tsx`: 2 switches no `SequenceBuilder` (pause on reply / pause on bounce)
+- `AutoPausedBadge.tsx`: badge "⏸ Auto-pausado: resposta detectada" no `SequenceEnrollmentsDrawer`
+- `ResumeEnrollmentButton.tsx`: botão para retomar manualmente
+- `InboundReplyLogPanel.tsx`: tabela admin em `/admin` com últimos eventos recebidos
+- `autoReplyHelpers.ts`: labels de razão, formatação
 
 **7. Integração**
-- `LeadDetailDrawer.tsx` / `ClientDetailDrawer.tsx`: adiciona `EngagementScoreCard` no topo
-- `LeadsTable.tsx` / `ClientsTable.tsx`: nova coluna "Engagement" com `EngagementScoreBadge`
-- `Dashboard/Index.tsx`: novo widget `EngagementLeaderboardWidget`
-- `SequenceEnrollmentsDrawer.tsx`: badge ao lado do nome do contato
+- `SequenceBuilder.tsx`: adiciona `AutoPauseSettingsCard` abaixo do toggle STO
+- `SequenceEnrollmentsDrawer.tsx`: badge + botão resume quando auto-pausado
+- `Admin/Index.tsx`: novo painel `InboundReplyLogPanel`
 
 **8. Validação**
-- Smoke RLS via `read_query` na nova tabela + view
-- Inserir sinais sintéticos (5 opens, 2 clicks, 1 reply) p/ contato → recompute → score >40 tier=warm/hot
-- Aguardar 7d simulado (manipular `decay_applied_at`) → score decai
-- Verificar leaderboard ordenado corretamente
-- Linter Supabase: zero novos warnings; console limpo; zero erros TS
+- Smoke RLS via `read_query` na nova tabela
+- Simular POST no webhook com payload Resend → verifica match + pause
+- Inserir activity tipo 'reply' → trigger auto-pausa enrollment
+- Verificar badge no drawer e botão resume funcionando
+- Linter Supabase: zero novos warnings; console limpo
 
 ### Arquivos
-- Criar: migration nova (2 tabelas + 1 view + 2 RPCs + trigger + RLS)
-- Criar: `supabase/functions/engagement-score-recompute/index.ts`
-- Criar: `src/hooks/engagement/useEngagementScore.ts`
-- Criar: `src/components/engagement/EngagementScoreBadge.tsx`, `EngagementScoreCard.tsx`, `EngagementLeaderboardWidget.tsx`, `engagementScoreHelpers.ts`
-- Editar: `supabase/functions/sequence-runner/index.ts`, `supabase/functions/sequence-record-reply/index.ts`, `supabase/config.toml`, `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `src/pages/Index.tsx`, `src/components/sequences/SequenceEnrollmentsDrawer.tsx`
+- Criar: migration nova (1 tabela + 4 colunas + 2 RPCs + trigger + RLS)
+- Criar: `supabase/functions/inbound-email-webhook/index.ts`
+- Criar: `src/hooks/sequences/useAutoPause.ts`
+- Criar: `src/components/sequences/AutoPauseSettingsCard.tsx`, `AutoPausedBadge.tsx`, `ResumeEnrollmentButton.tsx`, `autoReplyHelpers.ts`
+- Criar: `src/components/admin/InboundReplyLogPanel.tsx`
+- Editar: `supabase/functions/sequence-runner/index.ts`, `supabase/config.toml`, `src/components/sequences/SequenceBuilder.tsx`, `src/components/sequences/SequenceEnrollmentsDrawer.tsx`, `src/pages/Admin.tsx` (ou equivalente)
 
-Após esta, sigo automaticamente para 6/7 (Reply Detection & Auto-Pause) e 7/7 (Multichannel Native Send: WhatsApp+SMS).
+Após esta, sigo automaticamente para **7/7 — Multichannel Native Send (WhatsApp + SMS)** para fechar a fila Sales Engagement em 10/10.
