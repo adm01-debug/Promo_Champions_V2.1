@@ -108,3 +108,6 @@ verify_jwt = true
 [functions.nlq-query]
 verify_jwt = true
 
+[functions.summarize-call-recording]
+verify_jwt = true
+

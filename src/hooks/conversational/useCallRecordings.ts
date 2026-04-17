@@ -26,6 +26,14 @@ export interface CallRecording {
   turns_count?: number | null;
   diarization?: unknown;
   diarized_at?: string | null;
+  summary?: string | null;
+  action_items?: unknown;
+  decisions?: unknown;
+  objections_summary?: unknown;
+  next_steps?: unknown;
+  key_topics?: string[] | null;
+  sentiment?: string | null;
+  summarized_at?: string | null;
 }
 
 export interface CallInsight {

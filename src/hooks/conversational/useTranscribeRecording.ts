@@ -16,13 +16,19 @@ export function useTranscribeRecording() {
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ["call-recordings"] });
       toast.success("Transcrição concluída! 📝");
-      // Auto-trigger diarization in background
+      // Auto-chain: diarization → summarization (background)
       const recId = data?.recording_id;
       if (recId) {
         supabase.functions
           .invoke("diarize-call-recording", { body: { recording_id: recId } })
           .then(({ error }) => {
             if (!error) qc.invalidateQueries({ queryKey: ["call-recordings"] });
+            return supabase.functions.invoke("summarize-call-recording", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) qc.invalidateQueries({ queryKey: ["call-recordings"] });
           });
       }
     },
