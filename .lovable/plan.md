@@ -1,53 +1,44 @@
 
-Próxima melhoria atômica da fila Reporting & BI: **7/7 — Custom Report Widget no Dashboard Builder + E2E Final**.
+Reporting & BI fechou em 7/7 ✅. Próxima fila prioritária do GAPS doc: **Sales Engagement Avançado (gap 🔴 #2)** — fundação do Q1 do roadmap. Vou propor uma fila atômica de 7 melhorias, e na aprovação executo **a 1ª**.
 
-## Melhoria 7/7 — Custom Report Widget + E2E
+## Fila Sales Engagement 10/10 (7 melhorias)
 
-### Estado atual
-- Dashboard Builder existe com widgets nativos (KPIs, gráficos, listas).
-- Custom Reports executáveis via `report-builder-execute` mas não embutíveis em dashboards internos.
-- Falta closing loop: usar relatórios criados no Builder dentro de dashboards customizáveis.
+| # | Melhoria | Impacto |
+|---|----------|---------|
+| 1 | **Sequences Engine v2** — multistep multicanal (email/whatsapp/call/linkedin), pause-on-reply, exit conditions | 🔴 Crítico |
+| 2 | **AI Email Composer** — geração 1-to-many com variáveis de contexto + tom configurável | 🔴 Crítico |
+| 3 | **A/B Testing de Steps** — 2 variantes por step, winner por reply rate | 🟠 Alto |
+| 4 | **Send Time Optimization** — IA escolhe melhor horário/dia por contato com base em engagement histórico | 🟠 Alto |
+| 5 | **Email Engagement Scoring** — open + click + reply + meeting booked → score consolidado por contato | 🟠 Alto |
+| 6 | **Account-Based Engagement** — orquestração multi-contato por conta com "do not contact twice" | 🟠 Alto |
+| 7 | **Reply Detection + Auto-Pause** — webhook inbound classifica reply (interessado/objeção/oof) e pausa cadência + E2E final | 🔴 Crítico |
 
-### Mudanças
+### Próxima execução — Melhoria 1/7: Sequences Engine v2
 
-**1. Novo widget type: `custom_report`**
-- Adicionar `"custom_report"` à lista de tipos suportados em `dashboardBuilderHelpers.ts` / tipos do Dashboard.
-- Config: `{ report_id: string, height?: number }`.
+**Estado atual:** Existe `/follow-up` com cadência básica por temperatura, mas sem motor de sequences multistep configurável, sem pause-on-reply, sem exit conditions declarativas.
 
-**2. Componente `CustomReportWidget.tsx` (≤200L)**
-- Recebe `report_id` via config.
-- Hook interno: busca `custom_reports` por id + chama `report-builder-execute` (auth).
-- Renderiza via `ReportPreview` reaproveitado (table/kpi/bar/heatmap) em modo compacto.
-- Skeleton loading, empty state, erro amigável.
-- Header: nome do relatório + botão "Abrir no builder" (link `/relatorios/builder?id=...`).
+**Mudanças:**
+1. **Migration**:
+   - `sequences` (id, owner, name, description, channel_mix text[], enabled, created_at)
+   - `sequence_steps` (id, sequence_id, order, channel ['email'|'whatsapp'|'call'|'linkedin'], delay_days, delay_hours, template_id, conditions jsonb)
+   - `sequence_enrollments` (id, sequence_id, contact_id, contact_type ['lead'|'client'], status ['active'|'paused'|'completed'|'exited'], current_step, started_at, last_executed_at, exit_reason)
+   - `sequence_step_executions` (id, enrollment_id, step_id, executed_at, status ['sent'|'failed'|'skipped'], engagement jsonb)
+   - RLS owner + manager
+2. **Edge function `sequence-runner`** (cron 5min): busca enrollments com `next_action_at <= now()`, executa step (envia email via send-email, agenda call task, etc.), avança current_step, registra execution, marca completed se último step
+3. **Edge function `sequence-enroll`**: enroll em massa (lista de contatos), valida não-duplicação
+4. **UI `/sequences`**:
+   - Lista de sequences com status/enrollments ativos
+   - Builder visual: timeline vertical de steps (channel + delay + template), drag para reordenar
+   - Drawer de enrollments por sequence com status e timeline de execuções
+5. **Hooks**: `useSequences`, `useSequenceSteps`, `useSequenceEnrollments`, `useEnrollContacts`
+6. **Validação**: smoke RLS via read_query, criar sequence 3-step, enroll 1 lead, executar manual, verificar execuções
 
-**3. Editor do widget no Dashboard Builder**
-- `CustomReportWidgetEditor.tsx`: select com lista de `custom_reports` do usuário (hook `useCustomReports`).
-- Slider de altura (300-800px).
-- Integrar no `WidgetConfigPanel` existente.
+**Arquivos:**
+- Migration nova
+- `supabase/functions/sequence-runner/index.ts`, `sequence-enroll/index.ts`
+- `src/pages/SequencesPage.tsx`
+- `src/components/sequences/SequenceBuilder.tsx`, `SequenceStepCard.tsx`, `SequenceEnrollmentsDrawer.tsx`, `sequenceHelpers.ts`
+- `src/hooks/sequences/useSequences.ts`, `useSequenceSteps.ts`, `useSequenceEnrollments.ts`, `useEnrollContacts.ts`
+- Editar: `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, sidebar config
 
-**4. Renderer no grid**
-- Editar `DashboardWidgetRenderer.tsx`: case `custom_report` → `<CustomReportWidget />`.
-- Editar `WidgetPicker.tsx`: novo card "Relatório Customizado" com ícone `FileBarChart`.
-
-**5. E2E Validation Suite (Reporting & BI completo)**
-- Smoke navegacional:
-  - `/relatorios/builder` → criar report cross-object → executar → salvar.
-  - `/relatorios/funnel` → render visual.
-  - `/relatorios/cohort` → render heatmap.
-  - `/scheduled-reports` → criar schedule diário → executar manual.
-  - `/embed/report/:token` → token válido (incógnito).
-  - `/dashboard-builder` → adicionar widget custom_report → render.
-- Validar via `read_query` integridade RLS de todas as 4 tabelas (custom_reports, scheduled_reports, scheduled_report_runs, report_embed_tokens).
-- Linter Supabase: zero warnings novos.
-- Console limpo em todas as rotas.
-
-**6. Doc final**
-- Atualizar `docs/REPORTING_BI_COMPLETE.md` com status 7/7 ✅, screenshots, snippets de uso.
-
-### Arquivos
-- Criar: `src/components/dashboard-builder/widgets/CustomReportWidget.tsx`, `CustomReportWidgetEditor.tsx`
-- Editar: `src/components/dashboard-builder/dashboardBuilderHelpers.ts`, `DashboardWidgetRenderer.tsx`, `WidgetPicker.tsx`, `WidgetConfigPanel.tsx`
-- Criar: `docs/REPORTING_BI_COMPLETE.md`
-
-Esta é a última melhoria da fila Reporting & BI (7/7) — após esta, o módulo atinge 10/10 de classe mundial.
+Após aprovação executo 1/7 e sigo automaticamente até 7/7 (modo autônomo já confirmado pelo usuário).
