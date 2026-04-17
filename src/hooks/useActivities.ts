@@ -157,7 +157,8 @@ export const useActivityStats = (salespersonId?: string) => {
 
 export const useCreateActivity = () => {
   const queryClient = useQueryClient();
-  
+  const { index } = useIndexEntity();
+
   return useMutation({
     mutationFn: async (input: {
       activity_type: ActivityType;
@@ -173,13 +174,14 @@ export const useCreateActivity = () => {
         .insert(input)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['activities'] });
       queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
+      if (data?.id) index('activity', data.id);
     },
   });
 };
