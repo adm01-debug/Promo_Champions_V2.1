@@ -4,11 +4,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
+import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
