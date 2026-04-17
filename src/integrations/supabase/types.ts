@@ -1715,6 +1715,48 @@ export type Database = {
           },
         ]
       }
+      channel_credentials: {
+        Row: {
+          channel: string
+          created_at: string
+          credentials: Json
+          enabled: boolean
+          from_number: string | null
+          id: string
+          label: string | null
+          owner_id: string
+          provider: string
+          updated_at: string
+          verified_at: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          credentials?: Json
+          enabled?: boolean
+          from_number?: string | null
+          id?: string
+          label?: string | null
+          owner_id: string
+          provider: string
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          credentials?: Json
+          enabled?: boolean
+          from_number?: string | null
+          id?: string
+          label?: string | null
+          owner_id?: string
+          provider?: string
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       channel_interactions: {
         Row: {
           channel: string
@@ -4777,6 +4819,84 @@ export type Database = {
           },
         ]
       }
+      outbound_messages: {
+        Row: {
+          body: string | null
+          channel: string
+          created_at: string
+          delivered_at: string | null
+          enrollment_id: string | null
+          error: string | null
+          id: string
+          metadata: Json
+          owner_id: string
+          provider: string
+          provider_message_id: string | null
+          read_at: string | null
+          sent_at: string | null
+          status: string
+          step_id: string | null
+          template_id: string | null
+          to_number: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          channel: string
+          created_at?: string
+          delivered_at?: string | null
+          enrollment_id?: string | null
+          error?: string | null
+          id?: string
+          metadata?: Json
+          owner_id: string
+          provider: string
+          provider_message_id?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          step_id?: string | null
+          template_id?: string | null
+          to_number: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          channel?: string
+          created_at?: string
+          delivered_at?: string | null
+          enrollment_id?: string | null
+          error?: string | null
+          id?: string
+          metadata?: Json
+          owner_id?: string
+          provider?: string
+          provider_message_id?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          step_id?: string | null
+          template_id?: string | null
+          to_number?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outbound_messages_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outbound_messages_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_analytics: {
         Row: {
           created_at: string
@@ -7530,6 +7650,7 @@ export type Database = {
           step_order: number
           subject: string | null
           template_id: string | null
+          whatsapp_template_id: string | null
         }
         Insert: {
           body?: string | null
@@ -7543,6 +7664,7 @@ export type Database = {
           step_order: number
           subject?: string | null
           template_id?: string | null
+          whatsapp_template_id?: string | null
         }
         Update: {
           body?: string | null
@@ -7556,6 +7678,7 @@ export type Database = {
           step_order?: number
           subject?: string | null
           template_id?: string | null
+          whatsapp_template_id?: string | null
         }
         Relationships: [
           {
@@ -9612,6 +9735,22 @@ export type Database = {
           _signal: string
         }
         Returns: undefined
+      }
+      record_outbound_message: {
+        Args: {
+          _body: string
+          _channel: string
+          _enrollment_id: string
+          _error?: string
+          _owner_id: string
+          _provider: string
+          _provider_msg_id: string
+          _status: string
+          _step_id: string
+          _template_id?: string
+          _to: string
+        }
+        Returns: string
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
