@@ -8,6 +8,7 @@ import { NextStepsTimeline } from "./NextStepsTimeline";
 import { SummarizeButton } from "./SummarizeButton";
 import { CompetitorMentionsCard } from "./CompetitorMentionsCard";
 import { CoachingActionsList } from "./CoachingActionsList";
+import { SentimentTimelineChart } from "./SentimentTimelineChart";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
@@ -61,6 +62,7 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
               objections={(rec.objections_summary as Objection[]) ?? []}
             />
             <NextStepsTimeline steps={(rec.next_steps as NextStep[]) ?? []} />
+            <SentimentTimelineChart recordingId={rec.id} />
             <CompetitorMentionsCard recordingId={rec.id} />
             <CoachingActionsList recordingId={rec.id} />
           </div>
