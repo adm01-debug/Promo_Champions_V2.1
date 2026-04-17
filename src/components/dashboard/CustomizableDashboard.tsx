@@ -38,6 +38,9 @@ import { TopDealsWidget } from "./widgets/TopDealsWidget";
 import { RecentActivitiesWidget } from "./widgets/RecentActivitiesWidget";
 import { TeamRankingWidget } from "./widgets/TeamRankingWidget";
 import { CalendarPreviewWidget } from "./widgets/CalendarPreviewWidget";
+import { CustomReportWidget } from "./widgets/CustomReportWidget";
+import { CustomReportWidgetEditor } from "./widgets/CustomReportWidgetEditor";
+import { Pencil } from "lucide-react";
 
 const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
   revenue_kpi: RevenueKpiWidget,
@@ -52,7 +55,26 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
   calendar_preview: CalendarPreviewWidget,
 };
 
-function RealWidget({ config }: { config: WidgetConfig }) {
+function RealWidget({ config, onEdit }: { config: WidgetConfig; onEdit?: () => void }) {
+  if (config.type === "custom_report") {
+    const cfg = (config.config ?? {}) as { report_id?: string; height?: number };
+    return (
+      <div className="relative h-full group">
+        <CustomReportWidget reportId={cfg.report_id} height={cfg.height} />
+        {onEdit && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-10 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={onEdit}
+            title="Editar widget"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+        )}
+      </div>
+    );
+  }
   const Component = WIDGET_COMPONENTS[config.type];
   if (!Component) {
     return (
