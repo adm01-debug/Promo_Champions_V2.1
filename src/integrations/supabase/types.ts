@@ -580,6 +580,104 @@ export type Database = {
           },
         ]
       }
+      ai_agent_actions: {
+        Row: {
+          executed_at: string
+          executed_by: string
+          id: string
+          run_id: string
+          status: string
+          step_index: number
+          tool_input: Json
+          tool_name: string
+          tool_output: Json | null
+        }
+        Insert: {
+          executed_at?: string
+          executed_by?: string
+          id?: string
+          run_id: string
+          status?: string
+          step_index: number
+          tool_input?: Json
+          tool_name: string
+          tool_output?: Json | null
+        }
+        Update: {
+          executed_at?: string
+          executed_by?: string
+          id?: string
+          run_id?: string
+          status?: string
+          step_index?: number
+          tool_input?: Json
+          tool_name?: string
+          tool_output?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agent_actions_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agent_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agent_runs: {
+        Row: {
+          agent_type: string
+          approved_by: string | null
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          goal: string | null
+          id: string
+          requires_approval: boolean
+          result: Json | null
+          salesperson_id: string
+          status: string
+          steps: Json
+          target_entity_id: string | null
+          target_entity_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_type: string
+          approved_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          goal?: string | null
+          id?: string
+          requires_approval?: boolean
+          result?: Json | null
+          salesperson_id: string
+          status?: string
+          steps?: Json
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_type?: string
+          approved_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          goal?: string | null
+          id?: string
+          requires_approval?: boolean
+          result?: Json | null
+          salesperson_id?: string
+          status?: string
+          steps?: Json
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       api_tokens: {
         Row: {
           company_name: string
@@ -9536,6 +9634,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      append_agent_step: {
+        Args: {
+          _executed_by?: string
+          _run_id: string
+          _status?: string
+          _tool_input: Json
+          _tool_name: string
+          _tool_output: Json
+        }
+        Returns: undefined
+      }
+      approve_agent_run: { Args: { _run_id: string }; Returns: undefined }
       assign_cadence_variant: { Args: { _ab_test_id: string }; Returns: string }
       auto_assign_lead: {
         Args: { _sale_id: string }
@@ -9586,6 +9696,15 @@ export type Database = {
           processed: number
         }[]
       }
+      complete_agent_run: {
+        Args: {
+          _error?: string
+          _result: Json
+          _run_id: string
+          _status?: string
+        }
+        Returns: undefined
+      }
       compute_cohort_retention: {
         Args: { _cohort_id: string; _periods?: number }
         Returns: {
@@ -9633,6 +9752,16 @@ export type Database = {
       create_activities_from_action_items: {
         Args: { _recording_id: string }
         Returns: number
+      }
+      create_agent_run: {
+        Args: {
+          _agent_type: string
+          _goal?: string
+          _requires_approval?: boolean
+          _target_entity_id?: string
+          _target_entity_type?: string
+        }
+        Returns: string
       }
       declare_step_winner: {
         Args: { _step_id: string; _variant_label: string }
