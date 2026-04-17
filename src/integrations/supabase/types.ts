@@ -591,6 +591,13 @@ export type Database = {
             foreignKeyName: "agenda_events_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "agenda_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
             referencedRelation: "clients"
             referencedColumns: ["id"]
           },
@@ -1824,6 +1831,13 @@ export type Database = {
             foreignKeyName: "call_recordings_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "call_recordings_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
             referencedRelation: "clients"
             referencedColumns: ["id"]
           },
@@ -2288,6 +2302,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "salespeople_public"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portfolio_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
           },
           {
             foreignKeyName: "client_portfolio_client_id_fkey"
@@ -4490,6 +4511,13 @@ export type Database = {
             foreignKeyName: "icp_data_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: true
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "icp_data_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
             referencedRelation: "clients"
             referencedColumns: ["id"]
           },
@@ -4808,6 +4836,13 @@ export type Database = {
           to_salesperson_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "lead_routing_log_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
           {
             foreignKeyName: "lead_routing_log_client_id_fkey"
             columns: ["client_id"]
@@ -10444,6 +10479,18 @@ export type Database = {
           },
         ]
       }
+      client_purchase_seasonality: {
+        Row: {
+          avg_revenue: number | null
+          client_id: string | null
+          client_name: string | null
+          day_of_week: number | null
+          deal_count: number | null
+          month_of_year: number | null
+          total_revenue: number | null
+        }
+        Relationships: []
+      }
       contact_best_send_window: {
         Row: {
           clicks: number | null
@@ -10792,6 +10839,20 @@ export type Database = {
           total_tasks: number
         }[]
       }
+      get_client_purchase_heatmap: {
+        Args: { _client_id?: string; _months?: number }
+        Returns: {
+          client_id: string
+          client_name: string
+          deal_count: number
+          is_current_user: boolean
+          month_start: string
+          revenue: number
+          salesperson_id: string
+          salesperson_name: string
+          won_count: number
+        }[]
+      }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_dialer_queue_stats: {
@@ -10845,6 +10906,10 @@ export type Database = {
           sms_enabled: boolean
           totp_enabled: boolean
         }[]
+      }
+      get_purchase_intelligence_summary: {
+        Args: { _client_id: string }
+        Returns: Json
       }
       get_revenue_forecast: {
         Args: { _days?: number }
