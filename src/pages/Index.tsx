@@ -26,6 +26,7 @@ import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScor
 import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
 import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
 import { MoodTrackerWidget } from "@/components/engagement/MoodTrackerWidget";
+import { EngagementLeaderboardWidget } from "@/components/engagement/EngagementLeaderboardWidget";
 import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
 import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
@@ -256,10 +257,11 @@ const Index = () => {
                 <KPIGrid />
                 <AlertsPanel />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                 <BenchmarkPanel />
                 <TeamActivityFeed />
                 <ClientHealthPanel />
+                <EngagementLeaderboardWidget limit={8} />
               </div>
             </DashboardSection>
 

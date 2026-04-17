@@ -72,6 +72,11 @@ Deno.serve(async (req) => {
         _signal: "reply",
         _occurred_at: occurredAt,
       });
+      // Recompute engagement score inline (trigger also fires, this ensures sync return)
+      await admin.rpc("recompute_engagement_score", {
+        _contact_id: enr.contact_id,
+        _contact_type: enr.contact_type,
+      });
     }
 
     await admin
