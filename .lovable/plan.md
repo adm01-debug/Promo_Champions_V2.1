@@ -1,60 +1,57 @@
 
-Próxima atômica AI Generativo Avançado: **Semantic Search expandida** — busca vetorial unificada sobre clientes, leads, deals, atividades e gravações de calls. Hoje só existe busca textual fragmentada.
+Próxima atômica AI Generativo Avançado: **AI Agents autônomos** — agentes que executam tarefas multi-step (qualificar lead, montar proposta, agendar follow-up) usando tool calling do Gemini sobre as RPCs e funções existentes do CRM.
 
-## Próxima Melhoria — Semantic Search Universal
+## Próxima Melhoria — AI Agents Autônomos
 
 ### Estado atual
-- Cmd+K palette faz só match por título.
-- Sem embeddings nem RAG; usuário não consegue perguntar "clientes que falaram em desconto".
-- Existe `pgvector`? Verificar; senão habilitar.
+- IA atual é reativa: Copilot responde, NLQ consulta, Email Composer gera. Nada **age** sozinho.
+- Sem orquestração multi-step com aprovação humana.
+- Sem registro auditável de ações tomadas por IA.
 
 ### Mudanças
 
 **1. Migration**
-- Habilitar `vector` extension.
-- Tabela `semantic_index`:
-  - `id uuid pk`, `entity_type text` (`client|lead|deal|activity|call_recording`), `entity_id uuid`, `salesperson_id uuid`, `content text`, `embedding vector(768)`, `metadata jsonb`, `updated_at timestamptz`
-  - Unique `(entity_type, entity_id)`; índice ivfflat em `embedding`.
-- RLS: vendedor só vê próprios; admin/manager vê tudo.
-- RPC `match_semantic(_query_embedding, _match_count, _entity_types text[])` SECURITY DEFINER que aplica filtro por dono via `get_current_salesperson_id`.
-- RPC `upsert_semantic_entry(...)` SECURITY DEFINER.
+- Tabela `ai_agent_runs`: `id`, `salesperson_id`, `agent_type` (`qualify_lead|build_proposal|schedule_followup|enrich_client|recover_cold_lead`), `goal text`, `target_entity_type`, `target_entity_id`, `status` (`pending|running|awaiting_approval|completed|failed|cancelled`), `steps jsonb` (lista de tool calls + resultados), `result jsonb`, `requires_approval bool`, `approved_by`, `created_at`, `completed_at`.
+- Tabela `ai_agent_actions` (audit): `run_id`, `step_index`, `tool_name`, `tool_input jsonb`, `tool_output jsonb`, `executed_at`, `executed_by` (`ai|user`).
+- RLS: vendedor vê próprios; admin vê tudo.
+- RPCs `create_agent_run`, `append_agent_step`, `complete_agent_run`, `approve_agent_run` (SECURITY DEFINER + ownership).
 
-**2. Edge functions**
-- `semantic-index-entity` (`verify_jwt=true`): input `{ entity_type, entity_id }` → busca registro real, monta `content`, gera embedding via Lovable AI (`google/text-embedding-004`, 768d), upsert via RPC.
-- `semantic-search` (`verify_jwt=true`): input `{ query, entity_types?, limit? }` → embedding da query → `match_semantic` → enriquece resultado com link/preview → opcionalmente passa top 5 por LLM (`gemini-2.5-flash`) que retorna `answer` curta citando entidades. Trata 429/402.
-- `semantic-reindex-batch` (admin only): re-indexa em lote por tipo.
+**2. Edge function `ai-agent-orchestrator` (`verify_jwt=true`)**
+- Input: `{ agent_type, target_entity_id?, goal?, auto_execute? }`
+- Carrega contexto do alvo (lead/cliente/deal).
+- Loop tool calling Gemini 2.5 Flash com tools registradas:
+  - `get_entity_details`, `search_semantic`, `create_activity`, `compose_email`, `update_lead_score`, `add_note`, `schedule_followup`, `finish` (com sumário).
+- Cada tool call → executa via service-role + grava em `ai_agent_actions`.
+- Tools mutativas em modo `awaiting_approval` se `auto_execute=false` (default).
+- Trata 429/402, max 10 steps, timeout 60s.
 
 **3. Hooks**
-- `useSemanticSearch(query)` — debounce 350ms, mutation+cache.
-- `useIndexEntity()` — opcional para reindexar manualmente.
-- Auto-trigger: hooks de save de cliente/lead/deal/atividade chamam `semantic-index-entity` em background (fire-and-forget).
+- `useStartAgentRun()`, `useAgentRuns()`, `useApproveAgentRun()`, `useAgentRunDetails(id)` — realtime via channel em `ai_agent_runs`.
 
 **4. UI (≤300L cada)**
-- `SemanticSearchDialog.tsx` — dialog full-screen-ish (Cmd+Shift+F):
-  - Input grande com placeholder "Pergunte ou busque qualquer coisa…"
-  - Filtros chip: Clientes / Leads / Deals / Atividades / Calls
-  - Resposta IA no topo (quando houver) + lista de resultados com ícone por tipo, snippet, score
-  - Atalho Enter abre entidade
-- `SemanticSearchResultRow.tsx` — linha com ícone+título+snippet+badge tipo+score%
-- `semanticSearchHelpers.ts` — mapeamento tipo→ícone/cor/rota, formatação de score
-- Trigger global: botão na topbar (ícone Sparkles) + atalho de teclado registrado em `KeyboardShortcuts`.
+- `AgentLauncherDialog.tsx` — escolhe agent_type, alvo (autocomplete lead/cliente), goal opcional, toggle "executar automaticamente".
+- `AgentRunCard.tsx` — card com status + progress steps.
+- `AgentStepTimeline.tsx` — timeline das ações com input/output formatado.
+- `AgentApprovalBar.tsx` — aprovar/rejeitar plano antes da execução.
+- `agentHelpers.ts` — labels, ícones, cores por tipo.
+- Página `AIAgents.tsx` (`/agentes`): lista de runs + botão "Novo agente".
+- Botão "Acionar agente" inline em LeadDetailDrawer e ClientDetailDrawer.
 
 **5. Integração**
-- Sidebar group "BI/Analytics": item "Busca Semântica" (rota `/busca`).
-- Página `SemanticSearch.tsx` (lazy) reaproveitando o dialog inline.
-- Cmd+K palette: nova seção "Resultados semânticos" alimentada quando query ≥ 4 chars.
+- Rota `/agentes` (lazy) + sidebar item "Agentes IA" no grupo IA/Analytics.
+- Realtime: `ALTER PUBLICATION supabase_realtime ADD TABLE ai_agent_runs;`
 
 **6. Validação**
-- Smoke `supabase--curl_edge_functions` index + search com query real.
-- `supabase--linter` zero novos warnings.
-- Console limpo, zero TS errors.
+- Smoke `supabase--curl_edge_functions` em lead real (modo `awaiting_approval`).
+- RLS confere isolamento por vendedor.
+- Linter zero novos warnings, console limpo.
 
 ### Arquivos
-- Migration (extension + tabela + RPCs + RLS)
-- Criar `supabase/functions/semantic-index-entity/index.ts`, `semantic-search/index.ts`, `semantic-reindex-batch/index.ts`
-- Criar `src/hooks/semantic/useSemanticSearch.ts`, `useIndexEntity.ts`
-- Criar `src/components/semantic/SemanticSearchDialog.tsx`, `SemanticSearchResultRow.tsx`, `semanticSearchHelpers.ts`
-- Criar `src/pages/SemanticSearch.tsx`
-- Editar `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`, `src/components/layout/TopBar.tsx` (botão), `supabase/config.toml`
+- Migration (2 tabelas + 4 RPCs + RLS + realtime)
+- Criar `supabase/functions/ai-agent-orchestrator/index.ts`, `agentTools.ts`
+- Criar `src/hooks/agents/useAgentRuns.ts`, `useStartAgentRun.ts`, `useApproveAgentRun.ts`, `useAgentRunDetails.ts`
+- Criar `src/components/agents/AgentLauncherDialog.tsx`, `AgentRunCard.tsx`, `AgentStepTimeline.tsx`, `AgentApprovalBar.tsx`, `agentHelpers.ts`
+- Criar `src/pages/AIAgents.tsx`
+- Editar `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`, `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `supabase/config.toml`
 
-Após esta entrega, sigo para AI Agents autônomos e Predictive Scoring com explainability — fechando AI Generativo em 10/10.
+Após esta entrega, sigo para a última atômica de AI Generativo Avançado: **Predictive Scoring com Explainability** — fechando 10/10.
