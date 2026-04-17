@@ -122,10 +122,30 @@ Deno.serve(async (req) => {
           continue;
         }
 
+        // Pick A/B variant if any
+        let variantId: string | null = null;
+        let variantLabel: string | null = null;
+        let useSubject = nextStep.subject;
+        let useBody = nextStep.body;
+        try {
+          const { data: picked } = await supabase.rpc("pick_step_variant", {
+            _step_id: nextStep.id,
+          });
+          const pick = Array.isArray(picked) ? picked[0] : picked;
+          if (pick?.variant_id) {
+            variantId = pick.variant_id;
+            variantLabel = pick.label;
+            useSubject = pick.subject;
+            useBody = pick.body;
+          }
+        } catch (_) {
+          // soft-fail: no variant = use base
+        }
+
         // Resolve template variables with contact context
         const ctx = await fetchContactContext(supabase, enr.contact_id, enr.contact_type);
-        const resolvedSubject = resolveTemplateVariables(nextStep.subject, ctx);
-        const resolvedBody = resolveTemplateVariables(nextStep.body, ctx);
+        const resolvedSubject = resolveTemplateVariables(useSubject, ctx);
+        const resolvedBody = resolveTemplateVariables(useBody, ctx);
 
         // Record execution (channel-agnostic stub — real send wiring per channel happens in 2/7+)
         await supabase.from("sequence_step_executions").insert({
@@ -133,11 +153,13 @@ Deno.serve(async (req) => {
           step_id: nextStep.id,
           status: "sent",
           channel: nextStep.channel,
+          variant_id: variantId,
           engagement: {
             auto: true,
             dispatched_at: new Date().toISOString(),
             resolved_subject: resolvedSubject,
             resolved_body: resolvedBody,
+            variant_label: variantLabel,
           },
         });
 
