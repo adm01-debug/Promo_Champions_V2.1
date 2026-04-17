@@ -3342,6 +3342,107 @@ export type Database = {
           },
         ]
       }
+      email_bulk_drafts: {
+        Row: {
+          approved: boolean
+          body: string
+          client_id: string | null
+          created_at: string
+          error: string | null
+          id: string
+          job_id: string
+          personalization_notes: string | null
+          recipient_email: string | null
+          recipient_name: string | null
+          sale_id: string | null
+          sent_at: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean
+          body?: string
+          client_id?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id: string
+          personalization_notes?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          sale_id?: string | null
+          sent_at?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean
+          body?: string
+          client_id?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id?: string
+          personalization_notes?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          sale_id?: string | null
+          sent_at?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_bulk_drafts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "email_bulk_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_bulk_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          language: string
+          owner_id: string
+          prompt: string
+          status: string
+          target_count: number
+          tone: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          language?: string
+          owner_id: string
+          prompt: string
+          status?: string
+          target_count?: number
+          tone?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          language?: string
+          owner_id?: string
+          prompt?: string
+          status?: string
+          target_count?: number
+          tone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_logs: {
         Row: {
           created_at: string
@@ -9959,6 +10060,16 @@ export type Database = {
         }[]
       }
       get_auto_paused_count: { Args: { _days?: number }; Returns: number }
+      get_bulk_job_summary: {
+        Args: { _job_id: string }
+        Returns: {
+          approved: number
+          errored: number
+          pending: number
+          sent: number
+          total: number
+        }[]
+      }
       get_cadence_metrics: {
         Args: { _cadence_id?: string; _days?: number }
         Returns: {
