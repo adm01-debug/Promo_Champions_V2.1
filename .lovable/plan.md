@@ -1,45 +1,66 @@
 
-NLQ (#168 da seção "AI Generativo Avançado") já foi entregue na mensagem anterior. A próxima atômica natural da fila AI Generativo Avançado é **AI Email Composition** (#165), mas precisa estar 100% integrado ao fluxo do CRM.
+Próxima atômica AI Generativo Avançado: **Meeting Summary AI** — transforma transcrições de reuniões/calls em resumos executivos acionáveis com action items, decisões, riscos e próximos passos. Reaproveita pipeline de Conversation Intelligence (call_recordings + transcript já existentes).
 
-## Próxima Melhoria — AI Email Composition (linha #165)
+## Próxima Melhoria — Meeting Summary AI
 
 ### Estado atual
-- `ai-email-composer` edge function: já existe mas só usada em sequences (1-to-many).
-- Não há botão "Escrever com IA" nas telas de detalhes de Lead/Cliente/Deal.
-- Composer manual de email único não existe — usuário só consegue mandar email via sequence.
+- Conversation Intelligence (3/7) entrega upload + transcrição + diarização.
+- `call_recordings.transcript` já populado, mas usuário precisa ler tudo manualmente para extrair valor.
+- Sem geração automática de: resumo executivo, action items, decisões, objeções, próximos passos.
+- Sem persistência estruturada — atividades não recebem follow-ups automáticos das calls.
 
 ### Mudanças
 
-**Backend** (extensão da edge function existente)
-- Edição mínima em `supabase/functions/ai-email-composer/index.ts`: aceitar modo `single` com `{ recipient_id, recipient_type: 'lead'|'client', goal, tone, language, context_extras? }`.
-- Resolver contexto automático: nome, empresa, cargo, últimas 5 atividades, último deal/sale, tags. Sem expor PII desnecessária.
-- Tool calling Gemini 2.5 Flash retorna `{ subject, body_html, body_text, suggested_send_time, follow_up_hint }`.
-- Trata 429/402.
+**1. Migration**
+- Colunas em `call_recordings`:
+  - `summary text` — resumo executivo (3-5 parágrafos)
+  - `action_items jsonb` — `[{ title, owner_hint, due_hint, priority }]`
+  - `decisions jsonb` — `[{ text, made_by_hint }]`
+  - `objections jsonb` — `[{ text, category }]`
+  - `next_steps jsonb` — `[{ text, deadline_hint }]`
+  - `key_topics text[]`
+  - `sentiment text` (positive|neutral|negative|mixed)
+  - `summarized_at timestamptz`
+- RPC `update_call_recording_summary(_id, _payload)` SECURITY DEFINER + ownership check.
+- RPC opcional `create_activities_from_action_items(_recording_id)` que insere `activities` com `type='follow_up'` para cada action_item (idempotente via tag).
 
-**Frontend** (≤300L cada)
-- `useComposeEmail()` — mutation que chama edge + opcional `send-multichannel-message`.
-- `AIEmailComposerDialog.tsx` — dialog com:
-  - Form: objetivo (dropdown: Apresentação, Follow-up, Proposta, Reativação, Agradecimento), tom (Formal/Casual/Consultivo), idioma (PT-BR/EN), contexto extra (textarea opcional).
-  - Botão "Gerar com IA" → preview de assunto + corpo (markdown render), botão "Regenerar", botão "Editar manualmente", botão "Enviar agora" (canal email do multichannel).
-  - Indicador de horário sugerido + dica de follow-up.
-- `AIEmailComposerButton.tsx` — botão pequeno com ícone Sparkles + "Escrever com IA" reutilizável.
-- `aiEmailHelpers.ts` — defaults, mapeamento de tons e validação Zod.
+**2. Edge function `summarize-call-recording` (nova, `verify_jwt = true`)**
+- Input: `{ recording_id }`
+- Lê transcript + diarization + metadados do contato vinculado (cliente/lead).
+- Tool calling Lovable AI (`google/gemini-2.5-flash`) → tool `extract_meeting_summary` retorna estrutura completa.
+- Prompt PT-BR consultivo, sensível ao contexto de vendas (objeções BANT, próximos passos SPIN).
+- Persiste via RPC. Trata 429/402.
+- Auto-trigger após diarização concluir (chamado de `diarize-call-recording` em background).
 
-**Integração**
-- Inserir `AIEmailComposerButton` em:
-  - `src/components/leads/LeadDetailDrawer.tsx`
-  - `src/components/clients/ClientDetailDrawer.tsx`
-  - `src/components/deals/DealDetailDrawer.tsx` (se existir)
-- No multichannel hub, adicionar botão flutuante "Compor com IA".
+**3. Hooks**
+- `useSummarizeRecording()` — mutation + invalidate cache.
+- `useCreateActivitiesFromSummary()` — chama RPC para materializar action_items como atividades.
+- `useCallRecordings`: expor novos campos.
 
-**Validação**
-- `supabase--curl_edge_functions` smoke com `mode=single` em lead real.
-- Conferir RLS (vendedor só vê próprios leads).
-- Linter Supabase, console limpo, zero erros TS.
+**4. Componentes UI (≤300L cada)**
+- `MeetingSummaryCard.tsx` — card com summary markdown + sentiment badge + key_topics chips.
+- `ActionItemsList.tsx` — lista com checkbox, prioridade, botão "Criar atividade".
+- `DecisionsAndObjectionsPanel.tsx` — duas colunas semânticas.
+- `NextStepsTimeline.tsx` — timeline visual com deadlines.
+- `SummarizeButton.tsx` — trigger manual quando ainda não resumido.
+- `meetingSummaryHelpers.ts` — formatação, mapeamento sentiment→cor.
+
+**5. Integração**
+- `ConversationalIntelligence.tsx` — nova aba/seção "Resumo da Reunião" abaixo da diarização.
+- `ClientDetailDrawer` / `LeadDetailDrawer` — mostrar últimos 3 resumos de calls relacionadas (compacto).
+- `useTranscribeRecording` (chain): transcrição → diarização → resumo (encadeamento background).
+
+**6. Validação**
+- Smoke `supabase--curl_edge_functions` em recording transcrito real.
+- Confere RLS (vendedor só vê próprios resumos).
+- `supabase--linter` zero novos warnings.
+- Console limpo, zero erros TS.
 
 ### Arquivos
-- Editar: `supabase/functions/ai-email-composer/index.ts`
-- Criar: `src/hooks/email/useComposeEmail.ts`, `src/components/email/AIEmailComposerDialog.tsx`, `AIEmailComposerButton.tsx`, `aiEmailHelpers.ts`
-- Editar: `LeadDetailDrawer.tsx`, `ClientDetailDrawer.tsx`, eventual `DealDetailDrawer.tsx`, `MultichannelHub.tsx`
+- Criar migration (8 colunas + 2 RPCs)
+- Criar `supabase/functions/summarize-call-recording/index.ts`
+- Criar `src/hooks/conversational/useSummarizeRecording.ts`, `useCreateActivitiesFromSummary.ts`
+- Criar `src/components/conversational/MeetingSummaryCard.tsx`, `ActionItemsList.tsx`, `DecisionsAndObjectionsPanel.tsx`, `NextStepsTimeline.tsx`, `SummarizeButton.tsx`, `meetingSummaryHelpers.ts`
+- Editar `src/hooks/conversational/useCallRecordings.ts`, `useDiarizeRecording.ts` (chain), `src/pages/ConversationalIntelligence.tsx`, `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `supabase/config.toml`
 
-Após esta entrega, sigo automaticamente para as próximas atômicas restantes da seção AI Generativo Avançado: Meeting Summary AI, Semantic Search expandida, AI Agents autônomos, Predictive Scoring com explainability — fechando AI Generativo em 10/10.
+Após esta entrega, sigo automaticamente para as próximas atômicas restantes da seção AI Generativo Avançado: Semantic Search expandida, AI Agents autônomos, Predictive Scoring com explainability — fechando AI Generativo em 10/10.
