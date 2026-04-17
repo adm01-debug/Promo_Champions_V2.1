@@ -97,6 +97,20 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
             </div>
           </div>
 
+          {channel === "whatsapp" && (
+            <div>
+              <Label>WhatsApp Template ID (opcional)</Label>
+              <Input
+                value={whatsappTemplateId}
+                onChange={(e) => setWhatsappTemplateId(e.target.value)}
+                placeholder="ex: hello_world (template aprovado Meta)"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Para envios via Meta Cloud API fora da janela de 24h.
+              </p>
+            </div>
+          )}
+
           {supportsAI && step?.id ? (
             <Tabs defaultValue="single">
               <TabsList className="grid grid-cols-2 w-full">
