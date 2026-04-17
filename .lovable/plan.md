@@ -1,62 +1,43 @@
 
-Próxima atômica do **Sales Engagement Avançado** (item 2/8): **AI Email Composer 1-to-many** — gerar emails personalizados em massa com IA, mantendo tom único por destinatário, sem cair em spam de template.
+Predictive Scoring com Explainability **já foi 100% implementado** na sessão anterior — confirmo lendo os arquivos no código atual:
 
-## Estado atual
-- Existe `email-composer` edge function que gera 1 email a partir de prompt + contexto de 1 lead.
-- Sequences já fazem envio em massa, mas usam **template idêntico** com variáveis simples ({{nome}}, {{empresa}}).
-- Não existe geração 1-to-many: hoje, para personalizar 50 leads, o usuário precisaria gerar 50 vezes manualmente.
-- Sem preview/edição em massa, sem aprovação por lote, sem tracking de qual lead recebeu qual variação.
+- ✅ `lead_score_explanations` + `lead_score_history` + RPC `get_score_trend` + trigger (migração `20260417163016`)
+- ✅ Edge function `predictive-scoring-explain` (SHAP-style + narrativa Gemini 2.5 Flash + fallback determinístico)
+- ✅ Hooks: `useLeadScoreExplanation`, `useScoreTrend`, `useExplainBatch`
+- ✅ UI: `LeadScoreExplainCard`, `ScoreContributionBar`, `ScoreSparkline`, helpers
+- ✅ Integração: `LeadScoringDashboard`, `DealCard` (tooltip), `useLeadScoring`
 
-## Mudanças
+O que está **faltando** vs. plano original (gaps de cobertura):
 
-### 1. Migration
-- Tabela `email_bulk_jobs`: `id`, `owner_id`, `prompt text` (briefing do usuário), `tone text` (consultivo/direto/casual), `target_count int`, `status text` (`draft|generating|ready|sending|completed|failed`), `created_at`, `completed_at`.
-- Tabela `email_bulk_drafts`: `id`, `job_id`, `sale_id` (lead alvo), `subject text`, `body text`, `personalization_notes text` (o que IA usou para personalizar), `approved boolean default false`, `sent_at timestamptz`, `error text`.
-- RLS: owner vê os próprios; admin vê tudo.
-- RPC `get_bulk_job_summary(_job_id)` → contadores aggregados (drafts, approved, sent, failed).
+1. **Drawers**: aba "Score IA" não foi adicionada em `LeadDetailDrawer` nem `ClientDetailDrawer`.
+2. **Página `/lead-scoring`**: header sem botão "Reexplicar todos com IA" para admin (existe `useExplainBatch` mas não está plugado num CTA global da página).
+3. **Validação end-to-end**: nunca foi feita — sem confirmação de que o edge function popula `lead_score_explanations` com narrativa real, sem checagem do trigger gerando `lead_score_history` em update real.
+4. **Página `InteligenciaPreditiva`**: já existe (`/inteligencia-preditiva`) mas não expõe o card de explainability — oportunidade natural de hub.
 
-### 2. Edge function `email-composer-bulk` (`verify_jwt=true`)
-- Input: `{ prompt, tone, sale_ids: [...] }` (até 50).
-- Cria `email_bulk_jobs` com status=generating.
-- Para cada `sale_id`: carrega contexto rico (cliente, último deal, atividades recentes, score) → gera subject+body via Gemini 2.5 Flash com instrução explícita de personalização individual + `personalization_notes` (1 frase explicando o gancho usado).
-- Concorrência limitada (5 paralelos), tratamento 429/402 com retry exponencial e fallback determinístico (template + variáveis).
-- Persiste em `email_bulk_drafts`, atualiza job para `ready`.
+## Plano — Fechamento de Predictive Scoring com Explainability
 
-### 3. Edge function `email-bulk-send` (`verify_jwt=true`)
-- Input: `{ job_id }`. Filtra drafts `approved=true AND sent_at IS NULL`.
-- Despacha via `send-multichannel-message` (email channel) ou Resend direto.
-- Atualiza `sent_at`/`error` por draft, status do job.
+### 1. Integração nos Drawers (cobertura de UX)
+- **`LeadDetailDrawer.tsx`**: adicionar aba "Score IA" usando `<LeadScoreExplainCard saleId={...} />`. Lazy: só monta o card quando a aba é aberta.
+- **`ClientDetailDrawer.tsx`**: nova aba "Score IA" listando os deals do cliente, cada um com seu `LeadScoreExplainCard` (accordion compacto).
 
-### 4. Hooks
-- `useCreateBulkJob()` — invoca `email-composer-bulk`.
-- `useBulkJob(jobId)` — busca job + drafts em realtime (subscribe em `email_bulk_drafts`).
-- `useApproveDraft(draftId, approved)` / `useUpdateDraft(draftId, {subject,body})`.
-- `useSendBulkJob(jobId)` — invoca `email-bulk-send`.
+### 2. Página `/lead-scoring` — CTA admin
+- Header: botão **"Reexplicar todos com IA"** visível só para admin/manager (via `useUserRole`).
+- Ao clicar: confirma com dialog → chama `useExplainBatch()` com IDs dos deals visíveis na tabela (limite 50 por chamada, paginação interna).
+- Mostra progresso (toast) e invalida queries de explanation.
 
-### 5. UI (≤300L cada)
-- `src/components/engagement/BulkComposer/BulkComposerWizard.tsx`: 3 passos
-  - **Step 1**: seleção de leads (lista + checkboxes; aproveita filtros existentes da página `/leads`).
-  - **Step 2**: prompt + tom + botão "Gerar com IA". Mostra progresso (X/Y gerados).
-  - **Step 3**: tabela de drafts com preview (subject + 3 linhas de body), badge de personalization_notes, checkbox de aprovação, edição inline, botão "Enviar aprovados".
-- `BulkDraftRow.tsx` — linha da tabela com toggle approve + popover de edição.
-- `bulkComposerHelpers.ts` — formatação, contadores, validação.
+### 3. Hub de Predictive Intelligence
+- Em `PredictiveIntelligenceDashboard`, adicionar seção **"Top deals — explicação IA"**: lista os 5 maiores `top_opportunities` do `usePredictiveIntelligence`, cada um abre popover com `LeadScoreExplainCard` resumido (drivers + narrativa).
 
-### 6. Integração
-- Página `/leads`: novo botão "Composer IA em massa" no header (visível com ≥1 lead selecionado).
-- Página dedicada `/engagement/bulk-composer` listando jobs anteriores (histórico).
-- Sidebar: item "Composer IA" sob "Engajamento".
-
-### 7. Validação
-- `supabase--curl_edge_functions email-composer-bulk` com 3 sale_ids reais → confere drafts gerados com `personalization_notes` distintos.
-- `supabase--read_query` confere RLS + status transitions.
-- `supabase--linter` zero novos warnings.
+### 4. Validação end-to-end (obrigatória)
+- `supabase--curl_edge_functions` em `predictive-scoring-explain` com 1 `sale_id` real → confirma resposta JSON com `top_drivers`, `narrative`, `recommendations`.
+- `supabase--read_query`: confere `lead_score_explanations` populado e `lead_score_history` registrando após update simulado em `lead_scores`.
+- `supabase--linter`: zero novos warnings.
+- Console limpo (preview).
 
 ### Arquivos
-- **Migration**: 1 (2 tabelas + 1 RPC + RLS)
-- **Criar**: `supabase/functions/email-composer-bulk/index.ts`, `email-bulk-send/index.ts`
-- **Criar**: `src/hooks/engagement/useBulkComposer.ts` (todos os 4 hooks)
-- **Criar**: `src/components/engagement/BulkComposer/BulkComposerWizard.tsx`, `BulkDraftRow.tsx`, `bulkComposerHelpers.ts`
-- **Criar**: `src/pages/BulkComposer.tsx`
-- **Editar**: `src/pages/LeadsPage.tsx` (botão), `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`, `supabase/config.toml`
+- **Editar**: `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `src/pages/LeadScoring.tsx`, `src/components/predictive/PredictiveIntelligenceDashboard.tsx`
+- **Criar (se necessário)**: `src/components/lead-scoring/ReexplainAllButton.tsx` (CTA admin com dialog)
+- **Sem nova migração** (schema já existe).
+- **Sem nova edge function** (já deployada).
 
-Após esta entrega, sigo automaticamente para: **Send Time Optimization** → **Email Engagement Scoring** → **Account-Based Engagement** → **Power Dialer** → **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
+Após esta entrega, **AI Generativo Avançado fecha 10/10** e sigo automaticamente para o próximo gap pendente do `GAPS_CLASSE_MUNDIAL.md`.
