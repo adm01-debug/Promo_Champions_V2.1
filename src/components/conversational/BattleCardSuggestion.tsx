@@ -14,8 +14,7 @@ interface AssetSummary {
   id: string;
   title: string;
   description: string | null;
-  content: string | null;
-  url: string | null;
+  file_url: string | null;
 }
 
 export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
@@ -24,7 +23,7 @@ export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
     queryFn: async (): Promise<AssetSummary | null> => {
       const { data, error } = await supabase
         .from("sales_enablement_assets")
-        .select("id, title, description, content, url")
+        .select("id, title, description, file_url")
         .eq("id", battleCardId)
         .maybeSingle();
       if (error) throw error;
@@ -35,7 +34,7 @@ export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
   if (isLoading || !asset) return null;
 
   const copyTalkingPoints = async () => {
-    const text = asset.content ?? asset.description ?? asset.title;
+    const text = asset.description ?? asset.title;
     await navigator.clipboard.writeText(text);
     toast.success("Talking points copiados");
   };
