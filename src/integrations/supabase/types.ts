@@ -3441,39 +3441,98 @@ export type Database = {
           },
         ]
       }
+      deal_health_history: {
+        Row: {
+          delta: number
+          id: string
+          owner_id: string
+          sale_id: string
+          score: number
+          snapshot_at: string
+          tier: string
+        }
+        Insert: {
+          delta?: number
+          id?: string
+          owner_id: string
+          sale_id: string
+          score: number
+          snapshot_at?: string
+          tier: string
+        }
+        Update: {
+          delta?: number
+          id?: string
+          owner_id?: string
+          sale_id?: string
+          score?: number
+          snapshot_at?: string
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_health_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_health_scores: {
         Row: {
           ai_recommendation: string | null
           computed_at: string
           created_at: string
+          days_in_stage: number | null
+          factors: Json
           health_label: string
           health_score: number
           id: string
+          last_activity_at: string | null
           negative_factors: Json | null
+          owner_id: string | null
           positive_factors: Json | null
+          recommended_actions: Json
           sale_id: string
+          tier: string
+          updated_at: string
         }
         Insert: {
           ai_recommendation?: string | null
           computed_at?: string
           created_at?: string
+          days_in_stage?: number | null
+          factors?: Json
           health_label: string
           health_score: number
           id?: string
+          last_activity_at?: string | null
           negative_factors?: Json | null
+          owner_id?: string | null
           positive_factors?: Json | null
+          recommended_actions?: Json
           sale_id: string
+          tier?: string
+          updated_at?: string
         }
         Update: {
           ai_recommendation?: string | null
           computed_at?: string
           created_at?: string
+          days_in_stage?: number | null
+          factors?: Json
           health_label?: string
           health_score?: number
           id?: string
+          last_activity_at?: string | null
           negative_factors?: Json | null
+          owner_id?: string | null
           positive_factors?: Json | null
+          recommended_actions?: Json
           sale_id?: string
+          tier?: string
+          updated_at?: string
         }
         Relationships: [
           {
