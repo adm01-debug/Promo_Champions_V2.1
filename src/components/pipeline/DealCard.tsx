@@ -37,6 +37,7 @@ interface DealCardProps {
 }
 
 export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData }: DealCardProps) => {
+  const { data: explanation } = useLeadScoreExplanation(leadScore ? deal.id : null);
   const {
     attributes,
     listeners,
@@ -96,10 +97,42 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
           <div className="flex items-center gap-1 shrink-0">
             {leadScore && (
-              <Badge variant="outline" className={cn("text-[10px]", getScoreColor(leadScore.category))}>
-                <Target className="h-3 w-3 mr-1" />
-                {leadScore.score}
-              </Badge>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="outline" className={cn("text-[10px] cursor-help", getScoreColor(leadScore.category))}>
+                    <Target className="h-3 w-3 mr-1" />
+                    {leadScore.score}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-[260px] p-3">
+                  {explanation ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-1.5 pb-1 border-b border-border/40">
+                        <Brain className="h-3 w-3 text-primary" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wider">Top drivers</span>
+                      </div>
+                      {explanation.top_drivers.slice(0, 3).map((d) => (
+                        <div key={d.factor} className="flex items-center justify-between text-[11px]">
+                          <span className="truncate">{d.label}</span>
+                          <span className={cn(
+                            "font-mono font-semibold ml-2",
+                            d.direction === "positive" ? "text-status-success" : "text-destructive"
+                          )}>
+                            {d.direction === "positive" ? "+" : "-"}{d.contribution_pct}%
+                          </span>
+                        </div>
+                      ))}
+                      {explanation.narrative && (
+                        <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/40 leading-snug">
+                          {explanation.narrative}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground">Calculando explicação IA…</p>
+                  )}
+                </TooltipContent>
+              </Tooltip>
             )}
             <QuickActionsMenu deal={deal} />
           </div>
