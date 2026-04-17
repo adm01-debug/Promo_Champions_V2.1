@@ -7647,6 +7647,56 @@ export type Database = {
           },
         ]
       }
+      scheduled_sends: {
+        Row: {
+          channel: string
+          created_at: string
+          error: string | null
+          id: string
+          optimization_source: string
+          owner_id: string
+          payload: Json
+          sale_id: string
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          optimization_source?: string
+          owner_id: string
+          payload?: Json
+          sale_id: string
+          scheduled_for: string
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          optimization_source?: string
+          owner_id?: string
+          payload?: Json
+          sale_id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_sends_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       score_change_logs: {
         Row: {
           api_token_id: string | null
@@ -7833,6 +7883,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      send_time_profiles: {
+        Row: {
+          best_dow: number
+          best_hour: number
+          confidence: number
+          created_at: string
+          dow_distribution: Json
+          hour_distribution: Json
+          id: string
+          last_calculated_at: string
+          sale_id: string
+          sample_size: number
+          tz: string
+        }
+        Insert: {
+          best_dow?: number
+          best_hour?: number
+          confidence?: number
+          created_at?: string
+          dow_distribution?: Json
+          hour_distribution?: Json
+          id?: string
+          last_calculated_at?: string
+          sale_id: string
+          sample_size?: number
+          tz?: string
+        }
+        Update: {
+          best_dow?: number
+          best_hour?: number
+          confidence?: number
+          created_at?: string
+          dow_distribution?: Json
+          hour_distribution?: Json
+          id?: string
+          last_calculated_at?: string
+          sale_id?: string
+          sample_size?: number
+          tz?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "send_time_profiles_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sequence_enrollments: {
         Row: {
@@ -10100,6 +10200,14 @@ export type Database = {
           report_entity: string
           report_id: string
           report_name: string
+        }[]
+      }
+      get_global_send_time_stats: {
+        Args: never
+        Returns: {
+          best_dow: number
+          best_hour: number
+          sample_size: number
         }[]
       }
       get_mfa_status: {

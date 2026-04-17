@@ -13,7 +13,7 @@ import {
   // CRM Core
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
-  Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer,
+  Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization,
   LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
@@ -106,6 +106,7 @@ export function AppRoutes() {
                     <Route path="/follow-up" element={<FollowUpInteligente />} />
                     <Route path="/sequences" element={<Sequences />} />
                     <Route path="/engagement/bulk-composer" element={<BulkComposer />} />
+                    <Route path="/engagement/send-time" element={<SendTimeOptimization />} />
                     <Route path="/lead-scoring" element={<LeadScoring />} />
                     <Route path="/multichannel" element={<Multichannel />} />
                     <Route path="/email-tracking" element={<EmailTracking />} />
