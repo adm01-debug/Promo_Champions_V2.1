@@ -127,6 +127,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
       { title: "Análise de Funil", url: "/funil", icon: Filter },
       { title: "Relatório de Funil", url: "/relatorios/funil", icon: Filter },
+      { title: "Cohort Heatmap", url: "/relatorios/cohort", icon: LayoutGrid },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Forecast", url: "/forecast", icon: TrendingUp },
       { title: "Inteligência Preditiva", url: "/inteligencia-preditiva", icon: Brain },
