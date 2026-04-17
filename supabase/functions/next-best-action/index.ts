@@ -337,12 +337,49 @@ Gere ${limit} próximas melhores ações usando a tool generate_next_best_action
       });
     }
 
-    // Enrich suggestions with deal context fallback
-    result.suggestions = (result.suggestions || []).map((s) => ({
-      ...s,
-      confidence: Math.max(0, Math.min(1, Number(s.confidence) || 0.7)),
-      dealClient: s.dealClient || (s.dealId ? deals.find((d) => d.id.startsWith(s.dealId!.slice(0, 8)))?.client_name : null) || null,
-    }));
+    // Normalize + enrich suggestions to guarantee complete payload to UI
+    const inferCategory = (s: Partial<AISuggestion>): AISuggestion["category"] => {
+      if (s.priority === "high") return "urgent";
+      if (s.actionType === "email" || s.actionType === "linkedin") return "prospecting";
+      if (s.actionType === "proposal" || s.actionType === "meeting") return "growth";
+      return "growth";
+    };
+
+    result.suggestions = (result.suggestions || []).map((s) => {
+      const matchedDeal = s.dealId
+        ? deals.find((d) => d.id === s.dealId || d.id.startsWith(s.dealId!.slice(0, 8)))
+        : s.dealClient
+          ? deals.find((d) => d.client_name === s.dealClient)
+          : null;
+      return {
+        ...s,
+        rationale:
+          s.rationale ||
+          (matchedDeal
+            ? `Deal "${matchedDeal.client_name}" • R$ ${Number(matchedDeal.amount || 0).toLocaleString("pt-BR")} • status ${matchedDeal.status}.`
+            : "Baseado no contexto atual do pipeline."),
+        confidence: Math.max(0, Math.min(1, Number(s.confidence) || 0.75)),
+        category: s.category || inferCategory(s),
+        channel: s.channel || (s.actionType === "call" ? "phone" : s.actionType === "email" ? "email" : null),
+        suggestedDate: s.suggestedDate || todayIso.slice(0, 10),
+        suggestedTime: s.suggestedTime || null,
+        expectedImpact:
+          s.expectedImpact ||
+          (matchedDeal
+            ? `Avançar oportunidade de R$ ${Number(matchedDeal.amount || 0).toLocaleString("pt-BR")}.`
+            : "Fortalecer pipeline e velocidade comercial."),
+        dealClient: s.dealClient || matchedDeal?.client_name || null,
+        dealId: s.dealId || matchedDeal?.id || null,
+      };
+    });
+
+    if (!result.summary) {
+      result.summary = {
+        totalDeals: deals.length,
+        atRisk: stagnant.length + atRiskAccounts.length,
+        goalProgress: Math.round(goalProgress),
+      };
+    }
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
