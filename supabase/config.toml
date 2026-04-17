@@ -120,6 +120,9 @@ verify_jwt = true
 [functions.semantic-reindex-batch]
 verify_jwt = true
 
+[functions.semantic-coverage]
+verify_jwt = true
+
 [functions.ai-agent-orchestrator]
 verify_jwt = true
 

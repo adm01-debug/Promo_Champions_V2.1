@@ -1,6 +1,12 @@
-import { Users, UserPlus, Briefcase, Activity, Phone, type LucideIcon } from "lucide-react";
+import {
+  Users, UserPlus, Briefcase, Activity, Phone,
+  StickyNote, Mail, MessageCircle, FileText, CheckSquare, BookOpen,
+  type LucideIcon,
+} from "lucide-react";
 
-export type SemanticEntityType = "client" | "lead" | "deal" | "activity" | "call_recording";
+export type SemanticEntityType =
+  | "client" | "lead" | "deal" | "activity" | "call_recording"
+  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook";
 
 export interface SemanticResult {
   id: string;
@@ -25,6 +31,12 @@ export const ENTITY_META: Record<SemanticEntityType, { label: string; icon: Luci
   deal: { label: "Deal", icon: Briefcase, color: "bg-emerald-500/15 text-emerald-500", route: (id) => `/vendas?id=${id}` },
   activity: { label: "Atividade", icon: Activity, color: "bg-purple-500/15 text-purple-500", route: () => `/agenda` },
   call_recording: { label: "Call", icon: Phone, color: "bg-rose-500/15 text-rose-500", route: (id) => `/conversational?id=${id}` },
+  note: { label: "Nota", icon: StickyNote, color: "bg-yellow-500/15 text-yellow-600", route: () => `/clientes` },
+  email_message: { label: "E-mail", icon: Mail, color: "bg-sky-500/15 text-sky-500", route: () => `/multichannel` },
+  whatsapp_message: { label: "WhatsApp", icon: MessageCircle, color: "bg-green-500/15 text-green-500", route: () => `/multichannel` },
+  proposal: { label: "Proposta", icon: FileText, color: "bg-indigo-500/15 text-indigo-500", route: (id) => `/vendas?id=${id}` },
+  task: { label: "Tarefa", icon: CheckSquare, color: "bg-fuchsia-500/15 text-fuchsia-500", route: () => `/agenda` },
+  playbook: { label: "Playbook", icon: BookOpen, color: "bg-orange-500/15 text-orange-500", route: () => `/playbooks` },
 };
 
 export function formatScore(similarity: number): string {
