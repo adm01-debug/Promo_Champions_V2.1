@@ -1,58 +1,62 @@
 
-Próxima atômica — **Sequences Multicanal com A/B Testing** (Sales Engagement #2, item 1 dos 8).
+Próxima atômica do **Sales Engagement Avançado** (item 2/8): **AI Email Composer 1-to-many** — gerar emails personalizados em massa com IA, mantendo tom único por destinatário, sem cair em spam de template.
 
 ## Estado atual
-- Existe `sequences` + `sequence_steps` + `sequence_enrollments` + `inbound_reply_events` (auto-pause já implementado).
-- Steps são lineares de canal único (email).
-- Sem variantes A/B, sem tracking de winner, sem multicanal nativo (LinkedIn/WhatsApp/Call task).
-- Sem métricas comparativas por variante (open/click/reply/meeting).
+- Existe `email-composer` edge function que gera 1 email a partir de prompt + contexto de 1 lead.
+- Sequences já fazem envio em massa, mas usam **template idêntico** com variáveis simples ({{nome}}, {{empresa}}).
+- Não existe geração 1-to-many: hoje, para personalizar 50 leads, o usuário precisaria gerar 50 vezes manualmente.
+- Sem preview/edição em massa, sem aprovação por lote, sem tracking de qual lead recebeu qual variação.
 
 ## Mudanças
 
 ### 1. Migration
-- `sequence_steps`: adicionar `channel text` (`email|linkedin|whatsapp|call|task`), `variant_group text` (NULL = sem A/B; mesmo valor = grupo de variantes), `variant_label text` (`A|B|C`), `variant_weight int default 50`.
-- `sequence_step_metrics` (nova): `step_id`, `variant_label`, `sent_count`, `opens`, `clicks`, `replies`, `meetings_booked`, `last_updated_at` — agregado materializado.
-- RPC `pick_variant(_step_id uuid)` SECURITY DEFINER → seleciona variante por peso ponderado, registra escolha em `sequence_step_assignments` (sale_id ↔ variant).
-- RPC `get_ab_winner(_variant_group text, _sequence_id uuid)` → retorna variante com maior reply_rate quando significância (n≥30 por braço).
-- RPC `record_step_event(_enrollment_id, _event_type)` para somar métricas por variante.
-- Trigger em `inbound_reply_events` incrementa `replies` da variante respondida.
+- Tabela `email_bulk_jobs`: `id`, `owner_id`, `prompt text` (briefing do usuário), `tone text` (consultivo/direto/casual), `target_count int`, `status text` (`draft|generating|ready|sending|completed|failed`), `created_at`, `completed_at`.
+- Tabela `email_bulk_drafts`: `id`, `job_id`, `sale_id` (lead alvo), `subject text`, `body text`, `personalization_notes text` (o que IA usou para personalizar), `approved boolean default false`, `sent_at timestamptz`, `error text`.
+- RLS: owner vê os próprios; admin vê tudo.
+- RPC `get_bulk_job_summary(_job_id)` → contadores aggregados (drafts, approved, sent, failed).
 
-### 2. Edge function `sequence-step-executor` (atualizar)
-- Ao executar step com `variant_group`, chama `pick_variant` para escolher.
-- Despacha conforme `channel`: email (já existe), LinkedIn (cria task `linkedin_message`), WhatsApp (cria task ou chama edge whatsapp se configurado), call (cria task de ligação), task (cria task genérica).
-- Registra `sent` em `sequence_step_metrics`.
+### 2. Edge function `email-composer-bulk` (`verify_jwt=true`)
+- Input: `{ prompt, tone, sale_ids: [...] }` (até 50).
+- Cria `email_bulk_jobs` com status=generating.
+- Para cada `sale_id`: carrega contexto rico (cliente, último deal, atividades recentes, score) → gera subject+body via Gemini 2.5 Flash com instrução explícita de personalização individual + `personalization_notes` (1 frase explicando o gancho usado).
+- Concorrência limitada (5 paralelos), tratamento 429/402 com retry exponencial e fallback determinístico (template + variáveis).
+- Persiste em `email_bulk_drafts`, atualiza job para `ready`.
 
-### 3. Edge function nova `sequence-ab-promote` (admin)
-- Para cada `variant_group` de uma sequência, chama `get_ab_winner`; se houver winner, marca outras variantes como `is_paused=true` e amplia peso da winner para 100%.
+### 3. Edge function `email-bulk-send` (`verify_jwt=true`)
+- Input: `{ job_id }`. Filtra drafts `approved=true AND sent_at IS NULL`.
+- Despacha via `send-multichannel-message` (email channel) ou Resend direto.
+- Atualiza `sent_at`/`error` por draft, status do job.
 
 ### 4. Hooks
-- `useSequenceStepVariants(stepId)` — lista variantes + métricas + reply rate.
-- `useCreateVariant()` / `useUpdateVariant()` / `usePromoteWinner()`.
-- `useStepMetrics(sequenceId)` — agregado por step+variant.
+- `useCreateBulkJob()` — invoca `email-composer-bulk`.
+- `useBulkJob(jobId)` — busca job + drafts em realtime (subscribe em `email_bulk_drafts`).
+- `useApproveDraft(draftId, approved)` / `useUpdateDraft(draftId, {subject,body})`.
+- `useSendBulkJob(jobId)` — invoca `email-bulk-send`.
 
 ### 5. UI (≤300L cada)
-- `StepChannelSelector.tsx` — chips de canal (email/linkedin/whatsapp/call/task) com ícones.
-- `VariantEditor.tsx` — form para adicionar variante B/C com subject + body + peso (slider).
-- `ABTestPanel.tsx` — tabela comparativa (variante, sent, open%, reply%, meeting%) com badge "Winner" e botão "Promover winner".
-- `SequenceStepCard.tsx` (atualizar) — mostra canal, badges de variantes, mini-stats inline.
-- `sequenceVariantHelpers.ts` — cálculo de reply_rate, formatação, threshold de significância.
+- `src/components/engagement/BulkComposer/BulkComposerWizard.tsx`: 3 passos
+  - **Step 1**: seleção de leads (lista + checkboxes; aproveita filtros existentes da página `/leads`).
+  - **Step 2**: prompt + tom + botão "Gerar com IA". Mostra progresso (X/Y gerados).
+  - **Step 3**: tabela de drafts com preview (subject + 3 linhas de body), badge de personalization_notes, checkbox de aprovação, edição inline, botão "Enviar aprovados".
+- `BulkDraftRow.tsx` — linha da tabela com toggle approve + popover de edição.
+- `bulkComposerHelpers.ts` — formatação, contadores, validação.
 
 ### 6. Integração
-- `SequenceBuilder` (página existente) — botão "Adicionar variante A/B" em cada step.
-- `SequenceDetail` — nova aba "A/B Testing" com `ABTestPanel`.
-- Lista de steps mostra ícone do canal + contador de variantes.
+- Página `/leads`: novo botão "Composer IA em massa" no header (visível com ≥1 lead selecionado).
+- Página dedicada `/engagement/bulk-composer` listando jobs anteriores (histórico).
+- Sidebar: item "Composer IA" sob "Engajamento".
 
 ### 7. Validação
-- `supabase--curl_edge_functions` em sequência real → confere métricas populando.
-- `supabase--read_query`: confere distribuição de variantes ≈ pesos.
+- `supabase--curl_edge_functions email-composer-bulk` com 3 sale_ids reais → confere drafts gerados com `personalization_notes` distintos.
+- `supabase--read_query` confere RLS + status transitions.
 - `supabase--linter` zero novos warnings.
 
 ### Arquivos
-- **Migration**: 1 (colunas + 1 tabela + 3 RPCs + trigger)
-- **Editar**: `supabase/functions/sequence-step-executor/index.ts`
-- **Criar**: `supabase/functions/sequence-ab-promote/index.ts`
-- **Criar**: `src/hooks/sequences/useSequenceStepVariants.ts`, `usePromoteWinner.ts`, `useStepMetrics.ts`
-- **Criar**: `src/components/sequences/StepChannelSelector.tsx`, `VariantEditor.tsx`, `ABTestPanel.tsx`, `sequenceVariantHelpers.ts`
-- **Editar**: `src/components/sequences/SequenceStepCard.tsx`, `SequenceBuilder.tsx`, `SequenceDetail.tsx`, `supabase/config.toml`
+- **Migration**: 1 (2 tabelas + 1 RPC + RLS)
+- **Criar**: `supabase/functions/email-composer-bulk/index.ts`, `email-bulk-send/index.ts`
+- **Criar**: `src/hooks/engagement/useBulkComposer.ts` (todos os 4 hooks)
+- **Criar**: `src/components/engagement/BulkComposer/BulkComposerWizard.tsx`, `BulkDraftRow.tsx`, `bulkComposerHelpers.ts`
+- **Criar**: `src/pages/BulkComposer.tsx`
+- **Editar**: `src/pages/LeadsPage.tsx` (botão), `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`, `supabase/config.toml`
 
-Após esta entrega, sigo automaticamente para: **AI Email Composer 1-to-many** → **Send Time Optimization** → **Email Engagement Scoring** → **Account-Based Engagement** → **Power Dialer** → **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
+Após esta entrega, sigo automaticamente para: **Send Time Optimization** → **Email Engagement Scoring** → **Account-Based Engagement** → **Power Dialer** → **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
