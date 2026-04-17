@@ -92,3 +92,9 @@ verify_jwt = false
 
 [functions.inbound-email-webhook]
 verify_jwt = false
+
+[functions.send-multichannel-message]
+verify_jwt = true
+
+[functions.multichannel-status-webhook]
+verify_jwt = false

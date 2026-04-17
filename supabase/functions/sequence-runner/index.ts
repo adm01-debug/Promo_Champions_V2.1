@@ -9,6 +9,7 @@ interface Enrollment {
   current_step: number;
   status: string;
   send_time_optimization?: boolean;
+  owner_id?: string;
 }
 
 interface Step {
@@ -20,6 +21,7 @@ interface Step {
   delay_hours: number;
   subject: string | null;
   body: string | null;
+  whatsapp_template_id?: string | null;
 }
 
 function resolveTemplateVariables(
@@ -42,30 +44,35 @@ async function fetchContactContext(
   supabase: ReturnType<typeof createClient>,
   contactId: string,
   contactType: string,
-): Promise<{ nome?: string; empresa?: string; cargo?: string; ultima_interacao?: string }> {
+): Promise<{ nome?: string; empresa?: string; cargo?: string; phone?: string }> {
   try {
     if (contactType === "client") {
       const { data } = await supabase
         .from("clients")
-        .select("name, company")
+        .select("name, company, phone")
         .eq("id", contactId)
         .maybeSingle();
-      return { nome: data?.name ?? undefined, empresa: data?.company ?? undefined };
+      return {
+        nome: (data as { name?: string } | null)?.name ?? undefined,
+        empresa: (data as { company?: string } | null)?.company ?? undefined,
+        phone: (data as { phone?: string } | null)?.phone ?? undefined,
+      };
     }
     if (contactType === "lead") {
       const { data } = await supabase
         .from("leads")
-        .select("name, company, position")
+        .select("name, company, position, phone")
         .eq("id", contactId)
         .maybeSingle();
       return {
         nome: (data as { name?: string } | null)?.name ?? undefined,
         empresa: (data as { company?: string } | null)?.company ?? undefined,
         cargo: (data as { position?: string } | null)?.position ?? undefined,
+        phone: (data as { phone?: string } | null)?.phone ?? undefined,
       };
     }
   } catch (_) {
-    // soft-fail: no context = template stays raw
+    // soft-fail
   }
   return {};
 }
@@ -89,7 +96,7 @@ Deno.serve(async (req) => {
   try {
     const { data: due, error: dueErr } = await supabase
       .from("sequence_enrollments")
-      .select("id, sequence_id, contact_id, contact_type, current_step, status, auto_paused_at, sequences!inner(send_time_optimization)")
+      .select("id, sequence_id, contact_id, contact_type, current_step, status, auto_paused_at, sequences!inner(send_time_optimization, owner_id)")
       .eq("status", "active")
       .is("auto_paused_at", null)
       .lte("next_action_at", new Date().toISOString())
@@ -97,11 +104,12 @@ Deno.serve(async (req) => {
 
     if (dueErr) throw dueErr;
 
-    type DueRow = Enrollment & { sequences?: { send_time_optimization?: boolean } };
+    type DueRow = Enrollment & { sequences?: { send_time_optimization?: boolean; owner_id?: string } };
     for (const row of (due ?? []) as DueRow[]) {
       const enr: Enrollment = {
         ...row,
         send_time_optimization: row.sequences?.send_time_optimization ?? true,
+        owner_id: row.sequences?.owner_id,
       };
       processed++;
       try {
@@ -129,7 +137,7 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        // Send Time Optimization: defer to optimal window for email/linkedin
+        // STO defer for email/linkedin only
         const stoChannels = new Set(["email", "linkedin"]);
         if (enr.send_time_optimization && stoChannels.has(nextStep.channel)) {
           try {
@@ -154,20 +162,16 @@ Deno.serve(async (req) => {
                 continue;
               }
             }
-          } catch (_) {
-            // soft-fail: STO not critical, fall through to immediate send
-          }
+          } catch (_) { /* soft-fail */ }
         }
 
-        // Pick A/B variant if any
+        // A/B variant
         let variantId: string | null = null;
         let variantLabel: string | null = null;
         let useSubject = nextStep.subject;
         let useBody = nextStep.body;
         try {
-          const { data: picked } = await supabase.rpc("pick_step_variant", {
-            _step_id: nextStep.id,
-          });
+          const { data: picked } = await supabase.rpc("pick_step_variant", { _step_id: nextStep.id });
           const pick = Array.isArray(picked) ? picked[0] : picked;
           if (pick?.variant_id) {
             variantId = pick.variant_id;
@@ -175,32 +179,66 @@ Deno.serve(async (req) => {
             useSubject = pick.subject;
             useBody = pick.body;
           }
-        } catch (_) {
-          // soft-fail: no variant = use base
-        }
+        } catch (_) { /* soft-fail */ }
 
-        // Resolve template variables with contact context
         const ctx = await fetchContactContext(supabase, enr.contact_id, enr.contact_type);
         const resolvedSubject = resolveTemplateVariables(useSubject, ctx);
         const resolvedBody = resolveTemplateVariables(useBody, ctx);
 
-        // Record execution (channel-agnostic stub — real send wiring per channel happens in 2/7+)
+        // Multichannel native send for whatsapp/sms
+        const multichannel = new Set(["whatsapp", "sms"]);
+        let executionStatus: "sent" | "failed" | "skipped" = "sent";
+        const engagement: Record<string, unknown> = {
+          auto: true,
+          dispatched_at: new Date().toISOString(),
+          resolved_subject: resolvedSubject,
+          resolved_body: resolvedBody,
+          variant_label: variantLabel,
+        };
+
+        if (multichannel.has(nextStep.channel) && enr.owner_id && ctx.phone) {
+          try {
+            const { data: sendResult } = await supabase.functions.invoke(
+              "send-multichannel-message",
+              {
+                body: {
+                  ownerId: enr.owner_id,
+                  channel: nextStep.channel,
+                  to: ctx.phone,
+                  body: resolvedBody ?? "",
+                  templateId: nextStep.whatsapp_template_id ?? undefined,
+                  enrollmentId: enr.id,
+                  stepId: nextStep.id,
+                },
+              },
+            );
+            const r = sendResult as { ok?: boolean; error?: string; skipped?: boolean } | null;
+            if (r?.skipped || r?.error === "no_credentials") {
+              executionStatus = "skipped";
+              engagement.skipped_no_channel = true;
+            } else if (!r?.ok) {
+              executionStatus = "failed";
+              engagement.send_error = r?.error ?? "unknown";
+            }
+          } catch (e) {
+            executionStatus = "failed";
+            engagement.send_error = e instanceof Error ? e.message : String(e);
+          }
+        } else if (multichannel.has(nextStep.channel)) {
+          executionStatus = "skipped";
+          engagement.skipped_no_channel = true;
+          engagement.reason = !ctx.phone ? "no_phone" : "no_owner";
+        }
+
         await supabase.from("sequence_step_executions").insert({
           enrollment_id: enr.id,
           step_id: nextStep.id,
-          status: "sent",
+          status: executionStatus,
           channel: nextStep.channel,
           variant_id: variantId,
-          engagement: {
-            auto: true,
-            dispatched_at: new Date().toISOString(),
-            resolved_subject: resolvedSubject,
-            resolved_body: resolvedBody,
-            variant_label: variantLabel,
-          },
+          engagement,
         });
 
-        // Compute next step delay
         const upcomingIdx = enr.current_step + 1;
         const upcoming = stepList[upcomingIdx];
         let nextActionAt: string | null = null;
@@ -208,8 +246,7 @@ Deno.serve(async (req) => {
         let completedAt: string | null = null;
 
         if (upcoming) {
-          const delayMs =
-            (upcoming.delay_days * 24 + upcoming.delay_hours) * 3600 * 1000;
+          const delayMs = (upcoming.delay_days * 24 + upcoming.delay_hours) * 3600 * 1000;
           nextActionAt = new Date(Date.now() + delayMs).toISOString();
         } else {
           newStatus = "completed";
@@ -233,12 +270,6 @@ Deno.serve(async (req) => {
         failed++;
         const msg = e instanceof Error ? e.message : String(e);
         errors.push(`enrollment ${enr.id}: ${msg}`);
-        await supabase.from("sequence_step_executions").insert({
-          enrollment_id: enr.id,
-          step_id: "00000000-0000-0000-0000-000000000000",
-          status: "failed",
-          error_message: msg,
-        }).select().maybeSingle().then(() => undefined).catch(() => undefined);
       }
     }
 

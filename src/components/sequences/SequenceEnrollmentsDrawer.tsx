@@ -11,6 +11,7 @@ import { ptBR } from "date-fns/locale";
 import { EngagementBadgeForContact } from "./EngagementBadgeForContact";
 import { AutoPausedBadge } from "./AutoPausedBadge";
 import { ResumeEnrollmentButton } from "./ResumeEnrollmentButton";
+import { OutboundMessageLog } from "@/components/multichannel/OutboundMessageLog";
 
 interface Props {
   open: boolean;
@@ -68,6 +69,9 @@ export function SequenceEnrollmentsDrawer({ open, onOpenChange, sequenceId }: Pr
                       <ResumeEnrollmentButton enrollmentId={e.id} sequenceId={e.sequence_id} />
                     </div>
                   )}
+                  <div className="mt-2 pt-2 border-t border-border/50">
+                    <OutboundMessageLog enrollmentId={e.id} />
+                  </div>
                 </div>
               ))}
             </div>
