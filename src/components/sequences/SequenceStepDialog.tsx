@@ -6,10 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUpsertSequenceStep, type SequenceStep } from "@/hooks/sequences/useSequenceSteps";
 import { CHANNEL_META, type ChannelKey } from "./sequenceHelpers";
 import { AIEmailComposerPanel } from "./AIEmailComposerPanel";
 import { EmailVariablesHelper } from "./EmailVariablesHelper";
+import { StepVariantsManager } from "./StepVariantsManager";
 
 interface Props {
   open: boolean;
@@ -64,7 +66,7 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{step ? "Editar passo" : "Novo passo"}</DialogTitle>
         </DialogHeader>
@@ -90,49 +92,45 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
               <Input type="number" min={0} max={23} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
             </div>
           </div>
-          {supportsAI && (
-            <div>
-              <Label>Assunto</Label>
-              <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Re: Proposta..." />
-            </div>
-          )}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <Label>Mensagem / Anotação</Label>
-              {supportsAI && (
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 text-primary hover:text-primary"
-                  onClick={() => setShowAI((v) => !v)}
-                >
-                  <Sparkles className="h-3.5 w-3.5 mr-1" />
-                  {showAI ? "Ocultar IA" : "Compor com IA"}
-                </Button>
-              )}
-            </div>
-            <Textarea
-              ref={bodyRef}
-              rows={6}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="Olá {{nome}}..."
-            />
-            {supportsAI && (
-              <div className="mt-2">
-                <div className="text-xs text-muted-foreground mb-1.5">Inserir variável:</div>
-                <EmailVariablesHelper onInsert={insertVariable} />
-              </div>
-            )}
-          </div>
-          {showAI && supportsAI && (
-            <AIEmailComposerPanel
-              onAccept={(s, b) => {
-                setSubject(s);
-                setBody(b);
-              }}
-              onClose={() => setShowAI(false)}
+
+          {supportsAI && step?.id ? (
+            <Tabs defaultValue="single">
+              <TabsList className="grid grid-cols-2 w-full">
+                <TabsTrigger value="single">Conteúdo único</TabsTrigger>
+                <TabsTrigger value="ab">Teste A/B</TabsTrigger>
+              </TabsList>
+              <TabsContent value="single" className="space-y-4">
+                <SingleContent
+                  subject={subject}
+                  setSubject={setSubject}
+                  body={body}
+                  setBody={setBody}
+                  bodyRef={bodyRef}
+                  showAI={showAI}
+                  setShowAI={setShowAI}
+                  insertVariable={insertVariable}
+                  supportsAI
+                />
+              </TabsContent>
+              <TabsContent value="ab">
+                <StepVariantsManager
+                  stepId={step.id}
+                  seedSubject={subject}
+                  seedBody={body}
+                />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <SingleContent
+              subject={subject}
+              setSubject={setSubject}
+              body={body}
+              setBody={setBody}
+              bodyRef={bodyRef}
+              showAI={showAI}
+              setShowAI={setShowAI}
+              insertVariable={insertVariable}
+              supportsAI={supportsAI}
             />
           )}
         </div>
@@ -142,5 +140,79 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+interface SingleProps {
+  subject: string;
+  setSubject: (v: string) => void;
+  body: string;
+  setBody: (v: string) => void;
+  bodyRef: React.RefObject<HTMLTextAreaElement>;
+  showAI: boolean;
+  setShowAI: (v: boolean | ((p: boolean) => boolean)) => void;
+  insertVariable: (token: string) => void;
+  supportsAI: boolean;
+}
+
+function SingleContent({
+  subject,
+  setSubject,
+  body,
+  setBody,
+  bodyRef,
+  showAI,
+  setShowAI,
+  insertVariable,
+  supportsAI,
+}: SingleProps) {
+  return (
+    <div className="space-y-4">
+      {supportsAI && (
+        <div>
+          <Label>Assunto</Label>
+          <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Re: Proposta..." />
+        </div>
+      )}
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <Label>Mensagem / Anotação</Label>
+          {supportsAI && (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="h-7 text-primary hover:text-primary"
+              onClick={() => setShowAI((v) => !v)}
+            >
+              <Sparkles className="h-3.5 w-3.5 mr-1" />
+              {showAI ? "Ocultar IA" : "Compor com IA"}
+            </Button>
+          )}
+        </div>
+        <Textarea
+          ref={bodyRef}
+          rows={6}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="Olá {{nome}}..."
+        />
+        {supportsAI && (
+          <div className="mt-2">
+            <div className="text-xs text-muted-foreground mb-1.5">Inserir variável:</div>
+            <EmailVariablesHelper onInsert={insertVariable} />
+          </div>
+        )}
+      </div>
+      {showAI && supportsAI && (
+        <AIEmailComposerPanel
+          onAccept={(s, b) => {
+            setSubject(s);
+            setBody(b);
+          }}
+          onClose={() => setShowAI(false)}
+        />
+      )}
+    </div>
   );
 }
