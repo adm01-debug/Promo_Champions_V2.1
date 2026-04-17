@@ -17,6 +17,7 @@ import { AdminQuickStats } from "@/components/admin/AdminQuickStats";
 import { AdminSecurityPanel } from "@/components/admin/AdminSecurityPanel";
 import { AdminSystemStatus } from "@/components/admin/AdminSystemStatus";
 import { AdminQuickLinks } from "@/components/admin/AdminQuickLinks";
+import { SemanticReindexPanel } from "@/components/admin/SemanticReindexPanel";
 import { useAdminStats, useEdgeFunctionsStatus } from "@/hooks/useAdminStats";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
@@ -76,6 +77,7 @@ function AdminDashboardContent() {
       </div>
 
       <AdminQuickLinks />
+      <SemanticReindexPanel />
       <AutomationRulesPanel />
       <BackendAutomationMonitor />
       <CircuitBreakerDashboard />
