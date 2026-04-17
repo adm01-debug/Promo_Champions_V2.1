@@ -8,14 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   useCreateBulkJob,
   useBulkJob,
   useSendBulkJob,
   useUpdateDraft,
 } from "@/hooks/engagement/useBulkComposer";
+import { useScheduleOptimalSend } from "@/hooks/engagement/useSendTimeOptimization";
 import { TONE_OPTIONS, LANGUAGE_OPTIONS, STATUS_LABEL, STATUS_TONE } from "./bulkComposerHelpers";
 import { BulkDraftRow } from "./BulkDraftRow";
+import { toast } from "@/hooks/use-toast";
 
 interface SelectedLead {
   id: string;
@@ -37,10 +40,39 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
   const [language, setLanguage] = useState("pt-BR");
   const [jobId, setJobId] = useState<string | undefined>(jobIdProp);
 
+  const [optimizeTiming, setOptimizeTiming] = useState(true);
   const createJob = useCreateBulkJob();
   const sendJob = useSendBulkJob();
   const update = useUpdateDraft();
+  const scheduleOptimal = useScheduleOptimalSend();
   const { job, drafts, isLoading } = useBulkJob(jobId);
+
+  const handleSend = async () => {
+    if (!jobId) return;
+    if (!optimizeTiming) {
+      sendJob.mutate(jobId);
+      return;
+    }
+    const approved = drafts.filter((d) => d.approved && !d.sent_at && d.recipient_email && d.sale_id);
+    if (approved.length === 0) return;
+    let scheduled = 0;
+    for (const d of approved) {
+      try {
+        await scheduleOptimal.mutateAsync({
+          sale_id: d.sale_id!,
+          channel: "email",
+          payload: { subject: d.subject, body: d.body, to: d.recipient_email },
+        });
+        scheduled++;
+      } catch {
+        /* erro já reportado no hook */
+      }
+    }
+    toast({
+      title: "Agendamento concluído",
+      description: `${scheduled} e-mails agendados nos horários ótimos.`,
+    });
+  };
 
   const counts = useMemo(() => {
     const total = drafts.length;
@@ -214,14 +246,25 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
               <Button variant="outline" size="sm" onClick={() => approveAll(true)} disabled={drafts.length === 0}>
                 <CheckCircle2 className="h-4 w-4" /> Aprovar todos
               </Button>
+              <div className="flex items-center gap-2 px-2 border rounded-md bg-card">
+                <Switch
+                  id="optimize-timing"
+                  checked={optimizeTiming}
+                  onCheckedChange={setOptimizeTiming}
+                />
+                <Label htmlFor="optimize-timing" className="text-xs cursor-pointer">
+                  Distribuir nos horários ótimos
+                </Label>
+              </div>
               <Button
                 size="sm"
-                onClick={() => jobId && sendJob.mutate(jobId)}
-                disabled={!jobId || counts.approved === 0 || sendJob.isPending}
-                loading={sendJob.isPending}
-                loadingText="Enviando…"
+                onClick={handleSend}
+                disabled={!jobId || counts.approved === 0 || sendJob.isPending || scheduleOptimal.isPending}
+                loading={sendJob.isPending || scheduleOptimal.isPending}
+                loadingText={optimizeTiming ? "Agendando…" : "Enviando…"}
               >
-                <Send className="h-4 w-4" /> Enviar aprovados ({counts.approved})
+                <Send className="h-4 w-4" />
+                {optimizeTiming ? `Agendar (${counts.approved})` : `Enviar aprovados (${counts.approved})`}
               </Button>
             </div>
           </CardHeader>
