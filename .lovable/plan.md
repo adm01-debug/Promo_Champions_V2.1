@@ -1,58 +1,62 @@
 
-Próxima melhoria atômica da fila Reporting & BI: **5/7 — Scheduled Reports Robusto**.
+Próxima melhoria atômica da fila Reporting & BI: **6/7 — Embedded Analytics**.
 
-## Melhoria 5/7 — Scheduled Reports Robusto
+## Melhoria 6/7 — Embedded Analytics (relatórios embutíveis)
 
 ### Estado atual
-- Página `/scheduled-reports` existe mas é básica (sem cron real, sem entrega).
-- Custom Report Builder gera relatórios on-demand via `report-builder-execute`.
-- Sem storage de snapshots, sem e-mail, sem histórico de execuções.
+- Custom Reports existem em `custom_reports` e são executados via `report-builder-execute` (auth obrigatória).
+- Não há forma de compartilhar um relatório fora da plataforma (link público read-only / iframe embed).
+- Sem tokens de embed, sem rota pública, sem rate limit.
 
 ### Mudanças
 
 **1. Migration SQL**
-- Tabela `scheduled_reports`:
-  - `id`, `created_by`, `report_id` (FK custom_reports), `name`, `cron_expression` (text simples: daily/weekly/monthly + hora), `recipients` (text[] emails), `format` ('csv'|'pdf'|'json'), `enabled` (bool), `last_run_at`, `next_run_at`, `created_at`
-- Tabela `scheduled_report_runs`:
-  - `id`, `schedule_id`, `started_at`, `finished_at`, `status` ('success'|'failed'), `rows_count`, `file_path`, `error_message`
-- RLS: owner-only (created_by = auth.uid()) + Manager pode ver todos
-- Storage bucket `report-snapshots` (privado), policies por owner
-- Trigger `compute_next_run_at` antes de insert/update
+- Tabela `report_embed_tokens`:
+  - `id`, `report_id` (FK custom_reports), `token` (text único, gerado), `created_by`, `expires_at` (nullable), `allowed_origins` (text[]), `view_count` (int default 0), `last_viewed_at`, `revoked` (bool), `created_at`
+- RLS: owner ou manager gerenciam; SELECT público apenas via edge function (service role)
+- Índice em `token` único
 
-**2. Edge function `scheduled-reports-runner` (cron a cada 5min)**
-- Busca `scheduled_reports` onde `enabled=true` e `next_run_at <= now()`
-- Para cada: chama `report-builder-execute` internamente, gera CSV/JSON, faz upload no bucket, registra `scheduled_report_runs`, atualiza `last_run_at`/`next_run_at`
-- Envia e-mail (via `send-email` se existir, ou Resend) com link signed-url do snapshot
-- Logs estruturados, retry com backoff
+**2. Edge function `report-embed-public` (verify_jwt = false)**
+- Endpoint `GET /report-embed-public?token=xxx`
+- Valida token (não revogado, não expirado), incrementa `view_count`, atualiza `last_viewed_at`
+- Executa o relatório via lógica reaproveitada de `report-builder-execute` (entity allowlist, sem campos sensíveis)
+- Retorna JSON `{ name, viz_type, columns, rows, generated_at }`
+- CORS dinâmico baseado em `allowed_origins` (default `*` se vazio)
+- Rate limit simples: max 60 req/min por token (Map em memória)
 
-**3. Edge function `scheduled-report-trigger` (manual)**
-- Endpoint POST para disparar execução imediata de um schedule (botão "Executar agora")
+**3. Hooks**
+- `useReportEmbedTokens.ts` — list/create/revoke por report_id
+- `useEmbeddedReportPreview.ts` — fetch público via edge function (para preview interno)
 
-**4. Cron setup**
-- `pg_cron` job que invoca `scheduled-reports-runner` a cada 5 minutos via pg_net
+**4. Componentes**
+- `EmbedTokenManagerDialog.tsx` — modal aberto a partir do `ReportBuilder`:
+  - Lista tokens existentes com view_count, status, expires_at
+  - Botão "Gerar novo token" (com expiração opcional + origens permitidas via chips)
+  - Copy-to-clipboard do snippet `<iframe src="/embed/report/TOKEN" />` e do link direto
+  - Botão revogar
+- `EmbeddedReportView.tsx` — renderizador read-only (tabela / KPI / barra) reutilizando componentes existentes em modo "embed"
 
-**5. UI — refatorar `/scheduled-reports`**
-- Lista de schedules com toggle enabled, próxima execução, última execução, status badge
-- Modal "Novo agendamento": seleciona report existente do builder, frequência (diário/semanal/mensal), hora, destinatários (chips de email), formato
-- Drawer de histórico por schedule: lista `scheduled_report_runs` com download do snapshot
-- Botão "Executar agora" → chama trigger
-- Sora títulos, Inter body, tokens semânticos, animação Framer
+**5. Rota pública**
+- `EmbedReportPage.tsx` em `/embed/report/:token` (fora do `ProtectedRoute`)
+- Helmet com `noindex`, layout minimalista (sem sidebar/topbar), branding rodapé
+- Loading skeleton, empty state, erro amigável (token revogado/expirado)
+- Lazy load + registro em `AppRoutes.tsx`
 
-**6. Hooks**
-- `useScheduledReports.ts` — list/create/update/delete/toggle
-- `useScheduledReportRuns.ts` — histórico por schedule
-- `useTriggerScheduledReport.ts` — mutation para executar
+**6. Integração no Custom Report Builder**
+- Botão "Compartilhar / Embutir" no header do `ReportBuilder` que abre `EmbedTokenManagerDialog`
 
 **7. Validação**
-- Smoke test edge functions via `curl_edge_functions`
-- Criar schedule diário, executar manual, verificar arquivo no storage e e-mail
-- Verificar RLS via `read_query`
+- Smoke test edge function via `curl_edge_functions` (token válido/inválido/revogado)
+- Validar RLS de `report_embed_tokens` via `read_query`
+- Abrir `/embed/report/TOKEN` em incógnito e verificar render
+- Console limpo
 
 ### Arquivos
-- Migration: nova tabela + RLS + bucket + cron
-- Criar: `supabase/functions/scheduled-reports-runner/index.ts`, `supabase/functions/scheduled-report-trigger/index.ts`
-- Criar: `src/hooks/reporting/useScheduledReports.ts`, `useScheduledReportRuns.ts`, `useTriggerScheduledReport.ts`
-- Criar: `src/components/reporting/ScheduledReportFormDialog.tsx`, `ScheduledReportRunsDrawer.tsx`, `scheduledReportHelpers.ts`
-- Editar: `src/pages/ScheduledReportsPage.tsx`
+- Migration: nova tabela + RLS + índice
+- Criar: `supabase/functions/report-embed-public/index.ts`
+- Criar: `src/hooks/reporting/useReportEmbedTokens.ts`, `useEmbeddedReportPreview.ts`
+- Criar: `src/components/reporting/EmbedTokenManagerDialog.tsx`, `EmbeddedReportView.tsx`, `embedHelpers.ts`
+- Criar: `src/pages/EmbedReportPage.tsx`
+- Editar: `src/components/reporting/ReportBuilder.tsx`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `supabase/config.toml` (verify_jwt=false para `report-embed-public`)
 
-Após esta, sigo automaticamente para 6/7 (Embedded Analytics) e 7/7 (widget custom_report no Dashboard Builder + E2E).
+Após esta, sigo automaticamente para 7/7 (widget custom_report no Dashboard Builder + E2E).
