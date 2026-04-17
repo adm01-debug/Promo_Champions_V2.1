@@ -122,13 +122,23 @@ Deno.serve(async (req) => {
           continue;
         }
 
+        // Resolve template variables with contact context
+        const ctx = await fetchContactContext(supabase, enr.contact_id, enr.contact_type);
+        const resolvedSubject = resolveTemplateVariables(nextStep.subject, ctx);
+        const resolvedBody = resolveTemplateVariables(nextStep.body, ctx);
+
         // Record execution (channel-agnostic stub — real send wiring per channel happens in 2/7+)
         await supabase.from("sequence_step_executions").insert({
           enrollment_id: enr.id,
           step_id: nextStep.id,
           status: "sent",
           channel: nextStep.channel,
-          engagement: { auto: true, dispatched_at: new Date().toISOString() },
+          engagement: {
+            auto: true,
+            dispatched_at: new Date().toISOString(),
+            resolved_subject: resolvedSubject,
+            resolved_body: resolvedBody,
+          },
         });
 
         // Compute next step delay
