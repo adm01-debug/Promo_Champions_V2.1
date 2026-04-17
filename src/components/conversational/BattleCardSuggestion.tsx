@@ -60,9 +60,9 @@ export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
           <Copy className="h-3 w-3 mr-1" />
           Copiar
         </Button>
-        {asset.url && (
+        {asset.file_url && (
           <Button size="sm" variant="outline" asChild className="h-7 text-xs">
-            <a href={asset.url} target="_blank" rel="noopener noreferrer">
+            <a href={asset.file_url} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-3 w-3 mr-1" />
               Abrir
             </a>
