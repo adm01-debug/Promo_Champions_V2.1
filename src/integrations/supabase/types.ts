@@ -1535,6 +1535,10 @@ export type Database = {
           salesperson_id: string
           status: string
           title: string
+          transcribed_at: string | null
+          transcript: string | null
+          transcript_language: string | null
+          transcription_error: string | null
           updated_at: string
         }
         Insert: {
@@ -1550,6 +1554,10 @@ export type Database = {
           salesperson_id: string
           status?: string
           title: string
+          transcribed_at?: string | null
+          transcript?: string | null
+          transcript_language?: string | null
+          transcription_error?: string | null
           updated_at?: string
         }
         Update: {
@@ -1565,6 +1573,10 @@ export type Database = {
           salesperson_id?: string
           status?: string
           title?: string
+          transcribed_at?: string | null
+          transcript?: string | null
+          transcript_language?: string | null
+          transcription_error?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -9789,6 +9801,15 @@ export type Database = {
       toggle_workflow_active: {
         Args: { p_active: boolean; p_workflow_id: string }
         Returns: boolean
+      }
+      update_call_recording_transcript: {
+        Args: {
+          _error?: string
+          _id: string
+          _language?: string
+          _transcript: string
+        }
+        Returns: undefined
       }
       update_own_profile: {
         Args: { p_avatar_url?: string; p_name?: string }

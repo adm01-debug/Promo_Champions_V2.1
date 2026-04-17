@@ -11,10 +11,14 @@ export interface CallRecording {
   audio_url: string | null;
   duration_seconds: number;
   recorded_at: string;
-  status: "pending" | "transcribing" | "analyzing" | "ready" | "failed";
+  status: "pending" | "transcribing" | "transcribed" | "analyzing" | "ready" | "failed";
   participants: unknown;
   metadata: unknown;
   created_at: string;
+  transcript?: string | null;
+  transcript_language?: string | null;
+  transcribed_at?: string | null;
+  transcription_error?: string | null;
 }
 
 export interface CallInsight {
