@@ -1,60 +1,54 @@
 
-Próxima atômica do **Sales Engagement Avançado** (item 5/8): **Account-Based Engagement (ABE)** — agrupar contatos por conta (empresa), ver buying committee, score consolidado da conta, atividade multi-stakeholder e playbooks ABM.
+Próxima atômica do **Sales Engagement Avançado** (item 6/8): **Power Dialer** — fila inteligente de chamadas que apresenta o próximo lead a ligar com contexto, scripts e disposições de chamada, eliminando o tempo morto entre ligações.
 
 ## Estado atual
-- `sales` tem `client_name` mas sem agrupamento formal por conta/empresa.
-- Engajamento, scoring e sequences operam por contato individual — sem visão consolidada da conta.
-- Sem conceito de buying committee, sem score agregado por empresa, sem dashboard ABM.
+- Existem `sales`, `email_engagement_scores`, `send_time_profiles`, `account_contacts` — todos os sinais necessários para priorizar quem ligar.
+- Não existe fila de discagem, registro estruturado de chamadas, nem motor de priorização que combine score + send-time + tarefas em aberto.
+- Sequences não disparam tasks de "ligar agora" — call cadence é manual.
 
 ## Mudanças
 
 ### 1. Migration
-- Tabela `accounts`: `id`, `name`, `domain text`, `industry text`, `size_bucket text` (smb/mid/enterprise), `tier text` (tier1/tier2/tier3), `owner_id`, `created_at`. Unique em `lower(name)`.
-- Tabela `account_contacts`: `id`, `account_id`, `sale_id`, `role text` (champion/decision_maker/influencer/user/blocker), `seniority text` (c_level/vp/director/manager/ic), `is_primary bool`, `created_at`. Unique `(account_id, sale_id)`.
-- Coluna `account_id uuid` em `sales` (nullable, FK).
-- RPC `get_account_engagement_summary(_account_id uuid)` → agrega score médio, total contatos, interações 30d, tier dominante.
-- RPC `get_top_accounts(_limit int)` → ranking por score consolidado.
+- Tabela `dialer_queues`: `id`, `owner_id`, `name`, `filter jsonb` (tier mín, owner, tags), `priority_strategy text` (`score|recency|send_time|hybrid`), `is_active bool`, `created_at`.
+- Tabela `dialer_queue_items`: `id`, `queue_id`, `sale_id`, `score numeric` (priority calculado), `position int`, `status text` (`pending|calling|done|skipped|snoozed`), `snooze_until timestamptz`, `added_at`, `completed_at`. Index `(queue_id, status, position)`.
+- Tabela `call_logs`: `id`, `owner_id`, `sale_id`, `queue_item_id` (nullable), `disposition text` (`connected|voicemail|no_answer|busy|wrong_number|do_not_call`), `outcome text` (`meeting_set|interested|not_interested|callback|nurture`), `duration_seconds int`, `notes text`, `next_action_at timestamptz`, `created_at`.
+- RPC `build_dialer_queue(_queue_id uuid)` → repopula items aplicando filter + priority_strategy.
+- RPC `next_dialer_item(_queue_id uuid)` → retorna o próximo `pending` e marca `calling`.
 - RLS: owner vê o próprio; admin/manager veem tudo.
-- Trigger: ao inserir/atualizar `sales` com `client_name` novo, criar/vincular `account` automaticamente.
 
-### 2. Edge function `account-engagement-aggregator` (`verify_jwt = true`)
-- Input: `{ account_ids?: string[], recompute_all?: boolean }`.
-- Para cada account: agrega `email_engagement_scores` dos contatos vinculados.
-  - Calcula `account_score` (média ponderada por seniority), `engaged_contacts`, `coverage` (% de contatos com tier ≥ warm).
-  - Identifica `champion_count`, `decision_maker_count`.
-- Atualiza colunas computadas em `accounts` (adicionar via migration: `account_score`, `coverage`, `engaged_contacts`, `last_aggregated_at`).
-- Cron diário `0 5 * * *`.
+### 2. Edge function `dialer-queue-builder` (`verify_jwt = true`)
+- Input: `{ queue_id }`. Aplica filter (sales do owner com tier ≥ X), calcula priority híbrida (0.5·email_score + 0.3·send_time_match_now + 0.2·days_since_last_touch).
+- Upsert em `dialer_queue_items` ordenado por priority desc.
 
-### 3. Hook `src/hooks/engagement/useAccountEngagement.ts`
-- `useAccount(accountId)`, `useAccountContacts(accountId)`, `useTopAccounts(limit)`, `useRecomputeAccountEngagement()`.
+### 3. Hook `src/hooks/dialer/usePowerDialer.ts`
+- `useDialerQueues()`, `useQueueItems(queueId)`, `useNextItem(queueId)` (mutation), `useLogCall()` (mutation com next-action), `useRebuildQueue()` (invoca edge function), `useSnoozeItem()`.
 
 ### 4. UI
-- `src/components/engagement/Account/AccountScoreBadge.tsx` (≤80L) — chip "🏢 Tier 1 · 78".
-- `src/components/engagement/Account/BuyingCommitteeCard.tsx` (≤180L) — lista contatos por role com seniority + EmailScoreBadge inline.
-- `src/components/engagement/Account/AccountCoverageBar.tsx` (≤80L) — barra de cobertura (% engajados).
-- `src/components/engagement/Account/TopAccountsLeaderboard.tsx` (≤180L) — top 20 contas.
-- `src/pages/AccountBasedEngagement.tsx` (≤200L) — `/engagement/abm`:
-  - Header + botão "Recalcular contas" (admin).
-  - 4 stats (total contas, tier1, coverage médio, top score).
-  - Embed leaderboard.
-- `src/pages/AccountDetail.tsx` (≤180L) — `/engagement/abm/:accountId` com BuyingCommittee + score histórico + sequences ativas.
+- `src/components/dialer/DialerQueueCard.tsx` (≤120L) — card com nome, items pending, last build, ações.
+- `src/components/dialer/CurrentCallCard.tsx` (≤200L) — card grande do contato em chamada: nome, empresa, score, send-time recommendation, últimos 3 toques, botão "Próximo".
+- `src/components/dialer/CallDispositionForm.tsx` (≤200L) — formulário pós-call com disposition, outcome, notes, next_action_at.
+- `src/components/dialer/QueueBuilderDialog.tsx` (≤180L) — criar/editar fila com tier mínimo, owner, strategy.
+- `src/components/dialer/dialerHelpers.ts` — labels, ícones por disposition/outcome.
+- `src/pages/PowerDialer.tsx` (≤200L) — `/engagement/dialer`:
+  - Layout 2 colunas: lista de queues à esquerda, current call + form à direita.
+  - Botão "Construir fila" + "Próxima ligação".
 
 ### 5. Integração
-- `LeadDetailDrawer` / `ClientDetailDrawer`: link "Ver conta" + AccountScoreBadge.
-- Sidebar: item "ABM (Contas)" sob Engajamento.
-- Rotas em `AppRoutes` + `lazyPages`.
+- Sidebar: item "Power Dialer" sob Engajamento.
+- Rota `/engagement/dialer` em `AppRoutes` + `lazyPages`.
+- `LeadDetailDrawer`: histórico de chamadas (últimos 5 `call_logs`).
 
 ### 6. Validação
-- `supabase--curl_edge_functions /account-engagement-aggregator` com 1 account → confirma upsert.
-- `supabase--read_query` confere `account_score` + `coverage` populados.
-- Linter zero novos warnings.
+- `supabase--curl_edge_functions /dialer-queue-builder` com queue real → confirma popular `dialer_queue_items`.
+- `supabase--read_query` confirma priority válida + ordem correta.
+- `supabase--linter` zero novos warnings.
 
 ### Arquivos
-- **Migration**: 1 (2 tabelas + coluna em sales + 4 colunas em accounts + 2 RPCs + trigger + cron + RLS)
-- **Criar**: `supabase/functions/account-engagement-aggregator/index.ts`
-- **Criar**: `src/hooks/engagement/useAccountEngagement.ts`
-- **Criar**: 4 componentes em `src/components/engagement/Account/` + helpers
-- **Criar**: `src/pages/AccountBasedEngagement.tsx`, `AccountDetail.tsx`
-- **Editar**: `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `src/components/layout/sidebar/sidebarMenuData.ts`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `supabase/config.toml`
+- **Migration**: 1 (3 tabelas + 2 RPCs + RLS)
+- **Criar**: `supabase/functions/dialer-queue-builder/index.ts`
+- **Criar**: `src/hooks/dialer/usePowerDialer.ts`
+- **Criar**: 5 componentes em `src/components/dialer/` + helpers
+- **Criar**: `src/pages/PowerDialer.tsx`
+- **Editar**: `src/components/leads/LeadDetailDrawer.tsx`, `src/components/layout/sidebar/sidebarMenuData.ts`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `supabase/config.toml`
 
-Após esta entrega, sigo automaticamente para: **Power Dialer** → **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
+Após esta entrega, sigo automaticamente para: **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
