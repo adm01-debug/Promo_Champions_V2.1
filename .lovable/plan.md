@@ -1,57 +1,75 @@
 
-Próxima atômica AI Generativo Avançado: **AI Agents autônomos** — agentes que executam tarefas multi-step (qualificar lead, montar proposta, agendar follow-up) usando tool calling do Gemini sobre as RPCs e funções existentes do CRM.
+User wants to expand semantic search to cover ALL records in the CRM. Current state from codebase recon:
 
-## Próxima Melhoria — AI Agents Autônomos
+**Já implementado:**
+- Tabela `semantic_index` com pgvector (768d)
+- RPC `match_semantic` + `upsert_semantic_entry`
+- Edge functions: `semantic-index-entity`, `semantic-search-universal`, `semantic-reindex-batch`
+- UI: `SemanticSearchDialog`, `SemanticSearchMount` (Cmd+Shift+F), página `/busca`, item na sidebar
+- 5 entity types suportados: client, lead, deal, activity, call_recording
+- `useIndexEntity` hook fire-and-forget
 
-### Estado atual
-- IA atual é reativa: Copilot responde, NLQ consulta, Email Composer gera. Nada **age** sozinho.
-- Sem orquestração multi-step com aprovação humana.
-- Sem registro auditável de ações tomadas por IA.
+**Gaps reais (o "parcial"):**
+1. **Backfill**: índice está vazio para registros antigos. `semantic-reindex-batch` existe mas não tem UI nem trigger.
+2. **Auto-indexação**: `useIndexEntity` existe mas não é chamado nos hooks de save (createClient, updateLead, createDeal, logActivity, uploadCallRecording). Novos/editados registros não entram no índice.
+3. **Cobertura incompleta**: faltam tipos importantes — `note`, `email_message`, `whatsapp_message`, `proposal`, `playbook`, `task`.
+4. **Admin UI**: sem painel para disparar reindex, ver cobertura (% indexado por tipo), forçar refresh.
+5. **Cmd+K**: palette principal não consulta semantic search.
+6. **Stale detection**: registro editado fica com embedding desatualizado — sem coluna `source_updated_at` para comparar.
 
-### Mudanças
+## Plano — Semantic Search Universal Completa
 
-**1. Migration**
-- Tabela `ai_agent_runs`: `id`, `salesperson_id`, `agent_type` (`qualify_lead|build_proposal|schedule_followup|enrich_client|recover_cold_lead`), `goal text`, `target_entity_type`, `target_entity_id`, `status` (`pending|running|awaiting_approval|completed|failed|cancelled`), `steps jsonb` (lista de tool calls + resultados), `result jsonb`, `requires_approval bool`, `approved_by`, `created_at`, `completed_at`.
-- Tabela `ai_agent_actions` (audit): `run_id`, `step_index`, `tool_name`, `tool_input jsonb`, `tool_output jsonb`, `executed_at`, `executed_by` (`ai|user`).
-- RLS: vendedor vê próprios; admin vê tudo.
-- RPCs `create_agent_run`, `append_agent_step`, `complete_agent_run`, `approve_agent_run` (SECURITY DEFINER + ownership).
+### 1. Migration
+- Adicionar colunas em `semantic_index`: `source_updated_at timestamptz`, `content_hash text` (evita re-embed se conteúdo igual).
+- Expandir CHECK em `entity_type` para incluir: `note`, `email_message`, `whatsapp_message`, `proposal`, `task`, `playbook` (além dos 5 atuais).
+- RPC `get_semantic_coverage()` SECURITY DEFINER → retorna `[{ entity_type, total, indexed, coverage_pct, last_indexed }]` para admin.
+- RPC `mark_entity_for_reindex(_entity_type, _entity_id)` (deleta entry → forçará re-embed).
 
-**2. Edge function `ai-agent-orchestrator` (`verify_jwt=true`)**
-- Input: `{ agent_type, target_entity_id?, goal?, auto_execute? }`
-- Carrega contexto do alvo (lead/cliente/deal).
-- Loop tool calling Gemini 2.5 Flash com tools registradas:
-  - `get_entity_details`, `search_semantic`, `create_activity`, `compose_email`, `update_lead_score`, `add_note`, `schedule_followup`, `finish` (com sumário).
-- Cada tool call → executa via service-role + grava em `ai_agent_actions`.
-- Tools mutativas em modo `awaiting_approval` se `auto_execute=false` (default).
-- Trata 429/402, max 10 steps, timeout 60s.
+### 2. Edge functions
+- **Atualizar `semantic-index-entity`**: adicionar handlers para os novos tipos (note, email, whatsapp, proposal, task, playbook). Calcular `content_hash` (sha256) e pular re-embed se igual + `source_updated_at` igual. Persistir `source_updated_at` da entidade.
+- **Atualizar `semantic-reindex-batch`**: aceitar `{ entity_types?, only_missing?, batch_size? }`, paginar pelas tabelas-alvo, enviar para `semantic-index-entity` em lotes (concorrência 5), retornar contadores. Admin-only via has_role.
+- **Nova `semantic-coverage` (admin only)**: invoca RPC e devolve cobertura por tipo.
 
-**3. Hooks**
-- `useStartAgentRun()`, `useAgentRuns()`, `useApproveAgentRun()`, `useAgentRunDetails(id)` — realtime via channel em `ai_agent_runs`.
+### 3. Auto-indexação (front-end)
+Adicionar `index(entity_type, id)` fire-and-forget após mutações de sucesso em:
+- `useCreateClient`, `useUpdateClient`
+- `useCreateLead`, `useUpdateLead`
+- `useCreateDeal`, `useUpdateDeal`
+- `useCreateActivity` (já note + activity)
+- `useUploadCallRecording` (após transcrição)
+- Hooks de email/whatsapp messages e proposals (se existirem)
 
-**4. UI (≤300L cada)**
-- `AgentLauncherDialog.tsx` — escolhe agent_type, alvo (autocomplete lead/cliente), goal opcional, toggle "executar automaticamente".
-- `AgentRunCard.tsx` — card com status + progress steps.
-- `AgentStepTimeline.tsx` — timeline das ações com input/output formatado.
-- `AgentApprovalBar.tsx` — aprovar/rejeitar plano antes da execução.
-- `agentHelpers.ts` — labels, ícones, cores por tipo.
-- Página `AIAgents.tsx` (`/agentes`): lista de runs + botão "Novo agente".
-- Botão "Acionar agente" inline em LeadDetailDrawer e ClientDetailDrawer.
+### 4. UI — Admin Reindex Panel
+- `src/components/admin/SemanticReindexPanel.tsx` (em `/admin`):
+  - Tabela de cobertura: tipo, total, indexado, %, última atualização, botão "Reindexar".
+  - Botão global "Reindexar tudo (faltantes)".
+  - Progress toast durante execução.
+- Hook `useSemanticCoverage()` + `useReindexBatch()`.
 
-**5. Integração**
-- Rota `/agentes` (lazy) + sidebar item "Agentes IA" no grupo IA/Analytics.
-- Realtime: `ALTER PUBLICATION supabase_realtime ADD TABLE ai_agent_runs;`
+### 5. UI — Filtros expandidos
+- `semanticSearchHelpers.ts`: adicionar entradas em `ENTITY_META` para os 6 novos tipos com ícones/cores/rotas.
+- `SemanticSearchDialog`: chips de filtro renderizam dinamicamente a partir do `ENTITY_META`.
 
-**6. Validação**
-- Smoke `supabase--curl_edge_functions` em lead real (modo `awaiting_approval`).
-- RLS confere isolamento por vendedor.
-- Linter zero novos warnings, console limpo.
+### 6. Cmd+K integração
+- Localizar `CommandPalette` existente (provavelmente `src/components/search/*` ou `KeyboardShortcuts`).
+- Adicionar seção "Resultados semânticos" quando query ≥ 4 chars (debounced), mostra top 5 + link "Ver todos" → abre `SemanticSearchDialog`.
+
+### 7. Validação
+- Smoke `supabase--curl_edge_functions`: `semantic-coverage`, `semantic-reindex-batch` (lote pequeno), `semantic-search-universal` em registro recém-indexado.
+- `supabase--read_query`: confere `semantic_index` populando após reindex.
+- `supabase--linter` zero novos warnings.
+- Console limpo, zero TS errors.
 
 ### Arquivos
-- Migration (2 tabelas + 4 RPCs + RLS + realtime)
-- Criar `supabase/functions/ai-agent-orchestrator/index.ts`, `agentTools.ts`
-- Criar `src/hooks/agents/useAgentRuns.ts`, `useStartAgentRun.ts`, `useApproveAgentRun.ts`, `useAgentRunDetails.ts`
-- Criar `src/components/agents/AgentLauncherDialog.tsx`, `AgentRunCard.tsx`, `AgentStepTimeline.tsx`, `AgentApprovalBar.tsx`, `agentHelpers.ts`
-- Criar `src/pages/AIAgents.tsx`
-- Editar `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`, `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `supabase/config.toml`
+- **Migration**: 1 (colunas + 2 RPCs + check expandido)
+- **Editar**: `supabase/functions/semantic-index-entity/index.ts`, `semantic-reindex-batch/index.ts`
+- **Criar**: `supabase/functions/semantic-coverage/index.ts`
+- **Criar**: `src/hooks/semantic/useSemanticCoverage.ts`, `useReindexBatch.ts`
+- **Criar**: `src/components/admin/SemanticReindexPanel.tsx`
+- **Editar**: `src/components/semantic/semanticSearchHelpers.ts`, `SemanticSearchDialog.tsx`
+- **Editar**: hooks de mutação (clients/leads/deals/activities) — adicionar `index()` em onSuccess
+- **Editar**: CommandPalette principal (a localizar) — seção semantic
+- **Editar**: `src/pages/Admin.tsx` (ou equivalente) — montar painel
+- **Editar**: `supabase/config.toml` (nova função)
 
-Após esta entrega, sigo para a última atômica de AI Generativo Avançado: **Predictive Scoring com Explainability** — fechando 10/10.
+Após esta entrega, sigo automaticamente para a próxima atômica de AI Generativo Avançado: **Predictive Scoring com Explainability** — fechando 10/10.
