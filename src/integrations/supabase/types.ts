@@ -1526,57 +1526,78 @@ export type Database = {
           audio_url: string | null
           client_id: string | null
           created_at: string
+          diarization: Json | null
+          diarized_at: string | null
           duration_seconds: number | null
           id: string
+          interruptions_count: number | null
+          longest_monologue_sec: number | null
           metadata: Json | null
           participants: Json | null
           recorded_at: string
           sale_id: string | null
           salesperson_id: string
           status: string
+          talk_ratio_client: number | null
+          talk_ratio_seller: number | null
           title: string
           transcribed_at: string | null
           transcript: string | null
           transcript_language: string | null
           transcription_error: string | null
+          turns_count: number | null
           updated_at: string
         }
         Insert: {
           audio_url?: string | null
           client_id?: string | null
           created_at?: string
+          diarization?: Json | null
+          diarized_at?: string | null
           duration_seconds?: number | null
           id?: string
+          interruptions_count?: number | null
+          longest_monologue_sec?: number | null
           metadata?: Json | null
           participants?: Json | null
           recorded_at?: string
           sale_id?: string | null
           salesperson_id: string
           status?: string
+          talk_ratio_client?: number | null
+          talk_ratio_seller?: number | null
           title: string
           transcribed_at?: string | null
           transcript?: string | null
           transcript_language?: string | null
           transcription_error?: string | null
+          turns_count?: number | null
           updated_at?: string
         }
         Update: {
           audio_url?: string | null
           client_id?: string | null
           created_at?: string
+          diarization?: Json | null
+          diarized_at?: string | null
           duration_seconds?: number | null
           id?: string
+          interruptions_count?: number | null
+          longest_monologue_sec?: number | null
           metadata?: Json | null
           participants?: Json | null
           recorded_at?: string
           sale_id?: string | null
           salesperson_id?: string
           status?: string
+          talk_ratio_client?: number | null
+          talk_ratio_seller?: number | null
           title?: string
           transcribed_at?: string | null
           transcript?: string | null
           transcript_language?: string | null
           transcription_error?: string | null
+          turns_count?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -9801,6 +9822,18 @@ export type Database = {
       toggle_workflow_active: {
         Args: { p_active: boolean; p_workflow_id: string }
         Returns: boolean
+      }
+      update_call_recording_diarization: {
+        Args: {
+          _diarization: Json
+          _id: string
+          _interruptions_count: number
+          _longest_monologue_sec: number
+          _talk_ratio_client: number
+          _talk_ratio_seller: number
+          _turns_count: number
+        }
+        Returns: undefined
       }
       update_call_recording_transcript: {
         Args: {
