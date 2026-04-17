@@ -13,9 +13,18 @@ export function useTranscribeRecording() {
       if ((data as { error?: string })?.error) throw new Error((data as { error: string }).error);
       return data as { recording_id: string; transcript_length: number; status: string };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ["call-recordings"] });
       toast.success("Transcrição concluída! 📝");
+      // Auto-trigger diarization in background
+      const recId = data?.recording_id;
+      if (recId) {
+        supabase.functions
+          .invoke("diarize-call-recording", { body: { recording_id: recId } })
+          .then(({ error }) => {
+            if (!error) qc.invalidateQueries({ queryKey: ["call-recordings"] });
+          });
+      }
     },
     onError: (e) => toast.error(`Falha na transcrição: ${e instanceof Error ? e.message : "erro desconhecido"}`),
   });

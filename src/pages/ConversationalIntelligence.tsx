@@ -14,6 +14,11 @@ import { CallRecordingUploader } from "@/components/conversational/CallRecording
 import { CallRecordingPlayer } from "@/components/conversational/CallRecordingPlayer";
 import { TranscribeButton } from "@/components/conversational/TranscribeButton";
 import { TranscriptViewer } from "@/components/conversational/TranscriptViewer";
+import { TalkRatioBar } from "@/components/conversational/TalkRatioBar";
+import { DiarizationTimeline } from "@/components/conversational/DiarizationTimeline";
+import { CallStatsPanel } from "@/components/conversational/CallStatsPanel";
+import { DiarizeButton } from "@/components/conversational/DiarizeButton";
+import type { DiarizationTurn } from "@/components/conversational/diarizationHelpers";
 import { Helmet } from "react-helmet-async";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -183,11 +188,41 @@ export default function ConversationalIntelligence() {
                       </div>
                     )}
                     {rec.transcript && (
-                      <TranscriptViewer
-                        transcript={rec.transcript}
-                        language={rec.transcript_language}
-                        transcribedAt={rec.transcribed_at}
-                      />
+                      <>
+                        <TranscriptViewer
+                          transcript={rec.transcript}
+                          language={rec.transcript_language}
+                          transcribedAt={rec.transcribed_at}
+                        />
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            Diarização
+                          </p>
+                          <DiarizeButton
+                            recordingId={rec.id}
+                            hasTranscript={!!rec.transcript}
+                            alreadyDiarized={!!rec.diarized_at}
+                          />
+                        </div>
+                        {rec.diarized_at && (
+                          <>
+                            <TalkRatioBar
+                              seller={rec.talk_ratio_seller}
+                              client={rec.talk_ratio_client}
+                            />
+                            <CallStatsPanel
+                              turnsCount={rec.turns_count}
+                              longestMonologueSec={rec.longest_monologue_sec}
+                              interruptionsCount={rec.interruptions_count}
+                              talkRatioSeller={rec.talk_ratio_seller}
+                            />
+                            <DiarizationTimeline
+                              turns={rec.diarization as DiarizationTurn[] | null}
+                              totalSeconds={rec.duration_seconds ?? 0}
+                            />
+                          </>
+                        )}
+                      </>
                     )}
                   </>
                 );

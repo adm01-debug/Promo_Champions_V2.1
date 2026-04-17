@@ -19,6 +19,13 @@ export interface CallRecording {
   transcript_language?: string | null;
   transcribed_at?: string | null;
   transcription_error?: string | null;
+  talk_ratio_seller?: number | null;
+  talk_ratio_client?: number | null;
+  longest_monologue_sec?: number | null;
+  interruptions_count?: number | null;
+  turns_count?: number | null;
+  diarization?: unknown;
+  diarized_at?: string | null;
 }
 
 export interface CallInsight {
