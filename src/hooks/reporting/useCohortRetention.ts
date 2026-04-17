@@ -24,7 +24,7 @@ export function useCohortRetention({ periods = 12, metric = "orders" }: UseCohor
           .order("created_at", { ascending: true }),
         supabase
           .from("sales")
-          .select("client_name, created_at, value")
+          .select("client_name, created_at, amount")
           .gte("created_at", start.toISOString()),
       ]);
 
@@ -38,7 +38,7 @@ export function useCohortRetention({ periods = 12, metric = "orders" }: UseCohor
       const sales = (salesRes.data ?? []).map((s) => ({
         client_name: s.client_name,
         created_at: s.created_at,
-        final_value: s.value,
+        final_value: s.amount,
       }));
 
       return buildCohortMatrix(clients, sales, nameToId, periods, metric);
