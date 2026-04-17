@@ -1,54 +1,69 @@
 
-Próxima atômica do **Sales Engagement Avançado** (item 6/8): **Power Dialer** — fila inteligente de chamadas que apresenta o próximo lead a ligar com contexto, scripts e disposições de chamada, eliminando o tempo morto entre ligações.
+Próxima atômica do **Sales Engagement Avançado** (item 7/8 — última do bloco): **Click-to-call Twilio** — botão de discagem 1-clique direto do Power Dialer e do drawer de leads, com chamada via Twilio Voice API, gravação opcional e log automático em `call_logs`.
 
 ## Estado atual
-- Existem `sales`, `email_engagement_scores`, `send_time_profiles`, `account_contacts` — todos os sinais necessários para priorizar quem ligar.
-- Não existe fila de discagem, registro estruturado de chamadas, nem motor de priorização que combine score + send-time + tarefas em aberto.
-- Sequences não disparam tasks de "ligar agora" — call cadence é manual.
+- `call_logs` e `dialer_queue_items` já existem (entregues no item 6/8).
+- `multichannel_credentials` já suporta provider `twilio` (Account SID + Auth Token) usado por SMS/WhatsApp.
+- Sem botão "Ligar" funcional — usuário copia número e disca manualmente.
+- Sem registro automático de duração, status (answered/no-answer/busy) ou gravação.
 
 ## Mudanças
 
 ### 1. Migration
-- Tabela `dialer_queues`: `id`, `owner_id`, `name`, `filter jsonb` (tier mín, owner, tags), `priority_strategy text` (`score|recency|send_time|hybrid`), `is_active bool`, `created_at`.
-- Tabela `dialer_queue_items`: `id`, `queue_id`, `sale_id`, `score numeric` (priority calculado), `position int`, `status text` (`pending|calling|done|skipped|snoozed`), `snooze_until timestamptz`, `added_at`, `completed_at`. Index `(queue_id, status, position)`.
-- Tabela `call_logs`: `id`, `owner_id`, `sale_id`, `queue_item_id` (nullable), `disposition text` (`connected|voicemail|no_answer|busy|wrong_number|do_not_call`), `outcome text` (`meeting_set|interested|not_interested|callback|nurture`), `duration_seconds int`, `notes text`, `next_action_at timestamptz`, `created_at`.
-- RPC `build_dialer_queue(_queue_id uuid)` → repopula items aplicando filter + priority_strategy.
-- RPC `next_dialer_item(_queue_id uuid)` → retorna o próximo `pending` e marca `calling`.
+- Tabela `twilio_call_sessions`: `id`, `owner_id`, `sale_id`, `queue_item_id?`, `call_sid text UNIQUE` (Twilio CallSid), `from_number`, `to_number`, `status text` (`initiated|ringing|in-progress|completed|busy|no-answer|failed|canceled`), `duration_seconds int`, `recording_url text?`, `recording_sid text?`, `price numeric?`, `started_at`, `ended_at`, `created_at`.
+- Coluna `call_sid text` em `call_logs` (nullable, FK lógica para `twilio_call_sessions.call_sid`).
 - RLS: owner vê o próprio; admin/manager veem tudo.
+- Index em `(owner_id, created_at DESC)` e `(call_sid)`.
 
-### 2. Edge function `dialer-queue-builder` (`verify_jwt = true`)
-- Input: `{ queue_id }`. Aplica filter (sales do owner com tier ≥ X), calcula priority híbrida (0.5·email_score + 0.3·send_time_match_now + 0.2·days_since_last_touch).
-- Upsert em `dialer_queue_items` ordenado por priority desc.
+### 2. Edge function `twilio-click-to-call` (`verify_jwt = true`)
+- Input: `{ to_number, sale_id, queue_item_id?, from_number? }`.
+- Lê credenciais Twilio do owner em `multichannel_credentials` (channel=`sms`, provider=`twilio`).
+- Resolve `from_number`: usa `from_number` do payload, ou primeiro número Twilio do owner.
+- POST para `https://api.twilio.com/2010-04-01/Accounts/{SID}/Calls.json` com:
+  - `To`, `From`, `Url` (TwiML público apontando para `twilio-call-twiml`), `StatusCallback` apontando para `twilio-call-status`, `Record=true`.
+- Insere row em `twilio_call_sessions` com `status='initiated'`.
+- Output: `{ ok, call_sid, session_id }`.
 
-### 3. Hook `src/hooks/dialer/usePowerDialer.ts`
-- `useDialerQueues()`, `useQueueItems(queueId)`, `useNextItem(queueId)` (mutation), `useLogCall()` (mutation com next-action), `useRebuildQueue()` (invoca edge function), `useSnoozeItem()`.
+### 3. Edge function `twilio-call-twiml` (`verify_jwt = false`)
+- Endpoint público chamado pelo Twilio quando a chamada conecta.
+- Retorna XML TwiML simples: `<Response><Dial callerId="{from}">{agent_phone}</Dial></Response>` — conecta o cliente ao telefone do vendedor (lookup por `owner_id` em query string).
+- Suporta `forward_to` configurado em `multichannel_credentials.config.agent_phone`.
 
-### 4. UI
-- `src/components/dialer/DialerQueueCard.tsx` (≤120L) — card com nome, items pending, last build, ações.
-- `src/components/dialer/CurrentCallCard.tsx` (≤200L) — card grande do contato em chamada: nome, empresa, score, send-time recommendation, últimos 3 toques, botão "Próximo".
-- `src/components/dialer/CallDispositionForm.tsx` (≤200L) — formulário pós-call com disposition, outcome, notes, next_action_at.
-- `src/components/dialer/QueueBuilderDialog.tsx` (≤180L) — criar/editar fila com tier mínimo, owner, strategy.
-- `src/components/dialer/dialerHelpers.ts` — labels, ícones por disposition/outcome.
-- `src/pages/PowerDialer.tsx` (≤200L) — `/engagement/dialer`:
-  - Layout 2 colunas: lista de queues à esquerda, current call + form à direita.
-  - Botão "Construir fila" + "Próxima ligação".
+### 4. Edge function `twilio-call-status` (`verify_jwt = false`)
+- Webhook chamado pelo Twilio em cada mudança de status.
+- Atualiza `twilio_call_sessions` por `call_sid`: status, duration, recording_url, ended_at.
+- Quando `status=completed`: cria/atualiza row em `call_logs` com `disposition` mapeada (completed→connected, busy→busy, no-answer→no_answer, failed→no_answer) e `duration_seconds` real.
 
-### 5. Integração
-- Sidebar: item "Power Dialer" sob Engajamento.
-- Rota `/engagement/dialer` em `AppRoutes` + `lazyPages`.
-- `LeadDetailDrawer`: histórico de chamadas (últimos 5 `call_logs`).
+### 5. Hook `src/hooks/dialer/useClickToCall.ts`
+- `useInitiateCall()` — mutation que invoca `twilio-click-to-call`, retorna `call_sid`.
+- `useCallSession(callSid)` — query com refetch a cada 2s enquanto status ∈ {initiated, ringing, in-progress}.
+- `useTwilioCredentialsCheck()` — verifica se owner tem credenciais Twilio configuradas.
 
-### 6. Validação
-- `supabase--curl_edge_functions /dialer-queue-builder` com queue real → confirma popular `dialer_queue_items`.
-- `supabase--read_query` confirma priority válida + ordem correta.
+### 6. UI
+- `src/components/dialer/ClickToCallButton.tsx` (≤120L) — botão "Ligar agora" com ícone Phone:
+  - Verifica credenciais → se faltar, abre toast com link para Multichannel.
+  - Em chamada: mostra status live (Chamando… → Tocando → Em ligação 00:42).
+  - Substitui automaticamente o `CurrentCallCard` quando integrado.
+- `src/components/dialer/CallStatusBadge.tsx` (≤60L) — pill colorida por status com pulse.
+- Integrar em:
+  - `CurrentCallCard.tsx`: substitui o `<a href="tel:">` por `<ClickToCallButton>`.
+  - `LeadDetailDrawer.tsx`: botão "Ligar" no header.
+  - `ClientDetailDrawer.tsx`: idem.
+
+### 7. Configuração
+- `supabase/config.toml`: adicionar 3 entradas (`twilio-click-to-call` jwt=true, `twilio-call-twiml` jwt=false, `twilio-call-status` jwt=false).
+- Documentar na UI do Multichannel: campo opcional `agent_phone` no provider Twilio (número que recebe a perna do vendedor).
+
+### 8. Validação
+- `supabase--curl_edge_functions /twilio-click-to-call` com payload mock → confirma 401 sem credenciais válidas.
+- `supabase--read_query` confere session criada e RLS funcionando.
 - `supabase--linter` zero novos warnings.
 
 ### Arquivos
-- **Migration**: 1 (3 tabelas + 2 RPCs + RLS)
-- **Criar**: `supabase/functions/dialer-queue-builder/index.ts`
-- **Criar**: `src/hooks/dialer/usePowerDialer.ts`
-- **Criar**: 5 componentes em `src/components/dialer/` + helpers
-- **Criar**: `src/pages/PowerDialer.tsx`
-- **Editar**: `src/components/leads/LeadDetailDrawer.tsx`, `src/components/layout/sidebar/sidebarMenuData.ts`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `supabase/config.toml`
+- **Migration**: 1 (1 tabela + 1 coluna em call_logs + RLS + indexes)
+- **Criar**: `supabase/functions/twilio-click-to-call/index.ts`, `twilio-call-twiml/index.ts`, `twilio-call-status/index.ts`
+- **Criar**: `src/hooks/dialer/useClickToCall.ts`
+- **Criar**: `src/components/dialer/ClickToCallButton.tsx`, `CallStatusBadge.tsx`
+- **Editar**: `src/components/dialer/CurrentCallCard.tsx`, `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `supabase/config.toml`, `src/components/multichannel/multichannelHelpers.ts` (add `agent_phone` opcional ao Twilio)
 
-Após esta entrega, sigo automaticamente para: **Click-to-call Twilio** → fechando Sales Engagement em 10/10.
+Após esta entrega, **Sales Engagement Avançado fecha 8/8 (10/10)** e sigo automaticamente para o próximo bloco do `GAPS_CLASSE_MUNDIAL.md`.
