@@ -9,6 +9,7 @@ import { useSnoozeItem, useCallLogsForSale } from '@/hooks/dialer/usePowerDialer
 import { dispositionLabel } from './dialerHelpers';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { ClickToCallButton } from './ClickToCallButton';
 
 interface Props {
   itemId: string;

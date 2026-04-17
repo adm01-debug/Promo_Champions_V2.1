@@ -156,3 +156,12 @@ verify_jwt = true
 [functions.dialer-queue-builder]
 verify_jwt = true
 
+[functions.twilio-click-to-call]
+verify_jwt = true
+
+[functions.twilio-call-twiml]
+verify_jwt = false
+
+[functions.twilio-call-status]
+verify_jwt = false
+
