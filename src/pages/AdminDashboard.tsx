@@ -11,6 +11,7 @@ import { getQueryMetrics } from "@/hooks/useQueryPerformance";
 import { BackendAutomationMonitor } from "@/components/admin/BackendAutomationMonitor";
 import { AutomationRulesPanel } from "@/components/admin/AutomationRulesPanel";
 import { QuoteSyncLogsPanel } from "@/components/admin/QuoteSyncLogsPanel";
+import { InboundReplyLogPanel } from "@/components/admin/InboundReplyLogPanel";
 import { ExternalDBSettings } from "@/components/admin/ExternalDBSettings";
 import { AdminQuickStats } from "@/components/admin/AdminQuickStats";
 import { AdminSecurityPanel } from "@/components/admin/AdminSecurityPanel";
@@ -80,6 +81,7 @@ function AdminDashboardContent() {
       <CircuitBreakerDashboard />
       <EmailMetricsDashboard />
       <QuoteSyncLogsPanel />
+      <InboundReplyLogPanel />
       <ExternalDBSettings />
     </div>
   );
