@@ -20,6 +20,7 @@ import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
 import { ClientTimeline } from "@/components/clients/ClientTimeline";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
@@ -127,7 +128,10 @@ const Clientes = () => {
                 </p>
               </div>
             </div>
-            <CreateClientDialog />
+            <div className="flex flex-wrap gap-2">
+              <AIEmailComposerButton variant="outline" size="default" />
+              <CreateClientDialog />
+            </div>
           </div>
 
           {/* Filters */}
