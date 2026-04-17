@@ -160,8 +160,10 @@ export function CustomizableDashboard() {
   const saveLayout = useSaveDashboardLayout();
   const [layout, setLayout] = useState<WidgetConfig[] | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const currentLayout = layout || savedLayout || [];
+  const editingWidget = currentLayout.find(w => w.id === editingId) ?? null;
 
   const handleToggleWidget = useCallback((id: string) => {
     const updated = currentLayout.map(w =>
@@ -189,7 +191,15 @@ export function CustomizableDashboard() {
     setLayout([...currentLayout, newWidget]);
     setHasChanges(true);
     toast.success(`Widget "${widgetMeta.title}" adicionado!`);
+    if (type === "custom_report") setEditingId(newWidget.id);
   }, [currentLayout]);
+
+  const handleSaveCustomReport = useCallback((cfg: { report_id: string; height: number }) => {
+    if (!editingId) return;
+    const updated = currentLayout.map(w => w.id === editingId ? { ...w, config: cfg } : w);
+    setLayout(updated);
+    setHasChanges(true);
+  }, [currentLayout, editingId]);
 
   const handleSave = useCallback(() => {
     saveLayout.mutate(currentLayout, {
@@ -255,7 +265,7 @@ export function CustomizableDashboard() {
       {smallWidgets.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {smallWidgets.map(widget => (
-            <RealWidget key={widget.id} config={widget} />
+            <RealWidget key={widget.id} config={widget} onEdit={widget.type === "custom_report" ? () => setEditingId(widget.id) : undefined} />
           ))}
         </div>
       )}
@@ -264,7 +274,7 @@ export function CustomizableDashboard() {
       {largeWidgets.length > 0 && (
         <div className="grid lg:grid-cols-2 gap-4">
           {largeWidgets.map(widget => (
-            <RealWidget key={widget.id} config={widget} />
+            <RealWidget key={widget.id} config={widget} onEdit={widget.type === "custom_report" ? () => setEditingId(widget.id) : undefined} />
           ))}
         </div>
       )}
@@ -283,6 +293,14 @@ export function CustomizableDashboard() {
           </CardContent>
         </Card>
       )}
+
+      <CustomReportWidgetEditor
+        open={!!editingWidget && editingWidget.type === "custom_report"}
+        onOpenChange={(o) => !o && setEditingId(null)}
+        initialReportId={(editingWidget?.config as { report_id?: string } | undefined)?.report_id}
+        initialHeight={(editingWidget?.config as { height?: number } | undefined)?.height}
+        onSave={handleSaveCustomReport}
+      />
     </div>
   );
 }
