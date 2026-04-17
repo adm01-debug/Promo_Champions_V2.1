@@ -10,6 +10,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mic, Sparkles, MessageSquare, Target, AlertCircle, TrendingUp, Lightbulb, Trash2, FileText } from "lucide-react";
 import { useCallRecordings, useCallInsight, useCreateRecordingWithAnalysis, useDeleteRecording } from "@/hooks/conversational/useCallRecordings";
+import { CallRecordingUploader } from "@/components/conversational/CallRecordingUploader";
+import { CallRecordingPlayer } from "@/components/conversational/CallRecordingPlayer";
 import { Helmet } from "react-helmet-async";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
