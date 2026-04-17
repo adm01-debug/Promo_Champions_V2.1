@@ -4,6 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSequenceEnrollments } from "@/hooks/sequences/useSequenceEnrollments";
 import { statusBadgeVariant, STATUS_LABEL } from "./sequenceHelpers";
+import { formatOptimizedFor } from "./sendTimeHelpers";
+import { Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -39,7 +41,7 @@ export function SequenceEnrollmentsDrawer({ open, onOpenChange, sequenceId }: Pr
                     <code className="text-xs font-mono text-muted-foreground truncate">{e.contact_id}</code>
                     <Badge variant={statusBadgeVariant(e.status)}>{STATUS_LABEL[e.status] ?? e.status}</Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                     <span>Passo {e.current_step}</span>
                     <span>•</span>
                     <span>Iniciado {format(new Date(e.started_at), "dd MMM HH:mm", { locale: ptBR })}</span>
@@ -48,6 +50,12 @@ export function SequenceEnrollmentsDrawer({ open, onOpenChange, sequenceId }: Pr
                         <span>•</span>
                         <span>Próximo: {format(new Date(e.next_action_at), "dd MMM HH:mm", { locale: ptBR })}</span>
                       </>
+                    )}
+                    {e.optimized_for_at && (
+                      <Badge variant="outline" className="gap-1 text-[10px] py-0 h-4">
+                        <Clock className="h-2.5 w-2.5" />
+                        Otimizado para {formatOptimizedFor(e.optimized_for_at)}
+                      </Badge>
                     )}
                   </div>
                 </div>

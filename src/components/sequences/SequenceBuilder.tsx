@@ -3,8 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Inbox } from "lucide-react";
 import { useSequenceSteps, useDeleteSequenceStep, type SequenceStep } from "@/hooks/sequences/useSequenceSteps";
+import { useSequence } from "@/hooks/sequences/useSequences";
 import { SequenceStepCard } from "./SequenceStepCard";
 import { SequenceStepDialog } from "./SequenceStepDialog";
+import { SendTimeOptimizationToggle } from "./SendTimeOptimizationToggle";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export function SequenceBuilder({ sequenceId }: Props) {
+  const { data: sequence } = useSequence(sequenceId);
   const { data: steps, isLoading } = useSequenceSteps(sequenceId);
   const del = useDeleteSequenceStep();
   const [editing, setEditing] = useState<SequenceStep | null>(null);
@@ -38,6 +41,12 @@ export function SequenceBuilder({ sequenceId }: Props) {
 
   return (
     <div className="space-y-3">
+      {sequence && (
+        <SendTimeOptimizationToggle
+          sequenceId={sequence.id}
+          enabled={sequence.send_time_optimization ?? true}
+        />
+      )}
       {(steps ?? []).length === 0 ? (
         <Card className="p-12 text-center">
           <Inbox className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
