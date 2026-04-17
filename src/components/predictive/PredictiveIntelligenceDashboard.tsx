@@ -12,6 +12,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePredictiveIntelligence } from "@/hooks/usePredictiveIntelligence";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { LeadScoreExplainCard } from "@/components/lead-scoring/LeadScoreExplainCard";
 import { cn } from "@/lib/utils";
 
 const formatBRL = (v: number) =>
@@ -215,16 +217,26 @@ export function PredictiveIntelligenceDashboard() {
               ) : (
                 <div className="space-y-2">
                   {data?.win_propensity.top_opportunities.map((o) => (
-                    <div key={o.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-card">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{o.client}</p>
-                        <p className="text-xs text-muted-foreground">{formatBRL(o.amount)}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Progress value={o.probability * 100} className="w-20 h-2" />
-                        <Badge variant="default" className="flex-shrink-0">{Math.round(o.probability * 100)}%</Badge>
-                      </div>
-                    </div>
+                    <Popover key={o.id}>
+                      <PopoverTrigger asChild>
+                        <button className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors text-left">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate flex items-center gap-2">
+                              <Brain className="h-3.5 w-3.5 text-primary shrink-0" />
+                              {o.client}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{formatBRL(o.amount)} · clique para explicação IA</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Progress value={o.probability * 100} className="w-20 h-2" />
+                            <Badge variant="default" className="flex-shrink-0">{Math.round(o.probability * 100)}%</Badge>
+                          </div>
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[420px] p-0" align="end">
+                        <LeadScoreExplainCard saleId={o.id} />
+                      </PopoverContent>
+                    </Popover>
                   ))}
                 </div>
               )}
