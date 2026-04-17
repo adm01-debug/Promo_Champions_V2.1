@@ -1,73 +1,64 @@
 
-Próxima melhoria atômica da fila Sales Engagement: **3/7 — A/B Testing de Steps**.
+Próxima melhoria atômica da fila Sales Engagement: **4/7 — Send Time Optimization**.
 
-## Melhoria 3/7 — A/B Testing de Steps
+## Melhoria 4/7 — Send Time Optimization (STO)
 
 ### Estado atual
-- Sequences Engine v2 (1/7 ✅) e AI Email Composer (2/7 ✅) entregues.
-- Cada `sequence_step` tem 1 versão única de `subject`/`body`. Não há como testar variantes nem identificar copy vencedora.
-- `cadence_ab_tests` (hook `useABTests.ts`) existe para cadências antigas mas **não** está integrado ao motor novo de sequences.
+- 1/7 ✅ Sequences Engine, 2/7 ✅ AI Composer, 3/7 ✅ A/B Testing entregues.
+- O `sequence-runner` dispara passos assim que `next_action_at <= now()`, sem considerar o melhor horário/dia para o contato.
+- Não há histórico de engagement por janela horária para alimentar uma escolha inteligente.
 
 ### Mudanças
 
 **1. Migration**
-- Tabela `sequence_step_variants`:
-  - `id`, `step_id` (FK → sequence_steps), `label` ('A'|'B'), `subject`, `body`, `traffic_weight` int default 50, `created_at`
-  - Unique (step_id, label)
-- Coluna em `sequence_step_executions`: `variant_id uuid null` + `replied_at timestamptz null`
-- View `sequence_variant_performance`:
-  - Agrega por `step_id`+`variant_id`: sent, replied, reply_rate
-- RPC `pick_step_variant(_step_id uuid)`:
-  - SECURITY DEFINER, retorna 1 variante ponderada por `traffic_weight`; fallback para o step base se não houver variantes
-- RPC `declare_step_winner(_step_id uuid, _variant_label text)`:
-  - Atualiza `subject`/`body` do step com o conteúdo da variante vencedora e remove as outras variantes
-- RLS: owner/manager via has_role + ownership do sequence pai
+- Tabela `contact_send_time_profile`:
+  - `id`, `contact_id`, `contact_type` ('lead'|'client'), `hour_of_day` (0-23), `day_of_week` (0-6), `opens` int, `clicks` int, `replies` int, `score` numeric (gerado), `updated_at`
+  - Unique (contact_id, contact_type, hour_of_day, day_of_week)
+- Coluna em `sequences`: `send_time_optimization` boolean default true
+- Coluna em `sequence_enrollments`: `optimized_for_at timestamptz` (próxima janela ótima calculada)
+- View `contact_best_send_window` agregando top 3 janelas por contato
+- RPC `compute_optimal_send_time(_contact_id uuid, _contact_type text, _earliest timestamptz)`:
+  - SECURITY DEFINER, retorna `timestamptz` da próxima janela ótima ≥ `_earliest`
+  - Fallback: dia útil 10h horário local se sem dados
+- RPC `record_engagement_signal(_contact_id, _contact_type, _signal text, _occurred_at timestamptz)`:
+  - Incrementa contadores no perfil para a hora/dia do sinal
+- RLS: leitura para owner/manager via has_role
 
 **2. Edge function `sequence-runner` (update)**
-- Antes do dispatch: chamar `pick_step_variant(step.id)`
-- Se retornar variant: usar `subject`/`body` da variante e gravar `variant_id` na execução
-- Adicionar telemetria: `variant_label` no `engagement` jsonb
+- Quando enrollment.sequence.send_time_optimization = true e canal ∈ {email, linkedin}:
+  - Antes do dispatch, chama `compute_optimal_send_time`
+  - Se janela ótima > now() + 5min e ≤ now() + 24h: adia (`next_action_at = janela`), grava `optimized_for_at`, não envia agora
+  - Caso contrário: envia normalmente
+- Após gravar execução com `replied_at`/`opened_at`: chama `record_engagement_signal`
 
-**3. Edge function `sequence-record-reply` (nova, verify_jwt=true)**
-- Input: `{ enrollment_id, occurred_at? }`
-- Atualiza última `sequence_step_executions` ativa do enrollment com `replied_at = now()`
-- Pausa enrollment (`status='paused'`, `next_action_at=null`) — base para 7/7
-- Retorna `{ ok, execution_id, variant_id }`
+**3. Edge function `sequence-record-reply` (update)**
+- Após registrar reply: chama `record_engagement_signal` com signal='reply'
+- Garante alimentação contínua do perfil
 
 **4. Hooks**
-- `useStepVariants(stepId)` — lista variantes
-- `useUpsertStepVariant()` — criar/editar A ou B
-- `useDeleteStepVariant()`
-- `useStepVariantPerformance(stepId)` — query da view
-- `useDeclareStepWinner()` — chama RPC
+- `useContactSendProfile(contactId, contactType)` — top janelas
+- `useToggleSendTimeOptimization()` — liga/desliga STO na sequência
 
-**5. Componentes UI (≤300L cada)**
-- `StepVariantsManager.tsx`:
-  - Aba dentro do `SequenceStepDialog` (visível apenas para email/linkedin)
-  - 2 cards lado a lado (Variante A / Variante B): subject + body editáveis, slider de traffic_weight (soma=100)
-  - Botão "Compor com IA" reaproveita `AIEmailComposerPanel` por variante
-  - Mostra performance ao vivo: sent, reply rate, badge "Vencedora" se uma já tem ≥30 sends e reply_rate ≥1.5x da outra
-  - Botão "Declarar vencedora e promover" (chama RPC, fecha A/B)
-- `StepVariantBadge.tsx`: chip "A/B" no `SequenceStepCard` quando há variantes ativas
-- `abTestHelpers.ts`: cálculo de significância simples (z-test 2-prop, threshold 90%)
+**5. Componentes UI (≤250L cada)**
+- `SendTimeOptimizationToggle.tsx`: switch no header do `SequenceBuilder` com tooltip explicando STO
+- `BestSendWindowCard.tsx`: mini-card mostrando top 3 janelas do contato (usado no drawer de enrollments)
+- `sendTimeHelpers.ts`: formatação `Seg 14:00`, cálculo de score normalizado
 
-**6. Integração no `SequenceStepDialog`**
-- Tabs: "Conteúdo único" | "Teste A/B"
-- Ao alternar para A/B: cria 2 variantes seedadas com o `subject`/`body` atual
-- Ao alternar de volta: confirma descarte das variantes
+**6. Integração**
+- `SequenceBuilder.tsx`: adiciona toggle no topo
+- `SequenceEnrollmentsDrawer.tsx`: badge "⏰ Otimizado para Ter 10:00" quando `optimized_for_at` está setado
 
 **7. Validação**
-- RLS smoke via `read_query` nas 1 nova tabela + 1 nova view
-- Criar step → ativar A/B → 2 variantes → executar runner manual 5x → verificar distribuição ~50/50 e variant_id gravado
-- Chamar `sequence-record-reply` 2x para variante A → reply_rate sobe → declarar vencedora → step base atualizado, variantes removidas
-- Linter Supabase: zero novos warnings
-- Console limpo, zero erros TS
+- Smoke RLS via `read_query` na nova tabela + view
+- Inserir sinais sintéticos para 1 contato (3 opens em Ter 10h) → `compute_optimal_send_time` retorna terça 10h
+- Criar sequence com STO ON → enroll → runner adia para janela ótima
+- Verificar `optimized_for_at` populado e badge no drawer
+- Linter Supabase: zero novos warnings; console limpo
 
 ### Arquivos
-- Criar: migration nova (tabela + view + 2 RPCs + RLS)
-- Criar: `supabase/functions/sequence-record-reply/index.ts`
-- Criar: `src/hooks/sequences/useStepVariants.ts`
-- Criar: `src/components/sequences/StepVariantsManager.tsx`, `StepVariantBadge.tsx`, `abTestHelpers.ts`
-- Editar: `supabase/functions/sequence-runner/index.ts`, `src/components/sequences/SequenceStepDialog.tsx`, `src/components/sequences/SequenceStepCard.tsx`, `supabase/config.toml`
+- Criar: migration nova (1 tabela + 2 colunas + 1 view + 2 RPCs + RLS)
+- Criar: `src/hooks/sequences/useSendTimeOptimization.ts`
+- Criar: `src/components/sequences/SendTimeOptimizationToggle.tsx`, `BestSendWindowCard.tsx`, `sendTimeHelpers.ts`
+- Editar: `supabase/functions/sequence-runner/index.ts`, `supabase/functions/sequence-record-reply/index.ts`, `src/components/sequences/SequenceBuilder.tsx`, `src/components/sequences/SequenceEnrollmentsDrawer.tsx`, `src/hooks/sequences/useSequences.ts` (expor toggle)
 
-Após esta, sigo automaticamente para 4/7 (Send Time Optimization).
+Após esta, sigo automaticamente para 5/7 (Email Engagement Scoring).
