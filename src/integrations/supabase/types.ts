@@ -6881,6 +6881,109 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduled_report_runs: {
+        Row: {
+          error_message: string | null
+          file_path: string | null
+          finished_at: string | null
+          id: string
+          rows_count: number | null
+          schedule_id: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          error_message?: string | null
+          file_path?: string | null
+          finished_at?: string | null
+          id?: string
+          rows_count?: number | null
+          schedule_id: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          error_message?: string | null
+          file_path?: string | null
+          finished_at?: string | null
+          id?: string
+          rows_count?: number | null
+          schedule_id?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_report_runs_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_reports: {
+        Row: {
+          created_at: string
+          created_by: string
+          day_of_month: number | null
+          day_of_week: number | null
+          enabled: boolean
+          format: string
+          frequency: string
+          hour_of_day: number
+          id: string
+          last_run_at: string | null
+          name: string
+          next_run_at: string | null
+          recipients: string[]
+          report_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          enabled?: boolean
+          format?: string
+          frequency?: string
+          hour_of_day?: number
+          id?: string
+          last_run_at?: string | null
+          name: string
+          next_run_at?: string | null
+          recipients?: string[]
+          report_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          enabled?: boolean
+          format?: string
+          frequency?: string
+          hour_of_day?: number
+          id?: string
+          last_run_at?: string | null
+          name?: string
+          next_run_at?: string | null
+          recipients?: string[]
+          report_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_reports_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       score_change_logs: {
         Row: {
           api_token_id: string | null
