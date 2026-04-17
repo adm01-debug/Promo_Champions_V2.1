@@ -8,6 +8,7 @@ import { formatOptimizedFor } from "./sendTimeHelpers";
 import { Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { EngagementBadgeForContact } from "./EngagementBadgeForContact";
 
 interface Props {
   open: boolean;
