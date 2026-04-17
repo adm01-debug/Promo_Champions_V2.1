@@ -72,6 +72,7 @@ export const ForecastPonderado = lazy(() => import("@/pages/ForecastPonderado"))
 export const PrevisaoDemanda = lazy(() => import("@/pages/PrevisaoDemanda"));
 export const FunnelAnalysis = lazy(() => import("@/pages/FunnelAnalysis"));
 export const FunnelReport = lazy(() => import("@/pages/FunnelReportPage"));
+export const CohortReport = lazy(() => import("@/pages/CohortReportPage"));
 export const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
 export const PriceEvolution = lazy(() => import("@/pages/PriceEvolution"));
 export const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));

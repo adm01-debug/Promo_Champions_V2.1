@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { ReportExecutionResult } from "@/hooks/reporting/useReportExecution";
 import { AlertCircle, Database } from "lucide-react";
 import { FunnelReportView } from "./FunnelReportView";
+import { CohortHeatmap } from "./CohortHeatmap";
 
 interface Props {
   result?: ReportExecutionResult;
@@ -129,6 +130,12 @@ export const ReportPreview = memo(({ result, isLoading, error, vizType, columns 
       {vizType === "funnel" && (
         <div className="pt-2">
           <FunnelReportView defaultTimeframe={30} showTimeframeSelector={false} embedded />
+        </div>
+      )}
+
+      {vizType === "heatmap" && (
+        <div className="pt-2">
+          <CohortHeatmap embedded defaultPeriods={12} defaultMetric="orders" />
         </div>
       )}
 
