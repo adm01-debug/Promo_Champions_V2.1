@@ -1,75 +1,65 @@
 
-User wants to expand semantic search to cover ALL records in the CRM. Current state from codebase recon:
+Closing the AI Generativo Avançado section: **Predictive Scoring com Explainability (SHAP-style)**. Estado atual: existe `lead_scoring` edge function com 5 fatores rígidos e UI com `ScoreRing` — mas zero explicabilidade real (sem contribuição relativa, sem narrativa IA, sem ranking de drivers, sem recomendações acionáveis, sem histórico).
 
-**Já implementado:**
-- Tabela `semantic_index` com pgvector (768d)
-- RPC `match_semantic` + `upsert_semantic_entry`
-- Edge functions: `semantic-index-entity`, `semantic-search-universal`, `semantic-reindex-batch`
-- UI: `SemanticSearchDialog`, `SemanticSearchMount` (Cmd+Shift+F), página `/busca`, item na sidebar
-- 5 entity types suportados: client, lead, deal, activity, call_recording
-- `useIndexEntity` hook fire-and-forget
+## Próxima Melhoria — Predictive Scoring com Explainability
 
-**Gaps reais (o "parcial"):**
-1. **Backfill**: índice está vazio para registros antigos. `semantic-reindex-batch` existe mas não tem UI nem trigger.
-2. **Auto-indexação**: `useIndexEntity` existe mas não é chamado nos hooks de save (createClient, updateLead, createDeal, logActivity, uploadCallRecording). Novos/editados registros não entram no índice.
-3. **Cobertura incompleta**: faltam tipos importantes — `note`, `email_message`, `whatsapp_message`, `proposal`, `playbook`, `task`.
-4. **Admin UI**: sem painel para disparar reindex, ver cobertura (% indexado por tipo), forçar refresh.
-5. **Cmd+K**: palette principal não consulta semantic search.
-6. **Stale detection**: registro editado fica com embedding desatualizado — sem coluna `source_updated_at` para comparar.
+### Estado atual
+- `lead-scoring` retorna 5 fatores brutos (dealValue, stageProgress, timeInPipeline, category, recentActivity) com labels textuais.
+- Dashboard mostra apenas o número do score; não mostra **por que** + **o que fazer**.
+- Sem baseline, sem contribuição percentual, sem direção (positivo/negativo), sem trend.
 
-## Plano — Semantic Search Universal Completa
+### Mudanças
 
-### 1. Migration
-- Adicionar colunas em `semantic_index`: `source_updated_at timestamptz`, `content_hash text` (evita re-embed se conteúdo igual).
-- Expandir CHECK em `entity_type` para incluir: `note`, `email_message`, `whatsapp_message`, `proposal`, `task`, `playbook` (além dos 5 atuais).
-- RPC `get_semantic_coverage()` SECURITY DEFINER → retorna `[{ entity_type, total, indexed, coverage_pct, last_indexed }]` para admin.
-- RPC `mark_entity_for_reindex(_entity_type, _entity_id)` (deleta entry → forçará re-embed).
+**1. Migration**
+- Tabela `lead_score_explanations`: `sale_id`, `score`, `baseline_score` (média da carteira), `top_drivers jsonb` (`[{factor, contribution_pct, direction, value, label}]`), `recommendations jsonb` (`[{action, expected_lift, priority}]`), `narrative text` (resumo IA), `model_version text`, `calculated_at`.
+- Tabela `lead_score_history`: `sale_id`, `score`, `factors jsonb`, `recorded_at` — populada por trigger AFTER UPDATE em `lead_scores`.
+- RPC `get_score_trend(_sale_id, _days)` retorna histórico para sparkline.
+- RLS: vendedor vê próprios via join com `sales.salesperson_id`; admin/manager veem tudo.
 
-### 2. Edge functions
-- **Atualizar `semantic-index-entity`**: adicionar handlers para os novos tipos (note, email, whatsapp, proposal, task, playbook). Calcular `content_hash` (sha256) e pular re-embed se igual + `source_updated_at` igual. Persistir `source_updated_at` da entidade.
-- **Atualizar `semantic-reindex-batch`**: aceitar `{ entity_types?, only_missing?, batch_size? }`, paginar pelas tabelas-alvo, enviar para `semantic-index-entity` em lotes (concorrência 5), retornar contadores. Admin-only via has_role.
-- **Nova `semantic-coverage` (admin only)**: invoca RPC e devolve cobertura por tipo.
+**2. Edge function `predictive-scoring-explain` (`verify_jwt=true`)**
+- Input: `{ sale_id }` ou `{ sale_ids: [...] }` (batch até 50).
+- Carrega deal + factors do `lead_scores` + carteira do vendedor (baseline).
+- **SHAP-style**: para cada fator, calcula `contribution = factor_value - baseline_factor_value`, normaliza para `contribution_pct = |contribution| / sum(|contributions|) * 100`, define `direction` (positivo/negativo).
+- Ordena top 5 drivers, gera 3 recomendações regra-baseadas (ex: "tempo no pipeline > 30d → agendar follow-up; lift esperado +8 pts").
+- Chama Gemini 2.5 Flash para gerar **narrativa em PT-BR** de 2-3 frases explicando score + próximo passo (com tratamento 429/402 e fallback determinístico).
+- Persiste em `lead_score_explanations`.
 
-### 3. Auto-indexação (front-end)
-Adicionar `index(entity_type, id)` fire-and-forget após mutações de sucesso em:
-- `useCreateClient`, `useUpdateClient`
-- `useCreateLead`, `useUpdateLead`
-- `useCreateDeal`, `useUpdateDeal`
-- `useCreateActivity` (já note + activity)
-- `useUploadCallRecording` (após transcrição)
-- Hooks de email/whatsapp messages e proposals (se existirem)
+**3. Trigger**
+- AFTER UPDATE em `lead_scores` insere snapshot em `lead_score_history` (apenas se score mudou).
 
-### 4. UI — Admin Reindex Panel
-- `src/components/admin/SemanticReindexPanel.tsx` (em `/admin`):
-  - Tabela de cobertura: tipo, total, indexado, %, última atualização, botão "Reindexar".
-  - Botão global "Reindexar tudo (faltantes)".
-  - Progress toast durante execução.
-- Hook `useSemanticCoverage()` + `useReindexBatch()`.
+**4. Hooks**
+- `useLeadScoreExplanation(saleId)` — busca da tabela; se ausente/stale → invoca edge.
+- `useScoreTrend(saleId)` — usa RPC para sparkline.
+- `useExplainBatch()` — mutation para reexplicar lote (admin).
 
-### 5. UI — Filtros expandidos
-- `semanticSearchHelpers.ts`: adicionar entradas em `ENTITY_META` para os 6 novos tipos com ícones/cores/rotas.
-- `SemanticSearchDialog`: chips de filtro renderizam dinamicamente a partir do `ENTITY_META`.
+**5. UI (≤300L cada)**
+- `LeadScoreExplainCard.tsx`: card premium com
+  - Score grande + delta vs baseline (ex: "+18 pts acima da média da carteira")
+  - Mini-sparkline de 30d (`useScoreTrend`)
+  - Barras horizontais de contribuição (top 5 drivers, verde/vermelho conforme direção)
+  - Bloco "Por que esse score?" (narrativa IA)
+  - Lista "Próximas ações para subir o score" (recomendações com lift esperado)
+- `ScoreContributionBar.tsx`: barra com label, valor, % contribuição, direção.
+- `ScoreSparkline.tsx`: SVG inline (≤40 linhas) mostrando histórico.
+- `predictiveScoringHelpers.ts`: cores por direção, formatação de contribuição, label PT-BR de fatores.
 
-### 6. Cmd+K integração
-- Localizar `CommandPalette` existente (provavelmente `src/components/search/*` ou `KeyboardShortcuts`).
-- Adicionar seção "Resultados semânticos" quando query ≥ 4 chars (debounced), mostra top 5 + link "Ver todos" → abre `SemanticSearchDialog`.
+**6. Integração**
+- `LeadScoringDashboard`: ao clicar num lead da tabela, abre dialog com `LeadScoreExplainCard`.
+- `DealCard` no Pipeline: badge de score já existe; adicionar tooltip on-hover com top 3 drivers + botão "Explicar".
+- `LeadDetailDrawer` / `ClientDetailDrawer`: nova aba "Score IA" com o card completo.
+- Página `LeadScoring`: header com botão "Reexplicar todos" (admin) que dispara `useExplainBatch`.
 
-### 7. Validação
-- Smoke `supabase--curl_edge_functions`: `semantic-coverage`, `semantic-reindex-batch` (lote pequeno), `semantic-search-universal` em registro recém-indexado.
-- `supabase--read_query`: confere `semantic_index` populando após reindex.
+**7. Validação**
+- `supabase--curl_edge_functions` em sale real → confere `lead_score_explanations` populado com narrativa não vazia.
+- `supabase--read_query`: confere trigger gerando histórico após update simulado.
 - `supabase--linter` zero novos warnings.
 - Console limpo, zero TS errors.
 
 ### Arquivos
-- **Migration**: 1 (colunas + 2 RPCs + check expandido)
-- **Editar**: `supabase/functions/semantic-index-entity/index.ts`, `semantic-reindex-batch/index.ts`
-- **Criar**: `supabase/functions/semantic-coverage/index.ts`
-- **Criar**: `src/hooks/semantic/useSemanticCoverage.ts`, `useReindexBatch.ts`
-- **Criar**: `src/components/admin/SemanticReindexPanel.tsx`
-- **Editar**: `src/components/semantic/semanticSearchHelpers.ts`, `SemanticSearchDialog.tsx`
-- **Editar**: hooks de mutação (clients/leads/deals/activities) — adicionar `index()` em onSuccess
-- **Editar**: CommandPalette principal (a localizar) — seção semantic
-- **Editar**: `src/pages/Admin.tsx` (ou equivalente) — montar painel
-- **Editar**: `supabase/config.toml` (nova função)
+- **Migration**: 1 (2 tabelas + 1 RPC + 1 trigger + RLS)
+- **Criar**: `supabase/functions/predictive-scoring-explain/index.ts`
+- **Criar**: `src/hooks/scoring/useLeadScoreExplanation.ts`, `useScoreTrend.ts`, `useExplainBatch.ts`
+- **Criar**: `src/components/lead-scoring/LeadScoreExplainCard.tsx`, `ScoreContributionBar.tsx`, `ScoreSparkline.tsx`, `predictiveScoringHelpers.ts`
+- **Editar**: `src/components/lead-scoring/LeadScoringDashboard.tsx` (dialog explain), `src/components/pipeline/DealCard.tsx` (tooltip), `src/components/leads/LeadDetailDrawer.tsx`, `src/components/clients/ClientDetailDrawer.tsx`, `src/pages/LeadScoring.tsx`, `supabase/config.toml` (nova função)
 
-Após esta entrega, sigo automaticamente para a próxima atômica de AI Generativo Avançado: **Predictive Scoring com Explainability** — fechando 10/10.
+Após esta entrega, a seção **AI Generativo Avançado** fica 10/10 (todos os 7 itens do gap #14 completos: NLQ, Email Composer, Meeting Summary, Semantic Search Universal, AI Agents, Next Step Suggestions e Predictive Scoring com Explainability). Sigo automaticamente para a próxima seção crítica do GAPS_CLASSE_MUNDIAL: **Sales Engagement Avançado** (#2) começando por Sequences multicanal com A/B testing.
