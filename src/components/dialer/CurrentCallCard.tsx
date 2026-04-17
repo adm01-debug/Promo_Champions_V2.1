@@ -36,6 +36,22 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
     },
   });
 
+  const { data: contactPhone } = useQuery({
+    queryKey: ['sale-primary-phone', saleId],
+    enabled: !!saleId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('account_contacts')
+        .select('phone')
+        .eq('sale_id', saleId)
+        .not('phone', 'is', null)
+        .order('is_primary', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return (data?.phone as string | null) ?? null;
+    },
+  });
+
   const { data: history } = useCallLogsForSale(saleId);
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -77,7 +93,8 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
           </div>
         )}
 
-        <div className="flex gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-2">
+          <ClickToCallButton toNumber={contactPhone} saleId={saleId} queueItemId={itemId} />
           <Button variant="outline" size="sm" onClick={() => snooze.mutate({ item_id: itemId, snooze_minutes: 60 })}>
             <Clock className="h-4 w-4 mr-1" /> Adiar 1h
           </Button>
