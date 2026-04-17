@@ -4310,6 +4310,88 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_score_explanations: {
+        Row: {
+          baseline_score: number
+          calculated_at: string
+          created_at: string
+          id: string
+          model_version: string
+          narrative: string | null
+          recommendations: Json
+          sale_id: string
+          score: number
+          top_drivers: Json
+          updated_at: string
+        }
+        Insert: {
+          baseline_score?: number
+          calculated_at?: string
+          created_at?: string
+          id?: string
+          model_version?: string
+          narrative?: string | null
+          recommendations?: Json
+          sale_id: string
+          score: number
+          top_drivers?: Json
+          updated_at?: string
+        }
+        Update: {
+          baseline_score?: number
+          calculated_at?: string
+          created_at?: string
+          id?: string
+          model_version?: string
+          narrative?: string | null
+          recommendations?: Json
+          sale_id?: string
+          score?: number
+          top_drivers?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_score_explanations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_score_history: {
+        Row: {
+          factors: Json
+          id: string
+          recorded_at: string
+          sale_id: string
+          score: number
+        }
+        Insert: {
+          factors?: Json
+          id?: string
+          recorded_at?: string
+          sale_id: string
+          score: number
+        }
+        Update: {
+          factors?: Json
+          id?: string
+          recorded_at?: string
+          sale_id?: string
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_score_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_scores: {
         Row: {
           calculated_at: string
@@ -9862,6 +9944,13 @@ export type Database = {
           period: string
           raw_pipeline: number
           weighted_revenue: number
+        }[]
+      }
+      get_score_trend: {
+        Args: { _days?: number; _sale_id: string }
+        Returns: {
+          recorded_at: string
+          score: number
         }[]
       }
       get_semantic_coverage: {
