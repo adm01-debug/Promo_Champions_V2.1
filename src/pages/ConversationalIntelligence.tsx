@@ -12,6 +12,8 @@ import { Mic, Sparkles, MessageSquare, Target, AlertCircle, TrendingUp, Lightbul
 import { useCallRecordings, useCallInsight, useCreateRecordingWithAnalysis, useDeleteRecording } from "@/hooks/conversational/useCallRecordings";
 import { CallRecordingUploader } from "@/components/conversational/CallRecordingUploader";
 import { CallRecordingPlayer } from "@/components/conversational/CallRecordingPlayer";
+import { TranscribeButton } from "@/components/conversational/TranscribeButton";
+import { TranscriptViewer } from "@/components/conversational/TranscriptViewer";
 import { Helmet } from "react-helmet-async";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -164,11 +166,32 @@ export default function ConversationalIntelligence() {
               )}
             </CardHeader>
             <CardContent className="space-y-3">
-              {selected && (
-                <CallRecordingPlayer
-                  audioPath={recordings?.find((r) => r.id === selected)?.audio_url ?? null}
-                />
-              )}
+              {selected && (() => {
+                const rec = recordings?.find((r) => r.id === selected);
+                if (!rec) return null;
+                return (
+                  <>
+                    <CallRecordingPlayer audioPath={rec.audio_url ?? null} />
+                    {rec.audio_url && !rec.transcript && (
+                      <div className="flex flex-col items-center gap-2 py-3 border border-dashed border-border/40 rounded-lg">
+                        <p className="text-xs text-muted-foreground text-center px-3">
+                          {rec.transcription_error
+                            ? `Falha: ${rec.transcription_error}`
+                            : "Sem transcrição ainda"}
+                        </p>
+                        <TranscribeButton recordingId={rec.id} status={rec.status} />
+                      </div>
+                    )}
+                    {rec.transcript && (
+                      <TranscriptViewer
+                        transcript={rec.transcript}
+                        language={rec.transcript_language}
+                        transcribedAt={rec.transcribed_at}
+                      />
+                    )}
+                  </>
+                );
+              })()}
               {!selected && <p className="text-xs text-muted-foreground text-center py-8">Selecione uma call para ver os insights.</p>}
               {selected && !insight && <Skeleton className="h-40 w-full" />}
               {insight && (
