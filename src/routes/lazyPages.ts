@@ -111,6 +111,7 @@ export const Bitrix24 = lazy(() => import("@/pages/Bitrix24"));
 export const Assistente = lazy(() => import("@/pages/Assistente"));
 export const SmartSearch = lazy(() => import("@/pages/SmartSearch"));
 export const AskAnything = lazy(() => import("@/pages/AskAnything"));
+export const SemanticSearch = lazy(() => import("@/pages/SemanticSearch"));
 export const Notificacoes = lazy(() => import("@/pages/Notificacoes"));
 export const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
 
