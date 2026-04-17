@@ -1,51 +1,58 @@
 
-Próxima melhoria atômica da fila Reporting & BI: **4/7 — Cohort Heatmap Visual**.
+Próxima melhoria atômica da fila Reporting & BI: **5/7 — Scheduled Reports Robusto**.
 
-## Melhoria 4/7 — Cohort Heatmap Visual
+## Melhoria 5/7 — Scheduled Reports Robusto
 
 ### Estado atual
-- Tabela `cohort_analyses` já criada na migration 1/7.
-- RPC `compute_cohort_retention(_cohort_id, _periods)` declarada mas precisa ser validada/usada.
-- Existe módulo parcial de cohort em `retention-and-ltv-modules` (texto/tabela), sem heatmap visual.
-- `ReportPreview` declara `viz_type: "heatmap"` mas não trata.
+- Página `/scheduled-reports` existe mas é básica (sem cron real, sem entrega).
+- Custom Report Builder gera relatórios on-demand via `report-builder-execute`.
+- Sem storage de snapshots, sem e-mail, sem histórico de execuções.
 
 ### Mudanças
 
-**1. Hook `useCohortRetention.ts`**
-- Query Supabase: agrupa `clients` por mês de `created_at` (cohort) e cruza com `sales.created_at` para calcular % de retenção por mês relativo (M0..M11).
-- Retorna matriz `{ cohortLabel, cohortSize, retention: number[] }[]`.
-- Parâmetro: `periods` (default 12), `metric` ('orders'|'revenue').
-- staleTime 5min.
+**1. Migration SQL**
+- Tabela `scheduled_reports`:
+  - `id`, `created_by`, `report_id` (FK custom_reports), `name`, `cron_expression` (text simples: daily/weekly/monthly + hora), `recipients` (text[] emails), `format` ('csv'|'pdf'|'json'), `enabled` (bool), `last_run_at`, `next_run_at`, `created_at`
+- Tabela `scheduled_report_runs`:
+  - `id`, `schedule_id`, `started_at`, `finished_at`, `status` ('success'|'failed'), `rows_count`, `file_path`, `error_message`
+- RLS: owner-only (created_by = auth.uid()) + Manager pode ver todos
+- Storage bucket `report-snapshots` (privado), policies por owner
+- Trigger `compute_next_run_at` antes de insert/update
 
-**2. Helpers `cohortHelpers.ts`**
-- `buildCohortMatrix(clients, sales, periods)` — pura, testável.
-- `getHeatmapColor(value, max)` — interpola opacidade do primary (0.05 → 1.0).
-- `formatCohortLabel(date)` — "Jan/24".
+**2. Edge function `scheduled-reports-runner` (cron a cada 5min)**
+- Busca `scheduled_reports` onde `enabled=true` e `next_run_at <= now()`
+- Para cada: chama `report-builder-execute` internamente, gera CSV/JSON, faz upload no bucket, registra `scheduled_report_runs`, atualiza `last_run_at`/`next_run_at`
+- Envia e-mail (via `send-email` se existir, ou Resend) com link signed-url do snapshot
+- Logs estruturados, retry com backoff
 
-**3. Componente `CohortHeatmap.tsx` (≤300L)**
-- Header: KPIs (Cohorts ativas, Retenção média M1, M3, M6) com CountUp.
-- Grid responsivo: linhas = cohorts, colunas = M0..M11.
-- Cada célula: cor proporcional + tooltip com % e contagem absoluta.
-- Animação Framer stagger por linha.
-- Selector: período (6/12/24 meses), métrica (pedidos/receita).
-- Skeleton + empty state.
-- Sora títulos, Inter body, tokens semânticos.
+**3. Edge function `scheduled-report-trigger` (manual)**
+- Endpoint POST para disparar execução imediata de um schedule (botão "Executar agora")
 
-**4. Página `/relatorios/cohort`**
-- `CohortReportPage.tsx` com Helmet + PageTransition.
-- Lazy load + rota Manager-only.
-- Entrada no sidebar (Gestão > Análises).
+**4. Cron setup**
+- `pg_cron` job que invoca `scheduled-reports-runner` a cada 5 minutos via pg_net
 
-**5. Integração no Custom Report Builder**
-- `ReportPreview.tsx`: quando `viz_type === "heatmap"`, renderizar `<CohortHeatmap embedded />`.
+**5. UI — refatorar `/scheduled-reports`**
+- Lista de schedules com toggle enabled, próxima execução, última execução, status badge
+- Modal "Novo agendamento": seleciona report existente do builder, frequência (diário/semanal/mensal), hora, destinatários (chips de email), formato
+- Drawer de histórico por schedule: lista `scheduled_report_runs` com download do snapshot
+- Botão "Executar agora" → chama trigger
+- Sora títulos, Inter body, tokens semânticos, animação Framer
 
-**6. Validação**
-- Smoke visual: navegar `/relatorios/cohort`.
-- Trocar período/métrica e validar refetch.
-- Console limpo.
+**6. Hooks**
+- `useScheduledReports.ts` — list/create/update/delete/toggle
+- `useScheduledReportRuns.ts` — histórico por schedule
+- `useTriggerScheduledReport.ts` — mutation para executar
+
+**7. Validação**
+- Smoke test edge functions via `curl_edge_functions`
+- Criar schedule diário, executar manual, verificar arquivo no storage e e-mail
+- Verificar RLS via `read_query`
 
 ### Arquivos
-- Criar: `src/hooks/reporting/useCohortRetention.ts`, `src/components/reporting/cohortHelpers.ts`, `src/components/reporting/CohortHeatmap.tsx`, `src/pages/CohortReportPage.tsx`.
-- Editar: `src/components/reporting/ReportPreview.tsx`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`.
+- Migration: nova tabela + RLS + bucket + cron
+- Criar: `supabase/functions/scheduled-reports-runner/index.ts`, `supabase/functions/scheduled-report-trigger/index.ts`
+- Criar: `src/hooks/reporting/useScheduledReports.ts`, `useScheduledReportRuns.ts`, `useTriggerScheduledReport.ts`
+- Criar: `src/components/reporting/ScheduledReportFormDialog.tsx`, `ScheduledReportRunsDrawer.tsx`, `scheduledReportHelpers.ts`
+- Editar: `src/pages/ScheduledReportsPage.tsx`
 
-Após esta, sigo automaticamente para 5/7 (Scheduled robusto), 6/7 (Embedded), 7/7 (widget dashboard + E2E).
+Após esta, sigo automaticamente para 6/7 (Embedded Analytics) e 7/7 (widget custom_report no Dashboard Builder + E2E).
