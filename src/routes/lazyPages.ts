@@ -112,6 +112,7 @@ export const Assistente = lazy(() => import("@/pages/Assistente"));
 export const SmartSearch = lazy(() => import("@/pages/SmartSearch"));
 export const AskAnything = lazy(() => import("@/pages/AskAnything"));
 export const SemanticSearch = lazy(() => import("@/pages/SemanticSearch"));
+export const AIAgents = lazy(() => import("@/pages/AIAgents"));
 export const Notificacoes = lazy(() => import("@/pages/Notificacoes"));
 export const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
 

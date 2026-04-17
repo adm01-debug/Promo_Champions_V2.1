@@ -85,6 +85,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
+      { title: "Agentes IA", url: "/agentes", icon: Bot },
     ],
   },
 ];
@@ -121,6 +122,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
+      { title: "Agentes IA", url: "/agentes", icon: Bot },
     ],
   },
 ];
@@ -132,6 +134,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
+      { title: "Agentes IA", url: "/agentes", icon: Bot },
       { title: "Análise de Funil", url: "/funil", icon: Filter },
       { title: "Relatório de Funil", url: "/relatorios/funil", icon: Filter },
       { title: "Cohort Heatmap", url: "/relatorios/cohort", icon: LayoutGrid },
