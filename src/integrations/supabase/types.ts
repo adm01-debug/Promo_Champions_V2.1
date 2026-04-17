@@ -1656,6 +1656,60 @@ export type Database = {
           },
         ]
       }
+      call_logs: {
+        Row: {
+          created_at: string
+          disposition: string
+          duration_seconds: number | null
+          id: string
+          next_action_at: string | null
+          notes: string | null
+          outcome: string | null
+          owner_id: string
+          queue_item_id: string | null
+          sale_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          disposition: string
+          duration_seconds?: number | null
+          id?: string
+          next_action_at?: string | null
+          notes?: string | null
+          outcome?: string | null
+          owner_id: string
+          queue_item_id?: string | null
+          sale_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          disposition?: string
+          duration_seconds?: number | null
+          id?: string
+          next_action_at?: string | null
+          notes?: string | null
+          outcome?: string | null
+          owner_id?: string
+          queue_item_id?: string | null
+          sale_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_logs_queue_item_id_fkey"
+            columns: ["queue_item_id"]
+            isOneToOne: false
+            referencedRelation: "dialer_queue_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_recordings: {
         Row: {
           action_items: Json
@@ -3283,6 +3337,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dialer_queue_items: {
+        Row: {
+          added_at: string
+          completed_at: string | null
+          id: string
+          queue_id: string
+          queue_position: number
+          sale_id: string
+          score: number
+          snooze_until: string | null
+          status: string
+        }
+        Insert: {
+          added_at?: string
+          completed_at?: string | null
+          id?: string
+          queue_id: string
+          queue_position?: number
+          sale_id: string
+          score?: number
+          snooze_until?: string | null
+          status?: string
+        }
+        Update: {
+          added_at?: string
+          completed_at?: string | null
+          id?: string
+          queue_id?: string
+          queue_position?: number
+          sale_id?: string
+          score?: number
+          snooze_until?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dialer_queue_items_queue_id_fkey"
+            columns: ["queue_id"]
+            isOneToOne: false
+            referencedRelation: "dialer_queues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dialer_queue_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dialer_queues: {
+        Row: {
+          created_at: string
+          filter: Json
+          id: string
+          is_active: boolean
+          last_built_at: string | null
+          name: string
+          owner_id: string
+          priority_strategy: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          filter?: Json
+          id?: string
+          is_active?: boolean
+          last_built_at?: string | null
+          name: string
+          owner_id: string
+          priority_strategy?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          filter?: Json
+          id?: string
+          is_active?: boolean
+          last_built_at?: string | null
+          name?: string
+          owner_id?: string
+          priority_strategy?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       digital_signatures: {
         Row: {
@@ -10345,6 +10486,16 @@ export type Database = {
       }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
+      get_dialer_queue_stats: {
+        Args: { _queue_id: string }
+        Returns: {
+          calling_count: number
+          done_count: number
+          pending_count: number
+          skipped_count: number
+          snoozed_count: number
+        }[]
+      }
       get_embedded_report_by_token: {
         Args: { _token: string }
         Returns: {
@@ -10524,6 +10675,15 @@ export type Database = {
           id: string
           metadata: Json
           similarity: number
+        }[]
+      }
+      next_dialer_item: {
+        Args: { _queue_id: string }
+        Returns: {
+          item_id: string
+          queue_position: number
+          sale_id: string
+          score: number
         }[]
       }
       pick_step_variant: {

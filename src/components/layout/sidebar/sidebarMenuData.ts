@@ -61,6 +61,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Send Time IA", url: "/engagement/send-time", icon: CalendarClock },
       { title: "Email Scoring", url: "/engagement/email-scoring", icon: Flame },
       { title: "ABM (Contas)", url: "/engagement/abm", icon: Building2 },
+      { title: "Power Dialer", url: "/engagement/dialer", icon: Phone },
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Conv. Intelligence", url: "/conversational-intelligence", icon: Sparkles },
