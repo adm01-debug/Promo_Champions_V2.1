@@ -1744,6 +1744,7 @@ export type Database = {
           transcribed_at: string | null
           transcript: string | null
           transcript_language: string | null
+          transcript_tsv: unknown
           transcription_error: string | null
           turns_count: number | null
           updated_at: string
@@ -1778,6 +1779,7 @@ export type Database = {
           transcribed_at?: string | null
           transcript?: string | null
           transcript_language?: string | null
+          transcript_tsv?: unknown
           transcription_error?: string | null
           turns_count?: number | null
           updated_at?: string
@@ -1812,6 +1814,7 @@ export type Database = {
           transcribed_at?: string | null
           transcript?: string | null
           transcript_language?: string | null
+          transcript_tsv?: unknown
           transcription_error?: string | null
           turns_count?: number | null
           updated_at?: string
@@ -2675,6 +2678,87 @@ export type Database = {
           starts_at?: string
           status?: string
           xp_multiplier?: number
+        }
+        Relationships: []
+      }
+      competitor_mentions: {
+        Row: {
+          battle_card_id: string | null
+          competitor_id: string | null
+          competitor_name: string
+          context_snippet: string | null
+          created_at: string
+          id: string
+          recording_id: string
+          timestamp_sec: number | null
+        }
+        Insert: {
+          battle_card_id?: string | null
+          competitor_id?: string | null
+          competitor_name: string
+          context_snippet?: string | null
+          created_at?: string
+          id?: string
+          recording_id: string
+          timestamp_sec?: number | null
+        }
+        Update: {
+          battle_card_id?: string | null
+          competitor_id?: string | null
+          competitor_name?: string
+          context_snippet?: string | null
+          created_at?: string
+          id?: string
+          recording_id?: string
+          timestamp_sec?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitor_mentions_competitor_id_fkey"
+            columns: ["competitor_id"]
+            isOneToOne: false
+            referencedRelation: "competitors_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitor_mentions_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitors_registry: {
+        Row: {
+          aliases: string[]
+          created_at: string
+          default_battle_card_id: string | null
+          id: string
+          is_active: boolean
+          name: string
+          owner_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          aliases?: string[]
+          created_at?: string
+          default_battle_card_id?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          owner_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aliases?: string[]
+          created_at?: string
+          default_battle_card_id?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          owner_id?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -10799,6 +10883,19 @@ export type Database = {
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
       schedule_next_qbrs: { Args: never; Returns: number }
+      search_call_library: {
+        Args: { _limit?: number; _query: string }
+        Returns: {
+          duration_seconds: number
+          id: string
+          rank: number
+          recorded_at: string
+          salesperson_id: string
+          snippet: string
+          status: string
+          title: string
+        }[]
+      }
       search_products_semantic: {
         Args: { _keywords: string[]; _limit?: number; _query?: string }
         Returns: {

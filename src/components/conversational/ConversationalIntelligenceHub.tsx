@@ -10,6 +10,8 @@ import { Headphones, Search, Mic, MessageSquare, TrendingUp, Clock, AlertTriangl
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { RecordingSummaryDrawer, useRecordingSummaryDrawer } from "./RecordingSummaryDrawer";
+import { CallLibrarySearch } from "./CallLibrarySearch";
+import { CompetitorsAdminDialog } from "./CompetitorsAdminDialog";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -45,13 +47,16 @@ export const ConversationalIntelligenceHub = () => {
             Insights de IA sobre suas chamadas: sentimento, talk ratio, objeções e próximos passos
           </p>
         </div>
-        <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(Number(v))}>
-          <TabsList>
-            <TabsTrigger value="7">7 dias</TabsTrigger>
-            <TabsTrigger value="30">30 dias</TabsTrigger>
-            <TabsTrigger value="90">90 dias</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2 flex-wrap">
+          <CompetitorsAdminDialog />
+          <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(Number(v))}>
+            <TabsList>
+              <TabsTrigger value="7">7 dias</TabsTrigger>
+              <TabsTrigger value="30">30 dias</TabsTrigger>
+              <TabsTrigger value="90">90 dias</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
       {isLoading ? (
@@ -140,10 +145,22 @@ export const ConversationalIntelligenceHub = () => {
 
           <Card>
             <CardHeader>
+              <CardTitle>Biblioteca de chamadas (Full-text Search)</CardTitle>
+              <CardDescription>
+                Busca semântica nos transcripts — encontre objeções, concorrentes e tópicos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CallLibrarySearch onSelectRecording={drawer.open} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div>
-                  <CardTitle>Biblioteca de chamadas</CardTitle>
-                  <CardDescription>Pesquise por título ou resumo gerado por IA</CardDescription>
+                  <CardTitle>Todas as chamadas</CardTitle>
+                  <CardDescription>Filtro rápido por título ou resumo</CardDescription>
                 </div>
                 <div className="relative w-full sm:w-72">
                   <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />

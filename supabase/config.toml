@@ -165,3 +165,6 @@ verify_jwt = false
 [functions.twilio-call-status]
 verify_jwt = false
 
+[functions.detect-competitor-mentions]
+verify_jwt = true
+

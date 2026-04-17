@@ -29,6 +29,14 @@ export function useTranscribeRecording() {
           })
           .then((res) => {
             if (res && !res.error) qc.invalidateQueries({ queryKey: ["call-recordings"] });
+            return supabase.functions.invoke("detect-competitor-mentions", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) {
+              qc.invalidateQueries({ queryKey: ["competitor-mentions", recId] });
+            }
           });
       }
     },
