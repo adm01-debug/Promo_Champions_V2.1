@@ -1,44 +1,58 @@
 
-Reporting & BI fechou em 7/7 ✅. Próxima fila prioritária do GAPS doc: **Sales Engagement Avançado (gap 🔴 #2)** — fundação do Q1 do roadmap. Vou propor uma fila atômica de 7 melhorias, e na aprovação executo **a 1ª**.
+Próxima melhoria atômica da fila Sales Engagement: **2/7 — AI Email Composer**.
 
-## Fila Sales Engagement 10/10 (7 melhorias)
+## Melhoria 2/7 — AI Email Composer
 
-| # | Melhoria | Impacto |
-|---|----------|---------|
-| 1 | **Sequences Engine v2** — multistep multicanal (email/whatsapp/call/linkedin), pause-on-reply, exit conditions | 🔴 Crítico |
-| 2 | **AI Email Composer** — geração 1-to-many com variáveis de contexto + tom configurável | 🔴 Crítico |
-| 3 | **A/B Testing de Steps** — 2 variantes por step, winner por reply rate | 🟠 Alto |
-| 4 | **Send Time Optimization** — IA escolhe melhor horário/dia por contato com base em engagement histórico | 🟠 Alto |
-| 5 | **Email Engagement Scoring** — open + click + reply + meeting booked → score consolidado por contato | 🟠 Alto |
-| 6 | **Account-Based Engagement** — orquestração multi-contato por conta com "do not contact twice" | 🟠 Alto |
-| 7 | **Reply Detection + Auto-Pause** — webhook inbound classifica reply (interessado/objeção/oof) e pausa cadência + E2E final | 🔴 Crítico |
+### Estado atual
+- Sequences Engine v2 entregue (1/7 ✅) com passos de e-mail tendo `subject`/`body` digitados manualmente.
+- `SequenceStepDialog` exige redação manual; sem variáveis dinâmicas, sem geração assistida, sem ajuste de tom.
+- Já existe Lovable AI Gateway disponível (`google/gemini-2.5-flash`) para geração sem API key extra.
 
-### Próxima execução — Melhoria 1/7: Sequences Engine v2
+### Mudanças
 
-**Estado atual:** Existe `/follow-up` com cadência básica por temperatura, mas sem motor de sequences multistep configurável, sem pause-on-reply, sem exit conditions declarativas.
+**1. Edge function `ai-email-composer` (verify_jwt = true)**
+- Input: `{ contact_context: { name, company, role, industry, last_interaction }, goal: 'intro'|'follow_up'|'meeting'|'reactivation'|'breakup', tone: 'formal'|'casual'|'consultivo'|'direto', language: 'pt-BR'|'en', length: 'short'|'medium'|'long', custom_instructions?: string }`
+- Chama `https://ai.gateway.lovable.dev/v1/chat/completions` com `google/gemini-2.5-flash`
+- System prompt: especialista em copywriting B2B, PT-BR padrão, retorna JSON `{ subject, body, variables_used: string[] }`
+- Suporta variáveis Liquid-like: `{{nome}}`, `{{empresa}}`, `{{cargo}}`, `{{ultima_interacao}}`
+- Trata 429 (rate limit) e 402 (créditos) com mensagens claras
+- Logs estruturados, CORS via `_shared/cors.ts`
 
-**Mudanças:**
-1. **Migration**:
-   - `sequences` (id, owner, name, description, channel_mix text[], enabled, created_at)
-   - `sequence_steps` (id, sequence_id, order, channel ['email'|'whatsapp'|'call'|'linkedin'], delay_days, delay_hours, template_id, conditions jsonb)
-   - `sequence_enrollments` (id, sequence_id, contact_id, contact_type ['lead'|'client'], status ['active'|'paused'|'completed'|'exited'], current_step, started_at, last_executed_at, exit_reason)
-   - `sequence_step_executions` (id, enrollment_id, step_id, executed_at, status ['sent'|'failed'|'skipped'], engagement jsonb)
-   - RLS owner + manager
-2. **Edge function `sequence-runner`** (cron 5min): busca enrollments com `next_action_at <= now()`, executa step (envia email via send-email, agenda call task, etc.), avança current_step, registra execution, marca completed se último step
-3. **Edge function `sequence-enroll`**: enroll em massa (lista de contatos), valida não-duplicação
-4. **UI `/sequences`**:
-   - Lista de sequences com status/enrollments ativos
-   - Builder visual: timeline vertical de steps (channel + delay + template), drag para reordenar
-   - Drawer de enrollments por sequence com status e timeline de execuções
-5. **Hooks**: `useSequences`, `useSequenceSteps`, `useSequenceEnrollments`, `useEnrollContacts`
-6. **Validação**: smoke RLS via read_query, criar sequence 3-step, enroll 1 lead, executar manual, verificar execuções
+**2. Hook `useAIEmailComposer.ts`**
+- `useGenerateEmail()` mutation invocando a edge function
+- Loading/error states, toast de feedback
 
-**Arquivos:**
-- Migration nova
-- `supabase/functions/sequence-runner/index.ts`, `sequence-enroll/index.ts`
-- `src/pages/SequencesPage.tsx`
-- `src/components/sequences/SequenceBuilder.tsx`, `SequenceStepCard.tsx`, `SequenceEnrollmentsDrawer.tsx`, `sequenceHelpers.ts`
-- `src/hooks/sequences/useSequences.ts`, `useSequenceSteps.ts`, `useSequenceEnrollments.ts`, `useEnrollContacts.ts`
-- Editar: `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, sidebar config
+**3. Componente `AIEmailComposerPanel.tsx`** (≤250L)
+- Painel lateral expansível dentro do `SequenceStepDialog`
+- Inputs: select de objetivo (5 opções), tom (4 opções), idioma, tamanho, textarea de instruções customizadas
+- Botão "Gerar com IA" → preenche `subject` e `body` do passo
+- Preview com highlight de variáveis detectadas
+- Botão "Regenerar" + "Aceitar"
+- Animação de skeleton durante geração
 
-Após aprovação executo 1/7 e sigo automaticamente até 7/7 (modo autônomo já confirmado pelo usuário).
+**4. Variable picker (`EmailVariablesHelper.tsx`)**
+- Chips clicáveis abaixo do textarea de body para inserir `{{nome}}`, `{{empresa}}`, etc. no cursor
+- Lista compacta das 6 variáveis padrão suportadas
+
+**5. Integração no `SequenceStepDialog`**
+- Quando `channel === "email" || channel === "linkedin"`: mostra botão "✨ Compor com IA" ao lado do textarea
+- Abre o painel `AIEmailComposerPanel`
+- Variáveis disponíveis no body via `EmailVariablesHelper`
+
+**6. Resolução de variáveis no runner**
+- Ajustar `sequence-runner` para fazer lookup do contato (lead/client) antes do dispatch e substituir `{{nome}}`, `{{empresa}}`, `{{cargo}}` no `subject`/`body` antes de registrar a execução
+- Helper `resolveTemplateVariables()` no edge function
+
+**7. Validação**
+- Smoke test `ai-email-composer` via `curl_edge_functions` (3 tons, 2 objetivos)
+- Criar passo de e-mail via UI e gerar conteúdo IA
+- Verificar substituição de variáveis em uma execução manual do runner
+- Console limpo, zero erros
+
+### Arquivos
+- Criar: `supabase/functions/ai-email-composer/index.ts`
+- Criar: `src/hooks/sequences/useAIEmailComposer.ts`
+- Criar: `src/components/sequences/AIEmailComposerPanel.tsx`, `EmailVariablesHelper.tsx`, `emailComposerHelpers.ts`
+- Editar: `src/components/sequences/SequenceStepDialog.tsx`, `supabase/functions/sequence-runner/index.ts`, `supabase/config.toml` (registrar nova função)
+
+Após esta, sigo automaticamente para 3/7 (A/B Testing de Steps).
