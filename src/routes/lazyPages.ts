@@ -71,6 +71,7 @@ export const ROIDashboard = lazy(() => import("@/pages/ROIDashboard"));
 export const ForecastPonderado = lazy(() => import("@/pages/ForecastPonderado"));
 export const PrevisaoDemanda = lazy(() => import("@/pages/PrevisaoDemanda"));
 export const FunnelAnalysis = lazy(() => import("@/pages/FunnelAnalysis"));
+export const FunnelReport = lazy(() => import("@/pages/FunnelReportPage"));
 export const TopProductsRanking = lazy(() => import("@/pages/TopProductsRanking"));
 export const PriceEvolution = lazy(() => import("@/pages/PriceEvolution"));
 export const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
