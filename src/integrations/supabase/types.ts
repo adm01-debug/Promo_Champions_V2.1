@@ -7250,8 +7250,10 @@ export type Database = {
           error_message: string | null
           executed_at: string
           id: string
+          replied_at: string | null
           status: string
           step_id: string
+          variant_id: string | null
         }
         Insert: {
           channel?: string | null
@@ -7261,8 +7263,10 @@ export type Database = {
           error_message?: string | null
           executed_at?: string
           id?: string
+          replied_at?: string | null
           status: string
           step_id: string
+          variant_id?: string | null
         }
         Update: {
           channel?: string | null
@@ -7272,8 +7276,10 @@ export type Database = {
           error_message?: string | null
           executed_at?: string
           id?: string
+          replied_at?: string | null
           status?: string
           step_id?: string
+          variant_id?: string | null
         }
         Relationships: [
           {
@@ -7285,6 +7291,58 @@ export type Database = {
           },
           {
             foreignKeyName: "sequence_step_executions_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_step_executions_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_step_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_step_executions_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_variant_performance"
+            referencedColumns: ["variant_id"]
+          },
+        ]
+      }
+      sequence_step_variants: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          label: string
+          step_id: string
+          subject: string | null
+          traffic_weight: number
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          label: string
+          step_id: string
+          subject?: string | null
+          traffic_weight?: number
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          label?: string
+          step_id?: string
+          subject?: string | null
+          traffic_weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_step_variants_step_id_fkey"
             columns: ["step_id"]
             isOneToOne: false
             referencedRelation: "sequence_steps"
@@ -8997,6 +9055,25 @@ export type Database = {
         }
         Relationships: []
       }
+      sequence_variant_performance: {
+        Row: {
+          label: string | null
+          replied: number | null
+          reply_rate: number | null
+          sent: number | null
+          step_id: string | null
+          variant_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_step_variants_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_league_weekly_xp: {
@@ -9092,6 +9169,10 @@ export type Database = {
       count_reset_requests_24h: {
         Args: { check_email: string }
         Returns: number
+      }
+      declare_step_winner: {
+        Args: { _step_id: string; _variant_label: string }
+        Returns: boolean
       }
       detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
@@ -9259,6 +9340,15 @@ export type Database = {
         Returns: undefined
       }
       mark_all_notifications_read: { Args: never; Returns: number }
+      pick_step_variant: {
+        Args: { _step_id: string }
+        Returns: {
+          body: string
+          label: string
+          subject: string
+          variant_id: string
+        }[]
+      }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
       schedule_next_qbrs: { Args: never; Returns: number }
@@ -9321,6 +9411,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      user_owns_sequence_step: { Args: { _step_id: string }; Returns: boolean }
       validate_api_token: {
         Args: { p_token: string }
         Returns: {
