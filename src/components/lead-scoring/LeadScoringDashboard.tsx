@@ -243,6 +243,17 @@ export function LeadScoringDashboard() {
                       </Tooltip>
                     )}
 
+                    {/* Explain IA */}
+                    {lead.bestDealId && (
+                      <button
+                        onClick={() => setExplainSaleId(lead.bestDealId!)}
+                        className="p-1.5 rounded-md hover:bg-primary/10 shrink-0 group"
+                        aria-label="Explicar score com IA"
+                      >
+                        <Brain className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                      </button>
+                    )}
+
                     {/* Trend */}
                     <div className="hidden md:flex items-center gap-1 text-xs text-status-success shrink-0">
                       <TrendingUp className="h-3.5 w-3.5" />
@@ -255,6 +266,18 @@ export function LeadScoringDashboard() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={!!explainSaleId} onOpenChange={(o) => !o && setExplainSaleId(null)}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              Explicação do Score
+            </DialogTitle>
+          </DialogHeader>
+          {explainSaleId && <LeadScoreExplainCard saleId={explainSaleId} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
