@@ -12,6 +12,7 @@ export interface WidgetConfig {
   w: number;
   h: number;
   visible: boolean;
+  config?: Record<string, unknown>;
 }
 
 export const AVAILABLE_WIDGETS: { type: string; title: string; description: string; icon: string; defaultW: number; defaultH: number }[] = [
@@ -25,6 +26,7 @@ export const AVAILABLE_WIDGETS: { type: string; title: string; description: stri
   { type: "team_ranking", title: "Ranking do Time", description: "Posição no ranking de vendas", icon: "🏆", defaultW: 1, defaultH: 2 },
   { type: "forecast_summary", title: "Forecast", description: "Previsão de receita ponderada", icon: "🔮", defaultW: 1, defaultH: 1 },
   { type: "calendar_preview", title: "Calendário", description: "Próximas atividades agendadas", icon: "📅", defaultW: 2, defaultH: 2 },
+  { type: "custom_report", title: "Relatório Customizado", description: "Embute um relatório do Builder no dashboard", icon: "📑", defaultW: 2, defaultH: 2 },
 ];
 
 const DEFAULT_LAYOUT: WidgetConfig[] = [
