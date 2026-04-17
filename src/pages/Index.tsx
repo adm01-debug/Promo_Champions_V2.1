@@ -30,6 +30,7 @@ import { EngagementLeaderboardWidget } from "@/components/engagement/EngagementL
 import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
 import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -251,6 +252,9 @@ const Index = () => {
               icon={<BarChart3 className="h-4 w-4" />}
               defaultOpen={priorities.showAnalyticsOpen}
             >
+              <div className="mb-4">
+                <DashboardNLQWidget />
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <FunnelChart />
                 <SalesForecast />

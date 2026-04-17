@@ -82,6 +82,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
+      { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
     ],
   },
@@ -116,6 +117,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
+      { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
     ],
   },
@@ -126,6 +128,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
     label: "Análises", icon: Gauge,
     items: [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+      { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Análise de Funil", url: "/funil", icon: Filter },
       { title: "Relatório de Funil", url: "/relatorios/funil", icon: Filter },
       { title: "Cohort Heatmap", url: "/relatorios/cohort", icon: LayoutGrid },
