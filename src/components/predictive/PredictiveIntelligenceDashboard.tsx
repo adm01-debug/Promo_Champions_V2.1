@@ -12,6 +12,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePredictiveIntelligence } from "@/hooks/usePredictiveIntelligence";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { LeadScoreExplainCard } from "@/components/lead-scoring/LeadScoreExplainCard";
 import { cn } from "@/lib/utils";
 
 const formatBRL = (v: number) =>
