@@ -1523,21 +1523,29 @@ export type Database = {
       }
       call_recordings: {
         Row: {
+          action_items: Json
           audio_url: string | null
           client_id: string | null
           created_at: string
+          decisions: Json
           diarization: Json | null
           diarized_at: string | null
           duration_seconds: number | null
           id: string
           interruptions_count: number | null
+          key_topics: string[]
           longest_monologue_sec: number | null
           metadata: Json | null
+          next_steps: Json
+          objections_summary: Json
           participants: Json | null
           recorded_at: string
           sale_id: string | null
           salesperson_id: string
+          sentiment: string | null
           status: string
+          summarized_at: string | null
+          summary: string | null
           talk_ratio_client: number | null
           talk_ratio_seller: number | null
           title: string
@@ -1549,21 +1557,29 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          action_items?: Json
           audio_url?: string | null
           client_id?: string | null
           created_at?: string
+          decisions?: Json
           diarization?: Json | null
           diarized_at?: string | null
           duration_seconds?: number | null
           id?: string
           interruptions_count?: number | null
+          key_topics?: string[]
           longest_monologue_sec?: number | null
           metadata?: Json | null
+          next_steps?: Json
+          objections_summary?: Json
           participants?: Json | null
           recorded_at?: string
           sale_id?: string | null
           salesperson_id: string
+          sentiment?: string | null
           status?: string
+          summarized_at?: string | null
+          summary?: string | null
           talk_ratio_client?: number | null
           talk_ratio_seller?: number | null
           title: string
@@ -1575,21 +1591,29 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          action_items?: Json
           audio_url?: string | null
           client_id?: string | null
           created_at?: string
+          decisions?: Json
           diarization?: Json | null
           diarized_at?: string | null
           duration_seconds?: number | null
           id?: string
           interruptions_count?: number | null
+          key_topics?: string[]
           longest_monologue_sec?: number | null
           metadata?: Json | null
+          next_steps?: Json
+          objections_summary?: Json
           participants?: Json | null
           recorded_at?: string
           sale_id?: string | null
           salesperson_id?: string
+          sentiment?: string | null
           status?: string
+          summarized_at?: string | null
+          summary?: string | null
           talk_ratio_client?: number | null
           talk_ratio_seller?: number | null
           title?: string
@@ -9573,6 +9597,10 @@ export type Database = {
         Args: { check_email: string }
         Returns: number
       }
+      create_activities_from_action_items: {
+        Args: { _recording_id: string }
+        Returns: number
+      }
       declare_step_winner: {
         Args: { _step_id: string; _variant_label: string }
         Returns: boolean
@@ -9834,6 +9862,19 @@ export type Database = {
           _turns_count: number
         }
         Returns: undefined
+      }
+      update_call_recording_summary: {
+        Args: {
+          _action_items: Json
+          _decisions: Json
+          _key_topics: string[]
+          _next_steps: Json
+          _objections: Json
+          _recording_id: string
+          _sentiment: string
+          _summary: string
+        }
+        Returns: boolean
       }
       update_call_recording_transcript: {
         Args: {
