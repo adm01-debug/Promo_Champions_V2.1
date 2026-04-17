@@ -86,3 +86,6 @@ verify_jwt = true
 
 [functions.sequence-record-reply]
 verify_jwt = true
+
+[functions.engagement-score-recompute]
+verify_jwt = false
