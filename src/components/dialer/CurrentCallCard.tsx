@@ -9,6 +9,7 @@ import { useSnoozeItem, useCallLogsForSale } from '@/hooks/dialer/usePowerDialer
 import { dispositionLabel } from './dialerHelpers';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { ClickToCallButton } from './ClickToCallButton';
 
 interface Props {
   itemId: string;
@@ -32,6 +33,22 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
     queryFn: async () => {
       const { data } = await supabase.from('sales').select('id, client_name, status, amount').eq('id', saleId).maybeSingle();
       return data as { id: string; client_name: string; status: string; amount: number } | null;
+    },
+  });
+
+  const { data: contactPhone } = useQuery({
+    queryKey: ['sale-primary-phone', saleId],
+    enabled: !!saleId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('account_contacts')
+        .select('phone')
+        .eq('sale_id', saleId)
+        .not('phone', 'is', null)
+        .order('is_primary', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return (data?.phone as string | null) ?? null;
     },
   });
 
@@ -76,7 +93,8 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
           </div>
         )}
 
-        <div className="flex gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-2">
+          <ClickToCallButton toNumber={contactPhone} saleId={saleId} queueItemId={itemId} />
           <Button variant="outline" size="sm" onClick={() => snooze.mutate({ item_id: itemId, snooze_minutes: 60 })}>
             <Clock className="h-4 w-4 mr-1" /> Adiar 1h
           </Button>

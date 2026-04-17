@@ -46,6 +46,7 @@ export const PROVIDER_FIELDS: Record<ProviderKind, Array<{ key: string; label: s
   twilio: [
     { key: "account_sid", label: "Account SID" },
     { key: "auth_token", label: "Auth Token", secret: true },
+    { key: "agent_phone", label: "Telefone do vendedor (E.164, opcional)", help: "Número que receberá a perna do vendedor em chamadas click-to-call" },
   ],
   meta_cloud: [
     { key: "phone_number_id", label: "Phone Number ID" },

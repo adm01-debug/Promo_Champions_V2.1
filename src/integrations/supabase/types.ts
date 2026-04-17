@@ -1658,6 +1658,7 @@ export type Database = {
       }
       call_logs: {
         Row: {
+          call_sid: string | null
           created_at: string
           disposition: string
           duration_seconds: number | null
@@ -1670,6 +1671,7 @@ export type Database = {
           sale_id: string | null
         }
         Insert: {
+          call_sid?: string | null
           created_at?: string
           disposition: string
           duration_seconds?: number | null
@@ -1682,6 +1684,7 @@ export type Database = {
           sale_id?: string | null
         }
         Update: {
+          call_sid?: string | null
           created_at?: string
           disposition?: string
           duration_seconds?: number | null
@@ -9519,6 +9522,75 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      twilio_call_sessions: {
+        Row: {
+          call_sid: string | null
+          created_at: string
+          duration_seconds: number | null
+          ended_at: string | null
+          from_number: string | null
+          id: string
+          owner_id: string
+          price: number | null
+          queue_item_id: string | null
+          recording_sid: string | null
+          recording_url: string | null
+          sale_id: string | null
+          started_at: string | null
+          status: string
+          to_number: string
+        }
+        Insert: {
+          call_sid?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          from_number?: string | null
+          id?: string
+          owner_id: string
+          price?: number | null
+          queue_item_id?: string | null
+          recording_sid?: string | null
+          recording_url?: string | null
+          sale_id?: string | null
+          started_at?: string | null
+          status?: string
+          to_number: string
+        }
+        Update: {
+          call_sid?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          from_number?: string | null
+          id?: string
+          owner_id?: string
+          price?: number | null
+          queue_item_id?: string | null
+          recording_sid?: string | null
+          recording_url?: string | null
+          sale_id?: string | null
+          started_at?: string | null
+          status?: string
+          to_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "twilio_call_sessions_queue_item_id_fkey"
+            columns: ["queue_item_id"]
+            isOneToOne: false
+            referencedRelation: "dialer_queue_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "twilio_call_sessions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
             referencedColumns: ["id"]
           },
         ]
