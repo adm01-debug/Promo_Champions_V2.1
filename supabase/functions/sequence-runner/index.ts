@@ -21,6 +21,54 @@ interface Step {
   body: string | null;
 }
 
+function resolveTemplateVariables(
+  template: string | null,
+  ctx: { nome?: string; empresa?: string; cargo?: string; ultima_interacao?: string },
+): string | null {
+  if (!template) return template;
+  return template.replace(/\{\{\s*([a-zA-Z0-9_.]+)\s*\}\}/g, (_, key: string) => {
+    const k = key.trim().toLowerCase();
+    if (k === "nome" || k === "cliente.nome") return ctx.nome ?? `{{${key}}}`;
+    if (k === "empresa" || k === "cliente.empresa") return ctx.empresa ?? `{{${key}}}`;
+    if (k === "cargo" || k === "cliente.cargo") return ctx.cargo ?? `{{${key}}}`;
+    if (k === "ultima_interacao") return ctx.ultima_interacao ?? `{{${key}}}`;
+    if (k === "data.hoje") return new Date().toLocaleDateString("pt-BR");
+    return `{{${key}}}`;
+  });
+}
+
+async function fetchContactContext(
+  supabase: ReturnType<typeof createClient>,
+  contactId: string,
+  contactType: string,
+): Promise<{ nome?: string; empresa?: string; cargo?: string; ultima_interacao?: string }> {
+  try {
+    if (contactType === "client") {
+      const { data } = await supabase
+        .from("clients")
+        .select("name, company")
+        .eq("id", contactId)
+        .maybeSingle();
+      return { nome: data?.name ?? undefined, empresa: data?.company ?? undefined };
+    }
+    if (contactType === "lead") {
+      const { data } = await supabase
+        .from("leads")
+        .select("name, company, position")
+        .eq("id", contactId)
+        .maybeSingle();
+      return {
+        nome: (data as { name?: string } | null)?.name ?? undefined,
+        empresa: (data as { company?: string } | null)?.company ?? undefined,
+        cargo: (data as { position?: string } | null)?.position ?? undefined,
+      };
+    }
+  } catch (_) {
+    // soft-fail: no context = template stays raw
+  }
+  return {};
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -74,13 +122,23 @@ Deno.serve(async (req) => {
           continue;
         }
 
+        // Resolve template variables with contact context
+        const ctx = await fetchContactContext(supabase, enr.contact_id, enr.contact_type);
+        const resolvedSubject = resolveTemplateVariables(nextStep.subject, ctx);
+        const resolvedBody = resolveTemplateVariables(nextStep.body, ctx);
+
         // Record execution (channel-agnostic stub — real send wiring per channel happens in 2/7+)
         await supabase.from("sequence_step_executions").insert({
           enrollment_id: enr.id,
           step_id: nextStep.id,
           status: "sent",
           channel: nextStep.channel,
-          engagement: { auto: true, dispatched_at: new Date().toISOString() },
+          engagement: {
+            auto: true,
+            dispatched_at: new Date().toISOString(),
+            resolved_subject: resolvedSubject,
+            resolved_body: resolvedBody,
+          },
         });
 
         // Compute next step delay
