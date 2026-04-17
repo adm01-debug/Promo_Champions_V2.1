@@ -21,7 +21,7 @@ import {
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
@@ -155,6 +155,7 @@ export function AppRoutes() {
                     <Route path="/previsao-demanda" element={<Manager><PrevisaoDemanda /></Manager>} />
                     <Route path="/inteligencia-preditiva" element={<InteligenciaPreditiva />} />
                     <Route path="/inteligencia-compras" element={<PurchaseIntelligence />} />
+                    <Route path="/deal-intelligence" element={<DealIntelligence />} />
                     <Route path="/revops" element={<Manager><RevOpsHub /></Manager>} />
                     <Route path="/funil" element={<FunnelAnalysis />} />
                     <Route path="/relatorios/funil" element={<Manager><FunnelReport /></Manager>} />
