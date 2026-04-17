@@ -6083,6 +6083,53 @@ export type Database = {
           },
         ]
       }
+      report_embed_tokens: {
+        Row: {
+          allowed_origins: string[]
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          last_viewed_at: string | null
+          report_id: string
+          revoked: boolean
+          token: string
+          view_count: number
+        }
+        Insert: {
+          allowed_origins?: string[]
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          last_viewed_at?: string | null
+          report_id: string
+          revoked?: boolean
+          token: string
+          view_count?: number
+        }
+        Update: {
+          allowed_origins?: string[]
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          last_viewed_at?: string | null
+          report_id?: string
+          revoked?: boolean
+          token?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_embed_tokens_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_executions: {
         Row: {
           duration_ms: number | null

@@ -21,7 +21,7 @@ import {
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
@@ -67,6 +67,9 @@ export function AppRoutes() {
         {/* Public auth routes */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Public embedded report route (no layout, no auth) */}
+        <Route path="/embed/report/:token" element={<EmbedReport />} />
 
         {/* App routes within MainLayout */}
         <Route
