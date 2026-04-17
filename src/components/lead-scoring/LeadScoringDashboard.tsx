@@ -56,6 +56,8 @@ function FactorBar({ label, value, maxValue }: { label: string; value: number; m
 
 export function LeadScoringDashboard() {
   const { data: leads, isLoading } = useLeadScoring();
+  const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const explainBatch = useExplainBatch();
 
   if (isLoading) {
     return (
@@ -83,16 +85,31 @@ export function LeadScoringDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-primary/10">
-          <Target className="h-6 w-6 text-primary" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-primary/10">
+            <Target className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
+            <p className="text-sm text-muted-foreground">
+              Classificação automática de {allLeads.length} leads por potencial de conversão
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
-          <p className="text-sm text-muted-foreground">
-            Classificação automática de {allLeads.length} leads por potencial de conversão
-          </p>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
+            if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
+          }}
+          disabled={explainBatch.isPending}
+          className="gap-2"
+        >
+          <RefreshCw className={cn("h-3.5 w-3.5", explainBatch.isPending && "animate-spin")} />
+          Reexplicar com IA
+        </Button>
       </div>
 
       {/* KPI Cards */}
