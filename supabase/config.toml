@@ -138,3 +138,12 @@ verify_jwt = true
 [functions.email-bulk-send]
 verify_jwt = true
 
+[functions.send-time-optimizer]
+verify_jwt = true
+
+[functions.schedule-optimal-send]
+verify_jwt = true
+
+[functions.process-scheduled-sends]
+verify_jwt = false
+
