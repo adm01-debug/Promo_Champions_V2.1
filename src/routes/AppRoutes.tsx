@@ -13,7 +13,7 @@ import {
   // CRM Core
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
-  Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail,
+  Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
   LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
@@ -110,6 +110,7 @@ export function AppRoutes() {
                     <Route path="/engagement/email-scoring" element={<EmailEngagementScoring />} />
                     <Route path="/engagement/abm" element={<AccountBasedEngagement />} />
                     <Route path="/engagement/abm/:accountId" element={<AccountDetail />} />
+                    <Route path="/engagement/dialer" element={<PowerDialer />} />
                     <Route path="/lead-scoring" element={<LeadScoring />} />
                     <Route path="/multichannel" element={<Multichannel />} />
                     <Route path="/email-tracking" element={<EmailTracking />} />

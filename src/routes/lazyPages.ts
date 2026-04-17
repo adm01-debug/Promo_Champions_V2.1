@@ -34,6 +34,7 @@ export const Sequences = lazy(() => import("@/pages/SequencesPage"));
 export const BulkComposer = lazy(() => import("@/pages/BulkComposer"));
 export const SendTimeOptimization = lazy(() => import("@/pages/SendTimeOptimization"));
 export const EmailEngagementScoring = lazy(() => import("@/pages/EmailEngagementScoring"));
+export const PowerDialer = lazy(() => import("@/pages/PowerDialer"));
 export const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 export const Multichannel = lazy(() => import("@/pages/Multichannel"));
 export const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
