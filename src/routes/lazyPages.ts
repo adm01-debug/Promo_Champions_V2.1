@@ -87,6 +87,7 @@ export const CategoryMetrics = lazy(() => import("@/pages/CategoryMetrics"));
 export const HistoricalBenchmark = lazy(() => import("@/pages/HistoricalBenchmark"));
 export const ClientHealthScore = lazy(() => import("@/pages/ClientHealthScore"));
 export const InteligenciaPreditiva = lazy(() => import("@/pages/InteligenciaPreditiva"));
+export const PurchaseIntelligence = lazy(() => import("@/pages/PurchaseIntelligence"));
 export const CoachingInteligente = lazy(() => import("@/pages/CoachingInteligente"));
 export const RevOpsHub = lazy(() => import("@/pages/RevOpsHub"));
 
