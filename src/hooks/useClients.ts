@@ -28,15 +28,17 @@ export const useClients = (filters?: UseClientsOptions) => {
 
 export const useCreateClient = () => {
   const queryClient = useQueryClient();
-  
+  const { index } = useIndexEntity();
+
   return useMutation({
     mutationFn: async (input: { name: string; email?: string; phone?: string; company?: string }) => {
       const { data, error } = await supabase.from('clients').insert(input).select().single();
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      if (data?.id) index('client', data.id);
       toast.success('Cliente criado com sucesso!');
     },
     onError: () => toast.error('Erro ao criar cliente'),
@@ -45,7 +47,8 @@ export const useCreateClient = () => {
 
 export const useUpdateClient = () => {
   const queryClient = useQueryClient();
-  
+  const { index } = useIndexEntity();
+
   return useMutation({
     mutationFn: async ({ id, ...updates }: { id: string; name?: string; email?: string | null; phone?: string | null; company?: string | null; total_value?: number }) => {
       const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single();
@@ -55,12 +58,16 @@ export const useUpdateClient = () => {
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
       const previous = queryClient.getQueryData(['clients']);
-      queryClient.setQueryData(['clients'], (old: Client[] | undefined) => 
+      queryClient.setQueryData(['clients'], (old: Client[] | undefined) =>
         old?.map(c => c.id === newData.id ? { ...c, ...newData } : c)
       );
       return { previous };
     },
-    onSuccess: () => toast.success('Cliente atualizado!'),
+    onSuccess: (data, vars) => {
+      const id = data?.id ?? vars.id;
+      if (id) index('client', id);
+      toast.success('Cliente atualizado!');
+    },
     onError: (_err, _vars, ctx) => {
       queryClient.setQueryData(['clients'], ctx?.previous);
       toast.error('Erro ao atualizar cliente');
