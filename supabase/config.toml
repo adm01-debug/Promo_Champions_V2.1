@@ -80,3 +80,6 @@ verify_jwt = false
 
 [functions.report-embed-public]
 verify_jwt = false
+
+[functions.ai-email-composer]
+verify_jwt = true
