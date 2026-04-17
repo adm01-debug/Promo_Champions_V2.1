@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { useUpsertSequenceStep, type SequenceStep } from "@/hooks/sequences/useSequenceSteps";
 import { CHANNEL_META, type ChannelKey } from "./sequenceHelpers";
+import { AIEmailComposerPanel } from "./AIEmailComposerPanel";
+import { EmailVariablesHelper } from "./EmailVariablesHelper";
 
 interface Props {
   open: boolean;
@@ -22,7 +25,26 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
   const [hours, setHours] = useState(step?.delay_hours ?? 0);
   const [subject, setSubject] = useState(step?.subject ?? "");
   const [body, setBody] = useState(step?.body ?? "");
+  const [showAI, setShowAI] = useState(false);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
   const upsert = useUpsertSequenceStep();
+
+  const insertVariable = (token: string) => {
+    const el = bodyRef.current;
+    if (!el) {
+      setBody((b) => b + token);
+      return;
+    }
+    const start = el.selectionStart ?? body.length;
+    const end = el.selectionEnd ?? body.length;
+    const next = body.slice(0, start) + token + body.slice(end);
+    setBody(next);
+    requestAnimationFrame(() => {
+      el.focus();
+      const pos = start + token.length;
+      el.setSelectionRange(pos, pos);
+    });
+  };
 
   const handleSave = async () => {
     await upsert.mutateAsync({
@@ -38,9 +60,11 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
     onOpenChange(false);
   };
 
+  const supportsAI = channel === "email" || channel === "linkedin";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{step ? "Editar passo" : "Novo passo"}</DialogTitle>
         </DialogHeader>
@@ -66,16 +90,51 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
               <Input type="number" min={0} max={23} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
             </div>
           </div>
-          {(channel === "email" || channel === "linkedin") && (
+          {supportsAI && (
             <div>
               <Label>Assunto</Label>
               <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Re: Proposta..." />
             </div>
           )}
           <div>
-            <Label>Mensagem / Anotação</Label>
-            <Textarea rows={5} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Olá {{nome}}..." />
+            <div className="flex items-center justify-between mb-1">
+              <Label>Mensagem / Anotação</Label>
+              {supportsAI && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 text-primary hover:text-primary"
+                  onClick={() => setShowAI((v) => !v)}
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1" />
+                  {showAI ? "Ocultar IA" : "Compor com IA"}
+                </Button>
+              )}
+            </div>
+            <Textarea
+              ref={bodyRef}
+              rows={6}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Olá {{nome}}..."
+            />
+            {supportsAI && (
+              <div className="mt-2">
+                <div className="text-xs text-muted-foreground mb-1.5">Inserir variável:</div>
+                <EmailVariablesHelper onInsert={insertVariable} />
+              </div>
+            )}
           </div>
+          {showAI && supportsAI && (
+            <AIEmailComposerPanel
+              onAccept={(s, b) => {
+                setSubject(s);
+                setBody(b);
+              }}
+              onClose={() => setShowAI(false)}
+            />
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
