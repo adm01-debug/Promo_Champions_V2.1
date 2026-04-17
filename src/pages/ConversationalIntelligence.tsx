@@ -10,6 +10,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mic, Sparkles, MessageSquare, Target, AlertCircle, TrendingUp, Lightbulb, Trash2, FileText } from "lucide-react";
 import { useCallRecordings, useCallInsight, useCreateRecordingWithAnalysis, useDeleteRecording } from "@/hooks/conversational/useCallRecordings";
+import { CallRecordingUploader } from "@/components/conversational/CallRecordingUploader";
+import { CallRecordingPlayer } from "@/components/conversational/CallRecordingPlayer";
 import { Helmet } from "react-helmet-async";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -71,11 +73,14 @@ export default function ConversationalIntelligence() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Coluna 1: Nova análise */}
-          <Card className="glass border-border/40 lg:col-span-1 h-fit">
+          {/* Coluna 1: Upload + Nova análise */}
+          <div className="lg:col-span-1 space-y-4">
+            <CallRecordingUploader onUploaded={(id) => setSelected(id)} />
+
+            <Card className="glass border-border/40 h-fit">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Mic className="h-4 w-4 text-primary" /> Nova análise
+                <Mic className="h-4 w-4 text-primary" /> Análise por transcrição
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -104,6 +109,7 @@ export default function ConversationalIntelligence() {
               </Button>
             </CardContent>
           </Card>
+          </div>
 
           {/* Coluna 2: Lista */}
           <Card className="glass border-border/40 lg:col-span-1 h-fit">
@@ -157,7 +163,12 @@ export default function ConversationalIntelligence() {
                 </Button>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
+              {selected && (
+                <CallRecordingPlayer
+                  audioPath={recordings?.find((r) => r.id === selected)?.audio_url ?? null}
+                />
+              )}
               {!selected && <p className="text-xs text-muted-foreground text-center py-8">Selecione uma call para ver os insights.</p>}
               {selected && !insight && <Skeleton className="h-40 w-full" />}
               {insight && (
