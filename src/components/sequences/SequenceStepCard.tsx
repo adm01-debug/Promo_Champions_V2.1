@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { CHANNEL_META, formatDelay, type ChannelKey } from "./sequenceHelpers";
 import type { SequenceStep } from "@/hooks/sequences/useSequenceSteps";
 import { Pencil, Trash2, GripVertical } from "lucide-react";
+import { StepVariantBadge } from "./StepVariantBadge";
 
 interface Props {
   step: SequenceStep;
@@ -32,6 +33,7 @@ export function SequenceStepCard({ step, index, onEdit, onDelete }: Props) {
             <Badge variant="secondary" className="text-xs">
               {formatDelay(step.delay_days, step.delay_hours)}
             </Badge>
+            <StepVariantBadge stepId={step.id} />
           </div>
           {step.subject && (
             <p className="text-sm font-medium truncate text-foreground">{step.subject}</p>

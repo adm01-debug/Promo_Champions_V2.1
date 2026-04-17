@@ -83,3 +83,6 @@ verify_jwt = false
 
 [functions.ai-email-composer]
 verify_jwt = true
+
+[functions.sequence-record-reply]
+verify_jwt = true
