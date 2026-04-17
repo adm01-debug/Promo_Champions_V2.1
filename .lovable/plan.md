@@ -1,60 +1,64 @@
 
-**Bloco Conversation Intelligence — item 4/4 (último): Momentos Críticos com Notificações**
+**Próximo bloco do GAPS_CLASSE_MUNDIAL.md — Deal Intelligence: Risk Scoring + Stalled Deals Auto-Detection**
 
-Próxima atômica: detectar **momentos críticos automaticamente** em cada call (objeções fortes, menções de preço, sinais de churn, sinais de compra, concorrentes, pedidos de desconto) e disparar **notificações em tempo real** para vendedor + gestor, com link direto para o timestamp exato no player.
+Próxima atômica: detectar **deals em risco automaticamente** (estagnados, sem atividade, sem next-step, com sinais negativos da call) e gerar **score de saúde do deal (0-100)** com fatores explicáveis e ações recomendadas — primeiro item do bloco Deal Intelligence (1/4).
 
 ## Estado atual
-- `key_moments` em `call_recordings` é jsonb genérico, sem categorização nem severidade.
-- `competitor_mentions` já existe (item 1/4).
-- `coaching_actions` já existe (item 2/4).
-- `call_sentiment_timeline` já existe (item 3/4).
-- **Faltam**: tipos de momentos categorizados (objection/buying_signal/price/discount/churn/competitor) + sistema de notificações ativas + indicador visual no player + feed em tempo real.
+- `sales` tem `stage`, `updated_at`, `final_value`, mas sem score de saúde calculado.
+- `AtRiskDealsPanel` no Pipeline existe mas usa heurística simples (dias parado).
+- `call_critical_moments`, `coaching_actions`, `competitor_mentions` já trazem sinais ricos por call — não estão cruzados com o deal.
+- Sem score unificado, sem histórico de evolução do score, sem alertas proativos quando score cai.
 
 ## Mudanças
 
 ### 1. Migration
-- Tabela `call_critical_moments`: `id`, `recording_id`, `owner_id`, `salesperson_id`, `moment_type` (`objection|buying_signal|price_mention|discount_request|churn_signal|competitor|commitment|next_step`), `severity` (`low|medium|high|critical`), `timestamp_sec int`, `quote text`, `context text`, `suggested_action text`, `status` (`new|acknowledged|actioned|dismissed`), `created_at`, `updated_at`. Index `(owner_id, status, severity, created_at desc)`.
-- Tabela `critical_moment_notifications`: `id`, `moment_id` (FK), `recipient_user_id`, `delivered bool`, `read_at`, `created_at`.
-- RLS: salesperson vê os próprios; manager/admin veem da equipe.
-- Trigger `notify_critical_moment_created` que insere row em `critical_moment_notifications` para o vendedor + managers ativos quando severity ∈ (`high`,`critical`).
-- Realtime: `ALTER PUBLICATION supabase_realtime ADD TABLE public.call_critical_moments, public.critical_moment_notifications`.
+- Tabela `deal_health_scores`: `id`, `sale_id` (FK unique), `owner_id`, `score int` (0-100), `tier` (`healthy|watch|at_risk|critical`), `factors jsonb` (array `{key, label, impact, weight}`), `recommended_actions jsonb`, `last_activity_at`, `days_in_stage int`, `calculated_at`, `created_at`, `updated_at`. Index `(owner_id, tier, score)`.
+- Tabela `deal_health_history`: `id`, `sale_id`, `score`, `tier`, `delta int`, `snapshot_at`. Index `(sale_id, snapshot_at desc)`.
+- RLS: vendedor vê próprios; manager/admin vê tudo.
+- Trigger `track_deal_health_change` que insere row em `history` quando score muda ≥5 pontos.
+- Realtime nas duas tabelas.
 
-### 2. Edge function `detect-critical-moments` (`verify_jwt = true`)
-- Input: `{ recording_id }`.
-- Lê `transcript`, `diarization`, `call_sentiment_timeline`.
-- Lovable AI (`google/gemini-2.5-flash`) com tool calling estruturado: array `{moment_type, severity, timestamp_sec, quote, context, suggested_action}`.
-- Idempotente: deleta `status='new'` antigos da mesma recording.
-- Auto-chain: chamada após `analyze-sentiment-timeline` em `useTranscribeRecording`.
+### 2. Edge function `calculate-deal-health` (`verify_jwt = true`)
+- Input: `{ sale_id }` ou `{ batch: true }` (recalcula todos os deals abertos do user).
+- Lê: sale + última activity + critical_moments do recording associado + coaching_actions pendentes + dias em stage + próximo passo.
+- Lovable AI (`google/gemini-2.5-flash`) com tool calling: `{score, tier, factors[], recommended_actions[]}`.
+- Idempotente: upsert em `deal_health_scores` por `sale_id`.
+- Trigger automático após mudança de stage ou nova activity.
 
-### 3. Hooks `src/hooks/conversational/`
-- `useCriticalMoments(recordingId)` — lista momentos da call.
-- `useMyCriticalMomentsFeed(limit)` — realtime feed dos meus + canal subscribe.
-- `useUpdateCriticalMoment()` — mutation para `status`.
-- `useDetectCriticalMoments()` — re-roda detecção.
+### 3. Hooks `src/hooks/deal-intelligence/`
+- `useDealHealth(saleId)` — query individual + realtime.
+- `useDealHealthBatch(filters)` — lista filtrada por tier/owner.
+- `useRecalculateDealHealth()` — mutation single ou batch.
+- `useDealHealthHistory(saleId)` — sparkline de evolução.
 
 ### 4. UI
-- `src/components/conversational/CriticalMomentsList.tsx` (≤200L) — lista categorizada por severidade no `RecordingSummaryDrawer`, com timestamp clicável (`onSeek`), badges por tipo/severidade, ações (Acknowledge/Action/Dismiss).
-- `src/components/conversational/CriticalMomentsTimeline.tsx` (≤140L) — markers visuais sobrepostos no `SentimentTimelineChart` (linhas verticais coloridas por severidade nos timestamps dos momentos).
-- `src/components/conversational/CriticalMomentsFeed.tsx` (≤180L) — feed lateral live para o dashboard do gestor: lista realtime ordenada por severidade/data, com link "Ver na call".
-- `src/components/conversational/CriticalMomentBadge.tsx` (≤80L) — pill colorida por tipo/severidade, reusada na lista e no toast.
-- `src/components/conversational/criticalMomentsHelpers.ts` — labels PT-BR, ícones por tipo, cores por severidade, formatadores.
-- **Toast realtime**: hook `useMyCriticalMomentsFeed` dispara `toast.warning/error` (sonner) ao receber novo momento `high/critical` via realtime, com botão "Abrir call".
-- Editar `RecordingSummaryDrawer.tsx`: nova seção "Momentos Críticos" acima de Coaching, embedando `<CriticalMomentsList>` + passar `moments` para `<SentimentTimelineChart>` para overlay.
-- Editar dashboard do gestor (`BIGestorHub.tsx` ou similar): novo card lateral `<CriticalMomentsFeed>`.
+- `src/components/deal-intelligence/DealHealthScoreBadge.tsx` (≤100L) — pill colorida por tier com score numérico.
+- `src/components/deal-intelligence/DealHealthCard.tsx` (≤220L) — card detalhado: ring de score, lista de fatores (positivos/negativos), ações recomendadas com botão "Criar activity", sparkline de histórico.
+- `src/components/deal-intelligence/DealHealthFactorsList.tsx` (≤140L) — lista de fatores com impact visual (+/-).
+- `src/components/deal-intelligence/DealHealthSparkline.tsx` (≤100L) — mini chart Recharts da evolução.
+- `src/components/deal-intelligence/StalledDealsTable.tsx` (≤200L) — tabela priorizada de deals `at_risk`/`critical` com batch action "Recalcular todos".
+- `src/components/deal-intelligence/dealHealthHelpers.ts` — labels PT-BR, cores por tier, formatadores.
+- **Integração**:
+  - `AtRiskDealsPanel`: substituir heurística por `useDealHealthBatch({tier: ['at_risk','critical']})`.
+  - `KanbanCard`: adicionar `<DealHealthScoreBadge>` no canto.
+  - `SaleDetailDrawer` (ou similar): nova seção embedando `<DealHealthCard>`.
+  - Nova rota `/deal-intelligence` lazy com `<StalledDealsTable>` + filtros por tier/owner.
+  - Sidebar: novo item "Saúde dos Deals" no grupo Analytics.
 
 ### 5. Configuração
-- `supabase/config.toml`: `[functions.detect-critical-moments] verify_jwt = true`.
+- `supabase/config.toml`: `[functions.calculate-deal-health] verify_jwt = true`.
 
 ### 6. Validação
-- `supabase--curl_edge_functions /detect-critical-moments` em recording real → confirma rows + notification trigger.
+- `supabase--curl_edge_functions /calculate-deal-health` em sale real → confirma row + history.
 - `supabase--linter` zero novos warnings.
-- Realtime: abrir 2 abas, criar momento via curl, toast aparece na aba do vendedor.
+- Badge aparece no Kanban; tabela `/deal-intelligence` lista deals em risco.
 
 ## Arquivos
-- **Migration**: 1 (2 tabelas + RLS + trigger + realtime)
-- **Criar**: `supabase/functions/detect-critical-moments/index.ts`
-- **Criar**: `src/hooks/conversational/useCriticalMoments.ts`
-- **Criar**: 5 arquivos em `src/components/conversational/` (list, timeline overlay, feed, badge, helpers)
-- **Editar**: `src/components/conversational/RecordingSummaryDrawer.tsx`, `src/components/conversational/SentimentTimelineChart.tsx` (aceita `moments` prop), `src/hooks/conversational/useTranscribeRecording.ts` (auto-chain), dashboard do gestor, `supabase/config.toml`
+- **Migration**: 1 (2 tabelas + trigger + realtime + RLS)
+- **Criar**: `supabase/functions/calculate-deal-health/index.ts`
+- **Criar**: 4 hooks em `src/hooks/deal-intelligence/`
+- **Criar**: 6 componentes/helpers em `src/components/deal-intelligence/`
+- **Criar**: `src/pages/DealIntelligence.tsx`
+- **Editar**: `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`, `AtRiskDealsPanel`, `KanbanCard` (ou equivalente), `supabase/config.toml`
 
-Após esta entrega, **Conversation Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do `GAPS_CLASSE_MUNDIAL.md`.
+Após esta entrega, sigo automaticamente para 2/4 do bloco Deal Intelligence: **Buying Committee Mapping (DMU)** → 3/4 **Deal Velocity Predictor** → 4/4 **Stage Conversion Optimizer**, fechando o bloco em 10/10.
