@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Headphones, Search, Mic, MessageSquare, TrendingUp, Clock, AlertTriangle, Sparkles } from "lucide-react";
+import { Headphones, Search, Mic, MessageSquare, TrendingUp, Clock, AlertTriangle, Sparkles, Brain } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { RecordingSummaryDrawer, useRecordingSummaryDrawer } from "./RecordingSummaryDrawer";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -20,6 +21,7 @@ export const ConversationalIntelligenceHub = () => {
   const [horizon, setHorizon] = useState(30);
   const [search, setSearch] = useState("");
   const { data, isLoading } = useConversationalIntelligence(horizon);
+  const drawer = useRecordingSummaryDrawer();
 
   const filteredRecordings = useMemo(() => {
     if (!data) return [];
@@ -163,7 +165,12 @@ export const ConversationalIntelligenceHub = () => {
               ) : (
                 <div className="space-y-3">
                   {filteredRecordings.map((r) => (
-                    <div key={r.id} className="border border-border rounded-lg p-4 hover:bg-muted/40 transition-colors">
+                    <button
+                      type="button"
+                      key={r.id}
+                      onClick={() => drawer.open(r.id)}
+                      className="w-full text-left border border-border rounded-lg p-4 hover:bg-muted/40 hover:border-primary/30 transition-colors"
+                    >
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -176,6 +183,9 @@ export const ConversationalIntelligenceHub = () => {
                             {!r.has_insights && (
                               <Badge variant="outline" className="text-xs">Sem análise IA</Badge>
                             )}
+                            <Badge variant="secondary" className="text-xs gap-1">
+                              <Brain className="size-3" /> Ver resumo
+                            </Badge>
                           </div>
                           {r.summary && (
                             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{r.summary}</p>
@@ -197,7 +207,7 @@ export const ConversationalIntelligenceHub = () => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -205,6 +215,7 @@ export const ConversationalIntelligenceHub = () => {
           </Card>
         </>
       ) : null}
+      <RecordingSummaryDrawer recordingId={drawer.openId} onClose={drawer.close} />
     </div>
   );
 };
