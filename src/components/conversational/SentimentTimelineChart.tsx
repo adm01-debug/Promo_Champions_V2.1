@@ -21,11 +21,13 @@ import {
   type SentimentSegment,
 } from "./sentimentHelpers";
 import type { RechartsTooltipProps } from "@/types/recharts";
+import { severityHexColor, type CriticalMoment } from "./criticalMomentsHelpers";
 
 interface Props {
   recordingId: string;
   currentTime?: number;
   onSeek?: (sec: number) => void;
+  moments?: CriticalMoment[];
 }
 
 const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
@@ -44,7 +46,7 @@ const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
   );
 };
 
-export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek }: Props) => {
+export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments }: Props) => {
   const { data: timeline, isLoading } = useSentimentTimeline(recordingId);
   const analyze = useAnalyzeSentiment();
 
@@ -122,6 +124,17 @@ export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek }: Pro
                   strokeWidth={2}
                 />
               ))}
+              {(moments ?? [])
+                .filter((m) => m.severity === "high" || m.severity === "critical")
+                .map((m) => (
+                  <ReferenceLine
+                    key={m.id}
+                    x={m.timestamp_sec}
+                    stroke={severityHexColor(m.severity)}
+                    strokeWidth={1.5}
+                    strokeDasharray="3 2"
+                  />
+                ))}
             </AreaChart>
           </ResponsiveContainer>
         )}

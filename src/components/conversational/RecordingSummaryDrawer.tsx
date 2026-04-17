@@ -9,6 +9,8 @@ import { SummarizeButton } from "./SummarizeButton";
 import { CompetitorMentionsCard } from "./CompetitorMentionsCard";
 import { CoachingActionsList } from "./CoachingActionsList";
 import { SentimentTimelineChart } from "./SentimentTimelineChart";
+import { CriticalMomentsList } from "./CriticalMomentsList";
+import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
@@ -20,6 +22,7 @@ interface Props {
 export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
   const { data: recordings, isLoading } = useCallRecordings();
   const rec = recordings?.find((r) => r.id === recordingId) ?? null;
+  const { data: moments } = useCriticalMoments(rec?.id);
 
   return (
     <Sheet open={!!recordingId} onOpenChange={(o) => !o && onClose()}>
@@ -62,7 +65,8 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
               objections={(rec.objections_summary as Objection[]) ?? []}
             />
             <NextStepsTimeline steps={(rec.next_steps as NextStep[]) ?? []} />
-            <SentimentTimelineChart recordingId={rec.id} />
+            <SentimentTimelineChart recordingId={rec.id} moments={moments ?? []} />
+            <CriticalMomentsList recordingId={rec.id} />
             <CompetitorMentionsCard recordingId={rec.id} />
             <CoachingActionsList recordingId={rec.id} />
           </div>
