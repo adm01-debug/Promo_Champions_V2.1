@@ -11,9 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, Play, Trash2, Users, Workflow, ArrowLeft } from "lucide-react";
+import { Plus, Play, Trash2, Users, Workflow, ArrowLeft, FlaskConical, Settings2 } from "lucide-react";
 import { SequenceBuilder } from "@/components/sequences/SequenceBuilder";
 import { SequenceEnrollmentsDrawer } from "@/components/sequences/SequenceEnrollmentsDrawer";
+import { ABTestPanel } from "@/components/sequences/ABTestPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function SequencesPage() {
   const { data: sequences, isLoading } = useSequences();
@@ -70,7 +72,18 @@ export default function SequencesPage() {
               </Button>
             </div>
           </div>
-          <SequenceBuilder sequenceId={selected.id} />
+          <Tabs defaultValue="builder">
+            <TabsList>
+              <TabsTrigger value="builder"><Settings2 className="h-4 w-4 mr-2" />Builder</TabsTrigger>
+              <TabsTrigger value="ab"><FlaskConical className="h-4 w-4 mr-2" />A/B Testing</TabsTrigger>
+            </TabsList>
+            <TabsContent value="builder" className="mt-4">
+              <SequenceBuilder sequenceId={selected.id} />
+            </TabsContent>
+            <TabsContent value="ab" className="mt-4">
+              <ABTestPanel sequenceId={selected.id} />
+            </TabsContent>
+          </Tabs>
           <SequenceEnrollmentsDrawer open={enrollOpen} onOpenChange={setEnrollOpen} sequenceId={selected.id} />
         </div>
       </>

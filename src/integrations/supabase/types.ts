@@ -7804,6 +7804,62 @@ export type Database = {
           },
         ]
       }
+      sequence_step_assignments: {
+        Row: {
+          assigned_at: string
+          enrollment_id: string
+          id: string
+          step_id: string
+          variant_id: string | null
+          variant_label: string | null
+        }
+        Insert: {
+          assigned_at?: string
+          enrollment_id: string
+          id?: string
+          step_id: string
+          variant_id?: string | null
+          variant_label?: string | null
+        }
+        Update: {
+          assigned_at?: string
+          enrollment_id?: string
+          id?: string
+          step_id?: string
+          variant_id?: string | null
+          variant_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_step_assignments_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_step_assignments_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_step_assignments_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_step_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_step_assignments_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_variant_performance"
+            referencedColumns: ["variant_id"]
+          },
+        ]
+      }
       sequence_step_executions: {
         Row: {
           channel: string | null
@@ -9746,6 +9802,13 @@ export type Database = {
       auto_pause_enrollment: {
         Args: { _enrollment_id: string; _reason?: string }
         Returns: undefined
+      }
+      auto_promote_sequence_winners: {
+        Args: { _sequence_id: string }
+        Returns: {
+          promoted_label: string
+          step_id: string
+        }[]
       }
       bulk_recompute_engagement: {
         Args: { _owner_id?: string }

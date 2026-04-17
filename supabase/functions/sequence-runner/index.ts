@@ -165,19 +165,44 @@ Deno.serve(async (req) => {
           } catch (_) { /* soft-fail */ }
         }
 
-        // A/B variant
+        // A/B variant — sticky per (enrollment, step)
         let variantId: string | null = null;
         let variantLabel: string | null = null;
         let useSubject = nextStep.subject;
         let useBody = nextStep.body;
         try {
-          const { data: picked } = await supabase.rpc("pick_step_variant", { _step_id: nextStep.id });
-          const pick = Array.isArray(picked) ? picked[0] : picked;
-          if (pick?.variant_id) {
-            variantId = pick.variant_id;
-            variantLabel = pick.label;
-            useSubject = pick.subject;
-            useBody = pick.body;
+          const { data: existing } = await supabase
+            .from("sequence_step_assignments")
+            .select("variant_id, variant_label")
+            .eq("enrollment_id", enr.id)
+            .eq("step_id", nextStep.id)
+            .maybeSingle();
+          const ex = existing as { variant_id?: string; variant_label?: string } | null;
+          if (ex?.variant_id) {
+            variantId = ex.variant_id;
+            variantLabel = ex.variant_label ?? null;
+            const { data: v } = await supabase
+              .from("sequence_step_variants")
+              .select("subject, body")
+              .eq("id", variantId)
+              .maybeSingle();
+            const vv = v as { subject?: string; body?: string } | null;
+            if (vv) { useSubject = vv.subject ?? useSubject; useBody = vv.body ?? useBody; }
+          } else {
+            const { data: picked } = await supabase.rpc("pick_step_variant", { _step_id: nextStep.id });
+            const pick = Array.isArray(picked) ? picked[0] : picked;
+            if (pick?.variant_id) {
+              variantId = pick.variant_id;
+              variantLabel = pick.label;
+              useSubject = pick.subject;
+              useBody = pick.body;
+              await supabase.from("sequence_step_assignments").insert({
+                enrollment_id: enr.id,
+                step_id: nextStep.id,
+                variant_id: variantId,
+                variant_label: variantLabel,
+              });
+            }
           }
         } catch (_) { /* soft-fail */ }
 
@@ -185,8 +210,9 @@ Deno.serve(async (req) => {
         const resolvedSubject = resolveTemplateVariables(useSubject, ctx);
         const resolvedBody = resolveTemplateVariables(useBody, ctx);
 
-        // Multichannel native send for whatsapp/sms
-        const multichannel = new Set(["whatsapp", "sms"]);
+        // Multichannel native send for whatsapp/sms; task creation for linkedin/call/task
+        const messaging = new Set(["whatsapp", "sms"]);
+        const taskChannels = new Set(["linkedin", "call", "task"]);
         let executionStatus: "sent" | "failed" | "skipped" = "sent";
         const engagement: Record<string, unknown> = {
           auto: true,
@@ -196,7 +222,7 @@ Deno.serve(async (req) => {
           variant_label: variantLabel,
         };
 
-        if (multichannel.has(nextStep.channel) && enr.owner_id && ctx.phone) {
+        if (messaging.has(nextStep.channel) && enr.owner_id && ctx.phone) {
           try {
             const { data: sendResult } = await supabase.functions.invoke(
               "send-multichannel-message",
@@ -224,10 +250,42 @@ Deno.serve(async (req) => {
             executionStatus = "failed";
             engagement.send_error = e instanceof Error ? e.message : String(e);
           }
-        } else if (multichannel.has(nextStep.channel)) {
+        } else if (messaging.has(nextStep.channel)) {
           executionStatus = "skipped";
           engagement.skipped_no_channel = true;
           engagement.reason = !ctx.phone ? "no_phone" : "no_owner";
+        } else if (taskChannels.has(nextStep.channel) && enr.owner_id) {
+          try {
+            const { data: sp } = await supabase
+              .from("salespeople")
+              .select("id")
+              .eq("user_id", enr.owner_id)
+              .maybeSingle();
+            const spId = (sp as { id?: string } | null)?.id;
+            if (spId) {
+              const titleMap: Record<string, string> = {
+                linkedin: `LinkedIn: ${ctx.nome ?? "contato"}`,
+                call: `Ligar para ${ctx.nome ?? "contato"}`,
+                task: `Sequência: ${resolvedSubject ?? ctx.nome ?? "ação"}`,
+              };
+              await supabase.from("agenda_events").insert({
+                salesperson_id: spId,
+                title: titleMap[nextStep.channel] ?? "Sequência",
+                description: resolvedBody ?? null,
+                event_type: nextStep.channel === "call" ? "call" : "task",
+                scheduled_at: new Date().toISOString(),
+                priority: "medium",
+                status: "pending",
+              });
+              engagement.task_created = true;
+            } else {
+              executionStatus = "skipped";
+              engagement.reason = "no_salesperson";
+            }
+          } catch (e) {
+            executionStatus = "failed";
+            engagement.send_error = e instanceof Error ? e.message : String(e);
+          }
         }
 
         await supabase.from("sequence_step_executions").insert({
