@@ -92,7 +92,7 @@ export const useCreateQueue = () => {
         owner_id: user.id,
         name: payload.name,
         priority_strategy: payload.priority_strategy,
-        filter: payload.filter ?? {},
+        filter: (payload.filter ?? {}) as never,
       }).select().single();
       if (error) throw error;
       return data;

@@ -30,8 +30,8 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
     queryKey: ['sale-detail', saleId],
     enabled: !!saleId,
     queryFn: async () => {
-      const { data } = await supabase.from('sales').select('id, client_name, contact_phone, status, value, last_interaction').eq('id', saleId).single();
-      return data;
+      const { data } = await supabase.from('sales').select('id, client_name, status, amount').eq('id', saleId).maybeSingle();
+      return data as { id: string; client_name: string; status: string; amount: number } | null;
     },
   });
 
@@ -57,14 +57,10 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
             <Building2 className="h-4 w-4 text-muted-foreground" />
             <h2 className="text-2xl font-bold">{sale?.client_name ?? '—'}</h2>
           </div>
-          {sale?.contact_phone && (
-            <a href={`tel:${sale.contact_phone}`} className="text-primary text-lg hover:underline">
-              {sale.contact_phone}
-            </a>
-          )}
           <div className="flex gap-2 mt-2">
             <Badge variant="secondary">Score: {score.toFixed(0)}</Badge>
             {sale?.status && <Badge variant="outline">{sale.status}</Badge>}
+            {sale?.amount && <Badge variant="outline">R$ {sale.amount.toLocaleString('pt-BR')}</Badge>}
           </div>
         </div>
 
