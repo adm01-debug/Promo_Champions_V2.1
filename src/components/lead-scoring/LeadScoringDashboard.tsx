@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { useLeadScoring } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info, Brain, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
+import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
