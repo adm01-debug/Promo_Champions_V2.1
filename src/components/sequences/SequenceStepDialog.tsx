@@ -27,6 +27,9 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
   const [hours, setHours] = useState(step?.delay_hours ?? 0);
   const [subject, setSubject] = useState(step?.subject ?? "");
   const [body, setBody] = useState(step?.body ?? "");
+  const [whatsappTemplateId, setWhatsappTemplateId] = useState(
+    (step as { whatsapp_template_id?: string } | null)?.whatsapp_template_id ?? "",
+  );
   const [showAI, setShowAI] = useState(false);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const upsert = useUpsertSequenceStep();
@@ -58,7 +61,8 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
       delay_hours: Number(hours),
       subject: subject || null,
       body: body || null,
-    });
+      whatsapp_template_id: channel === "whatsapp" ? (whatsappTemplateId || null) : null,
+    } as Parameters<typeof upsert.mutateAsync>[0]);
     onOpenChange(false);
   };
 
@@ -92,6 +96,20 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
               <Input type="number" min={0} max={23} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
             </div>
           </div>
+
+          {channel === "whatsapp" && (
+            <div>
+              <Label>WhatsApp Template ID (opcional)</Label>
+              <Input
+                value={whatsappTemplateId}
+                onChange={(e) => setWhatsappTemplateId(e.target.value)}
+                placeholder="ex: hello_world (template aprovado Meta)"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Para envios via Meta Cloud API fora da janela de 24h.
+              </p>
+            </div>
+          )}
 
           {supportsAI && step?.id ? (
             <Tabs defaultValue="single">
