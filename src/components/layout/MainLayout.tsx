@@ -27,6 +27,7 @@ const OfflineIndicator = lazy(() => import("@/components/pwa/OfflineIndicator").
 const RouteTracker = lazy(() => import("@/components/analytics/RouteTracker").then(m => ({ default: m.RouteTracker })));
 const ConsentBanner = lazy(() => import("@/components/lgpd/ConsentBanner").then(m => ({ default: m.ConsentBanner })));
 const PerformanceMonitor = lazy(() => import("@/components/admin/PerformanceMonitor").then(m => ({ default: m.PerformanceMonitor })));
+const SemanticSearchMount = lazy(() => import("@/components/semantic/SemanticSearchMount").then(m => ({ default: m.SemanticSearchMount })));
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -138,6 +139,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         <Suspense fallback={null}>
           <PerformanceMonitor />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <SemanticSearchMount />
         </Suspense>
       </div>
     </SidebarProvider>
