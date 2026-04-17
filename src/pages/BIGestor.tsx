@@ -16,12 +16,15 @@ import { BITopClientsSection } from "@/components/bi/BITopClientsSection";
 import { BISalesInsights } from "@/components/bi/BISalesInsights";
 import { BIVendasMacro } from "@/components/bi/BIVendasMacro";
 import { BIGestorTeamSection } from "@/components/bi/BIGestorTeamSection";
+import { CriticalMomentsFeed } from "@/components/conversational/CriticalMomentsFeed";
+import { useNavigate } from "react-router-dom";
 
 const ABC_COLORS = { A: "hsl(var(--success))", B: "hsl(var(--warning))", C: "hsl(var(--destructive))" };
 const STAGE_LABELS: Record<string, string> = { pending: "Lead", qualified: "Qualificado", proposal: "Proposta", negotiation: "Negociação" };
 
 const BIGestor = () => {
   const { data, isLoading } = useBIGestor();
+  const navigate = useNavigate();
   const formatCurrency = (value: number) => `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
@@ -178,6 +181,10 @@ const BIGestor = () => {
 
             <BITopClientsSection className="animate-slide-up" />
             <BISalesInsights className="animate-slide-up" />
+
+            <CriticalMomentsFeed
+              onOpenRecording={() => navigate("/conversational-intelligence")}
+            />
           </div>
         </div>
       </PageTransition>
