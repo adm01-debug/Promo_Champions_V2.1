@@ -2387,6 +2387,48 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_engagement_score: {
+        Row: {
+          contact_id: string
+          contact_type: string
+          decay_applied_at: string
+          id: string
+          last_signal_at: string | null
+          score: number
+          tier: string
+          total_clicks: number
+          total_opens: number
+          total_replies: number
+          updated_at: string
+        }
+        Insert: {
+          contact_id: string
+          contact_type: string
+          decay_applied_at?: string
+          id?: string
+          last_signal_at?: string | null
+          score?: number
+          tier?: string
+          total_clicks?: number
+          total_opens?: number
+          total_replies?: number
+          updated_at?: string
+        }
+        Update: {
+          contact_id?: string
+          contact_type?: string
+          decay_applied_at?: string
+          id?: string
+          last_signal_at?: string | null
+          score?: number
+          tier?: string
+          total_clicks?: number
+          total_opens?: number
+          total_replies?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_send_time_profile: {
         Row: {
           clicks: number
@@ -3240,6 +3282,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      engagement_score_history: {
+        Row: {
+          captured_at: string
+          contact_id: string
+          contact_type: string
+          created_at: string
+          id: string
+          score: number
+          tier: string
+        }
+        Insert: {
+          captured_at?: string
+          contact_id: string
+          contact_type: string
+          created_at?: string
+          id?: string
+          score: number
+          tier: string
+        }
+        Update: {
+          captured_at?: string
+          contact_id?: string
+          contact_type?: string
+          created_at?: string
+          id?: string
+          score?: number
+          tier?: string
+        }
+        Relationships: []
       }
       error_logs: {
         Row: {
@@ -9090,6 +9162,51 @@ export type Database = {
         }
         Relationships: []
       }
+      engagement_score_leaderboard: {
+        Row: {
+          contact_id: string | null
+          contact_name: string | null
+          contact_type: string | null
+          id: string | null
+          last_signal_at: string | null
+          owner_salesperson_id: string | null
+          score: number | null
+          tier: string | null
+          total_clicks: number | null
+          total_opens: number | null
+          total_replies: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          contact_name?: never
+          contact_type?: string | null
+          id?: string | null
+          last_signal_at?: string | null
+          owner_salesperson_id?: never
+          score?: number | null
+          tier?: string | null
+          total_clicks?: number | null
+          total_opens?: number | null
+          total_replies?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          contact_name?: never
+          contact_type?: string | null
+          id?: string | null
+          last_signal_at?: string | null
+          owner_salesperson_id?: never
+          score?: number | null
+          tier?: string | null
+          total_clicks?: number | null
+          total_opens?: number | null
+          total_replies?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       salespeople_public: {
         Row: {
           avatar_url: string | null
@@ -9155,6 +9272,10 @@ export type Database = {
           rule_id: string
           strategy: string
         }[]
+      }
+      bulk_recompute_engagement: {
+        Args: { _owner_id?: string }
+        Returns: number
       }
       calculate_account_score: {
         Args: { p_account_id: string }
@@ -9412,6 +9533,10 @@ export type Database = {
           variant_id: string
         }[]
       }
+      recompute_engagement_score: {
+        Args: { _contact_id: string; _contact_type: string }
+        Returns: number
+      }
       record_engagement_signal: {
         Args: {
           _contact_id: string
@@ -9481,6 +9606,10 @@ export type Database = {
           p_totp_enabled?: boolean
           p_totp_secret?: string
         }
+        Returns: boolean
+      }
+      user_owns_engagement_contact: {
+        Args: { _contact_id: string; _contact_type: string }
         Returns: boolean
       }
       user_owns_sequence_step: { Args: { _step_id: string }; Returns: boolean }
