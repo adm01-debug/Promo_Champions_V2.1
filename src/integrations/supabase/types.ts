@@ -1850,6 +1850,56 @@ export type Database = {
           },
         ]
       }
+      call_sentiment_timeline: {
+        Row: {
+          confidence: number
+          created_at: string
+          end_sec: number
+          excerpt: string | null
+          id: string
+          recording_id: string
+          score: number
+          segment_index: number
+          sentiment: string
+          speaker: string
+          start_sec: number
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          end_sec?: number
+          excerpt?: string | null
+          id?: string
+          recording_id: string
+          score?: number
+          segment_index: number
+          sentiment?: string
+          speaker?: string
+          start_sec?: number
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          end_sec?: number
+          excerpt?: string | null
+          id?: string
+          recording_id?: string
+          score?: number
+          segment_index?: number
+          sentiment?: string
+          speaker?: string
+          start_sec?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_sentiment_timeline_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_transcripts: {
         Row: {
           created_at: string
@@ -10374,6 +10424,26 @@ export type Database = {
       }
     }
     Views: {
+      call_sentiment_summary: {
+        Row: {
+          avg_score: number | null
+          avg_score_client: number | null
+          avg_score_salesperson: number | null
+          negative_count: number | null
+          positive_count: number | null
+          recording_id: string | null
+          segments_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_sentiment_timeline_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_best_send_window: {
         Row: {
           clicks: number | null
