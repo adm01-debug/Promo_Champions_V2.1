@@ -3443,6 +3443,100 @@ export type Database = {
         }
         Relationships: []
       }
+      email_engagement_score_history: {
+        Row: {
+          captured_at: string
+          id: string
+          sale_id: string
+          score: number
+          tier: string
+        }
+        Insert: {
+          captured_at?: string
+          id?: string
+          sale_id: string
+          score: number
+          tier: string
+        }
+        Update: {
+          captured_at?: string
+          id?: string
+          sale_id?: string
+          score?: number
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_engagement_score_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_engagement_scores: {
+        Row: {
+          avg_response_minutes: number | null
+          click_rate: number
+          created_at: string
+          id: string
+          last_calculated_at: string
+          open_rate: number
+          recency_days: number | null
+          reply_rate: number
+          sale_id: string
+          score: number
+          tier: string
+          total_clicks: number
+          total_opens: number
+          total_replies: number
+          total_sent: number
+        }
+        Insert: {
+          avg_response_minutes?: number | null
+          click_rate?: number
+          created_at?: string
+          id?: string
+          last_calculated_at?: string
+          open_rate?: number
+          recency_days?: number | null
+          reply_rate?: number
+          sale_id: string
+          score?: number
+          tier?: string
+          total_clicks?: number
+          total_opens?: number
+          total_replies?: number
+          total_sent?: number
+        }
+        Update: {
+          avg_response_minutes?: number | null
+          click_rate?: number
+          created_at?: string
+          id?: string
+          last_calculated_at?: string
+          open_rate?: number
+          recency_days?: number | null
+          reply_rate?: number
+          sale_id?: string
+          score?: number
+          tier?: string
+          total_clicks?: number
+          total_opens?: number
+          total_replies?: number
+          total_sent?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_engagement_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           created_at: string
@@ -10200,6 +10294,21 @@ export type Database = {
           report_entity: string
           report_id: string
           report_name: string
+        }[]
+      }
+      get_engagement_leaderboard: {
+        Args: { _limit?: number }
+        Returns: {
+          click_rate: number
+          client_name: string
+          open_rate: number
+          recency_days: number
+          reply_rate: number
+          sale_id: string
+          salesperson_id: string
+          score: number
+          tier: string
+          total_sent: number
         }[]
       }
       get_global_send_time_stats: {

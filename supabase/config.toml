@@ -147,3 +147,6 @@ verify_jwt = true
 [functions.process-scheduled-sends]
 verify_jwt = false
 
+[functions.email-engagement-scorer]
+verify_jwt = true
+
