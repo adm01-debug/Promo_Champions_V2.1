@@ -5,6 +5,13 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
 import { useRetryMutation } from "@/hooks/useRetryMutation";
+import { useIndexEntity } from "@/hooks/semantic/useIndexEntity";
+import type { SemanticEntityType } from "@/components/semantic/semanticSearchHelpers";
+
+const LEAD_STATUSES = new Set(["lead", "prospecting", "qualified"]);
+function saleEntityType(status?: string | null): SemanticEntityType {
+  return status && LEAD_STATUSES.has(status) ? "lead" : "deal";
+}
 export interface Sale {
   id: string;
   client_name: string;
@@ -70,6 +77,7 @@ export const useSalesData = (searchTerm?: string) => {
 export const useCreateSale = () => {
   const queryClient = useQueryClient();
   const { playSoundForCategory } = useSystemSoundSettings();
+  const { index } = useIndexEntity();
 
   return useRetryMutation(
     async (input: CreateSaleInput) => {
@@ -84,12 +92,13 @@ export const useCreateSale = () => {
     },
     {
       retryConfig: { maxRetries: 3, baseDelay: 1000 },
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["sales-list"] });
         queryClient.invalidateQueries({ queryKey: ["sales"] });
         queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
         toast.success("Venda criada com sucesso!");
         playSoundForCategory('newSale');
+        if (data?.id) index(saleEntityType(data.status), data.id);
       },
       onError: (error) => {
         if (import.meta.env.DEV) {

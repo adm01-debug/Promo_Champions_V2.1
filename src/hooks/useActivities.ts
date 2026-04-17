@@ -2,6 +2,7 @@
 import { CACHE_TIMES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
 export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'other';
@@ -156,7 +157,8 @@ export const useActivityStats = (salespersonId?: string) => {
 
 export const useCreateActivity = () => {
   const queryClient = useQueryClient();
-  
+  const { index } = useIndexEntity();
+
   return useMutation({
     mutationFn: async (input: {
       activity_type: ActivityType;
@@ -172,13 +174,14 @@ export const useCreateActivity = () => {
         .insert(input)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['activities'] });
       queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
+      if (data?.id) index('activity', data.id);
     },
   });
 };
