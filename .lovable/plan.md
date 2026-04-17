@@ -1,60 +1,54 @@
 
-**Bloco Conversation Intelligence — item 2/4: Coaching IA com Timestamps Clicáveis**
+**Bloco Conversation Intelligence — item 3/4: Real-time Sentiment Stream**
 
-Próxima atômica: transformar os `coaching_tips` (já gerados em `call_insights`) em **coaching acionável com timestamps clicáveis**, vinculando cada dica a um momento exato da call e permitindo ao gestor/vendedor pular direto para o trecho problemático no player de áudio.
+Próxima atômica: visualizar **sentimento da call em tempo real ao longo da timeline**, gerando uma curva de sentimento por segmento da diarização que se sincroniza com o player de áudio — vendedor/gestor enxerga visualmente onde a conversa esquentou, esfriou ou virou.
 
 ## Estado atual
-- `call_insights.coaching_tips` é um `jsonb[]` com `{tip, category, severity}` mas sem âncora temporal.
-- `key_moments` tem timestamps mas não está cruzado com tips.
-- `RecordingSummaryDrawer` mostra tips como lista estática — sem seek, sem severidade visual, sem accept/dismiss.
-- Sem histórico de coaching por vendedor (gestor não vê evolução).
+- `call_insights` armazena `sentiment_overall` mas é um único valor para a call inteira.
+- `diarization` tem segmentos com `start`, `end`, `speaker`, `text` — base perfeita para sentiment por janela.
+- Player de áudio em `RecordingSummaryDrawer` toca mas não tem overlay visual de momentos.
+- Sem ancoragem visual de "onde virou" — gestor precisa ouvir tudo.
 
 ## Mudanças
 
 ### 1. Migration
-- Tabela `coaching_actions`: `id`, `recording_id`, `salesperson_id`, `tip text`, `category text` (`opening|discovery|objection|closing|talk_ratio|pace|empathy`), `severity text` (`info|warning|critical`), `timestamp_sec int?`, `quote text?` (trecho exato citado), `status text` (`pending|accepted|dismissed|practiced`), `manager_note text?`, `accepted_at`, `created_by_ai bool default true`, `created_at`, `updated_at`. RLS: salesperson vê o próprio; manager/admin veem todos.
-- Index `(salesperson_id, status, created_at desc)`.
-- RPC `coaching_progress_by_salesperson(_days int)` → agrega counts por categoria/severity/status.
+- Tabela `call_sentiment_timeline`: `id`, `recording_id` (FK), `segment_index int`, `start_sec int`, `end_sec int`, `speaker text` (`salesperson|client|unknown`), `sentiment text` (`very_negative|negative|neutral|positive|very_positive`), `score numeric` (-1.0 a 1.0), `confidence numeric` (0-1), `excerpt text`, `created_at`. Index em `(recording_id, start_sec)`. RLS herda do recording (owner/admin/manager).
+- View `call_sentiment_summary` agregando média por speaker + contagem de viradas (sentiment shifts).
 
-### 2. Edge function `extract-coaching-actions` (`verify_jwt = true`)
+### 2. Edge function `analyze-sentiment-timeline` (`verify_jwt = true`)
 - Input: `{ recording_id }`.
-- Lê `transcript`, `diarization`, `call_insights` da gravação.
-- Chama Lovable AI (`google/gemini-2.5-flash`) com prompt estruturado pedindo JSON: array de `{tip, category, severity, timestamp_sec, quote}` baseado em momentos reais da diarização.
-- Insere rows em `coaching_actions` (idempotente: deleta `pending` antigos da mesma recording antes).
-- Auto-chain: chamada após `summarize-call-recording` no `useTranscribeRecording`.
+- Lê `diarization`, agrupa em janelas de ~30s (ou 5 segmentos), chama Lovable AI (`google/gemini-2.5-flash-lite`) com tool calling: array de `{segment_index, sentiment, score, confidence, excerpt}`.
+- Idempotente: deleta rows antigas da mesma `recording_id` antes de inserir.
+- Auto-chain: chamada após `extract-coaching-actions` em `useTranscribeRecording`.
+- Output: `{ recording_id, segments_count }`.
 
 ### 3. Hooks `src/hooks/conversational/`
-- `useCoachingActions(recordingId)` — lista actions da call.
-- `useCoachingActionsBySalesperson(salespersonId, days)` — histórico do vendedor.
-- `useUpdateCoachingAction()` — mutation para `status` + `manager_note`.
-- `useExtractCoaching()` — mutation para re-rodar extração.
-- `useCoachingProgress(days)` — invoca RPC para gestor.
+- `useSentimentTimeline(recordingId)` — query lista ordenada por `start_sec`.
+- `useAnalyzeSentiment()` — mutation re-roda análise.
 
 ### 4. UI
-- `src/components/conversational/CoachingActionsList.tsx` (≤200L) — lista por severity (critical→warning→info), cada item com:
-  - Badge categoria + severity colorida.
-  - Timestamp clicável (chama `onSeek`).
-  - Quote em itálico do trecho citado.
-  - Botões: ✓ Aceitar, ✗ Dispensar, 💪 Pratiquei.
-  - Campo `manager_note` (só manager/admin).
-- `src/components/conversational/CoachingProgressCard.tsx` (≤160L) — donut por status (pending/accepted/practiced) + barras por categoria, usado no perfil do vendedor.
-- `src/components/conversational/coachingHelpers.ts` — labels, cores por categoria/severity, ícones.
-- Editar `RecordingSummaryDrawer.tsx`: substituir lista estática de tips por `<CoachingActionsList recordingId={...} onSeek={seekAudio}>`.
-- Editar `SalespersonProfile.tsx` (ou hub equivalente): adicionar `<CoachingProgressCard salespersonId={id}>`.
+- `src/components/conversational/SentimentTimelineChart.tsx` (≤200L) — área stacked por speaker, eixo X = tempo, eixo Y = score (-1 a +1):
+  - Recharts `AreaChart` com gradiente verde/vermelho.
+  - Linha vertical clicável que sincroniza com `currentTime` do audio (callback `onSeek`).
+  - Markers nos pontos de virada (delta ≥ 0.5).
+  - Tooltip com excerpt do trecho.
+- `src/components/conversational/sentimentHelpers.ts` — labels, cores por sentiment, função `detectShifts(timeline)` para markers.
+- `src/components/conversational/SentimentBadge.tsx` (≤60L) — pill colorida usada no card overall.
+- Editar `RecordingSummaryDrawer.tsx`: embed `<SentimentTimelineChart>` abaixo do player, propagar `currentTime` e `onSeek` (já existe ref do audio).
 
 ### 5. Configuração
-- `supabase/config.toml`: `[functions.extract-coaching-actions] verify_jwt = true`.
+- `supabase/config.toml`: `[functions.analyze-sentiment-timeline] verify_jwt = true`.
 
 ### 6. Validação
-- `supabase--curl_edge_functions /extract-coaching-actions` em recording real → confirma rows com timestamp válido.
+- `supabase--curl_edge_functions /analyze-sentiment-timeline` em recording real → confirma rows com `score` válido.
 - `supabase--linter` zero novos warnings.
-- Player segue até o timestamp ao clicar.
+- Click no chart → audio salta para o timestamp.
 
 ## Arquivos
-- **Migration**: 1 (1 tabela + RLS + index + RPC)
-- **Criar**: `supabase/functions/extract-coaching-actions/index.ts`
-- **Criar**: `src/hooks/conversational/useCoachingActions.ts`, `useCoachingProgress.ts`
-- **Criar**: 3 arquivos em `src/components/conversational/` (lista, progress, helpers)
-- **Editar**: `src/components/conversational/RecordingSummaryDrawer.tsx`, `src/hooks/conversational/useTranscribeRecording.ts` (auto-chain), `supabase/config.toml`, e o perfil do vendedor para embedar progress
+- **Migration**: 1 (1 tabela + view + RLS + index)
+- **Criar**: `supabase/functions/analyze-sentiment-timeline/index.ts`
+- **Criar**: `src/hooks/conversational/useSentimentTimeline.ts`
+- **Criar**: 3 arquivos em `src/components/conversational/` (chart, helpers, badge)
+- **Editar**: `src/components/conversational/RecordingSummaryDrawer.tsx`, `src/hooks/conversational/useTranscribeRecording.ts` (auto-chain), `supabase/config.toml`
 
-Após esta entrega, sigo automaticamente para: **Real-time Sentiment Stream** → **Momentos Críticos com Notificações** → fechando Conversation Intelligence em 10/10.
+Após esta entrega, sigo automaticamente para 4/4: **Momentos Críticos com Notificações** → fechando Conversation Intelligence em 10/10.
