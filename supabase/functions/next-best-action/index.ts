@@ -379,6 +379,9 @@ Gere ${limit} próximas melhores ações usando a tool generate_next_best_action
         atRisk: stagnant.length + atRiskAccounts.length,
         goalProgress: Math.round(goalProgress),
       };
+    } else {
+      const gp = Number(result.summary.goalProgress);
+      result.summary.goalProgress = gp > 0 && gp <= 1 ? Math.round(gp * 100) : Math.round(gp);
     }
 
     return new Response(JSON.stringify(result), {
