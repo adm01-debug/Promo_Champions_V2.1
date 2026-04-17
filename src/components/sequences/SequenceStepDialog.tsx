@@ -27,6 +27,9 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
   const [hours, setHours] = useState(step?.delay_hours ?? 0);
   const [subject, setSubject] = useState(step?.subject ?? "");
   const [body, setBody] = useState(step?.body ?? "");
+  const [whatsappTemplateId, setWhatsappTemplateId] = useState(
+    (step as { whatsapp_template_id?: string } | null)?.whatsapp_template_id ?? "",
+  );
   const [showAI, setShowAI] = useState(false);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const upsert = useUpsertSequenceStep();
@@ -58,7 +61,8 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
       delay_hours: Number(hours),
       subject: subject || null,
       body: body || null,
-    });
+      whatsapp_template_id: channel === "whatsapp" ? (whatsappTemplateId || null) : null,
+    } as Parameters<typeof upsert.mutateAsync>[0]);
     onOpenChange(false);
   };
 
