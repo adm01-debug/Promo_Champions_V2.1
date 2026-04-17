@@ -150,3 +150,6 @@ verify_jwt = false
 [functions.email-engagement-scorer]
 verify_jwt = true
 
+[functions.account-engagement-aggregator]
+verify_jwt = true
+
