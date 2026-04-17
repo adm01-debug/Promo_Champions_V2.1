@@ -50,7 +50,7 @@ export function usePurchaseHeatmap(clientId?: string, months = 24) {
     queryKey: ["purchase-heatmap", clientId ?? "all", months],
     queryFn: async (): Promise<HeatmapCell[]> => {
       const { data, error } = await supabase.rpc("get_client_purchase_heatmap", {
-        _client_id: clientId ?? null,
+        _client_id: clientId,
         _months: months,
       });
       if (error) throw error;

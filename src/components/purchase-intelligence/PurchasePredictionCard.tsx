@@ -63,7 +63,7 @@ export function PurchasePredictionCard({ clientId }: Props) {
           {data.top_competitor_internal && data.share_with_others_pct > 0 && (
             <p className="text-xs text-muted-foreground">
               Principal concorrente interno:{" "}
-              <strong className="text-amber-600 dark:text-amber-400">
+              <strong className="text-warning">
                 {data.top_competitor_internal.salesperson_name ?? "Desconhecido"}
               </strong>{" "}
               ({formatBRL(data.top_competitor_internal.revenue)})
@@ -116,7 +116,7 @@ export function PurchasePredictionCard({ clientId }: Props) {
             </div>
           </div>
         ) : data.ai_error ? (
-          <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300">
+          <div className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
             {data.ai_error === "rate_limited"
               ? "Limite de IA atingido — tente novamente em instantes."
               : data.ai_error === "credits_required"

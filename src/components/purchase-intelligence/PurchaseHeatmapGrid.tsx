@@ -94,7 +94,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
             <span className="inline-block h-3 w-3 rounded-sm border-2 border-primary" /> Minhas
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block h-3 w-3 rounded-sm border-2 border-dashed border-amber-500" /> Outros
+            <span className="inline-block h-3 w-3 rounded-sm border-2 border-dashed border-warning" /> Outros
           </span>
         </div>
       </CardHeader>
@@ -125,7 +125,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
                     const borderClass = cell?.hasMine
                       ? "border-2 border-primary"
                       : cell?.hasOthers
-                      ? "border-2 border-dashed border-amber-500"
+                      ? "border-2 border-dashed border-warning"
                       : "border border-border/30";
                     return (
                       <td key={m} className="p-0">
@@ -146,7 +146,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
                                   <div className="text-primary">Minhas: {formatBRL(cell.myRevenue)}</div>
                                 )}
                                 {cell.others.length > 0 && (
-                                  <div className="text-amber-600 dark:text-amber-400">
+                                  <div className="text-warning">
                                     Outros: {cell.others.map((o) => `${o.name} (${formatBRL(o.revenue)})`).join(", ")}
                                   </div>
                                 )}
