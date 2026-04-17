@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
     // Pull candidate sales owned by the queue owner (or filter's owner)
     const { data: sales, error: sErr } = await supabase
       .from("sales")
-      .select("id, salesperson_id, client_name, last_interaction, status")
+      .select("id, salesperson_id, client_name, status, updated_at")
       .eq("salesperson_id", ownerScope)
       .neq("status", "Vendido")
       .neq("status", "Perdido")
@@ -91,7 +91,7 @@ Deno.serve(async (req) => {
     const scored: Scored[] = sales
       .map((s) => {
         const emailScore = scoreMap.get(s.id) ?? 0;
-        const lastTouch = s.last_interaction ? new Date(s.last_interaction).getTime() : 0;
+        const lastTouch = s.updated_at ? new Date(s.updated_at).getTime() : 0;
         const daysSince = lastTouch ? (now - lastTouch) / (86400 * 1000) : 90;
         const recencyScore = Math.max(0, Math.min(100, daysSince * 1.5));
         let priority = 0;
