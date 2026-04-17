@@ -223,6 +223,7 @@ Deno.serve(async (req) => {
             next_action_at: nextActionAt,
             status: newStatus,
             completed_at: completedAt,
+            optimized_for_at: null,
           })
           .eq("id", enr.id);
 
