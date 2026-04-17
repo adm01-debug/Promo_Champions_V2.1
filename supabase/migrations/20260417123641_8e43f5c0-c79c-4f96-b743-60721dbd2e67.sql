@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "semantic_index_no_client_writes" ON public.semantic_index;

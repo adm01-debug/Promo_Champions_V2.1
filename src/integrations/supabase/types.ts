@@ -7514,6 +7514,39 @@ export type Database = {
         }
         Relationships: []
       }
+      semantic_index: {
+        Row: {
+          content: string
+          embedding: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json
+          salesperson_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          embedding?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          metadata?: Json
+          salesperson_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          embedding?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          metadata?: Json
+          salesperson_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sequence_enrollments: {
         Row: {
           auto_pause_reason: string | null
@@ -9775,6 +9808,21 @@ export type Database = {
         Args: { _contact_email: string; _received_at?: string }
         Returns: string
       }
+      match_semantic: {
+        Args: {
+          _entity_types?: string[]
+          _match_count?: number
+          _query_embedding: string
+        }
+        Returns: {
+          content: string
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json
+          similarity: number
+        }[]
+      }
       pick_step_variant: {
         Args: { _step_id: string }
         Returns: {
@@ -9908,6 +9956,17 @@ export type Database = {
           p_totp_secret?: string
         }
         Returns: boolean
+      }
+      upsert_semantic_entry: {
+        Args: {
+          _content: string
+          _embedding: string
+          _entity_id: string
+          _entity_type: string
+          _metadata?: Json
+          _salesperson_id: string
+        }
+        Returns: string
       }
       user_owns_engagement_contact: {
         Args: { _contact_id: string; _contact_type: string }

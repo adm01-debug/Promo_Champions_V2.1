@@ -29,7 +29,7 @@ import {
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
   NPSDashboard, Deduplication, ImportExport, OnboardingTracking, InactivityTriggers, Bitrix24,
   // Ferramentas & IA
-  Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything,
+  Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch,
   // Admin
   AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
@@ -190,6 +190,7 @@ export function AppRoutes() {
                     <Route path="/assistente" element={<Assistente />} />
                     <Route path="/perguntar" element={<AskAnything />} />
                     <Route path="/busca-inteligente" element={<SmartSearch />} />
+                    <Route path="/busca" element={<SemanticSearch />} />
                     <Route path="/notificacoes" element={<Notificacoes />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
 

@@ -111,3 +111,12 @@ verify_jwt = true
 [functions.summarize-call-recording]
 verify_jwt = true
 
+[functions.semantic-index-entity]
+verify_jwt = true
+
+[functions.semantic-search-universal]
+verify_jwt = true
+
+[functions.semantic-reindex-batch]
+verify_jwt = true
+

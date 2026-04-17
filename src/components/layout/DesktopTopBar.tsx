@@ -1,6 +1,6 @@
 import { RefObject } from "react";
 import { useLocation } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Bell, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
@@ -97,6 +97,21 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom"><p>Buscar (⌘K)</p></TooltipContent>
+          </Tooltip>
+
+          {/* Semantic Search trigger */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
+                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
+                aria-label="Busca semântica"
+              >
+                <Sparkles className="h-4 w-4 text-primary" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom"><p>Busca semântica (⌘⇧F)</p></TooltipContent>
           </Tooltip>
 
           {/* Divider */}
