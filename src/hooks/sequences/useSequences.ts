@@ -13,6 +13,8 @@ export interface Sequence {
   exit_on_reply: boolean;
   exit_on_meeting: boolean;
   send_time_optimization: boolean;
+  auto_pause_on_reply: boolean;
+  auto_pause_on_bounce: boolean;
   created_at: string;
   updated_at: string;
 }

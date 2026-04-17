@@ -14,6 +14,8 @@ export interface SequenceEnrollment {
   completed_at: string | null;
   exit_reason: string | null;
   optimized_for_at: string | null;
+  auto_paused_at: string | null;
+  auto_pause_reason: string | null;
 }
 
 export interface SequenceStepExecution {

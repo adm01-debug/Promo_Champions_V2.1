@@ -7,6 +7,7 @@ import { useSequence } from "@/hooks/sequences/useSequences";
 import { SequenceStepCard } from "./SequenceStepCard";
 import { SequenceStepDialog } from "./SequenceStepDialog";
 import { SendTimeOptimizationToggle } from "./SendTimeOptimizationToggle";
+import { AutoPauseSettingsCard } from "./AutoPauseSettingsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
@@ -42,10 +43,17 @@ export function SequenceBuilder({ sequenceId }: Props) {
   return (
     <div className="space-y-3">
       {sequence && (
-        <SendTimeOptimizationToggle
-          sequenceId={sequence.id}
-          enabled={sequence.send_time_optimization ?? true}
-        />
+        <>
+          <SendTimeOptimizationToggle
+            sequenceId={sequence.id}
+            enabled={sequence.send_time_optimization ?? true}
+          />
+          <AutoPauseSettingsCard
+            sequenceId={sequence.id}
+            autoPauseOnReply={sequence.auto_pause_on_reply ?? true}
+            autoPauseOnBounce={sequence.auto_pause_on_bounce ?? true}
+          />
+        </>
       )}
       {(steps ?? []).length === 0 ? (
         <Card className="p-12 text-center">
