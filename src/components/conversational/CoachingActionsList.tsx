@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, X, Dumbbell, Play, Sparkles, Loader2, MessageSquarePlus } from "lucide-react";
 import { useCoachingActions, useUpdateCoachingAction, useExtractCoaching } from "@/hooks/conversational/useCoachingActions";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import {
   CATEGORY_ICONS,
   CATEGORY_LABELS,
@@ -81,7 +81,7 @@ export const CoachingActionsList = ({ recordingId, onSeek }: Props) => {
 
 function ActionRow({ action, onSeek }: { action: CoachingAction; onSeek?: (s: number) => void }) {
   const update = useUpdateCoachingAction();
-  const { isAdmin, isManager } = useUserRole();
+  const { isAdmin, isManager } = useUserRoles();
   const canManage = isAdmin || isManager;
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState(action.manager_note ?? "");
