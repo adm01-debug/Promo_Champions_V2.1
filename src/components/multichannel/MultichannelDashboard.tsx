@@ -15,6 +15,7 @@ import { ChannelStatsCards } from "./ChannelStatsCards";
 import { ChannelChart } from "./ChannelChart";
 import { InteractionTimeline } from "./InteractionTimeline";
 import { TemplateManager } from "./TemplateManager";
+import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import {
   MessageSquare,
   Mail,
@@ -79,6 +80,7 @@ export function MultichannelDashboard() {
             </p>
           </div>
         </div>
+        <AIEmailComposerButton variant="glow" size="default" label="Compor com IA" />
       </div>
 
       {/* Channel Filter Chips */}
