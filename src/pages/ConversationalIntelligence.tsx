@@ -163,7 +163,12 @@ export default function ConversationalIntelligence() {
                 </Button>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
+              {selected && (
+                <CallRecordingPlayer
+                  audioPath={recordings?.find((r) => r.id === selected)?.audio_url ?? null}
+                />
+              )}
               {!selected && <p className="text-xs text-muted-foreground text-center py-8">Selecione uma call para ver os insights.</p>}
               {selected && !insight && <Skeleton className="h-40 w-full" />}
               {insight && (
