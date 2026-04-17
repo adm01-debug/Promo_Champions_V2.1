@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 interface ContactContext {
   name?: string;
@@ -9,8 +10,13 @@ interface ContactContext {
 }
 
 interface RequestBody {
+  mode?: "sequence" | "single";
+  // single mode
+  recipient_id?: string;
+  recipient_type?: "client" | "contact" | "manual";
+  // shared
   contact_context?: ContactContext;
-  goal?: "intro" | "follow_up" | "meeting" | "reactivation" | "breakup";
+  goal?: "intro" | "follow_up" | "meeting" | "reactivation" | "breakup" | "proposal" | "thanks";
   tone?: "formal" | "casual" | "consultivo" | "direto";
   language?: "pt-BR" | "en";
   length?: "short" | "medium" | "long";
@@ -23,6 +29,8 @@ const GOAL_LABEL: Record<string, string> = {
   meeting: "Solicitar reunião / demo",
   reactivation: "Reativar lead frio",
   breakup: "E-mail de break-up (última tentativa)",
+  proposal: "Envio de proposta comercial",
+  thanks: "Agradecimento pós-reunião ou pós-venda",
 };
 
 const TONE_LABEL: Record<string, string> = {
@@ -37,6 +45,52 @@ const LENGTH_LABEL: Record<string, string> = {
   medium: "médio (4-6 frases)",
   long: "longo (7-10 frases com mais contexto)",
 };
+
+async function resolveContext(
+  supabase: ReturnType<typeof createClient>,
+  recipientId: string,
+  recipientType: "client" | "contact",
+): Promise<ContactContext> {
+  if (recipientType === "client") {
+    const { data: client } = await supabase
+      .from("clients")
+      .select("name, company, email")
+      .eq("id", recipientId)
+      .maybeSingle();
+    if (!client) return {};
+    const { data: lastSale } = await supabase
+      .from("sales")
+      .select("created_at, status, value")
+      .eq("client_id", recipientId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return {
+      name: client.name,
+      company: client.company ?? undefined,
+      last_interaction: lastSale
+        ? `Última venda em ${new Date(lastSale.created_at).toLocaleDateString("pt-BR")} (${lastSale.status})`
+        : undefined,
+    };
+  }
+  // contact
+  const { data: contact } = await supabase
+    .from("account_contacts")
+    .select("name, job_title, department, last_contacted_at, account_id, accounts(name, industry)")
+    .eq("id", recipientId)
+    .maybeSingle();
+  if (!contact) return {};
+  const account = (contact as { accounts?: { name?: string; industry?: string } }).accounts;
+  return {
+    name: contact.name as string,
+    role: (contact.job_title as string | null) ?? undefined,
+    company: account?.name,
+    industry: account?.industry,
+    last_interaction: contact.last_contacted_at
+      ? `Último contato em ${new Date(contact.last_contacted_at as string).toLocaleDateString("pt-BR")}`
+      : undefined,
+  };
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -53,11 +107,24 @@ Deno.serve(async (req) => {
     }
 
     const body = (await req.json()) as RequestBody;
+    const mode = body.mode ?? "sequence";
     const goal = body.goal ?? "follow_up";
     const tone = body.tone ?? "consultivo";
     const language = body.language ?? "pt-BR";
     const length = body.length ?? "medium";
-    const ctx = body.contact_context ?? {};
+    let ctx = body.contact_context ?? {};
+
+    // Single mode: auto-resolve context with caller's JWT (RLS enforced)
+    if (mode === "single" && body.recipient_id && body.recipient_type && body.recipient_type !== "manual") {
+      const authHeader = req.headers.get("Authorization") ?? "";
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const resolved = await resolveContext(supabase, body.recipient_id, body.recipient_type);
+      ctx = { ...resolved, ...ctx };
+    }
 
     const langInstruction =
       language === "pt-BR"
@@ -75,7 +142,7 @@ REGRAS OBRIGATÓRIAS:
 5. Tamanho: ${LENGTH_LABEL[length]}.
 6. Sem placeholders genéricos tipo "[empresa]" — use {{empresa}}.
 7. Inclua 1 CTA claro no final.
-8. Retorne APENAS via tool call, nunca texto solto.`;
+8. Retorne APENAS via tool call emit_email com subject + body_text + body_html (HTML simples) + suggested_send_time (ISO ou texto tipo "terça 09h-11h") + follow_up_hint.`;
 
     const userPrompt = `Objetivo: ${GOAL_LABEL[goal]}.
 
@@ -112,14 +179,22 @@ Gere o e-mail agora chamando a tool emit_email.`;
                 type: "object",
                 properties: {
                   subject: { type: "string", description: "Assunto, máx 60 chars" },
-                  body: { type: "string", description: "Corpo do e-mail com quebras de linha \\n" },
+                  body_text: { type: "string", description: "Corpo em texto puro com \\n" },
+                  body_html: { type: "string", description: "Corpo em HTML simples (p, br, strong)" },
+                  suggested_send_time: {
+                    type: "string",
+                    description: "Janela ideal de envio, ex: 'terça 09h-11h' ou ISO datetime",
+                  },
+                  follow_up_hint: {
+                    type: "string",
+                    description: "Sugestão de follow-up se não houver resposta em X dias",
+                  },
                   variables_used: {
                     type: "array",
                     items: { type: "string" },
-                    description: "Lista de variáveis Liquid usadas, ex: ['nome','empresa']",
                   },
                 },
-                required: ["subject", "body", "variables_used"],
+                required: ["subject", "body_text", "body_html", "suggested_send_time", "follow_up_hint"],
                 additionalProperties: false,
               },
             },
@@ -159,18 +234,18 @@ Gere o e-mail agora chamando a tool emit_email.`;
       );
     }
 
-    const parsed = JSON.parse(toolCall.function.arguments) as {
-      subject: string;
-      body: string;
-      variables_used: string[];
-    };
+    const parsed = JSON.parse(toolCall.function.arguments);
 
     return new Response(
       JSON.stringify({
         subject: parsed.subject,
-        body: parsed.body,
+        body: parsed.body_text, // backwards compat with sequences
+        body_text: parsed.body_text,
+        body_html: parsed.body_html,
+        suggested_send_time: parsed.suggested_send_time,
+        follow_up_hint: parsed.follow_up_hint,
         variables_used: parsed.variables_used ?? [],
-        meta: { goal, tone, language, length },
+        meta: { goal, tone, language, length, mode },
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
