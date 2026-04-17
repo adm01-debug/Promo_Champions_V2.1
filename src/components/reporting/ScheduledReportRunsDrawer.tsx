@@ -43,7 +43,7 @@ export const ScheduledReportRunsDrawer = ({ scheduleId, scheduleName, onClose }:
           {runs?.map((r) => (
             <div key={r.id} className="border border-border/40 rounded-lg p-3 flex items-start gap-3 bg-card/40">
               <div className="mt-0.5">
-                {r.status === "success" && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+                {r.status === "success" && <CheckCircle2 className="h-4 w-4 text-primary" />}
                 {r.status === "failed" && <AlertCircle className="h-4 w-4 text-destructive" />}
                 {r.status === "running" && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
               </div>
