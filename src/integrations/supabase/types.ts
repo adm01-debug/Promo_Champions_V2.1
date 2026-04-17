@@ -127,12 +127,15 @@ export type Database = {
           email: string | null
           id: string
           influence_level: number
+          is_primary: boolean | null
           job_title: string | null
           last_contacted_at: string | null
           linkedin_url: string | null
           name: string
           notes: string | null
           phone: string | null
+          sale_id: string | null
+          seniority: string | null
           sentiment: string
           updated_at: string
         }
@@ -144,12 +147,15 @@ export type Database = {
           email?: string | null
           id?: string
           influence_level?: number
+          is_primary?: boolean | null
           job_title?: string | null
           last_contacted_at?: string | null
           linkedin_url?: string | null
           name: string
           notes?: string | null
           phone?: string | null
+          sale_id?: string | null
+          seniority?: string | null
           sentiment?: string
           updated_at?: string
         }
@@ -161,12 +167,15 @@ export type Database = {
           email?: string | null
           id?: string
           influence_level?: number
+          is_primary?: boolean | null
           job_title?: string | null
           last_contacted_at?: string | null
           linkedin_url?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
+          sale_id?: string | null
+          seniority?: string | null
           sentiment?: string
           updated_at?: string
         }
@@ -178,22 +187,36 @@ export type Database = {
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "account_contacts_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
         ]
       }
       accounts: {
         Row: {
           account_score: number
           annual_revenue: number | null
+          champion_count: number | null
           country: string | null
+          coverage: number | null
           created_at: string
+          decision_maker_count: number | null
+          domain: string | null
           employee_count: number | null
+          engaged_contacts: number | null
           health_status: string
           id: string
           industry: string | null
+          last_aggregated_at: string | null
           name: string
           notes: string | null
           owner_id: string | null
           parent_account_id: string | null
+          size_bucket: string | null
           tier: string
           updated_at: string
           website: string | null
@@ -201,16 +224,23 @@ export type Database = {
         Insert: {
           account_score?: number
           annual_revenue?: number | null
+          champion_count?: number | null
           country?: string | null
+          coverage?: number | null
           created_at?: string
+          decision_maker_count?: number | null
+          domain?: string | null
           employee_count?: number | null
+          engaged_contacts?: number | null
           health_status?: string
           id?: string
           industry?: string | null
+          last_aggregated_at?: string | null
           name: string
           notes?: string | null
           owner_id?: string | null
           parent_account_id?: string | null
+          size_bucket?: string | null
           tier?: string
           updated_at?: string
           website?: string | null
@@ -218,16 +248,23 @@ export type Database = {
         Update: {
           account_score?: number
           annual_revenue?: number | null
+          champion_count?: number | null
           country?: string | null
+          coverage?: number | null
           created_at?: string
+          decision_maker_count?: number | null
+          domain?: string | null
           employee_count?: number | null
+          engaged_contacts?: number | null
           health_status?: string
           id?: string
           industry?: string | null
+          last_aggregated_at?: string | null
           name?: string
           notes?: string | null
           owner_id?: string | null
           parent_account_id?: string | null
+          size_bucket?: string | null
           tier?: string
           updated_at?: string
           website?: string | null
@@ -6984,6 +7021,7 @@ export type Database = {
       }
       sales: {
         Row: {
+          account_id: string | null
           amount: number
           category: string
           client_name: string
@@ -7000,6 +7038,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           amount: number
           category?: string
           client_name: string
@@ -7016,6 +7055,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           amount?: number
           category?: string
           client_name?: string
@@ -7032,6 +7072,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_pipeline_id_fkey"
             columns: ["pipeline_id"]
@@ -10243,6 +10290,19 @@ export type Database = {
           variant: string
         }[]
       }
+      get_account_engagement_summary: {
+        Args: { _account_id: string }
+        Returns: {
+          account_id: string
+          account_name: string
+          avg_score: number
+          coverage: number
+          dominant_tier: string
+          engaged_contacts: number
+          interactions_30d: number
+          total_contacts: number
+        }[]
+      }
       get_active_salespeople: {
         Args: never
         Returns: {
@@ -10352,6 +10412,20 @@ export type Database = {
           indexed_rows: number
           last_indexed: string
           total_rows: number
+        }[]
+      }
+      get_top_accounts: {
+        Args: { _limit?: number }
+        Returns: {
+          account_score: number
+          champion_count: number
+          coverage: number
+          decision_maker_count: number
+          engaged_contacts: number
+          id: string
+          industry: string
+          name: string
+          tier: string
         }[]
       }
       get_user_permissions: {
