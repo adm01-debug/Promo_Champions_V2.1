@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTopAccounts, useRecomputeAccountEngagement } from "@/hooks/engagement/useAccountEngagement";
 import { TopAccountsLeaderboard } from "@/components/engagement/Account/TopAccountsLeaderboard";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useUserRoles } from "@/hooks/useUserRoles";
 
 export default function AccountBasedEngagement() {
   const { data: top = [] } = useTopAccounts(50);
   const recompute = useRecomputeAccountEngagement();
-  const { role } = useUserRole();
-  const canRecompute = role === "admin" || role === "manager";
+  const { isAdminOrManager } = useUserRoles();
+  const canRecompute = isAdminOrManager;
 
   const tier1 = top.filter((a) => (a.account_score ?? 0) >= 70).length;
   const avgCoverage = top.length > 0
