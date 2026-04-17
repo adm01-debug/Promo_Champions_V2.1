@@ -177,3 +177,6 @@ verify_jwt = true
 [functions.purchase-intelligence-forecast]
 verify_jwt = true
 
+[functions.detect-critical-moments]
+verify_jwt = true
+

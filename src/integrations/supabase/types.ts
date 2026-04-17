@@ -1601,6 +1601,76 @@ export type Database = {
         }
         Relationships: []
       }
+      call_critical_moments: {
+        Row: {
+          context: string | null
+          created_at: string
+          id: string
+          moment_type: string
+          owner_id: string
+          quote: string | null
+          recording_id: string
+          salesperson_id: string
+          severity: string
+          status: string
+          suggested_action: string | null
+          timestamp_sec: number
+          updated_at: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          id?: string
+          moment_type: string
+          owner_id: string
+          quote?: string | null
+          recording_id: string
+          salesperson_id: string
+          severity?: string
+          status?: string
+          suggested_action?: string | null
+          timestamp_sec?: number
+          updated_at?: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          id?: string
+          moment_type?: string
+          owner_id?: string
+          quote?: string | null
+          recording_id?: string
+          salesperson_id?: string
+          severity?: string
+          status?: string
+          suggested_action?: string | null
+          timestamp_sec?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_critical_moments_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_critical_moments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_critical_moments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_insights: {
         Row: {
           ai_model: string | null
@@ -2986,6 +3056,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      critical_moment_notifications: {
+        Row: {
+          created_at: string
+          delivered: boolean
+          id: string
+          moment_id: string
+          read_at: string | null
+          recipient_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivered?: boolean
+          id?: string
+          moment_id: string
+          read_at?: string | null
+          recipient_user_id: string
+        }
+        Update: {
+          created_at?: string
+          delivered?: boolean
+          id?: string
+          moment_id?: string
+          read_at?: string | null
+          recipient_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "critical_moment_notifications_moment_id_fkey"
+            columns: ["moment_id"]
+            isOneToOne: false
+            referencedRelation: "call_critical_moments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       csat_ces_surveys: {
         Row: {

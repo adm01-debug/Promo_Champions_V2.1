@@ -53,6 +53,15 @@ export function useTranscribeRecording() {
             if (res && !res.error) {
               qc.invalidateQueries({ queryKey: ["sentiment-timeline", recId] });
             }
+            return supabase.functions.invoke("detect-critical-moments", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) {
+              qc.invalidateQueries({ queryKey: ["critical-moments", recId] });
+              qc.invalidateQueries({ queryKey: ["critical-moments-feed"] });
+            }
           });
       }
     },
