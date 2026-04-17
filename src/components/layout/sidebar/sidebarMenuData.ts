@@ -128,6 +128,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
     label: "Análises", icon: Gauge,
     items: [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+      { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Análise de Funil", url: "/funil", icon: Filter },
       { title: "Relatório de Funil", url: "/relatorios/funil", icon: Filter },
       { title: "Cohort Heatmap", url: "/relatorios/cohort", icon: LayoutGrid },
