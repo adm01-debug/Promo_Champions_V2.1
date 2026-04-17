@@ -132,3 +132,9 @@ verify_jwt = true
 [functions.sequence-ab-promote]
 verify_jwt = true
 
+[functions.email-composer-bulk]
+verify_jwt = true
+
+[functions.email-bulk-send]
+verify_jwt = true
+

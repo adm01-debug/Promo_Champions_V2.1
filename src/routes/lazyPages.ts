@@ -31,6 +31,7 @@ export const FonteLeads = lazy(() => import("@/pages/FonteLeads"));
 export const Playbooks = lazy(() => import("@/pages/Playbooks"));
 export const FollowUpInteligente = lazy(() => import("@/pages/FollowUpInteligente"));
 export const Sequences = lazy(() => import("@/pages/SequencesPage"));
+export const BulkComposer = lazy(() => import("@/pages/BulkComposer"));
 export const LeadScoring = lazy(() => import("@/pages/LeadScoring"));
 export const Multichannel = lazy(() => import("@/pages/Multichannel"));
 export const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
