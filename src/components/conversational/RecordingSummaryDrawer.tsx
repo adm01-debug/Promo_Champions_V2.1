@@ -7,6 +7,7 @@ import { DecisionsAndObjectionsPanel } from "./DecisionsAndObjectionsPanel";
 import { NextStepsTimeline } from "./NextStepsTimeline";
 import { SummarizeButton } from "./SummarizeButton";
 import { CompetitorMentionsCard } from "./CompetitorMentionsCard";
+import { CoachingActionsList } from "./CoachingActionsList";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
@@ -61,6 +62,7 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
             />
             <NextStepsTimeline steps={(rec.next_steps as NextStep[]) ?? []} />
             <CompetitorMentionsCard recordingId={rec.id} />
+            <CoachingActionsList recordingId={rec.id} />
           </div>
         ) : null}
       </SheetContent>

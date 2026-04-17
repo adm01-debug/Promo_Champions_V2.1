@@ -37,6 +37,14 @@ export function useTranscribeRecording() {
             if (res && !res.error) {
               qc.invalidateQueries({ queryKey: ["competitor-mentions", recId] });
             }
+            return supabase.functions.invoke("extract-coaching-actions", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) {
+              qc.invalidateQueries({ queryKey: ["coaching-actions", recId] });
+            }
           });
       }
     },

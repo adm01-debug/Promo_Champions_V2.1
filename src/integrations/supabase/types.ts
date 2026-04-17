@@ -2301,6 +2301,79 @@ export type Database = {
         }
         Relationships: []
       }
+      coaching_actions: {
+        Row: {
+          accepted_at: string | null
+          category: string
+          created_at: string
+          created_by_ai: boolean
+          id: string
+          manager_note: string | null
+          quote: string | null
+          recording_id: string
+          salesperson_id: string
+          severity: string
+          status: string
+          timestamp_sec: number | null
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          category?: string
+          created_at?: string
+          created_by_ai?: boolean
+          id?: string
+          manager_note?: string | null
+          quote?: string | null
+          recording_id: string
+          salesperson_id: string
+          severity?: string
+          status?: string
+          timestamp_sec?: number | null
+          tip: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          category?: string
+          created_at?: string
+          created_by_ai?: boolean
+          id?: string
+          manager_note?: string | null
+          quote?: string | null
+          recording_id?: string
+          salesperson_id?: string
+          severity?: string
+          status?: string
+          timestamp_sec?: number | null
+          tip?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_actions_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_actions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_actions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cohort_analyses: {
         Row: {
           cohort_field: string
@@ -10484,6 +10557,15 @@ export type Database = {
           new_violations: number
           new_warnings: number
           processed: number
+        }[]
+      }
+      coaching_progress_by_salesperson: {
+        Args: { _days?: number; _salesperson_id: string }
+        Returns: {
+          category: string
+          count: number
+          severity: string
+          status: string
         }[]
       }
       complete_agent_run: {
