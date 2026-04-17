@@ -13,6 +13,7 @@ export interface SequenceStep {
   subject: string | null;
   body: string | null;
   conditions: Record<string, unknown>;
+  whatsapp_template_id?: string | null;
   created_at: string;
 }
 
@@ -46,6 +47,7 @@ export function useUpsertSequenceStep() {
         subject: input.subject ?? null,
         body: input.body ?? null,
         template_id: input.template_id ?? null,
+        whatsapp_template_id: input.whatsapp_template_id ?? null,
         conditions: (input.conditions ?? {}) as never,
       };
       if (input.id) {
