@@ -38,8 +38,9 @@ export function SequenceEnrollmentsDrawer({ open, onOpenChange, sequenceId }: Pr
             <div className="space-y-2">
               {data?.map((e) => (
                 <div key={e.id} className="border rounded-lg p-3 hover:bg-accent/5 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
-                    <code className="text-xs font-mono text-muted-foreground truncate">{e.contact_id}</code>
+                  <div className="flex items-center justify-between mb-2 gap-2">
+                    <code className="text-xs font-mono text-muted-foreground truncate flex-1">{e.contact_id}</code>
+                    <EngagementBadgeForContact contactId={e.contact_id} contactType={e.contact_type as "lead" | "client"} />
                     <Badge variant={statusBadgeVariant(e.status)}>{STATUS_LABEL[e.status] ?? e.status}</Badge>
                   </div>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
