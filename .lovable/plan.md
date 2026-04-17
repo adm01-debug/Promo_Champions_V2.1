@@ -1,61 +1,62 @@
 
-Próxima melhoria atômica da fila Conversation Intelligence: **2/7 — Audio Transcription Pipeline**.
+Conversation Intelligence está em 2/7. Próxima atômica: **3/7 — Diarization & Talk Ratio**.
 
-## Melhoria 2/7 — Audio Transcription Pipeline (Whisper via Lovable AI)
+## Melhoria 3/7 — Diarization & Talk Ratio
 
 ### Estado atual
-- 1/7 ✅: upload de áudio + storage privado + player funcionando.
-- `call_recordings.status` aceita `'transcribing'|'transcribed'` mas nada popula automaticamente.
-- Transcrição hoje é manual (textarea cole-aqui) → fluxo quebra a promessa de "Conversation Intelligence".
-- Não há edge function de transcrição nem campo `transcript` persistido na gravação.
+- 2/7 ✅: transcrição automática via Gemini com turnos `Vendedor:` / `Cliente:` quando o modelo consegue identificar.
+- Não há métrica quantitativa de quem falou mais, tempo médio de turno, monólogos longos ou interrupções.
+- Sem visualização de timeline de fala nem coaching baseado em talk ratio (benchmark Gong: vendedor ideal fala 40-50%).
 
 ### Mudanças
 
 **1. Migration**
 - Coluna em `call_recordings`:
-  - `transcript text` — texto completo transcrito
-  - `transcript_language text default 'pt'`
-  - `transcribed_at timestamptz`
-  - `transcription_error text`
-- RPC `update_call_recording_transcript(_id, _transcript, _language, _error)`: SECURITY DEFINER. Atualiza transcript + status + timestamps; checa ownership.
+  - `talk_ratio_seller numeric` (0-100, % do tempo falado pelo vendedor)
+  - `talk_ratio_client numeric`
+  - `longest_monologue_sec int` (maior bloco contínuo do vendedor)
+  - `interruptions_count int`
+  - `turns_count int`
+  - `diarization jsonb` — array de turnos `[{speaker, text, start_estimate, duration_estimate, word_count}]`
+  - `diarized_at timestamptz`
+- RPC `update_call_recording_diarization(_id, _diarization, _stats)`: SECURITY DEFINER + ownership check.
 
-**2. Edge function `transcribe-call-recording` (nova)**
+**2. Edge function `diarize-call-recording` (nova)**
 - POST `{ recording_id }`
-- Busca gravação; valida ownership via JWT
-- Gera URL assinada do `audio_url` no bucket privado
-- Marca status='transcribing'
-- Chama Lovable AI Gateway com modelo `google/gemini-2.5-flash` enviando áudio (base64 ou URL) + prompt: "Transcreva esta chamada de vendas em PT-BR, mantendo turnos Vendedor:/Cliente: quando possível"
-- Persiste transcript via RPC; status='transcribed'
-- Em erro: status='failed' + `transcription_error` populado
-- Trata 429 (rate limit) e 402 (créditos) com mensagens específicas
+- Lê `transcript` da gravação (requer status='transcribed')
+- Parser determinístico: separa por linhas iniciadas em `Vendedor:` / `Cliente:` / `Speaker N:`
+- Estima duração por turno proporcional a word_count vs `audio_duration_sec`
+- Calcula stats: talk_ratio, longest_monologue, turns_count, interruptions (turnos < 3 palavras seguidos de troca)
+- Quando heurística falhar (transcript sem rótulos), invoca Lovable AI (Gemini 2.5 Flash) para reclassificar turnos
+- Persiste via RPC
 
 **3. Hooks**
-- `useTranscribeRecording()` — dispara edge function e invalida cache
-- Atualizar `useCallRecordings` para retornar `transcript`, `transcript_language`, `transcribed_at`
+- `useDiarizeRecording()` — dispara edge + invalida cache
+- `useCallRecordings`: expor novos campos
 
-**4. Componentes UI**
-- `TranscribeButton.tsx`: botão "Transcrever com IA" no card da gravação selecionada (quando `status` ∈ {'ready','failed'})
-- `TranscriptViewer.tsx`: viewer expansível com highlight de turnos Vendedor/Cliente, contador de palavras, botão "Copiar"
-- Badge de status dinâmico: "Transcrevendo..." (loading), "Transcrito" (success), "Falha" (error tooltip com motivo)
-- Auto-trigger opcional: ao concluir upload, dispara transcrição automaticamente (toggle no uploader)
+**4. Componentes UI (≤300L cada)**
+- `TalkRatioBar.tsx`: barra horizontal Vendedor vs Cliente com cores semânticas + benchmark zone (40-50% ideal)
+- `DiarizationTimeline.tsx`: faixa horizontal segmentada por turno (hover = preview do texto)
+- `CallStatsPanel.tsx`: cards compactos (Turnos, Maior monólogo, Interrupções, Talk Ratio)
+- `DiarizeButton.tsx`: ação manual quando ainda não diarizado
+- Auto-trigger: ao concluir transcrição, dispara diarização automaticamente
 
 **5. Integração**
 - `ConversationalIntelligence.tsx`: 
-  - Após upload: dispara `useTranscribeRecording` automaticamente se toggle ativo
-  - Coluna 3: substitui textarea manual por `TranscriptViewer` quando há transcript persistido; senão mostra `TranscribeButton`
-  - O fluxo "Analisar com IA" agora usa o transcript persistido como input, removendo o paste manual obrigatório
+  - Coluna 3, abaixo do `TranscriptViewer`: insere `TalkRatioBar` + `CallStatsPanel` + `DiarizationTimeline`
+  - Insight de coaching: badge "Talk ratio acima do ideal" se vendedor > 65%
+- `useTranscribeRecording` (update): após sucesso, dispara `diarize-call-recording` em background
 
 **6. Validação**
-- Smoke RLS via `read_query` na coluna nova
-- Upload de MP3 curto → click Transcribe → verifica transcript populado
-- Verifica logs da edge function
-- Linter Supabase: zero novos warnings; console limpo
+- Smoke RLS via `read_query` nas novas colunas
+- Gravação transcrita → click Diarizar → verifica colunas populadas
+- Linter Supabase: zero novos warnings; console limpo; zero erros TS
 
 ### Arquivos
-- Criar: migration (4 colunas + 1 RPC)
-- Criar: `supabase/functions/transcribe-call-recording/index.ts`
-- Criar: `src/hooks/conversational/useTranscribeRecording.ts`
-- Criar: `src/components/conversational/TranscribeButton.tsx`, `TranscriptViewer.tsx`
-- Editar: `src/hooks/conversational/useCallRecordings.ts`, `src/pages/ConversationalIntelligence.tsx`, `supabase/config.toml`
+- Criar: migration (7 colunas + 1 RPC)
+- Criar: `supabase/functions/diarize-call-recording/index.ts`
+- Criar: `src/hooks/conversational/useDiarizeRecording.ts`
+- Criar: `src/components/conversational/TalkRatioBar.tsx`, `DiarizationTimeline.tsx`, `CallStatsPanel.tsx`, `DiarizeButton.tsx`, `diarizationHelpers.ts`
+- Editar: `src/hooks/conversational/useCallRecordings.ts`, `src/hooks/conversational/useTranscribeRecording.ts`, `src/pages/ConversationalIntelligence.tsx`, `supabase/config.toml`
 
-Após esta entrega (2/7), sigo automaticamente para 3/7 — Diarization & Talk Ratio, depois 4/7 Key Moment Detection, 5/7 Sentiment Analysis, 6/7 Battle Cards Auto-Trigger, 7/7 Searchable Call Library. Fechando Conversation Intelligence em 10/10.
+Após esta entrega (3/7), sigo automaticamente para 4/7 — Key Moment Detection, depois 5/7 Sentiment Analysis, 6/7 Battle Cards Auto-Trigger, 7/7 Searchable Call Library. Fechando Conversation Intelligence em 10/10.
