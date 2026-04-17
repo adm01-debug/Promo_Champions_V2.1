@@ -9,6 +9,8 @@ import { Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { EngagementBadgeForContact } from "./EngagementBadgeForContact";
+import { AutoPausedBadge } from "./AutoPausedBadge";
+import { ResumeEnrollmentButton } from "./ResumeEnrollmentButton";
 
 interface Props {
   open: boolean;
@@ -59,7 +61,13 @@ export function SequenceEnrollmentsDrawer({ open, onOpenChange, sequenceId }: Pr
                         Otimizado para {formatOptimizedFor(e.optimized_for_at)}
                       </Badge>
                     )}
+                    <AutoPausedBadge reason={e.auto_pause_reason} pausedAt={e.auto_paused_at} />
                   </div>
+                  {e.auto_paused_at && (
+                    <div className="mt-2 flex justify-end">
+                      <ResumeEnrollmentButton enrollmentId={e.id} sequenceId={e.sequence_id} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -89,8 +89,9 @@ Deno.serve(async (req) => {
   try {
     const { data: due, error: dueErr } = await supabase
       .from("sequence_enrollments")
-      .select("id, sequence_id, contact_id, contact_type, current_step, status, sequences!inner(send_time_optimization)")
+      .select("id, sequence_id, contact_id, contact_type, current_step, status, auto_paused_at, sequences!inner(send_time_optimization)")
       .eq("status", "active")
+      .is("auto_paused_at", null)
       .lte("next_action_at", new Date().toISOString())
       .limit(50);
 

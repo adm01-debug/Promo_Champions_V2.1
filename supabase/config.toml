@@ -89,3 +89,6 @@ verify_jwt = true
 
 [functions.engagement-score-recompute]
 verify_jwt = false
+
+[functions.inbound-email-webhook]
+verify_jwt = false

@@ -3715,6 +3715,53 @@ export type Database = {
           },
         ]
       }
+      inbound_reply_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          from_email: string | null
+          id: string
+          matched_enrollment_id: string | null
+          message_id: string | null
+          payload: Json
+          provider: string
+          received_at: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type?: string
+          from_email?: string | null
+          id?: string
+          matched_enrollment_id?: string | null
+          message_id?: string | null
+          payload?: Json
+          provider: string
+          received_at?: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          from_email?: string | null
+          id?: string
+          matched_enrollment_id?: string | null
+          message_id?: string | null
+          payload?: Json
+          provider?: string
+          received_at?: string
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbound_reply_events_matched_enrollment_id_fkey"
+            columns: ["matched_enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "sequence_enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_levels: {
         Row: {
           created_at: string
@@ -7292,6 +7339,8 @@ export type Database = {
       }
       sequence_enrollments: {
         Row: {
+          auto_pause_reason: string | null
+          auto_paused_at: string | null
           completed_at: string | null
           contact_id: string
           contact_type: string
@@ -7310,6 +7359,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_pause_reason?: string | null
+          auto_paused_at?: string | null
           completed_at?: string | null
           contact_id: string
           contact_type: string
@@ -7328,6 +7379,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_pause_reason?: string | null
+          auto_paused_at?: string | null
           completed_at?: string | null
           contact_id?: string
           contact_type?: string
@@ -7516,6 +7569,8 @@ export type Database = {
       }
       sequences: {
         Row: {
+          auto_pause_on_bounce: boolean
+          auto_pause_on_reply: boolean
           channel_mix: string[]
           created_at: string
           description: string | null
@@ -7529,6 +7584,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_pause_on_bounce?: boolean
+          auto_pause_on_reply?: boolean
           channel_mix?: string[]
           created_at?: string
           description?: string | null
@@ -7542,6 +7599,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_pause_on_bounce?: boolean
+          auto_pause_on_reply?: boolean
           channel_mix?: string[]
           created_at?: string
           description?: string | null
@@ -9273,6 +9332,10 @@ export type Database = {
           strategy: string
         }[]
       }
+      auto_pause_enrollment: {
+        Args: { _enrollment_id: string; _reason?: string }
+        Returns: undefined
+      }
       bulk_recompute_engagement: {
         Args: { _owner_id?: string }
         Returns: number
@@ -9524,6 +9587,10 @@ export type Database = {
         Returns: undefined
       }
       mark_all_notifications_read: { Args: never; Returns: number }
+      match_reply_to_enrollment: {
+        Args: { _contact_email: string; _received_at?: string }
+        Returns: string
+      }
       pick_step_variant: {
         Args: { _step_id: string }
         Returns: {
