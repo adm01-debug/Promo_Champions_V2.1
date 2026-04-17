@@ -8,6 +8,7 @@ interface Enrollment {
   contact_type: string;
   current_step: number;
   status: string;
+  send_time_optimization?: boolean;
 }
 
 interface Step {
@@ -88,14 +89,19 @@ Deno.serve(async (req) => {
   try {
     const { data: due, error: dueErr } = await supabase
       .from("sequence_enrollments")
-      .select("id, sequence_id, contact_id, contact_type, current_step, status")
+      .select("id, sequence_id, contact_id, contact_type, current_step, status, sequences!inner(send_time_optimization)")
       .eq("status", "active")
       .lte("next_action_at", new Date().toISOString())
       .limit(50);
 
     if (dueErr) throw dueErr;
 
-    for (const enr of (due ?? []) as Enrollment[]) {
+    type DueRow = Enrollment & { sequences?: { send_time_optimization?: boolean } };
+    for (const row of (due ?? []) as DueRow[]) {
+      const enr: Enrollment = {
+        ...row,
+        send_time_optimization: row.sequences?.send_time_optimization ?? true,
+      };
       processed++;
       try {
         const { data: steps, error: stepsErr } = await supabase
@@ -120,6 +126,36 @@ Deno.serve(async (req) => {
             .eq("id", enr.id);
           succeeded++;
           continue;
+        }
+
+        // Send Time Optimization: defer to optimal window for email/linkedin
+        const stoChannels = new Set(["email", "linkedin"]);
+        if (enr.send_time_optimization && stoChannels.has(nextStep.channel)) {
+          try {
+            const earliest = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+            const { data: optimal } = await supabase.rpc("compute_optimal_send_time", {
+              _contact_id: enr.contact_id,
+              _contact_type: enr.contact_type,
+              _earliest: earliest,
+            });
+            if (optimal) {
+              const optimalDate = new Date(optimal as string);
+              const maxDefer = Date.now() + 24 * 3600 * 1000;
+              if (optimalDate.getTime() > Date.now() + 5 * 60 * 1000 && optimalDate.getTime() <= maxDefer) {
+                await supabase
+                  .from("sequence_enrollments")
+                  .update({
+                    next_action_at: optimalDate.toISOString(),
+                    optimized_for_at: optimalDate.toISOString(),
+                  })
+                  .eq("id", enr.id);
+                succeeded++;
+                continue;
+              }
+            }
+          } catch (_) {
+            // soft-fail: STO not critical, fall through to immediate send
+          }
         }
 
         // Pick A/B variant if any
@@ -187,6 +223,7 @@ Deno.serve(async (req) => {
             next_action_at: nextActionAt,
             status: newStatus,
             completed_at: completedAt,
+            optimized_for_at: null,
           })
           .eq("id", enr.id);
 

@@ -2387,6 +2387,45 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_send_time_profile: {
+        Row: {
+          clicks: number
+          contact_id: string
+          contact_type: string
+          day_of_week: number
+          hour_of_day: number
+          id: string
+          opens: number
+          replies: number
+          score: number | null
+          updated_at: string
+        }
+        Insert: {
+          clicks?: number
+          contact_id: string
+          contact_type: string
+          day_of_week: number
+          hour_of_day: number
+          id?: string
+          opens?: number
+          replies?: number
+          score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          clicks?: number
+          contact_id?: string
+          contact_type?: string
+          day_of_week?: number
+          hour_of_day?: number
+          id?: string
+          opens?: number
+          replies?: number
+          score?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       csat_ces_surveys: {
         Row: {
           account_id: string | null
@@ -7192,6 +7231,7 @@ export type Database = {
           last_executed_at: string | null
           metadata: Json
           next_action_at: string | null
+          optimized_for_at: string | null
           sequence_id: string
           started_at: string
           status: string
@@ -7209,6 +7249,7 @@ export type Database = {
           last_executed_at?: string | null
           metadata?: Json
           next_action_at?: string | null
+          optimized_for_at?: string | null
           sequence_id: string
           started_at?: string
           status?: string
@@ -7226,6 +7267,7 @@ export type Database = {
           last_executed_at?: string | null
           metadata?: Json
           next_action_at?: string | null
+          optimized_for_at?: string | null
           sequence_id?: string
           started_at?: string
           status?: string
@@ -7411,6 +7453,7 @@ export type Database = {
           id: string
           name: string
           owner_id: string
+          send_time_optimization: boolean
           updated_at: string
         }
         Insert: {
@@ -7423,6 +7466,7 @@ export type Database = {
           id?: string
           name: string
           owner_id: string
+          send_time_optimization?: boolean
           updated_at?: string
         }
         Update: {
@@ -7435,6 +7479,7 @@ export type Database = {
           id?: string
           name?: string
           owner_id?: string
+          send_time_optimization?: boolean
           updated_at?: string
         }
         Relationships: []
@@ -9031,6 +9076,20 @@ export type Database = {
       }
     }
     Views: {
+      contact_best_send_window: {
+        Row: {
+          clicks: number | null
+          contact_id: string | null
+          contact_type: string | null
+          day_of_week: number | null
+          hour_of_day: number | null
+          opens: number | null
+          rank: number | null
+          replies: number | null
+          score: number | null
+        }
+        Relationships: []
+      }
       salespeople_public: {
         Row: {
           avatar_url: string | null
@@ -9160,6 +9219,10 @@ export type Database = {
           total_amount: number
           weighted_amount: number
         }[]
+      }
+      compute_optimal_send_time: {
+        Args: { _contact_id: string; _contact_type: string; _earliest: string }
+        Returns: string
       }
       compute_pipeline_inspection: { Args: never; Returns: number }
       count_failed_login_attempts: {
@@ -9348,6 +9411,15 @@ export type Database = {
           subject: string
           variant_id: string
         }[]
+      }
+      record_engagement_signal: {
+        Args: {
+          _contact_id: string
+          _contact_type: string
+          _occurred_at?: string
+          _signal: string
+        }
+        Returns: undefined
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }

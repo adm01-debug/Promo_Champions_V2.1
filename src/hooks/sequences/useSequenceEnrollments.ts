@@ -13,6 +13,7 @@ export interface SequenceEnrollment {
   last_executed_at: string | null;
   completed_at: string | null;
   exit_reason: string | null;
+  optimized_for_at: string | null;
 }
 
 export interface SequenceStepExecution {

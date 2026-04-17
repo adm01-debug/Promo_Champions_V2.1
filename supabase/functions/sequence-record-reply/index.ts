@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
 
     const { data: exec } = await admin
       .from("sequence_step_executions")
-      .select("id, variant_id")
+      .select("id, variant_id, enrollment_id")
       .eq("enrollment_id", enrollmentId)
       .is("replied_at", null)
       .order("created_at", { ascending: false })
@@ -57,6 +57,21 @@ Deno.serve(async (req) => {
         .from("sequence_step_executions")
         .update({ replied_at: occurredAt })
         .eq("id", exec.id);
+    }
+
+    const { data: enr } = await admin
+      .from("sequence_enrollments")
+      .select("contact_id, contact_type")
+      .eq("id", enrollmentId)
+      .maybeSingle();
+
+    if (enr?.contact_id && enr?.contact_type) {
+      await admin.rpc("record_engagement_signal", {
+        _contact_id: enr.contact_id,
+        _contact_type: enr.contact_type,
+        _signal: "reply",
+        _occurred_at: occurredAt,
+      });
     }
 
     await admin
