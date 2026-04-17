@@ -1,50 +1,51 @@
 
-Próxima melhoria atômica da fila Reporting & BI: **3/7 — Funnel Report Visual Rico**.
+Próxima melhoria atômica da fila Reporting & BI: **4/7 — Cohort Heatmap Visual**.
 
-## Melhoria 3/7 — Funnel Report Visual Rico
+## Melhoria 4/7 — Cohort Heatmap Visual
 
 ### Estado atual
-- `useFunnelData` já calcula stages, conversionRate, dropOffRate, totalValue, avgDealSize, topDropOffStage por timeframe.
-- Não há componente visual rico que renderize funil + drop-off + comparação de período.
-- Custom Report Builder tem `viz_type: "funnel"` declarado mas `ReportPreview` não trata.
+- Tabela `cohort_analyses` já criada na migration 1/7.
+- RPC `compute_cohort_retention(_cohort_id, _periods)` declarada mas precisa ser validada/usada.
+- Existe módulo parcial de cohort em `retention-and-ltv-modules` (texto/tabela), sem heatmap visual.
+- `ReportPreview` declara `viz_type: "heatmap"` mas não trata.
 
 ### Mudanças
 
-**1. Hook `useFunnelComparison.ts` (novo)**
-- Wrapper sobre `useFunnelData` que dispara duas queries: período atual + período anterior (mesmo tamanho de janela)
-- Retorna `{ current, previous, deltas: { count, value, conversionRate }[] }` por estágio
-- staleTime 5min, memoizado
+**1. Hook `useCohortRetention.ts`**
+- Query Supabase: agrupa `clients` por mês de `created_at` (cohort) e cruza com `sales.created_at` para calcular % de retenção por mês relativo (M0..M11).
+- Retorna matriz `{ cohortLabel, cohortSize, retention: number[] }[]`.
+- Parâmetro: `periods` (default 12), `metric` ('orders'|'revenue').
+- staleTime 5min.
 
-**2. Componente `FunnelReportView.tsx` (≤350L) em `src/components/reporting/`**
-- Header: KPIs (Conversão geral, Total Won, Avg deal size, Top drop-off) com CountUp + delta vs período anterior
-- Visual funil custom (SVG/divs trapezoidais) com largura proporcional ao count, gradiente do primary, animação Framer
-- Tabela de drop-off por etapa: Stage | Count | Conversão | Drop-off | Δ vs período anterior (badge verde/vermelho)
-- Barras horizontais comparativas (Recharts BarChart) atual vs anterior por estágio
-- Selector de timeframe (7/30/60/90 dias) controlado
-- Skeleton loading, empty state ("Sem dados no período")
-- Sora títulos, Inter body, tokens semânticos, dark-ready
+**2. Helpers `cohortHelpers.ts`**
+- `buildCohortMatrix(clients, sales, periods)` — pura, testável.
+- `getHeatmapColor(value, max)` — interpola opacidade do primary (0.05 → 1.0).
+- `formatCohortLabel(date)` — "Jan/24".
 
-**3. Helpers `funnelReportHelpers.ts`**
-- `computeStageDeltas(current, previous)` 
-- `formatDelta(n, type: 'pct'|'abs'|'currency')`
-- `getStageColor(index, total)` — gradiente
+**3. Componente `CohortHeatmap.tsx` (≤300L)**
+- Header: KPIs (Cohorts ativas, Retenção média M1, M3, M6) com CountUp.
+- Grid responsivo: linhas = cohorts, colunas = M0..M11.
+- Cada célula: cor proporcional + tooltip com % e contagem absoluta.
+- Animação Framer stagger por linha.
+- Selector: período (6/12/24 meses), métrica (pedidos/receita).
+- Skeleton + empty state.
+- Sora títulos, Inter body, tokens semânticos.
 
-**4. Página `/relatorios/funil`**
-- Nova rota `FunnelReportPage.tsx` em `src/pages/`
-- Lazy load em `lazyPages.ts`
-- Registrar em `AppRoutes.tsx` sob ProtectedRoute
-- Adicionar entrada no sidebar (Analytics group)
+**4. Página `/relatorios/cohort`**
+- `CohortReportPage.tsx` com Helmet + PageTransition.
+- Lazy load + rota Manager-only.
+- Entrada no sidebar (Gestão > Análises).
 
 **5. Integração no Custom Report Builder**
-- `ReportPreview.tsx`: quando `viz_type === "funnel"` e entity === "sales", renderizar `<FunnelReportView />` embutido (timeframe derivado de filtros de data, fallback 30)
+- `ReportPreview.tsx`: quando `viz_type === "heatmap"`, renderizar `<CohortHeatmap embedded />`.
 
 **6. Validação**
-- Smoke visual: navegar `/relatorios/funil`, verificar render + comparação
-- Trocar timeframe e validar refetch
-- Console limpo
+- Smoke visual: navegar `/relatorios/cohort`.
+- Trocar período/métrica e validar refetch.
+- Console limpo.
 
 ### Arquivos
-- Criar: `src/hooks/reporting/useFunnelComparison.ts`, `src/components/reporting/FunnelReportView.tsx`, `src/components/reporting/funnelReportHelpers.ts`, `src/pages/FunnelReportPage.tsx`
-- Editar: `src/components/reporting/ReportPreview.tsx`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, sidebar config
+- Criar: `src/hooks/reporting/useCohortRetention.ts`, `src/components/reporting/cohortHelpers.ts`, `src/components/reporting/CohortHeatmap.tsx`, `src/pages/CohortReportPage.tsx`.
+- Editar: `src/components/reporting/ReportPreview.tsx`, `src/routes/AppRoutes.tsx`, `src/routes/lazyPages.ts`, `src/components/layout/sidebar/sidebarMenuData.ts`.
 
-Após esta, sigo automaticamente para 4/7 (Cohort Heatmap), 5/7 (Scheduled robusto), 6/7 (Embedded), 7/7 (widget dashboard + E2E).
+Após esta, sigo automaticamente para 5/7 (Scheduled robusto), 6/7 (Embedded), 7/7 (widget dashboard + E2E).
