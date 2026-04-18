@@ -23,11 +23,12 @@ import { WinLossHub } from "@/components/deal-intelligence/winloss/WinLossHub";
 import { LeadRoutingHub } from "@/components/lead-routing/LeadRoutingHub";
 import { ConversationHub } from "@/components/conversation-intelligence/ConversationHub";
 import { PipelinePulseHub } from "@/components/pipeline-pulse/PipelinePulseHub";
+import { BriefingHub } from "@/components/executive-briefing/BriefingHub";
 
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
-  const [activeTab, setActiveTab] = useState("comando");
+  const [activeTab, setActiveTab] = useState("briefing");
   const { data, isLoading } = useRevenueIntelligenceHub(90, dimension);
   const inspection = useRunPipelineInspection();
 
@@ -70,6 +71,7 @@ export const RevenueIntelligenceHub: FC = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="briefing">✨ Briefing</TabsTrigger>
           <TabsTrigger value="comando">⚡ Comando</TabsTrigger>
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
@@ -86,6 +88,9 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
+        <TabsContent value="briefing" className="mt-4">
+          <BriefingHub />
+        </TabsContent>
         <TabsContent value="comando" className="mt-4">
           <PipelinePulseHub onNavigateTab={setActiveTab} />
         </TabsContent>

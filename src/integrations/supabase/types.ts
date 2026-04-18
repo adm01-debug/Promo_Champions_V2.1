@@ -5299,6 +5299,48 @@ export type Database = {
         }
         Relationships: []
       }
+      executive_briefings: {
+        Row: {
+          briefing_date: string
+          created_at: string
+          created_by: string | null
+          generated_by: string
+          headline: string
+          id: string
+          key_risks: Json
+          key_wins: Json
+          narrative: string
+          pulse_score: number
+          recommended_actions: Json
+        }
+        Insert: {
+          briefing_date?: string
+          created_at?: string
+          created_by?: string | null
+          generated_by?: string
+          headline: string
+          id?: string
+          key_risks?: Json
+          key_wins?: Json
+          narrative?: string
+          pulse_score?: number
+          recommended_actions?: Json
+        }
+        Update: {
+          briefing_date?: string
+          created_at?: string
+          created_by?: string | null
+          generated_by?: string
+          headline?: string
+          id?: string
+          key_risks?: Json
+          key_wins?: Json
+          narrative?: string
+          pulse_score?: number
+          recommended_actions?: Json
+        }
+        Relationships: []
+      }
       expansion_opportunities: {
         Row: {
           account_id: string
@@ -13340,6 +13382,22 @@ export type Database = {
           total_opens?: number | null
           total_replies?: number | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      latest_briefing_view: {
+        Row: {
+          briefing_date: string | null
+          created_at: string | null
+          created_by: string | null
+          generated_by: string | null
+          headline: string | null
+          id: string | null
+          key_risks: Json | null
+          key_wins: Json | null
+          narrative: string | null
+          pulse_score: number | null
+          recommended_actions: Json | null
         }
         Relationships: []
       }
