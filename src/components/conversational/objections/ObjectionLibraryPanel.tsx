@@ -1,4 +1,4 @@
-import { useState } from "react">
+import { useState } from "react";
 import { BookOpen, Lightbulb, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
