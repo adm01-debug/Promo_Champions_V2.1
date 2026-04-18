@@ -452,25 +452,48 @@ function CrowdCluster({
     const delay = ((i * 137 + seed * 53) % 600) / 1000; // 0-0.6s pseudo-random
     return { x, y, color, delay };
   });
+  const signColors = ['hsl(0 75% 52%)', 'hsl(45 92% 55%)', 'hsl(140 65% 45%)'];
   return (
     <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1px 1.5px 1px hsl(var(--race-grass-shadow) / 0.5))' }}>
-      {fans.map((f, i) => (
-        <g
-          key={i}
-          transform={`translate(${f.x} ${f.y})`}
-          style={{
-            animation: `race-crowd-jump 0.6s ease-in-out infinite`,
-            animationDelay: `${f.delay}s`,
-            transformBox: 'fill-box',
-            transformOrigin: 'center bottom',
-          }}
-        >
-          {/* corpo (camiseta colorida) */}
-          <rect x={-2} y={-1} width={4} height={6} rx={0.8} fill={f.color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
-          {/* cabeça */}
-          <circle cx={0} cy={-3} r={1.6} fill="hsl(20 35% 60%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
-        </g>
-      ))}
+      {fans.map((f, i) => {
+        // ~25% dos torcedores levantam plaquinhas (sign)
+        const hasSign = (i + seed) % 4 === 1;
+        const signColor = signColors[(i + seed) % signColors.length];
+        return (
+          <g
+            key={i}
+            transform={`translate(${f.x} ${f.y})`}
+            style={{
+              animation: `race-crowd-jump 0.6s ease-in-out infinite`,
+              animationDelay: `${f.delay}s`,
+              transformBox: 'fill-box',
+              transformOrigin: 'center bottom',
+            }}
+          >
+            {/* corpo (camiseta colorida) */}
+            <rect x={-2} y={-1} width={4} height={6} rx={0.8} fill={f.color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            {/* cabeça */}
+            <circle cx={0} cy={-3} r={1.6} fill="hsl(20 35% 60%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            {/* plaquinha levantada acima da cabeça */}
+            {hasSign && (
+              <g
+                transform="translate(0 -7)"
+                style={{
+                  animation: `race-fan-sign-bob 0.9s ease-in-out infinite`,
+                  animationDelay: `${f.delay + 0.1}s`,
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center bottom',
+                }}
+              >
+                <line x1={0} y1={0} x2={0} y2={2.5} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+                <rect x={-2.2} y={-2.4} width={4.4} height={3} rx={0.4} fill={signColor} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+                <rect x={-1.6} y={-2} width={3.2} height={0.5} fill="hsl(0 0% 100%)" opacity={0.7} />
+                <rect x={-1.6} y={-1.1} width={2.4} height={0.5} fill="hsl(0 0% 100%)" opacity={0.5} />
+              </g>
+            )}
+          </g>
+        );
+      })}
     </g>
   );
 }
