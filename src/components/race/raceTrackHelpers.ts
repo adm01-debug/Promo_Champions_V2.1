@@ -1,14 +1,24 @@
-// Pista oval — coordenadas no viewBox 1000x600
-// Path elíptico com cantos suaves
+// Pista serpenteante — circuito fechado em viewBox 1000x600
+// Path SVG cúbico amostrado em uma lookup table para posicionar carros por progresso 0..1.
+
 export const TRACK_VIEWBOX = { width: 1000, height: 600 };
-export const TRACK_CENTER = { x: 500, y: 300 };
-export const TRACK_RX_OUTER = 440;
-export const TRACK_RY_OUTER = 240;
-export const TRACK_RX_INNER = 280;
-export const TRACK_RY_INNER = 120;
-// Linha central onde o carro corre (média entre outer e inner)
-const RX = (TRACK_RX_OUTER + TRACK_RX_INNER) / 2;
-const RY = (TRACK_RY_OUTER + TRACK_RY_INNER) / 2;
+
+// Circuito fechado serpenteante (estilo F1/Mario Kart top-down).
+// Sequência: começa direita-meio, sobe pra cima-direita, hairpin esquerda,
+// desce em S, curva inferior, sobe pela esquerda, S no topo, fecha à direita.
+export const TRACK_PATH_D = `
+M 880 300
+C 920 200, 880 90, 760 80
+C 660 72, 600 140, 560 200
+C 520 260, 460 280, 400 240
+C 320 188, 220 180, 140 240
+C 70 292, 70 380, 140 440
+C 220 500, 340 500, 420 460
+C 500 420, 560 440, 600 500
+C 650 570, 760 580, 840 520
+C 920 460, 920 380, 880 300
+Z
+`.trim();
 
 export interface TrackPosition {
   x: number;
@@ -16,23 +26,126 @@ export interface TrackPosition {
   rotation: number; // graus, tangente
 }
 
+// ---------- Parser mínimo + amostragem De Casteljau ----------
+interface Point { x: number; y: number; }
+
+function cubicPoint(p0: Point, p1: Point, p2: Point, p3: Point, t: number): Point {
+  const u = 1 - t;
+  const uu = u * u, uuu = uu * u;
+  const tt = t * t, ttt = tt * t;
+  return {
+    x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
+    y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
+  };
+}
+
+function parsePath(d: string): Point[] {
+  // tokens: comandos (letras) + números (com sinal/decimal/exp)
+  const tokens = d.match(/[MCLZmclz]|-?\d*\.?\d+(?:e[-+]?\d+)?/gi) ?? [];
+  const cmds: Array<{ cmd: string; args: number[] }> = [];
+  let i = 0;
+  while (i < tokens.length) {
+    const t = tokens[i];
+    if (/[A-Za-z]/.test(t)) {
+      const cmd = t;
+      i++;
+      const argCount = cmd === 'M' || cmd === 'L' ? 2 : cmd === 'C' ? 6 : 0;
+      const args: number[] = [];
+      for (let k = 0; k < argCount; k++) args.push(parseFloat(tokens[i++]));
+      cmds.push({ cmd, args });
+    } else {
+      i++;
+    }
+  }
+
+  const pts: Point[] = [];
+  let cur: Point = { x: 0, y: 0 };
+  let start: Point = { x: 0, y: 0 };
+  const SEG = 40; // amostras por segmento cúbico
+
+  for (const { cmd, args } of cmds) {
+    if (cmd === 'M') {
+      cur = { x: args[0], y: args[1] };
+      start = cur;
+      pts.push(cur);
+    } else if (cmd === 'L') {
+      const next = { x: args[0], y: args[1] };
+      for (let s = 1; s <= SEG; s++) {
+        const t = s / SEG;
+        pts.push({ x: cur.x + (next.x - cur.x) * t, y: cur.y + (next.y - cur.y) * t });
+      }
+      cur = next;
+    } else if (cmd === 'C') {
+      const p1 = { x: args[0], y: args[1] };
+      const p2 = { x: args[2], y: args[3] };
+      const p3 = { x: args[4], y: args[5] };
+      for (let s = 1; s <= SEG; s++) {
+        pts.push(cubicPoint(cur, p1, p2, p3, s / SEG));
+      }
+      cur = p3;
+    } else if (cmd === 'Z' || cmd === 'z') {
+      // fecha: liga cur → start linearmente
+      for (let s = 1; s <= SEG; s++) {
+        const t = s / SEG;
+        pts.push({ x: cur.x + (start.x - cur.x) * t, y: cur.y + (start.y - cur.y) * t });
+      }
+      cur = start;
+    }
+  }
+  return pts;
+}
+
+// Reamostragem por arc-length para velocidade visual constante
+function resampleByLength(raw: Point[], n: number): Point[] {
+  const cum: number[] = [0];
+  for (let k = 1; k < raw.length; k++) {
+    const dx = raw[k].x - raw[k - 1].x;
+    const dy = raw[k].y - raw[k - 1].y;
+    cum.push(cum[k - 1] + Math.hypot(dx, dy));
+  }
+  const total = cum[cum.length - 1];
+  const out: Point[] = [];
+  let j = 0;
+  for (let i = 0; i < n; i++) {
+    const target = (i / n) * total;
+    while (j < cum.length - 1 && cum[j + 1] < target) j++;
+    const span = cum[j + 1] - cum[j] || 1;
+    const t = (target - cum[j]) / span;
+    out.push({
+      x: raw[j].x + (raw[j + 1].x - raw[j].x) * t,
+      y: raw[j].y + (raw[j + 1].y - raw[j].y) * t,
+    });
+  }
+  return out;
+}
+
+const RAW_POINTS = parsePath(TRACK_PATH_D);
+const TRACK_POINTS = resampleByLength(RAW_POINTS, 400);
+
 /**
- * Mapeia progresso 0..1 para posição na pista oval (sentido anti-horário a partir da linha de chegada à direita).
- * Linha de chegada = ângulo 0 (lado direito).
+ * Mapeia progresso 0..1 para posição na pista serpenteante.
+ * laneOffset desloca perpendicularmente (positivo = "fora", negativo = "dentro").
  */
 export function getPositionOnTrack(progress: number, laneOffset = 0): TrackPosition {
-  const p = Math.max(0, Math.min(1, progress));
-  // Anti-horário: ângulo cresce negativo (ou usar -2π)
-  const angle = -p * Math.PI * 2;
-  const rx = RX + laneOffset;
-  const ry = RY + laneOffset;
-  const x = TRACK_CENTER.x + rx * Math.cos(angle);
-  const y = TRACK_CENTER.y + ry * Math.sin(angle);
-  // tangente de elipse
-  const tx = -rx * Math.sin(angle);
-  const ty = ry * Math.cos(angle);
-  const rotation = (Math.atan2(ty, tx) * 180) / Math.PI;
-  return { x, y, rotation };
+  const p = ((progress % 1) + 1) % 1;
+  const f = p * TRACK_POINTS.length;
+  const idx = Math.floor(f) % TRACK_POINTS.length;
+  const next = (idx + 1) % TRACK_POINTS.length;
+  const a = TRACK_POINTS[idx];
+  const b = TRACK_POINTS[next];
+
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  // normal perpendicular (gira 90°)
+  const nx = -dy / len;
+  const ny = dx / len;
+
+  return {
+    x: a.x + nx * laneOffset,
+    y: a.y + ny * laneOffset,
+    rotation: (Math.atan2(dy, dx) * 180) / Math.PI,
+  };
 }
 
 export const CHECKPOINTS = [0.25, 0.5, 0.75];
@@ -49,7 +162,6 @@ export function detectOvertakes(
     const oldPos = prevRank.get(id);
     if (oldPos === undefined) return;
     if (newPos < oldPos) {
-      // subiu de posição — encontrar quem foi ultrapassado
       currRank.forEach((otherNew, otherId) => {
         if (otherId === id) return;
         const otherOld = prevRank.get(otherId);
