@@ -1,56 +1,48 @@
 
-Race Arena fechou 3/3 (10/10). Retomando o roadmap **Revenue Intelligence — 2/4: Pipeline Coverage Analyzer**.
+Coverage Analyzer 2/4 entregue. Próxima atômica do roadmap Revenue Intelligence.
 
-Já existem (Fase 1/4): `RevenueIntelligenceHub`, `CoverageRatioGauge` (cobertura simples ratio×target), forecast roll-up, win rate, pipeline inspection, QBR e AI Forecast. Falta o **Analyzer** completo: cobertura segmentada por estágio/owner/segmento, simulações what-if, alerta de gaps e recomendações IA.
+**Revenue Intelligence — 3/4: Win Probability Calibration**
 
----
-
-**Próxima atômica — Pipeline Coverage Analyzer**
+Hoje a probabilidade de cada deal vem de uma tabela estática de estágios (`STAGE_PROBABILITY`). Vamos calibrar com dados históricos reais por owner/segmento/source e expor a curva de calibração + score recalibrado por deal.
 
 ## O que entregar
 
 ### 1. Migration
-- `pipeline_coverage_snapshots`: `id`, `period_start`, `period_end`, `owner_id` (nullable=global), `segment` (nullable), `stage` (nullable), `quota_amount numeric`, `pipeline_amount numeric`, `weighted_pipeline numeric`, `coverage_ratio numeric`, `target_ratio numeric` (default 3.0), `health` (`critical|weak|healthy|strong`), `gap_to_target numeric`, `deals_count int`, `calculated_at timestamptz`. RLS + realtime.
-- `pipeline_coverage_recommendations`: `id`, `snapshot_id` FK, `priority` (`high|medium|low`), `title`, `action`, `expected_impact_amount numeric`, `ai_generated bool`, `created_at`. RLS.
-- View `v_pipeline_coverage_summary` agregando por owner/global.
-- Índices em `(period_start, owner_id, stage)`.
+- `win_probability_calibrations`: `id`, `scope` (`global|owner|segment|source`), `scope_value` (text nullable), `stage`, `historical_win_rate numeric`, `sample_size int`, `confidence numeric` (0-1, baseado em sample), `calibrated_probability numeric`, `baseline_probability numeric`, `calculated_at timestamptz`. RLS authenticated read; admin/manager write.
+- `deal_probability_scores`: `id`, `sale_id` FK, `raw_probability`, `calibrated_probability`, `confidence`, `factors jsonb` (breakdown: stage, owner_adj, segment_adj, recency_adj), `calculated_at`. RLS authenticated read; admin/manager write.
+- Índices em `(scope, scope_value, stage)` e `(sale_id, calculated_at desc)`.
+- Realtime nas duas.
 
-### 2. Edge function `analyze-pipeline-coverage` (verify_jwt=true)
-- Input: `{ period_days?: 90, owner_id?: string|null, refresh?: bool }`.
-- Calcula por (owner × stage × segment): pipeline aberto, pipeline ponderado por probabilidade do estágio, coverage_ratio = weighted_pipeline / quota_remaining.
-- Classifica health: <1.5 critical, 1.5-2.5 weak, 2.5-4 healthy, >4 strong.
-- Chama Lovable AI (`google/gemini-2.5-flash`) para gerar 3-5 recomendações priorizadas com estimativa de impacto $.
-- Upsert em `pipeline_coverage_snapshots` + `pipeline_coverage_recommendations`.
+### 2. Edge function `calibrate-win-probability` (verify_jwt=true)
+- Input: `{ lookback_days?: 180, min_sample?: 5 }`.
+- Para cada `(scope, scope_value, stage)`: lê histórico de `sales` (closed_won/lost) → calcula `win_rate = won/(won+lost)`, `confidence = min(sample/30, 1)`, `calibrated = baseline*0.3 + win_rate*0.7*confidence + baseline*(1-confidence)*0.7`.
+- Upsert calibrations.
+- Para cada deal aberto: aplica fator owner + segment + source + recency (deals últimos 30d valem mais) → grava em `deal_probability_scores`.
 
 ### 3. Hooks `src/hooks/revenue/`
-- `usePipelineCoverageAnalyzer(filters)` — query + realtime.
-- `useRunCoverageAnalysis()` — mutation que invoca a edge function.
-- `useCoverageWhatIf(snapshotId, deltas)` — recálculo client-side de cenários (adicionar X deals, mover Y%).
+- `useWinProbabilityCalibration()` — query calibrations + realtime.
+- `useDealProbabilityScores(filters?)` — query scores + realtime.
+- `useRunWinCalibration()` — mutation invocando edge function.
 
-### 4. Componentes `src/components/revenue-intelligence/coverage/`
-- `PipelineCoverageAnalyzer.tsx` (≤280L) — container com filtros (period, owner, segment) + sub-componentes.
-- `CoverageHealthGrid.tsx` (≤200L) — heatmap owner × stage com cores semânticas (critical→strong) e tooltip de gap.
-- `CoverageGapAlertList.tsx` (≤180L) — lista de gaps críticos ordenados por valor faltante, badge de severidade, botão "ver deals".
-- `CoverageWhatIfSimulator.tsx` (≤240L) — sliders: "+N deals médios", "+X% conversão estágio", "antecipar fechamento Y dias". Mostra novo ratio em tempo real.
-- `CoverageRecommendationsPanel.tsx` (≤180L) — cards de recomendações IA com prioridade + impacto $ + botão "marcar como atuada".
-- `coverageHelpers.ts` — `classifyHealth`, `calcWeightedPipeline`, `simulateWhatIf`, paleta de cores por health.
+### 4. Componentes `src/components/revenue-intelligence/calibration/`
+- `WinProbabilityCalibrationPanel.tsx` (≤260L) — container com botão "Recalibrar agora" + sub-componentes.
+- `CalibrationCurveChart.tsx` (≤180L) — Recharts line: baseline vs calibrated por estágio, com banda de confiança.
+- `CalibrationVarianceTable.tsx` (≤180L) — top 10 maiores divergências (baseline vs real), badge de confidence, sample size.
+- `RecalibratedDealsList.tsx` (≤200L) — top 15 deals com maior shift (Δ probabilidade), nome do deal, owner, valor, antes→depois com seta colorida.
+- `calibrationHelpers.ts` — `calcConfidence`, `blendProbability`, `colorByDelta`, formatters.
 
 ### 5. Integração
-- Nova aba **"Coverage Analyzer"** no `RevenueIntelligenceHub.tsx` (entre "Win Rate Drill-down" e "Pipeline Inspection") renderizando `PipelineCoverageAnalyzer`.
-- Botão "Analisar agora" no header da aba que chama `useRunCoverageAnalysis`.
+- Nova aba **"Win Calibration"** no `RevenueIntelligenceHub.tsx` entre "Coverage Analyzer" e "Pipeline Inspection".
+- `supabase/config.toml`: `[functions.calibrate-win-probability] verify_jwt = true`.
 
-### 6. Configuração
-- `supabase/config.toml`: bloco `[functions.analyze-pipeline-coverage] verify_jwt = true`.
-
-### 7. Validação
+### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Aba renderiza heatmap + gaps + simulator + recomendações sem erros.
-- What-if recalcula instantaneamente (<50ms) sem chamada de rede.
+- Botão "Recalibrar" insere calibrations + scores; gráfico desenha curva; tabela e lista de deals renderizam sem erros.
 
 ## Arquivos
-- **Migration**: 1 (2 tabelas + view + RLS + realtime + índices).
-- **Edge function**: `analyze-pipeline-coverage`.
-- **Criar**: 3 hooks, 5 componentes + 1 helper.
-- **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`, `src/components/revenue-intelligence/index.ts` (se existir).
+- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
+- **Edge function**: `calibrate-win-probability`.
+- **Criar**: 3 hooks, 4 componentes + 1 helper.
+- **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo automaticamente para **Revenue Intelligence 3/4: Win Probability Calibration** → 4/4 **Quota Attainment Predictor**, fechando o bloco em 10/10.
+Após esta entrega, sigo para **4/4: Quota Attainment Predictor** fechando Revenue Intelligence em 10/10.
