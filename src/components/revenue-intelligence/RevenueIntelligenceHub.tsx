@@ -16,6 +16,7 @@ import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
 import { ForecastBiasChart } from "./forecast/ForecastBiasChart";
 import { ConfidenceScoresTable } from "./forecast/ConfidenceScoresTable";
 import { MapeBySegmentChart } from "./forecast/MapeBySegmentChart";
+import { PipelineCoveragePanel } from "./coverage/PipelineCoveragePanel";
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
@@ -63,6 +64,7 @@ export const RevenueIntelligenceHub: FC = () => {
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="ai-forecast">AI Forecast</TabsTrigger>
+          <TabsTrigger value="coverage">Cobertura do Pipeline</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
           <TabsTrigger value="calibration">Win Calibration</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
@@ -82,6 +84,9 @@ export const RevenueIntelligenceHub: FC = () => {
         </TabsContent>
         <TabsContent value="ai-forecast" className="mt-4">
           <AIForecastPanel />
+        </TabsContent>
+        <TabsContent value="coverage" className="mt-4">
+          <PipelineCoveragePanel />
         </TabsContent>
         <TabsContent value="winrate" className="mt-4">
           <WinRateBreakdownChart
