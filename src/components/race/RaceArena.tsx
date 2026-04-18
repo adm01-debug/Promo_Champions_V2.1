@@ -13,6 +13,7 @@ import { RaceControlPanel, type RaceFlag } from './RaceControlPanel';
 import { SpeedHUD } from './SpeedHUD';
 import { NextCornerHUD } from './NextCornerHUD';
 import { TrackTireMarks } from './track/TrackTireMarks';
+import { TrackDustParticles } from './track/TrackDustParticles';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
@@ -475,6 +476,8 @@ export function RaceArena({
       >
         {/* Tire marks (rastros de pneu nas curvas) — abaixo dos carros */}
         <TrackTireMarks cars={tireMarkCars} />
+        {/* Poeira/fumaça nas curvas — sobre os rastros, abaixo dos carros */}
+        <TrackDustParticles cars={tireMarkCars} />
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
           const pos = getPositionOnTrack(Number(car.progress), lane);
