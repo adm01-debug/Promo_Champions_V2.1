@@ -3653,6 +3653,68 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_analyses: {
+        Row: {
+          ai_model: string | null
+          analyzed_by: string | null
+          buying_signals: string[]
+          client_id: string | null
+          created_at: string
+          decision_makers: string[]
+          id: string
+          next_steps: Json
+          objections: Json
+          risk_signals: string[]
+          sale_id: string | null
+          sentiment: string
+          source: string
+          summary: string | null
+          transcript: string
+        }
+        Insert: {
+          ai_model?: string | null
+          analyzed_by?: string | null
+          buying_signals?: string[]
+          client_id?: string | null
+          created_at?: string
+          decision_makers?: string[]
+          id?: string
+          next_steps?: Json
+          objections?: Json
+          risk_signals?: string[]
+          sale_id?: string | null
+          sentiment?: string
+          source: string
+          summary?: string | null
+          transcript: string
+        }
+        Update: {
+          ai_model?: string | null
+          analyzed_by?: string | null
+          buying_signals?: string[]
+          client_id?: string | null
+          created_at?: string
+          decision_makers?: string[]
+          id?: string
+          next_steps?: Json
+          objections?: Json
+          risk_signals?: string[]
+          sale_id?: string | null
+          sentiment?: string
+          source?: string
+          summary?: string | null
+          transcript?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_analyses_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       critical_moment_notifications: {
         Row: {
           created_at: string
@@ -13218,6 +13280,21 @@ export type Database = {
           rank: number | null
           replies: number | null
           score: number | null
+        }
+        Relationships: []
+      }
+      conversation_insights_summary: {
+        Row: {
+          avg_buying_signals: number | null
+          avg_objections: number | null
+          avg_risk_signals: number | null
+          last_analysis_at: string | null
+          mixed_count: number | null
+          negative_count: number | null
+          neutral_count: number | null
+          positive_count: number | null
+          total_analyses: number | null
+          user_id: string | null
         }
         Relationships: []
       }
