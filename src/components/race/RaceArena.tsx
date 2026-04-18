@@ -4,7 +4,11 @@ import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
-import { getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX } from './raceTrackHelpers';
+import { MiniMap } from './MiniMap';
+import {
+  getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
+  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo,
+} from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
@@ -38,6 +42,32 @@ export function RaceArena({
   const prevSnapshotRef = useRef<Array<{ id: string; progress: number }>>([]);
   const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
   const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
+  const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
+
+  // ----- Tire wear: tracking de consistência de progresso por carro -----
+  const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
+  const tireWearByCar = useMemo(() => {
+    const map = new Map<string, number>();
+    sorted.forEach((c) => {
+      const prev = wearTrackRef.current.get(c.car_id);
+      const p = Number(c.progress);
+      if (!prev) {
+        wearTrackRef.current.set(c.car_id, { lastProgress: p, smoothDelta: 0.001 });
+        map.set(c.car_id, 1);
+        return;
+      }
+      const delta = Math.max(0, p - prev.lastProgress);
+      const smooth = prev.smoothDelta * 0.85 + delta * 0.15;
+      wearTrackRef.current.set(c.car_id, { lastProgress: p, smoothDelta: smooth });
+      // wear: 1 quando consistente; degrada conforme distância da média
+      const avg = sorted.reduce((acc, x) => acc + Number(x.progress), 0) / Math.max(1, sorted.length);
+      const lag = Math.max(0, avg - p);
+      const wear = Math.max(0.15, Math.min(1, 1 - lag * 1.4));
+      map.set(c.car_id, wear);
+    });
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   useEffect(() => {
     const curr = sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) }));
@@ -74,6 +104,23 @@ export function RaceArena({
           setDustBursts((d) => d.filter((b) => !newDust.find((nb) => nb.id === b.id)));
         }, 1200);
       }
+
+      // ----- Setores cronometrados (apenas líder dispara badge) -----
+      const leaderCurr = curr[0];
+      const leaderPrev = prev.find((x) => x.id === leaderCurr?.id);
+      if (leaderCurr && leaderPrev) {
+        SECTOR_BOUNDARIES.forEach((b, i) => {
+          if (leaderPrev.progress < b && leaderCurr.progress >= b) {
+            const pos = getPositionOnTrack(b, 0);
+            const name = `S${i + 1}`;
+            const badgeId = `${leaderCurr.id}-${name}-${Date.now()}`;
+            setSectorBadges((arr) => [...arr, { id: badgeId, name, x: pos.x, y: pos.y }]);
+            setTimeout(() => {
+              setSectorBadges((arr) => arr.filter((bd) => bd.id !== badgeId));
+            }, 900);
+          }
+        });
+      }
     }
     prevSnapshotRef.current = curr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,6 +132,21 @@ export function RaceArena({
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
     [leader?.car_id, leader?.progress],
   );
+
+  // ----- Lap info -----
+  const lapInfo = computeLapInfo(Number(leader?.progress ?? 0), 10);
+
+  // ----- DRS: ativo quando carro está em zona DRS e tem alguém < 0.06 à frente -----
+  const drsActiveByCar = useMemo(() => {
+    const map = new Map<string, boolean>();
+    sorted.forEach((c, idx) => {
+      if (idx === 0) { map.set(c.car_id, false); return; }
+      const ahead = sorted[idx - 1];
+      const gap = Number(ahead.progress) - Number(c.progress);
+      map.set(c.car_id, isInDRSZone(Number(c.progress)) && gap > 0 && gap < 0.06);
+    });
+    return map;
+  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   // ----- Timing tower (top 3 com gaps) -----
   const top3 = sorted.slice(0, 3);
@@ -103,6 +165,17 @@ export function RaceArena({
         filter: 'saturate(1.08) contrast(1.02)',
       }}
     >
+      <div
+        className="w-full h-full"
+        style={
+          reducedMotion
+            ? undefined
+            : {
+                animation: 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+                transformOrigin: '50% 50%',
+              }
+        }
+      >
       <RaceTrack>
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
@@ -148,6 +221,8 @@ export function RaceArena({
                 showTrail={boostingIds?.has(car.salesperson_id) ?? false}
                 pattern={pattern}
                 overtakeFlash={flashingCars.has(car.car_id)}
+                tireWear={tireWearByCar.get(car.car_id) ?? 1}
+                drsActive={drsActiveByCar.get(car.car_id) ?? false}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
@@ -252,9 +327,53 @@ export function RaceArena({
           ))}
         </AnimatePresence>
 
+        {/* Sector badges (S1/S2/S3 ✓) — flutuam rapidamente quando o líder cruza */}
+        <AnimatePresence>
+          {sectorBadges.map((b) => (
+            <motion.g
+              key={b.id}
+              transform={`translate(${b.x} ${b.y})`}
+              initial={{ opacity: 0, scale: 0.6, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: -10 }}
+              exit={{ opacity: 0, scale: 0.95, y: -22 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              pointerEvents="none"
+            >
+              <rect x={-22} y={-12} width={44} height={18} rx={4}
+                fill="hsl(142 76% 38%)" stroke="hsl(0 0% 100%)" strokeWidth={1.2} />
+              <text y={1} textAnchor="middle" fontSize={10} fontWeight={900}
+                fill="hsl(0 0% 100%)"
+                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}>
+                {b.name} ✓
+              </text>
+            </motion.g>
+          ))}
+        </AnimatePresence>
+
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
+      </div>
+
+      {/* ===== LAP counter HUD (topo central) ===== */}
+      <div
+        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-1.5 shadow-lg"
+        style={{ background: 'hsl(var(--background) / 0.72)' }}
+        aria-label={`Volta ${lapInfo.current} de ${lapInfo.total}`}
+      >
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">
+            Lap
+          </span>
+          <span className="text-[15px] font-black tabular-nums text-foreground" style={{ fontFamily: 'system-ui, sans-serif' }}>
+            {lapInfo.current}
+            <span className="text-muted-foreground font-bold">/{lapInfo.total}</span>
+          </span>
+        </div>
+      </div>
+
+      {/* ===== Mini-mapa do circuito ===== */}
+      <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
       {/* ===== Timing tower (top 3 com gaps, estilo F1) ===== */}
       {top3.length > 0 && (

@@ -1,4 +1,4 @@
-import { TRACK_PATH_D, CHECKPOINTS, getPositionOnTrack } from '../raceTrackHelpers';
+import { TRACK_PATH_D, CHECKPOINTS, DRS_ZONES, getPositionOnTrack } from '../raceTrackHelpers';
 
 /**
  * Asfalto top-down polido — estilo Micro Machines / Mario Kart 2D:
@@ -128,6 +128,37 @@ export function TrackAsphalt() {
             strokeDasharray="3 4"
             opacity={0.5}
           />
+        );
+      })}
+
+      {/* ===== DRS zones — listras diagonais verdes sutis ===== */}
+      {DRS_ZONES.map((zone, zi) => {
+        const samples = 14;
+        const pts: Array<{ x: number; y: number }> = [];
+        for (let i = 0; i <= samples; i++) {
+          const p = zone.start + ((zone.end - zone.start) * i) / samples;
+          pts.push(getPositionOnTrack(p, 0));
+        }
+        const d = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`).join(' ');
+        const labelPos = getPositionOnTrack((zone.start + zone.end) / 2, -TRACK_WIDTH / 2 - 14);
+        return (
+          <g key={`drs-${zi}`} pointerEvents="none">
+            <path
+              d={d}
+              fill="none"
+              stroke="hsl(142 76% 45%)"
+              strokeWidth={TRACK_WIDTH - 14}
+              strokeDasharray="6 10"
+              strokeLinecap="butt"
+              opacity={0.18}
+            />
+            <g transform={`translate(${labelPos.x} ${labelPos.y})`}>
+              <rect x={-11} y={-5} width={22} height={10} rx={2} fill="hsl(142 76% 38%)" opacity={0.9} />
+              <text y={3} textAnchor="middle" fontSize={7} fontWeight={900} fill="hsl(0 0% 100%)" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.08em' }}>
+                DRS
+              </text>
+            </g>
+          </g>
         );
       })}
     </g>

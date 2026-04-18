@@ -11,6 +11,10 @@ interface RaceCarProps {
   pattern?: 'stripes' | 'dots' | 'checker' | null;
   /** Quando true, dispara um flash branco + ping circular indicando ultrapassagem. */
   overtakeFlash?: boolean;
+  /** Energia/desgaste 0..1 (1 = pneu novo, 0 = degradado). */
+  tireWear?: number;
+  /** Quando true, mostra ícone DRS pulsante no topo do carro. */
+  drsActive?: boolean;
 }
 
 /**
@@ -27,6 +31,8 @@ export function RaceCar({
   showTrail = false,
   pattern = null,
   overtakeFlash = false,
+  tireWear = 1,
+  drsActive = false,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
@@ -321,6 +327,35 @@ export function RaceCar({
             pointerEvents="none"
           />
         </>
+      )}
+
+      {/* ===== Tire wear bar (energia) ===== */}
+      {(() => {
+        const w = Math.max(0, Math.min(1, tireWear));
+        const barW = bodyW * 0.7;
+        const fillW = barW * w;
+        const color = w > 0.66 ? 'hsl(142 70% 45%)' : w > 0.33 ? 'hsl(45 95% 55%)' : 'hsl(0 80% 55%)';
+        return (
+          <g transform={`translate(${-barW / 2} ${bodyH / 2 + 8.5})`} pointerEvents="none">
+            <rect x={-0.5} y={-0.5} width={barW + 1} height={2.4} rx={1.2} fill="hsl(0 0% 0% / 0.45)" />
+            <rect x={0} y={0} width={fillW} height={1.8} rx={0.9} fill={color} />
+          </g>
+        );
+      })()}
+
+      {/* ===== DRS indicator ===== */}
+      {drsActive && (
+        <g transform={`translate(0 ${-bodyH / 2 - 9})`} pointerEvents="none">
+          <motion.g
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <rect x={-9} y={-4.5} width={18} height={8} rx={2} fill="hsl(142 76% 38%)" stroke="hsl(0 0% 100%)" strokeWidth={0.6} />
+            <text y={2} textAnchor="middle" fontSize={6} fontWeight={900} fill="hsl(0 0% 100%)" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}>
+              DRS
+            </text>
+          </motion.g>
+        </g>
       )}
     </g>
   );

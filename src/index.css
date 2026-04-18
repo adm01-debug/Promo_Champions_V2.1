@@ -1936,3 +1936,24 @@
     animation: none !important;
   }
 }
+/* ===== RACE ARENA: cinematic intro + DRS pulse ===== */
+@keyframes race-cinematic-intro {
+  0%   { transform: scale(1.8); opacity: 0; filter: blur(6px); }
+  60%  { opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+@keyframes race-drs-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+@keyframes race-sector-pop {
+  0%   { transform: scale(0.6) translateY(8px); opacity: 0; }
+  30%  { transform: scale(1.1) translateY(0); opacity: 1; }
+  80%  { transform: scale(1) translateY(-4px); opacity: 1; }
+  100% { transform: scale(0.95) translateY(-10px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .race-cinematic-intro { animation: none !important; }
+  .race-drs-pulse { animation: none !important; }
+  .race-sector-pop { animation: none !important; }
+}

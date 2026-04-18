@@ -155,6 +155,32 @@ export function getPositionOnTrack(progress: number, laneOffset = 0): TrackPosit
 
 export const CHECKPOINTS = [0.25, 0.5, 0.75];
 
+/** Setores cronometrados estilo F1 (S1, S2, S3). Fronteiras em progress 0..1. */
+export const SECTORS: Array<{ name: string; start: number; end: number }> = [
+  { name: 'S1', start: 0, end: 1 / 3 },
+  { name: 'S2', start: 1 / 3, end: 2 / 3 },
+  { name: 'S3', start: 2 / 3, end: 1 },
+];
+export const SECTOR_BOUNDARIES = [1 / 3, 2 / 3, 0.999];
+
+/** Zonas DRS — trechos retos para ultrapassagem. */
+export const DRS_ZONES: Array<{ start: number; end: number }> = [
+  { start: 0.02, end: 0.18 },   // reta superior
+  { start: 0.52, end: 0.66 },   // reta inferior (antes da chicane)
+];
+
+export function isInDRSZone(progress: number): boolean {
+  const p = ((progress % 1) + 1) % 1;
+  return DRS_ZONES.some((z) => p >= z.start && p <= z.end);
+}
+
+/** Calcula a volta atual (1-based) e total estimado a partir do progress acumulado. */
+export function computeLapInfo(progress: number, totalLaps = 10): { current: number; total: number } {
+  const lapsDone = Math.floor(Math.max(0, progress));
+  const current = Math.min(totalLaps, lapsDone + 1);
+  return { current, total: totalLaps };
+}
+
 /** Detecta ultrapassagens comparando dois snapshots ordenados por progresso desc. */
 export function detectOvertakes(
   prev: Array<{ id: string; progress: number }>,
