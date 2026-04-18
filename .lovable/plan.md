@@ -1,71 +1,64 @@
 
-**Bloco Deal Intelligence — item 2/4: Buying Committee Mapping (DMU)**
+**Bloco Deal Intelligence — item 3/4: Deal Velocity Predictor**
 
-Próxima atômica: mapear o **Decision Making Unit** de cada deal — quem são os stakeholders (Decision Maker, Champion, Influencer, Blocker, Economic Buyer, User), seu nível de engajamento, sentimento e relação de poder — para que vendedor/gestor enxerguem rapidamente se o deal tem cobertura suficiente para fechar.
+Próxima atômica: prever **quanto tempo cada deal aberto vai levar até fechar** (won ou lost) com base em histórico de velocidade por estágio, tamanho do deal, saúde, cobertura de comitê e sinais de calls — para vendedor/gestor anteciparem forecast e priorizarem deals que realmente vão fechar no período.
 
 ## Estado atual
-- `sales` tem `client_name` mas zero estrutura de stakeholders.
-- `clients` tem `contact_name` único — sem múltiplos contatos com papéis.
-- Calls (`call_recordings` + `diarization` + `transcript`) mencionam nomes/cargos que nunca são extraídos como entidades.
-- Sem visualização de "quem decide" no deal, sem alerta "deal sem champion identificado", sem score de cobertura do comitê.
+- `sales` tem `created_at`, `updated_at`, `stage`, mas sem cálculo de tempo médio por estágio nem ETA de fechamento.
+- `deal_health_scores` (item 1/4) e `deal_committee_coverage` (item 2/4) já fornecem sinais ricos não usados em forecast.
+- `Analytics > Deal Velocity` mostra média histórica agregada, mas não gera previsão por deal individual.
+- Sem comparação "este deal está X dias acima da média do estágio", sem confidence interval, sem alerta de deals "presos".
 
 ## Mudanças
 
 ### 1. Migration
-- Tabela `deal_stakeholders`: `id`, `sale_id` (FK), `owner_id`, `name`, `role_title`, `dmu_role` (`decision_maker|economic_buyer|champion|influencer|user|blocker|unknown`), `influence_level` (`low|medium|high`), `engagement_score int 0-100`, `sentiment` (`positive|neutral|negative`), `email`, `phone`, `linkedin_url`, `notes`, `last_interaction_at`, `source` (`manual|ai_extracted|email|call`), `created_at`, `updated_at`. Index `(sale_id, dmu_role)`.
-- Tabela `deal_committee_coverage`: `id`, `sale_id` UNIQUE, `coverage_score int 0-100`, `tier` (`weak|partial|strong|complete`), `gaps jsonb` (papéis ausentes), `risks jsonb`, `calculated_at`. Realtime.
-- RLS: vendedor vê próprios; manager/admin vê tudo.
-- Trigger recalcula `coverage` quando stakeholders mudam (chama edge function via pg_net opcional, ou apenas marca dirty — vou usar invalidação client-side).
+- Tabela `deal_velocity_predictions`: `id`, `sale_id` UNIQUE FK, `owner_id`, `predicted_close_date date`, `predicted_days_remaining int`, `confidence_score int 0-100`, `confidence_tier` (`low|medium|high`), `velocity_status` (`ahead|on_track|slow|stalled`), `current_stage`, `days_in_stage int`, `expected_days_in_stage int`, `stage_velocity_ratio numeric`, `factors jsonb` (drivers + brakes), `model_version text`, `calculated_at`, `created_at`, `updated_at`. Index `(owner_id, velocity_status)`.
+- Tabela `stage_velocity_baselines`: `id`, `stage`, `owner_id` (nullable = global), `avg_days numeric`, `median_days numeric`, `p75_days numeric`, `sample_size int`, `calculated_at`. Refresh por job/manual.
+- RLS padrão (próprios + manager/admin).
+- Realtime em ambas.
 
-### 2. Edge function `extract-deal-stakeholders` (`verify_jwt = true`)
-- Input: `{ recording_id }` ou `{ sale_id, manual_text }`.
-- Lê transcript + diarização da call.
-- Lovable AI (`google/gemini-2.5-flash`) com tool calling: array de stakeholders extraídos `{name, role_title, dmu_role, influence_level, sentiment, signals[]}`.
-- Faz upsert em `deal_stakeholders` por (`sale_id`, lowercase `name`), preservando edições manuais (`source='manual'` não é sobrescrito).
+### 2. Edge function `predict-deal-velocity` (`verify_jwt = true`)
+- Input: `{ sale_id }` ou `{ batch: true }`.
+- Lê: sale + health_score + coverage + baselines do estágio + sinais de critical_moments.
+- Lovable AI (`google/gemini-2.5-flash`) com tool calling: `{predicted_days_remaining, confidence_score, velocity_status, factors[]}`.
+- Fallback heurístico robusto se IA falhar (usa baselines + dias parado).
+- Upsert idempotente em `deal_velocity_predictions`.
 
-### 3. Edge function `calculate-committee-coverage` (`verify_jwt = true`)
-- Input: `{ sale_id }`.
-- Lê stakeholders → calcula score baseado em: presença de Decision Maker (+30), Economic Buyer (+20), Champion (+25), pelo menos 1 Influencer (+10), ausência de Blocker bloqueador (+15).
-- Retorna `{coverage_score, tier, gaps[], risks[]}` e upserta em `deal_committee_coverage`.
-- Auto-chain: chamada após `extract-deal-stakeholders`.
+### 3. Edge function `refresh-stage-baselines` (`verify_jwt = true`)
+- Calcula avg/median/p75 dias por estágio com base em deals fechados (won/lost) dos últimos 90 dias, global e por owner.
+- Upsert em `stage_velocity_baselines`.
 
 ### 4. Hooks `src/hooks/deal-intelligence/`
-- `useDealStakeholders(saleId)` — query + realtime.
-- `useUpsertStakeholder()` — mutation manual (CRUD).
-- `useDeleteStakeholder()`.
-- `useCommitteeCoverage(saleId)` — query + realtime.
-- `useExtractStakeholders()` — invoca edge function a partir de uma recording.
-- `useRecalculateCoverage()`.
+- `useDealVelocity(saleId)` — query individual + realtime.
+- `useDealVelocityBatch(filters)` — lista filtrada por status.
+- `usePredictVelocity()` — single ou batch mutation.
+- `useStageBaselines()` — leitura + refresh mutation.
 
 ### 5. UI — `src/components/deal-intelligence/`
-- `BuyingCommitteeCard.tsx` (≤220L) — card principal com:
-  - Header: score de cobertura (ring) + tier badge.
-  - Lista de stakeholders agrupados por `dmu_role` (avatar com inicial, nome, cargo, badges de influência/sentimento).
-  - Botão "Adicionar stakeholder" + "Extrair da última call".
-  - Lista de gaps ("Falta Economic Buyer", etc).
-- `StakeholderListItem.tsx` (≤140L) — item com avatar, badges, ações (editar/remover).
-- `StakeholderFormDialog.tsx` (≤200L) — dialog com Form/Zod para criar/editar.
-- `CommitteeCoverageRing.tsx` (≤100L) — SVG ring colorido por tier.
-- `DMURoleBadge.tsx` (≤80L) — pill colorida por papel DMU.
-- `committeeHelpers.ts` — labels PT-BR, cores, ícones por papel, formatadores.
+- `DealVelocityCard.tsx` (≤220L) — card com ETA, days remaining, confidence ring, status badge, comparação com baseline do estágio.
+- `VelocityStatusBadge.tsx` (≤80L) — pill colorida (`ahead/on_track/slow/stalled`).
+- `VelocityForecastTimeline.tsx` (≤140L) — linha visual mostrando passado (dias decorridos por estágio) + futuro previsto até close.
+- `StageBaselinesPanel.tsx` (≤160L) — admin panel com baselines globais, refresh manual.
+- `velocityHelpers.ts` — labels PT-BR, cores, formatadores de dias/datas.
 - **Integração**:
-  - `DealHealthCard.tsx` (item 1/4): adicionar mini-indicador de coverage no rodapé.
-  - Página `/deal-intelligence`: nova aba "Comitê de Compra" mostrando deals com `coverage.tier='weak'`.
-  - `RecordingSummaryDrawer.tsx`: novo botão "Mapear Comitê desta call" → dispara `useExtractStakeholders`.
+  - `DealHealthCard.tsx`: mini-indicador "Fecha em ~X dias" no rodapé.
+  - `BuyingCommitteeCard.tsx`: ícone de velocidade no header.
+  - Página `/deal-intelligence`: nova aba "Velocidade & Forecast" com tabela de deals priorizada por confidence × valor.
+  - `KanbanCard`: badge ETA inline (compacto).
 
 ### 6. Configuração
-- `supabase/config.toml`: blocos `[functions.extract-deal-stakeholders]` e `[functions.calculate-committee-coverage]` com `verify_jwt = true`.
+- `supabase/config.toml`: `[functions.predict-deal-velocity]` e `[functions.refresh-stage-baselines]` com `verify_jwt = true`.
 
 ### 7. Validação
-- `supabase--curl_edge_functions /extract-deal-stakeholders` em recording real → confirma stakeholders + coverage.
+- `supabase--curl_edge_functions /predict-deal-velocity` em sale real → confirma row + ETA coerente.
 - `supabase--linter` zero novos warnings.
-- Card aparece embedado e gaps são listados corretamente.
+- Card aparece e badges são consistentes.
 
 ## Arquivos
 - **Migration**: 1 (2 tabelas + RLS + realtime)
-- **Criar**: `supabase/functions/extract-deal-stakeholders/index.ts`, `supabase/functions/calculate-committee-coverage/index.ts`
-- **Criar**: `src/hooks/deal-intelligence/useDealStakeholders.ts`, `useCommitteeCoverage.ts`
-- **Criar**: 6 componentes/helpers em `src/components/deal-intelligence/`
-- **Editar**: `DealHealthCard.tsx`, `src/pages/DealIntelligence.tsx` (nova aba), `RecordingSummaryDrawer.tsx`, `supabase/config.toml`
+- **Criar**: `supabase/functions/predict-deal-velocity/index.ts`, `supabase/functions/refresh-stage-baselines/index.ts`
+- **Criar**: `src/hooks/deal-intelligence/useDealVelocity.ts`, `useStageBaselines.ts`
+- **Criar**: 5 componentes/helpers em `src/components/deal-intelligence/`
+- **Editar**: `DealHealthCard.tsx`, `BuyingCommitteeCard.tsx`, `src/pages/DealIntelligence.tsx` (nova aba), `KanbanCard` (ou equivalente), `supabase/config.toml`
 
-Após esta entrega, sigo automaticamente para 3/4: **Deal Velocity Predictor** → 4/4 **Stage Conversion Optimizer**, fechando o bloco em 10/10.
+Após esta entrega, sigo automaticamente para 4/4: **Stage Conversion Optimizer**, fechando o bloco Deal Intelligence em 10/10.
