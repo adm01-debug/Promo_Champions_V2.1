@@ -1,4 +1,4 @@
-import { TRACK_VIEWBOX } from '../raceTrackHelpers';
+import { TRACK_VIEWBOX, TRACK_INNER_HEIGHT } from '../raceTrackHelpers';
 
 /**
  * Cenário top-down VERTICAL (viewBox 600x1000) com árvores, paddock,
