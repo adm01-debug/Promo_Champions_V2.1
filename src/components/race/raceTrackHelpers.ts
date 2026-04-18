@@ -153,7 +153,7 @@ export function getPositionOnTrack(progress: number, laneOffset = 0): TrackPosit
 
   return {
     x: a.x + nx * laneOffset,
-    y: a.y + ny * laneOffset,
+    y: a.y + ny * laneOffset + TRACK_OFFSET_Y,
     rotation: (Math.atan2(dy, dx) * 180) / Math.PI,
   };
 }
