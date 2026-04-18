@@ -1,103 +1,44 @@
 
-# Plano: Pista Top-Down Estilo Ilustração Vetorial (referência anexada)
+Vou substituir a pista oval por um circuito serpenteante (estilo F1/Mario Kart top-down) com curvas variadas, mantendo o sistema de progresso 0..1 dos carros.
 
-## Análise da referência (pixel-by-pixel)
-A imagem enviada mostra um **circuito serpenteante top-down** com características muito diferentes da pista oval atual:
+## Mudança central
+Em `raceTrackHelpers.ts`, reescrever `getPositionOnTrack(progress)` para seguir um **path SVG fechado serpenteante** ao invés de uma elipse. Estratégia:
 
-1. **Forma**: circuito orgânico, sinuoso, com múltiplas curvas (S-curves, hairpin, chicane) — NÃO é uma elipse
-2. **Asfalto cinza claro uniforme** (#a0a4a8 aprox), sem gradient radial dramático
-3. **Bordas bege/areia** (#d4c5a0) — run-off areas largas em volta de toda a pista
-4. **Linhas brancas tracejadas** no centro da pista separando 2 raias (ida/volta)
-5. **Borda branca contínua** em ambos os lados do asfalto
-6. **Barreiras zebradas vermelho/branco verticais** (não rumble strips horizontais) posicionadas em pontos estratégicos como obstáculos/divisores
-7. **Gramado verde médio uniforme** (#5fa358 aprox) — sem mowing stripes, sem texturas complexas
-8. **Árvores estilizadas top-down**: massa de bolinhas verdes formando copas circulares/orgânicas, sombra suave
-9. **Estruturas cinzas top-down**: garagens, prédios pit, torres de controle como retângulos/quadrados cinza simples
-10. **Lago azul** orgânico no miolo (decorativo)
-11. **Linha de chegada xadrez preto/branco** simples (não pórtico 3D)
-12. **Carros pequenos top-down vetoriais** — F1, karts, stock cars, caminhões coloridos
-13. **Estética geral**: ilustração vetorial flat/clean, NÃO cinematográfica/realista
+1. Definir um path SVG fechado (`TRACK_PATH`) com curvas Bezier formando um circuito tipo "8 alongado" / serpentina dentro do viewBox 1000x600
+2. Usar uma instância invisível de `SVGPathElement` via `document.createElementNS` ou pré-computar pontos amostrando o path com matemática Bezier
+3. **Solução prática sem DOM**: pré-computar uma lookup table de ~400 pontos ao longo do path usando aproximação Bezier cúbica, exportar como array e interpolar por progresso
 
-## Diagnóstico do que está errado hoje
-A Fase A entregou uma estética **cinematográfica AAA** (skybox, golden hour, vinheta, mountains, gradient radial dramático no asfalto, rumble strips em todo o perímetro, pórtico 3D start/finish, holofote central, glow amarelo nas linhas). Isso é o **OPOSTO** do estilo flat/vetorial top-down da referência. Precisa ser **completamente repensado**.
+## Implementação
 
-## Estratégia: reescrever todas as camadas track/* com estética flat top-down
+**1. `raceTrackHelpers.ts`**:
+- Definir `TRACK_PATH_D` (string SVG path) — circuito serpenteante fechado com 6-8 curvas
+- Função `samplePath(d, n)` que gera array de `{x, y}` amostrando o path manualmente (parser de comandos M/C/Z + De Casteljau para cúbicas)
+- Pré-calcular `TRACK_POINTS = samplePath(TRACK_PATH_D, 400)` no module-load
+- `getPositionOnTrack(progress, laneOffset)` → indexa `TRACK_POINTS`, calcula tangente entre vizinhos, aplica offset perpendicular para a raia
+- Exportar `TRACK_PATH_D` para os componentes desenharem
 
-### Mudanças estruturais
+**2. `TrackAsphalt.tsx`** — reescrever:
+- Usar `<path d={TRACK_PATH_D}>` para asfalto (stroke largo cinza ~70px)
+- Run-off bege: mesmo path com stroke ainda mais largo (~90px) bege, renderizado abaixo
+- Bordas brancas: mesmo path com stroke fino branco
+- Linha central tracejada: mesmo path com stroke branco dasharray
+- Miolo verde: não precisa, gramado já está abaixo
+- Checkpoints: pontos no path em progresso 0.25, 0.5, 0.75 com pequena marca perpendicular
 
-**1. `raceTrackHelpers.ts` — manter forma oval mas com path serpenteante visual**
-- Manter cálculo elíptico de posição dos carros (compatibilidade com sistema de progresso)
-- Adicionar constante de **lane width** para 2 raias (ida/volta) com linha tracejada central
+**3. `TrackStartGantry.tsx`** — usar `getPositionOnTrack(0)` (já compatível) para posicionar a faixa xadrez perpendicular ao path
 
-**2. `TrackSky.tsx` → DELETAR** (não há céu em vista top-down)
+**4. `TrackBarriers.tsx`** — já usa `getPositionOnTrack`, reposicionar offsets para fora da pista (perpendicular ao path)
 
-**3. `TrackGrass.tsx` — reescrever**
-- Verde sólido `#5fa358` (sem mowing stripes, sem gradient, sem turbulence)
-- Manter apenas como background
+**5. `TrackPond.tsx`** — reposicionar lago para uma área "vazia" do circuito (não no centro 500,300 que pode ser cruzada pela pista)
 
-**4. `TrackAsphalt.tsx` — reescrever do zero**
-- Faixa bege externa (run-off) larga `#d4c5a0`
-- Asfalto cinza claro `#9ca3af` uniforme (sem gradient radial)
-- Borda branca contínua interna+externa do asfalto (2px)
-- Linha central tracejada branca (separa 2 raias) `#ffffff` dasharray "12 8"
-- REMOVER: rumble strips zebrados em todo perímetro, skid marks, glow amarelo, highlight especular
-- Miolo verde igual ao gramado externo
+**6. `TrackScenery.tsx`** — manter, ajustar posições de árvores/prédios para áreas livres do novo traçado
 
-**5. `TrackStartGantry.tsx` → reescrever como linha xadrez plana**
-- Apenas faixa retangular com padrão xadrez 8x8 preto/branco atravessando a pista
-- SEM pórtico 3D, postes, bandeirinhas, placa "START/FINISH"
+**7. `RaceArena.tsx`** — `lane = (idx - sorted.length / 2) * 8` continua válido (laneOffset perpendicular)
 
-**6. `TrackDefs.tsx` — limpar**
-- Remover skyGradient, asphaltGradient, vignette, centerSpotlight, yellowGlow, mountainGradient
-- Manter apenas: pattern checkered, filtros leves de sombra para árvores/estruturas
+## Padrões
+- ≤200L/arquivo, SVG puro, zero deps
+- Path desenhado **uma única vez** (string constante), amostragem **uma única vez** no module-load → zero overhead em render
+- Sistema de progresso dos carros 100% preservado (mesma assinatura `getPositionOnTrack`)
 
-**7. NOVO `TrackBarriers.tsx`** — barreiras zebradas vermelho/branco verticais
-- 6-8 retângulos verticais (~30x80) zebrados posicionados em pontos estratégicos das curvas
-- Sombra suave abaixo
-
-**8. NOVO `TrackScenery.tsx`** — árvores + estruturas top-down
-- **Árvores**: clusters de 5-8 círculos verdes (`#3a7a3a`, `#4a8a4a`, `#5a9a5a`) sobrepostos formando copa orgânica + sombra elipse `rgba(0,0,0,0.15)` deslocada 4px
-- 12-15 árvores distribuídas no gramado externo + miolo
-- **Estruturas pit/garagens**: 3-4 retângulos cinza `#c0c4c8` com borda escura, leve gradient pra simular volume top-down (sombra interna), pequenos quadrados representando portas
-- 1 estrutura "torre de controle" circular cinza com topo
-
-**9. NOVO `TrackPond.tsx`** — lago decorativo no miolo
-- Path orgânico azul `#3b8cc4` com borda mais escura + reflexo branco sutil
-
-**10. `RaceTrack.tsx` — recompor camadas**
-```
-TrackGrass (background verde)
-TrackPond (lago no miolo)
-TrackScenery (árvores externas — atrás da pista)
-TrackAsphalt (run-off bege + asfalto + linhas)
-TrackBarriers (barreiras zebradas)
-TrackStartGantry (linha xadrez)
-TrackScenery (árvores internas + estruturas pit)
-[children = carros]
-```
-REMOVER: holofote central, vinheta cinematográfica
-
-**11. `RaceArena.tsx` — ajustar background**
-- Trocar `bg-gradient-to-b from-sky-200 to-sky-100` por verde sólido matching o gramado
-- Remover sombra exagerada
-
-**12. `RaceCar.tsx` — leves ajustes**
-- Manter estilo top-down já existente (está coerente com a referência)
-- Aumentar levemente escala default para 1.1 para melhor leitura
-- Suavizar sombra (já existe)
-
-## Padrões respeitados
-- SVG puro, zero deps novas
-- ≤200L por arquivo (TrackAsphalt e TrackScenery são os maiores ~150L)
-- Cores hex literais (cenário visual, não tokens de UI)
-- Manter sistema de progresso/posicionamento dos carros intacto
-- Strict TS
-
-## Arquivos
-- **Criar**: `src/components/race/track/TrackBarriers.tsx`, `src/components/race/track/TrackScenery.tsx`, `src/components/race/track/TrackPond.tsx`
-- **Reescrever**: `TrackGrass.tsx`, `TrackAsphalt.tsx`, `TrackStartGantry.tsx`, `TrackDefs.tsx`, `RaceTrack.tsx`
-- **Deletar**: `TrackSky.tsx` (não usado em vista top-down)
-- **Editar**: `RaceArena.tsx` (background), `RaceCar.tsx` (escala)
-
-## Resultado esperado
-Pista flat top-down vetorial idêntica em estética à referência: gramado verde com lago azul, asfalto cinza serpenteante com run-off bege, linhas brancas tracejadas, barreiras zebradas vermelho/branco verticais, árvores como clusters de bolinhas verdes, prédios pit cinza, linha de chegada xadrez plana. Os carros (já top-down) ficarão coerentes visualmente.
+## Próximo passo
+Implementar agora.
