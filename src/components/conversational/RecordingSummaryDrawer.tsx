@@ -42,8 +42,9 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
           </div>
         ) : rec ? (
           <div className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2 flex-wrap">
               <SummarizeButton recordingId={rec.id} hasSummary={!!rec.summary} />
+              {rec.sale_id && <ExtractCommitteeButton recordingId={rec.id} />}
             </div>
 
             {!rec.summary && (
