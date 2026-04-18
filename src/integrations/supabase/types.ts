@@ -13124,6 +13124,41 @@ export type Database = {
         }
         Relationships: []
       }
+      coaching_impact_metrics: {
+        Row: {
+          coach_id: string | null
+          completed_at: string | null
+          delta_conversion: number | null
+          delta_overall: number | null
+          delta_ticket: number | null
+          focus_skills: string[] | null
+          outcome_rating: number | null
+          post_avg_overall: number | null
+          post_conversion: number | null
+          post_ticket: number | null
+          pre_avg_overall: number | null
+          pre_conversion: number | null
+          pre_ticket: number | null
+          salesperson_id: string | null
+          session_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_sessions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_best_send_window: {
         Row: {
           clicks: number | null
