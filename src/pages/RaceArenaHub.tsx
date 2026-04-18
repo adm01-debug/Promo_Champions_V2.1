@@ -8,7 +8,14 @@ import { Flag, Trophy, Users, ArrowRight, Settings, Phone, Handshake } from 'luc
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
+import { useStreakAchievements } from '@/hooks/useDailyStreakAchievements';
+import { useDailyBriefing } from '@/hooks/race/useDailyBriefing';
+import { useSessionDuration } from '@/hooks/race/useSessionDuration';
 import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
+import { DailyBriefingModal } from '@/components/race/DailyBriefingModal';
+import { NextRaceActionCard } from '@/components/race/NextRaceActionCard';
+import { RaceCalmProvider } from '@/contexts/RaceCalmContext';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -104,15 +111,31 @@ function Metric({ label, value, icon: Icon }: { label: string; value: string; ic
 
 export default function RaceArenaHub() {
   const { isAdmin } = useUserRoles();
+  const { data: myCar } = useMyRaceCar();
+  // Briefing usa a corrida de Closer como contexto principal (pode ser ajustado).
+  const { data: closerSeason } = useRaceSeasonByRole('closer');
+  const { data: closerLeaderboard = [] } = useRaceLeaderboard(closerSeason?.id);
+  const { data: streakData } = useStreakAchievements(myCar?.salesperson_id);
+
+  const briefing = useDailyBriefing({
+    entries: closerLeaderboard,
+    currentUserSalespersonId: myCar?.salesperson_id,
+    streakDays: streakData?.current_streak ?? 0,
+  });
+
+  // Densidade adaptativa: rastreia tempo na arena.
+  useSessionDuration({ fatigueThresholdMs: 10 * 60 * 1000, notify: true });
 
   return (
-    <>
+    <RaceCalmProvider>
       <Helmet>
         <title>Race Arena — Hub de Corridas</title>
         <meta name="description" content="Hub central da Race Arena. Escolha entre a corrida dos Closers ou dos SDRs e acompanhe o ranking ao vivo." />
       </Helmet>
 
-      <div className="container mx-auto p-4 space-y-6">
+      <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} />
+
+      <div className="container mx-auto p-4 space-y-4">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-4xl font-black flex items-center gap-3 font-display">
@@ -129,6 +152,8 @@ export default function RaceArenaHub() {
           )}
         </header>
 
+        <NextRaceActionCard salespersonId={myCar?.salesperson_id} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
             {ROLES.map((cfg, i) => <RoleCard key={cfg.role} cfg={cfg} index={i} />)}
@@ -136,6 +161,6 @@ export default function RaceArenaHub() {
           <ChampionsHistoryPanel className="lg:col-span-1" />
         </div>
       </div>
-    </>
+    </RaceCalmProvider>
   );
 }
