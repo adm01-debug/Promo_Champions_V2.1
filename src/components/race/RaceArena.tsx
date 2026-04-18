@@ -296,6 +296,7 @@ export function RaceArena({
                 overtakeFlash={flashingCars.has(car.car_id)}
                 tireWear={tireWearByCar.get(car.car_id) ?? 1}
                 drsActive={drsActiveByCar.get(car.car_id) ?? false}
+                rank={idx + 1}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
