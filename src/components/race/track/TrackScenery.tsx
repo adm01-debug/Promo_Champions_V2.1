@@ -506,9 +506,6 @@ export function TrackScenery({
       <Tree cx={180} cy={300} scale={0.55} />
       <Tree cx={420} cy={300} scale={0.55} />
 
-      {/* CICLO 53-58: Drones de filmagem orbitando sobre a chicane central */}
-      <FilmingDrone cx={250} cy={500} delay={0} />
-      <FilmingDrone cx={350} cy={520} delay={1.5} />
     </g>
   );
 }
