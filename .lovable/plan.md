@@ -1,50 +1,54 @@
 
-Deal Intelligence 2/4 entregue. Próxima atômica.
+Deal Intelligence 3/4 entregue. Última atômica do bloco.
 
-**Deal Intelligence — 3/4: Stage Velocity Analyzer**
+**Deal Intelligence — 4/4: Win/Loss Pattern Miner**
 
-Mede tempo que cada deal passa em cada estágio, compara com baseline da equipe/segmento, identifica deals "presos" e estágios-gargalo, e gera recomendações de desbloqueio.
+Analisa deals fechados (won/lost) para extrair padrões: fatores de vitória/derrota, perfis de cliente que convertem, estágios onde mais se perde, objeções recorrentes, ticket médio por outcome. Gera insights acionáveis e recomendações de ICP.
 
 ## Entregáveis
 
 ### 1. Migration
-- `deal_stage_transitions`: `id`, `sale_id` FK, `from_stage text`, `to_stage text`, `entered_at timestamptz`, `exited_at timestamptz`, `duration_hours numeric` (gerado), `transitioned_by uuid`, `created_at`. Índices `(sale_id, entered_at)`, `(to_stage)`.
-- `stage_velocity_baselines`: `id`, `stage text`, `segment text` (smb/mid/enterprise/all), `p50_hours numeric`, `p75_hours numeric`, `p90_hours numeric`, `sample_size int`, `computed_at`. Único `(stage, segment)`.
-- `deal_velocity_alerts`: `id`, `sale_id` FK UNIQUE, `current_stage text`, `hours_in_stage numeric`, `baseline_p75 numeric`, `severity` (`watch|stuck|critical`), `recommendation text`, `detected_at`. 
-- Trigger em `sales` para registrar transição quando `stage` muda.
-- RLS read authenticated, write admin/manager. Realtime + índices.
+- `win_loss_analyses`: `id`, `sale_id` FK UNIQUE, `outcome` (`won|lost`), `primary_reason text`, `secondary_reasons jsonb`, `competitor text`, `lost_stage text`, `cycle_days numeric`, `amount numeric`, `segment text`, `analyzed_at`. Snapshot por deal.
+- `win_loss_patterns`: `id`, `pattern_type` (`win_factor|loss_factor|stuck_stage|competitor|icp_match`), `label text`, `outcome text`, `frequency int`, `win_rate numeric`, `avg_cycle_days numeric`, `avg_amount numeric`, `confidence numeric`, `computed_at`. Agregados.
+- `win_loss_insights`: `id`, `insight_type text`, `title text`, `description text`, `severity` (`info|opportunity|risk`), `evidence jsonb`, `created_at`. IA-driven.
+- RLS read authenticated, write admin/manager. Realtime + índices `(outcome)`, `(pattern_type)`, `(severity)`.
 
 ### 2. Edge functions (verify_jwt=true)
-- `recompute-stage-baselines`: agrega `deal_stage_transitions` últimos 90d em percentis por estágio×segmento, upsert `stage_velocity_baselines`.
-- `detect-stuck-deals`: para cada deal aberto, calcula horas no estágio atual, compara com baseline p75/p90, classifica severidade, upsert `deal_velocity_alerts` com recomendação por estágio.
+- `analyze-win-loss`: lê `sales` com status `completed|lost` últimos 180d. Para cada um: extrai motivo (campos existentes ou via Lovable AI `gemini-2.5-flash` se houver notas), classifica primary/secondary, upsert `win_loss_analyses`.
+- `mine-win-loss-patterns`: agrega `win_loss_analyses` em `win_loss_patterns` (top fatores, win_rate por segmento/competitor, estágio onde mais se perde, ticket médio). Gera 3-5 insights acionáveis em `win_loss_insights` via IA.
 
-### 3. Hooks `src/hooks/deal-intelligence/useStageVelocity.ts`
-- `useDealVelocity(saleId)` — alerta + transições do deal.
-- `useStageBaselines()` — baselines globais.
-- `useStuckDeals(limit?)` — leaderboard stuck/critical.
-- `useStageBottlenecks()` — agregado: estágios com maior tempo médio + nº deals presos.
-- `useRecomputeBaselines()` / `useDetectStuckDeals()` — mutations.
+### 3. Hooks `src/hooks/deal-intelligence/useWinLoss.ts`
+- `useWinLossAnalyses(filters?)` — análises individuais.
+- `useWinLossPatterns(type?)` — padrões agregados.
+- `useWinLossInsights()` — insights IA.
+- `useWinLossSummary()` — KPIs: win rate, avg cycle won/lost, top win/loss reason, top competitor.
+- `useAnalyzeWinLoss()` / `useMinePatterns()` — mutations.
 
-### 4. Componentes `src/components/deal-intelligence/velocity/`
-- `StageVelocityCard.tsx` (≤220L) — card no drawer do deal: tempo no estágio atual vs baseline, badge severidade, timeline horizontal das transições, recomendação.
-- `StageTransitionsTimeline.tsx` (≤160L) — chips horizontais com tempo por estágio.
-- `StuckDealsPanel.tsx` (≤220L) — hub: top 10 deals stuck/critical com horas, baseline, dono, ação sugerida.
-- `StageBottlenecksChart.tsx` (≤180L) — Recharts bar: tempo médio por estágio + linha de baseline p75.
-- `velocityHelpers.ts` — labels severidade, cores, recomendações por estágio, formatador horas→legível.
+### 4. Componentes `src/components/deal-intelligence/winloss/`
+- `WinLossSummaryCard.tsx` (≤180L) — 4 KPIs principais com sparkline.
+- `WinFactorsChart.tsx` (≤160L) — Recharts bar horizontal: top 8 fatores de vitória.
+- `LossFactorsChart.tsx` (≤160L) — Recharts bar horizontal: top 8 fatores de derrota.
+- `CompetitorAnalysisTable.tsx` (≤180L) — concorrentes: encontros, win rate vs cada um, ticket médio.
+- `WinLossInsightsPanel.tsx` (≤200L) — cards de insights IA com severidade e evidências.
+- `LostStageBreakdown.tsx` (≤140L) — pie/donut: distribuição de perdas por estágio.
+- `winLossHelpers.ts` — labels, cores severidade, formatadores.
 
 ### 5. Integração
-- Drawer do deal (Pipeline): `<StageVelocityCard saleId />` abaixo do `<DealHealthCard />`.
-- `DealIntelligence.tsx`: nova aba "Velocidade" com `<StuckDealsPanel />` + `<StageBottlenecksChart />`.
+- `DealIntelligence.tsx`: nova aba "Win/Loss" com:
+  - Linha 1: `<WinLossSummaryCard />`
+  - Linha 2: `<WinFactorsChart />` + `<LossFactorsChart />` (grid 2 cols)
+  - Linha 3: `<LostStageBreakdown />` + `<CompetitorAnalysisTable />` (grid 2 cols)
+  - Linha 4: `<WinLossInsightsPanel />`
 - `supabase/config.toml`: blocos `verify_jwt = true` para as duas funções.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após detect: alertas aparecem no card e no painel; bottlenecks mostram estágio mais lento.
+- Após analyze + mine: KPIs preenchem, gráficos mostram top fatores, insights aparecem com recomendações.
 
 ## Arquivos
-- **Migration**: 1 (3 tabelas + trigger + RLS + realtime + índices).
-- **Edge functions**: 2.
-- **Criar**: 5 hooks (1 arquivo), 4 componentes + 1 helper.
-- **Editar**: drawer do deal, `DealIntelligence.tsx`, `supabase/config.toml`.
+- **Migration**: 1 (3 tabelas + RLS + realtime + índices).
+- **Edge functions**: 2 (`analyze-win-loss`, `mine-win-loss-patterns`).
+- **Criar**: 5 hooks (1 arquivo), 6 componentes + 1 helper.
+- **Editar**: `DealIntelligence.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo para **4/4: Win/Loss Pattern Miner**, fechando Deal Intelligence em 10/10.
+Após esta entrega, **Deal Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do roadmap mestre.
