@@ -68,8 +68,9 @@ export const RevenueIntelligenceHub: FC = () => {
         />
       </div>
 
-      <Tabs defaultValue="forecast-accuracy">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="comando">⚡ Comando</TabsTrigger>
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
           <TabsTrigger value="win-loss">Win/Loss IA</TabsTrigger>
@@ -85,6 +86,9 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
+        <TabsContent value="comando" className="mt-4">
+          <PipelinePulseHub onNavigateTab={setActiveTab} />
+        </TabsContent>
         <TabsContent value="forecast-accuracy" className="mt-4 space-y-4">
           <ForecastAccuracySummary />
           <div className="grid gap-4 lg:grid-cols-2">
