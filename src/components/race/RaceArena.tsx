@@ -217,12 +217,61 @@ export function RaceArena({
     if (leaderProgress >= 0.95) {
       setFinaleShown(true);
       setShowFinaleFlag(true);
+      setShowFireworks(true);
       const lname = sorted[0]?.salesperson_name;
       pushCommentary(makeCommentaryLine({ type: 'finale', leader: lname }));
-      const t = window.setTimeout(() => setShowFinaleFlag(false), 2200);
-      return () => window.clearTimeout(t);
+      const t1 = window.setTimeout(() => setShowFinaleFlag(false), 2200);
+      const t2 = window.setTimeout(() => setShowFireworks(false), 2600);
+      return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
     }
   }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary]);
+
+  // ----- Start lights: dispara 1x ao montar -----
+  useEffect(() => {
+    if (reducedMotion) return;
+    const t = window.setTimeout(() => setStartLightsTrigger(1), 600);
+    return () => window.clearTimeout(t);
+  }, [reducedMotion]);
+
+  // ----- Pit-stop detector: carro estagnado >3s vai pra "pit" 1.5s -----
+  useEffect(() => {
+    if (reducedMotion) return;
+    const now = Date.now();
+    const next = new Set(pitStopCars);
+    let mutated = false;
+    sorted.forEach((c) => {
+      const prev = pitTrackRef.current.get(c.car_id);
+      const p = Number(c.progress);
+      if (!prev) {
+        pitTrackRef.current.set(c.car_id, { lastProgress: p, stalledSince: now });
+        return;
+      }
+      const moved = Math.abs(p - prev.lastProgress) > 0.0005;
+      if (moved) {
+        pitTrackRef.current.set(c.car_id, { lastProgress: p, stalledSince: now });
+        if (next.has(c.car_id)) { next.delete(c.car_id); mutated = true; }
+      } else {
+        const stalledFor = now - prev.stalledSince;
+        if (stalledFor > 3000 && !next.has(c.car_id) && p > 0.02 && p < 0.98) {
+          next.add(c.car_id);
+          mutated = true;
+          // limpa após 1.5s
+          window.setTimeout(() => {
+            setPitStopCars((s) => {
+              const n = new Set(s);
+              n.delete(c.car_id);
+              return n;
+            });
+            // reset stall timer p/ não disparar imediatamente
+            const cur = pitTrackRef.current.get(c.car_id);
+            if (cur) pitTrackRef.current.set(c.car_id, { ...cur, stalledSince: Date.now() });
+          }, 1500);
+        }
+      }
+    });
+    if (mutated) setPitStopCars(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'), reducedMotion]);
 
   // ----- Replay -----
   const handleReplay = useCallback(() => {
