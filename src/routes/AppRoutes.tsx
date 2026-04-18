@@ -14,7 +14,7 @@ import {
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
   Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
-  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
+  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, RevenueForecast, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
   // Analytics & BI
@@ -117,6 +117,7 @@ export function AppRoutes() {
                     <Route path="/automacoes" element={<Automacoes />} />
                     <Route path="/conversational-intelligence" element={<ConversationalIntelligence />} />
                     <Route path="/revenue-intelligence" element={<Manager><RevenueIntelligence /></Manager>} />
+                    <Route path="/revenue-forecast" element={<Manager><RevenueForecast /></Manager>} />
                     <Route path="/abm" element={<AccountBasedSelling />} />
                     <Route path="/workflow-builder" element={<Manager><AutomationBuilder /></Manager>} />
                     <Route path="/automacao-inteligente" element={<Manager><AutomacaoInteligente /></Manager>} />

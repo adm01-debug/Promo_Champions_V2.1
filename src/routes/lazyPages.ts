@@ -41,6 +41,7 @@ export const EmailTracking = lazy(() => import("@/pages/EmailTracking"));
 export const Automacoes = lazy(() => import("@/pages/Automacoes"));
 export const ConversationalIntelligence = lazy(() => import("@/pages/ConversationalIntelligenceHub"));
 export const RevenueIntelligence = lazy(() => import("@/pages/RevenueIntelligence"));
+export const RevenueForecast = lazy(() => import("@/pages/RevenueForecast"));
 export const AccountBasedSelling = lazy(() => import("@/pages/AccountBasedSelling"));
 export const AccountBasedEngagement = lazy(() => import("@/pages/AccountBasedEngagement"));
 export const AccountDetail = lazy(() => import("@/pages/AccountDetail"));
