@@ -9,6 +9,9 @@ import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
 import { Fireworks } from './Fireworks';
+import { RaceControlPanel, type RaceFlag } from './RaceControlPanel';
+import { SpeedHUD } from './SpeedHUD';
+import { TrackTireMarks } from './track/TrackTireMarks';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
@@ -27,13 +30,17 @@ interface RaceArenaProps {
   colorblindMode?: boolean;
   /** Season ativa para escopo de reactions em tempo real. */
   seasonId?: string | null;
+  /** ISO start da season (Race Control). */
+  seasonStartedAt?: string | null;
+  /** ISO término previsto da season (Race Control). */
+  seasonEndsAt?: string | null;
 }
 
 const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
 
 export function RaceArena({
   cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay,
-  colorblindMode = false, seasonId = null,
+  colorblindMode = false, seasonId = null, seasonStartedAt = null, seasonEndsAt = null,
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
@@ -59,6 +66,13 @@ export function RaceArena({
   // Pit-stop tracking: timestamp do último progresso para cada carro
   const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(new Map());
   const [pitStopCars, setPitStopCars] = useState<Set<string>>(new Set());
+
+  // Race Control: contador de overtakes + bandeira atual
+  const [overtakesTotal, setOvertakesTotal] = useState(0);
+  const [yellowFlagUntil, setYellowFlagUntil] = useState<number>(0);
+  // Velocidade simulada do líder (km/h)
+  const [leaderSpeed, setLeaderSpeed] = useState(0);
+  const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
 
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
@@ -100,6 +114,9 @@ export function RaceArena({
     if (prev.length > 0 && !reducedMotion) {
       const overtakes = detectOvertakes(prev, curr);
       if (overtakes.length > 0) {
+        // Race Control: incrementa contador + dispara bandeira amarela 3s
+        setOvertakesTotal((n) => n + overtakes.length);
+        setYellowFlagUntil(Date.now() + 3000);
         const newFlash = new Set(flashingCars);
         overtakes.forEach((o) => newFlash.add(o.overtaker));
         setFlashingCars(newFlash);
@@ -180,6 +197,50 @@ export function RaceArena({
 
   // ----- Lap info -----
   const lapInfo = computeLapInfo(Number(leader?.progress ?? 0), 10);
+
+  // ----- Velocidade simulada do líder (delta progresso × 1000 → km/h) -----
+  useEffect(() => {
+    if (!leader) return;
+    const now = Date.now();
+    const p = Number(leader.progress);
+    const prev = lastLeaderProgressRef.current;
+    if (prev) {
+      const dt = (now - prev.at) / 1000; // segundos
+      const dp = Math.max(0, p - prev.progress);
+      if (dt > 0.05) {
+        // Conversão arbitrária: 1% de progresso em 1s ≈ 220 km/h.
+        const kmh = (dp / dt) * 22000;
+        // suavização exponencial
+        setLeaderSpeed((s) => s * 0.7 + Math.min(360, kmh) * 0.3);
+        lastLeaderProgressRef.current = { progress: p, at: now };
+      }
+    } else {
+      lastLeaderProgressRef.current = { progress: p, at: now };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leader?.car_id, leader?.progress]);
+
+  // Decay quando ninguém atualiza
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setLeaderSpeed((s) => (s > 1 ? s * 0.92 : 0));
+    }, 800);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // ----- Bandeira atual da corrida -----
+  const currentFlag: RaceFlag = useMemo(() => {
+    if (showFinaleFlag) return 'checkered';
+    if (Date.now() < yellowFlagUntil) return 'yellow';
+    return 'green';
+  }, [showFinaleFlag, yellowFlagUntil, /* re-render trigger: */ leaderSpeed]);
+
+  // Snapshot atual de carros para tire marks
+  const tireMarkCars = useMemo(
+    () => sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')],
+  );
 
   // ----- DRS: ativo quando carro está em zona DRS e tem alguém < 0.06 à frente -----
   const drsActiveByCar = useMemo(() => {
@@ -326,6 +387,8 @@ export function RaceArena({
         }}
       >
       <RaceTrack>
+        {/* Tire marks (rastros de pneu nas curvas) — abaixo dos carros */}
+        <TrackTireMarks cars={tireMarkCars} />
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
           const pos = getPositionOnTrack(Number(car.progress), lane);
@@ -531,6 +594,29 @@ export function RaceArena({
       {weatherOverlay}
       </motion.div>
 
+      {/* ===== Sombra dinâmica do sol (gradiente radial canto superior direito) ===== */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[5] rounded-3xl"
+        style={{
+          background:
+            'radial-gradient(circle at 92% 8%, hsl(48 100% 75% / 0.22) 0%, hsl(45 95% 65% / 0.08) 30%, transparent 65%)',
+          mixBlendMode: 'screen',
+        }}
+        aria-hidden
+      />
+
+      {/* ===== Overlay amarelo translúcido durante bandeira amarela ===== */}
+      {currentFlag === 'yellow' && !reducedMotion && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[6] rounded-3xl"
+          style={{
+            background: 'hsl(45 95% 55% / 0.15)',
+            animation: 'race-track-yellow-overlay 0.7s ease-in-out infinite',
+          }}
+          aria-hidden
+        />
+      )}
+
       {/* ===== LAP counter HUD (topo central) ===== */}
       <div
         className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-1.5 shadow-lg"
@@ -547,6 +633,17 @@ export function RaceArena({
           </span>
         </div>
       </div>
+
+      {/* ===== Race Control panel (lateral esquerda) ===== */}
+      <RaceControlPanel
+        flag={currentFlag}
+        startedAt={seasonStartedAt}
+        endsAt={seasonEndsAt}
+        overtakesTotal={overtakesTotal}
+      />
+
+      {/* ===== Speed HUD do líder (canto inferior esquerdo, ao lado do MiniMap) ===== */}
+      <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
 
       {/* ===== Mini-mapa do circuito ===== */}
       <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />

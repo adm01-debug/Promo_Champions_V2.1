@@ -145,7 +145,17 @@ export function RaceCar({
         </>
       )}
 
-      {/* ===== Sombra projetada (offset baixo, blur visual via dupla elipse) ===== */}
+      {/* ===== Sombra dinâmica do sol (elipse alongada para baixo-esquerda, blur SVG) ===== */}
+      <ellipse
+        cx={5}
+        cy={bodyH / 2 + 7}
+        rx={bodyW / 2 + 3}
+        ry={4.5}
+        fill="hsl(0 0% 0%)"
+        opacity={0.28}
+        filter="url(#carShadowBlur)"
+      />
+      {/* Sombra projetada (offset baixo, blur visual via dupla elipse) */}
       <ellipse cx={3} cy={bodyH / 2 + 6} rx={bodyW / 2 + 1} ry={3.5} fill="rgba(0,0,0,0.18)" />
       <ellipse cx={3} cy={bodyH / 2 + 5} rx={bodyW / 2 - 2} ry={2.5} fill="rgba(0,0,0,0.28)" />
 

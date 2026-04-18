@@ -44,3 +44,5 @@ export { ReactionFloater } from './ReactionFloater';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
 export { StartLights } from './StartLights';
 export { Fireworks } from './Fireworks';
+export { RaceControlPanel } from './RaceControlPanel';
+export { SpeedHUD } from './SpeedHUD';

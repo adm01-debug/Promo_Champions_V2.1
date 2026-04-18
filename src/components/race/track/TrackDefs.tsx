@@ -112,6 +112,26 @@ export function TrackDefs() {
         <stop offset="0%" stopColor="hsl(var(--race-asphalt))" stopOpacity="0.55" />
         <stop offset="100%" stopColor="hsl(var(--race-asphalt))" stopOpacity="0.85" />
       </linearGradient>
+
+      {/* ===== Cycle 41-46: Sol radial (canto superior direito) ===== */}
+      <radialGradient id="sunGlow" cx="92%" cy="8%" r="65%">
+        <stop offset="0%" stopColor="hsl(48 100% 75%)" stopOpacity="0.32" />
+        <stop offset="35%" stopColor="hsl(45 95% 65%)" stopOpacity="0.12" />
+        <stop offset="100%" stopColor="hsl(45 90% 55%)" stopOpacity="0" />
+      </radialGradient>
+
+      {/* ===== Heat haze: turbulência + displacement ===== */}
+      <filter id="heatHaze" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.04" numOctaves="2" seed="3">
+          <animate attributeName="baseFrequency" values="0.012 0.04;0.018 0.06;0.012 0.04" dur="6s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" scale="2.4" />
+      </filter>
+
+      {/* ===== Sombra elíptica do carro (blur) ===== */}
+      <filter id="carShadowBlur" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.6" />
+      </filter>
     </defs>
   );
 }
