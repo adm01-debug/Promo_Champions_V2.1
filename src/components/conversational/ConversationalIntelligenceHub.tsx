@@ -147,6 +147,8 @@ export const ConversationalIntelligenceHub = () => {
           <ConversationMetricsFeed />
 
           <Card>
+            <CardHeader>
+              <CardTitle>Biblioteca de chamadas (Full-text Search)</CardTitle>
               <CardDescription>
                 Busca semântica nos transcripts — encontre objeções, concorrentes e tópicos
               </CardDescription>
