@@ -30,13 +30,17 @@ interface RaceArenaProps {
   colorblindMode?: boolean;
   /** Season ativa para escopo de reactions em tempo real. */
   seasonId?: string | null;
+  /** ISO start da season (Race Control). */
+  seasonStartedAt?: string | null;
+  /** ISO término previsto da season (Race Control). */
+  seasonEndsAt?: string | null;
 }
 
 const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
 
 export function RaceArena({
   cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay,
-  colorblindMode = false, seasonId = null,
+  colorblindMode = false, seasonId = null, seasonStartedAt = null, seasonEndsAt = null,
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
