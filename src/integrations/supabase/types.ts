@@ -12069,6 +12069,128 @@ export type Database = {
           },
         ]
       }
+      win_loss_analyses: {
+        Row: {
+          amount: number | null
+          analyzed_at: string
+          competitor: string | null
+          created_at: string
+          cycle_days: number | null
+          id: string
+          lost_stage: string | null
+          outcome: string
+          primary_reason: string | null
+          sale_id: string
+          secondary_reasons: Json
+          segment: string | null
+        }
+        Insert: {
+          amount?: number | null
+          analyzed_at?: string
+          competitor?: string | null
+          created_at?: string
+          cycle_days?: number | null
+          id?: string
+          lost_stage?: string | null
+          outcome: string
+          primary_reason?: string | null
+          sale_id: string
+          secondary_reasons?: Json
+          segment?: string | null
+        }
+        Update: {
+          amount?: number | null
+          analyzed_at?: string
+          competitor?: string | null
+          created_at?: string
+          cycle_days?: number | null
+          id?: string
+          lost_stage?: string | null
+          outcome?: string
+          primary_reason?: string | null
+          sale_id?: string
+          secondary_reasons?: Json
+          segment?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "win_loss_analyses_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      win_loss_insights: {
+        Row: {
+          created_at: string
+          description: string
+          evidence: Json
+          id: string
+          insight_type: string
+          severity: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          evidence?: Json
+          id?: string
+          insight_type: string
+          severity?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          evidence?: Json
+          id?: string
+          insight_type?: string
+          severity?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      win_loss_patterns: {
+        Row: {
+          avg_amount: number
+          avg_cycle_days: number
+          computed_at: string
+          confidence: number
+          frequency: number
+          id: string
+          label: string
+          outcome: string | null
+          pattern_type: string
+          win_rate: number
+        }
+        Insert: {
+          avg_amount?: number
+          avg_cycle_days?: number
+          computed_at?: string
+          confidence?: number
+          frequency?: number
+          id?: string
+          label: string
+          outcome?: string | null
+          pattern_type: string
+          win_rate?: number
+        }
+        Update: {
+          avg_amount?: number
+          avg_cycle_days?: number
+          computed_at?: string
+          confidence?: number
+          frequency?: number
+          id?: string
+          label?: string
+          outcome?: string | null
+          pattern_type?: string
+          win_rate?: number
+        }
+        Relationships: []
+      }
       win_probability_calibrations: {
         Row: {
           baseline_probability: number
