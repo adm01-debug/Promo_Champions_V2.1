@@ -19,6 +19,10 @@ interface RaceCarProps {
   rank?: number;
   /** Quando true, dispara animação de pit-stop (pneus piscando + brilho amarelo). */
   pitStop?: boolean;
+  /** Quando true, exibe badge "FASTEST" roxa por 2s acima do carro. */
+  fastestSector?: boolean;
+  /** Quando true, exibe linhas brancas de turbulência aerodinâmica saindo da traseira. */
+  aeroTurbulence?: boolean;
 }
 
 /**
@@ -39,6 +43,8 @@ export function RaceCar({
   drsActive = false,
   rank,
   pitStop = false,
+  fastestSector = false,
+  aeroTurbulence = false,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
