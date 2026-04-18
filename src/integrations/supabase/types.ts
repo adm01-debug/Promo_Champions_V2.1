@@ -1601,6 +1601,65 @@ export type Database = {
         }
         Relationships: []
       }
+      call_conversation_metrics: {
+        Row: {
+          calculated_at: string
+          client_talk_ratio: number
+          client_words_per_minute: number
+          engagement_score: number
+          factors: Json
+          health: string
+          id: string
+          interruptions_count: number
+          longest_monologue_seconds: number
+          pace_score: number
+          recording_id: string
+          seller_talk_ratio: number
+          seller_words_per_minute: number
+          silence_ratio: number
+        }
+        Insert: {
+          calculated_at?: string
+          client_talk_ratio?: number
+          client_words_per_minute?: number
+          engagement_score?: number
+          factors?: Json
+          health?: string
+          id?: string
+          interruptions_count?: number
+          longest_monologue_seconds?: number
+          pace_score?: number
+          recording_id: string
+          seller_talk_ratio?: number
+          seller_words_per_minute?: number
+          silence_ratio?: number
+        }
+        Update: {
+          calculated_at?: string
+          client_talk_ratio?: number
+          client_words_per_minute?: number
+          engagement_score?: number
+          factors?: Json
+          health?: string
+          id?: string
+          interruptions_count?: number
+          longest_monologue_seconds?: number
+          pace_score?: number
+          recording_id?: string
+          seller_talk_ratio?: number
+          seller_words_per_minute?: number
+          silence_ratio?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_conversation_metrics_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: true
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_critical_moments: {
         Row: {
           context: string | null
@@ -1789,6 +1848,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      call_metric_benchmarks: {
+        Row: {
+          id: string
+          metric: string
+          p25: number
+          p50: number
+          p75: number
+          target_max: number
+          target_min: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          metric: string
+          p25?: number
+          p50?: number
+          p75?: number
+          target_max?: number
+          target_min?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          metric?: string
+          p25?: number
+          p50?: number
+          p75?: number
+          target_max?: number
+          target_min?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       call_recordings: {
         Row: {

@@ -12,6 +12,7 @@ import { ptBR } from "date-fns/locale";
 import { RecordingSummaryDrawer, useRecordingSummaryDrawer } from "./RecordingSummaryDrawer";
 import { CallLibrarySearch } from "./CallLibrarySearch";
 import { CompetitorsAdminDialog } from "./CompetitorsAdminDialog";
+import { ConversationMetricsFeed } from "./metrics/ConversationMetricsFeed";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -142,6 +143,8 @@ export const ConversationalIntelligenceHub = () => {
               </CardContent>
             </Card>
           </div>
+
+          <ConversationMetricsFeed />
 
           <Card>
             <CardHeader>
