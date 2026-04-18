@@ -75,9 +75,17 @@ export function NextGoalPanel({
               {isLeaderOnly && 'Líder absoluto'}
             </span>
           </div>
-          <span className="text-[10px] font-bold tabular-nums text-primary">
-            {goal.me?.rank ? `P${goal.me.rank}` : ''}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <ComboStreakBadge
+              salespersonId={currentUserSalespersonId}
+              seasonStart={seasonStart}
+              seasonEnd={seasonEnd}
+              compact
+            />
+            <span className="text-[10px] font-bold tabular-nums text-primary">
+              {goal.me?.rank ? `P${goal.me.rank}` : ''}
+            </span>
+          </div>
         </div>
 
         {/* Target / message */}
