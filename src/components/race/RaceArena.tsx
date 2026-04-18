@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
 import { MiniMap } from './MiniMap';
+import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
+import { ReplayButton } from './ReplayButton';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
-  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo,
+  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
 } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -43,8 +45,24 @@ export function RaceArena({
   const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
   const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
   const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
+  const [commentary, setCommentary] = useState<CommentaryLine | null>(null);
+  const commentaryTimerRef = useRef<number | null>(null);
+  const [replayOverlay, setReplayOverlay] = useState(false);
+  const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
+  const [finaleShown, setFinaleShown] = useState(false);
+  const [showFinaleFlag, setShowFinaleFlag] = useState(false);
+  const prevLeaderIdRef = useRef<string | null>(null);
 
-  // ----- Tire wear: tracking de consistência de progresso por carro -----
+  const pushCommentary = useCallback((text: string) => {
+    if (!text) return;
+    const line: CommentaryLine = { id: `${Date.now()}-${Math.random()}`, text, createdAt: Date.now() };
+    setCommentary(line);
+    if (commentaryTimerRef.current) window.clearTimeout(commentaryTimerRef.current);
+    commentaryTimerRef.current = window.setTimeout(() => {
+      setCommentary((cur) => (cur?.id === line.id ? null : cur));
+    }, 3000);
+  }, []);
+
   const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
   const tireWearByCar = useMemo(() => {
     const map = new Map<string, number>();
@@ -85,6 +103,17 @@ export function RaceArena({
             return next;
           });
         }, 700);
+        // narração + grava último overtake p/ replay
+        const o = overtakes[0];
+        const attackerName = sorted.find((c) => c.car_id === o.overtaker)?.salesperson_name;
+        const defenderName = sorted.find((c) => c.car_id === o.overtaken)?.salesperson_name;
+        const inDRS = isInDRSZone(curr.find((x) => x.id === o.overtaker)?.progress ?? 0);
+        pushCommentary(makeCommentaryLine({
+          type: inDRS ? 'drs' : 'overtake',
+          attacker: attackerName,
+          defender: defenderName,
+        }));
+        lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
       }
       // dust quando carro cruza um checkpoint (curva)
       const newDust: Array<{ id: string; x: number; y: number }> = [];
@@ -118,9 +147,18 @@ export function RaceArena({
             setTimeout(() => {
               setSectorBadges((arr) => arr.filter((bd) => bd.id !== badgeId));
             }, 900);
+            const lname = sorted.find((c) => c.car_id === leaderCurr.id)?.salesperson_name;
+            pushCommentary(makeCommentaryLine({ type: 'sector', leader: lname, sector: name }));
           }
         });
       }
+      // ----- Mudança de líder -----
+      const newLeaderId = leaderCurr?.id ?? null;
+      if (newLeaderId && prevLeaderIdRef.current && newLeaderId !== prevLeaderIdRef.current) {
+        const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
+        pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
+      }
+      if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
     prevSnapshotRef.current = curr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,6 +190,41 @@ export function RaceArena({
   const top3 = sorted.slice(0, 3);
   const leaderProgress = Number(top3[0]?.progress ?? 0);
 
+  // ----- Câmera dinâmica (zoom no líder em disputa apertada) -----
+  const closeBattle = sorted.length >= 2
+    ? (Number(sorted[0].progress) - Number(sorted[1].progress)) < 0.03
+    : false;
+  const [zoomActive, setZoomActive] = useState(false);
+  useEffect(() => {
+    if (reducedMotion) return;
+    if (closeBattle && !zoomActive) {
+      setZoomActive(true);
+      const t = window.setTimeout(() => setZoomActive(false), 2000);
+      return () => window.clearTimeout(t);
+    }
+  }, [closeBattle, reducedMotion, zoomActive]);
+
+  // ----- Bandeira de chegada (líder >= 0.95) -----
+  useEffect(() => {
+    if (finaleShown || reducedMotion) return;
+    if (leaderProgress >= 0.95) {
+      setFinaleShown(true);
+      setShowFinaleFlag(true);
+      const lname = sorted[0]?.salesperson_name;
+      pushCommentary(makeCommentaryLine({ type: 'finale', leader: lname }));
+      const t = window.setTimeout(() => setShowFinaleFlag(false), 2200);
+      return () => window.clearTimeout(t);
+    }
+  }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary]);
+
+  // ----- Replay -----
+  const handleReplay = useCallback(() => {
+    if (!lastOvertakeRef.current) return;
+    setReplayOverlay(true);
+    pushCommentary('REPLAY: melhor momento da pista');
+    window.setTimeout(() => setReplayOverlay(false), 3200);
+  }, [pushCommentary]);
+
   const transition = reducedMotion
     ? { duration: 0, type: 'tween' as const }
     : { type: 'spring' as const, stiffness: 70, damping: 18, duration: 0.8 };
@@ -165,16 +238,18 @@ export function RaceArena({
         filter: 'saturate(1.08) contrast(1.02)',
       }}
     >
-      <div
+      <motion.div
         className="w-full h-full"
-        style={
-          reducedMotion
+        animate={{ scale: zoomActive && !reducedMotion ? 1.12 : 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          transformOrigin: leaderPos
+            ? `${(leaderPos.x / TRACK_VIEWBOX.width) * 100}% ${(leaderPos.y / TRACK_VIEWBOX.height) * 100}%`
+            : '50% 50%',
+          animation: reducedMotion
             ? undefined
-            : {
-                animation: 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
-                transformOrigin: '50% 50%',
-              }
-        }
+            : 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+        }}
       >
       <RaceTrack>
         {sorted.map((car, idx) => {
@@ -223,6 +298,7 @@ export function RaceArena({
                 overtakeFlash={flashingCars.has(car.car_id)}
                 tireWear={tireWearByCar.get(car.car_id) ?? 1}
                 drsActive={drsActiveByCar.get(car.car_id) ?? false}
+                rank={idx + 1}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
@@ -353,7 +429,7 @@ export function RaceArena({
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
-      </div>
+      </motion.div>
 
       {/* ===== LAP counter HUD (topo central) ===== */}
       <div
@@ -424,6 +500,63 @@ export function RaceArena({
           </div>
         </div>
       )}
+
+      {/* ===== Comentarista IA (broadcast subtitle) ===== */}
+      <CommentaryBubble line={commentary} />
+
+      {/* ===== Replay button ===== */}
+      <ReplayButton
+        onClick={handleReplay}
+        disabled={!lastOvertakeRef.current}
+        isPlaying={replayOverlay}
+      />
+
+      {/* ===== Replay overlay (borda cinematográfica + slow-mo via filter visual) ===== */}
+      <AnimatePresence>
+        {replayOverlay && (
+          <motion.div
+            key="replay-overlay"
+            className="pointer-events-none absolute inset-0 z-30 rounded-3xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              boxShadow: 'inset 0 0 0 4px hsl(var(--destructive) / 0.85), inset 0 0 60px hsl(0 0% 0% / 0.45)',
+              animation: 'race-replay-pulse 1.4s ease-in-out infinite',
+            }}
+          >
+            <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-destructive/90 px-3 py-1 shadow-lg">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-background" />
+              <span className="text-[11px] font-black uppercase tracking-[0.22em] text-background">
+                Replay
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== Bandeira de chegada (xadrez gigante) ===== */}
+      <AnimatePresence>
+        {showFinaleFlag && (
+          <motion.div
+            key="finale-flag"
+            className="pointer-events-none absolute inset-y-0 right-0 z-30 w-[34%]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              backgroundImage:
+                'repeating-conic-gradient(hsl(0 0% 8%) 0% 25%, hsl(0 0% 100%) 0% 50%)',
+              backgroundSize: '36px 36px',
+              boxShadow: '-30px 0 60px -10px hsl(0 0% 0% / 0.5)',
+              animation: 'race-checkered-flag 2.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+              transformOrigin: 'right center',
+            }}
+            aria-label="Bandeira de chegada"
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

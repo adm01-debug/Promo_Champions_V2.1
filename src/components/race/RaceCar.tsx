@@ -15,6 +15,8 @@ interface RaceCarProps {
   tireWear?: number;
   /** Quando true, mostra ícone DRS pulsante no topo do carro. */
   drsActive?: boolean;
+  /** Posição absoluta na corrida (1-based). Mostra medalha (top 3) ou número. */
+  rank?: number;
 }
 
 /**
@@ -33,6 +35,7 @@ export function RaceCar({
   overtakeFlash = false,
   tireWear = 1,
   drsActive = false,
+  rank,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
@@ -105,6 +108,26 @@ export function RaceCar({
               transition={{ duration: 0.5 + i * 0.05, repeat: 3, delay: i * 0.04, ease: 'easeOut' }}
             />
           ))}
+          {/* Mario-Kart turbo particles (cor do carro) */}
+          {[0, 1, 2, 3, 4].map((i) => {
+            const angle = (i - 2) * 0.35;
+            return (
+              <motion.circle
+                key={`turbo-${i}`}
+                cx={-bodyW / 2 - 2}
+                cy={0}
+                r={2.2 + (i % 2) * 0.6}
+                fill={i % 2 === 0 ? primaryColor : secondaryColor}
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  cx: [-bodyW / 2 - 2, -bodyW / 2 - 26 - i * 6, -bodyW / 2 - 50 - i * 8],
+                  cy: [0, Math.sin(angle) * 10, Math.sin(angle) * 18],
+                }}
+                transition={{ duration: 0.6, repeat: 3, delay: i * 0.05, ease: 'easeOut' }}
+              />
+            );
+          })}
           <motion.circle
             cx={-bodyW / 2}
             cy={0}
@@ -357,6 +380,29 @@ export function RaceCar({
           </motion.g>
         </g>
       )}
+
+      {/* ===== Rank badge (medalha top 3 ou número) ===== */}
+      {rank !== undefined && rank > 0 && (() => {
+        const xPos = bodyW / 2 + 8;
+        const isPodium = rank <= 3;
+        const medalColor = rank === 1 ? 'hsl(45 95% 55%)' : rank === 2 ? 'hsl(0 0% 75%)' : rank === 3 ? 'hsl(28 75% 50%)' : 'hsl(var(--muted))';
+        const fg = isPodium ? 'hsl(20 30% 18%)' : 'hsl(var(--foreground))';
+        return (
+          <motion.g
+            transform={`translate(${xPos} ${-bodyH / 2 - 6})`}
+            key={`rank-${rank}`}
+            initial={{ scale: 1 }}
+            animate={{ scale: [1, 1.45, 0.92, 1] }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            pointerEvents="none"
+          >
+            <circle r={6.5} fill={medalColor} stroke="hsl(0 0% 100%)" strokeWidth={1.2} />
+            <text y={2.4} textAnchor="middle" fontSize={7.5} fontWeight={900} fill={fg} style={{ fontFamily: 'system-ui, sans-serif' }}>
+              {rank}
+            </text>
+          </motion.g>
+        );
+      })()}
     </g>
   );
 }
