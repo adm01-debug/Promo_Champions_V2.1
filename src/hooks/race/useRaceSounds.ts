@@ -171,6 +171,7 @@ export function useRaceSounds() {
         });
         break;
       }
+    }
   }, [muted, ensureCtx]);
 
   useEffect(() => () => {
