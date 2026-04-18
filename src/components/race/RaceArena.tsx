@@ -38,6 +38,7 @@ import {
 } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 interface RaceArenaProps {
@@ -74,6 +75,8 @@ export function RaceArena({
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
+  // Frente A — modo de visualização (default 'focus' = decluttered).
+  const viewMode = useRaceViewMode();
   const carIds = sorted.map((c) => c.car_id);
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
