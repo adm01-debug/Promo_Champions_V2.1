@@ -48,6 +48,68 @@ function classifyRisk(prob: number): "safe" | "on_track" | "at_risk" | "critical
   return "critical";
 }
 
+async function generateAdvancedActions(supabase: ReturnType<typeof createClient>, params: {
+  forecastId: string;
+  salespersonName: string;
+  quota: number;
+  p50: number;
+  prob: number;
+  risk: string;
+}): Promise<void> {
+  const apiKey = Deno.env.get("LOVABLE_API_KEY");
+  if (!apiKey) return;
+  const gap = Math.max(0, params.quota - params.p50);
+  const sys = "Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.";
+  const usr = `Vendedor: ${params.salespersonName}\nMeta: R$ ${params.quota.toFixed(0)}\nProjeção P50: R$ ${params.p50.toFixed(0)}\nGap: R$ ${gap.toFixed(0)}\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\nRisco: ${params.risk}`;
+  try {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
+        tools: [{
+          type: "function",
+          function: {
+            name: "recommend_actions",
+            description: "Lista de ações recomendadas",
+            parameters: {
+              type: "object",
+              properties: {
+                actions: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      action_type: { type: "string", enum: ["close_deal", "generate_pipeline", "increase_ticket", "accelerate_stage"] },
+                      title: { type: "string" },
+                      description: { type: "string" },
+                      expected_impact: { type: "number" },
+                      priority: { type: "integer", minimum: 1, maximum: 3 },
+                    },
+                    required: ["action_type", "title", "description", "expected_impact", "priority"],
+                  },
+                },
+              },
+              required: ["actions"],
+            },
+          },
+        }],
+        tool_choice: { type: "function", function: { name: "recommend_actions" } },
+      }),
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const tc = data?.choices?.[0]?.message?.tool_calls?.[0];
+    if (!tc) return;
+    const parsed = JSON.parse(tc.function.arguments) as { actions: Array<{ action_type: string; title: string; description: string; expected_impact: number; priority: number }> };
+    const rows = parsed.actions.slice(0, 3).map((a) => ({ ...a, forecast_id: params.forecastId }));
+    if (rows.length > 0) await supabase.from("quota_attainment_actions").insert(rows);
+  } catch (e) {
+    console.error("AI advanced actions error", e);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
