@@ -238,16 +238,20 @@ export function RaceArena({
         filter: 'saturate(1.08) contrast(1.02)',
       }}
     >
-      <div
+      <motion.div
         className="w-full h-full"
-        style={
-          reducedMotion
-            ? undefined
+        animate={{ scale: zoomActive && !reducedMotion ? 1.12 : 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          transformOrigin: leaderPos
+            ? `${(leaderPos.x / TRACK_VIEWBOX.width) * 100}% ${(leaderPos.y / TRACK_VIEWBOX.height) * 100}%`
+            : '50% 50%',
+          ...(reducedMotion
+            ? null
             : {
                 animation: 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
-                transformOrigin: '50% 50%',
-              }
-        }
+              }),
+        }}
       >
       <RaceTrack>
         {sorted.map((car, idx) => {
