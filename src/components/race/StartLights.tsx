@@ -92,8 +92,8 @@ export function StartLights({ trigger, onGo }: StartLightsProps) {
             }}
           >
             <span
-              className="text-3xl font-black tracking-[0.3em] text-white"
-              style={{ fontFamily: 'system-ui, sans-serif', textShadow: '0 2px 8px hsl(0 0% 0% / 0.6)' }}
+              className="text-3xl font-black tracking-[0.3em]"
+              style={{ fontFamily: 'system-ui, sans-serif', color: 'hsl(0 0% 100%)', textShadow: '0 2px 8px hsl(0 0% 0% / 0.6)' }}
             >
               GO!
             </span>
