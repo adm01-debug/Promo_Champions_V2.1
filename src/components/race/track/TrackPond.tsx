@@ -3,8 +3,8 @@
  * Posicionado em ~ (760, 380) — área interna do loop direito.
  */
 export function TrackPond() {
-  const cx = 760;
-  const cy = 380;
+  const cx = 450;
+  const cy = 280;
   const d = `
     M ${cx - 60} ${cy + 5}
     C ${cx - 75} ${cy - 25}, ${cx - 30} ${cy - 45}, ${cx + 5} ${cy - 38}

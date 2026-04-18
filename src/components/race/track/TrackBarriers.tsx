@@ -4,7 +4,7 @@ import { getPositionOnTrack } from '../raceTrackHelpers';
  * Barreiras zebradas vermelho/branco em pontos estratégicos do circuito,
  * posicionadas para fora da pista (laneOffset positivo).
  */
-const BARRIER_POSITIONS = [0.06, 0.2, 0.34, 0.5, 0.66, 0.82, 0.94];
+const BARRIER_POSITIONS = [0.05, 0.18, 0.3, 0.42, 0.55, 0.7, 0.85, 0.95];
 const OFFSET = 56; // fora do asfalto (asfalto = 64 de largura → metade=32, run-off ~18)
 
 function ZebraBarrier({ x, y, rotation }: { x: number; y: number; rotation: number }) {
