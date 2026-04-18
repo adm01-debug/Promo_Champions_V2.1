@@ -1,26 +1,40 @@
 
-Ciclo 23-28 entregue. Próximo ciclo foca em narrativa de corrida em tempo real, áudio visual e profundidade cinematográfica.
+## Mudança: Pista horizontal → vertical
 
-# Ciclo 29-34 (rumo ao 10/10++ definitivo)
+Hoje o `TRACK_VIEWBOX` é 1000×600 (paisagem). O usuário tem muito espaço vertical sobrando e quer aproveitá-lo. Plano:
 
-**29. Replay do "Melhor Momento"** — botão flutuante no canto inferior direito (ícone ▶) que, ao clicar, reproduz os últimos 8s da última ultrapassagem em câmera lenta (0.4x), com overlay "REPLAY" pulsante e borda cinematográfica.
+### 1. Inverter o viewBox e o path da pista
+Em `src/components/race/raceTrackHelpers.ts`:
+- Trocar `TRACK_VIEWBOX` para `{ width: 600, height: 1000 }` (retrato).
+- Reescrever `TRACK_PATH_D` para um oval estendido **vertical** (retas longas verticais nas laterais, curvas em cima/embaixo, mantendo a chicane suave no meio de uma das retas).
+- Recalcular `CHECKPOINTS`, `SECTOR_BOUNDARIES`, `DRS_ZONES` para o novo traçado (mesmas proporções, novo eixo).
+- Linha de largada/chegada agora horizontal no topo.
 
-**30. Comentarista IA (texto flutuante)** — bolha de texto estilo "broadcast subtitle" no rodapé que aparece em eventos: "Pedro ataca na curva 3!", "João defende a posição!", "Ultrapassagem na DRS!". Glassmorphism, fade-in/out 3s.
+### 2. Reposicionar todos os elementos do infield
+Coordenadas atuais assumem 1000×600. Atualizar para 600×1000:
+- `TrackPond.tsx` — lago + ilha + palmeira reposicionados ao centro (cx≈300, cy≈560).
+- `TrackScenery.tsx` — paddock, garagens da pit lane, arquibancadas, marshal posts, helicóptero (orbit elíptica vertical), árvores externas/internas.
+- `TrackGrass.tsx` — recalcular `lightBlobs`/`darkBlobs` para o novo canvas vertical.
+- `TrackStartGantry.tsx` — funciona automaticamente (usa `getPositionOnTrack(0)`).
+- `TrackBarriers.tsx` — funciona automaticamente (usa offsets do path).
 
-**31. Câmera dinâmica (zoom no líder)** — quando há disputa apertada (gap < 0.03), o SVG aplica `transform: scale(1.15)` suave focado no líder por 2s, depois volta. Sensação de close-up de TV.
+### 3. Ajustar o container externo
+Em `RaceArena.tsx`:
+- O `<svg>` usa `preserveAspectRatio="xMidYMid meet"` então adapta sozinho.
+- O wrapper externo (na page que monta a arena) hoje tem altura limitada para layout horizontal. Vou trocar a classe de altura para `aspect-[3/5]` (ou similar) e/ou `min-h-[78vh]` para o SVG vertical preencher a tela.
+- MiniMap, Timing Tower, ReplayButton e CommentaryBubble já são overlays absolutos — continuam funcionando, só revisar posicionamento (timing tower no canto superior direito; minimap inferior esquerdo continuam ok no formato retrato).
 
-**32. Bandeira de chegada animada** — quando líder cruza 95% do progress total da season, exibir bandeira xadrez gigante saindo da direita com `translateX` + balanço, ocupando 30% da tela por 2s, depois desaparece.
+### 4. Pit lane vertical
+A pit lane hoje é horizontal acompanhando a reta superior. No layout vertical ela passa a acompanhar a reta lateral esquerda (ou direita) — refazer geometria das 6 garagens em coluna.
 
-**33. Posição absoluta com troféus** — ao lado de cada nome no carro, ícone pequeno (🥇🥈🥉 para top3, número para resto) com micro-bounce quando posição muda. Identificação instantânea.
+### 5. Sem mudanças de comportamento
+Toda a lógica de progresso (0..1), ultrapassagens, DRS, setores, replay, comentarista permanece idêntica — depende apenas do `TRACK_PATH_D` via `getPositionOnTrack()`.
 
-**34. Trilha de partículas no boost** — quando carro está em "boost" (showTrail), emitir partículas coloridas (cor do carro) que voam para trás e dissipam em 600ms. Estilo Mario Kart turbo.
+### Arquivos a editar
+- `src/components/race/raceTrackHelpers.ts` — viewBox + path vertical + checkpoints/sectors/DRS
+- `src/components/race/track/TrackPond.tsx` — recolocar lago
+- `src/components/race/track/TrackScenery.tsx` — paddock, pit lane vertical, helicóptero, árvores
+- `src/components/race/track/TrackGrass.tsx` — manchas reposicionadas
+- `src/pages/RaceArenaView.tsx` (ou onde o `RaceArena` é renderizado) — altura/aspect do container
 
-## Arquivos a editar
-- `src/components/race/RaceArena.tsx` — replay button, comentarista, câmera dinâmica, bandeira final, partículas boost
-- `src/components/race/RaceCar.tsx` — ícone de troféu/posição com bounce
-- `src/components/race/CommentaryBubble.tsx` — novo componente bolha de comentário
-- `src/components/race/ReplayButton.tsx` — novo botão flutuante
-- `src/components/race/raceTrackHelpers.ts` — gerador de frases do comentarista
-- `src/index.css` — keyframes para bandeira xadrez + replay overlay + position bounce
-
-Sem perguntas. Executo as 6 em sequência.
+Sem perguntas. Executo direto.
