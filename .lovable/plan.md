@@ -1,43 +1,49 @@
 
-Deal Health Hub entregue. Próximo bloco rumo a 10/10: **Win/Loss Intelligence com IA** — análise automática de razões de ganho/perda usando padrões em deals fechados, gerando insights acionáveis para o time.
+Win/Loss Intelligence entregue. Próximo bloco rumo a 10/10: **Smart Lead Routing** — distribuição automática e inteligente de leads para o vendedor certo (closer) com base em ICP, especialização, capacidade e performance histórica.
 
-## Win/Loss Intelligence com IA
+## Smart Lead Routing
 
 ### Conceito
-Quando um deal é marcado como ganho ou perdido, o sistema captura razão estruturada + contexto (estágio, valor, ciclo, atividades, concorrente). Uma IA analisa lotes de deals fechados e gera padrões: "Você perde 60% dos deals acima de R$50k para Concorrente X", "Deals ganhos têm 3+ contatos com decisor", etc.
+Quando um SDR qualifica um lead ou um lead novo entra no sistema, uma engine roteia automaticamente para o closer ideal baseado em: match de ICP (segmento/ticket), especialização do vendedor (vertical/produto), capacidade atual (nº deals abertos vs limite), win rate histórico naquele segmento, e balanceamento round-robin como tiebreaker. Tudo auditável e com override manual pelo gestor.
 
 ### Backend
 **Migration**:
-- Tabela `deal_outcomes`: `id`, `sale_id`, `outcome` (won/lost), `primary_reason` (enum: price, timing, competitor, no_budget, no_decision, feature_gap, relationship, other), `secondary_reasons` (text[]), `competitor_name`, `lessons_learned` (text), `recorded_by`, `created_at`
-- View `win_loss_summary_view`: agrega win rate por razão, valor médio perdido por concorrente, ciclo médio won vs lost
-- RLS: vendedor vê só seus; gestor/admin vê tudo
+- Tabela `routing_rules`: `id`, `name`, `priority`, `conditions` (jsonb: segment, value_min/max, vertical, source), `target_strategy` (`best_match`|`round_robin`|`specific_user`), `target_user_id` (nullable), `is_active`, `created_by`, `created_at`
+- Tabela `salesperson_capacity`: `user_id`, `max_open_deals` (default 25), `current_open_deals` (trigger-mantido), `specializations` (text[]), `preferred_segments` (text[]), `accepting_leads` (bool)
+- Tabela `lead_routing_log`: `id`, `lead_id`, `assigned_to`, `rule_id`, `score` (jsonb com breakdown: icp_match, capacity, win_rate, history), `routed_at`, `routed_by` (`auto`|`manual`|`override`)
+- View `routing_performance_view`: agrega tempo médio até atribuição, % aceitos, conversão por vendedor
+- Trigger `auto_route_new_lead` em `sales` (insert): chama edge function via pg_net quando `assigned_to IS NULL`
+- RLS: gestor/admin gerenciam regras; vendedor vê apenas seu próprio capacity
 
-**Edge function `win-loss-analyzer`**:
-- Aceita período (30/60/90d) e filtros opcionais (salesperson, segment)
-- Busca deals fechados + outcomes + atividades
-- Chama Lovable AI (gemini-2.5-flash) com agregações para gerar padrões e recomendações
-- Retorna `{ patterns: [], top_loss_reasons: [], competitor_insights: [], recommendations: [] }`
+**Edge function `smart-lead-router`**:
+- Aceita `lead_id` ou batch `lead_ids[]`
+- Para cada lead: avalia regras ativas em ordem de priority, calcula score por candidato (ICP 40% + capacity 25% + win_rate 25% + recency 10%)
+- Usa Lovable AI (gemini-2.5-flash) APENAS para casos ambíguos (score top-2 com diferença <5 pontos) para desempate qualitativo
+- Atualiza `sales.assigned_to`, registra em `lead_routing_log`, dispara notificação in-app
 
-### Frontend (`src/components/win-loss/`)
-- `WinLossHub.tsx` (≤300L): hub com KPIs (win rate, avg deal size won/lost, top reason), seletor de período
-- `OutcomeReasonChart.tsx`: barras horizontais — razões de perda ordenadas por frequência
-- `CompetitorAnalysisCard.tsx`: tabela de concorrentes com win rate vs cada um
-- `WinLossInsightsCard.tsx`: card com narrativa IA (padrões + recomendações)
-- `OutcomeFormDialog.tsx`: modal disparado ao mover deal para Won/Lost — captura razão estruturada
-- `winLossHelpers.ts`: enums labels, color tokens, formatters
-- Hooks: `useWinLossOutcomes.ts`, `useWinLossInsights.ts`, `useRecordOutcome.ts`
+### Frontend (`src/components/lead-routing/`)
+- `LeadRoutingHub.tsx` (≤300L): hub admin/gestor com tabs (Regras / Capacidade / Histórico / Performance)
+- `RoutingRulesEditor.tsx`: CRUD visual de regras com builder de condições (segmento, ticket range, vertical) e seleção de estratégia
+- `CapacityDashboard.tsx`: grid de vendedores com bars de utilização (current/max), toggle accepting_leads, tags de especialização
+- `RoutingHistoryTable.tsx`: log de roteamentos recentes com score breakdown expandível e botão "Reatribuir"
+- `RoutingPerformanceCard.tsx`: KPIs (tempo médio até atribuição, taxa de aceitação, conversão por vendedor)
+- `ManualReassignDialog.tsx`: modal para gestor forçar reatribuição com motivo
+- `routingHelpers.ts`: score calculator client-side preview, formatters, color tokens
+- Hooks: `useRoutingRules.ts`, `useSalespersonCapacity.ts`, `useRoutingLog.ts`, `useRouteLeadMutation.ts`
 
 ### Integração
-- Trigger automático: quando deal passa para Won/Lost no Kanban → abre `OutcomeFormDialog`
-- Nova tab "Win/Loss" no Analytics module
-- Card resumo no `RevenueIntelligenceHub`
+- Botão "Rotear Automaticamente" em `Sales.tsx` para leads sem `assigned_to`
+- Badge "Auto-roteado" em cards do Kanban com tooltip do score
+- Nova entrada no menu Admin: "Roteamento de Leads"
+- Card resumo "Capacidade do Time" no Dashboard executivo
 
 ### Arquivos
-- Migration: tabela `deal_outcomes` + view + RLS + índices
-- Edge: `supabase/functions/win-loss-analyzer/index.ts`
-- Hooks: 3 em `src/hooks/win-loss/`
-- Componentes: 5 em `src/components/win-loss/`
-- Helpers: `winLossHelpers.ts`
-- Editar: `KanbanCard` (trigger dialog), `Analytics.tsx` (nova tab), `RevenueIntelligenceHub` (card)
+- Migration: 3 tabelas + view + trigger + RLS + índices
+- Edge: `supabase/functions/smart-lead-router/index.ts`
+- Hooks: 4 em `src/hooks/lead-routing/`
+- Componentes: 6 em `src/components/lead-routing/`
+- Helpers: `routingHelpers.ts`
+- Página: `src/pages/LeadRouting.tsx`
+- Editar: `AppRoutes.tsx`, `lazyPages.ts`, navegação Admin, `Sales.tsx` (botão), card do Kanban (badge)
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, recharts tipado, RLS com `has_role`.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L por arquivo, strict TS, RLS com `has_role`, trigger pg_net seguro.
