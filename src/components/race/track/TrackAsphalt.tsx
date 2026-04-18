@@ -69,6 +69,16 @@ export function TrackAsphalt() {
         strokeLinejoin="round"
       />
 
+      {/* gradiente de profundidade sobre o asfalto */}
+      <path
+        d={TRACK_PATH_D}
+        fill="none"
+        stroke="url(#asphaltDepth)"
+        strokeWidth={TRACK_WIDTH}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
       {/* textura sutil sobre asfalto */}
       <path
         d={TRACK_PATH_D}
@@ -77,7 +87,7 @@ export function TrackAsphalt() {
         strokeWidth={TRACK_WIDTH}
         strokeLinecap="round"
         strokeLinejoin="round"
-        opacity={0.4}
+        opacity={0.35}
       />
 
       {/* borda branca fina visível (limite interno do curb) */}
@@ -88,7 +98,7 @@ export function TrackAsphalt() {
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        opacity={0.85}
+        opacity={0.9}
       />
 
       {/* linha central tracejada amarelada */}

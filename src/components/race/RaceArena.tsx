@@ -39,7 +39,14 @@ export function RaceArena({
     : { type: 'spring' as const, stiffness: 70, damping: 18, duration: 0.8 };
 
   return (
-    <div className="relative w-full h-full rounded-xl overflow-hidden border-2 border-border shadow-lg bg-[hsl(var(--race-grass))]">
+    <div
+      className="relative w-full h-full rounded-3xl overflow-hidden border border-border/60 bg-[hsl(var(--race-grass))]"
+      style={{
+        boxShadow:
+          '0 24px 60px -20px hsl(var(--race-grass-shadow) / 0.55), inset 0 0 0 1px hsl(var(--race-asphalt-edge) / 0.08)',
+        filter: 'saturate(1.08) contrast(1.02)',
+      }}
+    >
       <RaceTrack>
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
@@ -96,7 +103,7 @@ export function RaceArena({
               )}
               <ReactionFloater reactions={carReactions} />
               {isMe && (
-                <g transform="translate(0, -42)">
+                <g transform={`rotate(${-pos.rotation}) translate(0, -42)`}>
                   <rect x={-18} y={-9} width={36} height={14} rx={7}
                     fill="hsl(var(--primary))" stroke="hsl(var(--background))" strokeWidth={1.5} />
                   <text y={1} textAnchor="middle" fontSize={9} fontWeight={900}
@@ -106,19 +113,38 @@ export function RaceArena({
                   </text>
                 </g>
               )}
-              <text
-                y={isMe ? -52 : -26}
-                textAnchor="middle"
-                fontSize={13}
-                fontWeight={700}
-                fill="hsl(var(--foreground))"
-                stroke="hsl(var(--background))"
-                strokeWidth={3}
-                paintOrder="stroke"
-                style={{ fontFamily: 'system-ui, sans-serif' }}
-              >
-                {car.salesperson_name?.split(' ')[0]}
-              </text>
+              {/* Label do piloto: counter-rotate para sempre ficar horizontal, com chip de fundo */}
+              <g transform={`rotate(${-pos.rotation})`}>
+                {(() => {
+                  const name = car.salesperson_name?.split(' ')[0] ?? '';
+                  const chipW = Math.max(38, name.length * 7 + 12);
+                  const yBase = isMe ? -52 : -28;
+                  return (
+                    <>
+                      <rect
+                        x={-chipW / 2}
+                        y={yBase - 9}
+                        width={chipW}
+                        height={14}
+                        rx={7}
+                        fill="hsl(var(--background) / 0.85)"
+                        stroke="hsl(var(--border))"
+                        strokeWidth={0.8}
+                      />
+                      <text
+                        y={yBase + 1}
+                        textAnchor="middle"
+                        fontSize={10}
+                        fontWeight={700}
+                        fill="hsl(var(--foreground))"
+                        style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.02em' }}
+                      >
+                        {name}
+                      </text>
+                    </>
+                  );
+                })()}
+              </g>
 
               {/* HTML overlay para barra de reactions */}
               <foreignObject x={-50} y={20} width={100} height={36} style={{ overflow: 'visible' }}>
