@@ -69,7 +69,7 @@ export const useStageBaselinesAll = () =>
   useQuery({
     queryKey: ["stage-baselines-all"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("stage_velocity_baselines")
         .select("*")
         .eq("segment", "all")
@@ -101,19 +101,28 @@ export const useStageBottlenecks = () =>
     queryKey: ["stage-bottlenecks"],
     queryFn: async () => {
       const [baselinesRes, alertsRes] = await Promise.all([
-        supabase.from("stage_velocity_baselines").select("stage, p50_hours, p75_hours, p90_hours, sample_size").eq("segment", "all"),
+        (supabase as any)
+          .from("stage_velocity_baselines")
+          .select("stage, p50_hours, p75_hours, p90_hours, sample_size")
+          .eq("segment", "all"),
         supabase.from("deal_velocity_alerts").select("current_stage, severity"),
       ]);
       if (baselinesRes.error) throw baselinesRes.error;
       if (alertsRes.error) throw alertsRes.error;
 
       const stuckByStage = new Map<string, number>();
-      for (const a of alertsRes.data || []) {
+      for (const a of (alertsRes.data || []) as Array<{ current_stage: string; severity: string }>) {
         if (a.severity === "stuck" || a.severity === "critical") {
           stuckByStage.set(a.current_stage, (stuckByStage.get(a.current_stage) || 0) + 1);
         }
       }
-      return (baselinesRes.data || []).map((b) => ({
+      return ((baselinesRes.data || []) as Array<{
+        stage: string;
+        p50_hours: number;
+        p75_hours: number;
+        p90_hours: number;
+        sample_size: number;
+      }>).map((b) => ({
         stage: b.stage,
         p50: Number(b.p50_hours),
         p75: Number(b.p75_hours),
