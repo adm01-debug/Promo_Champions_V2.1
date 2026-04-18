@@ -762,7 +762,7 @@ export function RaceArena({
         })}
 
         {/* Spotlight cinematográfico que segue o líder */}
-        {leaderPos && !reducedMotion && (
+        {leaderPos && !noFx && (
           <motion.circle
             cx={leaderPos.x}
             cy={leaderPos.y}
@@ -1067,8 +1067,8 @@ export function RaceArena({
       {/* ===== Start Lights (countdown F1 5x luzes) ===== */}
       <StartLights trigger={startLightsTrigger} />
 
-      {/* ===== Fogos de artifício (bandeirada final) ===== */}
-      <Fireworks active={showFireworks} />
+      {/* ===== Fogos de artifício (bandeirada final) — desligado em modo Calm ===== */}
+      <Fireworks active={showFireworks && !calm} />
 
       {/* ===== Countdown badge (canto inferior direito) ===== */}
       <RaceCountdownBadge endsAt={seasonEndsAt} />

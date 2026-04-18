@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Medal, Award, Flag } from 'lucide-react';
+import { Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 import { useRacePredictions } from '@/hooks/race/useRacePredictions';
 import { NextGoalPanel } from './NextGoalPanel';
 import { PredictedRankBadge } from './PredictedRankBadge';
+import { RankBadge } from './RankBadge';
 
 interface Props {
   entries: RaceLeaderboardEntry[];
@@ -15,12 +16,6 @@ interface Props {
   seasonStart?: string;
   seasonEnd?: string;
 }
-
-const POSITION_ICON = [
-  { Icon: Trophy, color: 'text-yellow-500' },
-  { Icon: Medal, color: 'text-slate-400' },
-  { Icon: Award, color: 'text-orange-500' },
-];
 
 function fmt(n: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
@@ -50,7 +45,6 @@ export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespe
       <CardContent className="flex-1 overflow-y-auto space-y-2">
         <AnimatePresence>
           {entries.map((e, i) => {
-            const positionMeta = POSITION_ICON[i];
             const gap = leader && i > 0 ? Number(leader.total_sales) - Number(e.total_sales) : 0;
             return (
               <motion.div
@@ -62,13 +56,7 @@ export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespe
                 transition={{ type: 'spring', stiffness: 200, damping: 22 }}
                 className="flex items-center gap-3 p-2 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors"
               >
-                <div className="flex flex-col items-center w-8">
-                  {positionMeta ? (
-                    <positionMeta.Icon className={`w-5 h-5 ${positionMeta.color}`} />
-                  ) : (
-                    <span className="text-sm font-bold text-muted-foreground">{i + 1}º</span>
-                  )}
-                </div>
+                <RankBadge rank={i + 1} size="md" />
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border-2"
                   style={{ background: e.primary_color, color: e.secondary_color, borderColor: e.secondary_color }}
