@@ -912,6 +912,9 @@ export function RaceArena({
 
       {/* ===== Fogos de artifício (bandeirada final) ===== */}
       <Fireworks active={showFireworks} />
+
+      {/* ===== Countdown badge (canto inferior direito) ===== */}
+      <RaceCountdownBadge endsAt={seasonEndsAt} />
     </div>
   );
 }
