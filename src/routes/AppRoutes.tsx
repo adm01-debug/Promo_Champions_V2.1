@@ -25,7 +25,7 @@ import {
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
   TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence,
   // Gamificação & Social
-  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, DesafiosSemanais, HistoricoDesafiosDiarios,
+  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
   // Gestão
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
