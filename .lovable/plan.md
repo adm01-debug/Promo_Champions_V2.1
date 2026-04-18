@@ -1,43 +1,35 @@
 
-User wants mock data populated in Race Arena to visualize the system. Currently the arena is empty (no cars on grid, no events). I need to seed mock race data.
+User wants the "Narração ao Vivo" feed to be moved to a secondary/background position so the race track (mapa) gets more horizontal space.
 
-Let me check what tables exist for the race system and what mock data would make it visual.
+Current layout in `src/pages/RaceArena.tsx`:
+- col-span-3 (left): Ranking Champions
+- col-span-6 (middle): Race Arena (track)
+- col-span-3 (right): Narração ao Vivo
 
-Key tables (from earlier context):
-- `race_seasons` (já tem temporada ativa "Temporada de Estreia")
-- `race_cars` (carros dos vendedores)
-- `race_leaderboard_view` (view com progresso)
-- `race_events` (narração)
-- `race_powerups`
-- `race_badges`
-- `salespeople` (já tem mock)
+The track only gets 50% of the width. Moving the feed out gives the track more room.
 
-Plan: criar migration de seed inserindo carros para vendedores existentes + eventos de narração + alguns power-ups + badges, garantindo cobertura de Closer e SDR.
+## Plan: Reduzir feed e expandir o mapa da corrida
 
-## Mock Data Seed for Race Arena
+### Mudança principal
+Transformar o feed "Narração ao Vivo" em um painel **flutuante colapsável** no canto inferior direito, liberando todo o espaço central+direito para o mapa da pista.
 
-### O que será populado
-1. **race_cars** — 1 carro por vendedor existente (até 12), com cores variadas, números únicos, estilos misturados (f1/stock/kart) e nicknames divertidos
-2. **Progresso simulado** — inserir vendas mock recentes para os top vendedores nas temporadas ativas (Closer e SDR) para que a `race_leaderboard_view` calcule progresso real (15%-85% espalhado)
-3. **race_events** — 8-12 eventos de narração recentes (overtakes, milestones 25%/50%/75%, power-ups coletados) para popular o feed "Narração ao Vivo"
-4. **race_powerups** — 4-5 power-ups espalhados pelo track (boost, shield, double_xp) com `position_pct` em pontos visíveis
-5. **race_badges** — 3-4 badges atribuídos para top performers (first_blood, podium, overtaker)
+### Novo layout
+- **Esquerda (col-span-3)**: Ranking Champions (mantém)
+- **Centro+Direita (col-span-9)**: RaceArena (mapa) — agora ocupa ~75% da largura
+- **Feed**: vira `FloatingEventFeedPanel` — drawer/card flutuante posicionado `fixed bottom-4 right-4`, largura ~340px, altura ~420px, com botão de toggle (collapse/expand) e badge de contador de novos eventos
 
-### Estratégia técnica
-- Migration SQL idempotente (`ON CONFLICT DO NOTHING` em todos inserts)
-- Usar `salespeople` reais via subqueries com `LIMIT` e `ORDER BY` para distribuir entre Closer e SDR
-- Cores em paleta vibrante (hex semântico-friendly): `#FF3B30`, `#007AFF`, `#34C759`, `#FFD60A`, `#AF52DE`, `#FF9500`, `#5AC8FA`, `#FF2D55`
-- Eventos com `created_at` escalonados nos últimos 30 minutos para parecer ao vivo
-- Progresso via inserts em `sales` (table base do leaderboard) com `amount` calibrado para gerar % desejado vs `goal_amount` da season
+### Componente novo
+`src/components/race/FloatingEventFeed.tsx`:
+- Wrapper sobre o `RaceEventFeed` existente
+- Estado `isOpen` (default: aberto, mas minimizável)
+- Quando colapsado: pílula compacta com ícone Radio pulsante + contador
+- Quando aberto: card com mesmo conteúdo do feed atual + botão X/minimize
+- Animação framer-motion (slide+fade)
+- z-index acima do conteúdo, abaixo do FAB do Copilot
 
-### Resultado visual esperado
-- Track com 8-12 carros distribuídos pela pista (não todos no início)
-- Sidebar "Grid de Largada" populada com ranking
-- Feed "Narração ao Vivo" com 8+ eventos animados
-- Power-ups visíveis no track (ícones flutuantes)
-- Conquistas (badges) na aba "Conquistas"
+### Edits
+- `src/pages/RaceArena.tsx`: remover coluna direita do feed, mudar grid para 3+9, montar `<FloatingEventFeed>` como overlay fora do grid
+- `src/components/race/index.ts`: exportar novo componente
 
-### Arquivos
-- 1 migration: `supabase/migrations/<timestamp>_seed_race_arena_mock.sql`
-
-Sem mudanças em código TS — puramente seed de dados para visualização.
+### Resultado
+Mapa da corrida ganha ~50% mais largura útil; feed continua acessível mas em segundo plano, sem competir com o protagonista (a pista).
