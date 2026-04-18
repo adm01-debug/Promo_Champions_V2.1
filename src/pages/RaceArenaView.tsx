@@ -30,6 +30,7 @@ import {
   RaceCommentaryPanel,
   DailyCheckinModal,
   RaceViewModeToggle,
+  RaceOnboardingChecklist,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
