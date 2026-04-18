@@ -1,49 +1,54 @@
 
-Revenue Intelligence 3/4 entregue. Última atômica do bloco.
+Revenue Intelligence Hub fechado em 4/4 (10/10). Próximo bloco do roadmap mestre.
 
-**Revenue Intelligence — 4/4: Quota Attainment Predictor (Avançado)**
+**Próximo bloco — Sales Coaching Intelligence (1/4): Coaching Opportunity Detector**
 
-Já existe um `QuotaAttainmentPredictor` básico. Esta atômica eleva-o a 10/10: simulação Monte Carlo, projeção end-of-period com intervalos de confiança (P10/P50/P90), recomendações de ação por vendedor e alertas automáticos.
+Detecta automaticamente oportunidades de coaching analisando gaps de performance entre vendedores. Compara métricas individuais (taxa de conversão por estágio, tempo médio em estágio, win rate, ticket médio, atividades/dia) contra benchmarks da equipe e identifica os 3 maiores gaps de cada vendedor + sugestão de skill a desenvolver.
 
 ## Entregáveis
 
 ### 1. Migration
-- `quota_attainment_forecasts`: `id`, `salesperson_id`, `period_start`, `period_end`, `quota numeric`, `closed numeric`, `weighted_open numeric`, `pace_per_day numeric`, `days_remaining int`, `p10 numeric`, `p50 numeric`, `p90 numeric`, `attainment_probability numeric`, `risk_level text` (safe|on_track|at_risk|critical), `simulations int`, `computed_at timestamptz`. Único `(salesperson_id, period_start)`.
-- `quota_attainment_actions`: `id`, `forecast_id FK`, `action_type` (`close_deal|generate_pipeline|increase_ticket|accelerate_stage`), `title`, `description`, `expected_impact numeric`, `priority`, `created_at`.
-- RLS read authenticated, write admin/manager. Realtime + índices.
+- `coaching_opportunities`: `id`, `salesperson_id FK`, `metric_key text` (`conversion_rate|stage_duration|win_rate|avg_ticket|activities_per_day`), `metric_label text`, `current_value numeric`, `team_benchmark numeric`, `gap_pct numeric` (gen), `severity text` (low|medium|high|critical), `skill_focus text` (`discovery|qualification|objection_handling|closing|prospecting|negotiation`), `recommended_action text`, `priority int`, `detected_at timestamptz`. Único `(salesperson_id, metric_key, detected_at::date)`.
+- `coaching_skill_benchmarks`: `id`, `metric_key text UNIQUE`, `team_avg numeric`, `top_quartile numeric`, `sample_size int`, `computed_at timestamptz`.
+- RLS: read authenticated; write admin/manager. Realtime + índices `(salesperson_id)`, `(severity)`, `(detected_at desc)`.
 
-### 2. Edge function `predict-quota-attainment` (verify_jwt=true)
-- Para cada vendedor ativo no período corrente:
-  - `closed` = soma de `sales.completed` no período.
-  - `weighted_open` = soma de `amount * stage_weight` para deals abertos com close esperado no período.
-  - `pace` = closed / dias_decorridos.
-  - Monte Carlo (1000 simulações): para cada deal aberto, sample Bernoulli(p=stage_weight) e adiciona `amount` se ganho. Adiciona projeção de novos deals via `pace * dias_restantes * fator_aleatório(0.7-1.3)`.
-  - Calcula P10/P50/P90, `attainment_probability = P(total ≥ quota)`, `risk_level` por threshold.
-  - Gera 1-3 ações via Lovable AI (gemini-2.5-flash) com base no gap.
+### 2. Edge function `detect-coaching-opportunities` (verify_jwt=true)
+- Para cada vendedor ativo:
+  - Calcula 5 métricas a partir de `sales` + `activities` (últimos 90d): conversion rate, stage duration mediana, win rate, avg ticket, activities/dia.
+  - Compara cada métrica com `team_avg` (recalcula benchmarks no início do run).
+  - `gap_pct = (benchmark - current) / benchmark` (positivo = abaixo da equipe).
+  - `severity`: gap ≥ 40% = critical, ≥ 25% = high, ≥ 10% = medium, senão low.
+  - Mapeia `skill_focus` por métrica (ex: win_rate → closing, conversion_rate → qualification).
+  - Gera `recommended_action` via Lovable AI (`gemini-2.5-flash`) com top 3 gaps por vendedor.
+  - Insere apenas top 3 gaps (priority 1-3) por vendedor.
 
-### 3. Hooks `src/hooks/revenue/useQuotaAttainmentPredictor.ts`
-- `useQuotaForecasts(filters?)`, `useQuotaActions(forecastId?)`, `useQuotaSummary()` (top 3 KPIs), `useRunQuotaPrediction()`.
+### 3. Hooks `src/hooks/coaching/useCoachingOpportunities.ts`
+- `useCoachingOpportunities(filters?)` — lista com join `salespeople(name)`.
+- `useCoachingBenchmarks()` — benchmarks da equipe.
+- `useCoachingSummary()` — KPIs: total críticas, vendedores afetados, skill mais comum, gap médio.
+- `useDetectCoachingOpportunities()` — mutation.
 
-### 4. Componentes `src/components/revenue-intelligence/quota/`
-- `QuotaForecastSummary.tsx` — KPIs (% safe, % crítico, gap total, prob. média).
-- `QuotaProbabilityChart.tsx` — bar/scatter por vendedor com bandas P10–P90.
-- `QuotaRiskHeatmap.tsx` — heatmap risco por vendedor.
-- `QuotaActionsPanel.tsx` — recomendações IA agrupadas.
-- `QuotaPredictorAdvancedPanel.tsx` (container) — substitui ou complementa o atual.
-- `quotaPredictorAdvancedHelpers.ts` — formatadores e cores de risco.
+### 4. Componentes `src/components/coaching/opportunities/`
+- `CoachingOpportunitySummary.tsx` (≤180L) — 4 KPIs + ação refresh.
+- `CoachingGapByRepTable.tsx` (≤200L) — tabela vendedor × top 3 gaps com severity badges.
+- `CoachingSkillFocusChart.tsx` (≤160L) — bar chart distribuição por skill.
+- `CoachingSeverityHeatmap.tsx` (≤160L) — heatmap vendedor × métrica.
+- `CoachingActionsPanel.tsx` (≤180L) — recomendações IA agrupadas por vendedor.
+- `CoachingOpportunityPanel.tsx` (container).
+- `coachingOpportunityHelpers.ts` — labels severity/skill, cores, formatadores.
 
 ### 5. Integração
-- Aba "Quota Predictor" (existente) recebe novo container avançado.
-- `supabase/config.toml`: `verify_jwt = true` para `predict-quota-attainment`.
+- Nova rota/aba "Coaching Intelligence" em hub adequado (verifico `BIGestorHub` ou crio `SalesCoachingHub`).
+- `supabase/config.toml`: `verify_jwt = true` para `detect-coaching-opportunities`.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após run: KPIs preenchem, chart com bandas P10–P90, heatmap com cores semânticas, ações IA aparecem.
+- Após detect: KPIs preenchem, tabela mostra top gaps por vendedor, ações IA aparecem.
 
 ## Arquivos
-- **Migration**: 1.
+- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
 - **Edge function**: 1.
-- **Criar**: 1 hook, 5 componentes + 1 helper.
-- **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`.
+- **Criar**: 1 hook, 6 componentes + 1 helper.
+- **Editar**: hub (1 arquivo), `supabase/config.toml`.
 
-Após esta entrega, **Revenue Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do roadmap mestre.
+Após esta entrega, sigo automaticamente para **2/4: Skill Gap Analyzer** → **3/4: Coaching Session Planner** → **4/4: Performance Improvement Tracker**, fechando Sales Coaching Intelligence em 10/10.
