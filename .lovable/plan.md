@@ -1,47 +1,34 @@
 
-Expandir o catálogo de carros de corrida de 12 cores + 3 estilos para 20 presets visuais distintos (combinação modelo+cor+tema), incluindo 3 temas LGBT (Pride Rainbow, Trans Pride, Bi Pride). O usuário escolhe um preset completo via novo seletor visual no `CarCustomizer`.
+Próxima onda de melhorias rumo ao 10/10 — imersão sonora, ar de transmissão e telemetria do piloto.
 
-## Estrutura
+## Iterações (sequencial, sem pausas)
 
-### Novos presets (`raceColors.ts`)
-Substituir/expandir `RACE_CAR_COLORS` por `RACE_CAR_PRESETS` (20 entradas), cada uma com: `id`, `name`, `style` (f1|stock|kart), `primary`, `secondary`, `accent?`, `pattern?` (`solid` | `stripes` | `flames` | `checkers` | `pride-rainbow` | `pride-trans` | `pride-bi`), `emoji`.
+### 1. Sound design 🔊
+- `useRaceSounds.ts` (já existe — expandir): garantir cobertura para overtakes top-3, takeover do líder, tier-up de combo, fim de season.
+- Integrar disparos em `RaceArena.tsx` nos eventos já detectados.
+- `RaceMuteToggle.tsx`: botão 🔊/🔇 ao lado do `RaceCountdownBadge`.
 
-20 presets propostos (modelo + cor + tema):
-1. Ferrari Scuderia (F1, vermelho/branco)
-2. Mercedes Silver Arrow (F1, prata/petróleo)
-3. McLaren Papaya (F1, laranja/azul)
-4. Williams Heritage (F1, azul/branco)
-5. Lotus Classic (F1, preto/dourado)
-6. Alpine Azure (F1, azul/rosa)
-7. NASCAR Thunder (Stock, vermelho/preto, chamas)
-8. Stock Lightning (Stock, amarelo/preto, listras)
-9. Stock Patriot (Stock, azul/vermelho/branco)
-10. Stock Forest (Stock, verde/branco)
-11. Stock Midnight (Stock, preto/roxo)
-12. Stock Sunset (Stock, laranja/rosa)
-13. Kart Mario (Kart, vermelho/branco)
-14. Kart Luigi (Kart, verde/branco)
-15. Kart Peach (Kart, rosa/dourado)
-16. Kart Toad (Kart, branco/vermelho, bolinhas)
-17. Kart Shadow (Kart, preto/ciano)
-18. **Pride Rainbow** (F1, listras arco-íris) 🏳️‍🌈
-19. **Trans Pride** (Kart, azul/rosa/branco) 🏳️‍⚧️
-20. **Bi Pride** (Stock, magenta/roxo/azul)
+### 2. Modo Broadcast (TV F1) 📺
+- `BroadcastOverlay.tsx`: lower-third inferior animado, rotaciona a cada 12s entre eventos quentes (gap < 1%, overtake recente, últimos 5% da season).
+- Bandeira virtual no topo: 🟢 normal · 🟡 overtake recente · 🏁 reta final.
 
-### DB
-- Nova migração: adicionar coluna `preset_id text` em `race_cars` (nullable, p/ retrocompatibilidade). `primary_color`/`secondary_color`/`car_style` continuam derivados do preset.
+### 3. Telemetria do piloto 📊
+- `MyTelemetryPanel.tsx`: card colapsável com velocidade média (deals/dia da week), best lap pessoal, delta vs ghost (`useGhostCar`), barrinha de "fadiga dos pneus" (dias sem venda) e próximo objetivo (`useNextGoal`).
 
-### UI
-- `CarCustomizer.tsx`: substituir grid de 12 cores + tabs de estilo por **grid 4×5 de preset cards** com mini-preview SVG do carro (usando `RaceCar` real), nome + emoji, badge "Pride" para temas LGBT. Manter campos número/apelido.
-- `RaceCar.tsx`: estender p/ aceitar `pattern` opcional e renderizar overlay (listras pride, chamas, bolinhas, etc.) via `<defs>` + clipPath sobre o chassi.
+### 4. Pit stop visual 🛠️
+- `PitLane.tsx`: garagem SVG lateral. Carro entra automaticamente quando piloto fica > 24h sem venda; sai ao registrar próxima. 4 mecânicos animados ao redor.
 
-### Hook
-- `useMyRaceCar`: incluir `preset_id` no payload do upsert.
+### 5. Replay highlight 🎬
+- `useRaceReplay.ts` + `RaceReplayButton.tsx`: replay 4s das últimas 10 posições com easing acelerado e flash branco em cada cruzamento.
+
+### 6. Easter eggs 🎁
+- `RaceEasterEggs.tsx`: Konami code → "rainbow road" 10s. Aniversário do vendedor → coroa flutuante. 100% da season → confetti + fogos SVG no P1.
 
 ## Arquivos
-**Editados:** `src/components/race/raceColors.ts`, `src/components/race/RaceCar.tsx`, `src/components/race/CarCustomizer.tsx`, `src/hooks/race/useMyRaceCar.ts`
-**Novo:** `src/components/race/CarPresetCard.tsx` (mini-preview do preset)
-**Migração:** add `preset_id` em `race_cars`
+
+**Novos:** `useRaceReplay.ts`, `BroadcastOverlay.tsx`, `MyTelemetryPanel.tsx`, `PitLane.tsx`, `RaceReplayButton.tsx`, `RaceMuteToggle.tsx`, `RaceEasterEggs.tsx`
+
+**Editados:** `RaceArena.tsx` (montagem + integração de eventos sonoros), `useRaceSounds.ts` (cobertura completa de eventos), `index.css` (keyframes broadcast-slide-in, rainbow-road, fireworks, pit-mechanic-bounce)
 
 ## Garantias
-Tokens HSL, mini-previews acessíveis (`aria-label`), grid responsivo, retrocompatível com carros já salvos (fallback para preset inferido por cor/estilo).
+Tokens HSL · `pointerEvents="none"` em decorativos · `aria-hidden` · `useReducedMotion` respeitado · sons opt-in (mutável) · arquivos < 200 linhas · zero erros de console · retrocompatível.
