@@ -1,0 +1,1 @@
+ALTER TABLE public.race_cars ADD COLUMN IF NOT EXISTS preset_id text;

@@ -8791,6 +8791,7 @@ export type Database = {
           created_at: string
           id: string
           nickname: string | null
+          preset_id: string | null
           primary_color: string
           salesperson_id: string
           secondary_color: string
@@ -8806,6 +8807,7 @@ export type Database = {
           created_at?: string
           id?: string
           nickname?: string | null
+          preset_id?: string | null
           primary_color?: string
           salesperson_id: string
           secondary_color?: string
@@ -8821,6 +8823,7 @@ export type Database = {
           created_at?: string
           id?: string
           nickname?: string | null
+          preset_id?: string | null
           primary_color?: string
           salesperson_id?: string
           secondary_color?: string
