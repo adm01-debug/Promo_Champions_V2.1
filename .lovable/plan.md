@@ -1,33 +1,35 @@
 
-Build verde. Hora de retomar o roadmap rumo a 10/10. Próximo bloco aprovado: **Sales Coaching Intelligence 3/4 — Coaching Session Planner**.
+Coaching Session Planner 3/4 entregue. Próximo bloco: **Sales Coaching Intelligence 4/4 — Coaching Impact Tracker**.
 
-## Coaching Session Planner
+## Coaching Impact Tracker
 
-Ferramenta para gestores planejarem sessões 1:1 de coaching com base em dados reais (scorecards, gaps, oportunidades).
+Mede o impacto real das sessões de coaching nos KPIs do vendedor (scorecard, conversão, ticket médio) comparando antes/depois.
 
 ### Backend
-- Tabela `coaching_sessions`: `id`, `salesperson_id`, `coach_id`, `scheduled_at`, `duration_min`, `status` (scheduled/completed/canceled), `focus_skills` (text[]), `agenda` (jsonb), `notes`, `action_items` (jsonb), `outcome_rating` (1-5), `created_at`
-- RLS: gestor vê/edita sessões que coacha; vendedor vê próprias sessões
-- Edge function `coaching-session-prep`: dado um `salesperson_id`, retorna agenda sugerida (top 3 gaps, deals em risco, recomendações IA via Lovable AI gemini-2.5-flash)
+- View `coaching_impact_metrics`: para cada sessão concluída, calcula:
+  - `pre_avg_overall` (scorecard 30d antes), `post_avg_overall` (scorecard 30d depois)
+  - `pre_conversion`, `post_conversion` (taxa de fechamento)
+  - `pre_ticket`, `post_ticket` (ticket médio)
+  - `delta_overall`, `delta_conversion`, `delta_ticket` (variação %)
+- Edge function `coaching-impact-summary`: agrega impacto por coach/vendedor/skill, retorna ranking de sessões mais impactantes + ROI estimado
 
-### Frontend (`src/components/coaching/sessions/`)
-- `CoachingSessionPlanner.tsx` (≤300L): hub principal com lista de sessões + botão "Nova sessão"
-- `SessionScheduleDialog.tsx`: form para agendar (vendedor, data, duração, foco)
-- `SessionPrepCard.tsx`: mostra agenda gerada pela IA (gaps, deals, talking points)
-- `SessionNotesEditor.tsx`: durante/pós-sessão — anotações + action items + rating
-- `sessionPlannerHelpers.ts`: status badges, formatters, color tokens
-- Hook `useCoachingSessions.ts` (React Query)
+### Frontend (`src/components/coaching/impact/`)
+- `CoachingImpactTracker.tsx` (≤300L): hub com KPIs gerais (sessões realizadas, delta médio, ROI), gráfico de evolução
+- `ImpactSessionCard.tsx`: card por sessão com before/after sparkline e delta badges
+- `SkillImpactHeatmap.tsx`: matriz skill × delta médio
+- `impactHelpers.ts`: formatters de delta (+/- com cores), ROI calculator
+- Hook `useCoachingImpact.ts` (React Query)
 
 ### Integração
-- Adicionar tab "Sessões 1:1" no hub de coaching existente
-- CTA "Agendar sessão" nos cards de `CoachingTarget` críticos
+- Nova tab "Impacto" no `CoachingIntelligenceHub`
+- Card "Impacto desta sessão" exibido no `SessionNotesEditor` para sessões concluídas
 
 ### Arquivos
-- Migration: `coaching_sessions` + RLS + índices
-- Edge: `supabase/functions/coaching-session-prep/index.ts`
-- Hook: `src/hooks/coaching/useCoachingSessions.ts`
-- Componentes: 4 arquivos em `src/components/coaching/sessions/`
-- Helpers: `sessionPlannerHelpers.ts`
-- Editar: hub de coaching para adicionar nova tab
+- Migration: view `coaching_impact_metrics` + índices auxiliares
+- Edge: `supabase/functions/coaching-impact-summary/index.ts`
+- Hook: `src/hooks/coaching/useCoachingImpact.ts`
+- Componentes: 3 arquivos em `src/components/coaching/impact/`
+- Helpers: `impactHelpers.ts`
+- Editar: `CoachingIntelligenceHub.tsx` (nova tab)
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L por arquivo, strict TS.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, sparklines via recharts.
