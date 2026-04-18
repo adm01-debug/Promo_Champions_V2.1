@@ -103,7 +103,7 @@ export function RaceArena({
               )}
               <ReactionFloater reactions={carReactions} />
               {isMe && (
-                <g transform="translate(0, -42)">
+                <g transform={`rotate(${-pos.rotation}) translate(0, -42)`}>
                   <rect x={-18} y={-9} width={36} height={14} rx={7}
                     fill="hsl(var(--primary))" stroke="hsl(var(--background))" strokeWidth={1.5} />
                   <text y={1} textAnchor="middle" fontSize={9} fontWeight={900}
