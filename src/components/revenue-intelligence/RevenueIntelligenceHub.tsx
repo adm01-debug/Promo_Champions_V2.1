@@ -22,10 +22,12 @@ import { DealHealthHub } from "@/components/deal-intelligence/health/DealHealthH
 import { WinLossHub } from "@/components/deal-intelligence/winloss/WinLossHub";
 import { LeadRoutingHub } from "@/components/lead-routing/LeadRoutingHub";
 import { ConversationHub } from "@/components/conversation-intelligence/ConversationHub";
+import { PipelinePulseHub } from "@/components/pipeline-pulse/PipelinePulseHub";
 
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
+  const [activeTab, setActiveTab] = useState("comando");
   const { data, isLoading } = useRevenueIntelligenceHub(90, dimension);
   const inspection = useRunPipelineInspection();
 
