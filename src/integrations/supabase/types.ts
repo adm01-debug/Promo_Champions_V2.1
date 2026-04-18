@@ -3646,6 +3646,44 @@ export type Database = {
           },
         ]
       }
+      deal_probability_scores: {
+        Row: {
+          calculated_at: string
+          calibrated_probability: number
+          confidence: number
+          factors: Json
+          id: string
+          raw_probability: number
+          sale_id: string
+        }
+        Insert: {
+          calculated_at?: string
+          calibrated_probability?: number
+          confidence?: number
+          factors?: Json
+          id?: string
+          raw_probability?: number
+          sale_id: string
+        }
+        Update: {
+          calculated_at?: string
+          calibrated_probability?: number
+          confidence?: number
+          factors?: Json
+          id?: string
+          raw_probability?: number
+          sale_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_probability_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_risk_signals: {
         Row: {
           description: string
@@ -11256,6 +11294,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      win_probability_calibrations: {
+        Row: {
+          baseline_probability: number
+          calculated_at: string
+          calibrated_probability: number
+          confidence: number
+          historical_win_rate: number
+          id: string
+          sample_size: number
+          scope: string
+          scope_value: string | null
+          stage: string
+        }
+        Insert: {
+          baseline_probability?: number
+          calculated_at?: string
+          calibrated_probability?: number
+          confidence?: number
+          historical_win_rate?: number
+          id?: string
+          sample_size?: number
+          scope: string
+          scope_value?: string | null
+          stage: string
+        }
+        Update: {
+          baseline_probability?: number
+          calculated_at?: string
+          calibrated_probability?: number
+          confidence?: number
+          historical_win_rate?: number
+          id?: string
+          sample_size?: number
+          scope?: string
+          scope_value?: string | null
+          stage?: string
+        }
+        Relationships: []
       }
       workflow_executions: {
         Row: {
