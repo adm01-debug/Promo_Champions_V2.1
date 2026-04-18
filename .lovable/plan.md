@@ -1,26 +1,28 @@
 
-A pista vertical já foi entregue. Próximo ciclo de polish foca em refinar a experiência do novo formato vertical e adicionar a próxima camada de profundidade narrativa.
+Ciclo 35-40 entregue. Próximo ciclo foca em narrativa de pista, profundidade ambiental e UI lateral aproveitando o espaço do layout vertical.
 
-# Ciclo 35-40 (polish do layout vertical)
+# Ciclo 41-46 (rumo ao 10/10++ definitivo)
 
-**35. Painel lateral de Timing Tower expandido** — aproveitar o espaço lateral livre (que sobrou ao verticalizar a pista) para um painel de timing F1-style com top 10 + gap em tempo real + delta colorido (verde/vermelho), substituindo o timing tower compacto atual.
+**41. Painel lateral "Race Control"** — coluna esquerda fixa (largura ~200px) aproveitando o espaço sobrando do layout vertical, exibindo: bandeira atual da corrida (verde/amarela/vermelha/xadrez), tempo decorrido da season, próximo evento (ex: "Fim em 3d 4h"), e contador de ultrapassagens totais.
 
-**36. Mini-mapa redesenhado para vertical** — atualizar o `MiniMap.tsx` (hoje desenhado para pista horizontal) para refletir o novo path vertical 600×1000, mantendo proporção retrato no radar.
+**42. Bandeira amarela em ultrapassagens próximas** — quando uma ultrapassagem acontece, exibe bandeira amarela animada no Race Control por 3s + leve overlay amarelo translúcido na pista. Cria tensão visual de "incidente na pista".
 
-**37. Bandeira de largada animada (countdown 3-2-1-GO)** — overlay centralizado no topo da pista que aparece 1x ao montar a arena, com luzes vermelhas sequenciais estilo F1 (5 luzes acendendo) e depois apagam = GO, sincronizado com o cinematic intro.
+**43. Sombra dinâmica do sol** — gradiente radial sutil simulando posição do sol (canto superior direito), com sombras projetadas dos carros (elipse desfocada ~8px abaixo) que se alongam levemente. Profundidade cinematográfica.
 
-**38. Pit stop ocasional** — quando um carro fica parado >3s (sem progresso), animar um "pit stop" visual: ele desliza para a pit lane vertical (lateral esquerda), pneus piscando, 1.5s, depois volta para a pista. Conta uma história quando há gargalo.
+**44. Efeito de calor no asfalto** — distorção sutil (`feTurbulence` + `feDisplacementMap`) na reta principal, animada com `baseFrequency` oscilando. Imita o "heat haze" de transmissão F1 em dia quente.
 
-**39. Linha de gap visual entre líder e 2º** — linha pontilhada amarela conectando o carro líder ao 2º colocado seguindo o path da pista, com label "+0.34" no meio. Aparece só quando gap < 0.05.
+**45. Pneus deixando rastro nas curvas** — quando carro passa por uma curva (chicane ou top/bottom), deixa breve rastro preto translúcido (5px, opacity 0.3, fade-out 1.5s) no asfalto. Acumula naturalmente conforme a corrida progride, máximo 30 marcas.
 
-**40. Fogos de artifício na bandeirada final** — quando líder cruza 100% (fim da season), além da bandeira xadrez gigante, disparar 3 explosões de partículas coloridas (confetes) saindo dos cantos superiores. Celebração épica.
+**46. HUD de velocidade do líder** — pequeno mostrador no canto superior esquerdo (não obstrui) mostrando "velocidade" simulada do líder (km/h baseado em delta de progresso × 1000), com agulha analógica estilo painel de carro.
 
 ## Arquivos a editar
-- `src/components/race/RaceArena.tsx` — timing tower expandido lateral, countdown de largada, gap line, fireworks finais
-- `src/components/race/MiniMap.tsx` — redesenho para path vertical
-- `src/components/race/RaceCar.tsx` — animação de pit stop
-- `src/components/race/StartLights.tsx` — novo componente de luzes 5x F1
-- `src/components/race/Fireworks.tsx` — novo componente de confete/explosão
-- `src/index.css` — keyframes start-lights + fireworks burst
+- `src/components/race/RaceArena.tsx` — Race Control panel, bandeira amarela em overtake, HUD velocidade, integrar tire-marks
+- `src/components/race/RaceControlPanel.tsx` — novo componente lateral
+- `src/components/race/SpeedHUD.tsx` — novo mostrador de velocidade
+- `src/components/race/track/TrackTireMarks.tsx` — novo overlay SVG de marcas de pneu
+- `src/components/race/track/TrackDefs.tsx` — filter de heat haze + sombra solar
+- `src/components/race/track/TrackAsphalt.tsx` — aplicar filter heat haze nas retas
+- `src/components/race/RaceCar.tsx` — sombra elíptica abaixo do carro
+- `src/index.css` — keyframes yellow-flag-flash + heat-haze pulse
 
 Sem perguntas. Executo as 6 em sequência.
