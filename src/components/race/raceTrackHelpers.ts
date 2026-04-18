@@ -3,20 +3,18 @@
 
 export const TRACK_VIEWBOX = { width: 1000, height: 600 };
 
-// Circuito fechado serpenteante (estilo F1/Mario Kart top-down).
-// Sequência: começa direita-meio, sobe pra cima-direita, hairpin esquerda,
-// desce em S, curva inferior, sobe pela esquerda, S no topo, fecha à direita.
+// Circuito estilo "estádio com chicane" — usa toda a altura (60→540) e largura (80→920).
+// Sequência balanceada: reta superior, hairpin topo-esq, S descendente, curva ampla baixo-esq,
+// reta inferior, chicane baixo-dir, subida direita, fecha no start.
 export const TRACK_PATH_D = `
-M 880 300
-C 920 200, 880 90, 760 80
-C 660 72, 600 140, 560 200
-C 520 260, 460 280, 400 240
-C 320 188, 220 180, 140 240
-C 70 292, 70 380, 140 440
-C 220 500, 340 500, 420 460
-C 500 420, 560 440, 600 500
-C 650 570, 760 580, 840 520
-C 920 460, 920 380, 880 300
+M 900 300
+C 900 140, 780 70, 560 70
+C 380 70, 230 80, 140 170
+C 70 250, 80 340, 170 380
+C 270 420, 240 490, 160 520
+C 280 560, 480 560, 640 530
+C 740 510, 700 430, 800 430
+C 880 430, 900 380, 900 300
 Z
 `.trim();
 
