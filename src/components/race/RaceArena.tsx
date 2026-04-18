@@ -483,11 +483,41 @@ export function RaceArena({
       setShowFireworks(true);
       const lname = sorted[0]?.salesperson_name;
       pushCommentary(makeCommentaryLine({ type: 'finale', leader: lname }));
+      // Sound + broadcast: season end
+      playRef.current('season_end');
+      if (lname) {
+        pushBroadcast({
+          kind: 'finale',
+          title: `${lname.split(' ')[0]} CRUZA A LINHA`,
+          detail: 'Bandeirada final — corrida encerrada',
+        });
+      }
       const t1 = window.setTimeout(() => setShowFinaleFlag(false), 2200);
       const t2 = window.setTimeout(() => setShowFireworks(false), 2600);
       return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
     }
-  }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary]);
+  }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary, pushBroadcast]);
+
+  // Gap apertado (< 1%) → broadcast event "BATTLE"
+  const gapBroadcastLastRef = useRef<number>(0);
+  useEffect(() => {
+    if (!leader || !second || gapToSecond === null) return;
+    if (gapToSecond > 0 && gapToSecond < 0.01) {
+      const now = Date.now();
+      if (now - gapBroadcastLastRef.current > 15_000) {
+        gapBroadcastLastRef.current = now;
+        const a = leader.salesperson_name?.split(' ')[0];
+        const b = second.salesperson_name?.split(' ')[0];
+        if (a && b) {
+          pushBroadcast({
+            kind: 'gap',
+            title: `${a} vs ${b}`,
+            detail: `Gap ${(gapToSecond * 100).toFixed(2)}% · disputa ao vivo`,
+          });
+        }
+      }
+    }
+  }, [leader, second, gapToSecond, pushBroadcast]);
 
   // ----- Start lights: dispara 1x ao montar -----
   useEffect(() => {
