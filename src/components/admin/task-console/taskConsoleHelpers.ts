@@ -42,3 +42,15 @@ export const formatXp = (n: number): string => {
   const sign = n > 0 ? '+' : '';
   return `${sign}${n.toLocaleString('pt-BR')} XP`;
 };
+
+export type RecurrenceRule = 'daily' | 'weekly' | 'monthly';
+
+export const RECURRENCE_LABELS: Record<RecurrenceRule, string> = {
+  daily: 'Diária',
+  weekly: 'Semanal',
+  monthly: 'Mensal',
+};
+
+export const SQUAD_COLOR_PRESETS: string[] = [
+  '#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444', '#64748b',
+];
