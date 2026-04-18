@@ -17,6 +17,8 @@ interface RaceCarProps {
   drsActive?: boolean;
   /** Posição absoluta na corrida (1-based). Mostra medalha (top 3) ou número. */
   rank?: number;
+  /** Quando true, dispara animação de pit-stop (pneus piscando + brilho amarelo). */
+  pitStop?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export function RaceCar({
   tireWear = 1,
   drsActive = false,
   rank,
+  pitStop = false,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
@@ -403,6 +406,48 @@ export function RaceCar({
           </motion.g>
         );
       })()}
+
+      {/* ===== Pit stop overlay (pneus piscando + glow amarelo) ===== */}
+      {pitStop && (
+        <g pointerEvents="none">
+          <motion.rect
+            x={-bodyW / 2 - 4}
+            y={-bodyH / 2 - 4}
+            width={bodyW + 8}
+            height={bodyH + 8}
+            rx={bodyR + 2}
+            fill="none"
+            stroke="hsl(45 95% 55%)"
+            strokeWidth={2}
+            strokeDasharray="4 3"
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 0.45, repeat: Infinity }}
+          />
+          {[
+            [-wheelOffsetX, -wheelOffsetY],
+            [-wheelOffsetX, wheelOffsetY],
+            [wheelOffsetX, -wheelOffsetY],
+            [wheelOffsetX, wheelOffsetY],
+          ].map(([wx, wy], i) => (
+            <motion.circle
+              key={`pit-${i}`}
+              cx={wx}
+              cy={wy}
+              r={5.5}
+              fill="hsl(45 95% 55%)"
+              opacity={0.8}
+              animate={{ opacity: [0, 0.85, 0] }}
+              transition={{ duration: 0.35, repeat: Infinity, delay: i * 0.08 }}
+            />
+          ))}
+          <g transform={`translate(0 ${-bodyH / 2 - 16})`}>
+            <rect x={-12} y={-5} width={24} height={9} rx={2} fill="hsl(45 95% 55%)" stroke="hsl(0 0% 10%)" strokeWidth={0.6} />
+            <text y={2} textAnchor="middle" fontSize={6.5} fontWeight={900} fill="hsl(20 30% 18%)" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.08em' }}>
+              PIT
+            </text>
+          </g>
+        </g>
+      )}
     </g>
   );
 }
