@@ -5,3 +5,6 @@ export { RaceLeaderboardSidebar } from './RaceLeaderboardSidebar';
 export { RaceEventFeed } from './RaceEventFeed';
 export { CarCustomizer } from './CarCustomizer';
 export { RaceSoundToggle } from './RaceSoundToggle';
+export { VictoryLapOverlay } from './VictoryLapOverlay';
+export { RaceBadgeShowcase } from './RaceBadgeShowcase';
+export { StartSeasonDialog } from './StartSeasonDialog';
