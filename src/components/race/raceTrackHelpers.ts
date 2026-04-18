@@ -3,26 +3,25 @@
 
 export const TRACK_VIEWBOX = { width: 1000, height: 600 };
 
-// Circuito clássico estilo Micro Machines — oval com chicane suave embaixo
-// e curva técnica em cima. Margens generosas (60px) para não tocar bordas.
-// Sentido: horário começando na reta de chegada (esquerda → direita no topo).
+// Oval estendido com 1 chicane suave na reta de baixo — estilo Mario Circuit / kart pro.
+// Largura constante, curvas com arcos amplos, sem retornos serpentinos.
+// Sentido horário: largada na esquerda da reta superior, indo para a direita.
+// viewBox 1000x600. Margens generosas (~110px nas laterais, ~95px topo/base).
 export const TRACK_PATH_D = `
-M 200 90
-L 720 90
-C 830 90, 900 130, 900 200
-C 900 250, 870 285, 820 295
-C 770 305, 740 325, 740 360
-C 740 395, 770 415, 820 425
-C 870 435, 900 470, 900 510
-C 900 550, 850 560, 780 540
-C 700 518, 600 510, 500 510
-L 280 510
-C 180 510, 100 470, 100 400
-C 100 350, 130 320, 180 310
-C 230 300, 260 275, 260 245
-C 260 215, 230 195, 180 188
-C 130 180, 100 150, 100 110
-C 100 90, 140 80, 200 90
+M 220 95
+L 780 95
+C 855 95, 905 145, 905 220
+L 905 380
+C 905 455, 855 505, 780 505
+L 640 505
+C 615 505, 600 515, 585 530
+C 570 545, 555 555, 530 555
+C 505 555, 490 545, 475 530
+C 460 515, 445 505, 420 505
+L 220 505
+C 145 505, 95 455, 95 380
+L 95 220
+C 95 145, 145 95, 220 95
 Z
 `.trim();
 
