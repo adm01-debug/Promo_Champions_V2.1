@@ -75,6 +75,25 @@ export function TrackDefs() {
         <stop offset="50%" stopColor="hsl(var(--streak))" stopOpacity="0.85" />
         <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity="0" />
       </linearGradient>
+
+      {/* shimmer animado no capô (estilo diecast lustroso) */}
+      <linearGradient id="carShimmer" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="hsl(0 0% 100%)" stopOpacity="0">
+          <animate attributeName="offset" values="-0.4;1.4" dur="4s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="20%" stopColor="hsl(0 0% 100%)" stopOpacity="0.55">
+          <animate attributeName="offset" values="-0.2;1.6" dur="4s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="40%" stopColor="hsl(0 0% 100%)" stopOpacity="0">
+          <animate attributeName="offset" values="0;1.8" dur="4s" repeatCount="indefinite" />
+        </stop>
+      </linearGradient>
+
+      {/* gradient sutil para skid marks */}
+      <linearGradient id="skidMark" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="hsl(var(--race-checkered-dark))" stopOpacity="0" />
+        <stop offset="100%" stopColor="hsl(var(--race-checkered-dark))" stopOpacity="0.55" />
+      </linearGradient>
     </defs>
   );
 }

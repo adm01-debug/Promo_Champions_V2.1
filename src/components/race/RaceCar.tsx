@@ -44,6 +44,21 @@ export function RaceCar({
       {/* ===== Boost trail ===== */}
       {showTrail && (
         <>
+          {/* Skid marks (rastro de pneu) — 2 linhas paralelas que esmaecem */}
+          {[-wheelOffsetY, wheelOffsetY].map((wy) => (
+            <motion.rect
+              key={`skid-${wy}`}
+              x={-bodyW / 2 - 60}
+              y={wy - 1}
+              width={60}
+              height={2}
+              rx={1}
+              fill="url(#skidMark)"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.7, 0] }}
+              transition={{ duration: 1.5, repeat: 2, ease: 'easeOut' }}
+            />
+          ))}
           <motion.ellipse
             cx={-44}
             cy={0}
@@ -171,6 +186,18 @@ export function RaceCar({
         rx={bodyR - 1}
         fill="url(#carBodyShine)"
         pointerEvents="none"
+      />
+
+      {/* shimmer metálico animado (estilo diecast) */}
+      <rect
+        x={-bodyW / 2 + 1}
+        y={-bodyH / 2 + 1}
+        width={bodyW - 2}
+        height={bodyH - 2}
+        rx={bodyR - 1}
+        fill="url(#carShimmer)"
+        pointerEvents="none"
+        opacity={0.85}
       />
 
       {/* overlay de padrão (acessibilidade colorblind) */}

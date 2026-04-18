@@ -16,6 +16,15 @@ export function TrackStartGantry() {
 
   return (
     <g aria-hidden transform={`translate(${center.x} ${center.y}) rotate(${rotation})`}>
+      {/* sombra suave abaixo da faixa */}
+      <rect
+        x={-STRIPE_W / 2 + 1}
+        y={-length / 2 + 2}
+        width={STRIPE_W}
+        height={length}
+        fill="hsl(var(--race-grass-shadow))"
+        opacity={0.35}
+      />
       <rect
         x={-STRIPE_W / 2}
         y={-length / 2}
@@ -25,6 +34,17 @@ export function TrackStartGantry() {
         stroke="hsl(var(--race-checkered-dark))"
         strokeWidth={1.5}
       />
+      {/* shimmer pulsante sutil sobre a linha */}
+      <rect
+        x={-STRIPE_W / 2}
+        y={-length / 2}
+        width={STRIPE_W}
+        height={length}
+        fill="hsl(0 0% 100%)"
+        opacity={0.12}
+      >
+        <animate attributeName="opacity" values="0.05;0.22;0.05" dur="2.4s" repeatCount="indefinite" />
+      </rect>
     </g>
   );
 }
