@@ -175,14 +175,33 @@ function Grandstand({
    ============================================================ */
 
 /** Helicóptero de transmissão atravessando a faixa superior em loop. */
-function BroadcastHelicopter() {
+function BroadcastHelicopter({
+  bodyColor = 'hsl(210 75% 50%)',
+  y = 0,
+  duration = 18,
+  delay = 0,
+  reverse = false,
+}: {
+  bodyColor?: string;
+  y?: number;
+  duration?: number;
+  delay?: number;
+  reverse?: boolean;
+}) {
   return (
-    <g aria-hidden style={{ animation: 'race-helicopter-fly 18s linear infinite' }}>
+    <g
+      aria-hidden
+      transform={`translate(0 ${y})`}
+      style={{
+        animation: `${reverse ? 'race-helicopter-fly-reverse' : 'race-helicopter-fly'} ${duration}s linear infinite`,
+        animationDelay: `${delay}s`,
+      }}
+    >
       {/* sombra projetada no chão */}
       <ellipse cx={6} cy={70} rx={11} ry={3.5} fill="rgba(0,0,0,0.22)" filter="url(#dustBlur)" />
       <g transform="translate(0, 28)">
         {/* fuselagem */}
-        <ellipse cx={3} cy={0} rx={9} ry={4.5} fill="hsl(210 75% 50%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.7} />
+        <ellipse cx={3} cy={0} rx={9} ry={4.5} fill={bodyColor} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.7} />
         {/* janela */}
         <ellipse cx={7} cy={-0.6} rx={3} ry={2.5} fill="hsl(200 30% 18%)" opacity={0.85} />
         <ellipse cx={6.5} cy={-1.3} rx={1.2} ry={0.6} fill="hsl(0 0% 100%)" opacity={0.45} />
