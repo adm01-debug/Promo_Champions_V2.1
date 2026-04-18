@@ -1,55 +1,59 @@
 
-Análise exaustiva do RaceArena (Mario Kart / F1 Arcade) buscando gaps de design e melhorias de excelência visual/UX.
+Executar sequencialmente todas as melhorias do top 5 + polimentos da análise exaustiva, em ordem de impacto. Cada item será uma intervenção cirúrgica e completa.
 
-## Áreas inspecionadas
-- `RaceArena.tsx` (orquestração, layers SVG)
-- `track/` (TrackScenery, TrackTireMarks, TrackDustParticles, helicópteros, etc.)
-- `raceTrackHelpers.ts` (CHECKPOINTS, getPositionOnTrack)
-- Componentes de carro, HUD, leaderboard
+## Roadmap de execução (ordem)
 
-## Gaps identificados (priorizados)
+**Já feito:** Sombra sob carros + halo do usuário logado (item #1).
 
-### 1. Imersão visual da pista
-- **Sem sombra dos carros** no asfalto → carros parecem "flutuar". Adicionar elipse escura translúcida abaixo de cada carro.
-- **Sem reflexo/brilho dinâmico no asfalto** quando há curva fechada (highlight especular).
-- **Curvas sem rumble strips animados** (faixas vermelho/branco piscando como F1 real).
-- **Linha de largada/chegada sem animação xadrez ondulando** quando líder se aproxima.
+### Próximas iterações
 
-### 2. Feedback do líder e disputa
-- **Sem destaque visual do carro do usuário logado** (já mencionado anteriormente, ainda pendente) — halo pulsante na cor do time.
-- **Sem indicador "GAP +X.Xs"** flutuante entre 1º e 2º quando estão próximos (<5% de progresso).
-- **Sem efeito DRS/Boost zone**: trecho da reta principal poderia ter overlay azul translúcido sinalizando "zona de ultrapassagem".
-- **Sem "slipstream" visual**: linhas de vento atrás do líder quando 2º está colado.
+1. **Slipstream + GAP flutuante** (drama competitivo)
+   - Novo `LeaderGapIndicator.tsx`: badge SVG flutuante "+X.Xs" entre 1º e 2º quando gap < 5%
+   - Novo `SlipstreamLines.tsx`: 3 linhas de vento animadas atrás do líder quando 2º está colado
+   - Cálculo de gap baseado em `progress` diff × tempo médio de volta
 
-### 3. Atmosfera arcade
-- **Faltam bandeiras agitando** nas arquibancadas (SVG com `<animateTransform>` skew).
-- **Torcedores estáticos demais**: adicionar 2-3 que levantam plaquinhas (cartazes coloridos).
-- **Sem balões/dirigíveis** flutuando lentamente no céu (acompanhando helicópteros).
-- **Sem fogos de artifício** no momento que alguém cruza a linha de chegada (já existe celebração, mas falta SVG fireworks na pista).
-- **Sem "lap counter" visual estilo placar LED** no canto da pista.
+2. **Rumble strips animados nas curvas** + **xadrez ondulado na largada**
+   - Em `TrackAsphalt.tsx`: adicionar `<animate>` no `strokeDashoffset` dos curbs vermelho/branco (movimento sutil)
+   - Em `TrackStartGantry.tsx`: já tem shimmer, intensificar ondulação quando `leaderApproaching` prop = true
 
-### 4. Microinterações de corrida
-- **Sem trilha de exhaust/escape** (pequena fumaça contínua atrás do carro em alta velocidade) — diferente do dust de curva.
-- **Sem screen shake** sutil quando há ultrapassagem (mudança de posição entre top 3).
-- **Sem "ghost trail"** colorido seguindo o líder (rastro de neon).
-- **Sem indicador de aceleração**: carros poderiam ter pequena chama no escapamento que aumenta com velocidade.
+3. **Exhaust trail + chama no escapamento** (sensação de velocidade)
+   - Novo `CarExhaust.tsx`: 2-3 partículas de fumaça contínuas atrás do carro (offset no rotation -180°)
+   - Pequena chama SVG `<polygon>` laranja/amarela animada no escape
+   - Renderizado dentro do `<motion.g>` de cada carro
 
-### 5. HUD e leitura competitiva
-- **Sem mini-mapa simplificado** (já tem a pista, mas falta versão compacta com só os pontinhos para leitura periférica).
-- **Sem timeline de eventos** (ex: "🏁 Vendedor X tomou liderança às 10:32").
-- **Sem countdown visual** para reset semanal ("⏱ Corrida termina em 2d 14h").
+4. **Bandeiras agitando + plaquinhas dos torcedores + dirigível**
+   - Em `TrackScenery.tsx`: adicionar 4-6 bandeiras `<rect>` com `<animateTransform type="skewX">` nas arquibancadas
+   - Modificar cluster de torcedores: 2-3 com plaquinhas coloridas levantadas
+   - Novo dirigível `<ellipse>` no céu com translação lenta horizontal (60s loop)
 
-### 6. Polimento de partículas existentes
-- `TrackDustParticles` está ótimo, mas:
-  - Poderia variar cor por tipo de superfície (poeira mais clara em retas, mais escura em curvas com runoff).
-  - Adicionar leve **blur SVG filter** nas partículas de fumaça para sensação volumétrica.
+5. **Polimentos finais**
+   - `TrackDustParticles`: filtro `<feGaussianBlur stdDeviation="0.8">` nas partículas
+   - Countdown visual no HUD: "⏱ Termina em Xd Yh" usando `useWeeklyResetCountdown`
+   - Lap counter LED-style no canto inferior da pista
 
-## Top 5 melhorias recomendadas (ordem de impacto)
-1. **Sombra sob os carros** + **halo no carro do usuário logado** (imersão imediata + personalização).
-2. **Slipstream + GAP flutuante** entre 1º e 2º (drama competitivo).
-3. **Rumble strips animados nas curvas** + **xadrez ondulado na largada** (atmosfera F1).
-4. **Exhaust trail contínua + chama no escapamento** (sensação de velocidade).
-5. **Bandeiras agitando + plaquinhas dos torcedores + dirigível no céu** (vida na arquibancada).
+## Estrutura de arquivos
 
-## Próximo passo sugerido
-Executar item #1 (sombra + halo do usuário) como primeira melhoria — alto impacto visual, baixo risco, completa o pedido pendente do "brilho no carro do vendedor logado".
+**Novos:**
+- `src/components/race/LeaderGapIndicator.tsx`
+- `src/components/race/SlipstreamLines.tsx`
+- `src/components/race/CarExhaust.tsx`
+- `src/components/race/track/TrackBlimp.tsx`
+- `src/components/race/RaceCountdownBadge.tsx`
+
+**Editados:**
+- `src/components/race/RaceArena.tsx` (montar novos componentes)
+- `src/components/race/track/TrackAsphalt.tsx` (rumble strips animados)
+- `src/components/race/track/TrackScenery.tsx` (bandeiras + plaquinhas)
+- `src/components/race/track/TrackDustParticles.tsx` (blur filter)
+- `src/components/race/track/TrackStartGantry.tsx` (xadrez ondulado intensificado)
+
+## Garantias de qualidade
+
+- Tokens semânticos HSL (sem cores hardcoded)
+- `pointerEvents="none"` em todos os elementos decorativos
+- `aria-hidden` em SVGs decorativos
+- Performance: limites de partículas, `useReducedMotion` respeitado
+- Arquivos < 200 linhas cada (padrão do projeto)
+- Zero erros de console
+
+Execução será sequencial: 1 melhoria → próxima → próxima, sem pausas.
