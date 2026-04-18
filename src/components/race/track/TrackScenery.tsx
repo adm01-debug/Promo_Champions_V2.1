@@ -495,8 +495,9 @@ export function TrackScenery({
           <Tree key={i} cx={x} cy={y} scale={s} />
         ))}
 
-        {/* CICLO 53-58: Helicóptero de transmissão atravessando a faixa superior */}
-        <BroadcastHelicopter />
+        {/* CICLO 53-58: Helicópteros de transmissão (azul + vermelho em sentido contrário) */}
+        <BroadcastHelicopter bodyColor="hsl(210 75% 50%)" y={0} duration={18} />
+        <BroadcastHelicopter bodyColor="hsl(0 78% 52%)" y={760} duration={22} delay={4} reverse />
 
         {/* CICLO 53-58: Bandos de pássaros ambientais */}
         <BirdFlock y={150} delay={0} />
