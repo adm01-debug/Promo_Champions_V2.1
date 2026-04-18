@@ -198,6 +198,50 @@ export function RaceArena({
   // ----- Lap info -----
   const lapInfo = computeLapInfo(Number(leader?.progress ?? 0), 10);
 
+  // ----- Velocidade simulada do líder (delta progresso × 1000 → km/h) -----
+  useEffect(() => {
+    if (!leader) return;
+    const now = Date.now();
+    const p = Number(leader.progress);
+    const prev = lastLeaderProgressRef.current;
+    if (prev) {
+      const dt = (now - prev.at) / 1000; // segundos
+      const dp = Math.max(0, p - prev.progress);
+      if (dt > 0.05) {
+        // Conversão arbitrária: 1% de progresso em 1s ≈ 220 km/h.
+        const kmh = (dp / dt) * 22000;
+        // suavização exponencial
+        setLeaderSpeed((s) => s * 0.7 + Math.min(360, kmh) * 0.3);
+        lastLeaderProgressRef.current = { progress: p, at: now };
+      }
+    } else {
+      lastLeaderProgressRef.current = { progress: p, at: now };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leader?.car_id, leader?.progress]);
+
+  // Decay quando ninguém atualiza
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setLeaderSpeed((s) => (s > 1 ? s * 0.92 : 0));
+    }, 800);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // ----- Bandeira atual da corrida -----
+  const currentFlag: RaceFlag = useMemo(() => {
+    if (showFinaleFlag) return 'checkered';
+    if (Date.now() < yellowFlagUntil) return 'yellow';
+    return 'green';
+  }, [showFinaleFlag, yellowFlagUntil, /* re-render trigger: */ leaderSpeed]);
+
+  // Snapshot atual de carros para tire marks
+  const tireMarkCars = useMemo(
+    () => sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')],
+  );
+
   // ----- DRS: ativo quando carro está em zona DRS e tem alguém < 0.06 à frente -----
   const drsActiveByCar = useMemo(() => {
     const map = new Map<string, boolean>();
