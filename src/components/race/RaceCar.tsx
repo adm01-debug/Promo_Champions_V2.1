@@ -262,6 +262,20 @@ export function RaceCar({
         opacity={0.85}
       />
 
+      {/* overlay de livery (chamas, listras, padrões Pride...) */}
+      {livery && livery !== 'solid' && (
+        <CarLiveryOverlay
+          pattern={livery}
+          bodyW={bodyW}
+          bodyH={bodyH}
+          bodyR={bodyR}
+          primary={primaryColor}
+          secondary={secondaryColor}
+          accent={liveryAccent}
+          uid={liveryUid ?? `${number}-${primaryColor.replace('#', '')}`}
+        />
+      )}
+
       {/* overlay de padrão (acessibilidade colorblind) */}
       {patternFillId && (
         <rect
