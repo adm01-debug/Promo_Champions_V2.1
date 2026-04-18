@@ -13896,6 +13896,7 @@ export type Database = {
       detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
+      finalize_race_season: { Args: { _season_id: string }; Returns: Json }
       find_matching_cadence_rule: {
         Args: { _sale_id: string }
         Returns: {
