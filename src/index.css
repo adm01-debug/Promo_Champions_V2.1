@@ -1952,8 +1952,30 @@
   80%  { transform: scale(1) translateY(-4px); opacity: 1; }
   100% { transform: scale(0.95) translateY(-10px); opacity: 0; }
 }
+/* ===== Cycle 29-34 ===== */
+@keyframes race-checkered-flag {
+  0%   { transform: translateX(120%) rotate(2deg); opacity: 0; }
+  18%  { transform: translateX(0%) rotate(-1deg); opacity: 1; }
+  35%  { transform: translateX(-2%) rotate(1.5deg); opacity: 1; }
+  55%  { transform: translateX(1%) rotate(-1deg); opacity: 1; }
+  78%  { transform: translateX(0%) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(110%) rotate(2deg); opacity: 0; }
+}
+@keyframes race-replay-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.55), inset 0 0 0 2px hsl(var(--destructive) / 0.6); }
+  50%      { box-shadow: 0 0 32px 8px hsl(var(--destructive) / 0.25), inset 0 0 0 2px hsl(var(--destructive) / 1); }
+}
+@keyframes race-position-bounce {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.45); }
+  70%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
 @media (prefers-reduced-motion: reduce) {
   .race-cinematic-intro { animation: none !important; }
   .race-drs-pulse { animation: none !important; }
   .race-sector-pop { animation: none !important; }
+  .race-checkered-flag { animation: none !important; }
+  .race-replay-pulse { animation: none !important; }
+  .race-position-bounce { animation: none !important; }
 }

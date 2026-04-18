@@ -181,6 +181,40 @@ export function computeLapInfo(progress: number, totalLaps = 10): { current: num
   return { current, total: totalLaps };
 }
 
+/** Gera frase de comentarista contextual para overtakes / sectors / final / DRS. */
+export function makeCommentaryLine(opts: {
+  type: 'overtake' | 'sector' | 'drs' | 'finale' | 'leader';
+  attacker?: string;
+  defender?: string;
+  leader?: string;
+  sector?: string;
+}): string {
+  const a = opts.attacker?.split(' ')[0] ?? 'Piloto';
+  const d = opts.defender?.split(' ')[0] ?? 'rival';
+  const l = opts.leader?.split(' ')[0] ?? 'líder';
+  switch (opts.type) {
+    case 'overtake': {
+      const variants = [
+        `${a} ataca e ultrapassa ${d}!`,
+        `Manobra cirúrgica de ${a} sobre ${d}!`,
+        `${a} dá o bote em ${d} na curva!`,
+        `${d} perde a posição para ${a}!`,
+      ];
+      return variants[Math.floor(Math.random() * variants.length)];
+    }
+    case 'drs':
+      return `${a} aciona o DRS e voa em cima de ${d}!`;
+    case 'sector':
+      return `${l} fecha o setor ${opts.sector ?? ''} na ponta!`;
+    case 'leader':
+      return `${l} assume a liderança da prova!`;
+    case 'finale':
+      return `Bandeira quadriculada à vista — ${l} caminha para a vitória!`;
+    default:
+      return '';
+  }
+}
+
 /** Detecta ultrapassagens comparando dois snapshots ordenados por progresso desc. */
 export function detectOvertakes(
   prev: Array<{ id: string; progress: number }>,
