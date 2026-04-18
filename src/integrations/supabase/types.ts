@@ -13743,6 +13743,31 @@ export type Database = {
           },
         ]
       }
+      race_rivalries_view: {
+        Row: {
+          last_swap_at: string | null
+          rival_a: string | null
+          rival_b: string | null
+          season_id: string | null
+          swap_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_events_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_events_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       revenue_forecast_view: {
         Row: {
           avg_cycle_days: number | null
