@@ -122,7 +122,7 @@ function RaceTabContent({ roleType }: { roleType: RoleType }) {
 
       <div className="grid grid-cols-12 gap-4" style={{ minHeight: '70vh' }}>
         <div className="col-span-12 lg:col-span-3 order-2 lg:order-1 space-y-3">
-          <RaceEventFeed events={events} cars={leaderboard} />
+          <RaceLeaderboardSidebar entries={leaderboard} goalAmount={Number(season.goal_amount)} />
           {myEntry && rules.length > 0 && (
             <ScoreBreakdownCard entry={myEntry} rules={rules} />
           )}
@@ -141,7 +141,7 @@ function RaceTabContent({ roleType }: { roleType: RoleType }) {
           />
         </div>
         <div className="col-span-12 lg:col-span-3 order-3">
-          <RaceLeaderboardSidebar entries={leaderboard} goalAmount={Number(season.goal_amount)} />
+          <RaceEventFeed events={events} cars={leaderboard} />
         </div>
       </div>
 
