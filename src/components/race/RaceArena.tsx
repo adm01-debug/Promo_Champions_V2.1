@@ -481,7 +481,7 @@ export function RaceArena({
 
   return (
     <div
-      className="relative w-full h-full rounded-3xl overflow-hidden border border-border/60 bg-[hsl(var(--race-grass))]"
+      className={`relative w-full h-full rounded-3xl overflow-hidden border border-border/60 bg-[hsl(var(--race-grass))] ${shaking && !reducedMotion ? 'race-screen-shake' : ''}`}
       style={{
         boxShadow:
           '0 24px 60px -20px hsl(var(--race-grass-shadow) / 0.55), inset 0 0 0 1px hsl(var(--race-asphalt-edge) / 0.08)',
@@ -512,6 +512,16 @@ export function RaceArena({
         <TrackTireMarks cars={tireMarkCars} />
         {/* Poeira/fumaça nas curvas — sobre os rastros, abaixo dos carros */}
         <TrackDustParticles cars={tireMarkCars} />
+        {/* DRS Zone overlay translúcido + label */}
+        <DRSZoneOverlay />
+        {/* Ghost trail neon do líder */}
+        {leader && !reducedMotion && (
+          <LeaderNeonTrail
+            leaderId={leader.car_id}
+            leaderProgress={Number(leader.progress)}
+            color={leader.primary_color}
+          />
+        )}
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
           const pos = getPositionOnTrack(Number(car.progress), lane);
@@ -814,7 +824,13 @@ export function RaceArena({
       <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
 
       {/* ===== Mini-mapa do circuito ===== */}
-      <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
+      <RaceMiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
+
+      {/* ===== Lap counter LED-style (ao lado do MiniMap) ===== */}
+      <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />
+
+      {/* ===== Ticker de eventos ao vivo (abaixo do LAP HUD top-center) ===== */}
+      <RaceEventTicker events={tickerEvents} />
 
       {/* ===== Timing tower expandido (top 5 com gaps + delta colorido) ===== */}
       {top5.length > 0 && (
