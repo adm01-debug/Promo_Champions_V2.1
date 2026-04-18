@@ -5322,6 +5322,83 @@ export type Database = {
           },
         ]
       }
+      forecast_accuracy: {
+        Row: {
+          actual_amount: number
+          actual_deals: number
+          bias: string
+          computed_at: string
+          id: string
+          mape: number
+          snapshot_id: string
+          variance_amount: number | null
+          variance_pct: number
+        }
+        Insert: {
+          actual_amount?: number
+          actual_deals?: number
+          bias?: string
+          computed_at?: string
+          id?: string
+          mape?: number
+          snapshot_id: string
+          variance_amount?: number | null
+          variance_pct?: number
+        }
+        Update: {
+          actual_amount?: number
+          actual_deals?: number
+          bias?: string
+          computed_at?: string
+          id?: string
+          mape?: number
+          snapshot_id?: string
+          variance_amount?: number | null
+          variance_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forecast_accuracy_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: true
+            referencedRelation: "forecast_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forecast_confidence_scores: {
+        Row: {
+          avg_mape: number
+          bias_trend: string
+          computed_at: string
+          confidence_score: number
+          id: string
+          owner_id: string | null
+          period_count: number
+          source: string
+        }
+        Insert: {
+          avg_mape?: number
+          bias_trend?: string
+          computed_at?: string
+          confidence_score?: number
+          id?: string
+          owner_id?: string | null
+          period_count?: number
+          source: string
+        }
+        Update: {
+          avg_mape?: number
+          bias_trend?: string
+          computed_at?: string
+          confidence_score?: number
+          id?: string
+          owner_id?: string | null
+          period_count?: number
+          source?: string
+        }
+        Relationships: []
+      }
       forecast_deal_contributions: {
         Row: {
           category: string
@@ -5369,6 +5446,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      forecast_snapshots: {
+        Row: {
+          best_case_amount: number
+          commit_amount: number
+          created_at: string
+          forecast_amount: number
+          forecast_deals: number
+          id: string
+          owner_id: string | null
+          period_end: string
+          period_start: string
+          segment: string | null
+          snapshot_at: string
+          source: string
+          weighted_amount: number
+        }
+        Insert: {
+          best_case_amount?: number
+          commit_amount?: number
+          created_at?: string
+          forecast_amount?: number
+          forecast_deals?: number
+          id?: string
+          owner_id?: string | null
+          period_end: string
+          period_start: string
+          segment?: string | null
+          snapshot_at?: string
+          source?: string
+          weighted_amount?: number
+        }
+        Update: {
+          best_case_amount?: number
+          commit_amount?: number
+          created_at?: string
+          forecast_amount?: number
+          forecast_deals?: number
+          id?: string
+          owner_id?: string | null
+          period_end?: string
+          period_start?: string
+          segment?: string | null
+          snapshot_at?: string
+          source?: string
+          weighted_amount?: number
+        }
+        Relationships: []
       }
       geo_access_logs: {
         Row: {
