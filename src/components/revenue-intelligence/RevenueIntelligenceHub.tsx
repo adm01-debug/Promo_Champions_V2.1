@@ -11,6 +11,7 @@ import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
 import { AIForecastPanel } from "./AIForecastPanel";
 import { PipelineCoverageAnalyzer } from "./coverage/PipelineCoverageAnalyzer";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
+import { QuotaAttainmentPredictor } from "./quota/QuotaAttainmentPredictor";
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
@@ -61,6 +62,7 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="coverage">Coverage Analyzer</TabsTrigger>
           <TabsTrigger value="calibration">Win Calibration</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
+          <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
         <TabsContent value="ai-forecast" className="mt-4">
@@ -86,6 +88,9 @@ export const RevenueIntelligenceHub: FC = () => {
             onRunInspection={() => inspection.mutate()}
             isRunning={inspection.isPending}
           />
+        </TabsContent>
+        <TabsContent value="quota" className="mt-4">
+          <QuotaAttainmentPredictor />
         </TabsContent>
         <TabsContent value="qbr" className="mt-4">
           <QBRGeneratorPanel />

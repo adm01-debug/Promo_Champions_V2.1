@@ -7371,6 +7371,136 @@ export type Database = {
         }
         Relationships: []
       }
+      quota_attainment_alerts: {
+        Row: {
+          acknowledged: boolean
+          created_at: string
+          id: string
+          message: string
+          prediction_id: string
+          recommended_action: string | null
+          salesperson_id: string
+          severity: string
+        }
+        Insert: {
+          acknowledged?: boolean
+          created_at?: string
+          id?: string
+          message: string
+          prediction_id: string
+          recommended_action?: string | null
+          salesperson_id: string
+          severity?: string
+        }
+        Update: {
+          acknowledged?: boolean
+          created_at?: string
+          id?: string
+          message?: string
+          prediction_id?: string
+          recommended_action?: string | null
+          salesperson_id?: string
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quota_attainment_alerts_prediction_id_fkey"
+            columns: ["prediction_id"]
+            isOneToOne: false
+            referencedRelation: "quota_attainment_predictions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quota_attainment_alerts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quota_attainment_alerts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quota_attainment_predictions: {
+        Row: {
+          attainment_probability: number
+          calculated_at: string
+          closed_amount: number
+          current_pace_per_day: number
+          factors: Json
+          id: string
+          pace_required_per_day: number
+          period_end: string
+          period_start: string
+          predicted_amount: number
+          quota_amount: number
+          risk_level: string
+          salesperson_id: string
+          scenario_optimistic: number
+          scenario_pessimistic: number
+          scenario_realistic: number
+          weighted_pipeline: number
+        }
+        Insert: {
+          attainment_probability?: number
+          calculated_at?: string
+          closed_amount?: number
+          current_pace_per_day?: number
+          factors?: Json
+          id?: string
+          pace_required_per_day?: number
+          period_end: string
+          period_start: string
+          predicted_amount?: number
+          quota_amount?: number
+          risk_level?: string
+          salesperson_id: string
+          scenario_optimistic?: number
+          scenario_pessimistic?: number
+          scenario_realistic?: number
+          weighted_pipeline?: number
+        }
+        Update: {
+          attainment_probability?: number
+          calculated_at?: string
+          closed_amount?: number
+          current_pace_per_day?: number
+          factors?: Json
+          id?: string
+          pace_required_per_day?: number
+          period_end?: string
+          period_start?: string
+          predicted_amount?: number
+          quota_amount?: number
+          risk_level?: string
+          salesperson_id?: string
+          scenario_optimistic?: number
+          scenario_pessimistic?: number
+          scenario_realistic?: number
+          weighted_pipeline?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quota_attainment_predictions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quota_attainment_predictions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_sync_logs: {
         Row: {
           action: string
