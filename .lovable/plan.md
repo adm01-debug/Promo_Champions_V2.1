@@ -1,44 +1,70 @@
 
-Smart Lead Routing entregue (Fase 8/10). Próximo bloco rumo a 10/10: **Conversation Intelligence** — análise automática de transcrições de calls/reuniões com IA, extraindo objeções, próximos passos, sentimento e sinais de compra.
+Conversation Intelligence entregue (Fase 9/10). Bloco final rumo a 10/10: **Pipeline Health Command Center** — painel executivo unificado que consolida em uma única tela todos os sinais críticos do pipeline com alertas proativos, drill-down e ações rápidas.
 
-## Conversation Intelligence
+## Pipeline Health Command Center (Fase 10/10)
 
 ### Conceito
-Vendedor cola/upload transcrição de call (ou texto de e-mail longo) e a IA extrai estruturadamente: objeções levantadas, próximos passos prometidos, decisores mencionados, sentimento por trecho, sinais de compra/risco e sugestão de follow-up. Tudo vinculado ao deal e indexado para busca semântica futura.
+Tela única "modo guerra" para gestor/admin abrir todo dia: status global do pipeline em tempo real combinando Deal Health, Win/Loss, Forecast, Routing, Conversation Intelligence e Coaching. Mostra o que está pegando fogo, o que está em risco e onde agir agora — com 1 clique para drill-down em cada módulo.
+
+### Estrutura
+
+**Header — Pulse Bar**
+- Score global de saúde do pipeline (0-100, animado)
+- Tendência 7d (sparkline)
+- Badge de status: Saudável / Atenção / Crítico
+
+**Grid de KPIs (6 cards)**
+- Pipeline Total (R$) + Δ 30d
+- Forecast 30d (IA) + confiança
+- Deals Críticos (count + valor exposto)
+- Win Rate 30d + tendência
+- Sentimento médio das conversas
+- Capacidade do time (% utilização)
+
+**Coluna esquerda — Critical Alerts Feed**
+- Lista priorizada de até 8 alertas IA agregando todos os módulos:
+  - Deals com Health Score < 40 e ticket alto
+  - Concorrentes ganhando >50% nas últimas semanas (Win/Loss)
+  - Vendedores saturados (Routing) ou sem aceitar leads
+  - Calls com sentimento negativo recente (Conversation)
+  - Forecast caindo > 15% vs ciclo anterior
+- Cada alerta: severidade, módulo origem, ação sugerida, botão "Abrir"
+
+**Coluna direita — Quick Actions Panel**
+- "Recomputar Health Scores" (chama edge existente)
+- "Rotear leads pendentes" (auto-route batch)
+- "Gerar forecast atualizado"
+- "Analisar últimas calls" (atalho)
+- Status de última execução de cada job
+
+**Bottom — Mini Module Drill Cards**
+- 4 mini-cards (Health, Win/Loss, Forecast, Routing) com 1 chart compacto e botão "Abrir hub completo"
 
 ### Backend
-**Migration** — tabela `conversation_analyses`:
-- `id`, `sale_id` (FK sales), `client_id` (nullable), `source` (`call`|`email`|`meeting`|`whatsapp`), `transcript` (text), `summary` (text), `sentiment` (`positive`|`neutral`|`negative`|`mixed`), `objections` (jsonb[]), `next_steps` (jsonb[]), `buying_signals` (text[]), `risk_signals` (text[]), `decision_makers` (text[]), `analyzed_by`, `created_at`
-- Índices em `sale_id`, `sentiment`, `created_at`
-- RLS: vendedor vê só conversas dos seus deals; gestor/admin vê tudo
-- View `conversation_insights_summary`: agrega top objeções, sentimento médio, taxa de buying signals por vendedor
+- Sem nova tabela; orquestra dados existentes
+- Edge function `pipeline-pulse-aggregator`: agrega em paralelo (Promise.all) métricas de `deal_health_scores`, `win_loss_summary_view`, `revenue_forecast_view`, `routing_performance_view`, `conversation_insights_summary` → retorna payload único `{ pulse_score, kpis, alerts, trends }`
+- Cálculo do `pulse_score` no servidor: média ponderada (Health 30% + Forecast 25% + Win Rate 20% + Routing 15% + Sentiment 10%)
 
-**Edge function `analyze-conversation`**:
-- Aceita `{ sale_id, source, transcript }`
-- Chama Lovable AI (gemini-2.5-flash) com prompt estruturado retornando JSON validado por Zod
-- Persiste em `conversation_analyses` e atualiza `sales.last_interaction_summary`
-- Trigger opcional: dispara `next-best-action` recompute
-
-### Frontend (`src/components/conversation-intelligence/`)
-- `ConversationHub.tsx` (≤300L): hub com lista de análises recentes + botão "Nova Análise"
-- `TranscriptAnalyzerDialog.tsx`: modal com textarea + select de source + botão "Analisar com IA" (loading state)
-- `AnalysisResultCard.tsx`: card visual com summary, sentimento (badge colorido), seções colapsáveis (objeções, próximos passos, signals)
-- `ObjectionsTrendChart.tsx`: barras horizontais — top objeções recorrentes do time (recharts)
-- `SentimentDistributionCard.tsx`: donut de sentimento agregado
-- `conversationHelpers.ts`: enums labels, sentiment color tokens, formatters
-- Hooks: `useConversationAnalyses.ts`, `useAnalyzeConversation.ts` (mutation), `useConversationInsights.ts`
+### Frontend (`src/components/pipeline-pulse/`)
+- `PipelinePulseHub.tsx` (≤300L): orquestrador com header + grid + colunas
+- `PulseScoreHeader.tsx`: gauge animado com score global + sparkline
+- `PulseKpiGrid.tsx`: 6 KPI cards memoizados
+- `CriticalAlertsFeed.tsx`: feed priorizado com filtro por módulo
+- `QuickActionsPanel.tsx`: ações com loading states e timestamp da última run
+- `ModuleDrillCards.tsx`: 4 mini-cards de navegação rápida
+- `pulseHelpers.ts`: score classifier, alert severity sorter, color tokens
+- Hooks: `usePipelinePulse.ts` (query agregada), `useQuickAction.ts` (mutation genérica)
 
 ### Integração
-- Nova tab "Conversas IA" no `RevenueIntelligenceHub`
-- Botão "Analisar Call" no detalhe do deal (`SaleDetailPage`)
-- Card resumo "Última Conversa" inline no `KanbanCard` (sentimento + 1 objeção top)
+- Nova rota `/comando` (ou tab "Comando" no `RevenueIntelligenceHub`)
+- Card resumo "Pulso do Pipeline" no Dashboard executivo (chip de score + 3 alertas top)
+- Atalho no menu Admin
 
 ### Arquivos
-- Migration: tabela `conversation_analyses` + view + RLS + índices
-- Edge: `supabase/functions/analyze-conversation/index.ts` (com Zod + shared utils)
-- Hooks: 3 em `src/hooks/conversation-intelligence/`
-- Componentes: 5 em `src/components/conversation-intelligence/`
-- Helpers: `conversationHelpers.ts`
-- Editar: `RevenueIntelligenceHub.tsx` (nova tab), `SaleDetailPage` (botão)
+- Edge: `supabase/functions/pipeline-pulse-aggregator/index.ts`
+- Hooks: 2 em `src/hooks/pipeline-pulse/`
+- Componentes: 6 em `src/components/pipeline-pulse/`
+- Helpers: `pulseHelpers.ts`
+- Editar: `RevenueIntelligenceHub.tsx` (nova tab "Comando" como primeira)
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, recharts tipado, RLS com `has_role`, edge function com `cors.ts` + `validation.ts` compartilhados.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, recharts tipado, agregação server-side em paralelo.
