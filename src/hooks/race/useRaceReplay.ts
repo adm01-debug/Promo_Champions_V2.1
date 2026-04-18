@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface ReplaySnapshot {
   at: number;
