@@ -11,6 +11,7 @@ import { useCoachingIntelligence, type CoachingTarget } from "@/hooks/useCoachin
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { CoachingOpportunityPanel } from "./opportunities/CoachingOpportunityPanel";
+import { SkillGapAnalyzerPanel } from "./skills/SkillGapAnalyzerPanel";
 
 const PRIORITY_STYLES: Record<CoachingTarget["priority"], { border: string; badge: "destructive" | "default" | "secondary"; label: string; icon: typeof AlertTriangle }> = {
   critical: { border: "border-l-4 border-l-destructive", badge: "destructive", label: "Crítico", icon: AlertTriangle },
