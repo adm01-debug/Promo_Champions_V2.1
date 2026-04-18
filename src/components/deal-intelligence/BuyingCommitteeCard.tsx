@@ -9,6 +9,8 @@ import { useCommitteeCoverage, useRecalculateCoverage } from "@/hooks/deal-intel
 import { CommitteeCoverageRing } from "./CommitteeCoverageRing";
 import { StakeholderListItem } from "./StakeholderListItem";
 import { StakeholderFormDialog } from "./StakeholderFormDialog";
+import { CommitteeCoverageSparkline } from "./committee/CommitteeCoverageSparkline";
+import { RoleCoverageMatrix } from "./committee/RoleCoverageMatrix";
 import { dmuRoleLabel, tierBadgeClass, tierLabel, type DMURole } from "./committeeHelpers";
 
 interface Props {
@@ -91,6 +93,9 @@ export function BuyingCommitteeCard({ saleId, ownerId, latestRecordingId }: Prop
             ))}
           </div>
         )}
+
+        <CommitteeCoverageSparkline saleId={saleId} />
+        <RoleCoverageMatrix saleId={saleId} />
 
         {/* Action buttons */}
         <div className="flex flex-wrap gap-2">

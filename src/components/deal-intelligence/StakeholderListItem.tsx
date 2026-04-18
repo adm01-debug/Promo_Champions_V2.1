@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Sparkles, Mail, Phone } from "lucide-react";
 import { DMURoleBadge } from "./DMURoleBadge";
+import { CommitteeExtractionBadge } from "./committee/CommitteeExtractionBadge";
 import {
   influenceLabel, sentimentColor, sentimentLabel, initials,
 } from "./committeeHelpers";
@@ -28,6 +29,9 @@ export function StakeholderListItem({ stakeholder: s, onEdit, onDelete }: Props)
           <span className="font-medium text-sm truncate">{s.name}</span>
           {s.source === "ai_extracted" && (
             <Sparkles className="h-3 w-3 text-primary shrink-0" aria-label="Extraído por IA" />
+          )}
+          {s.source === "call" && (
+            <CommitteeExtractionBadge evidenceQuote={s.evidence_quote} confidence={s.confidence} />
           )}
         </div>
         {s.role_title && <p className="text-xs text-muted-foreground truncate">{s.role_title}</p>}
