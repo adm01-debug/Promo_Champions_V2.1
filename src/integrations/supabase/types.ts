@@ -4747,6 +4747,54 @@ export type Database = {
           },
         ]
       }
+      forecast_deal_contributions: {
+        Row: {
+          category: string
+          created_at: string
+          forecast_id: string
+          id: string
+          probability: number
+          reasoning: string | null
+          sale_id: string
+          weighted_amount: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          forecast_id: string
+          id?: string
+          probability?: number
+          reasoning?: string | null
+          sale_id: string
+          weighted_amount?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          forecast_id?: string
+          id?: string
+          probability?: number
+          reasoning?: string | null
+          sale_id?: string
+          weighted_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forecast_deal_contributions_forecast_id_fkey"
+            columns: ["forecast_id"]
+            isOneToOne: false
+            referencedRelation: "revenue_forecasts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forecast_deal_contributions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geo_access_logs: {
         Row: {
           attempted_path: string | null
@@ -7725,6 +7773,87 @@ export type Database = {
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      revenue_forecasts: {
+        Row: {
+          ai_summary: string | null
+          best_case_amount: number
+          calculated_at: string
+          commit_amount: number
+          confidence_score: number
+          created_at: string
+          deals_count: number
+          factors: Json
+          gap_to_goal: number
+          goal_amount: number
+          id: string
+          model_version: string | null
+          owner_id: string | null
+          period_end: string
+          period_start: string
+          period_type: string
+          updated_at: string
+          upside_amount: number
+          weighted_pipeline: number
+        }
+        Insert: {
+          ai_summary?: string | null
+          best_case_amount?: number
+          calculated_at?: string
+          commit_amount?: number
+          confidence_score?: number
+          created_at?: string
+          deals_count?: number
+          factors?: Json
+          gap_to_goal?: number
+          goal_amount?: number
+          id?: string
+          model_version?: string | null
+          owner_id?: string | null
+          period_end: string
+          period_start: string
+          period_type: string
+          updated_at?: string
+          upside_amount?: number
+          weighted_pipeline?: number
+        }
+        Update: {
+          ai_summary?: string | null
+          best_case_amount?: number
+          calculated_at?: string
+          commit_amount?: number
+          confidence_score?: number
+          created_at?: string
+          deals_count?: number
+          factors?: Json
+          gap_to_goal?: number
+          goal_amount?: number
+          id?: string
+          model_version?: string | null
+          owner_id?: string | null
+          period_end?: string
+          period_start?: string
+          period_type?: string
+          updated_at?: string
+          upside_amount?: number
+          weighted_pipeline?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenue_forecasts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revenue_forecasts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
             referencedColumns: ["id"]
           },
         ]
