@@ -902,8 +902,8 @@ export function RaceArena({
         overtakesTotal={overtakesTotal}
       />
 
-      {/* ===== Próxima curva HUD (canto inferior direito, acima do Replay) ===== */}
-      <NextCornerHUD info={nextCornerInfo} />
+      {/* ===== Próxima curva HUD — gateado em modo focus ===== */}
+      {!viewMode.isFocus && <NextCornerHUD info={nextCornerInfo} />}
 
       {/* ===== Indicador "FASTEST SECTOR" piscando (topo central abaixo do Lap) ===== */}
       {flashSectorIdx !== null && !reducedMotion && (
@@ -922,17 +922,19 @@ export function RaceArena({
       )}
 
 
-      {/* ===== Speed HUD do líder (canto inferior esquerdo, ao lado do MiniMap) ===== */}
-      <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
+      {/* ===== Speed HUD — gateado em modo focus ===== */}
+      {!viewMode.isFocus && (
+        <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
+      )}
 
       {/* ===== Mini-mapa do circuito ===== */}
       <RaceMiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
-      {/* ===== Lap counter LED-style (ao lado do MiniMap) ===== */}
-      <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />
+      {/* ===== Lap counter LED-style — gateado em focus (já existe LAP HUD top-center) ===== */}
+      {!viewMode.isFocus && <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />}
 
-      {/* ===== Ticker de eventos ao vivo (abaixo do LAP HUD top-center) ===== */}
-      <RaceEventTicker events={tickerEvents} />
+      {/* ===== Ticker de eventos ao vivo — gateado por viewMode ===== */}
+      {viewMode.showTicker && <RaceEventTicker events={tickerEvents} />}
 
       {/* ===== Timing tower expandido (top 5 com gaps + delta colorido) ===== */}
       {top5.length > 0 && (
@@ -998,8 +1000,8 @@ export function RaceArena({
         </div>
       )}
 
-      {/* ===== Comentarista IA (broadcast subtitle) ===== */}
-      <CommentaryBubble line={commentary} />
+      {/* ===== Comentarista IA — gateado por viewMode ===== */}
+      {viewMode.showCommentary && <CommentaryBubble line={commentary} />}
 
       {/* ===== Replay button ===== */}
       <ReplayButton
@@ -1081,8 +1083,8 @@ export function RaceArena({
         return <PitLane count={pitStopCars.size} pilotName={pilot?.salesperson_name?.split(' ')[0]} />;
       })()}
 
-      {/* ===== Telemetria do piloto logado ===== */}
-      {telemetry && (
+      {/* ===== Telemetria do piloto logado — só fora do focus ===== */}
+      {telemetry && viewMode.showFullTelemetry && (
         <MyTelemetryPanel
           avgDealsPerDay={telemetry.avgDealsPerDay}
           bestLap={telemetry.bestLap}
@@ -1093,8 +1095,8 @@ export function RaceArena({
         />
       )}
 
-      {/* ===== Lower-third broadcast TV ===== */}
-      <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />
+      {/* ===== Lower-third broadcast TV — gateado por viewMode ===== */}
+      {viewMode.showBroadcast && <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />}
 
       {/* ===== Easter eggs (konami + fogos overlay quando finale) ===== */}
       <RaceEasterEggs showFireworks={showFireworks} />
