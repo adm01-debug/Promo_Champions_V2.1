@@ -4,7 +4,9 @@ import { Progress } from '@/components/ui/progress';
 import { Trophy, Medal, Award, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import { useRacePredictions } from '@/hooks/race/useRacePredictions';
 import { NextGoalPanel } from './NextGoalPanel';
+import { PredictedRankBadge } from './PredictedRankBadge';
 
 interface Props {
   entries: RaceLeaderboardEntry[];
@@ -26,6 +28,7 @@ function fmt(n: number) {
 
 export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespersonId, seasonStart, seasonEnd }: Props) {
   const leader = entries[0];
+  const predictions = useRacePredictions(entries, { start_date: seasonStart, end_date: seasonEnd });
 
   return (
     <Card className="h-full flex flex-col">
@@ -77,9 +80,12 @@ export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespe
                   <AvatarFallback>{e.salesperson_name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline">
+                  <div className="flex justify-between items-baseline gap-1">
                     <p className="text-sm font-semibold truncate">{e.salesperson_name}</p>
-                    <span className="text-xs text-muted-foreground tabular-nums">{Math.round(Number(e.progress) * 100)}%</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <PredictedRankBadge prediction={predictions.get(e.salesperson_id)} />
+                      <span className="text-xs text-muted-foreground tabular-nums">{Math.round(Number(e.progress) * 100)}%</span>
+                    </div>
                   </div>
                   <Progress value={Number(e.progress) * 100} className="h-1.5 mt-1" />
                   <div className="flex justify-between mt-0.5">

@@ -6,7 +6,9 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { cn } from '@/lib/utils';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 import { useNextGoal } from '@/hooks/race/useNextGoal';
+import { useRacePredictions } from '@/hooks/race/useRacePredictions';
 import { ComboStreakBadge } from './ComboStreakBadge';
+import { PredictedRankBadge } from './PredictedRankBadge';
 
 interface Props {
   entries: RaceLeaderboardEntry[];
@@ -32,6 +34,8 @@ export function NextGoalPanel({
   seasonEnd,
 }: Props) {
   const goal = useNextGoal(entries, currentUserSalespersonId, goalAmount);
+  const predictions = useRacePredictions(entries, { start_date: seasonStart, end_date: seasonEnd });
+  const myPrediction = currentUserSalespersonId ? predictions.get(currentUserSalespersonId) : undefined;
   const animatedGap = useCountUp(goal.gapAmount, { duration: 900 });
   const animatedSeason = useCountUp(goal.seasonProgress, { duration: 900, decimals: 1 });
 
@@ -82,6 +86,7 @@ export function NextGoalPanel({
               seasonEnd={seasonEnd}
               compact
             />
+            <PredictedRankBadge prediction={myPrediction} />
             <span className="text-[10px] font-bold tabular-nums text-primary">
               {goal.me?.rank ? `P${goal.me.rank}` : ''}
             </span>
