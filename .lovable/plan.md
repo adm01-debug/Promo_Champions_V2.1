@@ -1,64 +1,53 @@
 
-**Bloco Deal Intelligence — item 3/4: Deal Velocity Predictor**
+**Bloco Deal Intelligence — item 4/4 (último): Stage Conversion Optimizer**
 
-Próxima atômica: prever **quanto tempo cada deal aberto vai levar até fechar** (won ou lost) com base em histórico de velocidade por estágio, tamanho do deal, saúde, cobertura de comitê e sinais de calls — para vendedor/gestor anteciparem forecast e priorizarem deals que realmente vão fechar no período.
+Próxima atômica: revelar **gargalos de conversão entre estágios do funil** com taxas reais (`stage A → B`), tempo médio de transição, motivos de perda agregados por estágio e **recomendações de IA** para destravar cada gargalo — fechando o bloco Deal Intelligence em 10/10.
 
 ## Estado atual
-- `sales` tem `created_at`, `updated_at`, `stage`, mas sem cálculo de tempo médio por estágio nem ETA de fechamento.
-- `deal_health_scores` (item 1/4) e `deal_committee_coverage` (item 2/4) já fornecem sinais ricos não usados em forecast.
-- `Analytics > Deal Velocity` mostra média histórica agregada, mas não gera previsão por deal individual.
-- Sem comparação "este deal está X dias acima da média do estágio", sem confidence interval, sem alerta de deals "presos".
+- `deal_stage_history` registra entradas/saídas mas nunca é cruzado para calcular conversão.
+- `Analytics > Conversion Analysis` mostra funil estático sem comparação temporal nem benchmark por owner.
+- `stage_velocity_baselines` (3/4) já tem tempo médio — falta cruzar com taxa de conversão.
+- Sem "este estágio perde 60% dos deals — eis o motivo top + ação recomendada".
 
 ## Mudanças
 
 ### 1. Migration
-- Tabela `deal_velocity_predictions`: `id`, `sale_id` UNIQUE FK, `owner_id`, `predicted_close_date date`, `predicted_days_remaining int`, `confidence_score int 0-100`, `confidence_tier` (`low|medium|high`), `velocity_status` (`ahead|on_track|slow|stalled`), `current_stage`, `days_in_stage int`, `expected_days_in_stage int`, `stage_velocity_ratio numeric`, `factors jsonb` (drivers + brakes), `model_version text`, `calculated_at`, `created_at`, `updated_at`. Index `(owner_id, velocity_status)`.
-- Tabela `stage_velocity_baselines`: `id`, `stage`, `owner_id` (nullable = global), `avg_days numeric`, `median_days numeric`, `p75_days numeric`, `sample_size int`, `calculated_at`. Refresh por job/manual.
-- RLS padrão (próprios + manager/admin).
-- Realtime em ambas.
+- Tabela `stage_conversion_metrics`: `id`, `from_stage`, `to_stage`, `owner_id` (nullable=global), `entered_count int`, `converted_count int`, `lost_count int`, `conversion_rate numeric`, `avg_transition_days numeric`, `period_start date`, `period_end date`, `calculated_at`. Unique `(from_stage, to_stage, owner_id, period_start)`.
+- Tabela `stage_bottleneck_insights`: `id`, `stage`, `owner_id` (nullable), `severity` (`low|medium|high|critical`), `conversion_rate numeric`, `top_loss_reasons jsonb`, `recommendations jsonb`, `ai_summary text`, `calculated_at`. Unique `(stage, owner_id)`.
+- RLS padrão + realtime.
 
-### 2. Edge function `predict-deal-velocity` (`verify_jwt = true`)
-- Input: `{ sale_id }` ou `{ batch: true }`.
-- Lê: sale + health_score + coverage + baselines do estágio + sinais de critical_moments.
-- Lovable AI (`google/gemini-2.5-flash`) com tool calling: `{predicted_days_remaining, confidence_score, velocity_status, factors[]}`.
-- Fallback heurístico robusto se IA falhar (usa baselines + dias parado).
-- Upsert idempotente em `deal_velocity_predictions`.
+### 2. Edge function `analyze-stage-conversion` (`verify_jwt = true`)
+- Input: `{ owner_id?, days?: 90 }`.
+- Calcula transições reais cruzando `deal_stage_history` (last 90d): para cada `from_stage`, conta deals que avançaram vs. perdidos.
+- Lê `lost_reasons` em sales fechadas como lost para agrupar top motivos por estágio.
+- Lovable AI (`google/gemini-2.5-flash`) com tool calling: retorna `severity`, `recommendations[]` (3-5 ações táticas), `ai_summary` curto.
+- Upsert em ambas as tabelas; auto-chain após `refresh-stage-baselines`.
 
-### 3. Edge function `refresh-stage-baselines` (`verify_jwt = true`)
-- Calcula avg/median/p75 dias por estágio com base em deals fechados (won/lost) dos últimos 90 dias, global e por owner.
-- Upsert em `stage_velocity_baselines`.
+### 3. Hooks `src/hooks/deal-intelligence/`
+- `useStageConversion(ownerId?)` — query funil completo + realtime.
+- `useStageBottlenecks(ownerId?)` — insights por estágio.
+- `useAnalyzeStageConversion()` — mutation (refresh).
 
-### 4. Hooks `src/hooks/deal-intelligence/`
-- `useDealVelocity(saleId)` — query individual + realtime.
-- `useDealVelocityBatch(filters)` — lista filtrada por status.
-- `usePredictVelocity()` — single ou batch mutation.
-- `useStageBaselines()` — leitura + refresh mutation.
+### 4. UI — `src/components/deal-intelligence/`
+- `ConversionFunnelChart.tsx` (≤180L) — funil visual Recharts horizontal com taxas e perdas por estágio (cores semânticas por severity).
+- `StageBottleneckCard.tsx` (≤200L) — card por estágio: severity badge, taxa, top 3 loss reasons, recomendações IA acionáveis.
+- `ConversionOptimizerPanel.tsx` (≤160L) — wrapper com header + botão "Recalcular" + grid de cards.
+- `conversionHelpers.ts` — labels PT-BR, cores por severity, formatadores.
+- **Integração**: nova aba "Otimizador de Conversão" em `/deal-intelligence` (4ª aba). Mini-link no `StageBaselinesPanel` para "ver gargalos".
 
-### 5. UI — `src/components/deal-intelligence/`
-- `DealVelocityCard.tsx` (≤220L) — card com ETA, days remaining, confidence ring, status badge, comparação com baseline do estágio.
-- `VelocityStatusBadge.tsx` (≤80L) — pill colorida (`ahead/on_track/slow/stalled`).
-- `VelocityForecastTimeline.tsx` (≤140L) — linha visual mostrando passado (dias decorridos por estágio) + futuro previsto até close.
-- `StageBaselinesPanel.tsx` (≤160L) — admin panel com baselines globais, refresh manual.
-- `velocityHelpers.ts` — labels PT-BR, cores, formatadores de dias/datas.
-- **Integração**:
-  - `DealHealthCard.tsx`: mini-indicador "Fecha em ~X dias" no rodapé.
-  - `BuyingCommitteeCard.tsx`: ícone de velocidade no header.
-  - Página `/deal-intelligence`: nova aba "Velocidade & Forecast" com tabela de deals priorizada por confidence × valor.
-  - `KanbanCard`: badge ETA inline (compacto).
+### 5. Configuração
+- `supabase/config.toml`: `[functions.analyze-stage-conversion] verify_jwt = true`.
 
-### 6. Configuração
-- `supabase/config.toml`: `[functions.predict-deal-velocity]` e `[functions.refresh-stage-baselines]` com `verify_jwt = true`.
-
-### 7. Validação
-- `supabase--curl_edge_functions /predict-deal-velocity` em sale real → confirma row + ETA coerente.
+### 6. Validação
+- `supabase--deploy_edge_functions` + `curl_edge_functions /analyze-stage-conversion`.
 - `supabase--linter` zero novos warnings.
-- Card aparece e badges são consistentes.
+- Aba renderiza funil + cards de gargalo com recomendações.
 
 ## Arquivos
 - **Migration**: 1 (2 tabelas + RLS + realtime)
-- **Criar**: `supabase/functions/predict-deal-velocity/index.ts`, `supabase/functions/refresh-stage-baselines/index.ts`
-- **Criar**: `src/hooks/deal-intelligence/useDealVelocity.ts`, `useStageBaselines.ts`
-- **Criar**: 5 componentes/helpers em `src/components/deal-intelligence/`
-- **Editar**: `DealHealthCard.tsx`, `BuyingCommitteeCard.tsx`, `src/pages/DealIntelligence.tsx` (nova aba), `KanbanCard` (ou equivalente), `supabase/config.toml`
+- **Criar**: `supabase/functions/analyze-stage-conversion/index.ts`
+- **Criar**: `src/hooks/deal-intelligence/useStageConversion.ts`
+- **Criar**: 4 componentes/helpers em `src/components/deal-intelligence/`
+- **Editar**: `src/pages/DealIntelligence.tsx` (4ª aba), `StageBaselinesPanel.tsx` (link), `supabase/config.toml`
 
-Após esta entrega, sigo automaticamente para 4/4: **Stage Conversion Optimizer**, fechando o bloco Deal Intelligence em 10/10.
+Após esta entrega, **Deal Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do `GAPS_CLASSE_MUNDIAL.md`.
