@@ -246,11 +246,9 @@ export function RaceArena({
           transformOrigin: leaderPos
             ? `${(leaderPos.x / TRACK_VIEWBOX.width) * 100}% ${(leaderPos.y / TRACK_VIEWBOX.height) * 100}%`
             : '50% 50%',
-          ...(reducedMotion
-            ? null
-            : {
-                animation: 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
-              }),
+          animation: reducedMotion
+            ? undefined
+            : 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
         }}
       >
       <RaceTrack>
