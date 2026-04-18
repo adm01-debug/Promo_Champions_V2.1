@@ -1,42 +1,45 @@
 
-Race Arena 2.0 entregue. Próximo bloco rumo a 10/10: **Revenue Forecast Intelligence** — módulo de previsão de receita com IA que combina pipeline atual, histórico de conversão e sazonalidade.
+Revenue Forecast Intelligence entregue. Próximo bloco rumo a 10/10: **Deal Health Scoring** — score 0-100 por deal aberto combinando sinais de engajamento, velocidade no pipeline, valor vs ticket médio e estagnação, com explicação dos fatores e recomendações.
 
-## Revenue Forecast Intelligence
+## Deal Health Scoring
 
 ### Conceito
-Painel executivo que projeta receita dos próximos 30/60/90 dias usando: deals abertos × probabilidade IA, velocidade média do pipeline, sazonalidade histórica e meta da equipe. Mostra cenários (pessimista/realista/otimista) e gap vs. meta.
+Cada deal aberto recebe um score de saúde 0-100 (Crítico/Em Risco/Saudável/Excelente) calculado por edge function que pesa: dias no estágio atual vs benchmark, última atividade registrada, número de stakeholders, valor do deal vs ticket médio do vendedor, probabilidade de conversão histórica do estágio. O sistema explica o porquê de cada score com fatores positivos/negativos e sugere a próxima ação.
 
 ### Backend
-**Migration** — view `revenue_forecast_view`:
-- Agrega deals abertos por estágio × probabilidade média de fechamento
-- Calcula velocidade média (dias/estágio) dos últimos 90 dias
-- Projeta fechamentos esperados em janelas de 30/60/90d
-- Compara com meta mensal/trimestral
+**Migration** — tabela `deal_health_scores`:
+- `id`, `deal_id` (FK sales), `score` (0-100), `health` (`critical`|`at_risk`|`healthy`|`excellent`), `factors` (jsonb com breakdown), `recommendation` (text), `calculated_at`
+- Índices em `deal_id`, `health`, `calculated_at`
+- RLS: vendedor vê apenas seus próprios; gestor/admin vê tudo
+- View `deal_health_summary_view`: agrega contagem por health × salesperson + score médio
 
-**Edge function `revenue-forecast-ai`**:
-- Recebe horizonte (30/60/90) e role_type opcional
-- Busca dados da view + histórico de 12 meses
-- Chama Lovable AI (gemini-2.5-flash) para gerar 3 cenários + insights narrativos
-- Retorna `{ scenarios: {pessimistic, realistic, optimistic}, narrative, risks[], opportunities[] }`
+**Edge function `deal-health-scorer`**:
+- Aceita `deal_id` (single) ou `recompute_all=true`
+- Para cada deal aberto: busca atividades 30d, idade no estágio, ticket médio do vendedor (90d), benchmark do estágio
+- Calcula score ponderado (40% atividade recente, 25% velocidade vs benchmark, 20% engajamento/stakeholders, 15% valor vs ticket)
+- Chama Lovable AI (gemini-2.5-flash) APENAS para gerar `recommendation` quando score < 60 (otimização de custo)
+- Upsert em `deal_health_scores`
 
-### Frontend (`src/components/forecast/`)
-- `RevenueForecastHub.tsx` (≤300L): hub principal com seletor de horizonte, cards de cenários, gráfico recharts (área empilhada projeção × meta)
-- `ScenarioCard.tsx`: card por cenário com valor projetado, delta vs meta, confidence score
-- `ForecastNarrativeCard.tsx`: insights de IA (riscos + oportunidades) com badges semânticos
-- `PipelineContributionChart.tsx`: barras horizontais mostrando contribuição esperada por estágio
-- `forecastHelpers.ts`: formatters, color tokens por cenário, confidence calculator
-- Hook `useRevenueForecast.ts` (React Query)
+**Cron** (opcional, pg_cron): recompute diário às 6am.
+
+### Frontend (`src/components/deal-intelligence/health/`)
+- `DealHealthHub.tsx` (≤300L): hub com 4 KPI cards (count por health), gráfico donut de distribuição, tabela ordenável de deals críticos
+- `HealthScoreBadge.tsx`: badge colorido reutilizável (vermelho/laranja/azul/verde)
+- `DealHealthCard.tsx`: card por deal com score ring, breakdown de fatores, recomendação IA
+- `HealthDistributionChart.tsx`: donut recharts por status de saúde
+- `healthHelpers.ts`: classify, color tokens, label maps
+- Hook `useDealHealthScores.ts` (React Query) + `useRecomputeDealHealth.ts` (mutation)
 
 ### Integração
-- Nova entrada de menu "Forecast" em Analytics
-- Card resumo "Forecast 30d" no Dashboard executivo
+- Nova tab "Saúde dos Deals" no `RevenueIntelligenceHub`
+- `HealthScoreBadge` exibido inline nos cards do Kanban e na lista de Sales
 
 ### Arquivos
-- Migration: view `revenue_forecast_view`
-- Edge: `supabase/functions/revenue-forecast-ai/index.ts`
-- Hook: `src/hooks/forecast/useRevenueForecast.ts`
-- Componentes: 4 em `src/components/forecast/`
-- Helpers: `forecastHelpers.ts`
-- Editar: navegação Analytics + dashboard
+- Migration: tabela `deal_health_scores` + view + RLS + índices
+- Edge: `supabase/functions/deal-health-scorer/index.ts`
+- Hooks: 2 em `src/hooks/deal-intelligence/`
+- Componentes: 4 em `src/components/deal-intelligence/health/`
+- Helpers: `healthHelpers.ts`
+- Editar: `RevenueIntelligenceHub.tsx`, card do Kanban (badge inline opcional)
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, recharts tipado.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L por arquivo, strict TS, recharts tipado, RLS com `has_role`.
