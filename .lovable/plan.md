@@ -1,70 +1,45 @@
 
-Conversation Intelligence entregue (Fase 9/10). Bloco final rumo a 10/10: **Pipeline Health Command Center** — painel executivo unificado que consolida em uma única tela todos os sinais críticos do pipeline com alertas proativos, drill-down e ações rápidas.
+Meta 10/10 do roadmap original foi alcançada (Fases 1-10 entregues: Deal Health, Win/Loss, Forecast, Routing, Conversation Intelligence, Pipeline Pulse Command Center). Para continuar evoluindo rumo à perfeição absoluta, próximo bloco: **Executive Briefing AI** — relatório executivo diário gerado por IA, entregue automaticamente.
 
-## Pipeline Health Command Center (Fase 10/10)
+## Executive Briefing AI (Fase 11 — Bonus Excellence)
 
 ### Conceito
-Tela única "modo guerra" para gestor/admin abrir todo dia: status global do pipeline em tempo real combinando Deal Health, Win/Loss, Forecast, Routing, Conversation Intelligence e Coaching. Mostra o que está pegando fogo, o que está em risco e onde agir agora — com 1 clique para drill-down em cada módulo.
-
-### Estrutura
-
-**Header — Pulse Bar**
-- Score global de saúde do pipeline (0-100, animado)
-- Tendência 7d (sparkline)
-- Badge de status: Saudável / Atenção / Crítico
-
-**Grid de KPIs (6 cards)**
-- Pipeline Total (R$) + Δ 30d
-- Forecast 30d (IA) + confiança
-- Deals Críticos (count + valor exposto)
-- Win Rate 30d + tendência
-- Sentimento médio das conversas
-- Capacidade do time (% utilização)
-
-**Coluna esquerda — Critical Alerts Feed**
-- Lista priorizada de até 8 alertas IA agregando todos os módulos:
-  - Deals com Health Score < 40 e ticket alto
-  - Concorrentes ganhando >50% nas últimas semanas (Win/Loss)
-  - Vendedores saturados (Routing) ou sem aceitar leads
-  - Calls com sentimento negativo recente (Conversation)
-  - Forecast caindo > 15% vs ciclo anterior
-- Cada alerta: severidade, módulo origem, ação sugerida, botão "Abrir"
-
-**Coluna direita — Quick Actions Panel**
-- "Recomputar Health Scores" (chama edge existente)
-- "Rotear leads pendentes" (auto-route batch)
-- "Gerar forecast atualizado"
-- "Analisar últimas calls" (atalho)
-- Status de última execução de cada job
-
-**Bottom — Mini Module Drill Cards**
-- 4 mini-cards (Health, Win/Loss, Forecast, Routing) com 1 chart compacto e botão "Abrir hub completo"
+Todo dia às 7h (ou sob demanda), a IA gera um briefing executivo de 1 página combinando dados do Pipeline Pulse, alertas críticos, top 3 oportunidades, top 3 riscos e 3 ações recomendadas para o dia. Entregue no app (com histórico) e opcionalmente por e-mail.
 
 ### Backend
-- Sem nova tabela; orquestra dados existentes
-- Edge function `pipeline-pulse-aggregator`: agrega em paralelo (Promise.all) métricas de `deal_health_scores`, `win_loss_summary_view`, `revenue_forecast_view`, `routing_performance_view`, `conversation_insights_summary` → retorna payload único `{ pulse_score, kpis, alerts, trends }`
-- Cálculo do `pulse_score` no servidor: média ponderada (Health 30% + Forecast 25% + Win Rate 20% + Routing 15% + Sentiment 10%)
+**Migration** — tabela `executive_briefings`:
+- `id`, `briefing_date`, `pulse_score`, `headline` (text), `key_wins` (jsonb[]), `key_risks` (jsonb[]), `recommended_actions` (jsonb[]), `narrative` (text — markdown), `generated_by` (`auto`|`manual`), `created_at`
+- Índices em `briefing_date desc`, RLS: gestor/admin leem todos; vendedor lê apenas briefings públicos do time
+- View `latest_briefing_view` retorna o mais recente
 
-### Frontend (`src/components/pipeline-pulse/`)
-- `PipelinePulseHub.tsx` (≤300L): orquestrador com header + grid + colunas
-- `PulseScoreHeader.tsx`: gauge animado com score global + sparkline
-- `PulseKpiGrid.tsx`: 6 KPI cards memoizados
-- `CriticalAlertsFeed.tsx`: feed priorizado com filtro por módulo
-- `QuickActionsPanel.tsx`: ações com loading states e timestamp da última run
-- `ModuleDrillCards.tsx`: 4 mini-cards de navegação rápida
-- `pulseHelpers.ts`: score classifier, alert severity sorter, color tokens
-- Hooks: `usePipelinePulse.ts` (query agregada), `useQuickAction.ts` (mutation genérica)
+**Edge function `generate-executive-briefing`**:
+- Chama internamente `pipeline-pulse-aggregator` para snapshot do dia
+- Envia payload + contexto histórico (últimos 7 dias) para Lovable AI (gemini-2.5-pro para narrativa de qualidade)
+- Prompt estruturado retorna JSON: headline, narrative (markdown 4-6 parágrafos), wins[], risks[], actions[]
+- Persiste em `executive_briefings`
+
+**Cron job opcional**: agenda diária via `pg_cron` chamando a edge function às 7h America/Sao_Paulo
+
+### Frontend (`src/components/executive-briefing/`)
+- `BriefingHub.tsx` (≤300L): página com briefing do dia + histórico lateral
+- `BriefingCard.tsx`: card hero com headline, score, data e CTA "Ler completo"
+- `BriefingNarrative.tsx`: render markdown da narrativa com tipografia Sora/Inter
+- `BriefingActionsList.tsx`: 3 ações recomendadas com checkbox e link de drill-down
+- `BriefingHistoryRail.tsx`: timeline lateral dos últimos 14 briefings
+- `briefingHelpers.ts`: formatters, markdown sanitizer, tone tokens
+- Hooks: `useLatestBriefing.ts`, `useBriefingHistory.ts`, `useGenerateBriefing.ts` (mutation)
 
 ### Integração
-- Nova rota `/comando` (ou tab "Comando" no `RevenueIntelligenceHub`)
-- Card resumo "Pulso do Pipeline" no Dashboard executivo (chip de score + 3 alertas top)
-- Atalho no menu Admin
+- Nova tab "Briefing Diário" como primeira no `RevenueIntelligenceHub`
+- Card resumo no Dashboard executivo (headline + score + botão "Abrir briefing")
+- Botão "Gerar agora" para admin/gestor (idempotente por data)
 
 ### Arquivos
-- Edge: `supabase/functions/pipeline-pulse-aggregator/index.ts`
-- Hooks: 2 em `src/hooks/pipeline-pulse/`
-- Componentes: 6 em `src/components/pipeline-pulse/`
-- Helpers: `pulseHelpers.ts`
-- Editar: `RevenueIntelligenceHub.tsx` (nova tab "Comando" como primeira)
+- Migration: tabela + view + RLS + índices
+- Edge: `supabase/functions/generate-executive-briefing/index.ts`
+- Hooks: 3 em `src/hooks/executive-briefing/`
+- Componentes: 5 em `src/components/executive-briefing/`
+- Helpers: `briefingHelpers.ts`
+- Editar: `RevenueIntelligenceHub.tsx`
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, recharts tipado, agregação server-side em paralelo.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, RLS com `has_role`, prompt IA estruturado com JSON validado por Zod.
