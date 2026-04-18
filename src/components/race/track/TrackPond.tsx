@@ -1,10 +1,11 @@
 /**
- * Lago decorativo orgânico no infield (centro-baixo do oval),
+ * Lago decorativo orgânico no infield (centro do oval vertical),
  * com pequena ilha + palmeira estilizada no centro.
+ * viewBox 600x1000 — lago centralizado em (300, 560).
  */
 export function TrackPond() {
-  const cx = 500;
-  const cy = 380;
+  const cx = 300;
+  const cy = 560;
   const d = `
     M ${cx - 95} ${cy + 10}
     C ${cx - 115} ${cy - 32}, ${cx - 40} ${cy - 55}, ${cx + 10} ${cy - 50}
