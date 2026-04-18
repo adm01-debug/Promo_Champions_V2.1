@@ -7,12 +7,15 @@ interface RaceCarProps {
   style: 'f1' | 'stock' | 'kart';
   scale?: number;
   showTrail?: boolean;
+  /** Padrão visual extra para acessibilidade (colorblind mode). */
+  pattern?: 'stripes' | 'dots' | 'checker' | null;
 }
 
 /**
  * SVG carro top-down cartoon. ViewBox local 60x30; quem usa controla translate/rotate.
  */
-export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1.1, showTrail = false }: RaceCarProps) {
+export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1.1, showTrail = false, pattern = null }: RaceCarProps) {
+  const patternFillId = pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
   const isF1 = style === 'f1';
   const isKart = style === 'kart';
   const bodyW = isF1 ? 56 : isKart ? 40 : 50;
