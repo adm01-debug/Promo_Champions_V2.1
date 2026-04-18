@@ -94,6 +94,24 @@ export function TrackDefs() {
         <stop offset="0%" stopColor="hsl(var(--race-checkered-dark))" stopOpacity="0" />
         <stop offset="100%" stopColor="hsl(var(--race-checkered-dark))" stopOpacity="0.55" />
       </linearGradient>
+
+      {/* spotlight cinematográfico que segue o líder */}
+      <radialGradient id="leaderSpotlight" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="hsl(48 100% 70%)" stopOpacity="0.28" />
+        <stop offset="55%" stopColor="hsl(48 95% 60%)" stopOpacity="0.10" />
+        <stop offset="100%" stopColor="hsl(48 95% 60%)" stopOpacity="0" />
+      </radialGradient>
+
+      {/* filtro de blur para fumaça/poeira */}
+      <filter id="dustBlur" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.4" />
+      </filter>
+
+      {/* gradient da pit lane (cinza claro com leve variação) */}
+      <linearGradient id="pitLaneGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="hsl(var(--race-asphalt))" stopOpacity="0.55" />
+        <stop offset="100%" stopColor="hsl(var(--race-asphalt))" stopOpacity="0.85" />
+      </linearGradient>
     </defs>
   );
 }
