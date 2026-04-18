@@ -165,6 +165,7 @@ export default function RaceArenaView({ roleType }: Props) {
           actions={
             <>
               <RaceSoundToggle muted={muted} onToggle={toggleMute} />
+              <RaceAudioPreferences />
               <Button onClick={() => setCountdownTrigger((t) => t + 1)} variant="outline">
                 <Rocket className="w-4 h-4 mr-2" /> Largada!
               </Button>
