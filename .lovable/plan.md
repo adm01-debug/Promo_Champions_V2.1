@@ -1,32 +1,34 @@
 
-Próxima: **Melhoria #4/20 — Transição Hub ↔ Pistas com motion shared layout**.
+Próxima: **Melhoria #5/20 — Painel "Próxima Meta" no sidebar do piloto**.
 
 ## Plano
 
 ### Problema atual
-Navegação entre o Hub da Race Arena e as pistas (Closer/SDR) é instantânea, sem transição cinematográfica. Quebra a imersão do "entrar na pista".
+O `RaceLeaderboardSidebar` mostra ranking com gap em R$, mas falta um destaque motivacional sobre o objetivo imediato do piloto logado.
 
 ### Solução
-Wrapper de transição reutilizando `PageTransition` + `AnimatePresence` com `mode="wait"`:
+Novo card `NextGoalPanel.tsx` (~180L) em `src/components/race/`, no topo da sidebar:
 
-1. **Identificar Hub e RaceArenaView**: localizar o componente Hub (provavelmente `RaceArenaHub.tsx` ou similar) e confirmar que `RaceArenaView` recebe `roleType` via rota/param.
-2. **Criar `RaceTransitionWrapper.tsx`** (~80L) em `src/components/race/`:
-   - Usa `AnimatePresence mode="wait"` com `key` derivado da rota (`hub` | `closer` | `sdr`)
-   - Animação custom: Hub → Pista = slide horizontal + zoom-in sutil (sensação de entrar na pista) com blur de saída
-   - Pista → Hub = zoom-out + fade (sensação de afastar)
-   - Respeita `prefers-reduced-motion` (fade simples como fallback)
-3. **Aplicar no router**: envolver as rotas `/race-arena`, `/race-arena/closer`, `/race-arena/sdr` com o wrapper, ou aplicar dentro do layout pai dessas rotas.
-4. **Headline animada**: no `RaceArenaHeader`, animar título com `layoutId="race-title"` para shared element transition entre Hub (cards das pistas) e Header da pista escolhida.
+**Modos dinâmicos** (baseado no piloto logado):
+1. **Caçando posição** (não-líder): mostra alvo à frente, gap em R$, % de progresso, barra com gradient `from-primary to-amber`
+2. **Defendendo P1** (líder): mostra perseguidor + gap, ícone Crown dourada, mensagem "Defenda a P1"
+3. **Meta da temporada** (sempre): % rumo ao `goal_amount` com CountUp, ETA estimado pelo ritmo dos últimos 7 dias
 
-### Arquivos
-- **Criar**: `src/components/race/RaceTransitionWrapper.tsx`
-- **Editar**: `src/routes/AppRoutes.tsx` (ou layout específico das rotas race), `src/components/race/RaceArenaHeader.tsx` (adicionar `layoutId`), `src/components/race/index.ts`
-- **Investigar primeiro**: localizar Hub atual e cards de pista para aplicar `layoutId` correspondente
+**Visual**: Sora para números grandes, Inter para labels, gradient sutil, pulse motion quando gap <5%, ícones (Target/Crown/TrendingUp/Flag), `aria-live="polite"`.
+
+### Hook auxiliar
+`useNextGoal.ts` (~80L) em `src/hooks/race/`:
+- Input: `entries`, `currentUserSalespersonId`, `goalAmount`
+- Output: `{ mode, target, gapAmount, gapPercent, seasonProgress, eta }`
+- Pure + memoizado
+
+### Integração
+- `RaceLeaderboardSidebar.tsx`: renderiza `NextGoalPanel` acima do ranking quando há `currentUserSalespersonId`
+- `RaceArenaView.tsx`: passa `currentUserSalespersonId` (resolver via `useAuth` + lookup salesperson)
+- Exportar em `src/components/race/index.ts`
 
 ### Padrões
-- Semantic tokens, framer-motion spring (stiffness 280, damping 28), ≤200L
-- `prefers-reduced-motion` honrado
-- Sem layout shift; usa `position: relative` no container
+- Semantic tokens, Sora/Inter, ≤200L, strict TS, `useMemo` no hook, skeleton se piloto fora do leaderboard
 
 ### Próximas (preview)
-#5 Painel "Próxima Meta" no sidebar → #6 Combo Streak indicator → #7 Mini-podium no header → #8 Histórico de campeões... até #20.
+#6 Combo Streak indicator → #7 Mini-podium no header → #8 Histórico de campeões → ... até #20.
