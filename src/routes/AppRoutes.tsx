@@ -73,6 +73,9 @@ export function AppRoutes() {
         {/* Public embedded report route (no layout, no auth) */}
         <Route path="/embed/report/:token" element={<EmbedReport />} />
 
+        {/* Race Arena TV — fullscreen, sem MainLayout (autenticação herdada via ProtectedRoute) */}
+        <Route path="/race-arena/tv" element={<ProtectedRoute><RaceArenaTV /></ProtectedRoute>} />
+
         {/* App routes within MainLayout */}
         <Route
           path="/*"
