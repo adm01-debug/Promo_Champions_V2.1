@@ -38,6 +38,7 @@ import {
 } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 interface RaceArenaProps {
@@ -74,6 +75,8 @@ export function RaceArena({
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
+  // Frente A — modo de visualização (default 'focus' = decluttered).
+  const viewMode = useRaceViewMode();
   const carIds = sorted.map((c) => c.car_id);
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
@@ -407,8 +410,9 @@ export function RaceArena({
     return map;
   }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
-  // ----- Timing tower (top 5 com gaps) -----
-  const top5 = sorted.slice(0, 5);
+  // ----- Timing tower: 3 em focus/immersive, 5 em competitive/analysis -----
+  const timingCount = viewMode.isFocus || viewMode.isImmersive ? 3 : 5;
+  const top5 = sorted.slice(0, timingCount);
   const leaderProgress = Number(top5[0]?.progress ?? 0);
 
   // ----- Gap line líder→2º (apenas se gap < 0.05) -----
@@ -874,19 +878,25 @@ export function RaceArena({
         />
       )}
 
-      {/* ===== LAP counter HUD (topo central) ===== */}
+      {/* ===== LAP counter HUD (topo central) — título dominante em focus ===== */}
       <div
-        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-1.5 shadow-lg"
-        style={{ background: 'hsl(var(--background) / 0.72)' }}
+        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md shadow-lg"
+        style={{
+          background: 'hsl(var(--background) / 0.78)',
+          padding: viewMode.isFocus ? '6px 14px' : '6px 12px',
+        }}
         aria-label={`Volta ${lapInfo.current} de ${lapInfo.total}`}
       >
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">
+        <div className="flex items-baseline gap-2">
+          <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
             Lap
           </span>
-          <span className="text-[15px] font-black tabular-nums text-foreground" style={{ fontFamily: 'system-ui, sans-serif' }}>
+          <span
+            className={`tabular-nums text-foreground ${viewMode.isFocus ? 'text-[18px] font-black' : 'text-[15px] font-black'}`}
+            style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '-0.02em' }}
+          >
             {lapInfo.current}
-            <span className="text-muted-foreground font-bold">/{lapInfo.total}</span>
+            <span className="text-muted-foreground/70 font-normal">/{lapInfo.total}</span>
           </span>
         </div>
       </div>
@@ -899,8 +909,8 @@ export function RaceArena({
         overtakesTotal={overtakesTotal}
       />
 
-      {/* ===== Próxima curva HUD (canto inferior direito, acima do Replay) ===== */}
-      <NextCornerHUD info={nextCornerInfo} />
+      {/* ===== Próxima curva HUD — gateado em modo focus ===== */}
+      {!viewMode.isFocus && <NextCornerHUD info={nextCornerInfo} />}
 
       {/* ===== Indicador "FASTEST SECTOR" piscando (topo central abaixo do Lap) ===== */}
       {flashSectorIdx !== null && !reducedMotion && (
@@ -919,17 +929,19 @@ export function RaceArena({
       )}
 
 
-      {/* ===== Speed HUD do líder (canto inferior esquerdo, ao lado do MiniMap) ===== */}
-      <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
+      {/* ===== Speed HUD — gateado em modo focus ===== */}
+      {!viewMode.isFocus && (
+        <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
+      )}
 
       {/* ===== Mini-mapa do circuito ===== */}
       <RaceMiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
-      {/* ===== Lap counter LED-style (ao lado do MiniMap) ===== */}
-      <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />
+      {/* ===== Lap counter LED-style — gateado em focus (já existe LAP HUD top-center) ===== */}
+      {!viewMode.isFocus && <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />}
 
-      {/* ===== Ticker de eventos ao vivo (abaixo do LAP HUD top-center) ===== */}
-      <RaceEventTicker events={tickerEvents} />
+      {/* ===== Ticker de eventos ao vivo — gateado por viewMode ===== */}
+      {viewMode.showTicker && <RaceEventTicker events={tickerEvents} />}
 
       {/* ===== Timing tower expandido (top 5 com gaps + delta colorido) ===== */}
       {top5.length > 0 && (
@@ -975,16 +987,19 @@ export function RaceArena({
                   >
                     {i + 1}
                   </span>
-                  <span className="flex-1 truncate text-[11px] font-bold text-foreground">
+                  <span className="flex-1 truncate text-[11px] font-medium text-foreground/90">
                     {c.salesperson_name?.split(' ')[0]}
                   </span>
                   <span className={`text-[9px] font-mono font-bold w-3 text-center ${deltaColor}`}>
                     {deltaIcon}
                   </span>
                   <span
-                    className={`text-[9px] font-mono font-bold tabular-nums w-12 text-right ${
-                      i === 0 ? 'text-primary' : 'text-muted-foreground'
+                    className={`font-mono tabular-nums w-12 text-right ${
+                      i === 0
+                        ? 'text-[11px] font-black text-primary'
+                        : 'text-[10px] font-bold text-muted-foreground'
                     }`}
+                    style={{ letterSpacing: '-0.02em' }}
                   >
                     {gapStr}
                   </span>
@@ -995,8 +1010,8 @@ export function RaceArena({
         </div>
       )}
 
-      {/* ===== Comentarista IA (broadcast subtitle) ===== */}
-      <CommentaryBubble line={commentary} />
+      {/* ===== Comentarista IA — gateado por viewMode ===== */}
+      {viewMode.showCommentary && <CommentaryBubble line={commentary} />}
 
       {/* ===== Replay button ===== */}
       <ReplayButton
@@ -1078,8 +1093,8 @@ export function RaceArena({
         return <PitLane count={pitStopCars.size} pilotName={pilot?.salesperson_name?.split(' ')[0]} />;
       })()}
 
-      {/* ===== Telemetria do piloto logado ===== */}
-      {telemetry && (
+      {/* ===== Telemetria do piloto logado — só fora do focus ===== */}
+      {telemetry && viewMode.showFullTelemetry && (
         <MyTelemetryPanel
           avgDealsPerDay={telemetry.avgDealsPerDay}
           bestLap={telemetry.bestLap}
@@ -1090,8 +1105,8 @@ export function RaceArena({
         />
       )}
 
-      {/* ===== Lower-third broadcast TV ===== */}
-      <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />
+      {/* ===== Lower-third broadcast TV — gateado por viewMode ===== */}
+      {viewMode.showBroadcast && <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />}
 
       {/* ===== Easter eggs (konami + fogos overlay quando finale) ===== */}
       <RaceEasterEggs showFireworks={showFireworks} />

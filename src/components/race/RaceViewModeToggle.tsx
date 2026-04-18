@@ -1,4 +1,4 @@
-import { Eye, Trophy, BarChart3 } from 'lucide-react';
+import { Target, Eye, Trophy, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { RaceViewMode } from '@/hooks/race/useRaceViewMode';
 
@@ -8,8 +8,9 @@ interface Props {
 }
 
 const OPTIONS: Array<{ value: RaceViewMode; label: string; icon: typeof Eye; hint: string }> = [
-  { value: 'immersive', label: 'Imersivo', icon: Eye, hint: 'Foco total na pista' },
-  { value: 'competitive', label: 'Competitivo', icon: Trophy, hint: 'Pista + comentários + feed' },
+  { value: 'focus', label: 'Foco', icon: Target, hint: 'Pista + top-5 + 1 KPI (default)' },
+  { value: 'immersive', label: 'Imersivo', icon: Eye, hint: 'Só pista, zero HUD lateral' },
+  { value: 'competitive', label: 'Competitivo', icon: Trophy, hint: 'Pista + comentários + broadcast' },
   { value: 'analysis', label: 'Análise', icon: BarChart3, hint: 'Tudo + métricas detalhadas' },
 ];
 

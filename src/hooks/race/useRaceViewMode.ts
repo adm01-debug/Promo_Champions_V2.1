@@ -1,21 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export type RaceViewMode = 'immersive' | 'competitive' | 'analysis';
+export type RaceViewMode = 'focus' | 'immersive' | 'competitive' | 'analysis';
 
 const STORAGE_KEY = 'race_view_mode';
-const DEFAULT_MODE: RaceViewMode = 'competitive';
+/** Default mudou para 'focus' (Frente A — decluttering). */
+const DEFAULT_MODE: RaceViewMode = 'focus';
 
 function read(): RaceViewMode {
   if (typeof window === 'undefined') return DEFAULT_MODE;
   const v = window.localStorage.getItem(STORAGE_KEY);
-  return v === 'immersive' || v === 'competitive' || v === 'analysis' ? v : DEFAULT_MODE;
+  if (v === 'focus' || v === 'immersive' || v === 'competitive' || v === 'analysis') return v;
+  return DEFAULT_MODE;
 }
 
 /**
  * Hook persistente para o modo de visualização da Race Arena.
- * - immersive: só pista + leaderboard mínimo
- * - competitive: + commentary + feed + podium
- * - analysis: + score breakdown + predicted rank
+ * - focus (default): pista + leaderboard top-5 + 1 KPI pessoal. Zero ruído.
+ * - immersive: foco total na pista (sem timing tower lateral).
+ * - competitive: + commentary + ticker + broadcast + podium.
+ * - analysis: tudo + score breakdown + predicted rank.
  */
 export function useRaceViewMode() {
   const [mode, setModeState] = useState<RaceViewMode>(read);
@@ -25,7 +28,6 @@ export function useRaceViewMode() {
     try { window.localStorage.setItem(STORAGE_KEY, next); } catch { /* noop */ }
   }, []);
 
-  // sincroniza entre abas
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && e.newValue) setModeState(read());
@@ -37,11 +39,20 @@ export function useRaceViewMode() {
   return {
     mode,
     setMode,
+    isFocus: mode === 'focus',
     isImmersive: mode === 'immersive',
     isCompetitive: mode === 'competitive',
     isAnalysis: mode === 'analysis',
-    showCommentary: mode !== 'immersive',
-    showFeed: mode !== 'immersive',
+    /** Comentário/ticker/broadcast só aparecem fora do focus e immersive. */
+    showCommentary: mode === 'competitive' || mode === 'analysis',
+    showTicker: mode === 'competitive' || mode === 'analysis',
+    showBroadcast: mode === 'competitive' || mode === 'analysis',
+    /** Feed lateral (mantido p/ compat). */
+    showFeed: mode !== 'immersive' && mode !== 'focus',
     showScoreBreakdown: mode === 'analysis',
+    /** Telemetria detalhada. Em focus, mostramos apenas 1 KPI dominante. */
+    showFullTelemetry: mode === 'analysis' || mode === 'competitive',
+    /** Live timing tower (top-5 com gaps). Em focus virá compacta. */
+    showFullTimingTower: mode !== 'immersive',
   } as const;
 }
