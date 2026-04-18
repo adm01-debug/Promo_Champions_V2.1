@@ -2,6 +2,7 @@ export { RaceArena } from './RaceArena';
 export { RaceTrack } from './RaceTrack';
 export { RaceCar } from './RaceCar';
 export { RaceLeaderboardSidebar } from './RaceLeaderboardSidebar';
+export { NextGoalPanel } from './NextGoalPanel';
 export { RaceEventFeed } from './RaceEventFeed';
 export { FloatingEventFeed } from './FloatingEventFeed';
 export { CarCustomizer } from './CarCustomizer';
