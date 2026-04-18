@@ -113,7 +113,7 @@ export const RaceArenaHeader: FC<Props> = ({
                     </span>
                   </Badge>
                 )}
-              </h1>
+              </motion.h1>
               {subtitle && (
                 <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
               )}
