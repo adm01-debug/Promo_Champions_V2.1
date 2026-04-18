@@ -878,19 +878,25 @@ export function RaceArena({
         />
       )}
 
-      {/* ===== LAP counter HUD (topo central) ===== */}
+      {/* ===== LAP counter HUD (topo central) — título dominante em focus ===== */}
       <div
-        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-1.5 shadow-lg"
-        style={{ background: 'hsl(var(--background) / 0.72)' }}
+        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md shadow-lg"
+        style={{
+          background: 'hsl(var(--background) / 0.78)',
+          padding: viewMode.isFocus ? '6px 14px' : '6px 12px',
+        }}
         aria-label={`Volta ${lapInfo.current} de ${lapInfo.total}`}
       >
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">
+        <div className="flex items-baseline gap-2">
+          <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
             Lap
           </span>
-          <span className="text-[15px] font-black tabular-nums text-foreground" style={{ fontFamily: 'system-ui, sans-serif' }}>
+          <span
+            className={`tabular-nums text-foreground ${viewMode.isFocus ? 'text-[18px] font-black' : 'text-[15px] font-black'}`}
+            style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '-0.02em' }}
+          >
             {lapInfo.current}
-            <span className="text-muted-foreground font-bold">/{lapInfo.total}</span>
+            <span className="text-muted-foreground/70 font-normal">/{lapInfo.total}</span>
           </span>
         </div>
       </div>
