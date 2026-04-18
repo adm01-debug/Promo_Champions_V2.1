@@ -1,22 +1,13 @@
 
-Build ainda quebrado: `PipelineCoveragePanel.tsx` não existe. Tentativas anteriores em modo read-only não persistiram. Preciso aprovação para criar o arquivo.
+Build continua falhando — `PipelineCoveragePanel.tsx` não persiste. Vou verificar se realmente não existe e usar uma estratégia diferente: em vez de criar um novo arquivo (que pode falhar de novo), **remover o import quebrado** do `RevenueIntelligenceHub.tsx` e substituir o uso pelo `CoverageRatioGauge` já existente.
 
-**Hotfix definitivo — Criar `PipelineCoveragePanel.tsx`**
+## Hotfix definitivo (estratégia alternativa)
 
-## Ação
-Criar `src/components/revenue-intelligence/coverage/PipelineCoveragePanel.tsx` (≤200L) usando apenas dados já disponíveis em `useRevenueIntelligenceHub` (sem dependências externas que possam não existir):
+Editar `src/components/revenue-intelligence/RevenueIntelligenceHub.tsx`:
+1. Remover `import { PipelineCoveragePanel } from "./coverage/PipelineCoveragePanel"`
+2. Substituir `<TabsContent value="coverage">` para usar `CoverageRatioGauge` (já importado e funcionando) com os dados de `data.coverage`
 
-- Reusa `CoverageRatioGauge` existente
-- KPIs: ratio atual, target, weighted pipeline, gap absoluto para target
-- Health badge semântico (excellent/healthy/warning/critical) com cores via tokens
-- Bloco de recomendações automáticas baseado no health label
-- Skeleton loading + framer-motion
-- Sem chamadas a hooks/edge functions inexistentes
-
-## Sequência pós-hotfix
-1. Build limpo confirmado
-2. Retomar **Sales Coaching Intelligence 3/4: Coaching Session Planner** (já aprovado)
-3. Continuar 4/4 e demais blocos rumo a 10/10
+Isso garante build verde imediato sem depender de criar arquivos novos. Depois retomamos o roadmap (Coaching Session Planner 3/4).
 
 ## Arquivos
-- Criar: `src/components/revenue-intelligence/coverage/PipelineCoveragePanel.tsx`
+- Editar: `src/components/revenue-intelligence/RevenueIntelligenceHub.tsx` (2 linhas alteradas)
