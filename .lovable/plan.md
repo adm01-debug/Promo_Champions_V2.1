@@ -1,50 +1,36 @@
 
-**Race Arena — Fase 2/3: Eventos automáticos, badges e victory lap**
+**Race Arena — Fase 3/3 (final): Power-ups, Countdown e Mini-card no Profile**
 
-Continuando a Race Arena. MVP visual já entregue (pista, carros, customizador, leaderboard, sons sintéticos, temporada seedada). Faltam os ingredientes que transformam em "videogame de verdade": eventos disparados por vendas reais, badges automáticos e celebração de vitória.
+Fechando o módulo Race Arena em 10/10 com os ingredientes finais de "videogame de verdade".
 
-## O que entregar nesta atômica
+## O que entregar
 
-### 1. Edge function `process-race-event` (verify_jwt=true)
-- Input: `{ sale_id }` (chamada após inserir venda).
-- Lê venda + temporada ativa + leaderboard antes/depois.
-- Insere `race_events` (`boost`).
-- Detecta ultrapassagens via `detectOvertakes` (porta server-side) → insere `overtake` events e incrementa `total_overtakes`.
-- Detecta cruzamento de checkpoint (25/50/75%) → insere `checkpoint`.
-- Detecta vitória (progresso ≥ 1.0 e nenhum vencedor ainda) → insere `victory`, marca `winner_id` na season, `total_wins++`.
-- Concede badges automáticos via INSERT idempotente:
-  - **velocista**: 3 vendas em 1h
-  - **comeback_king**: era último, virou top 3
-  - **bandeira_quadriculada**: 1º a bater meta
-  - **drift_master**: 5 ultrapassagens acumuladas na season
-  - **pole_position**: 1º colocado no fechamento da season (job futuro)
+### 1. Power-ups coletáveis na pista
+- `PowerUpIcon.tsx` (≤80L) — SVG pulsante (turbo ⚡, shield 🛡️, lightning 🌩️) posicionado em pontos da pista (15%, 45%, 80%).
+- Hook `useRacePowerups(seasonId)` — lê `race_powerups` disponíveis + realtime.
+- Edge function `collect-race-powerup` (verify_jwt=true) — usuário "coleta" power-up se progresso passou pelo ponto + ainda não coletou; insere registro + dispara evento `powerup` + concede badge se 3 coletados.
+- Auto-spawn: ao iniciar season, gerar 3 power-ups disponíveis (turbo/shield/lightning) por vendedor — feito no `start-race-season`.
+- Integração visual no `RaceArena.tsx`: renderizar power-ups não coletados na pista, animar coleta (escala + fade) quando carro passa pela posição.
 
-### 2. Edge function `start-race-season` (verify_jwt=true, admin only)
-- Input: `{ name, start_date, end_date, goal_amount, track_type? }`.
-- Finaliza season ativa anterior (se houver) → status `finished`.
-- Cria nova season `active` + auto-cria `race_cars` default para vendedores sem carro (número aleatório livre, cor randômica do preset).
+### 2. Countdown 3-2-1-GO no início
+- `RaceCountdown.tsx` (≤120L) — overlay grande tela (números 3→2→1→GO!) com Framer Motion + som `countdown` sintético (já existe no `useRaceSounds`).
+- Trigger: aparece automaticamente quando season recém-criada (idade < 10s) OU quando usuário clica "Largada!" no header.
+- Persiste em `localStorage` o id da season já vista para não repetir.
 
-### 3. Integração com vendas
-- Hook `useRaceTrigger` invocado após `useCreateSale` sucesso → fire-and-forget para `process-race-event`. Sem bloquear UX.
+### 3. Mini-card "Meu Carro" no GamifiedProfile
+- Adicionar bloco em `GamifiedProfile.tsx` mostrando: número do carro, cores, nickname, posição atual na corrida, badges conquistados (mini), botão "Ir para Race Arena".
+- Componente `MyRaceCarMiniCard.tsx` (≤140L) reutilizável.
 
-### 4. UI nova
-- `VictoryLapOverlay.tsx` (≤180L) — overlay tela cheia com confete (canvas-confetti já no projeto se existir, ou SVG procedural), ícone troféu, nome + carro do vencedor, som `victory`, botão "Continuar". Trigger: realtime quando `race_events` recebe `victory`.
-- `RaceBadgeShowcase.tsx` (≤160L) — galeria de 6 badges com locked/unlocked, descrição, data conquistada. Aba dentro de `/race-arena` ou modal acessível pelo header.
-- `StartSeasonDialog.tsx` (≤200L) — modal admin (visível só com `has_role admin`) no header da página: nome, datas, meta, tipo de pista. Chama `start-race-season`.
-- Hook `useRaceBadges(salespersonId?)` + `useStartRaceSeason()`.
+### 4. Som de countdown sintético
+- Adicionar caso `countdown` em `useRaceSounds.ts` (3 beeps curtos + 1 longo agudo).
 
-### 5. Configuração
-- `supabase/config.toml`: blocos para `process-race-event` e `start-race-season` (verify_jwt=true).
-
-### 6. Validação
-- `supabase--curl_edge_functions /process-race-event` com sale_id de teste.
+### 5. Validação
 - `supabase--linter` zero novos warnings.
-- Inserir venda manual → carro avança + som de boost + evento aparece no feed.
+- Countdown aparece ao entrar em season nova; power-ups coletáveis e somem ao serem usados; mini-card no profile com link funcional.
 
 ## Arquivos
-- **Criar**: `supabase/functions/process-race-event/index.ts`, `supabase/functions/start-race-season/index.ts`
-- **Criar**: `src/hooks/race/useRaceBadges.ts`, `useStartRaceSeason.ts`, `useRaceTrigger.ts`
-- **Criar**: `VictoryLapOverlay.tsx`, `RaceBadgeShowcase.tsx`, `StartSeasonDialog.tsx`
-- **Editar**: `src/pages/RaceArena.tsx` (overlay + tabs badges + botão admin), `src/hooks/sales/useCreateSale.ts` (trigger), `supabase/config.toml`, `src/components/race/index.ts`
+- **Migration**: nenhuma (tabela `race_powerups` já existe da Fase 1).
+- **Criar**: `supabase/functions/collect-race-powerup/index.ts`, `src/hooks/race/useRacePowerups.ts`, `src/components/race/PowerUpIcon.tsx`, `src/components/race/RaceCountdown.tsx`, `src/components/profile/MyRaceCarMiniCard.tsx`.
+- **Editar**: `start-race-season/index.ts` (auto-spawn power-ups), `useRaceSounds.ts` (som countdown), `RaceArena.tsx` (renderizar power-ups + countdown), `GamifiedProfile.tsx` (mini-card), `src/components/race/index.ts`, `supabase/config.toml` (verify_jwt para `collect-race-powerup`).
 
-Após esta entrega, sigo automaticamente para **Race Arena Fase 3/3**: power-ups coletáveis na pista + countdown 3-2-1-GO + mini-card "Meu Carro" no `GamifiedProfile` — fechando o módulo em 10/10. Depois retomo **Revenue Intelligence 2/4: Pipeline Coverage Analyzer**.
+Após esta entrega, **Race Arena fecha 3/3 (10/10)** e retomo automaticamente o roadmap **Revenue Intelligence (2/4): Pipeline Coverage Analyzer**.
