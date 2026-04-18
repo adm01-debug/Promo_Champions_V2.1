@@ -8,8 +8,14 @@ import { StageBaselinesPanel } from "@/components/deal-intelligence/StageBaselin
 import { StuckDealsPanel } from "@/components/deal-intelligence/velocity/StuckDealsPanel";
 import { StageBottlenecksChart } from "@/components/deal-intelligence/velocity/StageBottlenecksChart";
 import { ConversionOptimizerPanel } from "@/components/deal-intelligence/ConversionOptimizerPanel";
+import { WinLossSummaryCard } from "@/components/deal-intelligence/winloss/WinLossSummaryCard";
+import { WinFactorsChart } from "@/components/deal-intelligence/winloss/WinFactorsChart";
+import { LossFactorsChart } from "@/components/deal-intelligence/winloss/LossFactorsChart";
+import { LostStageBreakdown } from "@/components/deal-intelligence/winloss/LostStageBreakdown";
+import { CompetitorAnalysisTable } from "@/components/deal-intelligence/winloss/CompetitorAnalysisTable";
+import { WinLossInsightsPanel } from "@/components/deal-intelligence/winloss/WinLossInsightsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Heart, Users, Gauge, TrendingDown } from "lucide-react";
+import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy } from "lucide-react";
 
 export default function DealIntelligence() {
   return (
@@ -56,6 +62,9 @@ export default function DealIntelligence() {
                 <TabsTrigger value="conversion" className="gap-2">
                   <TrendingDown className="h-4 w-4" /> Otimizador de Conversão
                 </TabsTrigger>
+                <TabsTrigger value="winloss" className="gap-2">
+                  <Trophy className="h-4 w-4" /> Win/Loss
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="health" className="mt-4">
                 <StalledDealsTable />
@@ -73,6 +82,18 @@ export default function DealIntelligence() {
               </TabsContent>
               <TabsContent value="conversion" className="mt-4">
                 <ConversionOptimizerPanel />
+              </TabsContent>
+              <TabsContent value="winloss" className="mt-4 space-y-4">
+                <WinLossSummaryCard />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <WinFactorsChart />
+                  <LossFactorsChart />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <LostStageBreakdown />
+                  <CompetitorAnalysisTable />
+                </div>
+                <WinLossInsightsPanel />
               </TabsContent>
             </Tabs>
           </motion.div>
