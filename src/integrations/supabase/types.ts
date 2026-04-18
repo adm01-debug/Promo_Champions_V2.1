@@ -10794,6 +10794,123 @@ export type Database = {
         }
         Relationships: []
       }
+      skill_assessments: {
+        Row: {
+          created_at: string
+          current_level: string
+          factors: Json
+          gap_count_30d: number
+          gap_count_90d: number
+          id: string
+          last_assessed_at: string
+          salesperson_id: string
+          score: number
+          skill: string
+          trend: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_level?: string
+          factors?: Json
+          gap_count_30d?: number
+          gap_count_90d?: number
+          id?: string
+          last_assessed_at?: string
+          salesperson_id: string
+          score?: number
+          skill: string
+          trend?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_level?: string
+          factors?: Json
+          gap_count_30d?: number
+          gap_count_90d?: number
+          id?: string
+          last_assessed_at?: string
+          salesperson_id?: string
+          score?: number
+          skill?: string
+          trend?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skill_assessments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_assessments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skill_development_tracks: {
+        Row: {
+          ai_plan: string | null
+          created_at: string
+          current_level: string
+          estimated_weeks: number
+          id: string
+          milestones: Json
+          priority: number
+          salesperson_id: string
+          skill: string
+          target_level: string
+          updated_at: string
+        }
+        Insert: {
+          ai_plan?: string | null
+          created_at?: string
+          current_level?: string
+          estimated_weeks?: number
+          id?: string
+          milestones?: Json
+          priority?: number
+          salesperson_id: string
+          skill: string
+          target_level?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_plan?: string | null
+          created_at?: string
+          current_level?: string
+          estimated_weeks?: number
+          id?: string
+          milestones?: Json
+          priority?: number
+          salesperson_id?: string
+          skill?: string
+          target_level?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skill_development_tracks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_development_tracks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sla_policies: {
         Row: {
           created_at: string
