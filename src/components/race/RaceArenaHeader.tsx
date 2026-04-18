@@ -92,7 +92,10 @@ export const RaceArenaHeader: FC<Props> = ({
               </Link>
             </Button>
             <div className="min-w-0">
-              <h1 className="flex items-center gap-2 font-display text-2xl font-black sm:text-3xl">
+              <motion.h1
+                layoutId="race-arena-title"
+                className="flex items-center gap-2 font-display text-2xl font-black sm:text-3xl"
+              >
                 <Flag className="h-6 w-6 text-primary sm:h-7 sm:w-7" aria-hidden />
                 {emoji && <span aria-hidden>{emoji}</span>}
                 <span className="truncate">{title}</span>
