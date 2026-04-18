@@ -69,6 +69,20 @@ export default function RaceArenaView({ roleType }: Props) {
   const { recentOvertakes, dismissOvertake } = useOvertakeDetector(leaderboard);
   const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(leaderboard, myCar?.salesperson_id);
 
+  const secondsToEnd = useMemo(() => {
+    if (!season?.end_date) return undefined;
+    const s = differenceInSeconds(new Date(season.end_date), new Date());
+    return s >= 0 ? s : undefined;
+  }, [season?.end_date]);
+
+  useRaceAudioEngine({
+    leaderboard,
+    mySalespersonId: myCar?.salesperson_id,
+    secondsToEnd,
+    play,
+    muted,
+  });
+
   useEffect(() => {
     if (recentOvertakes.length > 0) play('overtake');
     // eslint-disable-next-line react-hooks/exhaustive-deps
