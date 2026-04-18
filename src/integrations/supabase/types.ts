@@ -11309,6 +11309,62 @@ export type Database = {
         }
         Relationships: []
       }
+      squad_members: {
+        Row: {
+          added_at: string
+          squad_id: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          squad_id: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          squad_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_members_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squads: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stage_bottleneck_insights: {
         Row: {
           ai_summary: string | null
@@ -11838,8 +11894,11 @@ export type Database = {
           created_at: string
           due_date: string | null
           id: string
+          parent_recurrence_id: string | null
+          recurrence_rule: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          squad_id: string | null
           status: Database["public"]["Enums"]["task_assignment_status"]
           submission_note: string | null
           updated_at: string
@@ -11852,8 +11911,11 @@ export type Database = {
           created_at?: string
           due_date?: string | null
           id?: string
+          parent_recurrence_id?: string | null
+          recurrence_rule?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          squad_id?: string | null
           status?: Database["public"]["Enums"]["task_assignment_status"]
           submission_note?: string | null
           updated_at?: string
@@ -11866,8 +11928,11 @@ export type Database = {
           created_at?: string
           due_date?: string | null
           id?: string
+          parent_recurrence_id?: string | null
+          recurrence_rule?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          squad_id?: string | null
           status?: Database["public"]["Enums"]["task_assignment_status"]
           submission_note?: string | null
           updated_at?: string
@@ -11879,6 +11944,13 @@ export type Database = {
             columns: ["catalog_id"]
             isOneToOne: false
             referencedRelation: "task_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_assignments_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
             referencedColumns: ["id"]
           },
         ]
@@ -13672,6 +13744,15 @@ export type Database = {
       }
       approve_agent_run: { Args: { _run_id: string }; Returns: undefined }
       assign_cadence_variant: { Args: { _ab_test_id: string }; Returns: string }
+      assign_task_to_squad: {
+        Args: {
+          _catalog_id: string
+          _due_date?: string
+          _recurrence?: string
+          _squad_id: string
+        }
+        Returns: number
+      }
       auto_assign_lead: {
         Args: { _sale_id: string }
         Returns: {
@@ -13690,6 +13771,10 @@ export type Database = {
           promoted_label: string
           step_id: string
         }[]
+      }
+      bulk_approve_assignments: {
+        Args: { _ids: string[]; _xp_overrides?: Json }
+        Returns: number
       }
       bulk_recompute_engagement: {
         Args: { _owner_id?: string }

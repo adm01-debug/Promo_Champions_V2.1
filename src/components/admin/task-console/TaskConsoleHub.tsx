@@ -1,10 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
-import { ListChecks, Users, ClipboardCheck, Sparkles } from 'lucide-react';
+import { ListChecks, Users, ClipboardCheck, Sparkles, Shield } from 'lucide-react';
 import { TaskCatalogManager } from './TaskCatalogManager';
 import { TaskAssignmentDialog } from './TaskAssignmentDialog';
 import { PendingApprovalsQueue } from './PendingApprovalsQueue';
 import { XpAdjustmentPanel } from './XpAdjustmentPanel';
+import { SquadManager } from './SquadManager';
 import { useTaskAssignments } from '@/hooks/admin-tasks/useTaskAssignments';
 import { Badge } from '@/components/ui/badge';
 import { STATUS_LABELS, STATUS_TONES } from './taskConsoleHelpers';
@@ -26,8 +27,9 @@ export function TaskConsoleHub() {
       </div>
 
       <Tabs defaultValue="catalog" className="w-full">
-        <TabsList className="grid grid-cols-4 w-full max-w-2xl">
+        <TabsList className="grid grid-cols-5 w-full max-w-3xl">
           <TabsTrigger value="catalog"><ListChecks className="mr-2 h-4 w-4" />Catálogo</TabsTrigger>
+          <TabsTrigger value="squads"><Shield className="mr-2 h-4 w-4" />Squads</TabsTrigger>
           <TabsTrigger value="assignments"><Users className="mr-2 h-4 w-4" />Atribuições</TabsTrigger>
           <TabsTrigger value="approvals">
             <ClipboardCheck className="mr-2 h-4 w-4" />Aprovações
@@ -35,6 +37,10 @@ export function TaskConsoleHub() {
           </TabsTrigger>
           <TabsTrigger value="xp"><Sparkles className="mr-2 h-4 w-4" />Ajustes XP</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="squads" className="mt-6">
+          <Card className="p-6"><SquadManager /></Card>
+        </TabsContent>
 
         <TabsContent value="catalog" className="mt-6">
           <Card className="p-6"><TaskCatalogManager /></Card>
