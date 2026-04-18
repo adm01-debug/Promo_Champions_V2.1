@@ -1,10 +1,11 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import Index from "@/pages/Index";
+const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
 import {
   // Auth & System
   Auth, ResetPassword, NotFound, AccessDenied,
@@ -211,6 +212,7 @@ export function AppRoutes() {
                     <Route path="/usage-analytics" element={<Admin><UsageAnalytics /></Admin>} />
                     <Route path="/feature-flags" element={<Admin><FeatureFlagsAdmin /></Admin>} />
                     <Route path="/seguranca" element={<Admin><SecurityDashboard /></Admin>} />
+                    <Route path="/admin/tarefas" element={<Admin><AdminTasksPage /></Admin>} />
 
                     {/* ─── System ────────────────────────────────── */}
                     <Route path="/acesso-negado" element={<AccessDenied />} />
