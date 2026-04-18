@@ -1,6 +1,7 @@
 /**
  * Definições compartilhadas para a pista top-down vetorial flat.
- * Usa tokens semânticos para o padrão xadrez (suporta light/dark/skins).
+ * Inclui patterns de xadrez, colorblind, gradientes de boost,
+ * textura sutil de asfalto, vinheta de grama e gradiente de profundidade do lago.
  */
 export function TrackDefs() {
   return (
@@ -11,6 +12,35 @@ export function TrackDefs() {
         <rect width="8" height="8" fill="hsl(var(--race-checkered-dark))" />
         <rect x="8" y="8" width="8" height="8" fill="hsl(var(--race-checkered-dark))" />
       </pattern>
+
+      {/* textura sutil sobre asfalto — pontilhado escuro muito leve */}
+      <pattern id="asphaltTexture" patternUnits="userSpaceOnUse" width="6" height="6">
+        <rect width="6" height="6" fill="transparent" />
+        <circle cx="1.5" cy="1.5" r="0.45" fill="hsl(var(--race-checkered-dark))" opacity="0.5" />
+        <circle cx="4.5" cy="4.5" r="0.4" fill="hsl(var(--race-checkered-dark))" opacity="0.4" />
+        <circle cx="4.5" cy="1.5" r="0.3" fill="hsl(var(--race-asphalt-edge))" opacity="0.3" />
+      </pattern>
+
+      {/* vinheta radial sobre a grama */}
+      <radialGradient id="grassVignette" cx="50%" cy="50%" r="65%">
+        <stop offset="0%" stopColor="hsl(var(--race-grass))" stopOpacity="0" />
+        <stop offset="75%" stopColor="hsl(var(--race-grass-shadow))" stopOpacity="0" />
+        <stop offset="100%" stopColor="hsl(var(--race-grass-shadow))" stopOpacity="0.45" />
+      </radialGradient>
+
+      {/* profundidade do lago */}
+      <radialGradient id="pondDepth" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stopColor="hsl(var(--race-pond-deep))" stopOpacity="0.7" />
+        <stop offset="60%" stopColor="hsl(var(--race-pond-deep))" stopOpacity="0.2" />
+        <stop offset="100%" stopColor="hsl(var(--race-pond-deep))" stopOpacity="0" />
+      </radialGradient>
+
+      {/* highlight sobre a carroceria do carro */}
+      <linearGradient id="carBodyShine" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="hsl(0 0% 100%)" stopOpacity="0.35" />
+        <stop offset="50%" stopColor="hsl(0 0% 100%)" stopOpacity="0" />
+        <stop offset="100%" stopColor="hsl(0 0% 0%)" stopOpacity="0.18" />
+      </linearGradient>
 
       {/* padrões para colorblind: stripes, dots, checker */}
       <pattern id="cbStripes" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">

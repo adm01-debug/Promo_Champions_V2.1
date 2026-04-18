@@ -1,25 +1,31 @@
 /**
- * Lago decorativo orgânico em uma área livre do circuito serpenteante.
+ * Lago decorativo orgânico no infield (centro do oval).
  * Usa tokens semânticos de cor para suportar light/dark e skins.
  */
 export function TrackPond() {
-  // Posicionado em pequena área central entre voltas da serpentina.
+  // Centro do infield (entre as duas retas verticais imaginárias da pista).
   const cx = 500;
-  const cy = 405;
+  const cy = 320;
   const d = `
-    M ${cx - 40} ${cy + 4}
-    C ${cx - 50} ${cy - 18}, ${cx - 18} ${cy - 30}, ${cx + 4} ${cy - 26}
-    C ${cx + 28} ${cy - 30}, ${cx + 48} ${cy - 12}, ${cx + 44} ${cy + 6}
-    C ${cx + 40} ${cy + 22}, ${cx + 12} ${cy + 28}, ${cx - 12} ${cy + 26}
-    C ${cx - 36} ${cy + 26}, ${cx - 42} ${cy + 16}, ${cx - 40} ${cy + 4}
+    M ${cx - 70} ${cy + 8}
+    C ${cx - 90} ${cy - 30}, ${cx - 30} ${cy - 50}, ${cx + 10} ${cy - 44}
+    C ${cx + 60} ${cy - 50}, ${cx + 95} ${cy - 18}, ${cx + 80} ${cy + 12}
+    C ${cx + 70} ${cy + 38}, ${cx + 20} ${cy + 48}, ${cx - 20} ${cy + 44}
+    C ${cx - 60} ${cy + 44}, ${cx - 80} ${cy + 28}, ${cx - 70} ${cy + 8}
     Z
   `;
   return (
     <g aria-hidden>
-      <path d={d} fill="hsl(var(--race-pond-deep))" opacity={0.45} transform="translate(2 3)" />
-      <path d={d} fill="hsl(var(--race-pond))" stroke="hsl(var(--race-pond-shadow))" strokeWidth={1.5} />
-      <ellipse cx={cx - 12} cy={cy - 10} rx={14} ry={2.5} fill="hsl(var(--race-asphalt-edge))" opacity={0.35} />
-      <ellipse cx={cx + 12} cy={cy + 8} rx={9} ry={1.8} fill="hsl(var(--race-asphalt-edge))" opacity={0.25} />
+      {/* sombra projetada */}
+      <path d={d} fill="hsl(var(--race-pond-deep))" opacity={0.5} transform="translate(3 5)" />
+      {/* corpo d'água */}
+      <path d={d} fill="hsl(var(--race-pond))" stroke="hsl(var(--race-pond-shadow))" strokeWidth={2} />
+      {/* gradiente de profundidade interna */}
+      <path d={d} fill="url(#pondDepth)" opacity={0.6} />
+      {/* reflexos brancos */}
+      <ellipse cx={cx - 22} cy={cy - 18} rx={22} ry={3} fill="hsl(var(--race-asphalt-edge))" opacity={0.45} />
+      <ellipse cx={cx + 18} cy={cy + 12} rx={14} ry={2.2} fill="hsl(var(--race-asphalt-edge))" opacity={0.3} />
+      <ellipse cx={cx - 5} cy={cy + 28} rx={8} ry={1.5} fill="hsl(var(--race-asphalt-edge))" opacity={0.25} />
     </g>
   );
 }
