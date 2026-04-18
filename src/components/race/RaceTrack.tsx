@@ -1,14 +1,16 @@
 import { TRACK_VIEWBOX } from './raceTrackHelpers';
 import { TrackDefs } from './track/TrackDefs';
-import { TrackSky } from './track/TrackSky';
 import { TrackGrass } from './track/TrackGrass';
+import { TrackPond } from './track/TrackPond';
 import { TrackAsphalt } from './track/TrackAsphalt';
+import { TrackBarriers } from './track/TrackBarriers';
 import { TrackStartGantry } from './track/TrackStartGantry';
+import { TrackScenery } from './track/TrackScenery';
 
 /**
- * Pista oval cinematográfica (visual AAA): skybox + gramado com mowing stripes +
- * asfalto com gradient e rumble strips + pórtico start/finish + holofote central + vinheta.
- * Composição em camadas via subcomponentes (≤200L cada).
+ * Pista top-down vetorial flat (estilo ilustração).
+ * Camadas: gramado → lago → árvores externas → asfalto → barreiras →
+ * linha de chegada → árvores/prédios internos → carros.
  */
 export function RaceTrack({ children }: { children?: React.ReactNode }) {
   return (
@@ -18,27 +20,14 @@ export function RaceTrack({ children }: { children?: React.ReactNode }) {
       preserveAspectRatio="xMidYMid meet"
     >
       <TrackDefs />
-
-      {/* camada 1: skybox */}
-      <TrackSky />
-
-      {/* camada 2: gramado externo */}
       <TrackGrass />
-
-      {/* camada 3: asfalto + miolo + rumble strips + checkpoints */}
+      <TrackPond />
+      <TrackScenery layer="outer" />
       <TrackAsphalt />
-
-      {/* camada 4: pórtico start/finish */}
+      <TrackBarriers />
       <TrackStartGantry />
-
-      {/* holofote central suave */}
-      <rect width="100%" height="100%" fill="url(#centerSpotlight)" pointerEvents="none" />
-
-      {/* carros (renderizados acima de tudo) */}
+      <TrackScenery layer="inner" />
       {children}
-
-      {/* vinheta cinematográfica no topo de tudo */}
-      <rect width="100%" height="100%" fill="url(#vignette)" pointerEvents="none" />
     </svg>
   );
 }
