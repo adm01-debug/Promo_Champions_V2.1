@@ -16,6 +16,7 @@ import { CriticalMomentsList } from "./CriticalMomentsList";
 import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
 import { ConversationMetricsCard } from "./metrics/ConversationMetricsCard";
 import { QuestionQualityCard } from "./questions/QuestionQualityCard";
+import { ObjectionHandlingCard } from "./objections/ObjectionHandlingCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
@@ -74,6 +75,7 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
             <SentimentTimelineChart recordingId={rec.id} moments={moments ?? []} />
             <ConversationMetricsCard recordingId={rec.id} />
             <QuestionQualityCard recordingId={rec.id} />
+            <ObjectionHandlingCard recordingId={rec.id} />
             <CriticalMomentsList recordingId={rec.id} />
             <CompetitorMentionsCard recordingId={rec.id} />
             <CoachingActionsList recordingId={rec.id} />

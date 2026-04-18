@@ -1882,6 +1882,106 @@ export type Database = {
         }
         Relationships: []
       }
+      call_objection_analysis: {
+        Row: {
+          avg_response_time_seconds: number
+          calculated_at: string
+          factors: Json
+          handling_score: number
+          health: string
+          id: string
+          partially_resolved_count: number
+          recording_id: string
+          resolved_count: number
+          total_objections: number
+          unresolved_count: number
+        }
+        Insert: {
+          avg_response_time_seconds?: number
+          calculated_at?: string
+          factors?: Json
+          handling_score?: number
+          health?: string
+          id?: string
+          partially_resolved_count?: number
+          recording_id: string
+          resolved_count?: number
+          total_objections?: number
+          unresolved_count?: number
+        }
+        Update: {
+          avg_response_time_seconds?: number
+          calculated_at?: string
+          factors?: Json
+          handling_score?: number
+          health?: string
+          id?: string
+          partially_resolved_count?: number
+          recording_id?: string
+          resolved_count?: number
+          total_objections?: number
+          unresolved_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_objection_analysis_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: true
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_objections: {
+        Row: {
+          client_turn_index: number
+          created_at: string
+          factors: Json
+          id: string
+          objection_text: string
+          objection_type: string
+          recording_id: string
+          resolution_status: string
+          response_quality: string
+          seller_response_text: string | null
+          start_estimate: number
+        }
+        Insert: {
+          client_turn_index?: number
+          created_at?: string
+          factors?: Json
+          id?: string
+          objection_text: string
+          objection_type?: string
+          recording_id: string
+          resolution_status?: string
+          response_quality?: string
+          seller_response_text?: string | null
+          start_estimate?: number
+        }
+        Update: {
+          client_turn_index?: number
+          created_at?: string
+          factors?: Json
+          id?: string
+          objection_text?: string
+          objection_type?: string
+          recording_id?: string
+          resolution_status?: string
+          response_quality?: string
+          seller_response_text?: string | null
+          start_estimate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_objections_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_question_analysis: {
         Row: {
           avg_depth: number
@@ -6142,6 +6242,47 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      objection_library: {
+        Row: {
+          best_response_recording_id: string | null
+          best_response_text: string | null
+          frequency_count: number
+          id: string
+          last_seen_at: string
+          objection_type: string
+          pattern_text: string
+          updated_at: string
+        }
+        Insert: {
+          best_response_recording_id?: string | null
+          best_response_text?: string | null
+          frequency_count?: number
+          id?: string
+          last_seen_at?: string
+          objection_type: string
+          pattern_text: string
+          updated_at?: string
+        }
+        Update: {
+          best_response_recording_id?: string | null
+          best_response_text?: string | null
+          frequency_count?: number
+          id?: string
+          last_seen_at?: string
+          objection_type?: string
+          pattern_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objection_library_best_response_recording_id_fkey"
+            columns: ["best_response_recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
             referencedColumns: ["id"]
           },
         ]
