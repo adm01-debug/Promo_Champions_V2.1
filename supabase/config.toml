@@ -258,3 +258,6 @@ verify_jwt = false
 
 [functions.calibrate-win-probabilities]
 verify_jwt = true
+
+[functions.detect-coaching-opportunities]
+verify_jwt = true
