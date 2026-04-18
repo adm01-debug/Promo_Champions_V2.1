@@ -1921,3 +1921,18 @@
     transform: translateX(100%);
   }
 }
+
+/* ===== RACE ARENA: helicóptero de transmissão ===== */
+@keyframes race-heli-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes race-heli-rotor {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="race-heli-orbit"], [style*="race-heli-rotor"] {
+    animation: none !important;
+  }
+}
