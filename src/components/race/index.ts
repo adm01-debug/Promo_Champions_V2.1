@@ -34,4 +34,5 @@ export { GhostCar } from './GhostCar';
 export { GhostStatusBadge } from './GhostStatusBadge';
 export { RaceCommentaryPanel } from './RaceCommentaryPanel';
 export { DailyCheckinModal } from './DailyCheckinModal';
+export { RaceViewModeToggle } from './RaceViewModeToggle';
 export { fmtCurrency, fmtCompact } from './raceFormatters';

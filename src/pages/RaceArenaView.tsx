@@ -29,6 +29,7 @@ import {
   GhostStatusBadge,
   RaceCommentaryPanel,
   DailyCheckinModal,
+  RaceViewModeToggle,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -47,6 +48,7 @@ import { useTrackConditions } from '@/hooks/race/useTrackConditions';
 import { useGhostCar } from '@/hooks/race/useGhostCar';
 import { useRaceCommentary } from '@/hooks/race/useRaceCommentary';
 import { useDailyRaceCheckin } from '@/hooks/race/useDailyRaceCheckin';
+import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
