@@ -163,10 +163,10 @@ export const SECTORS: Array<{ name: string; start: number; end: number }> = [
 ];
 export const SECTOR_BOUNDARIES = [1 / 3, 2 / 3, 0.999];
 
-/** Zonas DRS — trechos retos para ultrapassagem. */
+/** Zonas DRS — trechos retos verticais para ultrapassagem. */
 export const DRS_ZONES: Array<{ start: number; end: number }> = [
-  { start: 0.02, end: 0.18 },   // reta superior
-  { start: 0.52, end: 0.66 },   // reta inferior (antes da chicane)
+  { start: 0.05, end: 0.22 },   // reta esquerda (descendo)
+  { start: 0.55, end: 0.70 },   // reta direita (subindo, após chicane)
 ];
 
 export function isInDRSZone(progress: number): boolean {
