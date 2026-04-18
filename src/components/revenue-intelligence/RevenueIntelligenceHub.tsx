@@ -116,6 +116,9 @@ export const RevenueIntelligenceHub: FC = () => {
         <TabsContent value="quota" className="mt-4">
           <QuotaAttainmentPredictor />
         </TabsContent>
+        <TabsContent value="quota-advanced" className="mt-4">
+          <QuotaPredictorAdvancedPanel />
+        </TabsContent>
         <TabsContent value="qbr" className="mt-4">
           <QBRGeneratorPanel />
         </TabsContent>
