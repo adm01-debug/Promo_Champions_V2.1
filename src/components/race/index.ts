@@ -10,3 +10,5 @@ export { RaceBadgeShowcase } from './RaceBadgeShowcase';
 export { StartSeasonDialog } from './StartSeasonDialog';
 export { PowerUpIcon } from './PowerUpIcon';
 export { RaceCountdown } from './RaceCountdown';
+export { ScoreBreakdownCard } from './ScoreBreakdownCard';
+export { ScoringRulesEditor } from './admin/ScoringRulesEditor';
