@@ -1,26 +1,24 @@
 
-Ciclo 41-46 entregue. Próximo ciclo foca em micro-narrativa, presença sonora-visual e refinamentos finais aproveitando ao máximo o layout vertical.
+Pista reduzida entregue (75% da área, grama nas bordas). Próximo ciclo aproveita o novo espaço de grama livre (topo e base) para enriquecer a ambientação e adicionar mais camadas narrativas F1.
 
-# Ciclo 47-52 (rumo ao 10/10++ definitivo)
+# Ciclo 53-58 (rumo ao 10/10++ definitivo)
 
-**47. Marshals com bandeiras animadas nos postos** — substituir os marshal posts estáticos por figurinhas SVG humanoides minimalistas (3px) segurando bandeiras que se agitam. Quando bandeira amarela ativa (Race Control), todos os marshals trocam para bandeira amarela sincronizadamente.
+**53. Helicóptero de transmissão sobrevoando** — pequeno SVG de helicóptero (~24px) cruzando lentamente a faixa de grama superior da esquerda para a direita em loop de 18s, com sombra circular projetada no chão e rotor animado. Imersão de "transmissão ao vivo".
 
-**48. Indicador de "Setor mais rápido" (purple sector)** — ao detectar que um carro fez o melhor tempo no setor (delta de progresso × tempo), pisca o setor correspondente em roxo (#9333ea) por 1.5s no timing tower e cria pequena badge "FASTEST" no carro por 2s. Estilo F1 oficial.
+**54. Motorhomes/Paddock na faixa superior** — preencher o espaço de grama superior (0-166) com 4-5 motorhomes coloridos (caminhões de equipe) enfileirados com logos genéricos das equipes (cores dos top 4 carros), antenas parabólicas e bandeirinhas. Vida de paddock.
 
-**49. Onda mexicana na arquibancada (La Ola)** — quando o líder cruza a linha de chegada (a cada lap completo), a arquibancada faz uma "ola" sequencial: blocos de espectadores se levantam em onda da esquerda para a direita ao longo de 1.2s. Vida real no estádio.
+**55. Pit lane visual na faixa inferior** — preencher o espaço de grama inferior (1166-1333) com uma pit lane estilizada: 6 boxes alinhados com pneus empilhados, mecânicos minimalistas (bonecos 4px) e placas de número. Conta a história do "outro lado" da corrida.
 
-**50. Rajada de vento visual nos pneus dos carros** — pequenas linhas brancas translúcidas (3-4px) saindo da traseira dos carros em alta velocidade (gap > threshold), simulando turbulência aerodinâmica. Aparecem só nos top 3 e quando carro está em DRS.
+**56. Drones de filmagem orbitando setor 2** — 2 pequenos drones (3px com 4 hélices animadas) flutuando em órbita lenta sobre a chicane central, com pequena luz vermelha piscante de "REC". Cobertura cinematográfica.
 
-**51. Painel de "Próxima Curva" para o usuário** — pequeno HUD no canto inferior direito (acima do ReplayButton) mostrando para o pilot logado: tipo da próxima curva (Curva 1, Chicane, etc), distância em % até ela, e se é DRS zone (badge verde). Telemetria pessoal estilo F1.
+**57. Placar gigante de LED na arquibancada** — adicionar um telão LED estilizado acima da grandstand inferior mostrando em loop o nome do líder atual e gap em texto pixelado (estilo matriz LED), com leve flicker. Atualiza em real-time conforme líder muda.
 
-**52. Cinematic camera focus no líder em momentos chave** — quando líder cruza setor 3 (final da volta) ou abre gap >5%, o SVG aplica leve zoom (scale 1.04) + pan suave focando no líder por 1.8s, com vinheta nas bordas. Câmera de transmissão.
+**58. Pássaros voando ocasionalmente** — bando de 3-5 pássaros (V-shapes minúsculos animados) cruzando a tela diagonalmente a cada 25s, alternando direção. Microvida ambiental que faz a cena respirar.
 
 ## Arquivos a editar
-- `src/components/race/track/TrackScenery.tsx` — marshals com bandeiras animadas + ola na arquibancada
-- `src/components/race/RaceArena.tsx` — fastest sector detection, integrar NextCornerHUD, cinematic camera focus, ola trigger
-- `src/components/race/RaceCar.tsx` — badge "FASTEST" + linhas de turbulência aerodinâmica
-- `src/components/race/NextCornerHUD.tsx` — novo HUD lateral pessoal
-- `src/components/race/raceTrackHelpers.ts` — helper `getNextCornerInfo(progress)` retornando tipo+distância+DRS
-- `src/index.css` — keyframes marshal-flag-wave + la-ola-wave + fastest-sector-flash + cinematic-zoom
+- `src/components/race/track/TrackScenery.tsx` — helicóptero, motorhomes, pit lane, drones, telão LED, pássaros
+- `src/components/race/RaceArena.tsx` — passar nome/gap do líder para telão LED via prop
+- `src/components/race/raceTrackHelpers.ts` — exportar `TRACK_OFFSET_Y` se ainda não acessível p/ posicionar elementos nas faixas extras
+- `src/index.css` — keyframes helicopter-fly, drone-orbit, rotor-spin, led-flicker, bird-flap
 
 Sem perguntas. Executo as 6 em sequência.
