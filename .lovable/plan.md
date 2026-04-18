@@ -1,34 +1,39 @@
 
-Próxima: **Melhoria #5/20 — Painel "Próxima Meta" no sidebar do piloto**.
+Próxima: **Melhoria #6/20 — Combo Streak Indicator** (sequência de vendas/dias ativos do piloto).
 
 ## Plano
 
-### Problema atual
-O `RaceLeaderboardSidebar` mostra ranking com gap em R$, mas falta um destaque motivacional sobre o objetivo imediato do piloto logado.
+### Problema
+Não há feedback visual de "momentum" — quando o piloto está em sequência quente de vendas/dias, isso passa despercebido. Falta gatilho de dopamina.
 
 ### Solução
-Novo card `NextGoalPanel.tsx` (~180L) em `src/components/race/`, no topo da sidebar:
+Novo componente `ComboStreakBadge.tsx` (~150L) em `src/components/race/`, exibido no `NextGoalPanel` (canto superior direito) e replicável no `RaceArenaHeader`.
 
-**Modos dinâmicos** (baseado no piloto logado):
-1. **Caçando posição** (não-líder): mostra alvo à frente, gap em R$, % de progresso, barra com gradient `from-primary to-amber`
-2. **Defendendo P1** (líder): mostra perseguidor + gap, ícone Crown dourada, mensagem "Defenda a P1"
-3. **Meta da temporada** (sempre): % rumo ao `goal_amount` com CountUp, ETA estimado pelo ritmo dos últimos 7 dias
+**Lógica do streak**:
+- Hook `useRaceStreak.ts` (~90L) em `src/hooks/race/`:
+  - Query Supabase: vendas do piloto na temporada (`sales` table filtrada por `salesperson_id` + `created_at` dentro de `season.start_date/end_date`)
+  - Agrupa por dia → calcula sequência consecutiva atual de dias com ≥1 venda
+  - Retorna `{ streakDays, lastSaleAt, isOnFire (≥3), isLegendary (≥7), salesCount }`
+  - Memoizado, `staleTime: 30s`, realtime invalidation via canal `sales` (já existe)
 
-**Visual**: Sora para números grandes, Inter para labels, gradient sutil, pulse motion quando gap <5%, ícones (Target/Crown/TrendingUp/Flag), `aria-live="polite"`.
-
-### Hook auxiliar
-`useNextGoal.ts` (~80L) em `src/hooks/race/`:
-- Input: `entries`, `currentUserSalespersonId`, `goalAmount`
-- Output: `{ mode, target, gapAmount, gapPercent, seasonProgress, eta }`
-- Pure + memoizado
+**Visual do badge**:
+- Tiers: 🔥 (3-6 dias, accent warning), ⚡ (7-13, gradient warning→destructive), 👑 (14+, gradient destructive→primary com glow pulse)
+- Nº grande em Sora black + label "DIAS"
+- Motion: pulse contínuo quando `isOnFire`, shimmer sweep quando `isLegendary`
+- Sem streak (0-2 dias): mostra dot pequeno cinza com "Comece sua sequência"
+- A11y: `aria-label="Sequência de N dias consecutivos"`
 
 ### Integração
-- `RaceLeaderboardSidebar.tsx`: renderiza `NextGoalPanel` acima do ranking quando há `currentUserSalespersonId`
-- `RaceArenaView.tsx`: passa `currentUserSalespersonId` (resolver via `useAuth` + lookup salesperson)
+- `NextGoalPanel.tsx`: receber `salespersonId` e renderizar `<ComboStreakBadge salespersonId={...} seasonStart={...} seasonEnd={...} />` no header (substitui o `P{rank}` simples ou ao lado dele)
+- `RaceLeaderboardSidebar.tsx`: passar `season` (start/end) já disponível
 - Exportar em `src/components/race/index.ts`
 
+### Arquivos
+- **Criar**: `src/hooks/race/useRaceStreak.ts`, `src/components/race/ComboStreakBadge.tsx`
+- **Editar**: `src/components/race/NextGoalPanel.tsx`, `src/components/race/RaceLeaderboardSidebar.tsx`, `src/components/race/index.ts`
+
 ### Padrões
-- Semantic tokens, Sora/Inter, ≤200L, strict TS, `useMemo` no hook, skeleton se piloto fora do leaderboard
+Semantic tokens, Sora/Inter, ≤200L, strict TS, `useMemo`+React Query, framer-motion respeitando `prefers-reduced-motion`.
 
 ### Próximas (preview)
-#6 Combo Streak indicator → #7 Mini-podium no header → #8 Histórico de campeões → ... até #20.
+#7 Mini-podium animado no header → #8 Histórico de campeões mensais → #9 Highlight Reel de ultrapassagens → ... até #20.
