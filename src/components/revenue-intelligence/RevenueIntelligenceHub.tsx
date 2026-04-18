@@ -11,6 +11,11 @@ import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
 import { AIForecastPanel } from "./AIForecastPanel";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
 import { QuotaAttainmentPredictor } from "./quota/QuotaAttainmentPredictor";
+import { ForecastAccuracySummary } from "./forecast/ForecastAccuracySummary";
+import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
+import { ForecastBiasChart } from "./forecast/ForecastBiasChart";
+import { ConfidenceScoresTable } from "./forecast/ConfidenceScoresTable";
+import { MapeBySegmentChart } from "./forecast/MapeBySegmentChart";
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
@@ -54,8 +59,9 @@ export const RevenueIntelligenceHub: FC = () => {
         />
       </div>
 
-      <Tabs defaultValue="ai-forecast">
-        <TabsList>
+      <Tabs defaultValue="forecast-accuracy">
+        <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="ai-forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
           <TabsTrigger value="calibration">Win Calibration</TabsTrigger>
@@ -63,6 +69,17 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
+        <TabsContent value="forecast-accuracy" className="mt-4 space-y-4">
+          <ForecastAccuracySummary />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ForecastVsActualChart />
+            <ForecastBiasChart />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
+            <MapeBySegmentChart />
+            <ConfidenceScoresTable />
+          </div>
+        </TabsContent>
         <TabsContent value="ai-forecast" className="mt-4">
           <AIForecastPanel />
         </TabsContent>
