@@ -725,6 +725,26 @@ export function RaceArena({
         overtakesTotal={overtakesTotal}
       />
 
+      {/* ===== Próxima curva HUD (canto inferior direito, acima do Replay) ===== */}
+      <NextCornerHUD info={nextCornerInfo} />
+
+      {/* ===== Indicador "FASTEST SECTOR" piscando (topo central abaixo do Lap) ===== */}
+      {flashSectorIdx !== null && !reducedMotion && (
+        <div
+          className="absolute top-12 left-1/2 -translate-x-1/2 z-20 rounded-md px-2 py-0.5 border border-border/50"
+          style={{
+            background: 'hsl(271 91% 55%)',
+            animation: 'race-fastest-sector-flash 0.5s ease-in-out infinite',
+          }}
+          aria-label={`Setor ${flashSectorIdx + 1} mais rápido`}
+        >
+          <span className="text-[8px] font-black uppercase tracking-[0.18em] text-white">
+            Fastest S{flashSectorIdx + 1}
+          </span>
+        </div>
+      )}
+
+
       {/* ===== Speed HUD do líder (canto inferior esquerdo, ao lado do MiniMap) ===== */}
       <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
 
