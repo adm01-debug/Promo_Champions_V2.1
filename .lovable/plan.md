@@ -1,54 +1,49 @@
 
-Revenue Intelligence Hub fechado em 4/4 (10/10). Próximo bloco do roadmap mestre.
+Sales Coaching Intelligence 1/4 entregue. Próxima atômica.
 
-**Próximo bloco — Sales Coaching Intelligence (1/4): Coaching Opportunity Detector**
+**Sales Coaching Intelligence — 2/4: Skill Gap Analyzer**
 
-Detecta automaticamente oportunidades de coaching analisando gaps de performance entre vendedores. Compara métricas individuais (taxa de conversão por estágio, tempo médio em estágio, win rate, ticket médio, atividades/dia) contra benchmarks da equipe e identifica os 3 maiores gaps de cada vendedor + sugestão de skill a desenvolver.
+Aprofunda o detector de oportunidades com análise longitudinal de skills: agrega gaps recorrentes ao longo do tempo, classifica vendedores em níveis de maturidade por skill (iniciante/intermediário/avançado/expert) e gera trilhas de desenvolvimento personalizadas.
 
 ## Entregáveis
 
 ### 1. Migration
-- `coaching_opportunities`: `id`, `salesperson_id FK`, `metric_key text` (`conversion_rate|stage_duration|win_rate|avg_ticket|activities_per_day`), `metric_label text`, `current_value numeric`, `team_benchmark numeric`, `gap_pct numeric` (gen), `severity text` (low|medium|high|critical), `skill_focus text` (`discovery|qualification|objection_handling|closing|prospecting|negotiation`), `recommended_action text`, `priority int`, `detected_at timestamptz`. Único `(salesperson_id, metric_key, detected_at::date)`.
-- `coaching_skill_benchmarks`: `id`, `metric_key text UNIQUE`, `team_avg numeric`, `top_quartile numeric`, `sample_size int`, `computed_at timestamptz`.
-- RLS: read authenticated; write admin/manager. Realtime + índices `(salesperson_id)`, `(severity)`, `(detected_at desc)`.
+- `skill_assessments`: `id`, `salesperson_id FK`, `skill text` (6 skills do enum coaching), `current_level text` (beginner|intermediate|advanced|expert), `score numeric` (0-100), `trend text` (improving|stable|declining), `gap_count_30d int`, `gap_count_90d int`, `last_assessed_at timestamptz`, `factors jsonb`. Único `(salesperson_id, skill)`.
+- `skill_development_tracks`: `id`, `salesperson_id FK`, `skill text`, `priority int`, `current_level text`, `target_level text`, `milestones jsonb` (array de marcos), `estimated_weeks int`, `ai_plan text`, `created_at timestamptz`. Único `(salesperson_id, skill)`.
+- RLS: read authenticated; write admin/manager. Realtime + índices.
 
-### 2. Edge function `detect-coaching-opportunities` (verify_jwt=true)
-- Para cada vendedor ativo:
-  - Calcula 5 métricas a partir de `sales` + `activities` (últimos 90d): conversion rate, stage duration mediana, win rate, avg ticket, activities/dia.
-  - Compara cada métrica com `team_avg` (recalcula benchmarks no início do run).
-  - `gap_pct = (benchmark - current) / benchmark` (positivo = abaixo da equipe).
-  - `severity`: gap ≥ 40% = critical, ≥ 25% = high, ≥ 10% = medium, senão low.
-  - Mapeia `skill_focus` por métrica (ex: win_rate → closing, conversion_rate → qualification).
-  - Gera `recommended_action` via Lovable AI (`gemini-2.5-flash`) com top 3 gaps por vendedor.
-  - Insere apenas top 3 gaps (priority 1-3) por vendedor.
+### 2. Edge function `analyze-skill-gaps` (verify_jwt=true)
+- Para cada vendedor:
+  - Agrega `coaching_opportunities` últimos 90d por `skill_focus` → contagem + severidade média.
+  - Calcula `score` por skill: 100 - (críticas × 30 + altas × 20 + médias × 10 + baixas × 5), clamp 0–100.
+  - Determina `current_level`: ≥85 expert, ≥65 advanced, ≥40 intermediate, <40 beginner.
+  - Compara com janela 90–180d para `trend`.
+  - Para top 3 skills com menor score: gera `ai_plan` via Lovable AI (Gemini Flash) com 4 milestones acionáveis e estimativa em semanas.
+  - Upserts `skill_assessments` (todas) e `skill_development_tracks` (top 3).
 
-### 3. Hooks `src/hooks/coaching/useCoachingOpportunities.ts`
-- `useCoachingOpportunities(filters?)` — lista com join `salespeople(name)`.
-- `useCoachingBenchmarks()` — benchmarks da equipe.
-- `useCoachingSummary()` — KPIs: total críticas, vendedores afetados, skill mais comum, gap médio.
-- `useDetectCoachingOpportunities()` — mutation.
+### 3. Hooks `src/hooks/coaching/useSkillGapAnalyzer.ts`
+- `useSkillAssessments(salespersonId?)`, `useSkillTracks(salespersonId?)`, `useSkillSummary()` (KPIs: skill mais fraca, vendedores em beginner, melhoria média), `useAnalyzeSkillGaps()` mutation.
 
-### 4. Componentes `src/components/coaching/opportunities/`
-- `CoachingOpportunitySummary.tsx` (≤180L) — 4 KPIs + ação refresh.
-- `CoachingGapByRepTable.tsx` (≤200L) — tabela vendedor × top 3 gaps com severity badges.
-- `CoachingSkillFocusChart.tsx` (≤160L) — bar chart distribuição por skill.
-- `CoachingSeverityHeatmap.tsx` (≤160L) — heatmap vendedor × métrica.
-- `CoachingActionsPanel.tsx` (≤180L) — recomendações IA agrupadas por vendedor.
-- `CoachingOpportunityPanel.tsx` (container).
-- `coachingOpportunityHelpers.ts` — labels severity/skill, cores, formatadores.
+### 4. Componentes `src/components/coaching/skills/`
+- `SkillGapSummary.tsx` (≤180L) — 4 KPIs + ação refresh.
+- `SkillRadarChart.tsx` (≤180L) — radar 6 skills × score médio da equipe.
+- `SkillMaturityMatrix.tsx` (≤200L) — matriz vendedor × skill com nível colorido.
+- `SkillTrackCards.tsx` (≤200L) — cards trilhas de desenvolvimento (top 12) com milestones e plano IA.
+- `SkillGapAnalyzerPanel.tsx` (container).
+- `skillGapHelpers.ts` — labels nível, cores, formatadores.
 
 ### 5. Integração
-- Nova rota/aba "Coaching Intelligence" em hub adequado (verifico `BIGestorHub` ou crio `SalesCoachingHub`).
-- `supabase/config.toml`: `verify_jwt = true` para `detect-coaching-opportunities`.
+- Nova aba "Skill Gap Analyzer" em `CoachingIntelligenceHub.tsx`.
+- `supabase/config.toml`: `verify_jwt = true` para `analyze-skill-gaps`.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após detect: KPIs preenchem, tabela mostra top gaps por vendedor, ações IA aparecem.
+- Após analyze: KPIs preenchem, radar mostra forças/fraquezas, matriz colorida por nível, trilhas com plano IA aparecem.
 
 ## Arquivos
 - **Migration**: 1 (2 tabelas + RLS + realtime + índices).
 - **Edge function**: 1.
-- **Criar**: 1 hook, 6 componentes + 1 helper.
-- **Editar**: hub (1 arquivo), `supabase/config.toml`.
+- **Criar**: 1 hook, 5 componentes + 1 helper.
+- **Editar**: `CoachingIntelligenceHub.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo automaticamente para **2/4: Skill Gap Analyzer** → **3/4: Coaching Session Planner** → **4/4: Performance Improvement Tracker**, fechando Sales Coaching Intelligence em 10/10.
+Após esta entrega, sigo automaticamente para **3/4: Coaching Session Planner** → **4/4: Performance Improvement Tracker**, fechando Sales Coaching Intelligence em 10/10.
