@@ -1,10 +1,12 @@
-import { TRACK_VIEWBOX, TRACK_INNER_HEIGHT } from '../raceTrackHelpers';
+import { TRACK_VIEWBOX } from '../raceTrackHelpers';
 
 /**
  * Cenário top-down VERTICAL (viewBox 600x1000) com árvores, paddock,
  * pit lane vertical na lateral esquerda do infield e arquibancadas.
  * - layer 'outer': árvores + arquibancadas + marshal posts FORA da pista
- * - layer 'inner': pit building, torre, paddock, arbustos e helicóptero NO infield
+ *                  + Cycle 53-58: motorhomes (faixa topo), pit-lane externa (faixa base),
+ *                  drones, telão LED, helicóptero de transmissão e pássaros ambientais.
+ * - layer 'inner': pit building, torre, paddock, arbustos NO infield
  */
 
 interface TreeProps { cx: number; cy: number; scale?: number; }
@@ -89,7 +91,6 @@ function Paddock({ x, y, w, h, slots = 6 }: { x: number; y: number; w: number; h
 /**
  * Marshal humanoide minimalista segurando bandeira que se agita.
  * Quando `yellowFlag` true, troca a cor da bandeira para amarelo F1.
- * Cada marshal tem `delayMs` para dessincronizar levemente a onda das bandeiras.
  */
 function MarshalPost({
   cx, cy, flagColor = 'hsl(28 95% 55%)', yellowFlag = false, delayMs = 0,
@@ -97,14 +98,10 @@ function MarshalPost({
   const flag = yellowFlag ? 'hsl(45 95% 55%)' : flagColor;
   return (
     <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1.5px 2px 1.5px hsl(var(--race-grass-shadow) / 0.55))' }}>
-      {/* base/post pintado */}
       <circle r={3.5} fill="hsl(28 95% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
-      {/* humanoide minimalista (3px): cabeça + tronco */}
       <circle cx={-1.6} cy={-5.5} r={1.4} fill="hsl(20 35% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
       <rect x={-2.8} y={-4.2} width={2.4} height={3.5} rx={0.6} fill="hsl(210 70% 45%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
-      {/* mastro */}
       <rect x={-0.4} y={-12} width={0.9} height={9} fill="hsl(var(--race-checkered-dark))" />
-      {/* bandeira animada (origem na ponta superior do mastro) */}
       <g
         style={{
           transformOrigin: '0px -12px',
@@ -124,7 +121,6 @@ function MarshalPost({
   );
 }
 
-/** Bandeiras de patrocinador horizontais (acima da arquibancada superior). */
 function SponsorBunting({ x, y, w, count = 8 }: { x: number; y: number; w: number; count?: number }) {
   const step = w / count;
   const palette = ['hsl(0 75% 52%)', 'hsl(0 0% 98%)', 'hsl(210 75% 52%)', 'hsl(45 92% 55%)'];
@@ -160,7 +156,6 @@ function Grandstand({
       <rect width={vertical ? 4 : w} height={vertical ? h : 4} fill="hsl(var(--race-curb-b))" rx={2} />
       {Array.from({ length: stripes }).map((_, i) => {
         const c = palette[i % palette.length];
-        // La Ola: cada faixa anima sequencialmente da esquerda para a direita
         const delay = (i / Math.max(1, stripes)) * 1.2;
         const animStyle = waveTrigger > 0
           ? { animation: `race-la-ola-wave 1.2s ease-in-out ${delay}s 1`, transformBox: 'fill-box' as const, transformOrigin: 'center bottom' }
@@ -175,28 +170,216 @@ function Grandstand({
   );
 }
 
-/** Helicóptero de transmissão sobrevoando o circuito em loop lento. Centro em (300, 500). */
+/* ============================================================
+   CYCLE 53-58: AMBIENT BROADCAST LIFE
+   ============================================================ */
+
+/** Helicóptero de transmissão atravessando a faixa superior em loop. */
 function BroadcastHelicopter() {
   return (
-    <g aria-hidden>
-      <g style={{ animation: 'race-heli-orbit 28s linear infinite', transformOrigin: '300px 500px' }}>
-        <g transform="translate(220 0)">
-          <ellipse cx={6} cy={20} rx={9} ry={3} fill="rgba(0,0,0,0.22)" filter="url(#dustBlur)" />
+    <g aria-hidden style={{ animation: 'race-helicopter-fly 18s linear infinite' }}>
+      {/* sombra projetada no chão */}
+      <ellipse cx={6} cy={70} rx={11} ry={3.5} fill="rgba(0,0,0,0.22)" filter="url(#dustBlur)" />
+      <g transform="translate(0, 28)">
+        {/* fuselagem */}
+        <ellipse cx={3} cy={0} rx={9} ry={4.5} fill="hsl(210 75% 50%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.7} />
+        {/* janela */}
+        <ellipse cx={7} cy={-0.6} rx={3} ry={2.5} fill="hsl(200 30% 18%)" opacity={0.85} />
+        <ellipse cx={6.5} cy={-1.3} rx={1.2} ry={0.6} fill="hsl(0 0% 100%)" opacity={0.45} />
+        {/* cauda */}
+        <rect x={-12} y={-1} width={11} height={2} rx={1} fill="hsl(var(--race-building-edge))" />
+        <circle cx={-12} cy={0} r={1.6} fill="hsl(var(--race-checkered-dark))" opacity={0.7} />
+        {/* skids */}
+        <line x1={-2} y1={4} x2={9} y2={4} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.6} />
+        {/* rotor principal animado */}
+        <g style={{ transformOrigin: '3px 0px', animation: 'race-rotor-spin 0.16s linear infinite' }}>
+          <ellipse cx={3} cy={-0.5} rx={16} ry={1} fill="hsl(var(--race-checkered-dark))" opacity={0.55} />
         </g>
       </g>
-      <g style={{ animation: 'race-heli-orbit 28s linear infinite', transformOrigin: '300px 500px' }}>
-        <g transform="translate(220 0)">
-          <rect x={-12} y={-1.2} width={14} height={2.4} rx={1} fill="hsl(var(--race-building-edge))" />
-          <ellipse cx={3} cy={0} rx={9} ry={5} fill="hsl(210 75% 50%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
-          <ellipse cx={7} cy={-0.8} rx={3.5} ry={3} fill="hsl(200 30% 18%)" opacity={0.85} />
-          <ellipse cx={6.5} cy={-1.5} rx={1.5} ry={0.7} fill="hsl(0 0% 100%)" opacity={0.45} />
-          <line x1={-2} y1={4.5} x2={9} y2={4.5} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.7} />
-          <g style={{ animation: 'race-heli-rotor 0.18s linear infinite', transformOrigin: '3px 0px' }}>
-            <ellipse cx={3} cy={0} rx={18} ry={1.2} fill="hsl(var(--race-checkered-dark))" opacity={0.55} />
-            <ellipse cx={3} cy={0} rx={1.2} ry={18} fill="hsl(var(--race-checkered-dark))" opacity={0.25} />
+    </g>
+  );
+}
+
+/** Motorhome (caminhão de equipe) na faixa superior. */
+function Motorhome({ x, y, color }: { x: number; y: number; color: string }) {
+  return (
+    <g transform={`translate(${x} ${y})`} aria-hidden style={{ filter: 'drop-shadow(2px 3px 2.5px hsl(var(--race-grass-shadow) / 0.5))' }}>
+      {/* corpo principal */}
+      <rect x={0} y={4} width={56} height={26} rx={2.5} fill={color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
+      {/* faixa superior */}
+      <rect x={0} y={4} width={56} height={5} rx={2} fill="hsl(0 0% 100%)" opacity={0.85} />
+      {/* janelas */}
+      <rect x={4} y={11} width={10} height={4.5} rx={0.8} fill="hsl(200 35% 25%)" opacity={0.85} />
+      <rect x={17} y={11} width={10} height={4.5} rx={0.8} fill="hsl(200 35% 25%)" opacity={0.85} />
+      <rect x={30} y={11} width={10} height={4.5} rx={0.8} fill="hsl(200 35% 25%)" opacity={0.85} />
+      <rect x={43} y={11} width={10} height={4.5} rx={0.8} fill="hsl(200 35% 25%)" opacity={0.85} />
+      {/* cabine */}
+      <rect x={48} y={18} width={8} height={12} rx={1.2} fill="hsl(0 0% 92%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.6} />
+      <rect x={49} y={20} width={6} height={4} rx={0.6} fill="hsl(200 35% 25%)" opacity={0.9} />
+      {/* rodas */}
+      <circle cx={10} cy={31} r={2.3} fill="hsl(var(--race-checkered-dark))" />
+      <circle cx={26} cy={31} r={2.3} fill="hsl(var(--race-checkered-dark))" />
+      <circle cx={50} cy={31} r={2.3} fill="hsl(var(--race-checkered-dark))" />
+      {/* antena parabólica no teto */}
+      <line x1={20} y1={4} x2={20} y2={-2} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.7} />
+      <ellipse cx={20} cy={-3} rx={3} ry={1.2} fill="hsl(0 0% 95%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+      {/* mini bandeirinha */}
+      <line x1={36} y1={4} x2={36} y2={-3} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.6} />
+      <path d="M36,-3 L41,-2 L36,-1 Z" fill={color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+    </g>
+  );
+}
+
+/** Faixa superior preenchida com 4 motorhomes de equipes. */
+function PaddockMotorhomes() {
+  const colors = ['hsl(0 75% 52%)', 'hsl(210 75% 52%)', 'hsl(45 92% 55%)', 'hsl(140 65% 45%)'];
+  return (
+    <g aria-hidden>
+      {colors.map((c, i) => (
+        <Motorhome key={i} x={50 + i * 130} y={42} color={c} />
+      ))}
+    </g>
+  );
+}
+
+/** Pit lane externa estilizada na faixa inferior (6 boxes). */
+function ExternalPitLane() {
+  const baseY = 935;
+  const colors = [
+    'hsl(0 75% 52%)', 'hsl(210 75% 52%)', 'hsl(45 92% 55%)',
+    'hsl(140 65% 45%)', 'hsl(280 55% 55%)', 'hsl(28 95% 55%)',
+  ];
+  return (
+    <g aria-hidden style={{ filter: 'drop-shadow(2px 2px 2px hsl(var(--race-grass-shadow) / 0.45))' }}>
+      {/* linha do asfalto da pit lane */}
+      <rect x={50} y={baseY} width={500} height={6} fill="hsl(var(--race-asphalt))" opacity={0.85} />
+      <line x1={50} y1={baseY + 3} x2={550} y2={baseY + 3} stroke="hsl(0 0% 100%)" strokeWidth={0.6} strokeDasharray="5 4" opacity={0.8} />
+      {colors.map((c, i) => {
+        const bx = 60 + i * 78;
+        const by = baseY + 8;
+        return (
+          <g key={i}>
+            {/* faixa colorida (teto do box) */}
+            <rect x={bx} y={by} width={60} height={4} fill={c} opacity={0.95} />
+            {/* corpo do box */}
+            <rect x={bx} y={by + 4} width={60} height={20} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={0.7} />
+            {/* placa numerada */}
+            <rect x={bx + 2} y={by + 6} width={12} height={8} rx={1} fill="hsl(var(--race-asphalt))" />
+            <text x={bx + 8} y={by + 12} textAnchor="middle" fontSize={6.5} fontWeight={900}
+              fill="hsl(0 0% 100%)" style={{ fontFamily: 'system-ui, sans-serif' }}>
+              {i + 1}
+            </text>
+            {/* pneus empilhados */}
+            <circle cx={bx + 22} cy={by + 14} r={2.2} fill="hsl(var(--race-checkered-dark))" />
+            <circle cx={bx + 22} cy={by + 10} r={2.2} fill="hsl(var(--race-checkered-dark))" />
+            <circle cx={bx + 27} cy={by + 14} r={2.2} fill="hsl(var(--race-checkered-dark))" />
+            {/* mecânicos minimalistas */}
+            <circle cx={bx + 38} cy={by + 14} r={1.3} fill="hsl(20 35% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            <rect x={bx + 36.7} y={by + 15} width={2.6} height={3.5} rx={0.5} fill={c} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            <circle cx={bx + 46} cy={by + 14} r={1.3} fill="hsl(20 35% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            <rect x={bx + 44.7} y={by + 15} width={2.6} height={3.5} rx={0.5} fill={c} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            {/* porta */}
+            <rect x={bx + 50} y={by + 8} width={8} height={14} fill="hsl(var(--race-asphalt))" opacity={0.7} />
           </g>
-          <circle cx={-12} cy={0} r={1.8} fill="hsl(var(--race-checkered-dark))" opacity={0.6} />
-        </g>
+        );
+      })}
+    </g>
+  );
+}
+
+/** Drone hexacoptero minimalista com luz REC piscante e órbita lenta. */
+function FilmingDrone({ cx, cy, delay = 0 }: { cx: number; cy: number; delay?: number }) {
+  return (
+    <g transform={`translate(${cx} ${cy})`} aria-hidden>
+      <g style={{ animation: `race-drone-orbit 6s linear infinite ${delay}s`, transformOrigin: '0 0' }}>
+        {/* corpo */}
+        <circle r={1.6} fill="hsl(var(--race-checkered-dark))" />
+        {/* 4 braços */}
+        {[0, 90, 180, 270].map((a) => (
+          <g key={a} transform={`rotate(${a})`}>
+            <line x1={0} y1={0} x2={3.5} y2={0} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+            {/* hélice animada */}
+            <ellipse
+              cx={3.5} cy={0} rx={2.2} ry={0.4}
+              fill="hsl(var(--race-asphalt-edge))"
+              opacity={0.7}
+              style={{ transformOrigin: '3.5px 0', animation: 'race-rotor-spin 0.12s linear infinite' }}
+            />
+          </g>
+        ))}
+        {/* luz REC piscando */}
+        <circle cx={0} cy={2.4} r={0.7} fill="hsl(0 90% 55%)" style={{ animation: 'race-led-blink-rec 0.9s ease-in-out infinite' }} />
+      </g>
+    </g>
+  );
+}
+
+/** Telão LED na faixa inferior, mostrando líder + gap. */
+function LedScoreboard({ leaderName, leaderGap }: { leaderName?: string; leaderGap?: string }) {
+  const text = leaderName ? `P1 ${leaderName.split(' ')[0].toUpperCase()}${leaderGap ? `  ${leaderGap}` : ''}` : 'LIVE BROADCAST';
+  return (
+    <g transform="translate(220 920)" aria-hidden style={{ filter: 'drop-shadow(2px 3px 3px hsl(var(--race-grass-shadow) / 0.55))' }}>
+      {/* suportes */}
+      <rect x={6}  y={12} width={2.5} height={10} fill="hsl(var(--race-checkered-dark))" />
+      <rect x={151} y={12} width={2.5} height={10} fill="hsl(var(--race-checkered-dark))" />
+      {/* moldura do telão */}
+      <rect x={0} y={0} width={160} height={14} rx={1.5} fill="hsl(var(--race-checkered-dark))" />
+      {/* área LED preta */}
+      <rect x={2} y={2} width={156} height={10} fill="hsl(0 0% 5%)" />
+      {/* matriz de LEDs (pontos sutis para textura) */}
+      <pattern id="ledMatrix" x={0} y={0} width={2} height={2} patternUnits="userSpaceOnUse">
+        <circle cx={1} cy={1} r={0.18} fill="hsl(140 80% 50%)" opacity={0.18} />
+      </pattern>
+      <rect x={2} y={2} width={156} height={10} fill="url(#ledMatrix)" />
+      {/* texto pixelado */}
+      <text
+        x={80} y={9.5} textAnchor="middle"
+        fontSize={7.2} fontWeight={900}
+        fill="hsl(45 100% 60%)"
+        style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          letterSpacing: '0.12em',
+          animation: 'race-led-flicker 4.5s ease-in-out infinite',
+        }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
+/** Bando de pássaros (V-shapes) cruzando a tela em diagonal. */
+function BirdFlock({ y, delay = 0, reverse = false }: { y: number; delay?: number; reverse?: boolean }) {
+  const flap = (i: number) => ({
+    transformOrigin: 'center',
+    animation: `race-bird-flap ${0.35 + i * 0.05}s ease-in-out infinite`,
+  });
+  return (
+    <g
+      aria-hidden
+      style={{
+        animation: `race-bird-fly 25s linear infinite ${delay}s`,
+        transform: reverse ? 'scaleX(-1) translateX(-600px)' : undefined,
+      }}
+    >
+      <g transform={`translate(0 ${y})`}>
+        {[0, 1, 2, 3, 4].map((i) => {
+          const bx = i * 14;
+          const by = (i % 2) * 4;
+          return (
+            <g key={i} transform={`translate(${bx} ${by})`} style={flap(i)}>
+              <path
+                d="M-3,0 L0,-1.5 L3,0"
+                fill="none"
+                stroke="hsl(var(--race-checkered-dark))"
+                strokeWidth={0.9}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.7}
+              />
+            </g>
+          );
+        })}
       </g>
     </g>
   );
@@ -221,13 +404,9 @@ function PitLane() {
         const c = garageColors[i];
         return (
           <g key={i}>
-            {/* faixa colorida (teto da garagem) à direita da pit lane */}
             <rect x={laneX + laneW} y={gy + 1} width={4} height={garageH - 2} fill={c} opacity={0.92} />
-            {/* corpo da garagem */}
             <rect x={laneX + laneW + 4} y={gy + 1} width={14} height={garageH - 2} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={0.7} />
-            {/* porta */}
             <rect x={laneX + laneW + 7} y={gy + 4} width={9} height={garageH - 8} fill="hsl(var(--race-asphalt))" opacity={0.7} />
-            {/* número */}
             <text
               x={laneX + laneW + 11.5}
               y={gy + garageH / 2 + 2}
@@ -251,52 +430,70 @@ export function TrackScenery({
   layer,
   yellowFlag = false,
   waveTrigger = 0,
-}: { layer: 'outer' | 'inner'; yellowFlag?: boolean; waveTrigger?: number }) {
+  leaderName,
+  leaderGap,
+}: {
+  layer: 'outer' | 'inner';
+  yellowFlag?: boolean;
+  waveTrigger?: number;
+  leaderName?: string;
+  leaderGap?: string;
+}) {
   const W = TRACK_VIEWBOX.width; // 600
-  // Coordenadas internas referem-se à área da pista (1000px) — o offset Y é aplicado pelo wrapper.
-  const H = TRACK_INNER_HEIGHT;
+  const H = TRACK_VIEWBOX.height; // 1000
 
   if (layer === 'outer') {
     const trees: Array<[number, number, number]> = [
-      [40, 40, 1.05], [120, 25, 0.85], [W - 40, 40, 1.0], [W - 120, 25, 0.9],
-      [40, H - 40, 1.1], [120, H - 28, 0.9], [W - 40, H - 40, 1.0], [W - 120, H - 28, 0.95],
+      [40, 40, 1.05], [W - 40, 40, 1.0],
+      [40, H - 40, 1.1], [W - 40, H - 40, 1.0],
       [25, 200, 0.95], [25, 360, 1.0], [25, 520, 0.95], [25, 680, 1.0], [25, 840, 0.9],
       [W - 25, 200, 0.95], [W - 25, 360, 1.05], [W - 25, 520, 0.9], [W - 25, 680, 1.0], [W - 25, 840, 0.95],
-      [60, 75, 0.7], [W - 60, 75, 0.75],
-      [60, H - 75, 0.75], [W - 60, H - 75, 0.7],
     ];
     return (
       <g aria-hidden>
+        {/* CICLO 53-58: Motorhomes na faixa superior (paddock de transmissão) */}
+        <PaddockMotorhomes />
+
         <Grandstand x={200} y={30} w={200} h={36} waveTrigger={waveTrigger} />
         <SponsorBunting x={200} y={24} w={200} count={10} />
         <Grandstand x={200} y={H - 66} w={200} h={36} waveTrigger={waveTrigger} />
         <Grandstand x={20} y={420} w={26} h={160} vertical waveTrigger={waveTrigger} />
         <Grandstand x={W - 46} y={420} w={26} h={160} vertical waveTrigger={waveTrigger} />
-        {/* Marshal posts: trocam para amarelo durante yellowFlag, com delays escalonados */}
+
+        {/* CICLO 53-58: Telão LED acima da grandstand inferior */}
+        <LedScoreboard leaderName={leaderName} leaderGap={leaderGap} />
+
+        {/* CICLO 53-58: Pit lane externa estilizada na faixa inferior */}
+        <ExternalPitLane />
+
+        {/* Marshal posts */}
         <MarshalPost cx={130}     cy={130}     yellowFlag={yellowFlag} delayMs={0}   />
         <MarshalPost cx={W - 130} cy={130}     yellowFlag={yellowFlag} delayMs={120} flagColor="hsl(0 75% 52%)" />
         <MarshalPost cx={130}     cy={H - 130} yellowFlag={yellowFlag} delayMs={240} flagColor="hsl(45 92% 55%)" />
         <MarshalPost cx={W - 130} cy={H - 130} yellowFlag={yellowFlag} delayMs={360} />
+
         {trees.map(([x, y, s], i) => (
           <Tree key={i} cx={x} cy={y} scale={s} />
         ))}
+
+        {/* CICLO 53-58: Helicóptero de transmissão atravessando a faixa superior */}
+        <BroadcastHelicopter />
+
+        {/* CICLO 53-58: Bandos de pássaros ambientais */}
+        <BirdFlock y={150} delay={0} />
+        <BirdFlock y={870} delay={12} reverse />
       </g>
     );
   }
 
-  // INFIELD: pit lane vertical (lateral esquerda) + pit building + torre + paddock + arbustos + helicóptero
+  // INFIELD
   return (
     <g aria-hidden>
-      {/* Pit lane vertical na lateral esquerda do infield */}
       <PitLane />
-      {/* Pit building horizontal no topo do infield */}
       <PitBuilding x={200} y={170} w={200} h={44} doors={6} />
-      {/* Torre de controle à direita do pit */}
       <ControlTower cx={420} cy={192} />
-      {/* Paddock vertical à direita do infield (boxes empilhados) */}
       <Paddock x={440} y={420} w={20} h={160} slots={6} />
 
-      {/* Arbustos espalhados ao redor do lago */}
       <Bush cx={200} cy={490} />
       <Bush cx={400} cy={490} />
       <Bush cx={200} cy={640} />
@@ -304,14 +501,14 @@ export function TrackScenery({
       <Bush cx={300} cy={460} />
       <Bush cx={300} cy={680} />
 
-      {/* Árvores pequenas decorativas */}
       <Tree cx={180} cy={780} scale={0.55} />
       <Tree cx={420} cy={780} scale={0.55} />
       <Tree cx={180} cy={300} scale={0.55} />
       <Tree cx={420} cy={300} scale={0.55} />
 
-      {/* Helicóptero de transmissão sobrevoando o circuito */}
-      <BroadcastHelicopter />
+      {/* CICLO 53-58: Drones de filmagem orbitando sobre a chicane central */}
+      <FilmingDrone cx={250} cy={500} delay={0} />
+      <FilmingDrone cx={350} cy={520} delay={1.5} />
     </g>
   );
 }

@@ -1,4 +1,4 @@
-import { TRACK_VIEWBOX, TRACK_OFFSET_Y } from './raceTrackHelpers';
+import { TRACK_VIEWBOX } from './raceTrackHelpers';
 import { TrackDefs } from './track/TrackDefs';
 import { TrackGrass } from './track/TrackGrass';
 import { TrackPond } from './track/TrackPond';
@@ -9,18 +9,22 @@ import { TrackScenery } from './track/TrackScenery';
 
 interface RaceTrackProps {
   children?: React.ReactNode;
+  /** Quando true, todos os marshals trocam para bandeira amarela. */
   yellowFlag?: boolean;
+  /** Incrementa para disparar uma onda mexicana (la ola) na arquibancada. */
   waveTrigger?: number;
+  /** Nome do líder atual (exibido no telão LED). */
+  leaderName?: string;
+  /** Gap formatado do líder (ex: "+0.42%") exibido no telão LED. */
+  leaderGap?: string;
 }
 
 /**
  * Pista top-down vetorial flat (estilo ilustração).
- * A grama cobre todo o viewBox; o restante do circuito é deslocado
- * verticalmente por TRACK_OFFSET_Y para centralizar a pista (75% da área).
- * `getPositionOnTrack` já aplica o offset, então `children` (carros) ficam
- * naturalmente alinhados sem precisar do translate.
  */
-export function RaceTrack({ children, yellowFlag = false, waveTrigger = 0 }: RaceTrackProps) {
+export function RaceTrack({
+  children, yellowFlag = false, waveTrigger = 0, leaderName, leaderGap,
+}: RaceTrackProps) {
   return (
     <svg
       viewBox={`0 0 ${TRACK_VIEWBOX.width} ${TRACK_VIEWBOX.height}`}
@@ -28,17 +32,13 @@ export function RaceTrack({ children, yellowFlag = false, waveTrigger = 0 }: Rac
       preserveAspectRatio="xMidYMid meet"
     >
       <TrackDefs />
-      {/* Grama cobre TODO o viewBox estendido */}
       <TrackGrass />
-      {/* Conteúdo da pista deslocado para o centro vertical */}
-      <g transform={`translate(0 ${TRACK_OFFSET_Y})`}>
-        <TrackPond />
-        <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} />
-        <TrackAsphalt />
-        <TrackBarriers />
-        <TrackStartGantry />
-        <TrackScenery layer="inner" />
-      </g>
+      <TrackPond />
+      <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} leaderName={leaderName} leaderGap={leaderGap} />
+      <TrackAsphalt />
+      <TrackBarriers />
+      <TrackStartGantry />
+      <TrackScenery layer="inner" />
       {children}
     </svg>
   );

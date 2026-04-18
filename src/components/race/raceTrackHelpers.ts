@@ -1,12 +1,7 @@
 // Pista vertical — circuito fechado em viewBox 600x1000 (retrato).
 // Path SVG cúbico amostrado em uma lookup table para posicionar carros por progresso 0..1.
 
-// Viewbox total estendido em ~33% na vertical para que a pista (1000px) ocupe
-// apenas ~75% da área renderizada — o restante (333px) é preenchido com grama
-// extra acima/abaixo, melhorando legibilidade dos carros sem distorcer o path.
-export const TRACK_INNER_HEIGHT = 1000;
-export const TRACK_OFFSET_Y = 166; // (1333 - 1000) / 2 ≈ centralizado
-export const TRACK_VIEWBOX = { width: 600, height: 1333 };
+export const TRACK_VIEWBOX = { width: 600, height: 1000 };
 
 // Oval estendido VERTICAL com 1 chicane suave na reta da direita — estilo Mario Circuit / kart pro.
 // Largura constante, curvas com arcos amplos, sem retornos serpentinos.
@@ -153,7 +148,7 @@ export function getPositionOnTrack(progress: number, laneOffset = 0): TrackPosit
 
   return {
     x: a.x + nx * laneOffset,
-    y: a.y + ny * laneOffset + TRACK_OFFSET_Y,
+    y: a.y + ny * laneOffset,
     rotation: (Math.atan2(dy, dx) * 180) / Math.PI,
   };
 }

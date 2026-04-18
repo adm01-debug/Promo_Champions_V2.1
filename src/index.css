@@ -2014,6 +2014,41 @@
   100% { transform: scale(1);    filter: brightness(1)    saturate(1); }
 }
 
+/* ===== Cycle 53-58: ambient broadcast life ===== */
+@keyframes race-helicopter-fly {
+  0%   { transform: translateX(-80px); }
+  100% { transform: translateX(680px); }
+}
+@keyframes race-drone-orbit {
+  0%   { transform: rotate(0deg)   translateX(28px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(28px) rotate(-360deg); }
+}
+@keyframes race-rotor-spin {
+  0%   { transform: scaleX(1); }
+  50%  { transform: scaleX(0.05); }
+  100% { transform: scaleX(1); }
+}
+@keyframes race-led-flicker {
+  0%, 92%, 100% { opacity: 1; }
+  94%           { opacity: 0.55; }
+  96%           { opacity: 1; }
+  98%           { opacity: 0.7; }
+}
+@keyframes race-led-blink-rec {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+@keyframes race-bird-fly {
+  0%   { transform: translate(-40px, 0) scale(0.9); opacity: 0; }
+  10%  { opacity: 0.85; }
+  90%  { opacity: 0.85; }
+  100% { transform: translate(680px, 60px) scale(1); opacity: 0; }
+}
+@keyframes race-bird-flap {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.35); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .race-cinematic-intro { animation: none !important; }
   .race-drs-pulse { animation: none !important; }
