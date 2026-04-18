@@ -1,43 +1,47 @@
 
-Próxima: **Melhoria #13/20 — Pit Stop Tactical Pause** (pausa estratégica com insights do coach IA).
+Próxima: **Melhoria #14/20 — Weather & Track Conditions** (condições dinâmicas da pista baseadas em momentum coletivo).
 
 ## Problema
-Pilotos correm sem espaço para reflexão tática. Não há um momento "respira fundo, olha o mapa" — falta uma pausa intencional que mostre: o que já fiz, o que falta, qual a próxima jogada ótima. O resultado é decisão reativa em vez de estratégica.
+A pista é sempre igual — não há sinal ambiental que reflita o "clima" coletivo da season. Quando o time está em chamas (muitos deals fechando), nada muda visualmente. Quando está parado, a pista também não comunica isso. Falta um indicador atmosférico que torne o estado da corrida tangível.
 
 ## Solução
-Botão "Pit Stop" no header da arena que abre um Sheet lateral com diagnóstico tático: stats da season até agora, gap pro rival imediato, sugestões acionáveis e um timer visual de 30s simbolizando a pausa estratégica. Som `pitstop` ao abrir.
+Calcular condição da pista a partir da atividade recente (deals últimas 2h vs. baseline), traduzir em 4 estados (☀️ Ensolarado / ⛅ Nublado / 🌧️ Chuvoso / ⛈️ Tempestade) e renderizar overlay visual sutil sobre a `RaceTrack` + badge no header.
 
-### Hook `usePitStopAnalysis.ts` (~120L) em `src/hooks/race/`
-- Recebe `{ leaderboard, mySalespersonId, season }`
-- `useMemo` retorna:
-  - `myStats`: total_sales, deals_closed, rank atual, progresso %
-  - `nextRival`: piloto à frente (rank − 1) + gap em R$
-  - `pace`: vendas/dia atual e necessárias para alcançar próximo rank
-  - `recommendation`: string contextual ("Foque em fechar 2 deals para ultrapassar X" / "Mantenha ritmo — você está no pódio")
-  - `daysRemaining`: do season
-- Pure function, zero side effects
+### Hook `useTrackConditions.ts` (~80L) em `src/hooks/race/`
+- Recebe `{ events: RaceEvent[], leaderboard }`
+- `useMemo` calcula:
+  - `recentDeals`: events tipo `deal_closed` nas últimas 2h
+  - `baseline`: média de deals/2h da season
+  - `intensity`: ratio recent/baseline
+  - `condition`: 'sunny' (≥1.5x) | 'cloudy' (0.7-1.5x) | 'rainy' (0.3-0.7x) | 'storm' (<0.3x)
+  - `label`, `emoji`, `description`, `colorToken` por estado
+- Pure, zero side effects
 
-### Componente `PitStopPanel.tsx` (~180L) em `src/components/race/`
-- `Sheet` lateral (right) shadcn
-- Header: ícone wrench + "Pit Stop Estratégico" + countdown 30s
-- Seções:
-  1. **Status atual**: card com rank, total, progresso ring
-  2. **Próximo alvo**: avatar do rival + gap + vendas necessárias
-  3. **Recomendação tática**: alert com `Lightbulb` icon
-  4. **Pace check**: comparação ritmo atual vs. necessário (mini barra)
-- Botão "Voltar à pista" fecha sheet
-- Som `pitstop` no `onOpen`
-- Framer-motion stagger nas seções, respeita `useReducedMotion`
+### Componente `TrackConditionsBadge.tsx` (~60L) em `src/components/race/`
+- Badge compacto com emoji + label + tooltip explicativa
+- Pulsa suavemente (framer-motion) — respeita `useReducedMotion`
+- Usa semantic tokens (warning/destructive/primary)
+
+### Componente `TrackWeatherOverlay.tsx` (~120L) em `src/components/race/`
+- `<div absolute inset-0 pointer-events-none>` sobre a track
+- Renderiza efeito por condição:
+  - **sunny**: gradient warm sutil (top opacity 0.05)
+  - **cloudy**: gradient neutro
+  - **rainy**: linhas SVG diagonais animadas (CSS animation)
+  - **storm**: linhas mais densas + flash sutil periódico
+- Opacity total ≤ 0.15 para não atrapalhar leitura
+- Respeita `useReducedMotion` (versão estática)
 
 ### Integração
-- `RaceArenaView.tsx`: estado `pitStopOpen`, botão `<Button variant="outline"><Wrench /></Button>` no array de actions do header (antes do sound toggle), instancia o hook e renderiza `<PitStopPanel ... />`
+- `RaceArenaView.tsx`: instanciar hook, passar `condition` para `RaceTrack` (nova prop opcional `weatherOverlay?: ReactNode`) e `<TrackConditionsBadge />` no header actions
+- `RaceTrack.tsx`: aceitar `weatherOverlay` e renderizar dentro do container da pista
 
 ### Arquivos
-- **Criar**: `src/hooks/race/usePitStopAnalysis.ts`, `src/components/race/PitStopPanel.tsx`
-- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/index.ts`
+- **Criar**: `src/hooks/race/useTrackConditions.ts`, `src/components/race/TrackConditionsBadge.tsx`, `src/components/race/TrackWeatherOverlay.tsx`
+- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/RaceTrack.tsx` (adicionar prop), `src/components/race/index.ts`
 
 ### Padrões
-Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, `useMemo` no hook, framer-motion com `useReducedMotion`, sem cores hardcoded, Sheet do shadcn já no projeto.
+Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, `useMemo` no hook, framer-motion com `useReducedMotion`, sem cores hardcoded, overlay com `pointer-events-none`.
 
 ### Próximas (preview)
-#14 Weather/track conditions → #15 Ghost car (PR pessoal) → #16 Replay da season → ... até #20.
+#15 Ghost car (PR pessoal) → #16 Replay da season → #17 Voice celebrations → ... até #20.
