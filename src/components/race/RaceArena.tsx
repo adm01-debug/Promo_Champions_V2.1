@@ -42,6 +42,32 @@ export function RaceArena({
   const prevSnapshotRef = useRef<Array<{ id: string; progress: number }>>([]);
   const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
   const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
+  const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
+
+  // ----- Tire wear: tracking de consistência de progresso por carro -----
+  const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
+  const tireWearByCar = useMemo(() => {
+    const map = new Map<string, number>();
+    sorted.forEach((c) => {
+      const prev = wearTrackRef.current.get(c.car_id);
+      const p = Number(c.progress);
+      if (!prev) {
+        wearTrackRef.current.set(c.car_id, { lastProgress: p, smoothDelta: 0.001 });
+        map.set(c.car_id, 1);
+        return;
+      }
+      const delta = Math.max(0, p - prev.lastProgress);
+      const smooth = prev.smoothDelta * 0.85 + delta * 0.15;
+      wearTrackRef.current.set(c.car_id, { lastProgress: p, smoothDelta: smooth });
+      // wear: 1 quando consistente; degrada conforme distância da média
+      const avg = sorted.reduce((acc, x) => acc + Number(x.progress), 0) / Math.max(1, sorted.length);
+      const lag = Math.max(0, avg - p);
+      const wear = Math.max(0.15, Math.min(1, 1 - lag * 1.4));
+      map.set(c.car_id, wear);
+    });
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   useEffect(() => {
     const curr = sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) }));
@@ -78,6 +104,23 @@ export function RaceArena({
           setDustBursts((d) => d.filter((b) => !newDust.find((nb) => nb.id === b.id)));
         }, 1200);
       }
+
+      // ----- Setores cronometrados (apenas líder dispara badge) -----
+      const leaderCurr = curr[0];
+      const leaderPrev = prev.find((x) => x.id === leaderCurr?.id);
+      if (leaderCurr && leaderPrev) {
+        SECTOR_BOUNDARIES.forEach((b, i) => {
+          if (leaderPrev.progress < b && leaderCurr.progress >= b) {
+            const pos = getPositionOnTrack(b, 0);
+            const name = `S${i + 1}`;
+            const badgeId = `${leaderCurr.id}-${name}-${Date.now()}`;
+            setSectorBadges((arr) => [...arr, { id: badgeId, name, x: pos.x, y: pos.y }]);
+            setTimeout(() => {
+              setSectorBadges((arr) => arr.filter((bd) => bd.id !== badgeId));
+            }, 900);
+          }
+        });
+      }
     }
     prevSnapshotRef.current = curr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,6 +132,21 @@ export function RaceArena({
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
     [leader?.car_id, leader?.progress],
   );
+
+  // ----- Lap info -----
+  const lapInfo = computeLapInfo(Number(leader?.progress ?? 0), 10);
+
+  // ----- DRS: ativo quando carro está em zona DRS e tem alguém < 0.06 à frente -----
+  const drsActiveByCar = useMemo(() => {
+    const map = new Map<string, boolean>();
+    sorted.forEach((c, idx) => {
+      if (idx === 0) { map.set(c.car_id, false); return; }
+      const ahead = sorted[idx - 1];
+      const gap = Number(ahead.progress) - Number(c.progress);
+      map.set(c.car_id, isInDRSZone(Number(c.progress)) && gap > 0 && gap < 0.06);
+    });
+    return map;
+  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   // ----- Timing tower (top 3 com gaps) -----
   const top3 = sorted.slice(0, 3);
