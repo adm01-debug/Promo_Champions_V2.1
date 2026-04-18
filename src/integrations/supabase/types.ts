@@ -8905,6 +8905,63 @@ export type Database = {
           },
         ]
       }
+      ranking_notifications: {
+        Row: {
+          created_at: string
+          gap_to_first: number
+          gap_to_next: number
+          id: string
+          message: string
+          next_competitor_name: string | null
+          period_start: string
+          rank: number
+          read_at: string | null
+          salesperson_id: string
+          total_sales: number
+        }
+        Insert: {
+          created_at?: string
+          gap_to_first?: number
+          gap_to_next?: number
+          id?: string
+          message: string
+          next_competitor_name?: string | null
+          period_start: string
+          rank: number
+          read_at?: string | null
+          salesperson_id: string
+          total_sales?: number
+        }
+        Update: {
+          created_at?: string
+          gap_to_first?: number
+          gap_to_next?: number
+          id?: string
+          message?: string
+          next_competitor_name?: string | null
+          period_start?: string
+          rank?: number
+          read_at?: string | null
+          salesperson_id?: string
+          total_sales?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ranking_notifications_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ranking_notifications_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rate_limit_logs: {
         Row: {
           action: string

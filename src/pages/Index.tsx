@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { SalesChart } from "@/components/dashboard/SalesChart";
@@ -105,6 +106,9 @@ const Index = () => {
             >
               <DashboardHeader />
             </motion.div>
+
+            {/* ── SECTION: Ranking Position Banner ── */}
+            <RankingPositionBanner />
 
             {/* ── SECTION: Onboarding ── */}
             <OnboardingChecklist />
