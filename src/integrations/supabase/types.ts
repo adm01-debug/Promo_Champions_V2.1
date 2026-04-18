@@ -7383,6 +7383,288 @@ export type Database = {
           },
         ]
       }
+      race_badges: {
+        Row: {
+          badge_code: string
+          earned_at: string
+          id: string
+          salesperson_id: string
+          season_id: string | null
+        }
+        Insert: {
+          badge_code: string
+          earned_at?: string
+          id?: string
+          salesperson_id: string
+          season_id?: string | null
+        }
+        Update: {
+          badge_code?: string
+          earned_at?: string
+          id?: string
+          salesperson_id?: string
+          season_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_badges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_badges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_badges_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_badges_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_cars: {
+        Row: {
+          car_number: number
+          car_style: string
+          created_at: string
+          id: string
+          nickname: string | null
+          primary_color: string
+          salesperson_id: string
+          secondary_color: string
+          total_overtakes: number
+          total_races: number
+          total_wins: number
+          updated_at: string
+        }
+        Insert: {
+          car_number: number
+          car_style?: string
+          created_at?: string
+          id?: string
+          nickname?: string | null
+          primary_color?: string
+          salesperson_id: string
+          secondary_color?: string
+          total_overtakes?: number
+          total_races?: number
+          total_wins?: number
+          updated_at?: string
+        }
+        Update: {
+          car_number?: number
+          car_style?: string
+          created_at?: string
+          id?: string
+          nickname?: string | null
+          primary_color?: string
+          salesperson_id?: string
+          secondary_color?: string
+          total_overtakes?: number
+          total_races?: number
+          total_wins?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          salesperson_id: string
+          season_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          salesperson_id: string
+          season_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          salesperson_id?: string
+          season_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_events_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_events_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_powerups: {
+        Row: {
+          collected_at: string
+          effect_data: Json
+          id: string
+          powerup_type: string
+          salesperson_id: string
+          season_id: string
+          used_at: string | null
+        }
+        Insert: {
+          collected_at?: string
+          effect_data?: Json
+          id?: string
+          powerup_type: string
+          salesperson_id: string
+          season_id: string
+          used_at?: string | null
+        }
+        Update: {
+          collected_at?: string
+          effect_data?: Json
+          id?: string
+          powerup_type?: string
+          salesperson_id?: string
+          season_id?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_powerups_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_powerups_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_powerups_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_powerups_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_seasons: {
+        Row: {
+          created_at: string
+          end_date: string
+          goal_amount: number
+          id: string
+          name: string
+          start_date: string
+          status: string
+          track_type: string
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          goal_amount?: number
+          id?: string
+          name: string
+          start_date: string
+          status?: string
+          track_type?: string
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          goal_amount?: number
+          id?: string
+          name?: string
+          start_date?: string
+          status?: string
+          track_type?: string
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_seasons_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_seasons_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rank_change_notifications: {
         Row: {
           context: string | null
@@ -11163,6 +11445,39 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      race_leaderboard_view: {
+        Row: {
+          avatar_url: string | null
+          car_id: string | null
+          car_number: number | null
+          car_style: string | null
+          deals_count: number | null
+          nickname: string | null
+          primary_color: string | null
+          progress: number | null
+          salesperson_id: string | null
+          salesperson_name: string | null
+          season_id: string | null
+          secondary_color: string | null
+          total_sales: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salespeople_public: {
         Row: {

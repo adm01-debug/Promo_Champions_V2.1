@@ -95,6 +95,7 @@ export const DealIntelligence = lazy(() => import("@/pages/DealIntelligence"));
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
 export const ArenaCompetitiva = lazy(() => import("@/pages/ArenaCompetitiva"));
+export const RaceArena = lazy(() => import("@/pages/RaceArena"));
 export const DesafiosSemanais = lazy(() => import("@/pages/DesafiosSemanais"));
 export const HistoricoDesafiosDiarios = lazy(() => import("@/pages/HistoricoDesafiosDiarios"));
 export const VictoryFeedPage = lazy(() => import("@/pages/VictoryFeedPage"));

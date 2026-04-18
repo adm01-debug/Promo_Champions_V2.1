@@ -30,6 +30,7 @@ export const sdrMainItems: MenuItem[] = [
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Ranking", url: "/ranking", icon: Trophy },
   { title: "Arena", url: "/arena", icon: Swords },
+  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const closerMainItems: MenuItem[] = [
@@ -41,6 +42,7 @@ export const closerMainItems: MenuItem[] = [
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Arena", url: "/arena", icon: Swords },
+  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const gestaoMainItems: MenuItem[] = [
@@ -49,6 +51,7 @@ export const gestaoMainItems: MenuItem[] = [
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Relatórios", url: "/relatorios", icon: LineChart },
+  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const sdrGroupedItems: MenuGroup[] = [

@@ -23,7 +23,7 @@ import {
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
   TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence,
   // Gamificação & Social
-  RankingCompetitivo, ArenaCompetitiva, DesafiosSemanais, HistoricoDesafiosDiarios,
+  RankingCompetitivo, ArenaCompetitiva, RaceArena, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
   // Gestão
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
@@ -174,6 +174,7 @@ export function AppRoutes() {
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
+                    <Route path="/race-arena" element={<RaceArena />} />
                     <Route path="/desafios" element={<DesafiosSemanais />} />
                     <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
                     <Route path="/feed-vitorias" element={<VictoryFeedPage />} />
