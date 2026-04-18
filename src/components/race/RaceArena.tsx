@@ -76,6 +76,19 @@ export function RaceArena({
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
 
+  // Ciclo 47-52: la-ola, fastest sector, cinematic camera
+  const [waveTrigger, setWaveTrigger] = useState(0);
+  const lastLapCompletedRef = useRef<number>(0);
+  const [fastestCarId, setFastestCarId] = useState<string | null>(null);
+  const fastestTimerRef = useRef<number | null>(null);
+  // Tempo do líder ao entrar em cada setor (ms) — para detectar setor mais rápido
+  const sectorEnterRef = useRef<Map<number, { carId: string; at: number }>>(new Map());
+  const bestSectorTimeRef = useRef<Map<number, number>>(new Map());
+  const [flashSectorIdx, setFlashSectorIdx] = useState<number | null>(null);
+  const [cinematicFocus, setCinematicFocus] = useState(false);
+  const cinematicTimerRef = useRef<number | null>(null);
+  const lastCinematicAtRef = useRef<number>(0);
+
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
     const line: CommentaryLine = { id: `${Date.now()}-${Math.random()}`, text, createdAt: Date.now() };
