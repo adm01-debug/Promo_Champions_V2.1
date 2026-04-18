@@ -193,9 +193,27 @@ export function RaceArena({
     return map;
   }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
-  // ----- Timing tower (top 3 com gaps) -----
-  const top3 = sorted.slice(0, 3);
-  const leaderProgress = Number(top3[0]?.progress ?? 0);
+  // ----- Timing tower (top 5 com gaps) -----
+  const top5 = sorted.slice(0, 5);
+  const leaderProgress = Number(top5[0]?.progress ?? 0);
+
+  // ----- Gap line líder→2º (apenas se gap < 0.05) -----
+  const second = sorted[1];
+  const gapToSecond = leader && second ? Number(leader.progress) - Number(second.progress) : null;
+  const showGapLine = gapToSecond !== null && gapToSecond > 0 && gapToSecond < 0.05;
+  const gapMidPos = useMemo(() => {
+    if (!showGapLine || !leader || !second) return null;
+    const midProgress = (Number(leader.progress) + Number(second.progress)) / 2;
+    return getPositionOnTrack(midProgress, 0);
+  }, [showGapLine, leader?.progress, second?.progress]);
+  const leaderPosForLine = useMemo(
+    () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
+    [leader?.car_id, leader?.progress],
+  );
+  const secondPos = useMemo(
+    () => (second ? getPositionOnTrack(Number(second.progress), 0) : null),
+    [second?.car_id, second?.progress],
+  );
 
   // ----- Câmera dinâmica (zoom no líder em disputa apertada) -----
   const closeBattle = sorted.length >= 2
