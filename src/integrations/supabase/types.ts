@@ -8798,6 +8798,7 @@ export type Database = {
           total_races: number
           total_wins: number
           updated_at: string
+          victory_quote: string | null
         }
         Insert: {
           car_number: number
@@ -8812,6 +8813,7 @@ export type Database = {
           total_races?: number
           total_wins?: number
           updated_at?: string
+          victory_quote?: string | null
         }
         Update: {
           car_number?: number
@@ -8826,6 +8828,7 @@ export type Database = {
           total_races?: number
           total_wins?: number
           updated_at?: string
+          victory_quote?: string | null
         }
         Relationships: [
           {
@@ -9013,6 +9016,33 @@ export type Database = {
           },
         ]
       }
+      race_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          reactor_user_id: string
+          season_id: string | null
+          target_car_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          id?: string
+          reactor_user_id: string
+          season_id?: string | null
+          target_car_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          reactor_user_id?: string
+          season_id?: string | null
+          target_car_id?: string
+        }
+        Relationships: []
+      }
       race_scoring_rules: {
         Row: {
           created_at: string
@@ -9114,6 +9144,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      race_unlocks: {
+        Row: {
+          id: string
+          unlock_key: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          unlock_key: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          unlock_key?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       race_user_daily_checkins: {
         Row: {
@@ -14430,6 +14481,10 @@ export type Database = {
       toggle_workflow_active: {
         Args: { p_active: boolean; p_workflow_id: string }
         Returns: boolean
+      }
+      unlock_race_item: {
+        Args: { _required_league?: string; _unlock_key: string }
+        Returns: Json
       }
       update_call_recording_diarization: {
         Args: {

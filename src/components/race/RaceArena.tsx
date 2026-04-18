@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
+import { ReactionFloater } from './ReactionFloater';
+import { ReactionBar } from './ReactionBar';
 import { getPositionOnTrack } from './raceTrackHelpers';
+import { useRaceReactions } from '@/hooks/race/useRaceReactions';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 interface RaceArenaProps {
@@ -10,27 +15,48 @@ interface RaceArenaProps {
   currentUserSalespersonId?: string;
   overlayChildren?: React.ReactNode;
   weatherOverlay?: React.ReactNode;
+  /** Habilita padrões SVG nos carros para usuários daltônicos. */
+  colorblindMode?: boolean;
+  /** Season ativa para escopo de reactions em tempo real. */
+  seasonId?: string | null;
 }
 
-export function RaceArena({ cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay }: RaceArenaProps) {
+const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
+
+export function RaceArena({
+  cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay,
+  colorblindMode = false, seasonId = null,
+}: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
+  const reducedMotion = useReducedMotion();
+  const carIds = sorted.map((c) => c.car_id);
+  const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
+  const allReactions = [...liveBurst, ...reactionsData];
+  const [hoveredCar, setHoveredCar] = useState<string | null>(null);
+
+  const transition = reducedMotion
+    ? { duration: 0, type: 'tween' as const }
+    : { type: 'spring' as const, stiffness: 70, damping: 18, duration: 0.8 };
 
   return (
     <div className="relative w-full h-full rounded-xl overflow-hidden border-2 border-border shadow-lg bg-[hsl(var(--race-grass))]">
       <RaceTrack>
         {sorted.map((car, idx) => {
-          // Espalha levemente as raias para evitar sobreposição
           const lane = (idx - sorted.length / 2) * 8;
           const pos = getPositionOnTrack(Number(car.progress), lane);
           const isMe = currentUserSalespersonId && car.salesperson_id === currentUserSalespersonId;
+          const carReactions = allReactions.filter((r) => r.target_car_id === car.car_id);
+          const pattern = colorblindMode ? PATTERN_BY_NUMBER[car.car_number % PATTERN_BY_NUMBER.length] : null;
           return (
             <motion.g
               key={car.car_id}
               initial={false}
               animate={{ x: pos.x, y: pos.y, rotate: pos.rotation }}
-              transition={{ type: 'spring', stiffness: 70, damping: 18, duration: 0.8 }}
+              transition={transition}
+              onMouseEnter={() => setHoveredCar(car.car_id)}
+              onMouseLeave={() => setHoveredCar((c) => (c === car.car_id ? null : c))}
+              style={{ cursor: 'pointer' }}
             >
-              {/* Halo pulsante para o usuário logado */}
               {isMe && (
                 <>
                   <motion.circle
@@ -39,15 +65,15 @@ export function RaceArena({ cars, boostingIds, currentUserSalespersonId, overlay
                     stroke="hsl(var(--primary))"
                     strokeWidth={2.5}
                     opacity={0.85}
-                    animate={{ r: [34, 46, 34], opacity: [0.9, 0.25, 0.9] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                    animate={reducedMotion ? undefined : { r: [34, 46, 34], opacity: [0.9, 0.25, 0.9] }}
+                    transition={reducedMotion ? undefined : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                   />
                   <motion.circle
                     r={28}
                     fill="hsl(var(--primary))"
                     opacity={0.18}
-                    animate={{ opacity: [0.25, 0.08, 0.25] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                    animate={reducedMotion ? undefined : { opacity: [0.25, 0.08, 0.25] }}
+                    transition={reducedMotion ? undefined : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                   />
                 </>
               )}
@@ -57,35 +83,33 @@ export function RaceArena({ cars, boostingIds, currentUserSalespersonId, overlay
                 secondaryColor={car.secondary_color}
                 style={car.car_style}
                 showTrail={boostingIds?.has(car.salesperson_id) ?? false}
+                pattern={pattern}
               />
-              {/* Label "VOCÊ" sticky */}
+              {/* contador de reactions recentes */}
+              {carReactions.length > 0 && (
+                <g transform="translate(20, -32)">
+                  <rect x={-10} y={-8} width={20} height={14} rx={7} fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth={1} />
+                  <text y={2} textAnchor="middle" fontSize={9} fontWeight={800} fill="hsl(var(--foreground))" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                    {carReactions.length}
+                  </text>
+                </g>
+              )}
+              <ReactionFloater reactions={carReactions} />
               {isMe && (
                 <g transform="translate(0, -42)">
-                  <rect
-                    x={-18} y={-9}
-                    width={36} height={14}
-                    rx={7}
-                    fill="hsl(var(--primary))"
-                    stroke="hsl(var(--background))"
-                    strokeWidth={1.5}
-                  />
-                  <text
-                    y={1}
-                    textAnchor="middle"
-                    fontSize={9}
-                    fontWeight={900}
+                  <rect x={-18} y={-9} width={36} height={14} rx={7}
+                    fill="hsl(var(--primary))" stroke="hsl(var(--background))" strokeWidth={1.5} />
+                  <text y={1} textAnchor="middle" fontSize={9} fontWeight={900}
                     fill="hsl(var(--primary-foreground))"
-                    style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.05em' }}
-                  >
+                    style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.05em' }}>
                     VOCÊ
                   </text>
                 </g>
               )}
-              {/* nome do piloto */}
               <text
                 y={isMe ? -52 : -26}
                 textAnchor="middle"
-                fontSize={11}
+                fontSize={13}
                 fontWeight={700}
                 fill="hsl(var(--foreground))"
                 stroke="hsl(var(--background))"
@@ -95,6 +119,13 @@ export function RaceArena({ cars, boostingIds, currentUserSalespersonId, overlay
               >
                 {car.salesperson_name?.split(' ')[0]}
               </text>
+
+              {/* HTML overlay para barra de reactions */}
+              <foreignObject x={-50} y={20} width={100} height={36} style={{ overflow: 'visible' }}>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <ReactionBar carId={car.car_id} seasonId={seasonId} visible={hoveredCar === car.car_id} />
+                </div>
+              </foreignObject>
             </motion.g>
           );
         })}

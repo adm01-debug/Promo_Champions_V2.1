@@ -10,6 +10,7 @@ export interface RaceCar {
   secondary_color: string;
   car_style: 'f1' | 'stock' | 'kart';
   nickname: string | null;
+  victory_quote: string | null;
   total_races: number;
   total_wins: number;
   total_overtakes: number;

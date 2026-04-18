@@ -101,6 +101,7 @@ export const RaceArenaCloser = lazy(() => import("@/pages/RaceArenaCloser"));
 export const RaceArenaSDR = lazy(() => import("@/pages/RaceArenaSDR"));
 export const RaceArenaAdmin = lazy(() => import("@/pages/admin/RaceArenaAdmin"));
 export const RaceArenaTV = lazy(() => import("@/pages/RaceArenaTV"));
+export const RaceArenaGarage = lazy(() => import("@/pages/RaceArenaGarage"));
 export const DesafiosSemanais = lazy(() => import("@/pages/DesafiosSemanais"));
 export const HistoricoDesafiosDiarios = lazy(() => import("@/pages/HistoricoDesafiosDiarios"));
 export const VictoryFeedPage = lazy(() => import("@/pages/VictoryFeedPage"));
