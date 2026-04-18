@@ -20,14 +20,54 @@ export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1
 
   return (
     <g transform={`scale(${scale})`}>
+      {/* Boost trail melhorado: glow afterimage + partículas */}
       {showTrail && (
-        <motion.ellipse
-          cx={-30} cy={0} rx={22} ry={6}
-          fill="url(#boostTrail)"
-          initial={{ opacity: 0, scaleX: 0.3 }}
-          animate={{ opacity: [0, 0.9, 0], scaleX: [0.3, 1.5, 2] }}
-          transition={{ duration: 0.6, repeat: 2 }}
-        />
+        <>
+          {/* Glow afterimage atrás do carro */}
+          <motion.ellipse
+            cx={-40} cy={0} rx={32} ry={9}
+            fill={primaryColor}
+            initial={{ opacity: 0, scaleX: 0.4 }}
+            animate={{ opacity: [0, 0.55, 0], scaleX: [0.4, 1.6, 2.2] }}
+            transition={{ duration: 0.7, repeat: 3, ease: 'easeOut' }}
+            style={{ filter: 'blur(6px)' }}
+          />
+          {/* Trail principal usando gradiente do TrackDefs */}
+          <motion.ellipse
+            cx={-30} cy={0} rx={22} ry={6}
+            fill="url(#boostTrail)"
+            initial={{ opacity: 0, scaleX: 0.3 }}
+            animate={{ opacity: [0, 0.95, 0], scaleX: [0.3, 1.5, 2] }}
+            transition={{ duration: 0.6, repeat: 3 }}
+          />
+          {/* Partículas de spark */}
+          {[0, 1, 2, 3].map((i) => (
+            <motion.circle
+              key={i}
+              cx={-bodyW / 2 - 4} cy={(i - 1.5) * 3}
+              r={1.6}
+              fill={secondaryColor}
+              initial={{ opacity: 0, x: 0 }}
+              animate={{
+                opacity: [0, 1, 0],
+                x: [-2, -22 - i * 3, -36 - i * 4],
+                y: [(i - 1.5) * 3, (i - 1.5) * 5, (i - 1.5) * 7],
+              }}
+              transition={{ duration: 0.5 + i * 0.05, repeat: 3, delay: i * 0.04, ease: 'easeOut' }}
+            />
+          ))}
+          {/* Onda de choque */}
+          <motion.circle
+            cx={-bodyW / 2} cy={0}
+            r={0}
+            fill="none"
+            stroke={primaryColor}
+            strokeWidth={1.5}
+            initial={{ r: 0, opacity: 0.8 }}
+            animate={{ r: [0, 18, 28], opacity: [0.8, 0.3, 0] }}
+            transition={{ duration: 0.5, repeat: 2 }}
+          />
+        </>
       )}
       {/* sombra */}
       <ellipse cx={2} cy={bodyH / 2 + 4} rx={bodyW / 2} ry={3} fill="rgba(0,0,0,0.25)" />
