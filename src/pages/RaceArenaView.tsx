@@ -294,7 +294,7 @@ export default function RaceArenaView({ roleType }: Props) {
                       </AnimatePresence>
                     </>
                   }
-                  weatherOverlay={<TrackWeatherOverlay condition={trackConditions.condition} />}
+                  
                 />
               </div>
             </div>
