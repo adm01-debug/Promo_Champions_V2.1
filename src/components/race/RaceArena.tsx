@@ -54,6 +54,15 @@ interface RaceArenaProps {
   seasonStartedAt?: string | null;
   /** ISO término previsto da season (Race Control). */
   seasonEndsAt?: string | null;
+  /** Telemetria opcional do piloto logado (mostra MyTelemetryPanel se fornecido). */
+  telemetry?: {
+    avgDealsPerDay: number;
+    bestLap: number;
+    ghostDeltaPp: number;
+    tireFatigue: number;
+    nextGoalLabel?: string;
+    nextGoalPercent?: number;
+  };
 }
 
 const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
