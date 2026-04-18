@@ -165,6 +165,17 @@ export function RaceArena({
         filter: 'saturate(1.08) contrast(1.02)',
       }}
     >
+      <div
+        className="w-full h-full"
+        style={
+          reducedMotion
+            ? undefined
+            : {
+                animation: 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+                transformOrigin: '50% 50%',
+              }
+        }
+      >
       <RaceTrack>
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
@@ -210,6 +221,8 @@ export function RaceArena({
                 showTrail={boostingIds?.has(car.salesperson_id) ?? false}
                 pattern={pattern}
                 overtakeFlash={flashingCars.has(car.car_id)}
+                tireWear={tireWearByCar.get(car.car_id) ?? 1}
+                drsActive={drsActiveByCar.get(car.car_id) ?? false}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
