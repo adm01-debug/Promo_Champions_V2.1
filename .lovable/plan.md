@@ -1,47 +1,44 @@
 
-Próxima: **Melhoria #14/20 — Weather & Track Conditions** (condições dinâmicas da pista baseadas em momentum coletivo).
+Próxima: **Melhoria #15/20 — Ghost Car (PR Pessoal)** (carro fantasma com seu melhor ritmo histórico).
 
 ## Problema
-A pista é sempre igual — não há sinal ambiental que reflita o "clima" coletivo da season. Quando o time está em chamas (muitos deals fechando), nada muda visualmente. Quando está parado, a pista também não comunica isso. Falta um indicador atmosférico que torne o estado da corrida tangível.
+Não há comparação contra você mesmo. Falta o "PR pessoal" — o ritmo da sua melhor season, renderizado como referência translúcida na pista. Sem isso, não dá pra saber se hoje você está acima ou abaixo do seu próprio teto.
 
 ## Solução
-Calcular condição da pista a partir da atividade recente (deals últimas 2h vs. baseline), traduzir em 4 estados (☀️ Ensolarado / ⛅ Nublado / 🌧️ Chuvoso / ⛈️ Tempestade) e renderizar overlay visual sutil sobre a `RaceTrack` + badge no header.
+Calcular o ritmo histórico do usuário (melhor progresso por % de tempo decorrido em seasons anteriores) e renderizar um carro fantasma semi-transparente na pista, junto com badge de status ("+12% acima do seu PR" / "-5% abaixo").
 
-### Hook `useTrackConditions.ts` (~80L) em `src/hooks/race/`
-- Recebe `{ events: RaceEvent[], leaderboard }`
+### Hook `useGhostCar.ts` (~120L) em `src/hooks/race/`
+- Recebe `{ mySalespersonId, currentSeason, leaderboard }`
+- Query Supabase: busca seasons anteriores do usuário (`race_seasons` finalizadas) + snapshots de progresso histórico (usa `race_leaderboard_entries` ou agregação de `race_events`)
 - `useMemo` calcula:
-  - `recentDeals`: events tipo `deal_closed` nas últimas 2h
-  - `baseline`: média de deals/2h da season
-  - `intensity`: ratio recent/baseline
-  - `condition`: 'sunny' (≥1.5x) | 'cloudy' (0.7-1.5x) | 'rainy' (0.3-0.7x) | 'storm' (<0.3x)
-  - `label`, `emoji`, `description`, `colorToken` por estado
-- Pure, zero side effects
+  - `bestPaceProgress`: melhor progresso registrado na mesma % de tempo decorrido da season atual
+  - `ghostProgress`: onde o ghost estaria agora
+  - `myProgress`: progresso atual do usuário
+  - `delta`: diferença em pp (percentage points)
+  - `status`: 'ahead' | 'behind' | 'tied' | 'no-data'
+- Pure, com fallback gracioso quando não há histórico
 
-### Componente `TrackConditionsBadge.tsx` (~60L) em `src/components/race/`
-- Badge compacto com emoji + label + tooltip explicativa
-- Pulsa suavemente (framer-motion) — respeita `useReducedMotion`
-- Usa semantic tokens (warning/destructive/primary)
+### Componente `GhostCar.tsx` (~80L) em `src/components/race/`
+- Reutiliza `RaceCar` com opacity 0.35 e filtro grayscale
+- Renderiza apenas se `status !== 'no-data'`
+- Posicionado via `getPositionOnTrack(ghostProgress, lane específica)`
+- Pequeno emoji 👻 acima do carro
 
-### Componente `TrackWeatherOverlay.tsx` (~120L) em `src/components/race/`
-- `<div absolute inset-0 pointer-events-none>` sobre a track
-- Renderiza efeito por condição:
-  - **sunny**: gradient warm sutil (top opacity 0.05)
-  - **cloudy**: gradient neutro
-  - **rainy**: linhas SVG diagonais animadas (CSS animation)
-  - **storm**: linhas mais densas + flash sutil periódico
-- Opacity total ≤ 0.15 para não atrapalhar leitura
-- Respeita `useReducedMotion` (versão estática)
+### Componente `GhostStatusBadge.tsx` (~60L) em `src/components/race/`
+- Badge no header: "👻 +12% vs PR" (verde) ou "-5% vs PR" (amber)
+- Tooltip explicando o que é o ghost
+- Hidden quando `status === 'no-data'`
 
 ### Integração
-- `RaceArenaView.tsx`: instanciar hook, passar `condition` para `RaceTrack` (nova prop opcional `weatherOverlay?: ReactNode`) e `<TrackConditionsBadge />` no header actions
-- `RaceTrack.tsx`: aceitar `weatherOverlay` e renderizar dentro do container da pista
+- `RaceArenaView.tsx`: instancia hook, passa ghost como `overlayChildren` adicional para `RaceArena`, badge no header actions
+- `RaceArena.tsx`: nenhuma mudança (ghost vem via overlayChildren)
 
 ### Arquivos
-- **Criar**: `src/hooks/race/useTrackConditions.ts`, `src/components/race/TrackConditionsBadge.tsx`, `src/components/race/TrackWeatherOverlay.tsx`
-- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/RaceTrack.tsx` (adicionar prop), `src/components/race/index.ts`
+- **Criar**: `src/hooks/race/useGhostCar.ts`, `src/components/race/GhostCar.tsx`, `src/components/race/GhostStatusBadge.tsx`
+- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/index.ts`
 
 ### Padrões
-Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, `useMemo` no hook, framer-motion com `useReducedMotion`, sem cores hardcoded, overlay com `pointer-events-none`.
+Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, `useMemo` no hook, fallback gracioso, opacity reduzida no ghost, sem cores hardcoded.
 
 ### Próximas (preview)
-#15 Ghost car (PR pessoal) → #16 Replay da season → #17 Voice celebrations → ... até #20.
+#16 Replay da season → #17 Voice celebrations → #18 Heatmap de overtakes → ... até #20.
