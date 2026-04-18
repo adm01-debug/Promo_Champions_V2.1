@@ -16,6 +16,9 @@ const SOUND_LABELS: Record<RaceSoundType, string> = {
   countdown: 'Contagem regressiva',
   pitstop: 'Pit Stop',
   powerup: 'Power-up / Combo',
+  leader_takeover: 'Tomada de liderança',
+  combo_tier: 'Combo tier-up',
+  season_end: 'Final de season',
 };
 
 type Prefs = Record<RaceSoundType, boolean>;
@@ -23,6 +26,7 @@ type Prefs = Record<RaceSoundType, boolean>;
 const DEFAULT_PREFS: Prefs = {
   boost: true, overtake: true, checkpoint: true, victory: true,
   countdown: true, pitstop: true, powerup: true,
+  leader_takeover: true, combo_tier: true, season_end: true,
 };
 
 function loadPrefs(): Prefs {
