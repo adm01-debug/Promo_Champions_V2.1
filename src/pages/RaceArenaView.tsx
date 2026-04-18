@@ -124,6 +124,12 @@ export default function RaceArenaView({ roleType }: Props) {
     enabled: !!season,
   });
 
+  const dailyCheckin = useDailyRaceCheckin({
+    seasonId: season?.id,
+    salespersonId: myCar?.salesperson_id,
+    enabled: !!season && !!myCar?.salesperson_id,
+  });
+
   useEffect(() => {
     if (recentOvertakes.length > 0) play('overtake');
     // eslint-disable-next-line react-hooks/exhaustive-deps
