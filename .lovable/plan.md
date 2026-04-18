@@ -1,68 +1,48 @@
 
-# Plano de Execução Sequencial — Race Arena 10/10
+# Continuação: Race Arena 10/10 — Etapas 5-10
 
-Vou executar as 10 melhorias da auditoria, **uma por vez, sem pausas nem perguntas**, em ordem de ROI. Cada item vira um commit completo e testável antes do próximo.
+Sigo de onde parei. Já entreguei 1-4 (spotlight/overtakes, commentary IA, daily check-in, modo TV). Agora as 6 restantes, uma por vez.
 
-## Sequência de execução
+## Etapa 5 — Tokens semânticos + Skin engine
+- Adicionar `--race-grass`, `--race-asphalt`, `--race-checkered`, `--race-curb`, `--race-pond` em `index.css` (light + dark)
+- Substituir `#5fa358` e demais cores hardcoded em `RaceArena.tsx`, `RaceTrack.tsx`, `TrackPond.tsx`, `TrackScenery.tsx`, `TrackBarriers.tsx`, `raceTrackHelpers.ts`
+- Variantes do skin engine existente: skin "cyberpunk" → grama roxa neon, "minimal" → cinza, default → verde
 
-**1. Spotlight do "VOCÊ" + Ultrapassagens dramáticas** (alto impacto, baixo esforço)
-- Halo pulsante no carro do usuário logado + label sticky "VOCÊ"
-- `OvertakeHighlight` ganha flash de tela, slow-motion 200ms, toast com avatares
-- Boost trail melhorado com partículas SVG e glow afterimage
+## Etapa 6 — Modos de visualização (Imersivo / Competitivo / Análise)
+- Componente `RaceViewModeToggle` no header da arena (3 botões inset, padrão view-switcher)
+- Hook `useRaceViewMode` com persistência em localStorage
+- `RaceArenaView` condiciona visibilidade: Imersivo = pista + leaderboard mínimo; Competitivo = + commentary + feed + podium; Análise = + ScoreBreakdown + PredictedRank
 
-**2. Race Commentary IA** (diferencial único)
-- Edge function `race-commentary` usando `google/gemini-2.5-flash-lite`
-- Painel substitui/complementa `RaceEventFeed` com narração contextual
-- Trigger em mudanças significativas (overtake, checkpoint, líder novo)
+## Etapa 7 — Onboarding inline + demo ghost-race
+- `RaceEmptyState` ganha 3 carros animados em loop (reutiliza `RaceCar` + `RaceTrack` em modo demo)
+- `RaceOnboardingTour` custom (sem dep externa): array de steps com `position`, render via portal, persiste `seen` no localStorage
+- Checklist flutuante `RaceOnboardingChecklist` (4-5 etapas: customizar carro, definir nickname, fechar 1 deal, ver leaderboard)
 
-**3. Daily Check-in Ritual + Delta Diário** (retenção)
-- Modal/overlay no 1º acesso do dia mostrando delta vs ontem
-- Snapshot diário em nova tabela `race_daily_snapshots`
-- Power-up grátis se manteve streak
+## Etapa 8 — Rivalidades + Highlights timeline
+- View `race_rivalries_view` (SQL): pares com ≥3 trocas de posição via `race_events` tipo `overtake`
+- Hook `useRaceRivalries(seasonId)` + componente `RivalryBadge` no leaderboard
+- `RaceHighlightsTimeline` lateral: top 5 eventos (maior comeback, ultrapassagem decisiva, líder novo) clicáveis
 
-**4. Modo TV `/race-arena/tv`** (viralização interna)
-- Rota fullscreen sem chrome, rotação automática Closer↔SDR a cada 30s
-- Narração IA em destaque, MonthlyChampionOverlay expandido
-- Sem sidebar, sem header, otimizado para 1920x1080
+## Etapa 9 — Garagem + skins desbloqueáveis
+- Tabela `race_unlocks` (user_id, unlock_key, unlocked_at) + RPC `unlock_race_item` validando liga atual
+- Rota `/race-arena/garage` com 3 abas: Troféus (lifetime), Carros (skins desbloqueadas/bloqueadas), Stats (deals, vendas, posições históricas)
+- Estender `CarCustomizer` com decals/neons gateados por liga + campos `nickname` e `victory_quote` em `race_cars`
 
-**5. Tokens semânticos + Skin engine** (consistência sistêmica)
-- `--race-grass`, `--race-asphalt`, `--race-checkered` em `index.css`
-- Substituir `#5fa358` hardcoded em todos os componentes de pista
-- Integrar com sistema de skins existente
+## Etapa 10 — Acessibilidade + Reactions ao vivo
+- Modo daltônico: setting em Configurações → Skins; carros ganham `pattern` SVG (listras/pontos/xadrez) sobreposto à cor
+- Reduced motion total: hook `useRaceMotion` que troca interpolação contínua por saltos discretos quando `prefers-reduced-motion`
+- `aria-live="polite"` region central anunciando "líder mudou", "season acaba em X"
+- Reactions: tabela `race_reactions` (event_id ou car_id, emoji, user_id) + componente `ReactionBar` em cima dos carros + realtime channel
+- Aumentar `fontSize` SVG mínimo 11→13
 
-**6. Modos de visualização (Imersivo/Competitivo/Análise)** (cognição)
-- Toggle no header da arena
-- Imersivo: só pista + leaderboard mínimo
-- Competitivo: + feed + podium
-- Análise: + score breakdown + predicted rank
-
-**7. Onboarding inline + Demo ghost-race** (ativação)
-- Empty state com 3 carros animados em loop
-- Tooltips sequenciais 1ª visita (custom, sem dep)
-- Checklist "3/5 etapas para entrar na corrida"
-
-**8. Rivalidades + Highlights timeline** (storytelling)
-- Detector de pares que trocam posições ≥3x → badge "Rivalidade"
-- Timeline lateral "Highlights" com snapshots dos top 5 eventos
-
-**9. Customização profunda (Garagem + Skins desbloqueáveis)** (propriedade)
-- Rota `/race-arena/garage` com troféus, stats lifetime
-- Decals/neons desbloqueáveis por liga
-- Apelido + frase de chegada customizada
-
-**10. Acessibilidade total + Reactions ao vivo** (inclusão + social)
-- Modo daltônico (padrões nos carros)
-- Reduced motion: saltos discretos entre checkpoints
-- `aria-live` anunciando mudanças
-- Reactions emoji 🔥👏😱 em tempo real via realtime channel
-
-## Padrões em todas as etapas
-- ≤400 linhas por arquivo, lógica pesada em `*Helpers.ts`
-- Tokens semânticos (sem cores hardcoded novas)
+## Padrões em todas
+- ≤400 linhas/arquivo, helpers em `*Helpers.ts`
+- Tokens semânticos (sem cores hardcoded)
 - Framer Motion + haptics + skeleton
 - Zero erros de console
 - React Query + RLS quando tocar DB
-- Edge functions seguem pattern de `validation.ts` + CORS shared utils
+- RPCs SECURITY DEFINER para escritas sensíveis
+- Edge functions seguem pattern shared/cors
 
-## Próximo passo
-Sair do plano mode e iniciar **etapa 1** (Spotlight + Ultrapassagens dramáticas). Ao concluir cada etapa, sigo direto para a próxima sem interromper.
+## Ordem de execução
+5 → 6 → 7 → 8 → 9 → 10. Cada etapa = commit completo testável. Sem pausas, sem perguntas. Ao concluir 10, declaro 10/10 e listo todas as 10 entregas.
