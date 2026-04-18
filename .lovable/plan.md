@@ -1,48 +1,43 @@
 
-# Continuação: Race Arena 10/10 — Etapas 5-10
+# Plano: Pista ocupando toda a área verde com serpentina vertical
 
-Sigo de onde parei. Já entreguei 1-4 (spotlight/overtakes, commentary IA, daily check-in, modo TV). Agora as 6 restantes, uma por vez.
+## Diagnóstico
+Pista atual ocupa ~50% da viewport (centralizada, deixa muito gramado vazio em cima/baixo). Carros estão no tamanho ideal e devem permanecer iguais.
 
-## Etapa 5 — Tokens semânticos + Skin engine
-- Adicionar `--race-grass`, `--race-asphalt`, `--race-checkered`, `--race-curb`, `--race-pond` em `index.css` (light + dark)
-- Substituir `#5fa358` e demais cores hardcoded em `RaceArena.tsx`, `RaceTrack.tsx`, `TrackPond.tsx`, `TrackScenery.tsx`, `TrackBarriers.tsx`, `raceTrackHelpers.ts`
-- Variantes do skin engine existente: skin "cyberpunk" → grama roxa neon, "minimal" → cinza, default → verde
+## Solução
+Reescrever apenas o **path SVG** da pista em `raceTrackHelpers.ts` para serpentear verticalmente do topo (y≈40) ao fundo (y≈560), usando toda a largura útil (x: 60→940). Sem mexer em carros, viewBox ou componentes.
 
-## Etapa 6 — Modos de visualização (Imersivo / Competitivo / Análise)
-- Componente `RaceViewModeToggle` no header da arena (3 botões inset, padrão view-switcher)
-- Hook `useRaceViewMode` com persistência em localStorage
-- `RaceArenaView` condiciona visibilidade: Imersivo = pista + leaderboard mínimo; Competitivo = + commentary + feed + podium; Análise = + ScoreBreakdown + PredictedRank
+### Novo traçado (serpentina vertical fechada)
+- **Reta superior**: x 200→800 em y≈70
+- **Curva direita topo** descendo até y≈200
+- **S horizontal** indo para esquerda em y≈230
+- **Curva esquerda** descendo até y≈360
+- **S horizontal** voltando para direita em y≈390
+- **Curva direita** descendo até y≈500
+- **Reta inferior** x 800→200 em y≈530
+- **Subida esquerda** fechando o circuito de volta ao start
 
-## Etapa 7 — Onboarding inline + demo ghost-race
-- `RaceEmptyState` ganha 3 carros animados em loop (reutiliza `RaceCar` + `RaceTrack` em modo demo)
-- `RaceOnboardingTour` custom (sem dep externa): array de steps com `position`, render via portal, persiste `seen` no localStorage
-- Checklist flutuante `RaceOnboardingChecklist` (4-5 etapas: customizar carro, definir nickname, fechar 1 deal, ver leaderboard)
+Path com bezier cúbicas mantendo o sampling existente (`parsePath` + `resampleByLength` já cuidam do resto — carros, barreiras, lago, cenário e linha de chegada se reposicionam automaticamente via `getPositionOnTrack`).
 
-## Etapa 8 — Rivalidades + Highlights timeline
-- View `race_rivalries_view` (SQL): pares com ≥3 trocas de posição via `race_events` tipo `overtake`
-- Hook `useRaceRivalries(seasonId)` + componente `RivalryBadge` no leaderboard
-- `RaceHighlightsTimeline` lateral: top 5 eventos (maior comeback, ultrapassagem decisiva, líder novo) clicáveis
+### Ajustes secundários
+- Reposicionar **lago** (`TrackPond`): mover para área central livre da nova serpentina (~cx 500, cy 300)
+- Reposicionar **prédios pit** (`TrackScenery` layer inner): centralizar em região segura entre as voltas
+- Reposicionar **árvores externas**: redistribuir nas 4 bordas e nas "ilhas" entre as serpentinas
 
-## Etapa 9 — Garagem + skins desbloqueáveis
-- Tabela `race_unlocks` (user_id, unlock_key, unlocked_at) + RPC `unlock_race_item` validando liga atual
-- Rota `/race-arena/garage` com 3 abas: Troféus (lifetime), Carros (skins desbloqueadas/bloqueadas), Stats (deals, vendas, posições históricas)
-- Estender `CarCustomizer` com decals/neons gateados por liga + campos `nickname` e `victory_quote` em `race_cars`
+### O que NÃO muda
+- `RaceCar.tsx` (tamanho dos carros preservado)
+- `TRACK_VIEWBOX` (1000x600)
+- Largura do asfalto, run-off, barreiras zebradas
+- Lógica de overtake/checkpoint/spotlight
 
-## Etapa 10 — Acessibilidade + Reactions ao vivo
-- Modo daltônico: setting em Configurações → Skins; carros ganham `pattern` SVG (listras/pontos/xadrez) sobreposto à cor
-- Reduced motion total: hook `useRaceMotion` que troca interpolação contínua por saltos discretos quando `prefers-reduced-motion`
-- `aria-live="polite"` region central anunciando "líder mudou", "season acaba em X"
-- Reactions: tabela `race_reactions` (event_id ou car_id, emoji, user_id) + componente `ReactionBar` em cima dos carros + realtime channel
-- Aumentar `fontSize` SVG mínimo 11→13
+## Arquivos
+1. `src/components/race/raceTrackHelpers.ts` — novo `TRACK_PATH_D`
+2. `src/components/race/track/TrackPond.tsx` — recentralizar lago
+3. `src/components/race/track/TrackScenery.tsx` — recolocar prédios e árvores
 
-## Padrões em todas
-- ≤400 linhas/arquivo, helpers em `*Helpers.ts`
-- Tokens semânticos (sem cores hardcoded)
-- Framer Motion + haptics + skeleton
-- Zero erros de console
-- React Query + RLS quando tocar DB
-- RPCs SECURITY DEFINER para escritas sensíveis
-- Edge functions seguem pattern shared/cors
-
-## Ordem de execução
-5 → 6 → 7 → 8 → 9 → 10. Cada etapa = commit completo testável. Sem pausas, sem perguntas. Ao concluir 10, declaro 10/10 e listo todas as 10 entregas.
+## Validação
+Após implementação, verificar visualmente em `/race-arena/closer` que:
+- Pista cobre topo→base sem grandes faixas verdes vazias
+- Carros não se sobrepõem ao lago/prédios
+- Linha de chegada visível e perpendicular
+- Barreiras zebradas nas curvas certas
