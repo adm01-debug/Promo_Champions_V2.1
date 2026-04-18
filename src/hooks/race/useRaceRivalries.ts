@@ -18,7 +18,6 @@ export function useRaceRivalries(seasonId?: string) {
     queryKey: ['race-rivalries', seasonId],
     queryFn: async (): Promise<RaceRivalry[]> => {
       if (!seasonId) return [];
-      // @ts-expect-error - view não tipada ainda em supabase types
       const { data, error } = await supabase
         .from('race_rivalries_view')
         .select('*')

@@ -37,4 +37,6 @@ export { DailyCheckinModal } from './DailyCheckinModal';
 export { RaceViewModeToggle } from './RaceViewModeToggle';
 export { RaceGhostDemo } from './RaceGhostDemo';
 export { RaceOnboardingChecklist } from './RaceOnboardingChecklist';
+export { RivalryBadge } from './RivalryBadge';
+export { RaceHighlightsTimeline } from './RaceHighlightsTimeline';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
