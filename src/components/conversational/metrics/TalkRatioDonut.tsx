@@ -22,7 +22,8 @@ export function TalkRatioDonut({ seller, client, silence }: Props) {
             {data.map((d) => <Cell key={d.name} fill={d.color} stroke="hsl(var(--background))" strokeWidth={2} />)}
           </Pie>
           <Tooltip
-            content={({ active, payload }: RechartsTooltipProps) => {
+            content={(props) => {
+              const { active, payload } = props as unknown as RechartsTooltipProps;
               if (!active || !payload?.length) return null;
               const p = payload[0];
               return (
