@@ -1,48 +1,27 @@
 
-# Continuação: Race Arena 10/10 — Etapas 9 e 10 finais
+As 10 etapas do plano Race Arena 10/10 já foram concluídas (1-8 + 9-10 finais). Não há mais melhorias pendentes na lista original.
 
-Já entreguei 1-8 (spotlight, commentary IA, daily check-in, modo TV, tokens semânticos, view modes, onboarding+demo, rivalidades+highlights). Restam as duas últimas para fechar 10/10.
+Sobre o pedido anterior (SVG vetorial da pista/carros via outra IA): estou aguardando você anexar os arquivos SVG. Sem eles, não tenho o que integrar.
 
-## Etapa 9 — Garagem + skins desbloqueáveis
-**DB**
-- Tabela `race_unlocks` (`user_id`, `unlock_key`, `unlocked_at`, unique pair) com RLS: usuário lê/insere apenas o próprio
-- RPC `unlock_race_item(_unlock_key text)` SECURITY DEFINER: valida liga atual via `arena_user_stats` (ou tabela equivalente) antes de inserir
-- Colunas novas em `race_cars`: `nickname text`, `victory_quote text` (default null)
+# Próximos passos possíveis
 
-**Catálogo**
-- `src/components/race/garage/raceUnlockCatalog.ts`: lista de decals/neons/skins com `key`, `label`, `requiredLeague`, `preview`
+Como o plano original está 100% entregue, posso seguir em uma destas direções (escolha uma respondendo):
 
-**UI**
-- Rota `/race-arena/garage` (`RaceArenaGarage.tsx`) com 3 abas (shadcn Tabs):
-  - **Troféus**: lifetime wins, podiums, MVPs (consulta `race_seasons` + `race_results`)
-  - **Carros**: grid de skins/decals/neons com cadeado se bloqueado, CTA "Desbloquear" quando elegível
-  - **Stats**: deals fechados lifetime, melhor posição, dias em #1, streak máximo
-- Estender `CarCustomizer` com tabs "Decals" e "Neons" (gateadas por unlocks) + inputs `nickname` e `victory_quote`
-- Hook `useRaceUnlocks()` (lista) + `useUnlockRaceItem()` (mutação)
-- Adicionar link "Garagem" no `RaceArenaHeader`
+**A) Aguardar seus SVGs** — você anexa pista + carro vetoriais e eu integro (Opção 2 já combinada)
 
-## Etapa 10 — Acessibilidade + Reactions ao vivo
-**Acessibilidade**
-- Setting `colorblind_mode` em Configurações → Skins (já existe a tab); persiste em `user_preferences`
-- `RaceCar.tsx` recebe `pattern?: 'stripes' | 'dots' | 'checker'` derivado do número do carro quando colorblind ativo; `<pattern>` SVG em `TrackDefs`
-- Hook `useRaceMotion()` lê `prefers-reduced-motion`; quando true, `RaceArena` troca `transition` de spring para `{ duration: 0, type: 'tween' }` (saltos discretos por checkpoint)
-- `aria-live="polite"` invisível em `RaceArenaView` anunciando: nova liderança, X minutos para fim, próprio rank mudou
-- Aumentar `fontSize` mínimo dos labels SVG de 11→13
+**B) Refazer o visual da pista eu mesmo** — recriar do zero em SVG com estilo mais polido (referência: pistas top-down estilo "Micro Machines" / "Mario Kart 2D"), sem depender de IA externa. Inclui:
+- Pista mais larga e legível
+- Curvas suaves com raios consistentes
+- Asfalto com textura sutil (noise pattern)
+- Curbs vermelho/branco em todas as curvas
+- Grama com variação de tom
+- Carros redesenhados com melhor proporção e sombra projetada
 
-**Reactions ao vivo**
-- Tabela `race_reactions` (`id`, `season_id`, `target_car_id`, `reactor_user_id`, `emoji`, `created_at`); RLS: leitura pública na season ativa, insert autenticado (rate-limit via trigger: máx 10/min/usuário)
-- Realtime channel `race-reactions:{seasonId}` no `RaceArena`
-- `ReactionBar.tsx`: 4 emojis fixos (🔥 👏 😱 🚀); aparece on-hover sobre o carro
-- `ReactionFloater.tsx`: emoji sobe e fade-out quando recebido (motion + auto-cleanup 1.5s)
-- Contador agregado por carro nas últimas 60s (badge pequeno acima do label)
+**C) Novo ciclo de melhorias 11-15** — evoluir além do 10/10 com:
+- Replays de corrida (gravação dos últimos 30s)
+- Apostas internas entre vendedores (XP wagering)
+- Clima dinâmico (chuva afeta velocidade visual)
+- Co-pilotos IA com personalidades
+- Torneios eliminatórios mensais
 
-## Padrões mantidos
-- ≤400 linhas/arquivo, helpers em `*Helpers.ts`
-- Tokens semânticos (sem cores hardcoded)
-- Framer Motion + haptics
-- Zero erros de console
-- React Query + RLS
-- RPCs SECURITY DEFINER para escritas sensíveis
-
-## Ordem
-9 → 10. Cada etapa = commit completo. Ao concluir 10, listo as 10 entregas e declaro 10/10.
+Me diga qual caminho (A, B ou C) e eu sigo executando sem pausas.
