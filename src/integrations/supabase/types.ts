@@ -4217,6 +4217,50 @@ export type Database = {
           },
         ]
       }
+      deal_stage_transitions: {
+        Row: {
+          created_at: string
+          duration_hours: number | null
+          entered_at: string
+          exited_at: string | null
+          from_stage: string | null
+          id: string
+          sale_id: string
+          to_stage: string
+          transitioned_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_hours?: number | null
+          entered_at?: string
+          exited_at?: string | null
+          from_stage?: string | null
+          id?: string
+          sale_id: string
+          to_stage: string
+          transitioned_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_hours?: number | null
+          entered_at?: string
+          exited_at?: string | null
+          from_stage?: string | null
+          id?: string
+          sale_id?: string
+          to_stage?: string
+          transitioned_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_stage_transitions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_stakeholders: {
         Row: {
           confidence: number | null
@@ -4289,6 +4333,50 @@ export type Database = {
             foreignKeyName: "deal_stakeholders_sale_id_fkey"
             columns: ["sale_id"]
             isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_velocity_alerts: {
+        Row: {
+          baseline_p75: number
+          baseline_p90: number
+          current_stage: string
+          detected_at: string
+          hours_in_stage: number
+          id: string
+          recommendation: string | null
+          sale_id: string
+          severity: string
+        }
+        Insert: {
+          baseline_p75?: number
+          baseline_p90?: number
+          current_stage: string
+          detected_at?: string
+          hours_in_stage?: number
+          id?: string
+          recommendation?: string | null
+          sale_id: string
+          severity?: string
+        }
+        Update: {
+          baseline_p75?: number
+          baseline_p90?: number
+          current_stage?: string
+          detected_at?: string
+          hours_in_stage?: number
+          id?: string
+          recommendation?: string | null
+          sale_id?: string
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_velocity_alerts_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
