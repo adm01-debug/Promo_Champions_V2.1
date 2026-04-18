@@ -2869,6 +2869,93 @@ export type Database = {
           },
         ]
       }
+      coaching_opportunities: {
+        Row: {
+          current_value: number
+          detected_at: string
+          gap_pct: number | null
+          id: string
+          metric_key: string
+          metric_label: string
+          priority: number
+          recommended_action: string | null
+          salesperson_id: string
+          severity: string
+          skill_focus: string
+          team_benchmark: number
+        }
+        Insert: {
+          current_value?: number
+          detected_at?: string
+          gap_pct?: number | null
+          id?: string
+          metric_key: string
+          metric_label: string
+          priority?: number
+          recommended_action?: string | null
+          salesperson_id: string
+          severity?: string
+          skill_focus: string
+          team_benchmark?: number
+        }
+        Update: {
+          current_value?: number
+          detected_at?: string
+          gap_pct?: number | null
+          id?: string
+          metric_key?: string
+          metric_label?: string
+          priority?: number
+          recommended_action?: string | null
+          salesperson_id?: string
+          severity?: string
+          skill_focus?: string
+          team_benchmark?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_opportunities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_opportunities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coaching_skill_benchmarks: {
+        Row: {
+          computed_at: string
+          id: string
+          metric_key: string
+          sample_size: number
+          team_avg: number
+          top_quartile: number
+        }
+        Insert: {
+          computed_at?: string
+          id?: string
+          metric_key: string
+          sample_size?: number
+          team_avg?: number
+          top_quartile?: number
+        }
+        Update: {
+          computed_at?: string
+          id?: string
+          metric_key?: string
+          sample_size?: number
+          team_avg?: number
+          top_quartile?: number
+        }
+        Relationships: []
+      }
       cohort_analyses: {
         Row: {
           cohort_field: string
