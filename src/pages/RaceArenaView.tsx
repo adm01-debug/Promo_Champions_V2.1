@@ -21,6 +21,7 @@ import {
   StartSeasonDialog,
   OvertakeHighlight,
   LeaderTakeoverCelebration,
+  RaceAudioPreferences,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
