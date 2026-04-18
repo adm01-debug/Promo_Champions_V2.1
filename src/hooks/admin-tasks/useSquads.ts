@@ -103,8 +103,8 @@ export const useSquads = () => {
       const { data, error } = await supabase.rpc('assign_task_to_squad', {
         _catalog_id: input.catalog_id,
         _squad_id: input.squad_id,
-        _due_date: input.due_date ?? null,
-        _recurrence: input.recurrence ?? null,
+        _due_date: input.due_date ?? undefined,
+        _recurrence: input.recurrence ?? undefined,
       });
       if (error) throw error;
       return data as number;
