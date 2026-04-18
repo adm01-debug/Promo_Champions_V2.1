@@ -1,4 +1,4 @@
-import { TRACK_VIEWBOX } from './raceTrackHelpers';
+import { SCENE_VIEWBOX, TRACK_OFFSET } from './raceTrackHelpers';
 import { TrackDefs } from './track/TrackDefs';
 import { TrackGrass } from './track/TrackGrass';
 import { TrackPond } from './track/TrackPond';
@@ -9,37 +9,39 @@ import { TrackScenery } from './track/TrackScenery';
 
 interface RaceTrackProps {
   children?: React.ReactNode;
-  /** Quando true, todos os marshals trocam para bandeira amarela. */
   yellowFlag?: boolean;
-  /** Incrementa para disparar uma onda mexicana (la ola) na arquibancada. */
   waveTrigger?: number;
-  /** Nome do líder atual (exibido no telão LED). */
   leaderName?: string;
-  /** Gap formatado do líder (ex: "+0.42%") exibido no telão LED. */
   leaderGap?: string;
 }
 
 /**
- * Pista top-down vetorial flat (estilo ilustração).
+ * Pista top-down vetorial flat. A pista (600x1000) é renderizada dentro de uma
+ * cena ampliada (800x1333) para ocupar ~75% da área visível, com grama nas bordas.
  */
 export function RaceTrack({
   children, yellowFlag = false, waveTrigger = 0, leaderName, leaderGap,
 }: RaceTrackProps) {
   return (
     <svg
-      viewBox={`0 0 ${TRACK_VIEWBOX.width} ${TRACK_VIEWBOX.height}`}
+      viewBox={`0 0 ${SCENE_VIEWBOX.width} ${SCENE_VIEWBOX.height}`}
       className="w-full h-full"
       preserveAspectRatio="xMidYMid meet"
     >
       <TrackDefs />
+      {/* Grama cobre toda a cena */}
       <TrackGrass />
-      <TrackPond />
-      <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} leaderName={leaderName} leaderGap={leaderGap} />
-      <TrackAsphalt />
-      <TrackBarriers />
-      <TrackStartGantry />
-      <TrackScenery layer="inner" />
-      {children}
+      {/* Pista + cenário relativos à pista, deslocados para o centro da cena */}
+      <g transform={`translate(${TRACK_OFFSET.x} ${TRACK_OFFSET.y})`}>
+        <TrackPond />
+        <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} leaderName={leaderName} leaderGap={leaderGap} />
+        <TrackAsphalt />
+        <TrackBarriers />
+        <TrackStartGantry />
+        <TrackScenery layer="inner" />
+        {children}
+      </g>
     </svg>
   );
 }
+
