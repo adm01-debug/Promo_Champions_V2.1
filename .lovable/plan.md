@@ -1,40 +1,36 @@
 
-Próxima: **Melhoria #9/20 — Highlight Reel de Ultrapassagens** (replay visual de overtakes recentes).
+Próxima: **Melhoria #10/20 — Predictive Ranking IA** (projeção de posição final da season).
 
 ## Problema
-Quando um piloto ultrapassa outro no ranking, o evento é silencioso — só aparece no feed textual. Falta um momento "TV de corrida" que celebre overtakes em tempo real.
+O leaderboard mostra apenas a posição atual. Pilotos não conseguem visualizar a tendência: "estou subindo ou caindo?" e "onde vou terminar se mantiver esse ritmo?". Falta um sinal preditivo que crie urgência estratégica.
 
 ## Solução
-Toast/banner cinematográfico que dispara quando um overtake é detectado, mostrando os 2 avatares envolvidos com animação de troca de posição.
+Calcular projeção linear da posição final de cada piloto com base no ritmo atual (vendas/dia desde início da season) versus dias restantes, e exibir um indicador de tendência (▲▼─) ao lado do rank.
 
-### Hook `useOvertakeDetector.ts` (~80L) em `src/hooks/race/`
-- Recebe `entries: RaceLeaderboardEntry[]` da season ativa
-- Mantém ref do snapshot anterior do ranking (Map<salesperson_id, rank>)
-- Em cada update, compara: se piloto X subiu ≥1 posição E piloto Y caiu correspondente → registra overtake
-- Retorna `{ recentOvertakes: Overtake[] }` (queue com auto-expire 6s) + `dismissOvertake(id)`
-- Ignora primeiro snapshot (evita falsos positivos no mount)
+### Hook `useRacePredictions.ts` (~120L) em `src/hooks/race/`
+- Recebe `entries: RaceLeaderboardEntry[]` + `season: { start_date, end_date }`
+- Para cada piloto: calcula `paceDaily = total_sales / daysElapsed`
+- Projeta `projectedTotal = total_sales + (paceDaily * daysRemaining)`
+- Re-ranqueia entries pela projeção → `projectedRank`
+- Retorna `Map<salesperson_id, { projectedRank, projectedTotal, trend: 'up' | 'down' | 'stable', deltaRanks }>`
+- `useMemo` pesado, recalcula só quando entries/season mudam
 
-### Componente `OvertakeHighlight.tsx` (~150L) em `src/components/race/`
-- Banner fixo top-center, z-index alto, max-w-md
-- Layout: Avatar overtaker (esquerda, com seta ↗ verde) → ícone "vs" → Avatar overtaken (direita, com seta ↘ vermelho)
-- Texto: "{Nome A} ULTRAPASSOU {Nome B}!" em Sora black
-- Subtexto: "P{newRank} ← P{oldRank}" tabular-nums
-- Animação: entrada slide-down + glow pulse; avatares fazem swap (x: -40 ↔ x: +40) em 0.6s
-- Cores das cars (primary_color) como ring nos avatares
-- Auto-dismiss em 5s; clique fecha
-- Som opcional reutilizando `RaceSoundToggle` state (whoosh)
-- Respeita `prefers-reduced-motion`
+### Componente `PredictedRankBadge.tsx` (~80L) em `src/components/race/`
+- Pequeno badge inline: ícone `TrendingUp` (success) / `TrendingDown` (destructive) / `Minus` (muted)
+- Tooltip com texto: "Projeção: P{projectedRank} ({±N posições)" e "Ritmo: R$ X/dia"
+- Animação sutil ao mudar tendência
 
 ### Integração
-- `RaceArenaView.tsx`: instanciar `useOvertakeDetector(entries)` e renderizar `<OvertakeHighlight overtakes={recentOvertakes} onDismiss={dismissOvertake} />` no nível root
-- Empilhar até 2 simultâneos (segundo desce 80px)
+- `RaceLeaderboardSidebar.tsx`: consumir hook e renderizar badge ao lado do rank de cada item
+- `NextGoalPanel.tsx`: adicionar linha "Projeção final: P{n}" quando dados disponíveis
+- Exportar em `src/components/race/index.ts`
 
 ### Arquivos
-- **Criar**: `src/hooks/race/useOvertakeDetector.ts`, `src/components/race/OvertakeHighlight.tsx`
-- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/index.ts`
+- **Criar**: `src/hooks/race/useRacePredictions.ts`, `src/components/race/PredictedRankBadge.tsx`
+- **Editar**: `src/components/race/RaceLeaderboardSidebar.tsx`, `src/components/race/NextGoalPanel.tsx`, `src/components/race/index.ts`
 
 ### Padrões
-Semantic tokens, Sora/Inter, ≤200L, strict TS, framer-motion com `useReducedMotion`, AnimatePresence para queue.
+Semantic tokens, Sora/Inter, ≤200L, strict TS, `useMemo` no hook, Tooltip do shadcn, sem cores hardcoded.
 
 ### Próximas (preview)
-#10 Predictive ranking IA → #11 Confetti em P1 → #12 Sound effects polish → ... até #20.
+#11 Confetti em P1 → #12 Sound effects polish → #13 Pit Stop tactical pause → ... até #20.
