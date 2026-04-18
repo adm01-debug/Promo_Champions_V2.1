@@ -1,59 +1,39 @@
 
-Executar sequencialmente todas as melhorias do top 5 + polimentos da análise exaustiva, em ordem de impacto. Cada item será uma intervenção cirúrgica e completa.
+Roadmap top-5 da análise exaustiva já foi 100% executado na iteração anterior (slipstream, gap badge, exhaust+chama, rumble strips animados, xadrez ondulado, blimp, bandeiras, plaquinhas, blur volumétrico, countdown LED). Para continuar rumo ao 10/10, vou executar a próxima onda de polimentos (itens HUD/microinterações pendentes da análise + refinos finais).
 
-## Roadmap de execução (ordem)
+## Próximas iterações (sequencial, sem pausas)
 
-**Já feito:** Sombra sob carros + halo do usuário logado (item #1).
+### 1. Mini-mapa periférico
+- Novo `RaceMiniMap.tsx` (canto inferior esquerdo): SVG ~120×80 px com silhueta da pista + pontinhos coloridos por carro. Glassmorphism, leitura periférica.
 
-### Próximas iterações
+### 2. Timeline de eventos ao vivo
+- Novo `RaceEventTicker.tsx`: faixa horizontal compacta acima do leaderboard com últimos 3 eventos ("🏁 X tomou P1 às 10:32", "⚡ Y ativou DRS"). Auto-scroll, fade.
 
-1. **Slipstream + GAP flutuante** (drama competitivo)
-   - Novo `LeaderGapIndicator.tsx`: badge SVG flutuante "+X.Xs" entre 1º e 2º quando gap < 5%
-   - Novo `SlipstreamLines.tsx`: 3 linhas de vento animadas atrás do líder quando 2º está colado
-   - Cálculo de gap baseado em `progress` diff × tempo médio de volta
+### 3. DRS Zone overlay visual
+- Novo `DRSZoneOverlay.tsx`: trecho da reta principal com overlay azul translúcido pulsante + ícone "DRS" sinalizando zona de ultrapassagem.
 
-2. **Rumble strips animados nas curvas** + **xadrez ondulado na largada**
-   - Em `TrackAsphalt.tsx`: adicionar `<animate>` no `strokeDashoffset` dos curbs vermelho/branco (movimento sutil)
-   - Em `TrackStartGantry.tsx`: já tem shimmer, intensificar ondulação quando `leaderApproaching` prop = true
+### 4. Ghost trail neon do líder
+- Novo `LeaderNeonTrail.tsx`: rastro colorido (cor do time) seguindo o líder com 8 pontos históricos em gradiente fade.
 
-3. **Exhaust trail + chama no escapamento** (sensação de velocidade)
-   - Novo `CarExhaust.tsx`: 2-3 partículas de fumaça contínuas atrás do carro (offset no rotation -180°)
-   - Pequena chama SVG `<polygon>` laranja/amarela animada no escape
-   - Renderizado dentro do `<motion.g>` de cada carro
+### 5. Screen shake em ultrapassagens top-3
+- Hook `useScreenShake.ts` + integração em `RaceArena`: dispara shake sutil (translate ±2px, 250ms) quando overtake afeta top 3.
 
-4. **Bandeiras agitando + plaquinhas dos torcedores + dirigível**
-   - Em `TrackScenery.tsx`: adicionar 4-6 bandeiras `<rect>` com `<animateTransform type="skewX">` nas arquibancadas
-   - Modificar cluster de torcedores: 2-3 com plaquinhas coloridas levantadas
-   - Novo dirigível `<ellipse>` no céu com translação lenta horizontal (60s loop)
+### 6. Lap counter LED-style
+- Novo `LapCounterBadge.tsx`: badge canto inferior esquerdo (oposto do countdown) com "LAP 3 / ∞" em fonte mono LED.
 
-5. **Polimentos finais**
-   - `TrackDustParticles`: filtro `<feGaussianBlur stdDeviation="0.8">` nas partículas
-   - Countdown visual no HUD: "⏱ Termina em Xd Yh" usando `useWeeklyResetCountdown`
-   - Lap counter LED-style no canto inferior da pista
-
-## Estrutura de arquivos
+## Estrutura
 
 **Novos:**
-- `src/components/race/LeaderGapIndicator.tsx`
-- `src/components/race/SlipstreamLines.tsx`
-- `src/components/race/CarExhaust.tsx`
-- `src/components/race/track/TrackBlimp.tsx`
-- `src/components/race/RaceCountdownBadge.tsx`
+- `src/components/race/RaceMiniMap.tsx`
+- `src/components/race/RaceEventTicker.tsx`
+- `src/components/race/DRSZoneOverlay.tsx`
+- `src/components/race/LeaderNeonTrail.tsx`
+- `src/components/race/LapCounterBadge.tsx`
+- `src/hooks/race/useScreenShake.ts`
 
 **Editados:**
-- `src/components/race/RaceArena.tsx` (montar novos componentes)
-- `src/components/race/track/TrackAsphalt.tsx` (rumble strips animados)
-- `src/components/race/track/TrackScenery.tsx` (bandeiras + plaquinhas)
-- `src/components/race/track/TrackDustParticles.tsx` (blur filter)
-- `src/components/race/track/TrackStartGantry.tsx` (xadrez ondulado intensificado)
+- `src/components/race/RaceArena.tsx` (montar todos)
+- `src/index.css` (keyframes neon-trail, drs-zone-pulse, screen-shake, ticker-fade)
 
-## Garantias de qualidade
-
-- Tokens semânticos HSL (sem cores hardcoded)
-- `pointerEvents="none"` em todos os elementos decorativos
-- `aria-hidden` em SVGs decorativos
-- Performance: limites de partículas, `useReducedMotion` respeitado
-- Arquivos < 200 linhas cada (padrão do projeto)
-- Zero erros de console
-
-Execução será sequencial: 1 melhoria → próxima → próxima, sem pausas.
+## Garantias
+- Tokens HSL semânticos, `pointerEvents="none"` em decorativos, `aria-hidden`, `useReducedMotion` respeitado, arquivos < 200 linhas, zero erros de console. Execução sequencial sem pausas.
