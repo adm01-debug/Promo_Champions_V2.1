@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { CoachingOpportunityPanel } from "./opportunities/CoachingOpportunityPanel";
 import { SkillGapAnalyzerPanel } from "./skills/SkillGapAnalyzerPanel";
+import { CoachingSessionPlanner } from "./sessions/CoachingSessionPlanner";
 
 const PRIORITY_STYLES: Record<CoachingTarget["priority"], { border: string; badge: "destructive" | "default" | "secondary"; label: string; icon: typeof AlertTriangle }> = {
   critical: { border: "border-l-4 border-l-destructive", badge: "destructive", label: "Crítico", icon: AlertTriangle },
@@ -49,6 +50,7 @@ export function CoachingIntelligenceHub() {
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="opportunities">Oportunidades de Coaching</TabsTrigger>
             <TabsTrigger value="skills">Skill Gap Analyzer</TabsTrigger>
+            <TabsTrigger value="sessions">Sessões 1:1</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-4 space-y-6">
@@ -196,6 +198,10 @@ export function CoachingIntelligenceHub() {
 
           <TabsContent value="skills" className="mt-4">
             <SkillGapAnalyzerPanel />
+          </TabsContent>
+
+          <TabsContent value="sessions" className="mt-4">
+            <CoachingSessionPlanner />
           </TabsContent>
         </Tabs>
       </div>

@@ -2929,6 +2929,72 @@ export type Database = {
           },
         ]
       }
+      coaching_sessions: {
+        Row: {
+          action_items: Json
+          agenda: Json
+          coach_id: string
+          completed_at: string | null
+          created_at: string
+          duration_min: number
+          focus_skills: string[]
+          id: string
+          notes: string | null
+          outcome_rating: number | null
+          salesperson_id: string
+          scheduled_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action_items?: Json
+          agenda?: Json
+          coach_id: string
+          completed_at?: string | null
+          created_at?: string
+          duration_min?: number
+          focus_skills?: string[]
+          id?: string
+          notes?: string | null
+          outcome_rating?: number | null
+          salesperson_id: string
+          scheduled_at: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action_items?: Json
+          agenda?: Json
+          coach_id?: string
+          completed_at?: string | null
+          created_at?: string
+          duration_min?: number
+          focus_skills?: string[]
+          id?: string
+          notes?: string | null
+          outcome_rating?: number | null
+          salesperson_id?: string
+          scheduled_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_sessions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coaching_skill_benchmarks: {
         Row: {
           computed_at: string
