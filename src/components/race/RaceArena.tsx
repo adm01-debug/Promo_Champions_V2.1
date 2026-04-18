@@ -190,6 +190,41 @@ export function RaceArena({
   const top3 = sorted.slice(0, 3);
   const leaderProgress = Number(top3[0]?.progress ?? 0);
 
+  // ----- Câmera dinâmica (zoom no líder em disputa apertada) -----
+  const closeBattle = sorted.length >= 2
+    ? (Number(sorted[0].progress) - Number(sorted[1].progress)) < 0.03
+    : false;
+  const [zoomActive, setZoomActive] = useState(false);
+  useEffect(() => {
+    if (reducedMotion) return;
+    if (closeBattle && !zoomActive) {
+      setZoomActive(true);
+      const t = window.setTimeout(() => setZoomActive(false), 2000);
+      return () => window.clearTimeout(t);
+    }
+  }, [closeBattle, reducedMotion, zoomActive]);
+
+  // ----- Bandeira de chegada (líder >= 0.95) -----
+  useEffect(() => {
+    if (finaleShown || reducedMotion) return;
+    if (leaderProgress >= 0.95) {
+      setFinaleShown(true);
+      setShowFinaleFlag(true);
+      const lname = sorted[0]?.salesperson_name;
+      pushCommentary(makeCommentaryLine({ type: 'finale', leader: lname }));
+      const t = window.setTimeout(() => setShowFinaleFlag(false), 2200);
+      return () => window.clearTimeout(t);
+    }
+  }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary]);
+
+  // ----- Replay -----
+  const handleReplay = useCallback(() => {
+    if (!lastOvertakeRef.current) return;
+    setReplayOverlay(true);
+    pushCommentary('REPLAY: melhor momento da pista');
+    window.setTimeout(() => setReplayOverlay(false), 3200);
+  }, [pushCommentary]);
+
   const transition = reducedMotion
     ? { duration: 0, type: 'tween' as const }
     : { type: 'spring' as const, stiffness: 70, damping: 18, duration: 0.8 };
