@@ -256,7 +256,7 @@ export default function RaceArenaView({ roleType }: Props) {
               Meta {Number(season.goal_amount).toLocaleString('pt-BR')} pts
             </div>
 
-            <div className="grid grid-cols-12 gap-4" style={{ minHeight: '70vh' }}>
+            <div className="grid grid-cols-12 gap-4" style={{ minHeight: '85vh' }}>
               <div className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-2' : 'lg:col-span-3'} order-2 lg:order-1 space-y-3`}>
                 {viewMode.showCommentary && (
                   <RaceCommentaryPanel
