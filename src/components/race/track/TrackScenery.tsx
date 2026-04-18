@@ -68,12 +68,12 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
   const H = TRACK_VIEWBOX.height;
 
   if (layer === 'outer') {
+    // Árvores nas 4 bordas externas (fora da serpentina que ocupa toda a área).
     const trees: Array<[number, number, number]> = [
-      [40, 40, 1], [110, 25, 0.85], [200, 40, 0.95], [300, 25, 0.9],
-      [W - 50, 30, 1], [W - 130, 45, 0.9], [W - 220, 30, 0.85],
-      [40, H - 40, 0.95], [120, H - 25, 1], [240, H - 50, 0.9], [340, H - 30, 0.85],
-      [W - 50, H - 40, 1], [W - 140, H - 60, 0.9], [W - 240, H - 35, 0.85],
-      [30, H / 2 + 20, 0.85], [W - 30, H / 2 - 20, 0.85],
+      [30, 25, 0.9], [80, 15, 0.8], [W - 30, 25, 0.95], [W - 80, 15, 0.85],
+      [30, H - 25, 0.95], [80, H - 15, 0.85], [W - 30, H - 25, 0.9], [W - 80, H - 15, 0.8],
+      [20, 200, 0.8], [20, 320, 0.85], [20, 440, 0.8],
+      [W - 20, 200, 0.85], [W - 20, 320, 0.8], [W - 20, 440, 0.85],
     ];
     return (
       <g aria-hidden>
@@ -84,14 +84,15 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
     );
   }
 
+  // Camada interna: pequenas árvores nos gaps entre as voltas da serpentina.
   return (
     <g aria-hidden>
-      <Building x={500} y={250} w={100} h={28} doors={3} />
-      <Building x={610} y={250} w={90} h={28} doors={3} />
-      <ControlTower cx={560} cy={220} />
-      <Tree cx={720} cy={250} scale={0.75} />
-      <Tree cx={680} cy={300} scale={0.7} />
-      <Tree cx={560} cy={340} scale={0.7} />
+      <Tree cx={200} cy={140} scale={0.55} />
+      <Tree cx={780} cy={140} scale={0.55} />
+      <Tree cx={250} cy={275} scale={0.5} />
+      <Tree cx={750} cy={275} scale={0.5} />
+      <Tree cx={250} cy={505} scale={0.5} />
+      <Tree cx={750} cy={505} scale={0.5} />
     </g>
   );
 }
