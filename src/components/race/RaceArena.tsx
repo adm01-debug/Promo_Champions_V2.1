@@ -22,7 +22,15 @@ import { RaceEventTicker, type RaceTickerEvent } from './RaceEventTicker';
 import { DRSZoneOverlay } from './DRSZoneOverlay';
 import { LeaderNeonTrail } from './LeaderNeonTrail';
 import { LapCounterBadge } from './LapCounterBadge';
+import { BroadcastOverlay, type BroadcastEvent } from './BroadcastOverlay';
+import { MyTelemetryPanel } from './MyTelemetryPanel';
+import { PitLane } from './PitLane';
+import { RaceMuteToggle } from './RaceMuteToggle';
+import { RaceReplayButton } from './RaceReplayButton';
+import { RaceEasterEggs } from './RaceEasterEggs';
 import { useScreenShake } from '@/hooks/race/useScreenShake';
+import { useRaceSounds } from '@/hooks/race/useRaceSounds';
+import { useRaceReplay } from '@/hooks/race/useRaceReplay';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
@@ -46,6 +54,15 @@ interface RaceArenaProps {
   seasonStartedAt?: string | null;
   /** ISO término previsto da season (Race Control). */
   seasonEndsAt?: string | null;
+  /** Telemetria opcional do piloto logado (mostra MyTelemetryPanel se fornecido). */
+  telemetry?: {
+    avgDealsPerDay: number;
+    bestLap: number;
+    ghostDeltaPp: number;
+    tireFatigue: number;
+    nextGoalLabel?: string;
+    nextGoalPercent?: number;
+  };
 }
 
 const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
@@ -53,6 +70,7 @@ const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
 export function RaceArena({
   cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay,
   colorblindMode = false, seasonId = null, seasonStartedAt = null, seasonEndsAt = null,
+  telemetry,
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
@@ -96,6 +114,38 @@ export function RaceArena({
 
   // Screen shake em ultrapassagens top-3
   const { shaking, trigger: triggerShake } = useScreenShake(280);
+
+  // Sons sintéticos da corrida (mute persistido em localStorage)
+  const { muted, toggleMute, play } = useRaceSounds();
+  const playRef = useRef(play);
+  useEffect(() => { playRef.current = play; }, [play]);
+
+  // Replay 4s das últimas posições
+  const replay = useRaceReplay();
+  // Grava snapshot a cada update de leaderboard
+  useEffect(() => {
+    if (cars.length > 0) replay.recordSnapshot(cars);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cars.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 100)}`).join('|')]);
+
+  // Eventos de broadcast (rotativos)
+  const [broadcastEvents, setBroadcastEvents] = useState<BroadcastEvent[]>([]);
+  const pushBroadcast = useCallback((evt: Omit<BroadcastEvent, 'id'>) => {
+    setBroadcastEvents((prev) => {
+      const id = `${Date.now()}-${Math.random()}`;
+      return [{ id, ...evt }, ...prev].slice(0, 5);
+    });
+  }, []);
+  // Auto-cleanup eventos > 60s
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const cutoff = Date.now() - 60_000;
+      setBroadcastEvents((prev) =>
+        prev.filter((e) => Number(e.id.split('-')[0]) > cutoff),
+      );
+    }, 8_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Ciclo 47-52: la-ola, fastest sector, cinematic camera
   const [waveTrigger, setWaveTrigger] = useState(0);
@@ -185,6 +235,16 @@ export function RaceArena({
         const overtakerNewRank = sortedCurr.findIndex((x) => x.id === o.overtaker);
         if (overtakerNewRank >= 0 && overtakerNewRank < 3 && !reducedMotion) {
           triggerShake();
+          // Sound: overtake top-3
+          playRef.current('overtake');
+          // Broadcast event
+          if (attackerName && defenderName) {
+            pushBroadcast({
+              kind: 'overtake',
+              title: `${attackerName.split(' ')[0]} ULTRAPASSOU ${defenderName.split(' ')[0]}`,
+              detail: inDRS ? `Zona DRS · P${overtakerNewRank + 1}` : `Manobra limpa · P${overtakerNewRank + 1}`,
+            });
+          }
         }
         lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
       }
@@ -265,6 +325,15 @@ export function RaceArena({
         const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
         pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
         if (lname) pushTickerEvent(`${lname.split(' ')[0]} assumiu P1`, '👑');
+        // Sound + broadcast: leader takeover
+        playRef.current('leader_takeover');
+        if (lname) {
+          pushBroadcast({
+            kind: 'leader',
+            title: `${lname.split(' ')[0]} ASSUMIU A LIDERANÇA`,
+            detail: 'Tomada de P1 ao vivo',
+          });
+        }
       }
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
@@ -414,11 +483,41 @@ export function RaceArena({
       setShowFireworks(true);
       const lname = sorted[0]?.salesperson_name;
       pushCommentary(makeCommentaryLine({ type: 'finale', leader: lname }));
+      // Sound + broadcast: season end
+      playRef.current('season_end');
+      if (lname) {
+        pushBroadcast({
+          kind: 'finale',
+          title: `${lname.split(' ')[0]} CRUZA A LINHA`,
+          detail: 'Bandeirada final — corrida encerrada',
+        });
+      }
       const t1 = window.setTimeout(() => setShowFinaleFlag(false), 2200);
       const t2 = window.setTimeout(() => setShowFireworks(false), 2600);
       return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
     }
-  }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary]);
+  }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary, pushBroadcast]);
+
+  // Gap apertado (< 1%) → broadcast event "BATTLE"
+  const gapBroadcastLastRef = useRef<number>(0);
+  useEffect(() => {
+    if (!leader || !second || gapToSecond === null) return;
+    if (gapToSecond > 0 && gapToSecond < 0.01) {
+      const now = Date.now();
+      if (now - gapBroadcastLastRef.current > 15_000) {
+        gapBroadcastLastRef.current = now;
+        const a = leader.salesperson_name?.split(' ')[0];
+        const b = second.salesperson_name?.split(' ')[0];
+        if (a && b) {
+          pushBroadcast({
+            kind: 'gap',
+            title: `${a} vs ${b}`,
+            detail: `Gap ${(gapToSecond * 100).toFixed(2)}% · disputa ao vivo`,
+          });
+        }
+      }
+    }
+  }, [leader, second, gapToSecond, pushBroadcast]);
 
   // ----- Start lights: dispara 1x ao montar -----
   useEffect(() => {
@@ -961,6 +1060,41 @@ export function RaceArena({
 
       {/* ===== Countdown badge (canto inferior direito) ===== */}
       <RaceCountdownBadge endsAt={seasonEndsAt} />
+
+      {/* ===== Mute toggle (ao lado do countdown) ===== */}
+      <RaceMuteToggle muted={muted} onToggle={toggleMute} />
+
+      {/* ===== Replay button 4s ===== */}
+      <RaceReplayButton
+        onClick={replay.startReplay}
+        disabled={!replay.hasReplay}
+        isPlaying={replay.isPlaying}
+      />
+
+      {/* ===== Pit lane visual (quando há carros parados) ===== */}
+      {pitStopCars.size > 0 && (() => {
+        const firstId = Array.from(pitStopCars)[0];
+        const pilot = sorted.find((c) => c.car_id === firstId);
+        return <PitLane count={pitStopCars.size} pilotName={pilot?.salesperson_name?.split(' ')[0]} />;
+      })()}
+
+      {/* ===== Telemetria do piloto logado ===== */}
+      {telemetry && (
+        <MyTelemetryPanel
+          avgDealsPerDay={telemetry.avgDealsPerDay}
+          bestLap={telemetry.bestLap}
+          ghostDeltaPp={telemetry.ghostDeltaPp}
+          tireFatigue={telemetry.tireFatigue}
+          nextGoalLabel={telemetry.nextGoalLabel}
+          nextGoalPercent={telemetry.nextGoalPercent}
+        />
+      )}
+
+      {/* ===== Lower-third broadcast TV ===== */}
+      <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />
+
+      {/* ===== Easter eggs (konami + fogos overlay quando finale) ===== */}
+      <RaceEasterEggs showFireworks={showFireworks} />
     </div>
   );
 }
