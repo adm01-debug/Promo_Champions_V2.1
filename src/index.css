@@ -2061,6 +2061,36 @@
   50%      { transform: translateY(-3px); }
 }
 
+/* ===== Iteração final: slipstream + exhaust + blimp + rumble strips + grandstand flags ===== */
+@keyframes race-slipstream-pulse {
+  0%, 100% { opacity: 0.15; transform: translateX(0); }
+  50%      { opacity: 0.7;  transform: translateX(-1.5px); }
+}
+@keyframes race-exhaust-puff {
+  0%   { opacity: 0.5; transform: scale(0.6); }
+  100% { opacity: 0;   transform: scale(1.6) translateX(-3px); }
+}
+@keyframes race-exhaust-flame {
+  0%, 100% { transform: scale(1, 1)    translateX(0); opacity: 0.95; }
+  50%      { transform: scale(1.2, 0.8) translateX(-1px); opacity: 1; }
+}
+@keyframes race-blimp-drift {
+  0%   { transform: translateX(-120px); }
+  100% { transform: translateX(900px); }
+}
+@keyframes race-rumble-strip-flow {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -28; }
+}
+@keyframes race-grandstand-flag-wave {
+  0%, 100% { transform: skewX(-12deg); }
+  50%      { transform: skewX(10deg); }
+}
+@keyframes race-fan-sign-bob {
+  0%, 100% { transform: translateY(0)   rotate(-4deg); }
+  50%      { transform: translateY(-3px) rotate(6deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .race-cinematic-intro { animation: none !important; }
   .race-drs-pulse { animation: none !important; }

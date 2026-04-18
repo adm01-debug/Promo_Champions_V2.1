@@ -101,14 +101,15 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
 
   const now = Date.now();
   return (
-    <g pointerEvents="none" aria-hidden>
+    <g pointerEvents="none" aria-hidden filter="url(#dustBlur)">
       {particlesRef.current.map((p) => {
         const age = now - p.bornAt;
         const k = Math.min(1, Math.max(0, age / p.life));
         const r = 1.5 + k * 3.5;
         const baseOpacity = p.kind === 'dust' ? 0.55 : 0.4;
         const opacity = baseOpacity * (1 - k);
-        const fill = p.kind === 'dust' ? 'hsl(var(--race-runoff))' : 'hsl(0 0% 80%)';
+        // dust = bege claro; smoke = cinza volumétrico (filtro blur via <g>)
+        const fill = p.kind === 'dust' ? 'hsl(var(--race-runoff))' : 'hsl(0 0% 78%)';
         return <circle key={p.id} cx={p.x} cy={p.y} r={r} fill={fill} opacity={opacity} />;
       })}
     </g>
