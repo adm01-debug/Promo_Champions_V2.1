@@ -502,9 +502,8 @@ export function TrackScenery({
           <Tree key={i} cx={x} cy={y} scale={s} />
         ))}
 
-        {/* CICLO 53-58: Helicópteros laterais de transmissão (azul + vermelho) */}
+        {/* CICLO 53-58: Helicóptero superior azul */}
         <BroadcastHelicopter bodyColor="hsl(210 75% 50%)" y={0} duration={18} />
-        <BroadcastHelicopter bodyColor="hsl(0 78% 52%)" y={970} duration={22} delay={4} reverse />
 
         {/* CICLO 53-58: Bandos de pássaros ambientais */}
         <BirdFlock y={150} delay={0} />
@@ -533,8 +532,9 @@ export function TrackScenery({
       <Tree cx={180} cy={300} scale={0.55} />
       <Tree cx={420} cy={300} scale={0.55} />
 
-      {/* Helicóptero vertical renderizado por cima da pista */}
+      {/* Helicópteros renderizados por cima da pista */}
       <BroadcastHelicopter bodyColor="hsl(140 70% 45%)" duration={28} delay={2} vertical />
+      <BroadcastHelicopter bodyColor="hsl(0 78% 52%)" y={970} duration={22} delay={4} reverse />
     </g>
   );
 }
