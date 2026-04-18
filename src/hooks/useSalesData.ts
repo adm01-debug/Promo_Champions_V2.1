@@ -6,6 +6,7 @@ import { ptBR } from "date-fns/locale";
 import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
 import { useRetryMutation } from "@/hooks/useRetryMutation";
 import { useIndexEntity } from "@/hooks/semantic/useIndexEntity";
+import { triggerRaceEvent } from "@/hooks/race/useRaceTrigger";
 import type { SemanticEntityType } from "@/components/semantic/semanticSearchHelpers";
 
 const LEAD_STATUSES = new Set(["lead", "prospecting", "qualified"]);
@@ -98,7 +99,10 @@ export const useCreateSale = () => {
         queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
         toast.success("Venda criada com sucesso!");
         playSoundForCategory('newSale');
-        if (data?.id) index(saleEntityType(data.status), data.id);
+        if (data?.id) {
+          index(saleEntityType(data.status), data.id);
+          triggerRaceEvent(data.id);
+        }
       },
       onError: (error) => {
         if (import.meta.env.DEV) {

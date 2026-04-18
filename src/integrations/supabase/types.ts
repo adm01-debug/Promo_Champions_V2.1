@@ -11913,6 +11913,14 @@ export type Database = {
         Args: { p_goal_id: string; p_increment?: number }
         Returns: boolean
       }
+      increment_race_car_overtakes: {
+        Args: { _salesperson_id: string }
+        Returns: undefined
+      }
+      increment_race_car_wins: {
+        Args: { _salesperson_id: string }
+        Returns: undefined
+      }
       increment_sales_streak: {
         Args: { p_salesperson_id: string }
         Returns: boolean
