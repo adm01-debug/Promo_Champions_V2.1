@@ -1,25 +1,25 @@
-// Pista serpenteante — circuito fechado em viewBox 1000x600
+// Pista vertical — circuito fechado em viewBox 600x1000 (retrato).
 // Path SVG cúbico amostrado em uma lookup table para posicionar carros por progresso 0..1.
 
-export const TRACK_VIEWBOX = { width: 1000, height: 600 };
+export const TRACK_VIEWBOX = { width: 600, height: 1000 };
 
-// Oval estendido com 1 chicane suave na reta de baixo — estilo Mario Circuit / kart pro.
+// Oval estendido VERTICAL com 1 chicane suave na reta da direita — estilo Mario Circuit / kart pro.
 // Largura constante, curvas com arcos amplos, sem retornos serpentinos.
-// Sentido horário: largada na esquerda da reta superior, indo para a direita.
-// viewBox 1000x600. Margens generosas (~110px nas laterais, ~95px topo/base).
+// Sentido horário: largada no topo da reta esquerda, descendo. Linha de chegada horizontal no topo.
+// viewBox 600x1000. Margens generosas (~95px laterais, ~95px topo/base).
 export const TRACK_PATH_D = `
 M 220 95
-L 780 95
-C 855 95, 905 145, 905 220
-L 905 380
-C 905 455, 855 505, 780 505
-L 640 505
-C 615 505, 600 515, 585 530
-C 570 545, 555 555, 530 555
-C 505 555, 490 545, 475 530
-C 460 515, 445 505, 420 505
-L 220 505
-C 145 505, 95 455, 95 380
+L 380 95
+C 455 95, 505 145, 505 220
+L 505 420
+C 505 445, 515 460, 530 475
+C 545 490, 555 505, 555 530
+C 555 555, 545 570, 530 585
+C 515 600, 505 615, 505 640
+L 505 780
+C 505 855, 455 905, 380 905
+L 220 905
+C 145 905, 95 855, 95 780
 L 95 220
 C 95 145, 145 95, 220 95
 Z
