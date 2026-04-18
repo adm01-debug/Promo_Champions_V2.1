@@ -12,42 +12,64 @@ interface RaceCarProps {
 }
 
 /**
- * SVG carro top-down cartoon. ViewBox local 60x30; quem usa controla translate/rotate.
+ * SVG carro top-down estilo Micro Machines / diecast toy.
+ * Sombra projetada destacada, carroceria com brilho, rodas com aros,
+ * cockpit/spoiler conforme estilo. Aponta para a direita →.
  */
-export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1.1, showTrail = false, pattern = null }: RaceCarProps) {
-  const patternFillId = pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
+export function RaceCar({
+  number,
+  primaryColor,
+  secondaryColor,
+  style,
+  scale = 1.15,
+  showTrail = false,
+  pattern = null,
+}: RaceCarProps) {
+  const patternFillId =
+    pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
+
   const isF1 = style === 'f1';
   const isKart = style === 'kart';
-  const bodyW = isF1 ? 56 : isKart ? 40 : 50;
-  const bodyH = isF1 ? 18 : isKart ? 22 : 24;
+  // Proporções tipo Micro Machines: corpo mais cheio
+  const bodyW = isF1 ? 58 : isKart ? 42 : 52;
+  const bodyH = isF1 ? 20 : isKart ? 24 : 26;
+  const bodyR = isKart ? 5 : isF1 ? 9 : 8;
+
+  // posição das rodas
+  const wheelOffsetX = bodyW / 2 - 7;
+  const wheelOffsetY = bodyH / 2 + 1;
 
   return (
     <g transform={`scale(${scale})`}>
-      {/* Boost trail melhorado: glow afterimage + partículas */}
+      {/* ===== Boost trail ===== */}
       {showTrail && (
         <>
-          {/* Glow afterimage atrás do carro */}
           <motion.ellipse
-            cx={-40} cy={0} rx={32} ry={9}
+            cx={-44}
+            cy={0}
+            rx={34}
+            ry={10}
             fill={primaryColor}
             initial={{ opacity: 0, scaleX: 0.4 }}
             animate={{ opacity: [0, 0.55, 0], scaleX: [0.4, 1.6, 2.2] }}
             transition={{ duration: 0.7, repeat: 3, ease: 'easeOut' }}
             style={{ filter: 'blur(6px)' }}
           />
-          {/* Trail principal usando gradiente do TrackDefs */}
           <motion.ellipse
-            cx={-30} cy={0} rx={22} ry={6}
+            cx={-32}
+            cy={0}
+            rx={22}
+            ry={6}
             fill="url(#boostTrail)"
             initial={{ opacity: 0, scaleX: 0.3 }}
             animate={{ opacity: [0, 0.95, 0], scaleX: [0.3, 1.5, 2] }}
             transition={{ duration: 0.6, repeat: 3 }}
           />
-          {/* Partículas de spark */}
           {[0, 1, 2, 3].map((i) => (
             <motion.circle
               key={i}
-              cx={-bodyW / 2 - 4} cy={(i - 1.5) * 3}
+              cx={-bodyW / 2 - 4}
+              cy={(i - 1.5) * 3}
               r={1.6}
               fill={secondaryColor}
               initial={{ opacity: 0, x: 0 }}
@@ -59,9 +81,9 @@ export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1
               transition={{ duration: 0.5 + i * 0.05, repeat: 3, delay: i * 0.04, ease: 'easeOut' }}
             />
           ))}
-          {/* Onda de choque */}
           <motion.circle
-            cx={-bodyW / 2} cy={0}
+            cx={-bodyW / 2}
+            cy={0}
             r={0}
             fill="none"
             stroke={primaryColor}
@@ -72,50 +94,155 @@ export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1
           />
         </>
       )}
-      {/* sombra */}
-      <ellipse cx={2} cy={bodyH / 2 + 4} rx={bodyW / 2} ry={3} fill="rgba(0,0,0,0.25)" />
-      {/* corpo */}
+
+      {/* ===== Sombra projetada (offset baixo, blur visual via dupla elipse) ===== */}
+      <ellipse cx={3} cy={bodyH / 2 + 6} rx={bodyW / 2 + 1} ry={3.5} fill="rgba(0,0,0,0.18)" />
+      <ellipse cx={3} cy={bodyH / 2 + 5} rx={bodyW / 2 - 2} ry={2.5} fill="rgba(0,0,0,0.28)" />
+
+      {/* ===== Rodas traseiras (renderizadas antes do corpo) ===== */}
+      <g>
+        {/* traseira esquerda (top) */}
+        <ellipse cx={-wheelOffsetX} cy={-wheelOffsetY} rx={4.5} ry={3.8} fill="#0a0a0a" />
+        <ellipse cx={-wheelOffsetX} cy={-wheelOffsetY} rx={2.5} ry={2.2} fill="#2a2a2a" />
+        <circle cx={-wheelOffsetX} cy={-wheelOffsetY} r={1} fill="#525252" />
+        {/* traseira direita (bottom) */}
+        <ellipse cx={-wheelOffsetX} cy={wheelOffsetY} rx={4.5} ry={3.8} fill="#0a0a0a" />
+        <ellipse cx={-wheelOffsetX} cy={wheelOffsetY} rx={2.5} ry={2.2} fill="#2a2a2a" />
+        <circle cx={-wheelOffsetX} cy={wheelOffsetY} r={1} fill="#525252" />
+        {/* dianteira esquerda (top) */}
+        <ellipse cx={wheelOffsetX} cy={-wheelOffsetY} rx={4.5} ry={3.8} fill="#0a0a0a" />
+        <ellipse cx={wheelOffsetX} cy={-wheelOffsetY} rx={2.5} ry={2.2} fill="#2a2a2a" />
+        <circle cx={wheelOffsetX} cy={-wheelOffsetY} r={1} fill="#525252" />
+        {/* dianteira direita (bottom) */}
+        <ellipse cx={wheelOffsetX} cy={wheelOffsetY} rx={4.5} ry={3.8} fill="#0a0a0a" />
+        <ellipse cx={wheelOffsetX} cy={wheelOffsetY} rx={2.5} ry={2.2} fill="#2a2a2a" />
+        <circle cx={wheelOffsetX} cy={wheelOffsetY} r={1} fill="#525252" />
+      </g>
+
+      {/* ===== Asa traseira (F1) ===== */}
+      {isF1 && (
+        <>
+          <rect
+            x={-bodyW / 2 - 3}
+            y={-bodyH / 2 - 3}
+            width={5}
+            height={bodyH + 6}
+            rx={1}
+            fill={secondaryColor}
+            stroke="#1f2937"
+            strokeWidth={0.9}
+          />
+          <rect x={-bodyW / 2 - 3} y={-1} width={5} height={2} fill="#0f172a" opacity={0.5} />
+        </>
+      )}
+
+      {/* ===== Corpo principal ===== */}
       <rect
-        x={-bodyW / 2} y={-bodyH / 2}
-        width={bodyW} height={bodyH}
-        rx={isKart ? 4 : isF1 ? 8 : 6}
+        x={-bodyW / 2}
+        y={-bodyH / 2}
+        width={bodyW}
+        height={bodyH}
+        rx={bodyR}
         fill={primaryColor}
-        stroke="#1f2937" strokeWidth={1.2}
+        stroke="#0f172a"
+        strokeWidth={1.4}
       />
+
       {/* faixa central (livery) */}
       <rect
-        x={-bodyW / 2 + 4} y={-2}
-        width={bodyW - 8} height={4}
+        x={-bodyW / 2 + 5}
+        y={-2.5}
+        width={bodyW - 10}
+        height={5}
         fill={secondaryColor}
-        opacity={0.85}
+        opacity={0.9}
       />
+
+      {/* duas linhas finas de detalhe */}
+      <rect x={-bodyW / 2 + 5} y={-bodyH / 2 + 3} width={bodyW - 10} height={0.8} fill={secondaryColor} opacity={0.5} />
+      <rect x={-bodyW / 2 + 5} y={bodyH / 2 - 3.8} width={bodyW - 10} height={0.8} fill={secondaryColor} opacity={0.5} />
+
+      {/* highlight superior (brilho) */}
+      <rect
+        x={-bodyW / 2 + 1}
+        y={-bodyH / 2 + 1}
+        width={bodyW - 2}
+        height={bodyH - 2}
+        rx={bodyR - 1}
+        fill="url(#carBodyShine)"
+        pointerEvents="none"
+      />
+
       {/* overlay de padrão (acessibilidade colorblind) */}
       {patternFillId && (
         <rect
-          x={-bodyW / 2} y={-bodyH / 2}
-          width={bodyW} height={bodyH}
-          rx={isKart ? 4 : isF1 ? 8 : 6}
+          x={-bodyW / 2}
+          y={-bodyH / 2}
+          width={bodyW}
+          height={bodyH}
+          rx={bodyR}
           fill={`url(#${patternFillId})`}
           pointerEvents="none"
         />
       )}
-      {/* cockpit */}
-      <ellipse cx={isF1 ? 4 : 0} cy={0} rx={isF1 ? 6 : 7} ry={isF1 ? 5 : 6} fill="#0f172a" stroke="#1f2937" strokeWidth={1} />
-      {/* asa traseira (F1) */}
-      {isF1 && <rect x={-bodyW / 2 - 2} y={-bodyH / 2 - 2} width={4} height={bodyH + 4} fill={secondaryColor} stroke="#1f2937" strokeWidth={0.8} />}
-      {/* asa dianteira (F1) */}
-      {isF1 && <rect x={bodyW / 2 - 2} y={-bodyH / 2 - 3} width={3} height={bodyH + 6} fill={secondaryColor} stroke="#1f2937" strokeWidth={0.8} />}
-      {/* rodas */}
-      <circle cx={-bodyW / 2 + 6} cy={-bodyH / 2 - 1} r={3.5} fill="#0f172a" />
-      <circle cx={-bodyW / 2 + 6} cy={bodyH / 2 + 1} r={3.5} fill="#0f172a" />
-      <circle cx={bodyW / 2 - 6} cy={-bodyH / 2 - 1} r={3.5} fill="#0f172a" />
-      <circle cx={bodyW / 2 - 6} cy={bodyH / 2 + 1} r={3.5} fill="#0f172a" />
-      {/* número */}
-      <circle cx={-bodyW / 2 + 14} cy={0} r={5} fill={secondaryColor} />
+
+      {/* ===== Cockpit (vidro escuro) ===== */}
+      <ellipse
+        cx={isF1 ? 5 : isKart ? 1 : 2}
+        cy={0}
+        rx={isF1 ? 6 : isKart ? 6 : 8}
+        ry={isF1 ? 5.5 : isKart ? 6 : 7}
+        fill="#0b1220"
+        stroke="#1f2937"
+        strokeWidth={1}
+      />
+      {/* reflexo do vidro */}
+      <ellipse
+        cx={isF1 ? 4 : isKart ? 0 : 1}
+        cy={-2}
+        rx={isF1 ? 3 : isKart ? 2.8 : 4}
+        ry={isF1 ? 1.6 : isKart ? 1.8 : 2}
+        fill="#ffffff"
+        opacity={0.18}
+      />
+
+      {/* ===== Asa dianteira (F1) ===== */}
+      {isF1 && (
+        <>
+          <rect
+            x={bodyW / 2 - 1}
+            y={-bodyH / 2 - 4}
+            width={4}
+            height={bodyH + 8}
+            rx={1}
+            fill={secondaryColor}
+            stroke="#1f2937"
+            strokeWidth={0.9}
+          />
+          <rect x={bodyW / 2 - 1} y={-1} width={4} height={2} fill="#0f172a" opacity={0.5} />
+        </>
+      )}
+
+      {/* faróis dianteiros */}
+      {!isKart && (
+        <>
+          <ellipse cx={bodyW / 2 - 2} cy={-bodyH / 2 + 4} rx={1.5} ry={1.2} fill="#fef9c3" opacity={0.95} />
+          <ellipse cx={bodyW / 2 - 2} cy={bodyH / 2 - 4} rx={1.5} ry={1.2} fill="#fef9c3" opacity={0.95} />
+        </>
+      )}
+      {/* luzes traseiras */}
+      <rect x={-bodyW / 2 + 0.5} y={-bodyH / 2 + 3} width={1.6} height={2.5} rx={0.5} fill="#dc2626" opacity={0.9} />
+      <rect x={-bodyW / 2 + 0.5} y={bodyH / 2 - 5.5} width={1.6} height={2.5} rx={0.5} fill="#dc2626" opacity={0.9} />
+
+      {/* ===== Número do piloto ===== */}
+      <circle cx={-bodyW / 2 + 14} cy={0} r={5.5} fill={secondaryColor} stroke="#0f172a" strokeWidth={0.8} />
       <text
-        x={-bodyW / 2 + 14} y={0}
-        textAnchor="middle" dominantBaseline="central"
-        fontSize={7} fontWeight={900}
+        x={-bodyW / 2 + 14}
+        y={0}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={7.5}
+        fontWeight={900}
         fill={primaryColor}
         style={{ fontFamily: 'system-ui, sans-serif' }}
       >

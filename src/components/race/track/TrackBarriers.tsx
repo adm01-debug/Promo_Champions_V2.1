@@ -1,24 +1,27 @@
 import { getPositionOnTrack } from '../raceTrackHelpers';
 
 /**
- * Barreiras zebradas (curb) em pontos estratégicos do circuito.
- * Usa tokens --race-curb-a/b para cor e --race-checkered-dark para borda.
+ * Barreiras tipo TecPro / pneus — pequenos blocos brancos com sombra
+ * em pontos estratégicos, alinhados perpendicular à pista.
+ * Mantém o look top-down "diecast toy track".
  */
-const BARRIER_POSITIONS = [0.05, 0.18, 0.3, 0.42, 0.55, 0.7, 0.85, 0.95];
-const OFFSET = 56;
+const BARRIER_POSITIONS = [0.06, 0.22, 0.36, 0.5, 0.64, 0.78, 0.92];
+const OFFSET_OUTER = 60;
+const OFFSET_INNER = -60;
 
-function ZebraBarrier({ x, y, rotation }: { x: number; y: number; rotation: number }) {
-  const w = 38;
-  const h = 14;
-  const stripeW = w / 6;
+function TyreStack({ x, y, rotation }: { x: number; y: number; rotation: number }) {
   return (
     <g transform={`translate(${x} ${y}) rotate(${rotation})`}>
-      <rect x={-w / 2 + 2} y={-h / 2 + 3} width={w} height={h} rx={2} fill="hsl(var(--race-checkered-dark))" opacity={0.3} />
-      <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={2} fill="hsl(var(--race-curb-a))" stroke="hsl(var(--race-checkered-dark))" strokeWidth={1.2} />
-      {[0, 2, 4].map((i) => (
-        <rect key={i} x={-w / 2 + i * stripeW} y={-h / 2} width={stripeW} height={h} fill="hsl(var(--race-curb-b))" />
+      {/* sombra */}
+      <ellipse cx={1.5} cy={3} rx={9} ry={2.5} fill="hsl(var(--race-checkered-dark))" opacity={0.35} />
+      {/* 3 pneus alinhados */}
+      {[-6, 0, 6].map((dx) => (
+        <g key={dx} transform={`translate(${dx} 0)`}>
+          <circle r={3.5} fill="hsl(var(--race-checkered-dark))" />
+          <circle r={2} fill="hsl(var(--race-asphalt))" />
+          <circle r={0.6} fill="hsl(var(--race-checkered-dark))" />
+        </g>
       ))}
-      <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={2} fill="none" stroke="hsl(var(--race-checkered-dark))" strokeWidth={1.2} />
     </g>
   );
 }
@@ -27,9 +30,9 @@ export function TrackBarriers() {
   return (
     <g aria-hidden>
       {BARRIER_POSITIONS.map((p, i) => {
-        const offset = i % 2 === 0 ? OFFSET : -OFFSET;
+        const offset = i % 2 === 0 ? OFFSET_OUTER : OFFSET_INNER;
         const pos = getPositionOnTrack(p, offset);
-        return <ZebraBarrier key={p} x={pos.x} y={pos.y} rotation={pos.rotation} />;
+        return <TyreStack key={p} x={pos.x} y={pos.y} rotation={pos.rotation} />;
       })}
     </g>
   );

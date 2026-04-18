@@ -3,25 +3,26 @@
 
 export const TRACK_VIEWBOX = { width: 1000, height: 600 };
 
-// Circuito serpenteante vertical — sobe e desce ocupando toda a área verde.
-// Usa altura 60→540 e largura 80→920. Quatro "voltas" horizontais conectadas
-// por curvas suaves nas laterais, formando um S invertido fechado.
+// Circuito clássico estilo Micro Machines — oval com chicane suave embaixo
+// e curva técnica em cima. Margens generosas (60px) para não tocar bordas.
+// Sentido: horário começando na reta de chegada (esquerda → direita no topo).
 export const TRACK_PATH_D = `
-M 140 70
-C 320 50, 600 50, 820 70
-C 900 80, 920 140, 860 180
-C 780 220, 500 220, 320 215
-C 180 215, 100 250, 140 305
-C 200 345, 480 345, 680 340
-C 820 340, 920 380, 860 430
-C 780 470, 500 475, 280 470
-C 160 470, 80 510, 180 545
-C 360 565, 640 565, 840 540
-C 920 525, 940 470, 920 380
-C 905 290, 920 200, 920 130
-C 920 80, 820 50, 700 55
-C 540 60, 360 55, 200 60
-C 140 65, 110 70, 140 70
+M 200 90
+L 720 90
+C 830 90, 900 130, 900 200
+C 900 250, 870 285, 820 295
+C 770 305, 740 325, 740 360
+C 740 395, 770 415, 820 425
+C 870 435, 900 470, 900 510
+C 900 550, 850 560, 780 540
+C 700 518, 600 510, 500 510
+L 280 510
+C 180 510, 100 470, 100 400
+C 100 350, 130 320, 180 310
+C 230 300, 260 275, 260 245
+C 260 215, 230 195, 180 188
+C 130 180, 100 150, 100 110
+C 100 90, 140 80, 200 90
 Z
 `.trim();
 
