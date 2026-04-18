@@ -150,7 +150,9 @@ export default function RaceArenaView({ roleType }: Props) {
           }
         />
 
-        {!season ? (
+        {isInitialLoading ? (
+          <RaceArenaSkeleton />
+        ) : !season ? (
           <Card>
             <CardContent className="py-10 text-center space-y-2">
               <Calendar className="w-10 h-10 mx-auto text-muted-foreground" />
