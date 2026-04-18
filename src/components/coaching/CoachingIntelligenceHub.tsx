@@ -199,6 +199,10 @@ export function CoachingIntelligenceHub() {
           <TabsContent value="skills" className="mt-4">
             <SkillGapAnalyzerPanel />
           </TabsContent>
+
+          <TabsContent value="sessions" className="mt-4">
+            <CoachingSessionPlanner />
+          </TabsContent>
         </Tabs>
       </div>
     </>
