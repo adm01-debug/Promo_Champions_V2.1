@@ -411,6 +411,46 @@ function BirdFlock({ y, delay = 0, reverse = false }: { y: number; delay?: numbe
   );
 }
 
+/** Cluster de torcedores na grama, com animação de pulo escalonado (efeito ola). */
+function CrowdCluster({
+  cx, cy, count = 8, seed = 0,
+}: { cx: number; cy: number; count?: number; seed?: number }) {
+  const palette = [
+    'hsl(0 75% 52%)', 'hsl(210 75% 52%)', 'hsl(45 92% 55%)',
+    'hsl(140 65% 45%)', 'hsl(0 0% 98%)', 'hsl(280 55% 55%)',
+  ];
+  const fans = Array.from({ length: count }).map((_, i) => {
+    const col = i % 4;
+    const row = Math.floor(i / 4);
+    const x = col * 7 + ((row % 2) * 3.5);
+    const y = row * 9;
+    const color = palette[(i + seed) % palette.length];
+    const delay = ((i * 137 + seed * 53) % 600) / 1000; // 0-0.6s pseudo-random
+    return { x, y, color, delay };
+  });
+  return (
+    <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1px 1.5px 1px hsl(var(--race-grass-shadow) / 0.5))' }}>
+      {fans.map((f, i) => (
+        <g
+          key={i}
+          transform={`translate(${f.x} ${f.y})`}
+          style={{
+            animation: `race-crowd-jump 0.6s ease-in-out infinite`,
+            animationDelay: `${f.delay}s`,
+            transformBox: 'fill-box',
+            transformOrigin: 'center bottom',
+          }}
+        >
+          {/* corpo (camiseta colorida) */}
+          <rect x={-2} y={-1} width={4} height={6} rx={0.8} fill={f.color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+          {/* cabeça */}
+          <circle cx={0} cy={-3} r={1.6} fill="hsl(20 35% 60%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+        </g>
+      ))}
+    </g>
+  );
+}
+
 /** Pit Lane VERTICAL: faixa cinza paralela à reta esquerda, com 6 garagens empilhadas. */
 function PitLane() {
   const startY = 240, endY = 760, laneX = 130, laneW = 16;
@@ -508,6 +548,12 @@ export function TrackScenery({
         {/* CICLO 53-58: Bandos de pássaros ambientais */}
         <BirdFlock y={150} delay={0} />
         <BirdFlock y={870} delay={12} reverse />
+
+        {/* Torcedores nas bordas (grama) — 4 clusters */}
+        <CrowdCluster cx={60}  cy={300} count={10} seed={1} />
+        <CrowdCluster cx={W - 90} cy={600} count={10} seed={3} />
+        <CrowdCluster cx={210} cy={90}  count={8}  seed={5} />
+        <CrowdCluster cx={330} cy={H - 110} count={8} seed={7} />
       </g>
     );
   }
