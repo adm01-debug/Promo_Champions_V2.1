@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { RaceCar } from './RaceCar';
-import { RACE_CAR_COLORS, CAR_STYLES, type CarStyle } from './raceColors';
+import { CarPresetCard } from './CarPresetCard';
+import {
+  RACE_CAR_PRESETS,
+  DEFAULT_PRESET_ID,
+  getPresetById,
+  inferPresetFromColors,
+} from './raceColors';
 import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
-import { Check } from 'lucide-react';
 
 interface Props {
   open: boolean;
@@ -17,27 +22,29 @@ interface Props {
 export function CarCustomizer({ open, onOpenChange }: Props) {
   const { data: car, upsert } = useMyRaceCar();
   const [number, setNumber] = useState<number>(7);
-  const [primary, setPrimary] = useState<string>(RACE_CAR_COLORS[0].primary);
-  const [secondary, setSecondary] = useState<string>(RACE_CAR_COLORS[0].secondary);
-  const [style, setStyle] = useState<CarStyle>('f1');
+  const [presetId, setPresetId] = useState<string>(DEFAULT_PRESET_ID);
   const [nickname, setNickname] = useState('');
+
+  const preset = useMemo(() => getPresetById(presetId), [presetId]);
 
   useEffect(() => {
     if (car) {
       setNumber(car.car_number);
-      setPrimary(car.primary_color);
-      setSecondary(car.secondary_color);
-      setStyle(car.car_style);
       setNickname(car.nickname ?? '');
+      const inferred = car.preset_id
+        ? getPresetById(car.preset_id).id
+        : inferPresetFromColors(car.primary_color, car.car_style).id;
+      setPresetId(inferred);
     }
   }, [car, open]);
 
   const handleSave = async () => {
     await upsert.mutateAsync({
       car_number: number,
-      primary_color: primary,
-      secondary_color: secondary,
-      car_style: style,
+      primary_color: preset.primary,
+      secondary_color: preset.secondary,
+      car_style: preset.style,
+      preset_id: preset.id,
       nickname: nickname || null,
     });
     onOpenChange(false);
@@ -45,66 +52,89 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>🏎️ Personalize seu Carro</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            🏎️ Personalize seu Carro
+            <span className="text-xs font-normal text-muted-foreground">
+              · {RACE_CAR_PRESETS.length} modelos
+            </span>
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="bg-gradient-to-b from-sky-100 to-sky-50 dark:from-slate-800 dark:to-slate-900 rounded-lg p-6 flex items-center justify-center">
-          <svg viewBox="-40 -25 80 50" className="w-48 h-32">
-            <RaceCar number={number} primaryColor={primary} secondaryColor={secondary} style={style} scale={1} />
-          </svg>
+        {/* Preview grande do preset selecionado */}
+        <div className="rounded-lg bg-gradient-to-b from-sky-100 to-sky-50 p-6 dark:from-slate-800 dark:to-slate-900">
+          <div className="flex items-center justify-center">
+            <svg viewBox="-50 -28 100 56" className="h-32 w-56" aria-label={`Preview ${preset.name}`}>
+              <RaceCar
+                number={number}
+                primaryColor={preset.primary}
+                secondaryColor={preset.secondary}
+                style={preset.style}
+                scale={1.1}
+                livery={preset.pattern}
+                liveryAccent={preset.accent}
+                liveryUid="preview"
+              />
+            </svg>
+          </div>
+          <p className="mt-2 text-center text-sm font-bold">
+            {preset.emoji} {preset.name}
+            {preset.pride && (
+              <span className="ml-2 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-primary">
+                Pride
+              </span>
+            )}
+          </p>
         </div>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor="car-number">Número (1-99)</Label>
-              <Input
-                id="car-number" type="number" min={1} max={99}
-                value={number}
-                onChange={(e) => setNumber(Math.max(1, Math.min(99, Number(e.target.value) || 1)))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="car-nick">Apelido</Label>
-              <Input id="car-nick" maxLength={20} value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Ex: Relâmpago" />
-            </div>
-          </div>
-
+        {/* Inputs número + apelido */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label>Estilo</Label>
-            <Tabs value={style} onValueChange={(v) => setStyle(v as CarStyle)} className="mt-1">
-              <TabsList className="grid grid-cols-3 w-full">
-                {CAR_STYLES.map((s) => (
-                  <TabsTrigger key={s.value} value={s.value}>{s.label}</TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+            <Label htmlFor="car-number">Número (1-99)</Label>
+            <Input
+              id="car-number"
+              type="number"
+              min={1}
+              max={99}
+              value={number}
+              onChange={(e) => setNumber(Math.max(1, Math.min(99, Number(e.target.value) || 1)))}
+            />
           </div>
-
           <div>
-            <Label>Cor</Label>
-            <div className="grid grid-cols-6 gap-2 mt-1">
-              {RACE_CAR_COLORS.map((c) => (
-                <button
-                  key={c.name} type="button"
-                  onClick={() => { setPrimary(c.primary); setSecondary(c.secondary); }}
-                  className="relative w-full aspect-square rounded-md border-2 hover:scale-110 transition-transform"
-                  style={{ background: c.primary, borderColor: c.secondary }}
-                  title={c.name}
-                >
-                  {primary === c.primary && (
-                    <Check className="absolute inset-0 m-auto w-4 h-4" style={{ color: c.secondary }} />
-                  )}
-                </button>
+            <Label htmlFor="car-nick">Apelido</Label>
+            <Input
+              id="car-nick"
+              maxLength={20}
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder="Ex: Relâmpago"
+            />
+          </div>
+        </div>
+
+        {/* Grid de presets */}
+        <div>
+          <Label>Modelo & Pintura</Label>
+          <ScrollArea className="mt-1 h-72 rounded-md border p-2">
+            <div className="grid grid-cols-4 gap-2">
+              {RACE_CAR_PRESETS.map((p) => (
+                <CarPresetCard
+                  key={p.id}
+                  preset={p}
+                  selected={p.id === presetId}
+                  carNumber={number}
+                  onSelect={setPresetId}
+                />
               ))}
             </div>
-          </div>
+          </ScrollArea>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
           <Button onClick={handleSave} disabled={upsert.isPending}>
             {upsert.isPending ? 'Salvando...' : 'Salvar Carro'}
           </Button>

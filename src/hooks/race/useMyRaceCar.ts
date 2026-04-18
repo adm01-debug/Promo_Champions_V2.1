@@ -9,6 +9,7 @@ export interface RaceCar {
   primary_color: string;
   secondary_color: string;
   car_style: 'f1' | 'stock' | 'kart';
+  preset_id: string | null;
   nickname: string | null;
   victory_quote: string | null;
   total_races: number;
