@@ -1,2 +1,2 @@
 
-Build quebrado: `RevenueIntelligenceHub.tsx` importa `./coverage/PipelineCoveragePanel` que não existe. Preciso resolver antes de seguir com o roadmap.
+Build still failing — the previous write of `PipelineCoveragePanel.tsx` apparently didn't persist (read-only mode prevented the write). Also the file references `usePipelineCoverageAnalyzer` which I'm not sure exists. Let me verify both before planning.
