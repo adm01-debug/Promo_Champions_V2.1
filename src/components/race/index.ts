@@ -20,3 +20,4 @@ export { RaceArenaHeader } from './RaceArenaHeader';
 export { RaceArenaSkeleton } from './RaceArenaSkeleton';
 export { RaceEmptyState } from './RaceEmptyState';
 export { RaceTransitionWrapper } from './RaceTransitionWrapper';
+export { ComboStreakBadge } from './ComboStreakBadge';
