@@ -235,6 +235,16 @@ export function RaceArena({
         const overtakerNewRank = sortedCurr.findIndex((x) => x.id === o.overtaker);
         if (overtakerNewRank >= 0 && overtakerNewRank < 3 && !reducedMotion) {
           triggerShake();
+          // Sound: overtake top-3
+          playRef.current('overtake');
+          // Broadcast event
+          if (attackerName && defenderName) {
+            pushBroadcast({
+              kind: 'overtake',
+              title: `${attackerName.split(' ')[0]} ULTRAPASSOU ${defenderName.split(' ')[0]}`,
+              detail: inDRS ? `Zona DRS · P${overtakerNewRank + 1}` : `Manobra limpa · P${overtakerNewRank + 1}`,
+            });
+          }
         }
         lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
       }
@@ -315,6 +325,15 @@ export function RaceArena({
         const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
         pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
         if (lname) pushTickerEvent(`${lname.split(' ')[0]} assumiu P1`, '👑');
+        // Sound + broadcast: leader takeover
+        playRef.current('leader_takeover');
+        if (lname) {
+          pushBroadcast({
+            kind: 'leader',
+            title: `${lname.split(' ')[0]} ASSUMIU A LIDERANÇA`,
+            detail: 'Tomada de P1 ao vivo',
+          });
+        }
       }
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
