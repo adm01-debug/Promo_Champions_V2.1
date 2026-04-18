@@ -246,3 +246,9 @@ verify_jwt = true
 
 [functions.mine-win-loss-patterns]
 verify_jwt = true
+
+[functions.snapshot-forecast]
+verify_jwt = true
+
+[functions.compute-forecast-accuracy]
+verify_jwt = true
