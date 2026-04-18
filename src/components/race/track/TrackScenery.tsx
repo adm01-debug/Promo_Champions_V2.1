@@ -534,7 +534,7 @@ export function TrackScenery({
       <Tree cx={420} cy={300} scale={0.55} />
 
       {/* Helicóptero vertical renderizado por cima da pista */}
-      <BroadcastHelicopter bodyColor="hsl(140 70% 45%)" duration={14} delay={2} vertical />
+      <BroadcastHelicopter bodyColor="hsl(140 70% 45%)" duration={28} delay={2} vertical />
     </g>
   );
 }
