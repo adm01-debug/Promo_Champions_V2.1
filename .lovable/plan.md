@@ -1,49 +1,54 @@
 
-Sales Coaching Intelligence 1/4 entregue. Próxima atômica.
+User quer notificações automáticas avisando cada vendedor sobre sua posição no pódium, gap para o 1º e gap para o próximo acima.
 
-**Sales Coaching Intelligence — 2/4: Skill Gap Analyzer**
+Já existe `useCompetitiveRanking` que calcula `rank`, `gapToFirst`, `gapToNext`. Preciso entender canal de entrega e gatilho.
 
-Aprofunda o detector de oportunidades com análise longitudinal de skills: agrega gaps recorrentes ao longo do tempo, classifica vendedores em níveis de maturidade por skill (iniciante/intermediário/avançado/expert) e gera trilhas de desenvolvimento personalizadas.
+**Canais possíveis:** toast in-app, notificação persistente (sino/badge), email, WhatsApp.
+**Gatilho:** ao logar, manualmente pelo gestor, automático diário, ou em tempo real quando posição muda.
 
-## Entregáveis
+Para MVP coerente com o sistema atual (que tem toasts, realtime, gamificação), proponho **notificação in-app persistente + toast de boas-vindas ao logar**, com opção de disparo manual pelo gestor. Email/WhatsApp ficam para fase 2.
+
+## Plano
 
 ### 1. Migration
-- `skill_assessments`: `id`, `salesperson_id FK`, `skill text` (6 skills do enum coaching), `current_level text` (beginner|intermediate|advanced|expert), `score numeric` (0-100), `trend text` (improving|stable|declining), `gap_count_30d int`, `gap_count_90d int`, `last_assessed_at timestamptz`, `factors jsonb`. Único `(salesperson_id, skill)`.
-- `skill_development_tracks`: `id`, `salesperson_id FK`, `skill text`, `priority int`, `current_level text`, `target_level text`, `milestones jsonb` (array de marcos), `estimated_weeks int`, `ai_plan text`, `created_at timestamptz`. Único `(salesperson_id, skill)`.
-- RLS: read authenticated; write admin/manager. Realtime + índices.
+Tabela `ranking_notifications`:
+- `id`, `salesperson_id` (FK), `rank int`, `total_sales numeric`, `gap_to_first numeric`, `gap_to_next numeric`, `next_competitor_name text`, `period_start date`, `message text`, `read_at timestamptz`, `created_at timestamptz`
+- Único `(salesperson_id, period_start)` para evitar duplicação no mesmo mês
+- RLS: vendedor lê apenas o próprio; admin/manager escreve
+- Realtime ativado
 
-### 2. Edge function `analyze-skill-gaps` (verify_jwt=true)
-- Para cada vendedor:
-  - Agrega `coaching_opportunities` últimos 90d por `skill_focus` → contagem + severidade média.
-  - Calcula `score` por skill: 100 - (críticas × 30 + altas × 20 + médias × 10 + baixas × 5), clamp 0–100.
-  - Determina `current_level`: ≥85 expert, ≥65 advanced, ≥40 intermediate, <40 beginner.
-  - Compara com janela 90–180d para `trend`.
-  - Para top 3 skills com menor score: gera `ai_plan` via Lovable AI (Gemini Flash) com 4 milestones acionáveis e estimativa em semanas.
-  - Upserts `skill_assessments` (todas) e `skill_development_tracks` (top 3).
+### 2. Edge function `notify-ranking-position` (verify_jwt=true)
+- Busca ranking competitivo do mês corrente
+- Para cada vendedor ativo gera mensagem personalizada:
+  - "🥇 Você está em 1º! R$ X em vendas. Mantenha o ritmo!"
+  - "🥈 Você está em 2º. Faltam R$ Y para ultrapassar [Nome]."
+  - "Você está em Nº. R$ Z para o pódium, R$ W para o próximo."
+- Upsert em `ranking_notifications` (1 por vendedor por mês)
+- Retorna contagem de notificações enviadas
 
-### 3. Hooks `src/hooks/coaching/useSkillGapAnalyzer.ts`
-- `useSkillAssessments(salespersonId?)`, `useSkillTracks(salespersonId?)`, `useSkillSummary()` (KPIs: skill mais fraca, vendedores em beginner, melhoria média), `useAnalyzeSkillGaps()` mutation.
+### 3. Hooks `src/hooks/useRankingNotifications.ts`
+- `useMyRankingNotification()` — busca a mais recente do vendedor logado
+- `useUnreadRankingCount()` — contador para badge
+- `useMarkRankingNotificationRead()` — marca como lida
+- `useSendRankingNotifications()` — mutation para gestor disparar
+- Subscription realtime para atualizar badge
 
-### 4. Componentes `src/components/coaching/skills/`
-- `SkillGapSummary.tsx` (≤180L) — 4 KPIs + ação refresh.
-- `SkillRadarChart.tsx` (≤180L) — radar 6 skills × score médio da equipe.
-- `SkillMaturityMatrix.tsx` (≤200L) — matriz vendedor × skill com nível colorido.
-- `SkillTrackCards.tsx` (≤200L) — cards trilhas de desenvolvimento (top 12) com milestones e plano IA.
-- `SkillGapAnalyzerPanel.tsx` (container).
-- `skillGapHelpers.ts` — labels nível, cores, formatadores.
+### 4. Componentes
+- `RankingPositionBanner.tsx` — banner dismissível no topo do dashboard mostrando posição + gaps com CTA para Ranking
+- `SendRankingNotificationsButton.tsx` — botão no painel admin/manager para disparar broadcast manual
+- Integração no sino de notificações existente (se houver) ou novo dropdown
 
-### 5. Integração
-- Nova aba "Skill Gap Analyzer" em `CoachingIntelligenceHub.tsx`.
-- `supabase/config.toml`: `verify_jwt = true` para `analyze-skill-gaps`.
+### 5. Disparo automático
+- Cron job pg_cron toda segunda 09h chamando `notify-ranking-position`
+- Garante que vendedores recebem update semanal sem intervenção
 
-### 6. Validação
-- `supabase--linter` zero novos warnings.
-- Após analyze: KPIs preenchem, radar mostra forças/fraquezas, matriz colorida por nível, trilhas com plano IA aparecem.
+### 6. Integração visual
+- Banner no `Dashboard` (acima do conteúdo)
+- Toast de boas-vindas no login se houver notificação não lida (1x por sessão)
+- Botão de disparo manual em `RankingHub` para gestores
 
 ## Arquivos
-- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
-- **Edge function**: 1.
-- **Criar**: 1 hook, 5 componentes + 1 helper.
-- **Editar**: `CoachingIntelligenceHub.tsx`, `supabase/config.toml`.
-
-Após esta entrega, sigo automaticamente para **3/4: Coaching Session Planner** → **4/4: Performance Improvement Tracker**, fechando Sales Coaching Intelligence em 10/10.
+- Migration: 1 (tabela + RLS + realtime + cron)
+- Edge function: 1
+- Criar: 1 hook, 2 componentes
+- Editar: `Dashboard` (banner), hub de ranking (botão admin), `supabase/config.toml`
