@@ -13304,6 +13304,22 @@ export type Database = {
           },
         ]
       }
+      revenue_forecast_view: {
+        Row: {
+          avg_cycle_days: number | null
+          monthly_goal: number | null
+          open_deals_count: number | null
+          optimistic_30d: number | null
+          pessimistic_30d: number | null
+          realistic_30d: number | null
+          salesperson_id: string | null
+          total_open_pipeline: number | null
+          weighted_forecast: number | null
+          won_amount_90d: number | null
+          won_count_90d: number | null
+        }
+        Relationships: []
+      }
       salespeople_public: {
         Row: {
           avatar_url: string | null
