@@ -84,7 +84,27 @@ Deno.serve(async (req) => {
     }
     if (toCreate.length > 0) await admin.from('race_cars').insert(toCreate);
 
-    return new Response(JSON.stringify({ ok: true, season: newSeason, cars_created: toCreate.length }), {
+    // auto-spawn 3 power-ups (turbo/shield/lightning) por vendedor da season nas posições 15/45/80%
+    const POWERUP_SPAWNS: Array<{ type: 'turbo' | 'shield' | 'lightning'; pct: number }> = [
+      { type: 'turbo', pct: 0.15 },
+      { type: 'shield', pct: 0.45 },
+      { type: 'lightning', pct: 0.80 },
+    ];
+    const powerupRows: Array<Record<string, unknown>> = [];
+    for (const sp of salespeople ?? []) {
+      for (const spawn of POWERUP_SPAWNS) {
+        powerupRows.push({
+          season_id: newSeason.id,
+          salesperson_id: sp.id,
+          powerup_type: spawn.type,
+          effect_data: { position_pct: spawn.pct, spawned: true },
+          used_at: null,
+        });
+      }
+    }
+    if (powerupRows.length > 0) await admin.from('race_powerups').insert(powerupRows);
+
+    return new Response(JSON.stringify({ ok: true, season: newSeason, cars_created: toCreate.length, powerups_spawned: powerupRows.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {

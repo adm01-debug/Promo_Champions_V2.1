@@ -7,9 +7,10 @@ import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 interface RaceArenaProps {
   cars: RaceLeaderboardEntry[];
   boostingIds?: Set<string>;
+  overlayChildren?: React.ReactNode;
 }
 
-export function RaceArena({ cars, boostingIds }: RaceArenaProps) {
+export function RaceArena({ cars, boostingIds, overlayChildren }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
 
   return (
@@ -50,6 +51,7 @@ export function RaceArena({ cars, boostingIds }: RaceArenaProps) {
             </motion.g>
           );
         })}
+        {overlayChildren}
       </RaceTrack>
     </div>
   );

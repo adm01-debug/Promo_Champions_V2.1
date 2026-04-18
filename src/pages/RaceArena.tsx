@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings2, Flag, Calendar, PlayCircle } from 'lucide-react';
+import { Settings2, Flag, Calendar, PlayCircle, Rocket } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import {
   RaceArena as Arena,
   RaceLeaderboardSidebar,
@@ -13,14 +14,23 @@ import {
   VictoryLapOverlay,
   RaceBadgeShowcase,
   StartSeasonDialog,
+  PowerUpIcon,
+  RaceCountdown,
 } from '@/components/race';
+import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeason } from '@/hooks/race/useRaceSeason';
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useRaceEvents } from '@/hooks/race/useRaceEvents';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
 import { useUserRoles } from '@/hooks/useUserRoles';
-import { format } from 'date-fns';
+import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
+import { useRacePowerups, collectRacePowerup } from '@/hooks/race/useRacePowerups';
+import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
+
+const COUNTDOWN_SEEN_KEY = 'race_countdown_seen_seasons';
 
 export default function RaceArenaPage() {
   const { data: season } = useRaceSeason();
@@ -28,11 +38,33 @@ export default function RaceArenaPage() {
   const { data: events = [] } = useRaceEvents(season?.id);
   const { muted, toggleMute, play } = useRaceSounds();
   const { isAdmin } = useUserRoles();
+  const { data: myCar } = useMyRaceCar();
+  const { data: myPowerups = [] } = useRacePowerups(season?.id, myCar?.salesperson_id);
+  const qc = useQueryClient();
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [startSeasonOpen, setStartSeasonOpen] = useState(false);
+  const [countdownTrigger, setCountdownTrigger] = useState(0);
   const lastEventIdRef = useRef<string | null>(null);
   const [boostingIds, setBoostingIds] = useState<Set<string>>(new Set());
 
+  // Countdown automático ao detectar season nova (idade < 10s) ainda não vista
+  useEffect(() => {
+    if (!season) return;
+    try {
+      const seen = JSON.parse(localStorage.getItem(COUNTDOWN_SEEN_KEY) || '[]') as string[];
+      if (seen.includes(season.id)) return;
+      const ageSec = differenceInSeconds(new Date(), new Date(season.start_date));
+      if (ageSec < 10 && ageSec > -86400) {
+        setCountdownTrigger((t) => t + 1);
+        localStorage.setItem(COUNTDOWN_SEEN_KEY, JSON.stringify([...seen, season.id]));
+      } else if (ageSec >= 10) {
+        // marca como vista para não disparar depois
+        localStorage.setItem(COUNTDOWN_SEEN_KEY, JSON.stringify([...seen, season.id]));
+      }
+    } catch { /* noop */ }
+  }, [season]);
+
+  // Sons + boost por evento
   useEffect(() => {
     if (events.length === 0) return;
     const newest = events[0];
@@ -52,6 +84,39 @@ export default function RaceArenaPage() {
     }
     lastEventIdRef.current = newest.id;
   }, [events, play]);
+
+  // Posições dos power-ups disponíveis na pista
+  const myEntry = leaderboard.find((e) => e.salesperson_id === myCar?.salesperson_id);
+  const myProgress = Number(myEntry?.progress ?? 0);
+  const visiblePowerups = useMemo(() => {
+    return myPowerups
+      .filter((p) => !p.used_at)
+      .map((p) => {
+        const pos = getPositionOnTrack(p.position_pct, 0);
+        return { ...p, x: pos.x, y: pos.y, reachable: myProgress >= p.position_pct };
+      });
+  }, [myPowerups, myProgress]);
+
+  const handleCollectPowerup = async (id: string, reachable: boolean) => {
+    if (!reachable) {
+      toast.info('Você ainda não chegou neste power-up — venda mais!');
+      return;
+    }
+    try {
+      const res = await collectRacePowerup(id) as { powerup_type?: string; badge_unlocked?: boolean };
+      play('powerup');
+      toast.success(`⚡ Power-up coletado: ${res?.powerup_type ?? ''}`);
+      if (res?.badge_unlocked) toast.success('🏆 Badge desbloqueado: Powerup Collector!');
+      qc.invalidateQueries({ queryKey: ['race-powerups'] });
+      qc.invalidateQueries({ queryKey: ['race-events'] });
+    } catch (e) {
+      toast.error(`Erro: ${e instanceof Error ? e.message : 'desconhecido'}`);
+    }
+  };
+
+  const handleManualCountdown = () => {
+    setCountdownTrigger((t) => t + 1);
+  };
 
   return (
     <>
@@ -78,6 +143,11 @@ export default function RaceArenaPage() {
           </div>
           <div className="flex items-center gap-2">
             <RaceSoundToggle muted={muted} onToggle={toggleMute} />
+            {season && (
+              <Button onClick={handleManualCountdown} variant="outline">
+                <Rocket className="w-4 h-4 mr-2" /> Largada!
+              </Button>
+            )}
             {isAdmin && (
               <Button onClick={() => setStartSeasonOpen(true)} variant="outline">
                 <PlayCircle className="w-4 h-4 mr-2" /> Nova Temporada
@@ -113,7 +183,23 @@ export default function RaceArenaPage() {
                   <RaceEventFeed events={events} cars={leaderboard} />
                 </div>
                 <div className="col-span-12 lg:col-span-6 order-1 lg:order-2">
-                  <Arena cars={leaderboard} boostingIds={boostingIds} />
+                  <Arena
+                    cars={leaderboard}
+                    boostingIds={boostingIds}
+                    overlayChildren={
+                      <AnimatePresence>
+                        {visiblePowerups.map((p) => (
+                          <PowerUpIcon
+                            key={p.id}
+                            type={p.powerup_type}
+                            x={p.x}
+                            y={p.y}
+                            onClick={() => handleCollectPowerup(p.id, p.reachable)}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    }
+                  />
                 </div>
                 <div className="col-span-12 lg:col-span-3 order-3">
                   <RaceLeaderboardSidebar entries={leaderboard} goalAmount={Number(season.goal_amount)} />
@@ -129,6 +215,7 @@ export default function RaceArenaPage() {
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
         <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
         <VictoryLapOverlay events={events} cars={leaderboard} onPlaySound={() => play('victory')} />
+        <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
       </div>
     </>
   );

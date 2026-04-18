@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useGamifiedProfile } from '@/hooks/useGamifiedProfile';
+import { MyRaceCarMiniCard } from '@/components/profile/MyRaceCarMiniCard';
 
 interface GamifiedProfileProps {
   salespersonId?: string;
@@ -99,6 +100,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
           </div>
         </Card>
       </motion.div>
+
+      {/* Race Arena mini card */}
+      <MyRaceCarMiniCard salespersonId={salespersonId} />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
