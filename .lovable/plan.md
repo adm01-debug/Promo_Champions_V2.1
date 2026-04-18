@@ -1,54 +1,49 @@
 
-Deal Intelligence 3/4 entregue. Última atômica do bloco.
+Deal Intelligence Hub fechado em 4/4 (10/10). Próximo bloco do roadmap mestre.
 
-**Deal Intelligence — 4/4: Win/Loss Pattern Miner**
+**Próximo bloco — Revenue Intelligence Hub (1/4): Forecast Accuracy Tracker**
 
-Analisa deals fechados (won/lost) para extrair padrões: fatores de vitória/derrota, perfis de cliente que convertem, estágios onde mais se perde, objeções recorrentes, ticket médio por outcome. Gera insights acionáveis e recomendações de ICP.
+Mede a precisão das previsões de receita comparando forecast vs realizado por período/vendedor/segmento. Identifica viés sistemático (otimista/pessimista), calcula MAPE (Mean Absolute Percentage Error) e gera score de confiabilidade do forecast por origem.
 
 ## Entregáveis
 
 ### 1. Migration
-- `win_loss_analyses`: `id`, `sale_id` FK UNIQUE, `outcome` (`won|lost`), `primary_reason text`, `secondary_reasons jsonb`, `competitor text`, `lost_stage text`, `cycle_days numeric`, `amount numeric`, `segment text`, `analyzed_at`. Snapshot por deal.
-- `win_loss_patterns`: `id`, `pattern_type` (`win_factor|loss_factor|stuck_stage|competitor|icp_match`), `label text`, `outcome text`, `frequency int`, `win_rate numeric`, `avg_cycle_days numeric`, `avg_amount numeric`, `confidence numeric`, `computed_at`. Agregados.
-- `win_loss_insights`: `id`, `insight_type text`, `title text`, `description text`, `severity` (`info|opportunity|risk`), `evidence jsonb`, `created_at`. IA-driven.
-- RLS read authenticated, write admin/manager. Realtime + índices `(outcome)`, `(pattern_type)`, `(severity)`.
+- `forecast_snapshots`: `id`, `period_start date`, `period_end date`, `owner_id uuid`, `segment text`, `forecast_amount numeric`, `forecast_deals int`, `weighted_amount numeric`, `commit_amount numeric`, `best_case_amount numeric`, `snapshot_at timestamptz`, `source text` (manual|weighted|ai). Snapshot histórico.
+- `forecast_accuracy`: `id`, `snapshot_id FK UNIQUE`, `actual_amount numeric`, `actual_deals int`, `variance_amount numeric` (gen), `variance_pct numeric`, `mape numeric`, `bias text` (optimistic|pessimistic|accurate), `computed_at timestamptz`.
+- `forecast_confidence_scores`: `id`, `owner_id uuid`, `source text`, `period_count int`, `avg_mape numeric`, `bias_trend text`, `confidence_score numeric` (0-100), `computed_at`. Único `(owner_id, source)`.
+- RLS read authenticated, write admin/manager. Realtime + índices.
 
 ### 2. Edge functions (verify_jwt=true)
-- `analyze-win-loss`: lê `sales` com status `completed|lost` últimos 180d. Para cada um: extrai motivo (campos existentes ou via Lovable AI `gemini-2.5-flash` se houver notas), classifica primary/secondary, upsert `win_loss_analyses`.
-- `mine-win-loss-patterns`: agrega `win_loss_analyses` em `win_loss_patterns` (top fatores, win_rate por segmento/competitor, estágio onde mais se perde, ticket médio). Gera 3-5 insights acionáveis em `win_loss_insights` via IA.
+- `snapshot-forecast`: captura forecast atual (deals abertos × stage weights) + commit/best-case manuais, insere em `forecast_snapshots` por owner+segment.
+- `compute-forecast-accuracy`: para snapshots com período encerrado, calcula receita real (sales completed no período), MAPE, bias, atualiza `forecast_accuracy` e agrega `forecast_confidence_scores`.
 
-### 3. Hooks `src/hooks/deal-intelligence/useWinLoss.ts`
-- `useWinLossAnalyses(filters?)` — análises individuais.
-- `useWinLossPatterns(type?)` — padrões agregados.
-- `useWinLossInsights()` — insights IA.
-- `useWinLossSummary()` — KPIs: win rate, avg cycle won/lost, top win/loss reason, top competitor.
-- `useAnalyzeWinLoss()` / `useMinePatterns()` — mutations.
+### 3. Hooks `src/hooks/revenue-intelligence/useForecastAccuracy.ts`
+- `useForecastSnapshots(filters?)` — histórico.
+- `useForecastAccuracy(period?)` — accuracy por período.
+- `useConfidenceScores()` — scores por owner/source.
+- `useForecastSummary()` — KPIs: MAPE médio, bias geral, melhor source, accuracy trend.
+- `useSnapshotForecast()` / `useComputeAccuracy()` — mutations.
 
-### 4. Componentes `src/components/deal-intelligence/winloss/`
-- `WinLossSummaryCard.tsx` (≤180L) — 4 KPIs principais com sparkline.
-- `WinFactorsChart.tsx` (≤160L) — Recharts bar horizontal: top 8 fatores de vitória.
-- `LossFactorsChart.tsx` (≤160L) — Recharts bar horizontal: top 8 fatores de derrota.
-- `CompetitorAnalysisTable.tsx` (≤180L) — concorrentes: encontros, win rate vs cada um, ticket médio.
-- `WinLossInsightsPanel.tsx` (≤200L) — cards de insights IA com severidade e evidências.
-- `LostStageBreakdown.tsx` (≤140L) — pie/donut: distribuição de perdas por estágio.
-- `winLossHelpers.ts` — labels, cores severidade, formatadores.
+### 4. Componentes `src/components/revenue-intelligence/forecast/`
+- `ForecastAccuracySummary.tsx` (≤180L) — 4 KPIs + actions.
+- `ForecastVsActualChart.tsx` (≤180L) — Recharts line: forecast vs actual ao longo do tempo.
+- `ForecastBiasChart.tsx` (≤160L) — bar chart: viés por owner/source.
+- `ConfidenceScoresTable.tsx` (≤180L) — ranking de confiabilidade por origem/owner.
+- `MapeBySegmentChart.tsx` (≤140L) — MAPE por segmento (smb/mid/enterprise).
+- `forecastHelpers.ts` — labels bias, cores, formatadores MAPE.
 
 ### 5. Integração
-- `DealIntelligence.tsx`: nova aba "Win/Loss" com:
-  - Linha 1: `<WinLossSummaryCard />`
-  - Linha 2: `<WinFactorsChart />` + `<LossFactorsChart />` (grid 2 cols)
-  - Linha 3: `<LostStageBreakdown />` + `<CompetitorAnalysisTable />` (grid 2 cols)
-  - Linha 4: `<WinLossInsightsPanel />`
-- `supabase/config.toml`: blocos `verify_jwt = true` para as duas funções.
+- `RevenueIntelligence.tsx` (criar se não existir) ou aba em hub existente: nova aba "Precisão do Forecast".
+- `supabase/config.toml`: blocos `verify_jwt = true` para as 2 funções.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após analyze + mine: KPIs preenchem, gráficos mostram top fatores, insights aparecem com recomendações.
+- Após snapshot + compute: KPIs preenchem, gráficos mostram histórico, tabela mostra confiabilidade.
 
 ## Arquivos
 - **Migration**: 1 (3 tabelas + RLS + realtime + índices).
-- **Edge functions**: 2 (`analyze-win-loss`, `mine-win-loss-patterns`).
-- **Criar**: 5 hooks (1 arquivo), 6 componentes + 1 helper.
-- **Editar**: `DealIntelligence.tsx`, `supabase/config.toml`.
+- **Edge functions**: 2.
+- **Criar**: 5 hooks (1 arquivo), 5 componentes + 1 helper.
+- **Editar**: hub de revenue intelligence, `supabase/config.toml`.
 
-Após esta entrega, **Deal Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do roadmap mestre.
+Após esta entrega, sigo para **2/4: Pipeline Coverage Forecaster** → **3/4: Revenue Leakage Detector** → **4/4: Quota Attainment Predictor**, fechando Revenue Intelligence em 10/10.
