@@ -9274,6 +9274,99 @@ export type Database = {
         }
         Relationships: []
       }
+      stage_bottleneck_insights: {
+        Row: {
+          ai_summary: string | null
+          calculated_at: string
+          conversion_rate: number
+          created_at: string
+          id: string
+          owner_id: string | null
+          recommendations: Json
+          severity: string
+          stage: string
+          top_loss_reasons: Json
+          updated_at: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          calculated_at?: string
+          conversion_rate?: number
+          created_at?: string
+          id?: string
+          owner_id?: string | null
+          recommendations?: Json
+          severity?: string
+          stage: string
+          top_loss_reasons?: Json
+          updated_at?: string
+        }
+        Update: {
+          ai_summary?: string | null
+          calculated_at?: string
+          conversion_rate?: number
+          created_at?: string
+          id?: string
+          owner_id?: string | null
+          recommendations?: Json
+          severity?: string
+          stage?: string
+          top_loss_reasons?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      stage_conversion_metrics: {
+        Row: {
+          avg_transition_days: number
+          calculated_at: string
+          conversion_rate: number
+          converted_count: number
+          created_at: string
+          entered_count: number
+          from_stage: string
+          id: string
+          lost_count: number
+          owner_id: string | null
+          period_end: string
+          period_start: string
+          to_stage: string
+          updated_at: string
+        }
+        Insert: {
+          avg_transition_days?: number
+          calculated_at?: string
+          conversion_rate?: number
+          converted_count?: number
+          created_at?: string
+          entered_count?: number
+          from_stage: string
+          id?: string
+          lost_count?: number
+          owner_id?: string | null
+          period_end: string
+          period_start: string
+          to_stage: string
+          updated_at?: string
+        }
+        Update: {
+          avg_transition_days?: number
+          calculated_at?: string
+          conversion_rate?: number
+          converted_count?: number
+          created_at?: string
+          entered_count?: number
+          from_stage?: string
+          id?: string
+          lost_count?: number
+          owner_id?: string | null
+          period_end?: string
+          period_start?: string
+          to_stage?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stage_velocity_baselines: {
         Row: {
           avg_days: number
