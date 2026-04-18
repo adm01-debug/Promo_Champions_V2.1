@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
 
     const { data: rec, error: recErr } = await supabase
       .from("call_recordings")
-      .select("id, sale_id, transcript")
+      .select("id, sale_id, transcript, salesperson_id")
       .eq("id", recording_id)
       .maybeSingle();
     if (recErr || !rec) {
@@ -123,6 +123,13 @@ Deno.serve(async (req) => {
       ? stakeholders.reduce((s, x) => s + (Number(x.confidence) || 0), 0) / stakeholders.length
       : 0;
 
+    // Resolve owner_id (required by deal_stakeholders)
+    let ownerId = rec.salesperson_id as string | null;
+    if (!ownerId) {
+      const { data: sale } = await supabase.from("sales").select("salesperson_id").eq("id", rec.sale_id).maybeSingle();
+      ownerId = (sale as any)?.salesperson_id ?? null;
+    }
+
     for (const st of stakeholders) {
       if (!st.name?.trim()) continue;
       const { data: existing } = await supabase
@@ -132,17 +139,18 @@ Deno.serve(async (req) => {
         .ilike("name", st.name.trim())
         .maybeSingle();
 
-      const payload = {
+      const payload: Record<string, unknown> = {
         sale_id: rec.sale_id,
         name: st.name.trim(),
-        job_title: st.job_title ?? null,
+        role_title: st.job_title ?? null,
         dmu_role: st.dmu_role,
         influence_level: st.influence_level,
         sentiment: st.sentiment,
-        source: "ai_call_extraction",
+        source: "call",
         evidence_quote: st.evidence_quote,
         confidence: Number(st.confidence) || 0,
       };
+      if (ownerId) payload.owner_id = ownerId;
 
       if (existing?.id) {
         await supabase.from("deal_stakeholders").update(payload).eq("id", existing.id);
