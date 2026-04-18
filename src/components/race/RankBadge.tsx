@@ -55,11 +55,11 @@ export function RankBadge({ rank, size = 'sm', className }: RankBadgeProps) {
       <span
         aria-label={ariaLabel}
         className={cn(
-          'inline-flex items-center justify-center rounded-md bg-orange-500/15 ring-1 ring-orange-500/50',
+          'inline-flex items-center justify-center rounded-md bg-accent/30 ring-1 ring-accent',
           dims, className,
         )}
       >
-        <Medal className="text-orange-500" strokeWidth={2.5} width={iconSize} height={iconSize} />
+        <Medal className="text-accent-foreground" strokeWidth={2.5} width={iconSize} height={iconSize} />
       </span>
     );
   }

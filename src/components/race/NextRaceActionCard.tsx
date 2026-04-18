@@ -18,7 +18,7 @@ export function NextRaceActionCard({ salespersonId }: Props) {
   const [dismissed, setDismissed] = useState(false);
 
   if (!salespersonId || isLoading || dismissed) return null;
-  const action = data?.actions?.[0];
+  const action = data?.suggestions?.[0];
   if (!action) return null;
 
   return (
