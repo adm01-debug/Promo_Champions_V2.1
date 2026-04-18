@@ -387,6 +387,8 @@ export function RaceArena({
         }}
       >
       <RaceTrack>
+        {/* Tire marks (rastros de pneu nas curvas) — abaixo dos carros */}
+        <TrackTireMarks cars={tireMarkCars} />
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
           const pos = getPositionOnTrack(Number(car.progress), lane);
