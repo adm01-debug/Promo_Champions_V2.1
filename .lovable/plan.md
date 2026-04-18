@@ -1,36 +1,56 @@
 
-**Race Arena — Fase 3/3 (final): Power-ups, Countdown e Mini-card no Profile**
+Race Arena fechou 3/3 (10/10). Retomando o roadmap **Revenue Intelligence — 2/4: Pipeline Coverage Analyzer**.
 
-Fechando o módulo Race Arena em 10/10 com os ingredientes finais de "videogame de verdade".
+Já existem (Fase 1/4): `RevenueIntelligenceHub`, `CoverageRatioGauge` (cobertura simples ratio×target), forecast roll-up, win rate, pipeline inspection, QBR e AI Forecast. Falta o **Analyzer** completo: cobertura segmentada por estágio/owner/segmento, simulações what-if, alerta de gaps e recomendações IA.
+
+---
+
+**Próxima atômica — Pipeline Coverage Analyzer**
 
 ## O que entregar
 
-### 1. Power-ups coletáveis na pista
-- `PowerUpIcon.tsx` (≤80L) — SVG pulsante (turbo ⚡, shield 🛡️, lightning 🌩️) posicionado em pontos da pista (15%, 45%, 80%).
-- Hook `useRacePowerups(seasonId)` — lê `race_powerups` disponíveis + realtime.
-- Edge function `collect-race-powerup` (verify_jwt=true) — usuário "coleta" power-up se progresso passou pelo ponto + ainda não coletou; insere registro + dispara evento `powerup` + concede badge se 3 coletados.
-- Auto-spawn: ao iniciar season, gerar 3 power-ups disponíveis (turbo/shield/lightning) por vendedor — feito no `start-race-season`.
-- Integração visual no `RaceArena.tsx`: renderizar power-ups não coletados na pista, animar coleta (escala + fade) quando carro passa pela posição.
+### 1. Migration
+- `pipeline_coverage_snapshots`: `id`, `period_start`, `period_end`, `owner_id` (nullable=global), `segment` (nullable), `stage` (nullable), `quota_amount numeric`, `pipeline_amount numeric`, `weighted_pipeline numeric`, `coverage_ratio numeric`, `target_ratio numeric` (default 3.0), `health` (`critical|weak|healthy|strong`), `gap_to_target numeric`, `deals_count int`, `calculated_at timestamptz`. RLS + realtime.
+- `pipeline_coverage_recommendations`: `id`, `snapshot_id` FK, `priority` (`high|medium|low`), `title`, `action`, `expected_impact_amount numeric`, `ai_generated bool`, `created_at`. RLS.
+- View `v_pipeline_coverage_summary` agregando por owner/global.
+- Índices em `(period_start, owner_id, stage)`.
 
-### 2. Countdown 3-2-1-GO no início
-- `RaceCountdown.tsx` (≤120L) — overlay grande tela (números 3→2→1→GO!) com Framer Motion + som `countdown` sintético (já existe no `useRaceSounds`).
-- Trigger: aparece automaticamente quando season recém-criada (idade < 10s) OU quando usuário clica "Largada!" no header.
-- Persiste em `localStorage` o id da season já vista para não repetir.
+### 2. Edge function `analyze-pipeline-coverage` (verify_jwt=true)
+- Input: `{ period_days?: 90, owner_id?: string|null, refresh?: bool }`.
+- Calcula por (owner × stage × segment): pipeline aberto, pipeline ponderado por probabilidade do estágio, coverage_ratio = weighted_pipeline / quota_remaining.
+- Classifica health: <1.5 critical, 1.5-2.5 weak, 2.5-4 healthy, >4 strong.
+- Chama Lovable AI (`google/gemini-2.5-flash`) para gerar 3-5 recomendações priorizadas com estimativa de impacto $.
+- Upsert em `pipeline_coverage_snapshots` + `pipeline_coverage_recommendations`.
 
-### 3. Mini-card "Meu Carro" no GamifiedProfile
-- Adicionar bloco em `GamifiedProfile.tsx` mostrando: número do carro, cores, nickname, posição atual na corrida, badges conquistados (mini), botão "Ir para Race Arena".
-- Componente `MyRaceCarMiniCard.tsx` (≤140L) reutilizável.
+### 3. Hooks `src/hooks/revenue/`
+- `usePipelineCoverageAnalyzer(filters)` — query + realtime.
+- `useRunCoverageAnalysis()` — mutation que invoca a edge function.
+- `useCoverageWhatIf(snapshotId, deltas)` — recálculo client-side de cenários (adicionar X deals, mover Y%).
 
-### 4. Som de countdown sintético
-- Adicionar caso `countdown` em `useRaceSounds.ts` (3 beeps curtos + 1 longo agudo).
+### 4. Componentes `src/components/revenue-intelligence/coverage/`
+- `PipelineCoverageAnalyzer.tsx` (≤280L) — container com filtros (period, owner, segment) + sub-componentes.
+- `CoverageHealthGrid.tsx` (≤200L) — heatmap owner × stage com cores semânticas (critical→strong) e tooltip de gap.
+- `CoverageGapAlertList.tsx` (≤180L) — lista de gaps críticos ordenados por valor faltante, badge de severidade, botão "ver deals".
+- `CoverageWhatIfSimulator.tsx` (≤240L) — sliders: "+N deals médios", "+X% conversão estágio", "antecipar fechamento Y dias". Mostra novo ratio em tempo real.
+- `CoverageRecommendationsPanel.tsx` (≤180L) — cards de recomendações IA com prioridade + impacto $ + botão "marcar como atuada".
+- `coverageHelpers.ts` — `classifyHealth`, `calcWeightedPipeline`, `simulateWhatIf`, paleta de cores por health.
 
-### 5. Validação
+### 5. Integração
+- Nova aba **"Coverage Analyzer"** no `RevenueIntelligenceHub.tsx` (entre "Win Rate Drill-down" e "Pipeline Inspection") renderizando `PipelineCoverageAnalyzer`.
+- Botão "Analisar agora" no header da aba que chama `useRunCoverageAnalysis`.
+
+### 6. Configuração
+- `supabase/config.toml`: bloco `[functions.analyze-pipeline-coverage] verify_jwt = true`.
+
+### 7. Validação
 - `supabase--linter` zero novos warnings.
-- Countdown aparece ao entrar em season nova; power-ups coletáveis e somem ao serem usados; mini-card no profile com link funcional.
+- Aba renderiza heatmap + gaps + simulator + recomendações sem erros.
+- What-if recalcula instantaneamente (<50ms) sem chamada de rede.
 
 ## Arquivos
-- **Migration**: nenhuma (tabela `race_powerups` já existe da Fase 1).
-- **Criar**: `supabase/functions/collect-race-powerup/index.ts`, `src/hooks/race/useRacePowerups.ts`, `src/components/race/PowerUpIcon.tsx`, `src/components/race/RaceCountdown.tsx`, `src/components/profile/MyRaceCarMiniCard.tsx`.
-- **Editar**: `start-race-season/index.ts` (auto-spawn power-ups), `useRaceSounds.ts` (som countdown), `RaceArena.tsx` (renderizar power-ups + countdown), `GamifiedProfile.tsx` (mini-card), `src/components/race/index.ts`, `supabase/config.toml` (verify_jwt para `collect-race-powerup`).
+- **Migration**: 1 (2 tabelas + view + RLS + realtime + índices).
+- **Edge function**: `analyze-pipeline-coverage`.
+- **Criar**: 3 hooks, 5 componentes + 1 helper.
+- **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`, `src/components/revenue-intelligence/index.ts` (se existir).
 
-Após esta entrega, **Race Arena fecha 3/3 (10/10)** e retomo automaticamente o roadmap **Revenue Intelligence (2/4): Pipeline Coverage Analyzer**.
+Após esta entrega, sigo automaticamente para **Revenue Intelligence 3/4: Win Probability Calibration** → 4/4 **Quota Attainment Predictor**, fechando o bloco em 10/10.
