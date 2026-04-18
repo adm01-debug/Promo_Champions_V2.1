@@ -8,6 +8,9 @@ import { NextStepsTimeline } from "./NextStepsTimeline";
 import { SummarizeButton } from "./SummarizeButton";
 import { CompetitorMentionsCard } from "./CompetitorMentionsCard";
 import { CoachingActionsList } from "./CoachingActionsList";
+import { Button } from "@/components/ui/button";
+import { Users } from "lucide-react";
+import { useExtractStakeholders } from "@/hooks/deal-intelligence/useDealStakeholders";
 import { SentimentTimelineChart } from "./SentimentTimelineChart";
 import { CriticalMomentsList } from "./CriticalMomentsList";
 import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
@@ -39,8 +42,9 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
           </div>
         ) : rec ? (
           <div className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2 flex-wrap">
               <SummarizeButton recordingId={rec.id} hasSummary={!!rec.summary} />
+              {rec.sale_id && <ExtractCommitteeButton recordingId={rec.id} />}
             </div>
 
             {!rec.summary && (
@@ -75,6 +79,22 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
     </Sheet>
   );
 };
+
+function ExtractCommitteeButton({ recordingId }: { recordingId: string }) {
+  const extract = useExtractStakeholders();
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={() => extract.mutate({ recording_id: recordingId })}
+      disabled={extract.isPending}
+      className="gap-1"
+    >
+      <Users className="h-3.5 w-3.5" />
+      {extract.isPending ? "Mapeando..." : "Mapear comitê"}
+    </Button>
+  );
+}
 
 export const useRecordingSummaryDrawer = () => {
   const [openId, setOpenId] = useState<string | null>(null);

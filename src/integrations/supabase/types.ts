@@ -3441,6 +3441,56 @@ export type Database = {
           },
         ]
       }
+      deal_committee_coverage: {
+        Row: {
+          calculated_at: string
+          coverage_score: number
+          created_at: string
+          gaps: Json
+          id: string
+          owner_id: string
+          risks: Json
+          sale_id: string
+          stakeholder_count: number
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          calculated_at?: string
+          coverage_score?: number
+          created_at?: string
+          gaps?: Json
+          id?: string
+          owner_id: string
+          risks?: Json
+          sale_id: string
+          stakeholder_count?: number
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          calculated_at?: string
+          coverage_score?: number
+          created_at?: string
+          gaps?: Json
+          id?: string
+          owner_id?: string
+          risks?: Json
+          sale_id?: string
+          stakeholder_count?: number
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_committee_coverage_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_health_history: {
         Row: {
           delta: number
@@ -3679,6 +3729,77 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "deal_stage_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_stakeholders: {
+        Row: {
+          created_at: string
+          dmu_role: string
+          email: string | null
+          engagement_score: number
+          id: string
+          influence_level: string
+          last_interaction_at: string | null
+          linkedin_url: string | null
+          name: string
+          notes: string | null
+          owner_id: string
+          phone: string | null
+          role_title: string | null
+          sale_id: string
+          sentiment: string
+          signals: Json
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dmu_role?: string
+          email?: string | null
+          engagement_score?: number
+          id?: string
+          influence_level?: string
+          last_interaction_at?: string | null
+          linkedin_url?: string | null
+          name: string
+          notes?: string | null
+          owner_id: string
+          phone?: string | null
+          role_title?: string | null
+          sale_id: string
+          sentiment?: string
+          signals?: Json
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dmu_role?: string
+          email?: string | null
+          engagement_score?: number
+          id?: string
+          influence_level?: string
+          last_interaction_at?: string | null
+          linkedin_url?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string | null
+          role_title?: string | null
+          sale_id?: string
+          sentiment?: string
+          signals?: Json
+          source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_stakeholders_sale_id_fkey"
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
