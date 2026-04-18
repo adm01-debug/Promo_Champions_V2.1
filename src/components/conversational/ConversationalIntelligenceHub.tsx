@@ -14,6 +14,7 @@ import { CallLibrarySearch } from "./CallLibrarySearch";
 import { CompetitorsAdminDialog } from "./CompetitorsAdminDialog";
 import { ConversationMetricsFeed } from "./metrics/ConversationMetricsFeed";
 import { QuestionFeedPanel } from "./questions/QuestionFeedPanel";
+import { ObjectionLibraryPanel } from "./objections/ObjectionLibraryPanel";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -148,6 +149,8 @@ export const ConversationalIntelligenceHub = () => {
           <ConversationMetricsFeed />
 
           <QuestionFeedPanel onSelect={drawer.open} />
+
+          <ObjectionLibraryPanel onSelect={drawer.open} />
 
           <Card>
             <CardHeader>
