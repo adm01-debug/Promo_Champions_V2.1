@@ -11,10 +11,12 @@ import { StartLights } from './StartLights';
 import { Fireworks } from './Fireworks';
 import { RaceControlPanel, type RaceFlag } from './RaceControlPanel';
 import { SpeedHUD } from './SpeedHUD';
+import { NextCornerHUD } from './NextCornerHUD';
 import { TrackTireMarks } from './track/TrackTireMarks';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
+  getNextCornerInfo,
 } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
