@@ -340,6 +340,25 @@
     --shadow-2xs: 0 1px 2px 0 hsl(0 0% 0% / 0.15);
     --shadow: 0 2px 8px -2px hsl(0 0% 0% / 0.3), 0 1px 3px -1px hsl(0 0% 0% / 0.2);
     --shadow-2xl: 0 32px 64px -12px hsl(0 0% 0% / 0.6);
+
+    /* ===== RACE ARENA - Track tokens (dark) ===== */
+    --race-grass: 130 25% 22%;
+    --race-grass-shadow: 130 30% 14%;
+    --race-asphalt: 220 6% 28%;
+    --race-asphalt-edge: 0 0% 92%;
+    --race-runoff: 35 20% 38%;
+    --race-curb-a: 0 0% 92%;
+    --race-curb-b: 0 80% 55%;
+    --race-pond: 205 60% 32%;
+    --race-pond-shadow: 205 65% 18%;
+    --race-pond-deep: 205 70% 12%;
+    --race-tree-light: 130 30% 38%;
+    --race-tree-mid: 130 35% 28%;
+    --race-tree-dark: 130 40% 18%;
+    --race-building: 220 8% 38%;
+    --race-building-edge: 220 10% 22%;
+    --race-checkered-light: 0 0% 92%;
+    --race-checkered-dark: 0 0% 6%;
   }
 }
 
