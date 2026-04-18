@@ -1,45 +1,43 @@
 
-Revenue Forecast Intelligence entregue. Próximo bloco rumo a 10/10: **Deal Health Scoring** — score 0-100 por deal aberto combinando sinais de engajamento, velocidade no pipeline, valor vs ticket médio e estagnação, com explicação dos fatores e recomendações.
+Deal Health Hub entregue. Próximo bloco rumo a 10/10: **Win/Loss Intelligence com IA** — análise automática de razões de ganho/perda usando padrões em deals fechados, gerando insights acionáveis para o time.
 
-## Deal Health Scoring
+## Win/Loss Intelligence com IA
 
 ### Conceito
-Cada deal aberto recebe um score de saúde 0-100 (Crítico/Em Risco/Saudável/Excelente) calculado por edge function que pesa: dias no estágio atual vs benchmark, última atividade registrada, número de stakeholders, valor do deal vs ticket médio do vendedor, probabilidade de conversão histórica do estágio. O sistema explica o porquê de cada score com fatores positivos/negativos e sugere a próxima ação.
+Quando um deal é marcado como ganho ou perdido, o sistema captura razão estruturada + contexto (estágio, valor, ciclo, atividades, concorrente). Uma IA analisa lotes de deals fechados e gera padrões: "Você perde 60% dos deals acima de R$50k para Concorrente X", "Deals ganhos têm 3+ contatos com decisor", etc.
 
 ### Backend
-**Migration** — tabela `deal_health_scores`:
-- `id`, `deal_id` (FK sales), `score` (0-100), `health` (`critical`|`at_risk`|`healthy`|`excellent`), `factors` (jsonb com breakdown), `recommendation` (text), `calculated_at`
-- Índices em `deal_id`, `health`, `calculated_at`
-- RLS: vendedor vê apenas seus próprios; gestor/admin vê tudo
-- View `deal_health_summary_view`: agrega contagem por health × salesperson + score médio
+**Migration**:
+- Tabela `deal_outcomes`: `id`, `sale_id`, `outcome` (won/lost), `primary_reason` (enum: price, timing, competitor, no_budget, no_decision, feature_gap, relationship, other), `secondary_reasons` (text[]), `competitor_name`, `lessons_learned` (text), `recorded_by`, `created_at`
+- View `win_loss_summary_view`: agrega win rate por razão, valor médio perdido por concorrente, ciclo médio won vs lost
+- RLS: vendedor vê só seus; gestor/admin vê tudo
 
-**Edge function `deal-health-scorer`**:
-- Aceita `deal_id` (single) ou `recompute_all=true`
-- Para cada deal aberto: busca atividades 30d, idade no estágio, ticket médio do vendedor (90d), benchmark do estágio
-- Calcula score ponderado (40% atividade recente, 25% velocidade vs benchmark, 20% engajamento/stakeholders, 15% valor vs ticket)
-- Chama Lovable AI (gemini-2.5-flash) APENAS para gerar `recommendation` quando score < 60 (otimização de custo)
-- Upsert em `deal_health_scores`
+**Edge function `win-loss-analyzer`**:
+- Aceita período (30/60/90d) e filtros opcionais (salesperson, segment)
+- Busca deals fechados + outcomes + atividades
+- Chama Lovable AI (gemini-2.5-flash) com agregações para gerar padrões e recomendações
+- Retorna `{ patterns: [], top_loss_reasons: [], competitor_insights: [], recommendations: [] }`
 
-**Cron** (opcional, pg_cron): recompute diário às 6am.
-
-### Frontend (`src/components/deal-intelligence/health/`)
-- `DealHealthHub.tsx` (≤300L): hub com 4 KPI cards (count por health), gráfico donut de distribuição, tabela ordenável de deals críticos
-- `HealthScoreBadge.tsx`: badge colorido reutilizável (vermelho/laranja/azul/verde)
-- `DealHealthCard.tsx`: card por deal com score ring, breakdown de fatores, recomendação IA
-- `HealthDistributionChart.tsx`: donut recharts por status de saúde
-- `healthHelpers.ts`: classify, color tokens, label maps
-- Hook `useDealHealthScores.ts` (React Query) + `useRecomputeDealHealth.ts` (mutation)
+### Frontend (`src/components/win-loss/`)
+- `WinLossHub.tsx` (≤300L): hub com KPIs (win rate, avg deal size won/lost, top reason), seletor de período
+- `OutcomeReasonChart.tsx`: barras horizontais — razões de perda ordenadas por frequência
+- `CompetitorAnalysisCard.tsx`: tabela de concorrentes com win rate vs cada um
+- `WinLossInsightsCard.tsx`: card com narrativa IA (padrões + recomendações)
+- `OutcomeFormDialog.tsx`: modal disparado ao mover deal para Won/Lost — captura razão estruturada
+- `winLossHelpers.ts`: enums labels, color tokens, formatters
+- Hooks: `useWinLossOutcomes.ts`, `useWinLossInsights.ts`, `useRecordOutcome.ts`
 
 ### Integração
-- Nova tab "Saúde dos Deals" no `RevenueIntelligenceHub`
-- `HealthScoreBadge` exibido inline nos cards do Kanban e na lista de Sales
+- Trigger automático: quando deal passa para Won/Lost no Kanban → abre `OutcomeFormDialog`
+- Nova tab "Win/Loss" no Analytics module
+- Card resumo no `RevenueIntelligenceHub`
 
 ### Arquivos
-- Migration: tabela `deal_health_scores` + view + RLS + índices
-- Edge: `supabase/functions/deal-health-scorer/index.ts`
-- Hooks: 2 em `src/hooks/deal-intelligence/`
-- Componentes: 4 em `src/components/deal-intelligence/health/`
-- Helpers: `healthHelpers.ts`
-- Editar: `RevenueIntelligenceHub.tsx`, card do Kanban (badge inline opcional)
+- Migration: tabela `deal_outcomes` + view + RLS + índices
+- Edge: `supabase/functions/win-loss-analyzer/index.ts`
+- Hooks: 3 em `src/hooks/win-loss/`
+- Componentes: 5 em `src/components/win-loss/`
+- Helpers: `winLossHelpers.ts`
+- Editar: `KanbanCard` (trigger dialog), `Analytics.tsx` (nova tab), `RevenueIntelligenceHub` (card)
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L por arquivo, strict TS, recharts tipado, RLS com `has_role`.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, recharts tipado, RLS com `has_role`.
