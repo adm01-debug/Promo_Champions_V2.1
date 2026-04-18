@@ -13,6 +13,8 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { CheckeredFlag } from './CheckeredFlag';
+import { MiniPodium } from './MiniPodium';
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -30,8 +32,10 @@ interface Props {
   seasonName?: string;
   /** Botões/ações no canto direito */
   actions?: ReactNode;
-  /** Conteúdo extra abaixo do header (ex: mini-podium) */
+  /** Conteúdo extra abaixo do header (ex: mini-podium customizado) */
   belowChildren?: ReactNode;
+  /** Top entries para renderizar o mini-pódium automático (até 3) */
+  topEntries?: RaceLeaderboardEntry[];
   className?: string;
 }
 
@@ -49,8 +53,10 @@ export const RaceArenaHeader: FC<Props> = ({
   seasonName,
   actions,
   belowChildren,
+  topEntries,
   className,
 }) => {
+  const podiumEntries = topEntries?.slice(0, 3) ?? [];
   return (
     <motion.header
       initial={{ opacity: 0, y: -8 }}
@@ -125,6 +131,7 @@ export const RaceArenaHeader: FC<Props> = ({
           )}
         </div>
 
+        {podiumEntries.length > 0 && <MiniPodium entries={podiumEntries} />}
         {belowChildren && <div className="pt-1">{belowChildren}</div>}
       </div>
     </motion.header>
