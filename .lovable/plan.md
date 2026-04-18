@@ -1,49 +1,58 @@
 
-Deal Intelligence Hub fechado em 4/4 (10/10). Próximo bloco do roadmap mestre.
+Usuário quer notificar todos os vendedores quando um colega fecha uma venda, mostrando o valor.
 
-**Próximo bloco — Revenue Intelligence Hub (1/4): Forecast Accuracy Tracker**
+## Análise do que já existe
 
-Mede a precisão das previsões de receita comparando forecast vs realizado por período/vendedor/segmento. Identifica viés sistemático (otimista/pessimista), calcula MAPE (Mean Absolute Percentage Error) e gera score de confiabilidade do forecast por origem.
+Pelo código fornecido (`src/hooks/useSalesRealtime.ts` + `salesRealtimeUtils.ts`):
+- Já há **toast** (`🔥 ${salesperson.name} fechou uma venda!` com valor formatado) para todos os usuários conectados via realtime.
+- Já há **Web Notification** do navegador (apenas se `currentSalespersonId !== newSale.salesperson_id`).
+- Já há filtro `shouldReceiveNotification` por papel (SDR/Closer/Hybrid).
+- Já existe edge function `send-push-notification` (web push para dispositivos offline).
+- Já existe sistema interno de notificações (`useNotifications` + RPC `send_notification` + tabela `notifications`).
 
-## Entregáveis
+## Gap
 
-### 1. Migration
-- `forecast_snapshots`: `id`, `period_start date`, `period_end date`, `owner_id uuid`, `segment text`, `forecast_amount numeric`, `forecast_deals int`, `weighted_amount numeric`, `commit_amount numeric`, `best_case_amount numeric`, `snapshot_at timestamptz`, `source text` (manual|weighted|ai). Snapshot histórico.
-- `forecast_accuracy`: `id`, `snapshot_id FK UNIQUE`, `actual_amount numeric`, `actual_deals int`, `variance_amount numeric` (gen), `variance_pct numeric`, `mape numeric`, `bias text` (optimistic|pessimistic|accurate), `computed_at timestamptz`.
-- `forecast_confidence_scores`: `id`, `owner_id uuid`, `source text`, `period_count int`, `avg_mape numeric`, `bias_trend text`, `confidence_score numeric` (0-100), `computed_at`. Único `(owner_id, source)`.
-- RLS read authenticated, write admin/manager. Realtime + índices.
+A notificação atual depende do usuário estar **online** (realtime). Quem estiver offline, em outra aba, ou no mobile sem o app aberto **não recebe nada**. Além disso, não fica registro persistente no sino de notificações in-app.
 
-### 2. Edge functions (verify_jwt=true)
-- `snapshot-forecast`: captura forecast atual (deals abertos × stage weights) + commit/best-case manuais, insere em `forecast_snapshots` por owner+segment.
-- `compute-forecast-accuracy`: para snapshots com período encerrado, calcula receita real (sales completed no período), MAPE, bias, atualiza `forecast_accuracy` e agrega `forecast_confidence_scores`.
+## Proposta — "Sale Broadcast"
 
-### 3. Hooks `src/hooks/revenue-intelligence/useForecastAccuracy.ts`
-- `useForecastSnapshots(filters?)` — histórico.
-- `useForecastAccuracy(period?)` — accuracy por período.
-- `useConfidenceScores()` — scores por owner/source.
-- `useForecastSummary()` — KPIs: MAPE médio, bias geral, melhor source, accuracy trend.
-- `useSnapshotForecast()` / `useComputeAccuracy()` — mutations.
+Quando uma venda `completed` é inserida, disparar para **todos os vendedores ativos exceto o vendedor da venda**:
 
-### 4. Componentes `src/components/revenue-intelligence/forecast/`
-- `ForecastAccuracySummary.tsx` (≤180L) — 4 KPIs + actions.
-- `ForecastVsActualChart.tsx` (≤180L) — Recharts line: forecast vs actual ao longo do tempo.
-- `ForecastBiasChart.tsx` (≤160L) — bar chart: viés por owner/source.
-- `ConfidenceScoresTable.tsx` (≤180L) — ranking de confiabilidade por origem/owner.
-- `MapeBySegmentChart.tsx` (≤140L) — MAPE por segmento (smb/mid/enterprise).
-- `forecastHelpers.ts` — labels bias, cores, formatadores MAPE.
+1. **Notificação persistente in-app** (tabela `notifications`, aparece no sino) — categoria `sales`, com nome do colega + valor formatado em BRL.
+2. **Web Push** (via `send-push-notification`) — para quem tem subscription registrada e está offline.
+3. **Manter** o toast/realtime atual para quem está online (zero mudança visual para usuários ativos).
 
-### 5. Integração
-- `RevenueIntelligence.tsx` (criar se não existir) ou aba em hub existente: nova aba "Precisão do Forecast".
-- `supabase/config.toml`: blocos `verify_jwt = true` para as 2 funções.
+## Implementação
 
-### 6. Validação
-- `supabase--linter` zero novos warnings.
-- Após snapshot + compute: KPIs preenchem, gráficos mostram histórico, tabela mostra confiabilidade.
+### 1. Edge function `broadcast-sale-notification` (verify_jwt = false; chamada por trigger)
+- Input: `{ sale_id, salesperson_id, salesperson_name, client_name, amount }`.
+- Busca todos `salespeople` ativos com `user_id` definido, exceto o vendedor da venda.
+- Para cada destinatário:
+  - Chama RPC `send_notification` (categoria `sales`, prioridade `medium`, título `🔥 {nome} fechou uma venda!`, mensagem `{cliente} — {valor BRL}`, `action_url=/vendas`, metadata `{ sale_id, amount, seller_id }`).
+- Coleta `user_ids` e chama `send-push-notification` em batch (chunks de 100).
+- Retorna `{ notified: N, pushed: M }`.
+
+### 2. Database trigger `trg_broadcast_sale_completed` em `sales`
+- AFTER INSERT OR UPDATE OF status — quando `NEW.status = 'completed'` e (TG_OP = 'INSERT' OR OLD.status IS DISTINCT FROM 'completed').
+- Faz `pg_net.http_post` para `broadcast-sale-notification` com payload incluindo nome do vendedor (JOIN com `salespeople`).
+- Garantia de não duplicar: usar `pg_advisory_xact_lock` ou checar coluna `broadcast_sent_at` (adicionar em `sales`).
+
+### 3. UI — controle de preferência (opcional, mínimo)
+- Em `useSystemSoundSettings` já existe categoria `newSale`. Manter.
+- Adicionar toggle "Avisos de vendas dos colegas" em Configurações → Notificações que grava em `notification_preferences` (se já existir) ou novo campo. Edge function respeita esse opt-out antes de inserir.
+
+### 4. Realtime atual permanece
+- `useSalesRealtime` continua mostrando toast + confetti para usuários online (UX instantâneo).
+- Como o realtime de `notifications` (`useNotifications`) já está ativo, o sino atualiza sozinho.
 
 ## Arquivos
-- **Migration**: 1 (3 tabelas + RLS + realtime + índices).
-- **Edge functions**: 2.
-- **Criar**: 5 hooks (1 arquivo), 5 componentes + 1 helper.
-- **Editar**: hub de revenue intelligence, `supabase/config.toml`.
+- **Migration**: 1 (coluna `broadcast_sent_at` em `sales` + trigger + grant `pg_net`).
+- **Edge function**: 1 (`broadcast-sale-notification`) + entrada em `supabase/config.toml`.
+- **Sem mudanças** em componentes React (sino já consome notifications em realtime).
 
-Após esta entrega, sigo para **2/4: Pipeline Coverage Forecaster** → **3/4: Revenue Leakage Detector** → **4/4: Quota Attainment Predictor**, fechando Revenue Intelligence em 10/10.
+## Validação
+- Inserir venda `completed` → todos os outros vendedores recebem entrada no sino + push (se subscritos) + toast (se online).
+- O próprio vendedor da venda **não** recebe broadcast (evita auto-notificação).
+- `supabase--linter` zero novos warnings.
+
+Após esta entrega, sigo para a próxima atômica do roadmap mestre.
