@@ -70,7 +70,7 @@ export const RaceArenaSkeleton: FC = () => {
 
         {/* Track skeleton */}
         <div className="col-span-12 lg:col-span-9 order-1 lg:order-2">
-          <div className="relative w-full h-full min-h-[60vh] rounded-xl overflow-hidden border-2 border-border bg-gradient-to-b from-sky-200/40 to-sky-100/40 dark:from-slate-800/40 dark:to-slate-900/40">
+          <div className="relative w-full h-full min-h-[60vh] rounded-xl overflow-hidden border-2 border-border bg-muted/20">
             {/* Pista linhas tracejadas */}
             <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 space-y-6">
               {Array.from({ length: 4 }).map((_, i) => (
