@@ -24,10 +24,10 @@ export const STATUS_ICONS = {
   canceled: XCircle,
 } as const;
 
-export const STATUS_BADGE: Record<CoachingSessionStatus, "info" | "success" | "destructive"> = {
+export const STATUS_BADGE: Record<CoachingSessionStatus, "info" | "success" | "error"> = {
   scheduled: "info",
   completed: "success",
-  canceled: "destructive",
+  canceled: "error",
 };
 
 export function formatSessionDate(iso: string): string {
