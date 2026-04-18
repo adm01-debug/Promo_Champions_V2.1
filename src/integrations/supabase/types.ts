@@ -11830,6 +11830,98 @@ export type Database = {
           },
         ]
       }
+      task_assignments: {
+        Row: {
+          assigned_by: string
+          assigned_to: string
+          catalog_id: string
+          created_at: string
+          due_date: string | null
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["task_assignment_status"]
+          submission_note: string | null
+          updated_at: string
+          xp_granted: number | null
+        }
+        Insert: {
+          assigned_by: string
+          assigned_to: string
+          catalog_id: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["task_assignment_status"]
+          submission_note?: string | null
+          updated_at?: string
+          xp_granted?: number | null
+        }
+        Update: {
+          assigned_by?: string
+          assigned_to?: string
+          catalog_id?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["task_assignment_status"]
+          submission_note?: string | null
+          updated_at?: string
+          xp_granted?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_assignments_catalog_id_fkey"
+            columns: ["catalog_id"]
+            isOneToOne: false
+            referencedRelation: "task_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_catalog: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          difficulty: Database["public"]["Enums"]["task_difficulty"]
+          id: string
+          title: string
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["task_difficulty"]
+          id?: string
+          title: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["task_difficulty"]
+          id?: string
+          title?: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           completed_at: string | null
@@ -13197,6 +13289,47 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_adjustments: {
+        Row: {
+          adjusted_by: string
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          related_assignment_id: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          adjusted_by: string
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          related_assignment_id?: string | null
+          source?: string
+          user_id: string
+        }
+        Update: {
+          adjusted_by?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          related_assignment_id?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xp_adjustments_related_assignment_id_fkey"
+            columns: ["related_assignment_id"]
+            isOneToOne: false
+            referencedRelation: "task_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       xp_history: {
         Row: {
           created_at: string
@@ -13883,6 +14016,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      grant_task_xp: {
+        Args: { _assignment_id: string; _reason?: string; _xp_amount: number }
+        Returns: string
+      }
       has_pending_reset_request: {
         Args: { check_email: string }
         Returns: boolean
@@ -13952,6 +14089,10 @@ export type Database = {
           p_identifier_type: string
         }
         Returns: undefined
+      }
+      manual_xp_adjustment: {
+        Args: { _amount: number; _reason: string; _user_id: string }
+        Returns: string
       }
       mark_all_notifications_read: { Args: never; Returns: number }
       mark_entity_for_reindex: {
@@ -14223,6 +14364,13 @@ export type Database = {
       salesperson_role: "sdr" | "closer" | "hybrid"
       support_ticket_priority: "low" | "normal" | "high" | "urgent"
       support_ticket_status: "open" | "pending" | "resolved" | "closed"
+      task_assignment_status:
+        | "pending"
+        | "in_progress"
+        | "submitted"
+        | "approved"
+        | "rejected"
+      task_difficulty: "easy" | "medium" | "hard" | "epic"
       task_priority: "high" | "medium" | "low"
       task_status: "pending" | "in_progress" | "completed" | "cancelled"
       task_type:
@@ -14401,6 +14549,14 @@ export const Constants = {
       salesperson_role: ["sdr", "closer", "hybrid"],
       support_ticket_priority: ["low", "normal", "high", "urgent"],
       support_ticket_status: ["open", "pending", "resolved", "closed"],
+      task_assignment_status: [
+        "pending",
+        "in_progress",
+        "submitted",
+        "approved",
+        "rejected",
+      ],
+      task_difficulty: ["easy", "medium", "hard", "epic"],
       task_priority: ["high", "medium", "low"],
       task_status: ["pending", "in_progress", "completed", "cancelled"],
       task_type: ["call", "meeting", "follow_up", "email", "proposal", "other"],
