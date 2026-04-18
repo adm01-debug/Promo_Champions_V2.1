@@ -467,7 +467,12 @@ export function RaceArena({
           boxShadow: cinematicFocus && !reducedMotion ? 'inset 0 0 120px 30px hsl(0 0% 0% / 0.45)' : undefined,
         }}
       >
-      <RaceTrack yellowFlag={currentFlag === 'yellow'} waveTrigger={waveTrigger}>
+      <RaceTrack
+        yellowFlag={currentFlag === 'yellow'}
+        waveTrigger={waveTrigger}
+        leaderName={leader?.salesperson_name}
+        leaderGap={gapToSecond !== null && gapToSecond > 0 ? `+${(gapToSecond * 100).toFixed(2)}%` : undefined}
+      >
         {/* Tire marks (rastros de pneu nas curvas) — abaixo dos carros */}
         <TrackTireMarks cars={tireMarkCars} />
         {sorted.map((car, idx) => {
