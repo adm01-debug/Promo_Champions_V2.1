@@ -144,6 +144,19 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
           </p>
         </motion.div>
 
+        {/* Demo ghost-race ao vivo */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.4 }}
+          className="w-full max-w-2xl"
+        >
+          <RaceGhostDemo />
+          <p className="text-[11px] text-muted-foreground mt-1.5 text-center">
+            👀 Prévia: assim será sua corrida quando a temporada começar
+          </p>
+        </motion.div>
+
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
