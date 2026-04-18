@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
-import { getPositionOnTrack } from './raceTrackHelpers';
+import { getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
@@ -33,6 +33,62 @@ export function RaceArena({
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
   const [hoveredCar, setHoveredCar] = useState<string | null>(null);
+
+  // ----- Detecção de ultrapassagens (flash + dust) -----
+  const prevSnapshotRef = useRef<Array<{ id: string; progress: number }>>([]);
+  const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
+  const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
+
+  useEffect(() => {
+    const curr = sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) }));
+    const prev = prevSnapshotRef.current;
+    if (prev.length > 0 && !reducedMotion) {
+      const overtakes = detectOvertakes(prev, curr);
+      if (overtakes.length > 0) {
+        const newFlash = new Set(flashingCars);
+        overtakes.forEach((o) => newFlash.add(o.overtaker));
+        setFlashingCars(newFlash);
+        setTimeout(() => {
+          setFlashingCars((s) => {
+            const next = new Set(s);
+            overtakes.forEach((o) => next.delete(o.overtaker));
+            return next;
+          });
+        }, 700);
+      }
+      // dust quando carro cruza um checkpoint (curva)
+      const newDust: Array<{ id: string; x: number; y: number }> = [];
+      curr.forEach((c) => {
+        const p = prev.find((x) => x.id === c.id);
+        if (!p) return;
+        for (const cp of CHECKPOINTS) {
+          if (p.progress < cp && c.progress >= cp) {
+            const pos = getPositionOnTrack(cp, 0);
+            newDust.push({ id: `${c.id}-${cp}-${Date.now()}`, x: pos.x, y: pos.y });
+          }
+        }
+      });
+      if (newDust.length > 0) {
+        setDustBursts((d) => [...d, ...newDust]);
+        setTimeout(() => {
+          setDustBursts((d) => d.filter((b) => !newDust.find((nb) => nb.id === b.id)));
+        }, 1200);
+      }
+    }
+    prevSnapshotRef.current = curr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorted.map((c) => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
+
+  // ----- Spotlight do líder -----
+  const leader = sorted[0];
+  const leaderPos = useMemo(
+    () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
+    [leader?.car_id, leader?.progress],
+  );
+
+  // ----- Timing tower (top 3 com gaps) -----
+  const top3 = sorted.slice(0, 3);
+  const leaderProgress = Number(top3[0]?.progress ?? 0);
 
   const transition = reducedMotion
     ? { duration: 0, type: 'tween' as const }
@@ -91,6 +147,7 @@ export function RaceArena({
                 style={car.car_style}
                 showTrail={boostingIds?.has(car.salesperson_id) ?? false}
                 pattern={pattern}
+                overtakeFlash={flashingCars.has(car.car_id)}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
@@ -155,9 +212,99 @@ export function RaceArena({
             </motion.g>
           );
         })}
+
+        {/* Spotlight cinematográfico que segue o líder */}
+        {leaderPos && !reducedMotion && (
+          <motion.circle
+            cx={leaderPos.x}
+            cy={leaderPos.y}
+            r={120}
+            fill="url(#leaderSpotlight)"
+            initial={false}
+            animate={{ cx: leaderPos.x, cy: leaderPos.y }}
+            transition={{ type: 'spring', stiffness: 40, damping: 20 }}
+            pointerEvents="none"
+          />
+        )}
+
+        {/* Dust particles nos checkpoints (curvas) */}
+        <AnimatePresence>
+          {dustBursts.map((burst) => (
+            <g key={burst.id} transform={`translate(${burst.x} ${burst.y})`} pointerEvents="none">
+              {[0, 1, 2, 3].map((i) => {
+                const angle = (i / 4) * Math.PI * 2;
+                const dx = Math.cos(angle) * 18;
+                const dy = Math.sin(angle) * 12 - 8;
+                return (
+                  <motion.circle
+                    key={i}
+                    r={3 + i * 0.5}
+                    fill="hsl(var(--race-runoff))"
+                    filter="url(#dustBlur)"
+                    initial={{ x: 0, y: 0, opacity: 0.7 }}
+                    animate={{ x: dx, y: dy, opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.1, ease: 'easeOut', delay: i * 0.04 }}
+                  />
+                );
+              })}
+            </g>
+          ))}
+        </AnimatePresence>
+
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
+
+      {/* ===== Timing tower (top 3 com gaps, estilo F1) ===== */}
+      {top3.length > 0 && (
+        <div
+          className="absolute top-3 right-3 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-2 shadow-lg"
+          style={{
+            background: 'hsl(var(--background) / 0.72)',
+            minWidth: 168,
+          }}
+        >
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[9px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+              Live Timing
+            </span>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
+            </span>
+          </div>
+          <div className="space-y-1">
+            {top3.map((c, i) => {
+              const gap = i === 0 ? null : leaderProgress - Number(c.progress);
+              const gapStr = gap === null ? 'LEADER' : `+${(gap * 100).toFixed(2)}%`;
+              return (
+                <div key={c.car_id} className="flex items-center gap-2">
+                  <span
+                    className="flex h-4 w-4 items-center justify-center rounded text-[9px] font-black tabular-nums"
+                    style={{
+                      backgroundColor: c.primary_color,
+                      color: c.secondary_color,
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="flex-1 truncate text-[11px] font-bold text-foreground">
+                    {c.salesperson_name?.split(' ')[0]}
+                  </span>
+                  <span
+                    className={`text-[9px] font-mono font-bold tabular-nums ${
+                      i === 0 ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {gapStr}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

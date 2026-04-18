@@ -153,6 +153,82 @@ function Grandstand({ x, y, w, h, vertical = false }: { x: number; y: number; w:
   );
 }
 
+/** Helicóptero de transmissão sobrevoando o circuito em loop lento. */
+function BroadcastHelicopter() {
+  return (
+    <g aria-hidden>
+      {/* sombra projetada na grama (mais sutil, com offset) */}
+      <g style={{ animation: 'race-heli-orbit 28s linear infinite', transformOrigin: '500px 350px' }}>
+        <g transform="translate(380 0)">
+          <ellipse cx={6} cy={20} rx={9} ry={3} fill="rgba(0,0,0,0.22)" filter="url(#dustBlur)" />
+        </g>
+      </g>
+      {/* helicóptero em si */}
+      <g style={{ animation: 'race-heli-orbit 28s linear infinite', transformOrigin: '500px 350px' }}>
+        <g transform="translate(380 0)">
+          {/* cauda */}
+          <rect x={-12} y={-1.2} width={14} height={2.4} rx={1} fill="hsl(var(--race-building-edge))" />
+          {/* corpo */}
+          <ellipse cx={3} cy={0} rx={9} ry={5} fill="hsl(210 75% 50%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
+          {/* cockpit vidro */}
+          <ellipse cx={7} cy={-0.8} rx={3.5} ry={3} fill="hsl(200 30% 18%)" opacity={0.85} />
+          <ellipse cx={6.5} cy={-1.5} rx={1.5} ry={0.7} fill="hsl(0 0% 100%)" opacity={0.45} />
+          {/* skids */}
+          <line x1={-2} y1={4.5} x2={9} y2={4.5} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.7} />
+          {/* rotor principal — gira rápido */}
+          <g style={{ animation: 'race-heli-rotor 0.18s linear infinite', transformOrigin: '3px 0px' }}>
+            <ellipse cx={3} cy={0} rx={18} ry={1.2} fill="hsl(var(--race-checkered-dark))" opacity={0.55} />
+            <ellipse cx={3} cy={0} rx={1.2} ry={18} fill="hsl(var(--race-checkered-dark))" opacity={0.25} />
+          </g>
+          {/* rotor de cauda */}
+          <circle cx={-12} cy={0} r={1.8} fill="hsl(var(--race-checkered-dark))" opacity={0.6} />
+        </g>
+      </g>
+    </g>
+  );
+}
+
+/** Pit Lane: faixa cinza paralela à reta superior com 6 garagens numeradas. */
+function PitLane() {
+  const startX = 240, endX = 760, laneY = 120, laneH = 16;
+  const w = endX - startX;
+  const garageColors = [
+    'hsl(0 75% 52%)', 'hsl(210 75% 52%)', 'hsl(45 92% 55%)',
+    'hsl(140 65% 45%)', 'hsl(280 55% 55%)', 'hsl(28 95% 55%)',
+  ];
+  const garages = 6;
+  const garageW = w / garages;
+  return (
+    <g aria-hidden style={{ filter: 'drop-shadow(2px 3px 2px hsl(var(--race-grass-shadow) / 0.4))' }}>
+      <rect x={startX} y={laneY} width={w} height={laneH} fill="url(#pitLaneGrad)" stroke="hsl(var(--race-asphalt-edge))" strokeWidth={0.6} opacity={0.92} />
+      <line x1={startX} y1={laneY} x2={endX} y2={laneY} stroke="hsl(var(--race-asphalt-edge))" strokeWidth={1.2} strokeDasharray="6 5" opacity={0.85} />
+      {Array.from({ length: garages }).map((_, i) => {
+        const gx = startX + i * garageW;
+        const c = garageColors[i];
+        return (
+          <g key={i}>
+            <rect x={gx + 1} y={laneY + laneH} width={garageW - 2} height={4} fill={c} opacity={0.92} />
+            <rect x={gx + 1} y={laneY + laneH + 4} width={garageW - 2} height={14} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={0.7} />
+            <rect x={gx + 4} y={laneY + laneH + 7} width={garageW - 8} height={9} fill="hsl(var(--race-asphalt))" opacity={0.7} />
+            <text
+              x={gx + garageW / 2}
+              y={laneY + laneH + 13}
+              textAnchor="middle"
+              fontSize={6.5}
+              fontWeight={900}
+              fill="hsl(var(--race-asphalt-edge))"
+              opacity={0.95}
+              style={{ fontFamily: 'system-ui, sans-serif' }}
+            >
+              P{i + 1}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
   const W = TRACK_VIEWBOX.width;
   const H = TRACK_VIEWBOX.height;
@@ -188,10 +264,12 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
     );
   }
 
-  // INFIELD: pit building + torre + paddock + arbustos + árvores pequenas
+  // INFIELD: pit lane + pit building + torre + paddock + arbustos + árvores pequenas + helicóptero
   return (
     <g aria-hidden>
-      {/* Pit building no topo do infield, alinhado horizontalmente */}
+      {/* Pit lane na parte superior do infield, paralela à reta principal */}
+      <PitLane />
+      {/* Pit building no centro do infield, alinhado horizontalmente */}
       <PitBuilding x={380} y={170} w={240} h={50} doors={6} />
       {/* Torre de controle à esquerda do pit */}
       <ControlTower cx={345} cy={195} />
@@ -211,6 +289,9 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
       <Tree cx={760} cy={250} scale={0.55} />
       <Tree cx={250} cy={460} scale={0.6} />
       <Tree cx={760} cy={460} scale={0.6} />
+
+      {/* Helicóptero de transmissão sobrevoando o circuito */}
+      <BroadcastHelicopter />
     </g>
   );
 }

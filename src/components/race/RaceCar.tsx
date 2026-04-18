@@ -9,6 +9,8 @@ interface RaceCarProps {
   showTrail?: boolean;
   /** Padrão visual extra para acessibilidade (colorblind mode). */
   pattern?: 'stripes' | 'dots' | 'checker' | null;
+  /** Quando true, dispara um flash branco + ping circular indicando ultrapassagem. */
+  overtakeFlash?: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ export function RaceCar({
   scale = 1.15,
   showTrail = false,
   pattern = null,
+  overtakeFlash = false,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
@@ -275,6 +278,50 @@ export function RaceCar({
       >
         {number}
       </text>
+
+      {/* ===== Flash de ultrapassagem (sound design visual) ===== */}
+      {overtakeFlash && (
+        <>
+          {/* flash branco breve sobre o corpo */}
+          <motion.rect
+            x={-bodyW / 2}
+            y={-bodyH / 2}
+            width={bodyW}
+            height={bodyH}
+            rx={bodyR}
+            fill="hsl(0 0% 100%)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.85, 0] }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            pointerEvents="none"
+          />
+          {/* ping circular expandindo */}
+          <motion.circle
+            cx={0}
+            cy={0}
+            r={6}
+            fill="none"
+            stroke="hsl(48 95% 60%)"
+            strokeWidth={2}
+            initial={{ r: 6, opacity: 0.95 }}
+            animate={{ r: [6, 32, 48], opacity: [0.95, 0.4, 0] }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            pointerEvents="none"
+          />
+          <motion.circle
+            cx={0}
+            cy={0}
+            r={4}
+            fill="none"
+            stroke="hsl(0 0% 100%)"
+            strokeWidth={1.2}
+            initial={{ r: 4, opacity: 0.85 }}
+            animate={{ r: [4, 22, 36], opacity: [0.85, 0.3, 0] }}
+            transition={{ duration: 0.55, ease: 'easeOut', delay: 0.05 }}
+            pointerEvents="none"
+          />
+        </>
+      )}
     </g>
   );
 }
