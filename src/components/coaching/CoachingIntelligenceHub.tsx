@@ -50,6 +50,7 @@ export function CoachingIntelligenceHub() {
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="opportunities">Oportunidades de Coaching</TabsTrigger>
             <TabsTrigger value="skills">Skill Gap Analyzer</TabsTrigger>
+            <TabsTrigger value="sessions">Sessões 1:1</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-4 space-y-6">
