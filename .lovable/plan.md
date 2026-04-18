@@ -1,28 +1,32 @@
 
-Próxima: **Melhoria #3/20 — Empty States Cinematográficos** quando não há season ativa.
+Próxima: **Melhoria #4/20 — Transição Hub ↔ Pistas com motion shared layout**.
 
 ## Plano
 
 ### Problema atual
-Quando `season` é null, `RaceArenaView` renderiza um aviso simples sem impacto visual. Precisa virar uma cena cinematográfica que motive o admin a criar uma season e oriente o piloto.
+Navegação entre o Hub da Race Arena e as pistas (Closer/SDR) é instantânea, sem transição cinematográfica. Quebra a imersão do "entrar na pista".
 
 ### Solução
-Novo componente `RaceEmptyState.tsx` (~180L) em `src/components/race/`:
-- **Ilustração SVG procedural**: pista vazia em perspectiva com bandeira quadriculada (`CheckeredFlag`) ondulando no horizonte + carro silhueta pontilhado na largada (aguardando)
-- **Headline Sora**: "A pista está silenciosa" / subtítulo Inter explicando estado
-- **Variantes por role**:
-  - `isAdmin`: CTA primário "Iniciar Nova Temporada" → abre `StartSeasonDialog` + secundário "Ir para Admin Console"
-  - piloto: mensagem "Aguardando o gestor abrir a próxima corrida" + botão ghost "Ver histórico de campeões"
-- **Animações framer-motion**: bandeira ondulando contínuo, fade-in sequencial (ilustração → texto → CTAs), partículas de poeira sutis na pista
-- **Decoração**: gradiente radial sutil, padrão de xadrez no rodapé do card, glow em volta da ilustração
+Wrapper de transição reutilizando `PageTransition` + `AnimatePresence` com `mode="wait"`:
 
-### Integração
-- `RaceArenaView.tsx`: substituir o bloco `!season ? (...)` atual por `<RaceEmptyState roleType={roleType} isAdmin={isAdmin} onStartSeason={() => setStartOpen(true)} />`
-- Exportar em `src/components/race/index.ts`
+1. **Identificar Hub e RaceArenaView**: localizar o componente Hub (provavelmente `RaceArenaHub.tsx` ou similar) e confirmar que `RaceArenaView` recebe `roleType` via rota/param.
+2. **Criar `RaceTransitionWrapper.tsx`** (~80L) em `src/components/race/`:
+   - Usa `AnimatePresence mode="wait"` com `key` derivado da rota (`hub` | `closer` | `sdr`)
+   - Animação custom: Hub → Pista = slide horizontal + zoom-in sutil (sensação de entrar na pista) com blur de saída
+   - Pista → Hub = zoom-out + fade (sensação de afastar)
+   - Respeita `prefers-reduced-motion` (fade simples como fallback)
+3. **Aplicar no router**: envolver as rotas `/race-arena`, `/race-arena/closer`, `/race-arena/sdr` com o wrapper, ou aplicar dentro do layout pai dessas rotas.
+4. **Headline animada**: no `RaceArenaHeader`, animar título com `layoutId="race-title"` para shared element transition entre Hub (cards das pistas) e Header da pista escolhida.
+
+### Arquivos
+- **Criar**: `src/components/race/RaceTransitionWrapper.tsx`
+- **Editar**: `src/routes/AppRoutes.tsx` (ou layout específico das rotas race), `src/components/race/RaceArenaHeader.tsx` (adicionar `layoutId`), `src/components/race/index.ts`
+- **Investigar primeiro**: localizar Hub atual e cards de pista para aplicar `layoutId` correspondente
 
 ### Padrões
-- Semantic tokens (sem cores hardcoded), Sora título / Inter corpo, ≤200L, reaproveita `CheckeredFlag` e `Button`
-- A11y: `role="status"`, `aria-live="polite"`, foco gerenciado nos CTAs
+- Semantic tokens, framer-motion spring (stiffness 280, damping 28), ≤200L
+- `prefers-reduced-motion` honrado
+- Sem layout shift; usa `position: relative` no container
 
-### Próximas (preview da fila)
-#4 Transição Hub↔Pistas (motion shared layout) → #5 Painel Próxima Meta no sidebar → #6 Combo Streak indicator → ... até #20.
+### Próximas (preview)
+#5 Painel "Próxima Meta" no sidebar → #6 Combo Streak indicator → #7 Mini-podium no header → #8 Histórico de campeões... até #20.
