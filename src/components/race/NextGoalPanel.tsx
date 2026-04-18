@@ -6,11 +6,14 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { cn } from '@/lib/utils';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 import { useNextGoal } from '@/hooks/race/useNextGoal';
+import { ComboStreakBadge } from './ComboStreakBadge';
 
 interface Props {
   entries: RaceLeaderboardEntry[];
   currentUserSalespersonId?: string;
   goalAmount: number;
+  seasonStart?: string;
+  seasonEnd?: string;
 }
 
 function fmt(n: number) {
@@ -21,7 +24,13 @@ function fmt(n: number) {
   }).format(n);
 }
 
-export function NextGoalPanel({ entries, currentUserSalespersonId, goalAmount }: Props) {
+export function NextGoalPanel({
+  entries,
+  currentUserSalespersonId,
+  goalAmount,
+  seasonStart,
+  seasonEnd,
+}: Props) {
   const goal = useNextGoal(entries, currentUserSalespersonId, goalAmount);
   const animatedGap = useCountUp(goal.gapAmount, { duration: 900 });
   const animatedSeason = useCountUp(goal.seasonProgress, { duration: 900, decimals: 1 });
