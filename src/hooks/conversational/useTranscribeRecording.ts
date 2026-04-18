@@ -62,6 +62,15 @@ export function useTranscribeRecording() {
               qc.invalidateQueries({ queryKey: ["critical-moments", recId] });
               qc.invalidateQueries({ queryKey: ["critical-moments-feed"] });
             }
+            return supabase.functions.invoke("analyze-conversation-metrics", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) {
+              qc.invalidateQueries({ queryKey: ["conversation-metrics", recId] });
+              qc.invalidateQueries({ queryKey: ["conversation-metrics-feed"] });
+            }
           });
       }
     },
