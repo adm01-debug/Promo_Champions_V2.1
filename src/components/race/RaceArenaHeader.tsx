@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Flag } from 'lucide-react';
+import { ArrowLeft, Flag, Warehouse } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -126,9 +126,15 @@ export const RaceArenaHeader: FC<Props> = ({
             </div>
           </div>
 
-          {actions && (
-            <div className="flex flex-wrap items-center gap-2">{actions}</div>
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline" className="gap-2">
+              <Link to="/race-arena/garage" aria-label="Abrir Garagem">
+                <Warehouse className="h-4 w-4" />
+                Garagem
+              </Link>
+            </Button>
+            {actions}
+          </div>
         </div>
 
         {podiumEntries.length > 0 && <MiniPodium entries={podiumEntries} />}
