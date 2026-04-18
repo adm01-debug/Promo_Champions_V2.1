@@ -4,7 +4,7 @@ import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
-import { MiniMap } from './MiniMap';
+import { RaceMiniMap } from './RaceMiniMap';
 import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
@@ -18,6 +18,11 @@ import { LeaderGapIndicator } from './LeaderGapIndicator';
 import { SlipstreamLines } from './SlipstreamLines';
 import { CarExhaust } from './CarExhaust';
 import { RaceCountdownBadge } from './RaceCountdownBadge';
+import { RaceEventTicker, type RaceTickerEvent } from './RaceEventTicker';
+import { DRSZoneOverlay } from './DRSZoneOverlay';
+import { LeaderNeonTrail } from './LeaderNeonTrail';
+import { LapCounterBadge } from './LapCounterBadge';
+import { useScreenShake } from '@/hooks/race/useScreenShake';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
