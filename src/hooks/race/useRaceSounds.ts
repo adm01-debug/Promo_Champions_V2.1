@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'race_sound_muted';
 
-export type RaceSoundType = 'boost' | 'overtake' | 'checkpoint' | 'victory' | 'countdown' | 'pitstop' | 'powerup';
+export type RaceSoundType = 'boost' | 'overtake' | 'checkpoint' | 'victory' | 'countdown' | 'pitstop' | 'powerup' | 'leader_takeover' | 'combo_tier' | 'season_end';
 
 /**
  * Sons sintéticos via Web Audio API (sem arquivos externos).
@@ -125,7 +125,52 @@ export function useRaceSounds() {
         env.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
         osc.start(now); osc.stop(now + 0.4);
         break;
-    }
+      case 'leader_takeover': {
+        // fanfarra curta de 3 notas ascendentes (P1 takeover)
+        osc.disconnect();
+        const notes = [659, 880, 1175];
+        notes.forEach((f, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sawtooth';
+          o.frequency.value = f;
+          o.connect(g); g.connect(master);
+          const t = now + i * 0.08;
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.45, t + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+          o.start(t); o.stop(t + 0.25);
+        });
+        break;
+      }
+      case 'combo_tier':
+        // chime brilhante (combo tier-up)
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1320, now);
+        osc.frequency.linearRampToValueAtTime(1760, now + 0.18);
+        env.gain.setValueAtTime(0.0001, now);
+        env.gain.exponentialRampToValueAtTime(0.5, now + 0.02);
+        env.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+        osc.start(now); osc.stop(now + 0.35);
+        break;
+      case 'season_end': {
+        // cinemática longa: 4 notas + queda final
+        osc.disconnect();
+        const notes = [392, 523, 659, 1047];
+        notes.forEach((f, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'triangle';
+          o.frequency.value = f;
+          o.connect(g); g.connect(master);
+          const t = now + i * 0.22;
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.55, t + 0.03);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+          o.start(t); o.stop(t + 0.6);
+        });
+        break;
+      }
   }, [muted, ensureCtx]);
 
   useEffect(() => () => {
