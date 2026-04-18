@@ -1,48 +1,49 @@
 
-Pipeline Coverage (2/4) entregue. Próxima atômica do Revenue Intelligence Hub.
+Revenue Intelligence 3/4 entregue. Última atômica do bloco.
 
-**Revenue Intelligence — 3/4: Win Probability Calibrator**
+**Revenue Intelligence — 4/4: Quota Attainment Predictor (Avançado)**
 
-Calibra a probabilidade de fechamento de cada deal aberto comparando a probabilidade declarada (`stage weight` ou `probability` manual) com a taxa real histórica de conversão por estágio/segmento/owner. Detecta deals "super-otimistas" (probabilidade declarada >> real) e "subestimados", e emite probabilidade calibrada via regressão logística simples + isotonic-like binning.
+Já existe um `QuotaAttainmentPredictor` básico. Esta atômica eleva-o a 10/10: simulação Monte Carlo, projeção end-of-period com intervalos de confiança (P10/P50/P90), recomendações de ação por vendedor e alertas automáticos.
 
 ## Entregáveis
 
 ### 1. Migration
-- `win_probability_calibrations`: `id`, `sale_id FK UNIQUE`, `stage text`, `segment text`, `owner_id uuid`, `declared_probability numeric`, `historical_win_rate numeric`, `calibrated_probability numeric`, `calibration_delta numeric` (gen: calibrated - declared), `confidence text` (low|medium|high), `flag text` (overconfident|underconfident|aligned), `sample_size int`, `computed_at timestamptz`.
-- `win_calibration_buckets`: `id`, `stage text`, `segment text`, `bucket_min numeric`, `bucket_max numeric`, `actual_win_rate numeric`, `sample_size int`, `computed_at timestamptz`. Único `(stage, segment, bucket_min)`.
-- RLS read authenticated, write admin/manager. Realtime + índices `(sale_id)`, `(flag)`, `(stage, segment)`.
+- `quota_attainment_forecasts`: `id`, `salesperson_id`, `period_start`, `period_end`, `quota numeric`, `closed numeric`, `weighted_open numeric`, `pace_per_day numeric`, `days_remaining int`, `p10 numeric`, `p50 numeric`, `p90 numeric`, `attainment_probability numeric`, `risk_level text` (safe|on_track|at_risk|critical), `simulations int`, `computed_at timestamptz`. Único `(salesperson_id, period_start)`.
+- `quota_attainment_actions`: `id`, `forecast_id FK`, `action_type` (`close_deal|generate_pipeline|increase_ticket|accelerate_stage`), `title`, `description`, `expected_impact numeric`, `priority`, `created_at`.
+- RLS read authenticated, write admin/manager. Realtime + índices.
 
-### 2. Edge function (verify_jwt=true)
-- `calibrate-win-probabilities`:
-  - Para cada combinação `(stage, segment)` com ≥ 20 deals fechados nos últimos 180d, calcula `actual_win_rate = won / (won+lost)` e cria buckets de probabilidade declarada (0-20, 20-40, 40-60, 60-80, 80-100) com `actual_win_rate` por bucket → upsert `win_calibration_buckets`.
-  - Para cada deal aberto: lookup do bucket correspondente; `calibrated_probability = bucket.actual_win_rate`; `flag = overconfident` se `declared - calibrated > 0.15`, `underconfident` se `calibrated - declared > 0.15`, senão `aligned`; `confidence` baseado em `sample_size` (≥100 high, ≥30 medium, senão low) → upsert `win_probability_calibrations`.
+### 2. Edge function `predict-quota-attainment` (verify_jwt=true)
+- Para cada vendedor ativo no período corrente:
+  - `closed` = soma de `sales.completed` no período.
+  - `weighted_open` = soma de `amount * stage_weight` para deals abertos com close esperado no período.
+  - `pace` = closed / dias_decorridos.
+  - Monte Carlo (1000 simulações): para cada deal aberto, sample Bernoulli(p=stage_weight) e adiciona `amount` se ganho. Adiciona projeção de novos deals via `pace * dias_restantes * fator_aleatório(0.7-1.3)`.
+  - Calcula P10/P50/P90, `attainment_probability = P(total ≥ quota)`, `risk_level` por threshold.
+  - Gera 1-3 ações via Lovable AI (gemini-2.5-flash) com base no gap.
 
-### 3. Hooks `src/hooks/revenue/useWinProbabilityCalibrator.ts`
-- `useCalibrations(filters?)` — calibrations + join sale_id.
-- `useCalibrationBuckets(stage?, segment?)` — buckets para curva.
-- `useCalibrationSummary()` — KPIs: total overconfident, underconfident, gap médio, accuracy global.
-- `useRunCalibration()` — mutation.
+### 3. Hooks `src/hooks/revenue/useQuotaAttainmentPredictor.ts`
+- `useQuotaForecasts(filters?)`, `useQuotaActions(forecastId?)`, `useQuotaSummary()` (top 3 KPIs), `useRunQuotaPrediction()`.
 
-### 4. Componentes `src/components/revenue-intelligence/calibration/`
-- `CalibrationSummaryCard.tsx` (≤180L) — 4 KPIs + ação refresh.
-- `CalibrationCurveChart.tsx` (≤180L) — line chart: declared (diagonal) vs actual por bucket.
-- `OverconfidentDealsTable.tsx` (≤200L) — top 20 deals super-otimistas (gap descendente).
-- `CalibrationFlagDistribution.tsx` (≤140L) — donut overconfident/aligned/underconfident.
-- `WinProbabilityCalibrationPanel.tsx` (container).
-- `calibrationHelpers.ts` — labels flag, cores, formatadores.
+### 4. Componentes `src/components/revenue-intelligence/quota/`
+- `QuotaForecastSummary.tsx` — KPIs (% safe, % crítico, gap total, prob. média).
+- `QuotaProbabilityChart.tsx` — bar/scatter por vendedor com bandas P10–P90.
+- `QuotaRiskHeatmap.tsx` — heatmap risco por vendedor.
+- `QuotaActionsPanel.tsx` — recomendações IA agrupadas.
+- `QuotaPredictorAdvancedPanel.tsx` (container) — substitui ou complementa o atual.
+- `quotaPredictorAdvancedHelpers.ts` — formatadores e cores de risco.
 
 ### 5. Integração
-- Nova aba "Calibração de Win" em `RevenueIntelligenceHub.tsx`.
-- `supabase/config.toml`: bloco `verify_jwt = true` para `calibrate-win-probabilities`.
+- Aba "Quota Predictor" (existente) recebe novo container avançado.
+- `supabase/config.toml`: `verify_jwt = true` para `predict-quota-attainment`.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após calibrate: KPIs preenchem, curva mostra desvio do ideal, tabela lista deals super-otimistas.
+- Após run: KPIs preenchem, chart com bandas P10–P90, heatmap com cores semânticas, ações IA aparecem.
 
 ## Arquivos
-- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
+- **Migration**: 1.
 - **Edge function**: 1.
-- **Criar**: 4 hooks (1 arquivo), 5 componentes + 1 helper.
+- **Criar**: 1 hook, 5 componentes + 1 helper.
 - **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo para **4/4: Quota Attainment Predictor**, fechando Revenue Intelligence em 10/10.
+Após esta entrega, **Revenue Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do roadmap mestre.
