@@ -264,6 +264,7 @@ export function RaceArena({
       if (newLeaderId && prevLeaderIdRef.current && newLeaderId !== prevLeaderIdRef.current) {
         const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
         pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
+        if (lname) pushTickerEvent(`${lname.split(' ')[0]} assumiu P1`, '👑');
       }
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
