@@ -4,10 +4,12 @@ import { Progress } from '@/components/ui/progress';
 import { Trophy, Medal, Award, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import { NextGoalPanel } from './NextGoalPanel';
 
 interface Props {
   entries: RaceLeaderboardEntry[];
   goalAmount: number;
+  currentUserSalespersonId?: string;
 }
 
 const POSITION_ICON = [
@@ -20,12 +22,19 @@ function fmt(n: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
 }
 
-export function RaceLeaderboardSidebar({ entries, goalAmount }: Props) {
+export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespersonId }: Props) {
   const leader = entries[0];
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 space-y-3">
+        {currentUserSalespersonId && (
+          <NextGoalPanel
+            entries={entries}
+            currentUserSalespersonId={currentUserSalespersonId}
+            goalAmount={goalAmount}
+          />
+        )}
         <CardTitle className="flex items-center gap-2 text-lg">
           <Flag className="w-5 h-5 text-primary" />
           Ranking Champions
