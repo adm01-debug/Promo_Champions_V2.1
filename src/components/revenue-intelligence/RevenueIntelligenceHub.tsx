@@ -22,10 +22,12 @@ import { DealHealthHub } from "@/components/deal-intelligence/health/DealHealthH
 import { WinLossHub } from "@/components/deal-intelligence/winloss/WinLossHub";
 import { LeadRoutingHub } from "@/components/lead-routing/LeadRoutingHub";
 import { ConversationHub } from "@/components/conversation-intelligence/ConversationHub";
+import { PipelinePulseHub } from "@/components/pipeline-pulse/PipelinePulseHub";
 
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
+  const [activeTab, setActiveTab] = useState("comando");
   const { data, isLoading } = useRevenueIntelligenceHub(90, dimension);
   const inspection = useRunPipelineInspection();
 
@@ -66,8 +68,9 @@ export const RevenueIntelligenceHub: FC = () => {
         />
       </div>
 
-      <Tabs defaultValue="forecast-accuracy">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="comando">⚡ Comando</TabsTrigger>
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
           <TabsTrigger value="win-loss">Win/Loss IA</TabsTrigger>
@@ -83,6 +86,9 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
+        <TabsContent value="comando" className="mt-4">
+          <PipelinePulseHub onNavigateTab={setActiveTab} />
+        </TabsContent>
         <TabsContent value="forecast-accuracy" className="mt-4 space-y-4">
           <ForecastAccuracySummary />
           <div className="grid gap-4 lg:grid-cols-2">
