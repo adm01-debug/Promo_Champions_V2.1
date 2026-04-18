@@ -12,6 +12,7 @@ import { AIForecastPanel } from "./AIForecastPanel";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
 import { WinProbabilityCalibratorPanel } from "./calibration/WinProbabilityCalibratorPanel";
 import { QuotaAttainmentPredictor } from "./quota/QuotaAttainmentPredictor";
+import { QuotaPredictorAdvancedPanel } from "./quota/QuotaPredictorAdvancedPanel";
 import { ForecastAccuracySummary } from "./forecast/ForecastAccuracySummary";
 import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
 import { ForecastBiasChart } from "./forecast/ForecastBiasChart";
