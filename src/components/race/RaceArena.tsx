@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
 import { MiniMap } from './MiniMap';
+import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
+import { ReplayButton } from './ReplayButton';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
-  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo,
+  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
 } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
