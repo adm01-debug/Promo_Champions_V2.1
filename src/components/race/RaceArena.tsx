@@ -514,6 +514,17 @@ export function RaceArena({
                   />
                 </>
               )}
+              {/* Sombra sob o carro — elipse escura translúcida para ancorar no asfalto */}
+              <ellipse
+                cx={1.5}
+                cy={4}
+                rx={15}
+                ry={4.5}
+                fill="hsl(0 0% 0%)"
+                opacity={0.28}
+                style={{ filter: 'blur(1.5px)' }}
+                pointerEvents="none"
+              />
               <RaceCar
                 number={car.car_number}
                 primaryColor={car.primary_color}
