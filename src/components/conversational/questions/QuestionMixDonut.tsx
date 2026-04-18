@@ -1,6 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { categoryHsl, categoryLabel, type QuestionAnalysis, type QuestionCategory } from "./questionHelpers";
-import type { RechartsTooltipProps } from "@/types/recharts";
 
 interface Props {
   analysis: QuestionAnalysis;

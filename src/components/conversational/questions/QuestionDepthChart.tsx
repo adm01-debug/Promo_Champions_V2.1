@@ -1,7 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
 import type { CallQuestion } from "./questionHelpers";
 import { depthLabel } from "./questionHelpers";
-import type { RechartsTooltipProps } from "@/types/recharts";
 
 interface Props {
   questions: CallQuestion[];
