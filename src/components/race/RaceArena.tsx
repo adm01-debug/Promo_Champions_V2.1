@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
-import { getPositionOnTrack } from './raceTrackHelpers';
+import { getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
@@ -33,6 +33,62 @@ export function RaceArena({
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
   const [hoveredCar, setHoveredCar] = useState<string | null>(null);
+
+  // ----- Detecção de ultrapassagens (flash + dust) -----
+  const prevSnapshotRef = useRef<Array<{ id: string; progress: number }>>([]);
+  const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
+  const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
+
+  useEffect(() => {
+    const curr = sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) }));
+    const prev = prevSnapshotRef.current;
+    if (prev.length > 0 && !reducedMotion) {
+      const overtakes = detectOvertakes(prev, curr);
+      if (overtakes.length > 0) {
+        const newFlash = new Set(flashingCars);
+        overtakes.forEach((o) => newFlash.add(o.overtaker));
+        setFlashingCars(newFlash);
+        setTimeout(() => {
+          setFlashingCars((s) => {
+            const next = new Set(s);
+            overtakes.forEach((o) => next.delete(o.overtaker));
+            return next;
+          });
+        }, 700);
+      }
+      // dust quando carro cruza um checkpoint (curva)
+      const newDust: Array<{ id: string; x: number; y: number }> = [];
+      curr.forEach((c) => {
+        const p = prev.find((x) => x.id === c.id);
+        if (!p) return;
+        for (const cp of CHECKPOINTS) {
+          if (p.progress < cp && c.progress >= cp) {
+            const pos = getPositionOnTrack(cp, 0);
+            newDust.push({ id: `${c.id}-${cp}-${Date.now()}`, x: pos.x, y: pos.y });
+          }
+        }
+      });
+      if (newDust.length > 0) {
+        setDustBursts((d) => [...d, ...newDust]);
+        setTimeout(() => {
+          setDustBursts((d) => d.filter((b) => !newDust.find((nb) => nb.id === b.id)));
+        }, 1200);
+      }
+    }
+    prevSnapshotRef.current = curr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorted.map((c) => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
+
+  // ----- Spotlight do líder -----
+  const leader = sorted[0];
+  const leaderPos = useMemo(
+    () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
+    [leader?.car_id, leader?.progress],
+  );
+
+  // ----- Timing tower (top 3 com gaps) -----
+  const top3 = sorted.slice(0, 3);
+  const leaderProgress = Number(top3[0]?.progress ?? 0);
 
   const transition = reducedMotion
     ? { duration: 0, type: 'tween' as const }
