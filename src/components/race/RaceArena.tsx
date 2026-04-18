@@ -28,6 +28,7 @@ import { PitLane } from './PitLane';
 import { RaceMuteToggle } from './RaceMuteToggle';
 import { RaceReplayButton } from './RaceReplayButton';
 import { RaceEasterEggs } from './RaceEasterEggs';
+import { RankBadge } from './RankBadge';
 import { useScreenShake } from '@/hooks/race/useScreenShake';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
 import { useRaceReplay } from '@/hooks/race/useRaceReplay';
@@ -39,6 +40,7 @@ import {
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
+import { useRaceCalm } from '@/contexts/RaceCalmContext';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 interface RaceArenaProps {
@@ -77,6 +79,9 @@ export function RaceArena({
   const reducedMotion = useReducedMotion();
   // Frente A — modo de visualização (default 'focus' = decluttered).
   const viewMode = useRaceViewMode();
+  // Frente D — modo Calm: desliga partículas/shake/fogos/neon, mantém info.
+  const { calm } = useRaceCalm();
+  const noFx = reducedMotion || calm;
   const carIds = sorted.map((c) => c.car_id);
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
@@ -978,15 +983,7 @@ export function RaceArena({
               const deltaIcon = delta > 0 ? '▲' : delta < 0 ? '▼' : '–';
               return (
                 <div key={c.car_id} className="flex items-center gap-2">
-                  <span
-                    className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-black tabular-nums"
-                    style={{
-                      backgroundColor: c.primary_color,
-                      color: c.secondary_color,
-                    }}
-                  >
-                    {i + 1}
-                  </span>
+                  <RankBadge rank={i + 1} />
                   <span className="flex-1 truncate text-[11px] font-medium text-foreground/90">
                     {c.salesperson_name?.split(' ')[0]}
                   </span>
