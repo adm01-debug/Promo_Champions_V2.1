@@ -1,37 +1,43 @@
 
-Próxima: **Melhoria #11/20 — Confetti Burst em P1** (celebração ao assumir liderança).
+Próxima: **Melhoria #12/20 — Sound Effects Polish & Contextual Audio Engine**.
 
 ## Problema
-Quando um piloto assume P1 da season, não há explosão visual celebrativa. O momento "tomei a liderança!" passa em silêncio — falta o gatilho dopaminérgico que define games competitivos.
+Os sons existem (`useRaceSounds`) mas são disparados de forma esparsa: só `victory` (takeover) e `overtake` estão ativos. Eventos importantes (checkpoint atingido, boost de combo, countdown final) passam mudos. Falta uma camada que conecte eventos do jogo aos sons já implementados.
 
 ## Solução
-Disparar burst de confetti no instante em que o usuário logado entra em P1, com cores do carro do piloto e som opcional.
+Criar um hook orquestrador `useRaceAudioEngine` que escuta mudanças de estado da arena e dispara o som certo no momento certo, com debounce para evitar spam.
 
-### Hook `useLeaderTakeoverDetector.ts` (~70L) em `src/hooks/race/`
-- Recebe `entries: RaceLeaderboardEntry[]` + `currentUserSalespersonId`
-- Mantém ref do P1 anterior (`prevLeaderIdRef`)
-- Quando `entries[0].salesperson_id === currentUserSalespersonId` E mudou (não era antes) → emite evento `{ id, primaryColor, secondaryColor, timestamp }`
-- Ignora primeiro snapshot (evita falso positivo no mount)
-- Retorna `{ takeover: TakeoverEvent | null, clear: () => void }`
+### Hook `useRaceAudioEngine.ts` (~120L) em `src/hooks/race/`
+- Recebe: `{ leaderboard, mySalespersonId, comboCount, secondsToEnd, play, muted }`
+- Usa refs para detectar transições:
+  - `prevComboRef`: dispara `powerup` quando combo cresce (≥3)
+  - `prevMyProgressRef`: dispara `checkpoint` quando usuário cruza múltiplo de 25% (25/50/75/100)
+  - `prevSecondsRef`: dispara `countdown` nos últimos 5s da season (1x por segundo)
+  - `prevMyRankRef`: dispara `boost` quando usuário sobe ≥1 posição (separado do overtake global)
+- Debounce 800ms entre sons do mesmo tipo
+- Respeita `muted` (early return)
+- Sem retorno (efeito puro)
 
-### Componente `LeaderTakeoverCelebration.tsx` (~120L) em `src/components/race/`
-- Usa `canvas-confetti` (já no projeto) ou implementação manual com framer-motion
-- Verifica via `code--search_files` se `canvas-confetti` está instalado; se não, usar partículas SVG animadas
-- Burst central + 2 laterais com `colors: [primaryColor, secondaryColor, hsl(var(--warning))]`
-- Banner overlay 2.5s: "🏆 LIDERANÇA ASSUMIDA!" Sora black + nome do piloto
-- Auto-clear após animação; respeita `prefers-reduced-motion` (skip burst, só banner)
-- Som opcional via toggle existente (`fanfare` curto)
+### Componente `RaceAudioPreferences.tsx` (~80L) em `src/components/race/`
+- Pequeno popover acessível pelo `RaceSoundToggle` (ou ao lado dele)
+- 6 toggles individuais por tipo de som (boost, checkpoint, etc)
+- Persiste em `localStorage` chave `race_sound_prefs`
+- Estado padrão: todos ligados
+
+### Refactor `useRaceSounds.ts` (mínimo)
+- Adicionar leitura opcional de prefs por tipo: `play(type)` consulta `localStorage` antes de tocar
+- Manter compatibilidade total com chamadas existentes
 
 ### Integração
-- `RaceArenaView.tsx`: instanciar `useLeaderTakeoverDetector(leaderboard, currentUserSalespersonId)` e renderizar `<LeaderTakeoverCelebration takeover={takeover} onClear={clear} />` no nível root, junto do `OvertakeHighlight`
-- Garantir que não conflite visualmente com overtake banner (z-index e posição diferentes — celebração ao centro, overtake top)
+- `RaceArenaView.tsx`: instanciar `useRaceAudioEngine({...})` perto dos demais detectores
+- Adicionar `<RaceAudioPreferences />` no header da arena, agrupado com `RaceSoundToggle`
 
 ### Arquivos
-- **Criar**: `src/hooks/race/useLeaderTakeoverDetector.ts`, `src/components/race/LeaderTakeoverCelebration.tsx`
-- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/index.ts`
+- **Criar**: `src/hooks/race/useRaceAudioEngine.ts`, `src/components/race/RaceAudioPreferences.tsx`
+- **Editar**: `src/hooks/race/useRaceSounds.ts` (mínimo), `src/pages/RaceArenaView.tsx`, `src/components/race/RaceArenaHeader.tsx` (adicionar prefs ao lado do toggle), `src/components/race/index.ts`
 
 ### Padrões
-Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, framer-motion com `useReducedMotion`, sem cores hardcoded (exceto `primaryColor`/`secondaryColor` do car que são dados dinâmicos).
+Semantic tokens, Sora/Inter, ≤200L, strict TS, `useRef` para debounce, sem deps externas, respeita `muted` global e prefs por tipo.
 
 ### Próximas (preview)
-#12 Sound effects polish → #13 Pit Stop tactical pause → #14 Weather/track conditions → ... até #20.
+#13 Pit Stop tactical pause → #14 Weather/track conditions → #15 Ghost car (PR pessoal) → ... até #20.
