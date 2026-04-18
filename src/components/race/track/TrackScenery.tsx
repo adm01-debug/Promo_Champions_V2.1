@@ -247,12 +247,15 @@ function PitLane() {
   );
 }
 
-export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
+export function TrackScenery({
+  layer,
+  yellowFlag = false,
+  waveTrigger = 0,
+}: { layer: 'outer' | 'inner'; yellowFlag?: boolean; waveTrigger?: number }) {
   const W = TRACK_VIEWBOX.width; // 600
   const H = TRACK_VIEWBOX.height; // 1000
 
   if (layer === 'outer') {
-    // Árvores nos cantos e bordas externas, evitando a pista (margem ~95px).
     const trees: Array<[number, number, number]> = [
       [40, 40, 1.05], [120, 25, 0.85], [W - 40, 40, 1.0], [W - 120, 25, 0.9],
       [40, H - 40, 1.1], [120, H - 28, 0.9], [W - 40, H - 40, 1.0], [W - 120, H - 28, 0.95],
@@ -263,20 +266,16 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
     ];
     return (
       <g aria-hidden>
-        {/* Arquibancada superior (acima da reta de cima, fora da pista) */}
-        <Grandstand x={200} y={30} w={200} h={36} />
-        {/* Bandeiras de patrocinador penduradas acima da arquibancada */}
+        <Grandstand x={200} y={30} w={200} h={36} waveTrigger={waveTrigger} />
         <SponsorBunting x={200} y={24} w={200} count={10} />
-        {/* Arquibancada inferior */}
-        <Grandstand x={200} y={H - 66} w={200} h={36} />
-        {/* Arquibancadas laterais (verticais) */}
-        <Grandstand x={20} y={420} w={26} h={160} vertical />
-        <Grandstand x={W - 46} y={420} w={26} h={160} vertical />
-        {/* Marshal posts nas 4 curvas principais */}
-        <MarshalPost cx={130} cy={130} />
-        <MarshalPost cx={W - 130} cy={130} flagColor="hsl(0 75% 52%)" />
-        <MarshalPost cx={130} cy={H - 130} flagColor="hsl(45 92% 55%)" />
-        <MarshalPost cx={W - 130} cy={H - 130} />
+        <Grandstand x={200} y={H - 66} w={200} h={36} waveTrigger={waveTrigger} />
+        <Grandstand x={20} y={420} w={26} h={160} vertical waveTrigger={waveTrigger} />
+        <Grandstand x={W - 46} y={420} w={26} h={160} vertical waveTrigger={waveTrigger} />
+        {/* Marshal posts: trocam para amarelo durante yellowFlag, com delays escalonados */}
+        <MarshalPost cx={130}     cy={130}     yellowFlag={yellowFlag} delayMs={0}   />
+        <MarshalPost cx={W - 130} cy={130}     yellowFlag={yellowFlag} delayMs={120} flagColor="hsl(0 75% 52%)" />
+        <MarshalPost cx={130}     cy={H - 130} yellowFlag={yellowFlag} delayMs={240} flagColor="hsl(45 92% 55%)" />
+        <MarshalPost cx={W - 130} cy={H - 130} yellowFlag={yellowFlag} delayMs={360} />
         {trees.map(([x, y, s], i) => (
           <Tree key={i} cx={x} cy={y} scale={s} />
         ))}
