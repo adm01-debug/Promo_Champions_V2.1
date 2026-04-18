@@ -28,4 +28,6 @@ export { OvertakeHighlight } from './OvertakeHighlight';
 export { PredictedRankBadge } from './PredictedRankBadge';
 export { LeaderTakeoverCelebration } from './LeaderTakeoverCelebration';
 export { PitStopPanel } from './PitStopPanel';
+export { TrackConditionsBadge } from './TrackConditionsBadge';
+export { TrackWeatherOverlay } from './TrackWeatherOverlay';
 export { fmtCurrency, fmtCompact } from './raceFormatters';

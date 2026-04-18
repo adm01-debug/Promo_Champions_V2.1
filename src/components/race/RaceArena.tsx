@@ -8,13 +8,14 @@ interface RaceArenaProps {
   cars: RaceLeaderboardEntry[];
   boostingIds?: Set<string>;
   overlayChildren?: React.ReactNode;
+  weatherOverlay?: React.ReactNode;
 }
 
-export function RaceArena({ cars, boostingIds, overlayChildren }: RaceArenaProps) {
+export function RaceArena({ cars, boostingIds, overlayChildren, weatherOverlay }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
 
   return (
-    <div className="w-full h-full bg-gradient-to-b from-sky-200 to-sky-100 dark:from-slate-800 dark:to-slate-900 rounded-xl overflow-hidden border-2 border-border shadow-2xl">
+    <div className="relative w-full h-full bg-gradient-to-b from-sky-200 to-sky-100 dark:from-slate-800 dark:to-slate-900 rounded-xl overflow-hidden border-2 border-border shadow-2xl">
       <RaceTrack>
         {sorted.map((car, idx) => {
           // Espalha levemente as raias para evitar sobreposição
@@ -53,6 +54,7 @@ export function RaceArena({ cars, boostingIds, overlayChildren }: RaceArenaProps
         })}
         {overlayChildren}
       </RaceTrack>
+      {weatherOverlay}
     </div>
   );
 }
