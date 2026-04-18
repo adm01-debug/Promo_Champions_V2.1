@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { CarLiveryOverlay } from './CarLiveryOverlay';
+import type { LiveryPattern } from './raceColors';
 
 interface RaceCarProps {
   number: number;
@@ -23,6 +25,12 @@ interface RaceCarProps {
   fastestSector?: boolean;
   /** Quando true, exibe linhas brancas de turbulência aerodinâmica saindo da traseira. */
   aeroTurbulence?: boolean;
+  /** Padrão de pintura (livery) renderizado sobre o chassi. */
+  livery?: LiveryPattern;
+  /** Cor extra usada por algumas liveries (chamas, listras Pride bi). */
+  liveryAccent?: string;
+  /** ID único para clipPath da livery (use car_id ou similar). */
+  liveryUid?: string;
 }
 
 /**
@@ -45,6 +53,9 @@ export function RaceCar({
   pitStop = false,
   fastestSector = false,
   aeroTurbulence = false,
+  livery = 'solid',
+  liveryAccent,
+  liveryUid,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
@@ -250,6 +261,20 @@ export function RaceCar({
         pointerEvents="none"
         opacity={0.85}
       />
+
+      {/* overlay de livery (chamas, listras, padrões Pride...) */}
+      {livery && livery !== 'solid' && (
+        <CarLiveryOverlay
+          pattern={livery}
+          bodyW={bodyW}
+          bodyH={bodyH}
+          bodyR={bodyR}
+          primary={primaryColor}
+          secondary={secondaryColor}
+          accent={liveryAccent}
+          uid={liveryUid ?? `${number}-${primaryColor.replace('#', '')}`}
+        />
+      )}
 
       {/* overlay de padrão (acessibilidade colorblind) */}
       {patternFillId && (
