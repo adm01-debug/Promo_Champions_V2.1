@@ -18,3 +18,4 @@ export { MonthlyChampionOverlay } from './MonthlyChampionOverlay';
 export { RaceArenaHeader } from './RaceArenaHeader';
 export { RaceArenaSkeleton } from './RaceArenaSkeleton';
 export { RaceEmptyState } from './RaceEmptyState';
+export { RaceTransitionWrapper } from './RaceTransitionWrapper';

@@ -5,6 +5,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import Index from "@/pages/Index";
+import { RaceTransitionWrapper } from "@/components/race/RaceTransitionWrapper";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
 import {
   // Auth & System
