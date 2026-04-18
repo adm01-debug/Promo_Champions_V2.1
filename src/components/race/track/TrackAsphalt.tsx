@@ -1,79 +1,69 @@
-import {
-  TRACK_CENTER, TRACK_RX_INNER, TRACK_RX_OUTER, TRACK_RY_INNER, TRACK_RY_OUTER,
-  CHECKPOINTS, getPositionOnTrack,
-} from '../raceTrackHelpers';
+import { TRACK_PATH_D, CHECKPOINTS, getPositionOnTrack } from '../raceTrackHelpers';
 
 /**
- * Asfalto top-down flat: run-off bege externo + asfalto cinza + bordas brancas
- * + linha central tracejada (separa 2 raias). Estilo ilustração vetorial limpa.
+ * Asfalto top-down flat baseado em path serpenteante:
+ * camadas de stroke do mais largo (run-off) ao mais fino (linha central tracejada).
  */
-export function TrackAsphalt() {
-  const cx = TRACK_CENTER.x;
-  const cy = TRACK_CENTER.y;
-  const runoff = 18; // largura do run-off bege
+const TRACK_WIDTH = 64;     // largura do asfalto
+const RUNOFF_EXTRA = 18;    // run-off bege em volta
 
+export function TrackAsphalt() {
   return (
     <g aria-hidden>
-      {/* run-off bege externo */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={TRACK_RX_OUTER + runoff} ry={TRACK_RY_OUTER + runoff}
-        fill="#d4c5a0"
+      {/* run-off bege */}
+      <path
+        d={TRACK_PATH_D}
+        fill="none"
+        stroke="#d4c5a0"
+        strokeWidth={TRACK_WIDTH + RUNOFF_EXTRA * 2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      {/* run-off bege interno (espelhado) */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={TRACK_RX_INNER - runoff} ry={TRACK_RY_INNER - runoff}
-        fill="#5fa358"
+      {/* asfalto cinza */}
+      <path
+        d={TRACK_PATH_D}
+        fill="none"
+        stroke="#9ca3af"
+        strokeWidth={TRACK_WIDTH}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-
-      {/* asfalto base cinza claro */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={TRACK_RX_OUTER} ry={TRACK_RY_OUTER}
-        fill="#9ca3af"
-      />
-
-      {/* miolo verde (revela gramado) */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={TRACK_RX_INNER} ry={TRACK_RY_INNER}
-        fill="#5fa358"
-      />
-
-      {/* borda branca externa do asfalto */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={TRACK_RX_OUTER} ry={TRACK_RY_OUTER}
+      {/* borda branca externa */}
+      <path
+        d={TRACK_PATH_D}
         fill="none"
         stroke="#ffffff"
-        strokeWidth={3}
+        strokeWidth={TRACK_WIDTH + 4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={0.001}
       />
-      {/* borda branca interna do asfalto */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={TRACK_RX_INNER} ry={TRACK_RY_INNER}
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth={3}
-      />
-
-      {/* linha central tracejada branca (separa 2 raias) */}
-      <ellipse
-        cx={cx} cy={cy}
-        rx={(TRACK_RX_OUTER + TRACK_RX_INNER) / 2}
-        ry={(TRACK_RY_OUTER + TRACK_RY_INNER) / 2}
+      {/* duas bordas brancas finas via stroke-only com pintura por cima */}
+      <path
+        d={TRACK_PATH_D}
         fill="none"
         stroke="#ffffff"
         strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ filter: 'none' }}
+        transform="translate(0,0)"
+      />
+      {/* linha central tracejada */}
+      <path
+        d={TRACK_PATH_D}
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth={2}
         strokeDasharray="14 10"
+        strokeLinecap="butt"
         opacity={0.95}
       />
 
-      {/* checkpoints discretos como marcas brancas atravessando a pista */}
+      {/* checkpoints discretos atravessando a pista */}
       {CHECKPOINTS.map((p) => {
-        const inner = getPositionOnTrack(p, -((TRACK_RY_OUTER - TRACK_RY_INNER) / 2));
-        const outer = getPositionOnTrack(p, (TRACK_RY_OUTER - TRACK_RY_INNER) / 2);
+        const inner = getPositionOnTrack(p, -TRACK_WIDTH / 2);
+        const outer = getPositionOnTrack(p, TRACK_WIDTH / 2);
         return (
           <line
             key={p}
