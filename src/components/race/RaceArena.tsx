@@ -53,7 +53,12 @@ export function RaceArena({
   const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
   const [finaleShown, setFinaleShown] = useState(false);
   const [showFinaleFlag, setShowFinaleFlag] = useState(false);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [startLightsTrigger, setStartLightsTrigger] = useState(0);
   const prevLeaderIdRef = useRef<string | null>(null);
+  // Pit-stop tracking: timestamp do último progresso para cada carro
+  const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(new Map());
+  const [pitStopCars, setPitStopCars] = useState<Set<string>>(new Set());
 
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
