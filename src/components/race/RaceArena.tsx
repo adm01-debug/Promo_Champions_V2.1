@@ -51,6 +51,7 @@ export function RaceArena({ cars, boostingIds, overlayChildren }: RaceArenaProps
             </motion.g>
           );
         })}
+        {overlayChildren}
       </RaceTrack>
     </div>
   );
