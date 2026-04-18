@@ -1982,6 +1982,15 @@
   60%  { opacity: 1; }
   100% { transform: scale(3); opacity: 0; }
 }
+/* ===== Cycle 41-46: yellow flag flash + heat haze pulse ===== */
+@keyframes race-yellow-flag-flash {
+  0%, 100% { box-shadow: inset 0 0 0 0 hsl(45 95% 55% / 0); filter: brightness(1); }
+  50%      { box-shadow: inset 0 0 0 2px hsl(45 95% 55% / 0.9); filter: brightness(1.18); }
+}
+@keyframes race-track-yellow-overlay {
+  0%, 100% { opacity: 0.10; }
+  50%      { opacity: 0.22; }
+}
 @media (prefers-reduced-motion: reduce) {
   .race-cinematic-intro { animation: none !important; }
   .race-drs-pulse { animation: none !important; }
@@ -1991,4 +2000,6 @@
   .race-position-bounce { animation: none !important; }
   .race-start-light-on { animation: none !important; }
   .race-firework-burst { animation: none !important; }
+  .race-yellow-flag-flash { animation: none !important; }
+  .race-track-yellow-overlay { animation: none !important; }
 }
