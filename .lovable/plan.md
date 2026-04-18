@@ -1,28 +1,26 @@
 
-Ciclo 35-40 entregue. Próximo ciclo foca em narrativa de pista, profundidade ambiental e UI lateral aproveitando o espaço do layout vertical.
+Ciclo 41-46 entregue. Próximo ciclo foca em micro-narrativa, presença sonora-visual e refinamentos finais aproveitando ao máximo o layout vertical.
 
-# Ciclo 41-46 (rumo ao 10/10++ definitivo)
+# Ciclo 47-52 (rumo ao 10/10++ definitivo)
 
-**41. Painel lateral "Race Control"** — coluna esquerda fixa (largura ~200px) aproveitando o espaço sobrando do layout vertical, exibindo: bandeira atual da corrida (verde/amarela/vermelha/xadrez), tempo decorrido da season, próximo evento (ex: "Fim em 3d 4h"), e contador de ultrapassagens totais.
+**47. Marshals com bandeiras animadas nos postos** — substituir os marshal posts estáticos por figurinhas SVG humanoides minimalistas (3px) segurando bandeiras que se agitam. Quando bandeira amarela ativa (Race Control), todos os marshals trocam para bandeira amarela sincronizadamente.
 
-**42. Bandeira amarela em ultrapassagens próximas** — quando uma ultrapassagem acontece, exibe bandeira amarela animada no Race Control por 3s + leve overlay amarelo translúcido na pista. Cria tensão visual de "incidente na pista".
+**48. Indicador de "Setor mais rápido" (purple sector)** — ao detectar que um carro fez o melhor tempo no setor (delta de progresso × tempo), pisca o setor correspondente em roxo (#9333ea) por 1.5s no timing tower e cria pequena badge "FASTEST" no carro por 2s. Estilo F1 oficial.
 
-**43. Sombra dinâmica do sol** — gradiente radial sutil simulando posição do sol (canto superior direito), com sombras projetadas dos carros (elipse desfocada ~8px abaixo) que se alongam levemente. Profundidade cinematográfica.
+**49. Onda mexicana na arquibancada (La Ola)** — quando o líder cruza a linha de chegada (a cada lap completo), a arquibancada faz uma "ola" sequencial: blocos de espectadores se levantam em onda da esquerda para a direita ao longo de 1.2s. Vida real no estádio.
 
-**44. Efeito de calor no asfalto** — distorção sutil (`feTurbulence` + `feDisplacementMap`) na reta principal, animada com `baseFrequency` oscilando. Imita o "heat haze" de transmissão F1 em dia quente.
+**50. Rajada de vento visual nos pneus dos carros** — pequenas linhas brancas translúcidas (3-4px) saindo da traseira dos carros em alta velocidade (gap > threshold), simulando turbulência aerodinâmica. Aparecem só nos top 3 e quando carro está em DRS.
 
-**45. Pneus deixando rastro nas curvas** — quando carro passa por uma curva (chicane ou top/bottom), deixa breve rastro preto translúcido (5px, opacity 0.3, fade-out 1.5s) no asfalto. Acumula naturalmente conforme a corrida progride, máximo 30 marcas.
+**51. Painel de "Próxima Curva" para o usuário** — pequeno HUD no canto inferior direito (acima do ReplayButton) mostrando para o pilot logado: tipo da próxima curva (Curva 1, Chicane, etc), distância em % até ela, e se é DRS zone (badge verde). Telemetria pessoal estilo F1.
 
-**46. HUD de velocidade do líder** — pequeno mostrador no canto superior esquerdo (não obstrui) mostrando "velocidade" simulada do líder (km/h baseado em delta de progresso × 1000), com agulha analógica estilo painel de carro.
+**52. Cinematic camera focus no líder em momentos chave** — quando líder cruza setor 3 (final da volta) ou abre gap >5%, o SVG aplica leve zoom (scale 1.04) + pan suave focando no líder por 1.8s, com vinheta nas bordas. Câmera de transmissão.
 
 ## Arquivos a editar
-- `src/components/race/RaceArena.tsx` — Race Control panel, bandeira amarela em overtake, HUD velocidade, integrar tire-marks
-- `src/components/race/RaceControlPanel.tsx` — novo componente lateral
-- `src/components/race/SpeedHUD.tsx` — novo mostrador de velocidade
-- `src/components/race/track/TrackTireMarks.tsx` — novo overlay SVG de marcas de pneu
-- `src/components/race/track/TrackDefs.tsx` — filter de heat haze + sombra solar
-- `src/components/race/track/TrackAsphalt.tsx` — aplicar filter heat haze nas retas
-- `src/components/race/RaceCar.tsx` — sombra elíptica abaixo do carro
-- `src/index.css` — keyframes yellow-flag-flash + heat-haze pulse
+- `src/components/race/track/TrackScenery.tsx` — marshals com bandeiras animadas + ola na arquibancada
+- `src/components/race/RaceArena.tsx` — fastest sector detection, integrar NextCornerHUD, cinematic camera focus, ola trigger
+- `src/components/race/RaceCar.tsx` — badge "FASTEST" + linhas de turbulência aerodinâmica
+- `src/components/race/NextCornerHUD.tsx` — novo HUD lateral pessoal
+- `src/components/race/raceTrackHelpers.ts` — helper `getNextCornerInfo(progress)` retornando tipo+distância+DRS
+- `src/index.css` — keyframes marshal-flag-wave + la-ola-wave + fastest-sector-flash + cinematic-zoom
 
 Sem perguntas. Executo as 6 em sequência.
