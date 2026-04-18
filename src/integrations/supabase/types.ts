@@ -1882,6 +1882,106 @@ export type Database = {
         }
         Relationships: []
       }
+      call_question_analysis: {
+        Row: {
+          avg_depth: number
+          calculated_at: string
+          closed_questions: number
+          discovery_questions: number
+          factors: Json
+          health: string
+          id: string
+          impact_questions: number
+          leading_questions: number
+          open_questions: number
+          quality_score: number
+          question_density: number
+          recording_id: string
+          total_questions: number
+        }
+        Insert: {
+          avg_depth?: number
+          calculated_at?: string
+          closed_questions?: number
+          discovery_questions?: number
+          factors?: Json
+          health?: string
+          id?: string
+          impact_questions?: number
+          leading_questions?: number
+          open_questions?: number
+          quality_score?: number
+          question_density?: number
+          recording_id: string
+          total_questions?: number
+        }
+        Update: {
+          avg_depth?: number
+          calculated_at?: string
+          closed_questions?: number
+          discovery_questions?: number
+          factors?: Json
+          health?: string
+          id?: string
+          impact_questions?: number
+          leading_questions?: number
+          open_questions?: number
+          quality_score?: number
+          question_density?: number
+          recording_id?: string
+          total_questions?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_question_analysis_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: true
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_questions: {
+        Row: {
+          category: string
+          created_at: string
+          depth: number
+          id: string
+          recording_id: string
+          start_estimate: number
+          text: string
+          turn_index: number
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          depth?: number
+          id?: string
+          recording_id: string
+          start_estimate?: number
+          text: string
+          turn_index?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          depth?: number
+          id?: string
+          recording_id?: string
+          start_estimate?: number
+          text?: string
+          turn_index?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_questions_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_recordings: {
         Row: {
           action_items: Json
