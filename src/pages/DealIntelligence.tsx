@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { StalledDealsTable } from "@/components/deal-intelligence/StalledDealsTable";
 import { WeakCoverageDealsTable } from "@/components/deal-intelligence/WeakCoverageDealsTable";
+import { StageBaselinesPanel } from "@/components/deal-intelligence/StageBaselinesPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Heart, Users } from "lucide-react";
+import { Sparkles, Heart, Users, Gauge } from "lucide-react";
 
 export default function DealIntelligence() {
   return (
@@ -45,12 +46,18 @@ export default function DealIntelligence() {
                 <TabsTrigger value="committee" className="gap-2">
                   <Users className="h-4 w-4" /> Comitê de Compra
                 </TabsTrigger>
+                <TabsTrigger value="velocity" className="gap-2">
+                  <Gauge className="h-4 w-4" /> Velocidade & Forecast
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="health" className="mt-4">
                 <StalledDealsTable />
               </TabsContent>
               <TabsContent value="committee" className="mt-4">
                 <WeakCoverageDealsTable />
+              </TabsContent>
+              <TabsContent value="velocity" className="mt-4">
+                <StageBaselinesPanel />
               </TabsContent>
             </Tabs>
           </motion.div>
