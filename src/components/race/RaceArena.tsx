@@ -103,6 +103,17 @@ export function RaceArena({
             return next;
           });
         }, 700);
+        // narração + grava último overtake p/ replay
+        const o = overtakes[0];
+        const attackerName = sorted.find((c) => c.car_id === o.overtaker)?.salesperson_name;
+        const defenderName = sorted.find((c) => c.car_id === o.overtaken)?.salesperson_name;
+        const inDRS = isInDRSZone(curr.find((x) => x.id === o.overtaker)?.progress ?? 0);
+        pushCommentary(makeCommentaryLine({
+          type: inDRS ? 'drs' : 'overtake',
+          attacker: attackerName,
+          defender: defenderName,
+        }));
+        lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
       }
       // dust quando carro cruza um checkpoint (curva)
       const newDust: Array<{ id: string; x: number; y: number }> = [];
@@ -136,9 +147,18 @@ export function RaceArena({
             setTimeout(() => {
               setSectorBadges((arr) => arr.filter((bd) => bd.id !== badgeId));
             }, 900);
+            const lname = sorted.find((c) => c.car_id === leaderCurr.id)?.salesperson_name;
+            pushCommentary(makeCommentaryLine({ type: 'sector', leader: lname, sector: name }));
           }
         });
       }
+      // ----- Mudança de líder -----
+      const newLeaderId = leaderCurr?.id ?? null;
+      if (newLeaderId && prevLeaderIdRef.current && newLeaderId !== prevLeaderIdRef.current) {
+        const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
+        pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
+      }
+      if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
     prevSnapshotRef.current = curr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
