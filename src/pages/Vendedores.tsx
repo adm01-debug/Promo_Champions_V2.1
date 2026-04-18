@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/useSalespeople";
 import { useGamificationData } from "@/hooks/useGamificationData";
 import { SalespersonForm, SalespersonRole } from "@/components/vendedores/SalespersonForm";
+import { SendRankingNotificationsButton } from "@/components/ranking/SendRankingNotificationsButton";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";
 import { SalesChart } from "@/components/vendedores/SalesChart";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
@@ -131,6 +132,7 @@ const Vendedores = () => {
           </div>
           <div className="flex items-center gap-3">
             <PeriodFilterButtons value={period} onChange={setPeriod} />
+            <SendRankingNotificationsButton />
             <SalespersonForm />
           </div>
         </div>
