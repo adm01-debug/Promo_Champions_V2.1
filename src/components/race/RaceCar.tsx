@@ -380,6 +380,29 @@ export function RaceCar({
           </motion.g>
         </g>
       )}
+
+      {/* ===== Rank badge (medalha top 3 ou número) ===== */}
+      {rank !== undefined && rank > 0 && (() => {
+        const xPos = bodyW / 2 + 8;
+        const isPodium = rank <= 3;
+        const medalColor = rank === 1 ? 'hsl(45 95% 55%)' : rank === 2 ? 'hsl(0 0% 75%)' : rank === 3 ? 'hsl(28 75% 50%)' : 'hsl(var(--muted))';
+        const fg = isPodium ? 'hsl(20 30% 18%)' : 'hsl(var(--foreground))';
+        return (
+          <motion.g
+            transform={`translate(${xPos} ${-bodyH / 2 - 6})`}
+            key={`rank-${rank}`}
+            initial={{ scale: 1 }}
+            animate={{ scale: [1, 1.45, 0.92, 1] }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            pointerEvents="none"
+          >
+            <circle r={6.5} fill={medalColor} stroke="hsl(0 0% 100%)" strokeWidth={1.2} />
+            <text y={2.4} textAnchor="middle" fontSize={7.5} fontWeight={900} fill={fg} style={{ fontFamily: 'system-ui, sans-serif' }}>
+              {rank}
+            </text>
+          </motion.g>
+        );
+      })()}
     </g>
   );
 }
