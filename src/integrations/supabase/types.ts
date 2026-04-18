@@ -3144,6 +3144,95 @@ export type Database = {
           },
         ]
       }
+      committee_coverage_history: {
+        Row: {
+          coverage_score: number
+          gaps: Json
+          id: string
+          sale_id: string
+          snapshot_at: string
+          stakeholder_count: number
+          tier: string
+        }
+        Insert: {
+          coverage_score?: number
+          gaps?: Json
+          id?: string
+          sale_id: string
+          snapshot_at?: string
+          stakeholder_count?: number
+          tier?: string
+        }
+        Update: {
+          coverage_score?: number
+          gaps?: Json
+          id?: string
+          sale_id?: string
+          snapshot_at?: string
+          stakeholder_count?: number
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "committee_coverage_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      committee_extraction_runs: {
+        Row: {
+          confidence: number
+          created_at: string
+          created_count: number
+          extracted_count: number
+          id: string
+          raw_output: Json
+          recording_id: string | null
+          sale_id: string | null
+          updated_count: number
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          created_count?: number
+          extracted_count?: number
+          id?: string
+          raw_output?: Json
+          recording_id?: string | null
+          sale_id?: string | null
+          updated_count?: number
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          created_count?: number
+          extracted_count?: number
+          id?: string
+          raw_output?: Json
+          recording_id?: string | null
+          sale_id?: string | null
+          updated_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "committee_extraction_runs_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "committee_extraction_runs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitive_chat_messages: {
         Row: {
           created_at: string
@@ -4130,10 +4219,12 @@ export type Database = {
       }
       deal_stakeholders: {
         Row: {
+          confidence: number | null
           created_at: string
           dmu_role: string
           email: string | null
           engagement_score: number
+          evidence_quote: string | null
           id: string
           influence_level: string
           last_interaction_at: string | null
@@ -4150,10 +4241,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          confidence?: number | null
           created_at?: string
           dmu_role?: string
           email?: string | null
           engagement_score?: number
+          evidence_quote?: string | null
           id?: string
           influence_level?: string
           last_interaction_at?: string | null
@@ -4170,10 +4263,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          confidence?: number | null
           created_at?: string
           dmu_role?: string
           email?: string | null
           engagement_score?: number
+          evidence_quote?: string | null
           id?: string
           influence_level?: string
           last_interaction_at?: string | null

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { StalledDealsTable } from "@/components/deal-intelligence/StalledDealsTable";
 import { WeakCoverageDealsTable } from "@/components/deal-intelligence/WeakCoverageDealsTable";
+import { CommitteeInsightsPanel } from "@/components/deal-intelligence/committee/CommitteeInsightsPanel";
 import { StageBaselinesPanel } from "@/components/deal-intelligence/StageBaselinesPanel";
 import { ConversionOptimizerPanel } from "@/components/deal-intelligence/ConversionOptimizerPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -57,7 +58,8 @@ export default function DealIntelligence() {
               <TabsContent value="health" className="mt-4">
                 <StalledDealsTable />
               </TabsContent>
-              <TabsContent value="committee" className="mt-4">
+              <TabsContent value="committee" className="mt-4 space-y-4">
+                <CommitteeInsightsPanel />
                 <WeakCoverageDealsTable />
               </TabsContent>
               <TabsContent value="velocity" className="mt-4">

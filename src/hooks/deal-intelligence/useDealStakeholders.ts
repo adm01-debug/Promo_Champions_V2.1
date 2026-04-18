@@ -21,6 +21,8 @@ export interface DealStakeholder {
   signals: string[];
   last_interaction_at: string | null;
   source: "manual" | "ai_extracted" | "email" | "call";
+  evidence_quote: string | null;
+  confidence: number | null;
   created_at: string;
   updated_at: string;
 }

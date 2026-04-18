@@ -10,7 +10,7 @@ import { CompetitorMentionsCard } from "./CompetitorMentionsCard";
 import { CoachingActionsList } from "./CoachingActionsList";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
-import { useExtractStakeholders } from "@/hooks/deal-intelligence/useDealStakeholders";
+import { useExtractCommitteeFromCall } from "@/hooks/deal-intelligence/useCommitteeCoverage";
 import { SentimentTimelineChart } from "./SentimentTimelineChart";
 import { CriticalMomentsList } from "./CriticalMomentsList";
 import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
@@ -90,12 +90,12 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
 };
 
 function ExtractCommitteeButton({ recordingId }: { recordingId: string }) {
-  const extract = useExtractStakeholders();
+  const extract = useExtractCommitteeFromCall();
   return (
     <Button
       size="sm"
       variant="outline"
-      onClick={() => extract.mutate({ recording_id: recordingId })}
+      onClick={() => extract.mutate(recordingId)}
       disabled={extract.isPending}
       className="gap-1"
     >
