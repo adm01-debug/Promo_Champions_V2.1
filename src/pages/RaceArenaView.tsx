@@ -27,6 +27,7 @@ import {
   TrackWeatherOverlay,
   GhostCar,
   GhostStatusBadge,
+  RaceCommentaryPanel,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -43,6 +44,7 @@ import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
 import { usePitStopAnalysis } from '@/hooks/race/usePitStopAnalysis';
 import { useTrackConditions } from '@/hooks/race/useTrackConditions';
 import { useGhostCar } from '@/hooks/race/useGhostCar';
+import { useRaceCommentary } from '@/hooks/race/useRaceCommentary';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -108,6 +110,16 @@ export default function RaceArenaView({ roleType }: Props) {
     mySalespersonId: myCar?.salesperson_id,
     currentSeason: season,
     leaderboard,
+  });
+
+  const commentary = useRaceCommentary({
+    seasonId: season?.id,
+    seasonName: season?.name,
+    roleType,
+    leaderboard,
+    recentEvents: events,
+    secondsToEnd,
+    enabled: !!season,
   });
 
   useEffect(() => {
@@ -232,6 +244,11 @@ export default function RaceArenaView({ roleType }: Props) {
 
             <div className="grid grid-cols-12 gap-4" style={{ minHeight: '70vh' }}>
               <div className="col-span-12 lg:col-span-3 order-2 lg:order-1 space-y-3">
+                <RaceCommentaryPanel
+                  items={commentary.items}
+                  isGenerating={commentary.isGenerating}
+                  onRegenerate={commentary.regenerate}
+                />
                 <RaceLeaderboardSidebar
                   entries={leaderboard}
                   goalAmount={Number(season.goal_amount)}
