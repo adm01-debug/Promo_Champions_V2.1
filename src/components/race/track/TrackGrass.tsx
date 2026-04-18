@@ -1,13 +1,12 @@
-import { TRACK_VIEWBOX } from '../raceTrackHelpers';
+import { SCENE_VIEWBOX } from '../raceTrackHelpers';
 
 /**
- * Gramado top-down com variação de tom — base + manchas claras/escuras
- * espalhadas para sair do verde chapado e sugerir relevo natural.
- * Calibrado para viewBox 600x1000 (vertical).
+ * Gramado top-down preenchendo toda a cena (SCENE_VIEWBOX 800x1333),
+ * para a pista (600x1000 centralizada) ocupar ~75% e ter grama ao redor.
  */
 export function TrackGrass() {
-  const W = TRACK_VIEWBOX.width;
-  const H = TRACK_VIEWBOX.height;
+  const W = SCENE_VIEWBOX.width;
+  const H = SCENE_VIEWBOX.height;
 
   // Manchas pseudo-aleatórias mas determinísticas (posições fixas em 600x1000).
   const lightBlobs: Array<[number, number, number]> = [
