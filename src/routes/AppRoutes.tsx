@@ -5,6 +5,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import Index from "@/pages/Index";
+import { RaceTransitionWrapper } from "@/components/race/RaceTransitionWrapper";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
 import {
   // Auth & System
@@ -176,9 +177,9 @@ export function AppRoutes() {
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
-                    <Route path="/race-arena" element={<RaceArena />} />
-                    <Route path="/race-arena/closer" element={<RaceArenaCloser />} />
-                    <Route path="/race-arena/sdr" element={<RaceArenaSDR />} />
+                    <Route path="/race-arena" element={<RaceTransitionWrapper><RaceArena /></RaceTransitionWrapper>} />
+                    <Route path="/race-arena/closer" element={<RaceTransitionWrapper><RaceArenaCloser /></RaceTransitionWrapper>} />
+                    <Route path="/race-arena/sdr" element={<RaceTransitionWrapper><RaceArenaSDR /></RaceTransitionWrapper>} />
                     <Route path="/admin/race-arena" element={<Admin><RaceArenaAdmin /></Admin>} />
                     <Route path="/desafios" element={<DesafiosSemanais />} />
                     <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
