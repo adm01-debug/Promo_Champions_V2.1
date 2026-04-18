@@ -14,6 +14,10 @@ import { SpeedHUD } from './SpeedHUD';
 import { NextCornerHUD } from './NextCornerHUD';
 import { TrackTireMarks } from './track/TrackTireMarks';
 import { TrackDustParticles } from './track/TrackDustParticles';
+import { LeaderGapIndicator } from './LeaderGapIndicator';
+import { SlipstreamLines } from './SlipstreamLines';
+import { CarExhaust } from './CarExhaust';
+import { RaceCountdownBadge } from './RaceCountdownBadge';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
