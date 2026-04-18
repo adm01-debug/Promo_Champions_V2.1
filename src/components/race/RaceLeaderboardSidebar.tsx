@@ -28,7 +28,7 @@ export function RaceLeaderboardSidebar({ entries, goalAmount }: Props) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Flag className="w-5 h-5 text-primary" />
-          Grid de Largada
+          Ranking Champions
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto space-y-2">
