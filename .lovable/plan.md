@@ -1,39 +1,47 @@
 
-Roadmap top-5 da análise exaustiva já foi 100% executado na iteração anterior (slipstream, gap badge, exhaust+chama, rumble strips animados, xadrez ondulado, blimp, bandeiras, plaquinhas, blur volumétrico, countdown LED). Para continuar rumo ao 10/10, vou executar a próxima onda de polimentos (itens HUD/microinterações pendentes da análise + refinos finais).
-
-## Próximas iterações (sequencial, sem pausas)
-
-### 1. Mini-mapa periférico
-- Novo `RaceMiniMap.tsx` (canto inferior esquerdo): SVG ~120×80 px com silhueta da pista + pontinhos coloridos por carro. Glassmorphism, leitura periférica.
-
-### 2. Timeline de eventos ao vivo
-- Novo `RaceEventTicker.tsx`: faixa horizontal compacta acima do leaderboard com últimos 3 eventos ("🏁 X tomou P1 às 10:32", "⚡ Y ativou DRS"). Auto-scroll, fade.
-
-### 3. DRS Zone overlay visual
-- Novo `DRSZoneOverlay.tsx`: trecho da reta principal com overlay azul translúcido pulsante + ícone "DRS" sinalizando zona de ultrapassagem.
-
-### 4. Ghost trail neon do líder
-- Novo `LeaderNeonTrail.tsx`: rastro colorido (cor do time) seguindo o líder com 8 pontos históricos em gradiente fade.
-
-### 5. Screen shake em ultrapassagens top-3
-- Hook `useScreenShake.ts` + integração em `RaceArena`: dispara shake sutil (translate ±2px, 250ms) quando overtake afeta top 3.
-
-### 6. Lap counter LED-style
-- Novo `LapCounterBadge.tsx`: badge canto inferior esquerdo (oposto do countdown) com "LAP 3 / ∞" em fonte mono LED.
+Expandir o catálogo de carros de corrida de 12 cores + 3 estilos para 20 presets visuais distintos (combinação modelo+cor+tema), incluindo 3 temas LGBT (Pride Rainbow, Trans Pride, Bi Pride). O usuário escolhe um preset completo via novo seletor visual no `CarCustomizer`.
 
 ## Estrutura
 
-**Novos:**
-- `src/components/race/RaceMiniMap.tsx`
-- `src/components/race/RaceEventTicker.tsx`
-- `src/components/race/DRSZoneOverlay.tsx`
-- `src/components/race/LeaderNeonTrail.tsx`
-- `src/components/race/LapCounterBadge.tsx`
-- `src/hooks/race/useScreenShake.ts`
+### Novos presets (`raceColors.ts`)
+Substituir/expandir `RACE_CAR_COLORS` por `RACE_CAR_PRESETS` (20 entradas), cada uma com: `id`, `name`, `style` (f1|stock|kart), `primary`, `secondary`, `accent?`, `pattern?` (`solid` | `stripes` | `flames` | `checkers` | `pride-rainbow` | `pride-trans` | `pride-bi`), `emoji`.
 
-**Editados:**
-- `src/components/race/RaceArena.tsx` (montar todos)
-- `src/index.css` (keyframes neon-trail, drs-zone-pulse, screen-shake, ticker-fade)
+20 presets propostos (modelo + cor + tema):
+1. Ferrari Scuderia (F1, vermelho/branco)
+2. Mercedes Silver Arrow (F1, prata/petróleo)
+3. McLaren Papaya (F1, laranja/azul)
+4. Williams Heritage (F1, azul/branco)
+5. Lotus Classic (F1, preto/dourado)
+6. Alpine Azure (F1, azul/rosa)
+7. NASCAR Thunder (Stock, vermelho/preto, chamas)
+8. Stock Lightning (Stock, amarelo/preto, listras)
+9. Stock Patriot (Stock, azul/vermelho/branco)
+10. Stock Forest (Stock, verde/branco)
+11. Stock Midnight (Stock, preto/roxo)
+12. Stock Sunset (Stock, laranja/rosa)
+13. Kart Mario (Kart, vermelho/branco)
+14. Kart Luigi (Kart, verde/branco)
+15. Kart Peach (Kart, rosa/dourado)
+16. Kart Toad (Kart, branco/vermelho, bolinhas)
+17. Kart Shadow (Kart, preto/ciano)
+18. **Pride Rainbow** (F1, listras arco-íris) 🏳️‍🌈
+19. **Trans Pride** (Kart, azul/rosa/branco) 🏳️‍⚧️
+20. **Bi Pride** (Stock, magenta/roxo/azul)
+
+### DB
+- Nova migração: adicionar coluna `preset_id text` em `race_cars` (nullable, p/ retrocompatibilidade). `primary_color`/`secondary_color`/`car_style` continuam derivados do preset.
+
+### UI
+- `CarCustomizer.tsx`: substituir grid de 12 cores + tabs de estilo por **grid 4×5 de preset cards** com mini-preview SVG do carro (usando `RaceCar` real), nome + emoji, badge "Pride" para temas LGBT. Manter campos número/apelido.
+- `RaceCar.tsx`: estender p/ aceitar `pattern` opcional e renderizar overlay (listras pride, chamas, bolinhas, etc.) via `<defs>` + clipPath sobre o chassi.
+
+### Hook
+- `useMyRaceCar`: incluir `preset_id` no payload do upsert.
+
+## Arquivos
+**Editados:** `src/components/race/raceColors.ts`, `src/components/race/RaceCar.tsx`, `src/components/race/CarCustomizer.tsx`, `src/hooks/race/useMyRaceCar.ts`
+**Novo:** `src/components/race/CarPresetCard.tsx` (mini-preview do preset)
+**Migração:** add `preset_id` em `race_cars`
 
 ## Garantias
-- Tokens HSL semânticos, `pointerEvents="none"` em decorativos, `aria-hidden`, `useReducedMotion` respeitado, arquivos < 200 linhas, zero erros de console. Execução sequencial sem pausas.
+Tokens HSL, mini-previews acessíveis (`aria-label`), grid responsivo, retrocompatível com carros já salvos (fallback para preset inferido por cor/estilo).
