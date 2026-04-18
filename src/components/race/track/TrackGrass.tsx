@@ -1,12 +1,12 @@
 import { TRACK_VIEWBOX } from '../raceTrackHelpers';
 
-/** Gramado verde sólido top-down — base do cenário. */
+/** Gramado top-down — base do cenário usando tokens semânticos. */
 export function TrackGrass() {
   return (
     <rect
       width={TRACK_VIEWBOX.width}
       height={TRACK_VIEWBOX.height}
-      fill="#5fa358"
+      fill="hsl(var(--race-grass))"
       aria-hidden
     />
   );

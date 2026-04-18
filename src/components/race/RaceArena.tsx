@@ -16,7 +16,7 @@ export function RaceArena({ cars, boostingIds, currentUserSalespersonId, overlay
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
 
   return (
-    <div className="relative w-full h-full rounded-xl overflow-hidden border-2 border-border shadow-lg" style={{ backgroundColor: '#5fa358' }}>
+    <div className="relative w-full h-full rounded-xl overflow-hidden border-2 border-border shadow-lg bg-[hsl(var(--race-grass))]">
       <RaceTrack>
         {sorted.map((car, idx) => {
           // Espalha levemente as raias para evitar sobreposição

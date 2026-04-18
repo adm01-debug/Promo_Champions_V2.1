@@ -1,29 +1,28 @@
 import { TRACK_VIEWBOX } from '../raceTrackHelpers';
 
 /**
- * Cenário top-down flat para o circuito serpenteante:
- * árvores como clusters de bolinhas verdes + estruturas pit cinza.
+ * Cenário top-down flat: árvores e edifícios pit usando tokens semânticos
+ * para se adaptar a light/dark/skins.
  */
 
 interface TreeProps { cx: number; cy: number; scale?: number; }
 
 function Tree({ cx, cy, scale = 1 }: TreeProps) {
-  const greens = ['#3a7a3a', '#4a8a4a', '#5a9a5a'];
   const blobs = [
-    { dx: 0, dy: 0, r: 14, c: greens[1] },
-    { dx: -10, dy: -4, r: 10, c: greens[0] },
-    { dx: 10, dy: -2, r: 11, c: greens[2] },
-    { dx: -6, dy: 8, r: 9, c: greens[0] },
-    { dx: 8, dy: 7, r: 10, c: greens[2] },
-    { dx: 0, dy: -10, r: 9, c: greens[1] },
+    { dx: 0, dy: 0, r: 14, fill: 'hsl(var(--race-tree-mid))' },
+    { dx: -10, dy: -4, r: 10, fill: 'hsl(var(--race-tree-dark))' },
+    { dx: 10, dy: -2, r: 11, fill: 'hsl(var(--race-tree-light))' },
+    { dx: -6, dy: 8, r: 9, fill: 'hsl(var(--race-tree-dark))' },
+    { dx: 8, dy: 7, r: 10, fill: 'hsl(var(--race-tree-light))' },
+    { dx: 0, dy: -10, r: 9, fill: 'hsl(var(--race-tree-mid))' },
   ];
   return (
     <g transform={`translate(${cx} ${cy}) scale(${scale})`}>
-      <ellipse cx={2} cy={16} rx={18} ry={5} fill="#000" opacity={0.18} />
+      <ellipse cx={2} cy={16} rx={18} ry={5} fill="hsl(var(--race-grass-shadow))" opacity={0.45} />
       {blobs.map((b, i) => (
-        <circle key={i} cx={b.dx} cy={b.dy} r={b.r} fill={b.c} />
+        <circle key={i} cx={b.dx} cy={b.dy} r={b.r} fill={b.fill} />
       ))}
-      <circle cx={-3} cy={-4} r={4} fill="#7ab87a" opacity={0.6} />
+      <circle cx={-3} cy={-4} r={4} fill="hsl(var(--race-tree-light))" opacity={0.7} />
     </g>
   );
 }
@@ -34,9 +33,9 @@ function Building({ x, y, w, h, doors = 3 }: BuildingProps) {
   const doorW = (w - 8) / doors - 4;
   return (
     <g transform={`translate(${x} ${y})`}>
-      <rect x={3} y={4} width={w} height={h} rx={2} fill="#000" opacity={0.22} />
-      <rect width={w} height={h} rx={2} fill="#c0c4c8" stroke="#6b7280" strokeWidth={1.4} />
-      <rect width={w} height={6} fill="#9ca3af" />
+      <rect x={3} y={4} width={w} height={h} rx={2} fill="hsl(var(--race-grass-shadow))" opacity={0.4} />
+      <rect width={w} height={h} rx={2} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={1.4} />
+      <rect width={w} height={6} fill="hsl(var(--race-asphalt))" />
       {Array.from({ length: doors }).map((_, i) => (
         <rect
           key={i}
@@ -44,8 +43,8 @@ function Building({ x, y, w, h, doors = 3 }: BuildingProps) {
           y={h - doorW - 4}
           width={doorW}
           height={doorW}
-          fill="#4b5563"
-          stroke="#1f2937"
+          fill="hsl(var(--race-building-edge))"
+          stroke="hsl(var(--race-checkered-dark))"
           strokeWidth={0.8}
         />
       ))}
@@ -56,10 +55,10 @@ function Building({ x, y, w, h, doors = 3 }: BuildingProps) {
 function ControlTower({ cx, cy }: { cx: number; cy: number }) {
   return (
     <g transform={`translate(${cx} ${cy})`}>
-      <ellipse cx={2} cy={3} rx={18} ry={5} fill="#000" opacity={0.22} />
-      <circle r={16} fill="#c0c4c8" stroke="#6b7280" strokeWidth={1.4} />
-      <circle r={9} fill="#9ca3af" stroke="#4b5563" strokeWidth={1} />
-      <circle r={3} fill="#dc2626" />
+      <ellipse cx={2} cy={3} rx={18} ry={5} fill="hsl(var(--race-grass-shadow))" opacity={0.45} />
+      <circle r={16} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={1.4} />
+      <circle r={9} fill="hsl(var(--race-asphalt))" stroke="hsl(var(--race-building-edge))" strokeWidth={1} />
+      <circle r={3} fill="hsl(var(--race-curb-b))" />
     </g>
   );
 }
@@ -69,7 +68,6 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
   const H = TRACK_VIEWBOX.height;
 
   if (layer === 'outer') {
-    // árvores nos cantos e bordas livres do novo circuito
     const trees: Array<[number, number, number]> = [
       [40, 40, 1], [110, 25, 0.85], [200, 40, 0.95], [300, 25, 0.9],
       [W - 50, 30, 1], [W - 130, 45, 0.9], [W - 220, 30, 0.85],
@@ -86,7 +84,6 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
     );
   }
 
-  // inner: pit area + torre na área central-direita livre do novo traçado
   return (
     <g aria-hidden>
       <Building x={500} y={250} w={100} h={28} doors={3} />

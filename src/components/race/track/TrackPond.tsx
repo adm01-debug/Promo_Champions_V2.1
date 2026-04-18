@@ -1,6 +1,6 @@
 /**
  * Lago decorativo orgânico em uma área livre do circuito serpenteante.
- * Posicionado em ~ (760, 380) — área interna do loop direito.
+ * Usa tokens semânticos de cor para suportar light/dark e skins.
  */
 export function TrackPond() {
   const cx = 450;
@@ -15,10 +15,10 @@ export function TrackPond() {
   `;
   return (
     <g aria-hidden>
-      <path d={d} fill="#1e4f70" opacity={0.25} transform="translate(2 3)" />
-      <path d={d} fill="#3b8cc4" stroke="#2a6a96" strokeWidth={2} />
-      <ellipse cx={cx - 20} cy={cy - 15} rx={22} ry={3.5} fill="#ffffff" opacity={0.35} />
-      <ellipse cx={cx + 20} cy={cy + 12} rx={14} ry={2.5} fill="#ffffff" opacity={0.25} />
+      <path d={d} fill="hsl(var(--race-pond-deep))" opacity={0.45} transform="translate(2 3)" />
+      <path d={d} fill="hsl(var(--race-pond))" stroke="hsl(var(--race-pond-shadow))" strokeWidth={2} />
+      <ellipse cx={cx - 20} cy={cy - 15} rx={22} ry={3.5} fill="hsl(var(--race-asphalt-edge))" opacity={0.35} />
+      <ellipse cx={cx + 20} cy={cy + 12} rx={14} ry={2.5} fill="hsl(var(--race-asphalt-edge))" opacity={0.25} />
     </g>
   );
 }
