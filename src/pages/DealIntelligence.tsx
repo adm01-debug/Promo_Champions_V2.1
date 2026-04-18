@@ -4,8 +4,9 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { StalledDealsTable } from "@/components/deal-intelligence/StalledDealsTable";
 import { WeakCoverageDealsTable } from "@/components/deal-intelligence/WeakCoverageDealsTable";
 import { StageBaselinesPanel } from "@/components/deal-intelligence/StageBaselinesPanel";
+import { ConversionOptimizerPanel } from "@/components/deal-intelligence/ConversionOptimizerPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Heart, Users, Gauge } from "lucide-react";
+import { Sparkles, Heart, Users, Gauge, TrendingDown } from "lucide-react";
 
 export default function DealIntelligence() {
   return (
@@ -49,6 +50,9 @@ export default function DealIntelligence() {
                 <TabsTrigger value="velocity" className="gap-2">
                   <Gauge className="h-4 w-4" /> Velocidade & Forecast
                 </TabsTrigger>
+                <TabsTrigger value="conversion" className="gap-2">
+                  <TrendingDown className="h-4 w-4" /> Otimizador de Conversão
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="health" className="mt-4">
                 <StalledDealsTable />
@@ -58,6 +62,9 @@ export default function DealIntelligence() {
               </TabsContent>
               <TabsContent value="velocity" className="mt-4">
                 <StageBaselinesPanel />
+              </TabsContent>
+              <TabsContent value="conversion" className="mt-4">
+                <ConversionOptimizerPanel />
               </TabsContent>
             </Tabs>
           </motion.div>
