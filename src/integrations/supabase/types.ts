@@ -4219,10 +4219,12 @@ export type Database = {
       }
       deal_stakeholders: {
         Row: {
+          confidence: number | null
           created_at: string
           dmu_role: string
           email: string | null
           engagement_score: number
+          evidence_quote: string | null
           id: string
           influence_level: string
           last_interaction_at: string | null
@@ -4239,10 +4241,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          confidence?: number | null
           created_at?: string
           dmu_role?: string
           email?: string | null
           engagement_score?: number
+          evidence_quote?: string | null
           id?: string
           influence_level?: string
           last_interaction_at?: string | null
@@ -4259,10 +4263,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          confidence?: number | null
           created_at?: string
           dmu_role?: string
           email?: string | null
           engagement_score?: number
+          evidence_quote?: string | null
           id?: string
           influence_level?: string
           last_interaction_at?: string | null
