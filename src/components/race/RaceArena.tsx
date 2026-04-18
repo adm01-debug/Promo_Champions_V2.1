@@ -4,7 +4,7 @@ import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
-import { MiniMap } from './MiniMap';
+import { RaceMiniMap } from './RaceMiniMap';
 import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
@@ -18,6 +18,11 @@ import { LeaderGapIndicator } from './LeaderGapIndicator';
 import { SlipstreamLines } from './SlipstreamLines';
 import { CarExhaust } from './CarExhaust';
 import { RaceCountdownBadge } from './RaceCountdownBadge';
+import { RaceEventTicker, type RaceTickerEvent } from './RaceEventTicker';
+import { DRSZoneOverlay } from './DRSZoneOverlay';
+import { LeaderNeonTrail } from './LeaderNeonTrail';
+import { LapCounterBadge } from './LapCounterBadge';
+import { useScreenShake } from '@/hooks/race/useScreenShake';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
@@ -80,6 +85,17 @@ export function RaceArena({
   // Velocidade simulada do líder (km/h)
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
+
+  // Ticker de eventos ao vivo (top 3, expira após 12s — gerenciado pelo componente)
+  const [tickerEvents, setTickerEvents] = useState<RaceTickerEvent[]>([]);
+  const pushTickerEvent = useCallback((text: string, icon?: string) => {
+    setTickerEvents((prev) =>
+      [{ id: `${Date.now()}-${Math.random()}`, text, icon, at: Date.now() }, ...prev].slice(0, 8),
+    );
+  }, []);
+
+  // Screen shake em ultrapassagens top-3
+  const { shaking, trigger: triggerShake } = useScreenShake(280);
 
   // Ciclo 47-52: la-ola, fastest sector, cinematic camera
   const [waveTrigger, setWaveTrigger] = useState(0);
@@ -147,7 +163,7 @@ export function RaceArena({
             return next;
           });
         }, 700);
-        // narração + grava último overtake p/ replay
+        // narração + grava último overtake p/ replay + ticker + screen shake top-3
         const o = overtakes[0];
         const attackerName = sorted.find((c) => c.car_id === o.overtaker)?.salesperson_name;
         const defenderName = sorted.find((c) => c.car_id === o.overtaken)?.salesperson_name;
@@ -157,6 +173,19 @@ export function RaceArena({
           attacker: attackerName,
           defender: defenderName,
         }));
+        // Ticker resumido
+        if (attackerName && defenderName) {
+          pushTickerEvent(
+            `${attackerName.split(' ')[0]} ultrapassou ${defenderName.split(' ')[0]}`,
+            inDRS ? '⚡' : '🏁',
+          );
+        }
+        // Screen shake apenas se overtake afeta posições top-3
+        const sortedCurr = [...curr].sort((a, b) => b.progress - a.progress);
+        const overtakerNewRank = sortedCurr.findIndex((x) => x.id === o.overtaker);
+        if (overtakerNewRank >= 0 && overtakerNewRank < 3 && !reducedMotion) {
+          triggerShake();
+        }
         lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
       }
       // dust quando carro cruza um checkpoint (curva)
@@ -235,6 +264,7 @@ export function RaceArena({
       if (newLeaderId && prevLeaderIdRef.current && newLeaderId !== prevLeaderIdRef.current) {
         const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
         pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
+        if (lname) pushTickerEvent(`${lname.split(' ')[0]} assumiu P1`, '👑');
       }
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
@@ -451,7 +481,7 @@ export function RaceArena({
 
   return (
     <div
-      className="relative w-full h-full rounded-3xl overflow-hidden border border-border/60 bg-[hsl(var(--race-grass))]"
+      className={`relative w-full h-full rounded-3xl overflow-hidden border border-border/60 bg-[hsl(var(--race-grass))] ${shaking && !reducedMotion ? 'race-screen-shake' : ''}`}
       style={{
         boxShadow:
           '0 24px 60px -20px hsl(var(--race-grass-shadow) / 0.55), inset 0 0 0 1px hsl(var(--race-asphalt-edge) / 0.08)',
@@ -482,6 +512,16 @@ export function RaceArena({
         <TrackTireMarks cars={tireMarkCars} />
         {/* Poeira/fumaça nas curvas — sobre os rastros, abaixo dos carros */}
         <TrackDustParticles cars={tireMarkCars} />
+        {/* DRS Zone overlay translúcido + label */}
+        <DRSZoneOverlay />
+        {/* Ghost trail neon do líder */}
+        {leader && !reducedMotion && (
+          <LeaderNeonTrail
+            leaderId={leader.car_id}
+            leaderProgress={Number(leader.progress)}
+            color={leader.primary_color}
+          />
+        )}
         {sorted.map((car, idx) => {
           const lane = (idx - sorted.length / 2) * 8;
           const pos = getPositionOnTrack(Number(car.progress), lane);
@@ -784,7 +824,13 @@ export function RaceArena({
       <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
 
       {/* ===== Mini-mapa do circuito ===== */}
-      <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
+      <RaceMiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
+
+      {/* ===== Lap counter LED-style (ao lado do MiniMap) ===== */}
+      <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />
+
+      {/* ===== Ticker de eventos ao vivo (abaixo do LAP HUD top-center) ===== */}
+      <RaceEventTicker events={tickerEvents} />
 
       {/* ===== Timing tower expandido (top 5 com gaps + delta colorido) ===== */}
       {top5.length > 0 && (
