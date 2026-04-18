@@ -6351,6 +6351,113 @@ export type Database = {
         }
         Relationships: []
       }
+      pipeline_coverage_recommendations: {
+        Row: {
+          acted_on: boolean
+          acted_on_at: string | null
+          acted_on_by: string | null
+          action: string
+          ai_generated: boolean
+          created_at: string
+          expected_impact_amount: number
+          id: string
+          priority: string
+          snapshot_id: string
+          title: string
+        }
+        Insert: {
+          acted_on?: boolean
+          acted_on_at?: string | null
+          acted_on_by?: string | null
+          action: string
+          ai_generated?: boolean
+          created_at?: string
+          expected_impact_amount?: number
+          id?: string
+          priority?: string
+          snapshot_id: string
+          title: string
+        }
+        Update: {
+          acted_on?: boolean
+          acted_on_at?: string | null
+          acted_on_by?: string | null
+          action?: string
+          ai_generated?: boolean
+          created_at?: string
+          expected_impact_amount?: number
+          id?: string
+          priority?: string
+          snapshot_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_coverage_recommendations_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_coverage_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipeline_coverage_snapshots: {
+        Row: {
+          calculated_at: string
+          coverage_ratio: number
+          created_at: string
+          deals_count: number
+          gap_to_target: number
+          health: string
+          id: string
+          owner_id: string | null
+          period_end: string
+          period_start: string
+          pipeline_amount: number
+          quota_amount: number
+          segment: string | null
+          stage: string | null
+          target_ratio: number
+          weighted_pipeline: number
+        }
+        Insert: {
+          calculated_at?: string
+          coverage_ratio?: number
+          created_at?: string
+          deals_count?: number
+          gap_to_target?: number
+          health?: string
+          id?: string
+          owner_id?: string | null
+          period_end: string
+          period_start: string
+          pipeline_amount?: number
+          quota_amount?: number
+          segment?: string | null
+          stage?: string | null
+          target_ratio?: number
+          weighted_pipeline?: number
+        }
+        Update: {
+          calculated_at?: string
+          coverage_ratio?: number
+          created_at?: string
+          deals_count?: number
+          gap_to_target?: number
+          health?: string
+          id?: string
+          owner_id?: string | null
+          period_end?: string
+          period_start?: string
+          pipeline_amount?: number
+          quota_amount?: number
+          segment?: string | null
+          stage?: string | null
+          target_ratio?: number
+          weighted_pipeline?: number
+        }
+        Relationships: []
+      }
       pipeline_inspection_snapshots: {
         Row: {
           days_in_stage: number
@@ -11521,6 +11628,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      v_pipeline_coverage_summary: {
+        Row: {
+          avg_ratio: number | null
+          calculated_at: string | null
+          health: string | null
+          owner_id: string | null
+          owner_key: string | null
+          period_end: string | null
+          period_start: string | null
+          total_quota: number | null
+          total_weighted: number | null
+        }
+        Relationships: []
       }
     }
     Functions: {
