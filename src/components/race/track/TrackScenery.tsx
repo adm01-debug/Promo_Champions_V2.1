@@ -1,4 +1,5 @@
 import { TRACK_VIEWBOX } from '../raceTrackHelpers';
+import { TrackBlimp } from './TrackBlimp';
 
 /**
  * Cenário top-down VERTICAL (viewBox 600x1000) com árvores, paddock,
@@ -150,6 +151,9 @@ function Grandstand({
 }: { x: number; y: number; w: number; h: number; vertical?: boolean; waveTrigger?: number }) {
   const stripes = vertical ? Math.floor(h / 4) : Math.floor(w / 4);
   const palette = ['hsl(0 70% 55%)', 'hsl(45 90% 58%)', 'hsl(210 70% 55%)', 'hsl(280 50% 58%)', 'hsl(0 0% 95%)'];
+  // bandeiras agitando ao longo do topo da arquibancada
+  const flagCount = vertical ? Math.max(2, Math.floor(h / 50)) : Math.max(3, Math.floor(w / 60));
+  const flagPalette = ['hsl(0 75% 52%)', 'hsl(45 92% 55%)', 'hsl(210 75% 52%)', 'hsl(140 65% 45%)'];
   return (
     <g transform={`translate(${x} ${y})`} aria-hidden style={{ filter: 'drop-shadow(2px 2px 2px hsl(var(--race-grass-shadow) / 0.5))' }}>
       <rect width={w} height={h} rx={3} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={1} />
@@ -164,6 +168,26 @@ function Grandstand({
           <rect key={`${waveTrigger}-${i}`} x={6} y={2 + i * 4} width={w - 10} height={2.5} fill={c} opacity={0.85} style={animStyle} />
         ) : (
           <rect key={`${waveTrigger}-${i}`} x={2 + i * 4} y={6} width={2.5} height={h - 10} fill={c} opacity={0.85} style={animStyle} />
+        );
+      })}
+      {/* Bandeiras agitando ao longo do topo (ou lateral) */}
+      {!vertical && Array.from({ length: flagCount }).map((_, i) => {
+        const fx = (w / (flagCount + 1)) * (i + 1);
+        const fc = flagPalette[i % flagPalette.length];
+        return (
+          <g key={`flag-${i}`} transform={`translate(${fx} -4)`}>
+            <line x1={0} y1={0} x2={0} y2={-10} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+            <g
+              style={{
+                transformOrigin: '0 -10px',
+                transformBox: 'fill-box',
+                animation: `race-grandstand-flag-wave 1.4s ease-in-out infinite`,
+                animationDelay: `${i * 0.18}s`,
+              }}
+            >
+              <rect x={0} y={-10} width={5} height={3.5} fill={fc} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            </g>
+          </g>
         );
       })}
     </g>
