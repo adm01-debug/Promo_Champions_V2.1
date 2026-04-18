@@ -1,66 +1,44 @@
 
-User wants to use the checkered flag victory celebration (VictoryLapOverlay) as a monthly winner celebration — triggered at month-end for the top performer of the Race Arena, not just on individual race victory events.
+Plano: Roadmap de Excelência 10/10 — Race Arena (execução autônoma, 1 melhoria por vez)
 
-Let me check the current VictoryLapOverlay and how it's triggered.
+Vou executar sequencialmente, sem pausas, as melhorias abaixo até atingir 10/10. Cada item será uma entrega completa, com QA visual e código limpo.
 
-The current `VictoryLapOverlay.tsx` listens to `race_events` of type `'victory'`. We need a separate **MonthlyChampionOverlay** that fires at end-of-month (or when admin closes the season) showing the #1 ranked Closer/SDR with the same gold trophy + checkered flag aesthetic.
+### Fase 1 — Polimento visual e UX
+1. **Header unificado da Race Arena** com `CheckeredFlag` no topo + breadcrumb (Hub → Pista) + badge de season ativa pulsante.
+2. **Skeleton premium** no `RaceArenaView` (track + sidebar + feed) durante loading inicial.
+3. **Empty states cinematográficos** quando não há season ativa (CTA admin / aviso piloto) com ilustração SVG.
+4. **Transição entre Hub ↔ Pistas** com motion shared layout (slide + fade).
 
-## Plano: Cerimônia do Campeão do Mês 🏁
+### Fase 2 — Engajamento e gamificação
+5. **Painel "Próxima Meta"** no sidebar: distância em R$/pontos para ultrapassar o piloto à frente (já existe lógica de micro-goals, integrar).
+6. **Combo Streak indicator** no card do piloto (chama de fogo quando 3+ vendas seguidas no dia).
+7. **Mini-podium fixo no header** mostrando top 3 com avatares + medalhas, atualizado em realtime.
+8. **Histórico de campeões** — nova aba no Hub listando últimos vencedores mensais (Closer/SDR) com bandeira quadriculada.
 
-### Conceito
-Reaproveitar o visual da `VictoryLapOverlay` (troféu dourado + bandeira quadriculada + confetes) para criar uma **cerimônia oficial de premiação mensal** do vencedor da Race Arena (Closer e SDR separadamente).
+### Fase 3 — Admin Console premium
+9. **Dashboard de saúde da season** no admin: gráfico de evolução diária, % engajamento, alertas (season sem eventos há X dias).
+10. **Bulk actions na garagem**: resetar customização em massa, exportar CSV de pilotos.
+11. **Preview ao vivo da cerimônia** no admin (botão "Pré-visualizar premiação") sem gravar evento.
+12. **Audit feed com filtros** (tipo de evento, piloto, intervalo de data) + export.
 
-### Trigger
-Quando o mês vira (ou quando admin fecha a season manualmente):
-1. Sistema identifica o líder do `useRaceLeaderboard` da season encerrada
-2. Registra um evento `monthly_champion` em `race_events` (via RPC ou no fechamento da season)
-3. Overlay aparece para todos os usuários conectados ao abrir a arena daquele role
+### Fase 4 — Performance e qualidade
+13. **Memoização agressiva** dos componentes pesados (`RaceTrack`, `RaceCar`, `LeaderboardSidebar`) com `React.memo` + `useMemo` em derivações.
+14. **Virtualização do feed** com `@tanstack/react-virtual` quando >50 eventos.
+15. **Code-splitting** do admin (`/admin/race-arena` lazy isolado) e do `MonthlyChampionOverlay` (carregado só quando trigger dispara).
+16. **A11y completo**: roles ARIA na pista, foco visível em todos botões, leitor de tela narrando posições do leaderboard.
 
-Detecção client-side: hook `useMonthlyChampion(roleType)` que:
-- Busca a season mais recente com `status='finished'` e `ended_at` no mês corrente
-- Identifica o `winner_id` (ou top 1 do leaderboard daquela season)
-- Marca como "visto" em `localStorage` (`monthly-champion-seen-${seasonId}`) para não repetir
-- Retorna `{ champion, season, shouldShow }`
+### Fase 5 — Polimento final
+17. **Sons opcionais** (motor acelerando em overtake, fanfarra na cerimônia) respeitando `RaceSoundToggle`.
+18. **Compartilhamento da cerimônia** gerando imagem PNG via `html-to-image` para download/social.
+19. **Documentação inline** (JSDoc) nos hooks e componentes públicos da pasta `race/`.
+20. **QA visual final** — screenshots Hub, Pista Closer, Pista SDR, Admin, Cerimônia em 1561px e mobile.
 
-### Componente novo: `MonthlyChampionOverlay.tsx`
-Variação premium do `VictoryLapOverlay`:
-- **Header**: "🏆 CAMPEÃO DO MÊS 🏆" + nome do mês (ex: "Outubro 2025")
-- **Centro**: Avatar grande do vencedor + troféu animado + bandeira quadriculada SVG procedural (não emoji) ondulando com framer-motion
-- **Stats**: Total de vendas, # de deals, dias liderando, XP ganho na season
-- **Ações**: "Compartilhar conquista" (copia link/imagem) + "Fechar"
-- **Animações**: Spring entry, confete dourado contínuo (5s), reveal sequencial (troféu → nome → stats)
-- **Áudio opcional**: respeitar `RaceSoundToggle` setting
+### Regras de execução
+- 1 melhoria por commit lógico, sem perguntar entre etapas.
+- Semantic tokens, Sora/Inter, ≤300L por arquivo, strict TS, zero console errors.
+- Reaproveitar componentes existentes; criar helpers em `*Helpers.ts` quando exceder limite.
+- Toast de sucesso em ações admin; skeleton em todo loading.
+- Após cada fase, validar tipos (`tsc`) e ausência de regressões visuais.
 
-### Bandeira quadriculada SVG
-Componente `CheckeredFlag.tsx` em `src/components/race/`:
-- SVG com padrão de xadrez 8x4 células pretas/brancas
-- Animação de wave usando `<animateTransform>` ou framer-motion `path` morph
-- Reutilizável: usar também no header da arena para reforçar branding
-
-### Integração
-- `RaceArenaView.tsx`: montar `<MonthlyChampionOverlay roleType={roleType} />` ao lado do `VictoryLapOverlay` existente
-- Admin Console (`SeasonsManagerTable`): ao "Encerrar season", chamar RPC que define `winner_salesperson_id` e insere evento `monthly_champion` → dispara overlay para todos
-
-### Backend (mínimo)
-Migration leve:
-- Confirmar coluna `winner_salesperson_id` em `race_seasons` (provavelmente já existe)
-- RPC `finalize_race_season(season_id uuid)` SECURITY DEFINER (admin only via `has_role`):
-  1. Calcula top 1 do leaderboard da season
-  2. Set `status='finished'`, `winner_salesperson_id`, `ended_at=now()`
-  3. Insere `race_events` tipo `monthly_champion` com metadata (ranking final top 5)
-  4. Concede badge "Campeão do Mês" via `salesperson_badges`
-
-### Arquivos
-- **Novo**: `src/components/race/MonthlyChampionOverlay.tsx` (~250L)
-- **Novo**: `src/components/race/CheckeredFlag.tsx` (~80L SVG animado)
-- **Novo**: `src/hooks/race/useMonthlyChampion.ts` (~80L)
-- **Editar**: `src/pages/RaceArenaView.tsx` (montar overlay)
-- **Editar**: `src/components/race/admin/SeasonsManagerTable.tsx` (botão "Finalizar e Premiar" → chama RPC)
-- **Editar**: `src/components/race/index.ts` (exportar novos)
-- **Migration**: 1 RPC `finalize_race_season` + garantir colunas
-
-### Padrões
-Semantic tokens (rank-gold, amber-*), Sora p/ "CAMPEÃO DO MÊS", framer-motion spring, ≤300L por arquivo, RPC SECURITY DEFINER + RLS, localStorage para deduplicação client-side.
-
-### Resultado
-Cerimônia mensal automática e cinematográfica que coroa o campeão de cada pista (Closer/SDR), reaproveitando o visual de bandeira quadriculada como assinatura da Race Arena.
+### Entrega
+Ao concluir as 20 melhorias, a Race Arena estará em padrão Awwwards 10/10 — cinematográfica, performática, acessível e gerenciável.
