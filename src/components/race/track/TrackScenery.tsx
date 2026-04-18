@@ -93,6 +93,43 @@ function Paddock({ x, y, w, h, slots = 6 }: { x: number; y: number; w: number; h
   );
 }
 
+/** Marshal post: poste laranja com bandeirinha (fiscal de pista). */
+function MarshalPost({ cx, cy, flagColor = 'hsl(28 95% 55%)' }: { cx: number; cy: number; flagColor?: string }) {
+  return (
+    <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1.5px 2px 1.5px hsl(var(--race-grass-shadow) / 0.55))' }}>
+      <circle r={3.5} fill="hsl(28 95% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
+      <rect x={-0.6} y={-12} width={1.2} height={9} fill="hsl(var(--race-checkered-dark))" />
+      <path d="M0.6,-12 L7,-9.5 L0.6,-7 Z" fill={flagColor} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+      <circle r={1} fill="hsl(0 0% 100%)" opacity={0.6} />
+    </g>
+  );
+}
+
+/** Bandeiras triangulares de patrocinador (estilo F1) penduradas em linha. */
+function SponsorBunting({ x, y, w, count = 8 }: { x: number; y: number; w: number; count?: number }) {
+  const step = w / count;
+  const palette = ['hsl(0 75% 52%)', 'hsl(0 0% 98%)', 'hsl(210 75% 52%)', 'hsl(45 92% 55%)'];
+  return (
+    <g transform={`translate(${x} ${y})`} aria-hidden>
+      <line x1={0} y1={0} x2={w} y2={0} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.6} opacity={0.85} />
+      {Array.from({ length: count }).map((_, i) => {
+        const px = i * step + step / 2;
+        const c = palette[i % palette.length];
+        return (
+          <path
+            key={i}
+            d={`M${px - 2.5},0 L${px + 2.5},0 L${px},5.5 Z`}
+            fill={c}
+            stroke="hsl(var(--race-checkered-dark))"
+            strokeWidth={0.4}
+            opacity={0.95}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
 /** Arquibancada: barras coloridas pixeladas representando público. */
 function Grandstand({ x, y, w, h, vertical = false }: { x: number; y: number; w: number; h: number; vertical?: boolean }) {
   const stripes = vertical ? Math.floor(h / 4) : Math.floor(w / 4);
@@ -134,9 +171,16 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
       <g aria-hidden>
         {/* Arquibancada superior (atrás da reta de cima, fora da pista) */}
         <Grandstand x={300} y={30} w={400} h={36} />
+        {/* Bandeiras de patrocinador penduradas acima da arquibancada */}
+        <SponsorBunting x={300} y={24} w={400} count={12} />
         {/* Arquibancadas laterais menores */}
         <Grandstand x={20} y={250} w={26} h={120} vertical />
         <Grandstand x={W - 46} y={250} w={26} h={120} vertical />
+        {/* Marshal posts nas 4 curvas principais */}
+        <MarshalPost cx={95} cy={130} />
+        <MarshalPost cx={W - 95} cy={130} flagColor="hsl(0 75% 52%)" />
+        <MarshalPost cx={95} cy={H - 130} flagColor="hsl(45 92% 55%)" />
+        <MarshalPost cx={W - 95} cy={H - 130} />
         {trees.map(([x, y, s], i) => (
           <Tree key={i} cx={x} cy={y} scale={s} />
         ))}
