@@ -58,7 +58,6 @@ export const RevenueIntelligenceHub: FC = () => {
         <TabsList>
           <TabsTrigger value="ai-forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
-          <TabsTrigger value="coverage">Coverage Analyzer</TabsTrigger>
           <TabsTrigger value="calibration">Win Calibration</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
@@ -73,9 +72,6 @@ export const RevenueIntelligenceHub: FC = () => {
             dimension={dimension}
             onChangeDimension={setDimension}
           />
-        </TabsContent>
-        <TabsContent value="coverage" className="mt-4">
-          <PipelineCoverageAnalyzer />
         </TabsContent>
         <TabsContent value="calibration" className="mt-4">
           <WinProbabilityCalibrationPanel />
