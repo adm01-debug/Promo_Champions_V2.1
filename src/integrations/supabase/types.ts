@@ -3807,6 +3807,74 @@ export type Database = {
           },
         ]
       }
+      deal_velocity_predictions: {
+        Row: {
+          calculated_at: string
+          confidence_score: number
+          confidence_tier: string
+          created_at: string
+          current_stage: string | null
+          days_in_stage: number | null
+          expected_days_in_stage: number | null
+          factors: Json
+          id: string
+          model_version: string
+          owner_id: string | null
+          predicted_close_date: string | null
+          predicted_days_remaining: number | null
+          sale_id: string
+          stage_velocity_ratio: number | null
+          updated_at: string
+          velocity_status: string
+        }
+        Insert: {
+          calculated_at?: string
+          confidence_score?: number
+          confidence_tier?: string
+          created_at?: string
+          current_stage?: string | null
+          days_in_stage?: number | null
+          expected_days_in_stage?: number | null
+          factors?: Json
+          id?: string
+          model_version?: string
+          owner_id?: string | null
+          predicted_close_date?: string | null
+          predicted_days_remaining?: number | null
+          sale_id: string
+          stage_velocity_ratio?: number | null
+          updated_at?: string
+          velocity_status?: string
+        }
+        Update: {
+          calculated_at?: string
+          confidence_score?: number
+          confidence_tier?: string
+          created_at?: string
+          current_stage?: string | null
+          days_in_stage?: number | null
+          expected_days_in_stage?: number | null
+          factors?: Json
+          id?: string
+          model_version?: string
+          owner_id?: string | null
+          predicted_close_date?: string | null
+          predicted_days_remaining?: number | null
+          sale_id?: string
+          stage_velocity_ratio?: number | null
+          updated_at?: string
+          velocity_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_velocity_predictions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demand_forecasts: {
         Row: {
           confidence_score: number | null
@@ -9203,6 +9271,45 @@ export type Database = {
           phone_number?: string
           used_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      stage_velocity_baselines: {
+        Row: {
+          avg_days: number
+          calculated_at: string
+          created_at: string
+          id: string
+          median_days: number
+          owner_id: string | null
+          p75_days: number
+          sample_size: number
+          stage: string
+          updated_at: string
+        }
+        Insert: {
+          avg_days?: number
+          calculated_at?: string
+          created_at?: string
+          id?: string
+          median_days?: number
+          owner_id?: string | null
+          p75_days?: number
+          sample_size?: number
+          stage: string
+          updated_at?: string
+        }
+        Update: {
+          avg_days?: number
+          calculated_at?: string
+          created_at?: string
+          id?: string
+          median_days?: number
+          owner_id?: string | null
+          p75_days?: number
+          sample_size?: number
+          stage?: string
+          updated_at?: string
         }
         Relationships: []
       }
