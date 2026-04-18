@@ -8,7 +8,7 @@ import { AnimatePresence } from 'framer-motion';
 import {
   RaceArena as Arena,
   RaceLeaderboardSidebar,
-  RaceEventFeed,
+  FloatingEventFeed,
   CarCustomizer,
   RaceSoundToggle,
   VictoryLapOverlay,
@@ -127,7 +127,7 @@ function RaceTabContent({ roleType }: { roleType: RoleType }) {
             <ScoreBreakdownCard entry={myEntry} rules={rules} />
           )}
         </div>
-        <div className="col-span-12 lg:col-span-6 order-1 lg:order-2">
+        <div className="col-span-12 lg:col-span-9 order-1 lg:order-2">
           <Arena
             cars={leaderboard}
             boostingIds={boostingIds}
@@ -140,10 +140,9 @@ function RaceTabContent({ roleType }: { roleType: RoleType }) {
             }
           />
         </div>
-        <div className="col-span-12 lg:col-span-3 order-3">
-          <RaceEventFeed events={events} cars={leaderboard} />
-        </div>
       </div>
+
+      <FloatingEventFeed events={events} cars={leaderboard} />
 
       {isAdmin && (
         <ScoringRulesEditor

@@ -3,6 +3,7 @@ export { RaceTrack } from './RaceTrack';
 export { RaceCar } from './RaceCar';
 export { RaceLeaderboardSidebar } from './RaceLeaderboardSidebar';
 export { RaceEventFeed } from './RaceEventFeed';
+export { FloatingEventFeed } from './FloatingEventFeed';
 export { CarCustomizer } from './CarCustomizer';
 export { RaceSoundToggle } from './RaceSoundToggle';
 export { VictoryLapOverlay } from './VictoryLapOverlay';
