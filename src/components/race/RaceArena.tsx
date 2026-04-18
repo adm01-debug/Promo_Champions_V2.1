@@ -45,8 +45,24 @@ export function RaceArena({
   const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
   const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
   const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
+  const [commentary, setCommentary] = useState<CommentaryLine | null>(null);
+  const commentaryTimerRef = useRef<number | null>(null);
+  const [replayOverlay, setReplayOverlay] = useState(false);
+  const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
+  const [finaleShown, setFinaleShown] = useState(false);
+  const [showFinaleFlag, setShowFinaleFlag] = useState(false);
+  const prevLeaderIdRef = useRef<string | null>(null);
 
-  // ----- Tire wear: tracking de consistência de progresso por carro -----
+  const pushCommentary = useCallback((text: string) => {
+    if (!text) return;
+    const line: CommentaryLine = { id: `${Date.now()}-${Math.random()}`, text, createdAt: Date.now() };
+    setCommentary(line);
+    if (commentaryTimerRef.current) window.clearTimeout(commentaryTimerRef.current);
+    commentaryTimerRef.current = window.setTimeout(() => {
+      setCommentary((cur) => (cur?.id === line.id ? null : cur));
+    }, 3000);
+  }, []);
+
   const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
   const tireWearByCar = useMemo(() => {
     const map = new Map<string, number>();
