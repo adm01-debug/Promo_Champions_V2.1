@@ -8,6 +8,7 @@ import { CoverageRatioGauge } from "./CoverageRatioGauge";
 import { WinRateBreakdownChart } from "./WinRateBreakdownChart";
 import { PipelineInspectionTable } from "./PipelineInspectionTable";
 import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
+import { AIForecastPanel } from "./AIForecastPanel";
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
@@ -51,12 +52,16 @@ export const RevenueIntelligenceHub: FC = () => {
         />
       </div>
 
-      <Tabs defaultValue="winrate">
+      <Tabs defaultValue="ai-forecast">
         <TabsList>
+          <TabsTrigger value="ai-forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
+        <TabsContent value="ai-forecast" className="mt-4">
+          <AIForecastPanel />
+        </TabsContent>
         <TabsContent value="winrate" className="mt-4">
           <WinRateBreakdownChart
             data={data.win_rate_breakdown}
