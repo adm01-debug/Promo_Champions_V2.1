@@ -23,6 +23,8 @@ import {
   LeaderTakeoverCelebration,
   RaceAudioPreferences,
   PitStopPanel,
+  TrackConditionsBadge,
+  TrackWeatherOverlay,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -37,6 +39,7 @@ import { useOvertakeDetector } from '@/hooks/race/useOvertakeDetector';
 import { useLeaderTakeoverDetector } from '@/hooks/race/useLeaderTakeoverDetector';
 import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
 import { usePitStopAnalysis } from '@/hooks/race/usePitStopAnalysis';
+import { useTrackConditions } from '@/hooks/race/useTrackConditions';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -90,6 +93,12 @@ export default function RaceArenaView({ roleType }: Props) {
     leaderboard,
     mySalespersonId: myCar?.salesperson_id,
     season,
+  });
+
+  const trackConditions = useTrackConditions({
+    events,
+    leaderboard,
+    seasonStart: season?.start_date,
   });
 
   useEffect(() => {
@@ -173,6 +182,7 @@ export default function RaceArenaView({ roleType }: Props) {
           topEntries={leaderboard.slice(0, 3)}
           actions={
             <>
+              {season && <TrackConditionsBadge conditions={trackConditions} />}
               <Button onClick={() => setPitStopOpen(true)} variant="outline" disabled={!season}>
                 <Wrench className="w-4 h-4 mr-2" /> Pit Stop
               </Button>
@@ -234,6 +244,7 @@ export default function RaceArenaView({ roleType }: Props) {
                       ))}
                     </AnimatePresence>
                   }
+                  weatherOverlay={<TrackWeatherOverlay condition={trackConditions.condition} />}
                 />
               </div>
             </div>
