@@ -1,51 +1,51 @@
 
-Win Calibration 3/4 entregue. Última atômica do Revenue Intelligence para fechar 10/10.
+Revenue Intelligence fechou 4/4 (10/10). Próximo bloco do roadmap mestre rumo aos 10/10 globais.
 
-**Revenue Intelligence — 4/4: Quota Attainment Predictor**
+**Próximo bloco — Conversation Intelligence Hub (1/4): Talk Ratio & Pace Analyzer**
 
-Predição probabilística de atingimento de quota por vendedor até o fim do período, combinando: pipeline calibrado (já temos via Win Calibration), velocity histórica, run-rate atual e pace requerido. Saída: % de chance de bater quota + cenários (pessimista/realista/otimista) + alertas de quem precisa de intervenção.
+Já existem (base): transcrição, diarização, sumário, sentiment timeline, momentos críticos, menções a competidores e ações de coaching (`useTranscribeRecording.ts`). Falta a camada de **métricas conversacionais quantitativas** que transforme cada call em score objetivo de qualidade — fundamento para os próximos 3 módulos (Question Quality, Objection Handling, Coaching Scorecard).
 
 ## O que entregar
 
 ### 1. Migration
-- `quota_attainment_predictions`: `id`, `salesperson_id` FK, `period_start`, `period_end`, `quota_amount numeric`, `closed_amount numeric`, `weighted_pipeline numeric`, `predicted_amount numeric`, `attainment_probability numeric` (0-1), `scenario_pessimistic numeric`, `scenario_realistic numeric`, `scenario_optimistic numeric`, `pace_required_per_day numeric`, `current_pace_per_day numeric`, `risk_level` (`safe|on_track|at_risk|critical`), `factors jsonb`, `calculated_at timestamptz`. RLS authenticated read; admin/manager write.
-- `quota_attainment_alerts`: `id`, `prediction_id` FK, `salesperson_id`, `severity` (`info|warning|critical`), `message`, `recommended_action`, `acknowledged bool`, `created_at`. RLS.
-- Índices em `(salesperson_id, period_start desc)` e realtime nas duas.
+- `call_conversation_metrics`: `id`, `recording_id` FK UNIQUE, `seller_talk_ratio numeric` (0-1), `client_talk_ratio numeric`, `silence_ratio numeric`, `longest_monologue_seconds int`, `interruptions_count int`, `seller_words_per_minute int`, `client_words_per_minute int`, `pace_score numeric` (0-100), `engagement_score numeric` (0-100), `health` (`poor|fair|good|excellent`), `factors jsonb`, `calculated_at timestamptz`. RLS authenticated read; admin/manager write.
+- `call_metric_benchmarks`: `id`, `metric` text, `p25 numeric`, `p50 numeric`, `p75 numeric`, `target_min numeric`, `target_max numeric`, `updated_at`. Seed com benchmarks padrão (talk_ratio 40-60%, WPM 130-160, etc.).
+- Índices em `(recording_id)` e `(health, calculated_at desc)`. Realtime nas duas.
 
-### 2. Edge function `predict-quota-attainment` (verify_jwt=true)
-- Input: `{ period?: 'month'|'quarter', salesperson_id?: string|null }`.
-- Para cada vendedor (ou um específico): calcula closed no período + weighted pipeline (usando `deal_probability_scores` quando disponível, fallback STAGE_PROBABILITY) + run-rate (closed/dias decorridos) + pace required ((quota - closed)/dias restantes).
-- Monte Carlo simplificado: 1000 simulações somando deals abertos com `Bernoulli(calibrated_probability)`; deriva P10 (pessimista), P50 (realista), P90 (otimista) e probabilidade de ≥ quota.
-- Classifica risco: prob ≥ 0.8 safe, 0.5-0.8 on_track, 0.25-0.5 at_risk, <0.25 critical.
-- Gera alertas para `at_risk`/`critical` com ação recomendada (ex: "precisa fechar R$X em Y dias — focar em N deals em Negotiation").
-- Upsert predictions + insert alerts novos.
+### 2. Edge function `analyze-conversation-metrics` (verify_jwt=true)
+- Input: `{ recording_id: string }`.
+- Lê `diarization_turns` da recording → calcula talk ratios (segundos por speaker / total), silence ratio, longest monologue, interruptions (turn switch <1s), WPM por speaker.
+- Pace score: distância do WPM ideal (130-160). Engagement: combinação de talk balance + low silence + interruption penalty.
+- Health: <40 poor, 40-60 fair, 60-80 good, >80 excellent.
+- Upsert em `call_conversation_metrics`.
 
-### 3. Hooks `src/hooks/revenue/`
-- `useQuotaAttainmentPredictions(filters?)` — query + realtime.
-- `useQuotaAttainmentAlerts()` — query alertas não-acknowledged + realtime.
-- `useRunQuotaPrediction()` — mutation invocando edge function.
-- `useAcknowledgeQuotaAlert()` — mutation marca alert como visto.
+### 3. Hooks `src/hooks/conversational/`
+- `useConversationMetrics(recordingId)` — query + realtime.
+- `useConversationMetricsFeed(filters?)` — lista agregada (últimas 50) para hub.
+- `useAnalyzeConversationMetrics()` — mutation invocando edge function.
+- Encadear automaticamente em `useTranscribeRecording.ts` após `diarize-call-recording` (paralelo a summarize).
 
-### 4. Componentes `src/components/revenue-intelligence/quota/`
-- `QuotaAttainmentPredictor.tsx` (≤260L) — container com botão "Recalcular predições" + sub-componentes.
-- `QuotaAttainmentSummaryCards.tsx` (≤160L) — KPIs: % time on track, vendedores at-risk, gap total, prob média de bater quota.
-- `QuotaScenarioChart.tsx` (≤200L) — Recharts bar + reference line da quota: para cada vendedor, barras P10/P50/P90 lado a lado com linha de quota.
-- `QuotaRiskTable.tsx` (≤200L) — tabela: vendedor, closed, weighted pipeline, prob bater quota (badge color), pace atual vs requerido, risco.
-- `QuotaAttainmentAlertsPanel.tsx` (≤180L) — lista de alertas críticos com botão "Ack" e ação recomendada.
-- `quotaPredictorHelpers.ts` — `classifyRisk`, `monteCarloAttainment` (client-side fallback), `formatPace`, paleta de cores.
+### 4. Componentes `src/components/conversational/metrics/`
+- `ConversationMetricsCard.tsx` (≤200L) — card por recording: talk ratio donut, WPM, health badge, botão "recalcular".
+- `TalkRatioDonut.tsx` (≤120L) — donut Recharts seller×client×silence com legenda.
+- `PaceGauge.tsx` (≤140L) — gauge semicircular WPM com banda alvo (verde 130-160).
+- `EngagementBreakdown.tsx` (≤160L) — barras: talk balance, silence, interruptions, monologue — cada uma colorida por health.
+- `ConversationMetricsFeed.tsx` (≤220L) — lista das últimas 50 calls com métricas, filtros por health, ordenação.
+- `metricsHelpers.ts` — `classifyHealth`, `calcEngagement`, `formatWPM`, paleta.
 
 ### 5. Integração
-- Nova aba **"Quota Predictor"** no `RevenueIntelligenceHub.tsx` ao final (depois de "Pipeline Inspection").
-- `supabase/config.toml`: `[functions.predict-quota-attainment] verify_jwt = true`.
+- Renderizar `ConversationMetricsCard` dentro do `CallRecordingDetailDrawer` (abaixo de Sumário/Sentiment).
+- Nova rota/aba **"Conversation Intelligence"** no hub conversacional existente exibindo `ConversationMetricsFeed` + KPIs agregados.
+- `supabase/config.toml`: `[functions.analyze-conversation-metrics] verify_jwt = true`.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Botão "Recalcular" gera predictions + alertas; cards/tabela/chart renderizam; alertas podem ser acknowledged.
+- Após transcrever uma call, métricas aparecem no drawer; feed lista calls com health badges.
 
 ## Arquivos
-- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
-- **Edge function**: `predict-quota-attainment`.
-- **Criar**: 4 hooks, 5 componentes + 1 helper.
-- **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`.
+- **Migration**: 1 (2 tabelas + RLS + realtime + índices + seed benchmarks).
+- **Edge function**: `analyze-conversation-metrics`.
+- **Criar**: 3 hooks, 5 componentes + 1 helper.
+- **Editar**: `useTranscribeRecording.ts` (chain), `CallRecordingDetailDrawer.tsx`, hub conversacional, `supabase/config.toml`.
 
-Após esta entrega, **Revenue Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do roadmap mestre.
+Após esta entrega, sigo automaticamente para **Conversation Intelligence 2/4: Question Quality Scorer** → 3/4 **Objection Handling Tracker** → 4/4 **Coaching Scorecard Aggregator**, fechando o bloco em 10/10.
