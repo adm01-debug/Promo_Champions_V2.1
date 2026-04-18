@@ -46,7 +46,8 @@ export const QuestionMixDonut = ({ analysis }: Props) => {
           ))}
         </Pie>
         <Tooltip
-          content={({ active, payload }: RechartsTooltipProps) => {
+          content={(props) => {
+            const { active, payload } = props as { active?: boolean; payload?: Array<{ name: string; value: number }> };
             if (!active || !payload?.length) return null;
             const p = payload[0];
             return (
