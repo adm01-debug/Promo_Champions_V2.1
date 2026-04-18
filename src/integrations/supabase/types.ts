@@ -9016,6 +9016,33 @@ export type Database = {
           },
         ]
       }
+      race_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          reactor_user_id: string
+          season_id: string | null
+          target_car_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          id?: string
+          reactor_user_id: string
+          season_id?: string | null
+          target_car_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          reactor_user_id?: string
+          season_id?: string | null
+          target_car_id?: string
+        }
+        Relationships: []
+      }
       race_scoring_rules: {
         Row: {
           created_at: string
