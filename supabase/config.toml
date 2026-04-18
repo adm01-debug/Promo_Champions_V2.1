@@ -216,3 +216,6 @@ verify_jwt = true
 [functions.calibrate-win-probability]
 verify_jwt = true
 
+[functions.predict-quota-attainment]
+verify_jwt = true
+
