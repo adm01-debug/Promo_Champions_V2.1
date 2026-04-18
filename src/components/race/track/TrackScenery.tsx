@@ -253,7 +253,8 @@ export function TrackScenery({
   waveTrigger = 0,
 }: { layer: 'outer' | 'inner'; yellowFlag?: boolean; waveTrigger?: number }) {
   const W = TRACK_VIEWBOX.width; // 600
-  const H = TRACK_VIEWBOX.height; // 1000
+  // Coordenadas internas referem-se à área da pista (1000px) — o offset Y é aplicado pelo wrapper.
+  const H = TRACK_INNER_HEIGHT;
 
   if (layer === 'outer') {
     const trees: Array<[number, number, number]> = [
