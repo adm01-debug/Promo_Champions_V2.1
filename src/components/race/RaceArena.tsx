@@ -13,6 +13,7 @@ import { RaceControlPanel, type RaceFlag } from './RaceControlPanel';
 import { SpeedHUD } from './SpeedHUD';
 import { NextCornerHUD } from './NextCornerHUD';
 import { TrackTireMarks } from './track/TrackTireMarks';
+import { TrackDustParticles } from './track/TrackDustParticles';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
