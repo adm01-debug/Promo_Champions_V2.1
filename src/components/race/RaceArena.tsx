@@ -594,6 +594,29 @@ export function RaceArena({
       {weatherOverlay}
       </motion.div>
 
+      {/* ===== Sombra dinâmica do sol (gradiente radial canto superior direito) ===== */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[5] rounded-3xl"
+        style={{
+          background:
+            'radial-gradient(circle at 92% 8%, hsl(48 100% 75% / 0.22) 0%, hsl(45 95% 65% / 0.08) 30%, transparent 65%)',
+          mixBlendMode: 'screen',
+        }}
+        aria-hidden
+      />
+
+      {/* ===== Overlay amarelo translúcido durante bandeira amarela ===== */}
+      {currentFlag === 'yellow' && !reducedMotion && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[6] rounded-3xl"
+          style={{
+            background: 'hsl(45 95% 55% / 0.15)',
+            animation: 'race-track-yellow-overlay 0.7s ease-in-out infinite',
+          }}
+          aria-hidden
+        />
+      )}
+
       {/* ===== LAP counter HUD (topo central) ===== */}
       <div
         className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-1.5 shadow-lg"
@@ -610,6 +633,17 @@ export function RaceArena({
           </span>
         </div>
       </div>
+
+      {/* ===== Race Control panel (lateral esquerda) ===== */}
+      <RaceControlPanel
+        flag={currentFlag}
+        startedAt={seasonStartedAt}
+        endsAt={seasonEndsAt}
+        overtakesTotal={overtakesTotal}
+      />
+
+      {/* ===== Speed HUD do líder (canto inferior esquerdo, ao lado do MiniMap) ===== */}
+      <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
 
       {/* ===== Mini-mapa do circuito ===== */}
       <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
