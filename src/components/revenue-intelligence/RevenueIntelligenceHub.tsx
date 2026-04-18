@@ -9,7 +9,6 @@ import { WinRateBreakdownChart } from "./WinRateBreakdownChart";
 import { PipelineInspectionTable } from "./PipelineInspectionTable";
 import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
 import { AIForecastPanel } from "./AIForecastPanel";
-import { PipelineCoverageAnalyzer } from "./coverage/PipelineCoverageAnalyzer";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
 import { QuotaAttainmentPredictor } from "./quota/QuotaAttainmentPredictor";
 
