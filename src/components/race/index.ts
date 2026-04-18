@@ -27,4 +27,5 @@ export { ChampionsHistoryPanel } from './ChampionsHistoryPanel';
 export { OvertakeHighlight } from './OvertakeHighlight';
 export { PredictedRankBadge } from './PredictedRankBadge';
 export { LeaderTakeoverCelebration } from './LeaderTakeoverCelebration';
+export { PitStopPanel } from './PitStopPanel';
 export { fmtCurrency, fmtCompact } from './raceFormatters';

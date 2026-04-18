@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Settings2, Rocket } from 'lucide-react';
+import { Settings2, Rocket, Wrench } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import {
   RaceArena as Arena,
@@ -22,6 +22,7 @@ import {
   OvertakeHighlight,
   LeaderTakeoverCelebration,
   RaceAudioPreferences,
+  PitStopPanel,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -35,6 +36,7 @@ import { useRaceScoringRules } from '@/hooks/race/useRaceScoringRules';
 import { useOvertakeDetector } from '@/hooks/race/useOvertakeDetector';
 import { useLeaderTakeoverDetector } from '@/hooks/race/useLeaderTakeoverDetector';
 import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
+import { usePitStopAnalysis } from '@/hooks/race/usePitStopAnalysis';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -63,6 +65,7 @@ export default function RaceArenaView({ roleType }: Props) {
   const qc = useQueryClient();
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [startSeasonOpen, setStartSeasonOpen] = useState(false);
+  const [pitStopOpen, setPitStopOpen] = useState(false);
   const [countdownTrigger, setCountdownTrigger] = useState(0);
   const [boostingIds, setBoostingIds] = useState<Set<string>>(new Set());
   const lastEventIdRef = useRef<string | null>(null);
@@ -81,6 +84,12 @@ export default function RaceArenaView({ roleType }: Props) {
     secondsToEnd,
     play,
     muted,
+  });
+
+  const pitStopAnalysis = usePitStopAnalysis({
+    leaderboard,
+    mySalespersonId: myCar?.salesperson_id,
+    season,
   });
 
   useEffect(() => {
@@ -164,6 +173,9 @@ export default function RaceArenaView({ roleType }: Props) {
           topEntries={leaderboard.slice(0, 3)}
           actions={
             <>
+              <Button onClick={() => setPitStopOpen(true)} variant="outline" disabled={!season}>
+                <Wrench className="w-4 h-4 mr-2" /> Pit Stop
+              </Button>
               <RaceSoundToggle muted={muted} onToggle={toggleMute} />
               <RaceAudioPreferences />
               <Button onClick={() => setCountdownTrigger((t) => t + 1)} variant="outline">
@@ -236,6 +248,12 @@ export default function RaceArenaView({ roleType }: Props) {
         <LeaderTakeoverCelebration takeover={takeover} onClear={clearTakeover} onPlaySound={() => play('victory')} />
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
+        <PitStopPanel
+          open={pitStopOpen}
+          onOpenChange={setPitStopOpen}
+          analysis={pitStopAnalysis}
+          onPlaySound={() => play('pitstop')}
+        />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
         {isAdmin && (
           <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
