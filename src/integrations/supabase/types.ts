@@ -8855,6 +8855,51 @@ export type Database = {
           },
         ]
       }
+      race_scoring_rules: {
+        Row: {
+          created_at: string
+          id: string
+          label: string | null
+          metric_code: string
+          points_per_unit: number
+          season_id: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          metric_code: string
+          points_per_unit?: number
+          season_id: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          metric_code?: string
+          points_per_unit?: number
+          season_id?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_scoring_rules_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_scoring_rules_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       race_seasons: {
         Row: {
           created_at: string
@@ -8862,6 +8907,7 @@ export type Database = {
           goal_amount: number
           id: string
           name: string
+          role_type: string
           start_date: string
           status: string
           track_type: string
@@ -8874,6 +8920,7 @@ export type Database = {
           goal_amount?: number
           id?: string
           name: string
+          role_type?: string
           start_date: string
           status?: string
           track_type?: string
@@ -8886,6 +8933,7 @@ export type Database = {
           goal_amount?: number
           id?: string
           name?: string
+          role_type?: string
           start_date?: string
           status?: string
           track_type?: string
@@ -13220,16 +13268,21 @@ export type Database = {
       }
       race_leaderboard_view: {
         Row: {
+          activities_count: number | null
           avatar_url: string | null
           car_id: string | null
           car_number: number | null
           car_style: string | null
+          conversations_count: number | null
           deals_count: number | null
+          new_clients_count: number | null
           nickname: string | null
           primary_color: string | null
           progress: number | null
+          role_type: string | null
           salesperson_id: string | null
           salesperson_name: string | null
+          score: number | null
           season_id: string | null
           secondary_color: string | null
           total_sales: number | null

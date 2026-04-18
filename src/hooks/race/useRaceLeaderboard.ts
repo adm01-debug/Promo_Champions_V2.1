@@ -13,8 +13,13 @@ export interface RaceLeaderboardEntry {
   secondary_color: string;
   car_style: 'f1' | 'stock' | 'kart';
   nickname: string | null;
+  role_type?: 'closer' | 'sdr';
   total_sales: number;
   deals_count: number;
+  new_clients_count?: number;
+  activities_count?: number;
+  conversations_count?: number;
+  score?: number;
   progress: number;
   rank?: number;
 }

@@ -8,6 +8,13 @@ interface StartSeasonInput {
   end_date: string;
   goal_amount: number;
   track_type?: 'oval' | 'circuit' | 'street';
+  role_type?: 'closer' | 'sdr';
+  scoring_rules?: Array<{
+    metric_code: string;
+    weight: number;
+    points_per_unit: number;
+    label?: string;
+  }>;
 }
 
 export function useStartRaceSeason() {
