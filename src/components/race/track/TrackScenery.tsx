@@ -86,12 +86,39 @@ function Paddock({ x, y, w, h, slots = 6 }: { x: number; y: number; w: number; h
   );
 }
 
-function MarshalPost({ cx, cy, flagColor = 'hsl(28 95% 55%)' }: { cx: number; cy: number; flagColor?: string }) {
+/**
+ * Marshal humanoide minimalista segurando bandeira que se agita.
+ * Quando `yellowFlag` true, troca a cor da bandeira para amarelo F1.
+ * Cada marshal tem `delayMs` para dessincronizar levemente a onda das bandeiras.
+ */
+function MarshalPost({
+  cx, cy, flagColor = 'hsl(28 95% 55%)', yellowFlag = false, delayMs = 0,
+}: { cx: number; cy: number; flagColor?: string; yellowFlag?: boolean; delayMs?: number }) {
+  const flag = yellowFlag ? 'hsl(45 95% 55%)' : flagColor;
   return (
     <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1.5px 2px 1.5px hsl(var(--race-grass-shadow) / 0.55))' }}>
+      {/* base/post pintado */}
       <circle r={3.5} fill="hsl(28 95% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
-      <rect x={-0.6} y={-12} width={1.2} height={9} fill="hsl(var(--race-checkered-dark))" />
-      <path d="M0.6,-12 L7,-9.5 L0.6,-7 Z" fill={flagColor} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+      {/* humanoide minimalista (3px): cabeça + tronco */}
+      <circle cx={-1.6} cy={-5.5} r={1.4} fill="hsl(20 35% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+      <rect x={-2.8} y={-4.2} width={2.4} height={3.5} rx={0.6} fill="hsl(210 70% 45%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+      {/* mastro */}
+      <rect x={-0.4} y={-12} width={0.9} height={9} fill="hsl(var(--race-checkered-dark))" />
+      {/* bandeira animada (origem na ponta superior do mastro) */}
+      <g
+        style={{
+          transformOrigin: '0px -12px',
+          transformBox: 'fill-box',
+          animation: `race-marshal-flag-wave 0.9s ease-in-out infinite ${delayMs}ms`,
+        }}
+      >
+        <path
+          d="M0.6,-12 L7.5,-10 L6.4,-8.2 L7.6,-6.4 L0.6,-7.5 Z"
+          fill={flag}
+          stroke="hsl(var(--race-checkered-dark))"
+          strokeWidth={0.5}
+        />
+      </g>
       <circle r={1} fill="hsl(0 0% 100%)" opacity={0.6} />
     </g>
   );
@@ -122,7 +149,9 @@ function SponsorBunting({ x, y, w, count = 8 }: { x: number; y: number; w: numbe
   );
 }
 
-function Grandstand({ x, y, w, h, vertical = false }: { x: number; y: number; w: number; h: number; vertical?: boolean }) {
+function Grandstand({
+  x, y, w, h, vertical = false, waveTrigger = 0,
+}: { x: number; y: number; w: number; h: number; vertical?: boolean; waveTrigger?: number }) {
   const stripes = vertical ? Math.floor(h / 4) : Math.floor(w / 4);
   const palette = ['hsl(0 70% 55%)', 'hsl(45 90% 58%)', 'hsl(210 70% 55%)', 'hsl(280 50% 58%)', 'hsl(0 0% 95%)'];
   return (
@@ -131,10 +160,15 @@ function Grandstand({ x, y, w, h, vertical = false }: { x: number; y: number; w:
       <rect width={vertical ? 4 : w} height={vertical ? h : 4} fill="hsl(var(--race-curb-b))" rx={2} />
       {Array.from({ length: stripes }).map((_, i) => {
         const c = palette[i % palette.length];
+        // La Ola: cada faixa anima sequencialmente da esquerda para a direita
+        const delay = (i / Math.max(1, stripes)) * 1.2;
+        const animStyle = waveTrigger > 0
+          ? { animation: `race-la-ola-wave 1.2s ease-in-out ${delay}s 1`, transformBox: 'fill-box' as const, transformOrigin: 'center bottom' }
+          : undefined;
         return vertical ? (
-          <rect key={i} x={6} y={2 + i * 4} width={w - 10} height={2.5} fill={c} opacity={0.85} />
+          <rect key={`${waveTrigger}-${i}`} x={6} y={2 + i * 4} width={w - 10} height={2.5} fill={c} opacity={0.85} style={animStyle} />
         ) : (
-          <rect key={i} x={2 + i * 4} y={6} width={2.5} height={h - 10} fill={c} opacity={0.85} />
+          <rect key={`${waveTrigger}-${i}`} x={2 + i * 4} y={6} width={2.5} height={h - 10} fill={c} opacity={0.85} style={animStyle} />
         );
       })}
     </g>
@@ -213,12 +247,15 @@ function PitLane() {
   );
 }
 
-export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
+export function TrackScenery({
+  layer,
+  yellowFlag = false,
+  waveTrigger = 0,
+}: { layer: 'outer' | 'inner'; yellowFlag?: boolean; waveTrigger?: number }) {
   const W = TRACK_VIEWBOX.width; // 600
   const H = TRACK_VIEWBOX.height; // 1000
 
   if (layer === 'outer') {
-    // Árvores nos cantos e bordas externas, evitando a pista (margem ~95px).
     const trees: Array<[number, number, number]> = [
       [40, 40, 1.05], [120, 25, 0.85], [W - 40, 40, 1.0], [W - 120, 25, 0.9],
       [40, H - 40, 1.1], [120, H - 28, 0.9], [W - 40, H - 40, 1.0], [W - 120, H - 28, 0.95],
@@ -229,20 +266,16 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
     ];
     return (
       <g aria-hidden>
-        {/* Arquibancada superior (acima da reta de cima, fora da pista) */}
-        <Grandstand x={200} y={30} w={200} h={36} />
-        {/* Bandeiras de patrocinador penduradas acima da arquibancada */}
+        <Grandstand x={200} y={30} w={200} h={36} waveTrigger={waveTrigger} />
         <SponsorBunting x={200} y={24} w={200} count={10} />
-        {/* Arquibancada inferior */}
-        <Grandstand x={200} y={H - 66} w={200} h={36} />
-        {/* Arquibancadas laterais (verticais) */}
-        <Grandstand x={20} y={420} w={26} h={160} vertical />
-        <Grandstand x={W - 46} y={420} w={26} h={160} vertical />
-        {/* Marshal posts nas 4 curvas principais */}
-        <MarshalPost cx={130} cy={130} />
-        <MarshalPost cx={W - 130} cy={130} flagColor="hsl(0 75% 52%)" />
-        <MarshalPost cx={130} cy={H - 130} flagColor="hsl(45 92% 55%)" />
-        <MarshalPost cx={W - 130} cy={H - 130} />
+        <Grandstand x={200} y={H - 66} w={200} h={36} waveTrigger={waveTrigger} />
+        <Grandstand x={20} y={420} w={26} h={160} vertical waveTrigger={waveTrigger} />
+        <Grandstand x={W - 46} y={420} w={26} h={160} vertical waveTrigger={waveTrigger} />
+        {/* Marshal posts: trocam para amarelo durante yellowFlag, com delays escalonados */}
+        <MarshalPost cx={130}     cy={130}     yellowFlag={yellowFlag} delayMs={0}   />
+        <MarshalPost cx={W - 130} cy={130}     yellowFlag={yellowFlag} delayMs={120} flagColor="hsl(0 75% 52%)" />
+        <MarshalPost cx={130}     cy={H - 130} yellowFlag={yellowFlag} delayMs={240} flagColor="hsl(45 92% 55%)" />
+        <MarshalPost cx={W - 130} cy={H - 130} yellowFlag={yellowFlag} delayMs={360} />
         {trees.map(([x, y, s], i) => (
           <Tree key={i} cx={x} cy={y} scale={s} />
         ))}

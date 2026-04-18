@@ -11,10 +11,12 @@ import { StartLights } from './StartLights';
 import { Fireworks } from './Fireworks';
 import { RaceControlPanel, type RaceFlag } from './RaceControlPanel';
 import { SpeedHUD } from './SpeedHUD';
+import { NextCornerHUD } from './NextCornerHUD';
 import { TrackTireMarks } from './track/TrackTireMarks';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
+  getNextCornerInfo,
 } from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -73,6 +75,19 @@ export function RaceArena({
   // Velocidade simulada do líder (km/h)
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
+
+  // Ciclo 47-52: la-ola, fastest sector, cinematic camera
+  const [waveTrigger, setWaveTrigger] = useState(0);
+  const lastLapCompletedRef = useRef<number>(0);
+  const [fastestCarId, setFastestCarId] = useState<string | null>(null);
+  const fastestTimerRef = useRef<number | null>(null);
+  // Tempo do líder ao entrar em cada setor (ms) — para detectar setor mais rápido
+  const sectorEnterRef = useRef<Map<number, { carId: string; at: number }>>(new Map());
+  const bestSectorTimeRef = useRef<Map<number, number>>(new Map());
+  const [flashSectorIdx, setFlashSectorIdx] = useState<number | null>(null);
+  const [cinematicFocus, setCinematicFocus] = useState(false);
+  const cinematicTimerRef = useRef<number | null>(null);
+  const lastCinematicAtRef = useRef<number>(0);
 
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
@@ -173,8 +188,42 @@ export function RaceArena({
             }, 900);
             const lname = sorted.find((c) => c.car_id === leaderCurr.id)?.salesperson_name;
             pushCommentary(makeCommentaryLine({ type: 'sector', leader: lname, sector: name }));
+
+            // ===== FASTEST SECTOR detection =====
+            const now = Date.now();
+            const prevEnter = sectorEnterRef.current.get(i);
+            if (prevEnter && prevEnter.carId === leaderCurr.id) {
+              const sectorTime = now - prevEnter.at;
+              const best = bestSectorTimeRef.current.get(i);
+              if (sectorTime > 200 && (best === undefined || sectorTime < best)) {
+                bestSectorTimeRef.current.set(i, sectorTime);
+                // flash setor + badge FASTEST
+                setFlashSectorIdx(i);
+                setFastestCarId(leaderCurr.id);
+                if (fastestTimerRef.current) window.clearTimeout(fastestTimerRef.current);
+                fastestTimerRef.current = window.setTimeout(() => {
+                  setFlashSectorIdx(null);
+                  setFastestCarId(null);
+                }, 2000);
+              }
+            }
+            sectorEnterRef.current.set(i, { carId: leaderCurr.id, at: now });
+
+            // ===== CINEMATIC FOCUS no setor 3 (final da volta, i==2) =====
+            if (i === 2 && now - lastCinematicAtRef.current > 8000) {
+              lastCinematicAtRef.current = now;
+              setCinematicFocus(true);
+              if (cinematicTimerRef.current) window.clearTimeout(cinematicTimerRef.current);
+              cinematicTimerRef.current = window.setTimeout(() => setCinematicFocus(false), 1800);
+            }
           }
         });
+
+        // ===== LA OLA: dispara quando líder completa uma volta (cruza 0) =====
+        if (leaderCurr.progress > 1 && Math.floor(leaderCurr.progress) > lastLapCompletedRef.current) {
+          lastLapCompletedRef.current = Math.floor(leaderCurr.progress);
+          setWaveTrigger((n) => n + 1);
+        }
       }
       // ----- Mudança de líder -----
       const newLeaderId = leaderCurr?.id ?? null;
@@ -290,6 +339,37 @@ export function RaceArena({
     }
   }, [closeBattle, reducedMotion, zoomActive]);
 
+  // ----- Cinematic focus quando líder abre gap >5% -----
+  useEffect(() => {
+    if (reducedMotion || !gapToSecond) return;
+    const now = Date.now();
+    if (gapToSecond > 0.05 && now - lastCinematicAtRef.current > 8000) {
+      lastCinematicAtRef.current = now;
+      setCinematicFocus(true);
+      if (cinematicTimerRef.current) window.clearTimeout(cinematicTimerRef.current);
+      cinematicTimerRef.current = window.setTimeout(() => setCinematicFocus(false), 1800);
+    }
+  }, [gapToSecond, reducedMotion]);
+
+  // ----- Próxima curva para o usuário logado -----
+  const currentUserCar = useMemo(
+    () => sorted.find((c) => c.salesperson_id === currentUserSalespersonId),
+    [sorted, currentUserSalespersonId],
+  );
+  const nextCornerInfo = useMemo(
+    () => (currentUserCar ? getNextCornerInfo(Number(currentUserCar.progress)) : null),
+    [currentUserCar?.car_id, currentUserCar?.progress],
+  );
+
+  // ----- Aero turbulence: top 3 + DRS ativo -----
+  const aeroTurbByCar = useMemo(() => {
+    const map = new Map<string, boolean>();
+    sorted.forEach((c, idx) => {
+      map.set(c.car_id, idx < 3 && (drsActiveByCar.get(c.car_id) ?? false));
+    });
+    return map;
+  }, [sorted, drsActiveByCar]);
+
   // ----- Bandeira de chegada (líder >= 0.95) -----
   useEffect(() => {
     if (finaleShown || reducedMotion) return;
@@ -375,8 +455,8 @@ export function RaceArena({
     >
       <motion.div
         className="w-full h-full"
-        animate={{ scale: zoomActive && !reducedMotion ? 1.12 : 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ scale: (zoomActive || cinematicFocus) && !reducedMotion ? (cinematicFocus ? 1.04 : 1.12) : 1 }}
+        transition={{ duration: cinematicFocus ? 1.8 : 0.6, ease: [0.22, 1, 0.36, 1] }}
         style={{
           transformOrigin: leaderPos
             ? `${(leaderPos.x / TRACK_VIEWBOX.width) * 100}% ${(leaderPos.y / TRACK_VIEWBOX.height) * 100}%`
@@ -384,9 +464,10 @@ export function RaceArena({
           animation: reducedMotion
             ? undefined
             : 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+          boxShadow: cinematicFocus && !reducedMotion ? 'inset 0 0 120px 30px hsl(0 0% 0% / 0.45)' : undefined,
         }}
       >
-      <RaceTrack>
+      <RaceTrack yellowFlag={currentFlag === 'yellow'} waveTrigger={waveTrigger}>
         {/* Tire marks (rastros de pneu nas curvas) — abaixo dos carros */}
         <TrackTireMarks cars={tireMarkCars} />
         {sorted.map((car, idx) => {
@@ -437,6 +518,8 @@ export function RaceArena({
                 drsActive={drsActiveByCar.get(car.car_id) ?? false}
                 rank={idx + 1}
                 pitStop={pitStopCars.has(car.car_id)}
+                fastestSector={fastestCarId === car.car_id}
+                aeroTurbulence={aeroTurbByCar.get(car.car_id) ?? false}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
@@ -641,6 +724,26 @@ export function RaceArena({
         endsAt={seasonEndsAt}
         overtakesTotal={overtakesTotal}
       />
+
+      {/* ===== Próxima curva HUD (canto inferior direito, acima do Replay) ===== */}
+      <NextCornerHUD info={nextCornerInfo} />
+
+      {/* ===== Indicador "FASTEST SECTOR" piscando (topo central abaixo do Lap) ===== */}
+      {flashSectorIdx !== null && !reducedMotion && (
+        <div
+          className="absolute top-12 left-1/2 -translate-x-1/2 z-20 rounded-md px-2 py-0.5 border border-border/50"
+          style={{
+            background: 'hsl(271 91% 55%)',
+            animation: 'race-fastest-sector-flash 0.5s ease-in-out infinite',
+          }}
+          aria-label={`Setor ${flashSectorIdx + 1} mais rápido`}
+        >
+          <span className="text-[8px] font-black uppercase tracking-[0.18em] text-white">
+            Fastest S{flashSectorIdx + 1}
+          </span>
+        </div>
+      )}
+
 
       {/* ===== Speed HUD do líder (canto inferior esquerdo, ao lado do MiniMap) ===== */}
       <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
