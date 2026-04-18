@@ -3,18 +3,25 @@
 
 export const TRACK_VIEWBOX = { width: 1000, height: 600 };
 
-// Circuito estilo "estádio com chicane" — usa toda a altura (60→540) e largura (80→920).
-// Sequência balanceada: reta superior, hairpin topo-esq, S descendente, curva ampla baixo-esq,
-// reta inferior, chicane baixo-dir, subida direita, fecha no start.
+// Circuito serpenteante vertical — sobe e desce ocupando toda a área verde.
+// Usa altura 60→540 e largura 80→920. Quatro "voltas" horizontais conectadas
+// por curvas suaves nas laterais, formando um S invertido fechado.
 export const TRACK_PATH_D = `
-M 900 300
-C 900 140, 780 70, 560 70
-C 380 70, 230 80, 140 170
-C 70 250, 80 340, 170 380
-C 270 420, 240 490, 160 520
-C 280 560, 480 560, 640 530
-C 740 510, 700 430, 800 430
-C 880 430, 900 380, 900 300
+M 140 70
+C 320 50, 600 50, 820 70
+C 900 80, 920 140, 860 180
+C 780 220, 500 220, 320 215
+C 180 215, 100 250, 140 305
+C 200 345, 480 345, 680 340
+C 820 340, 920 380, 860 430
+C 780 470, 500 475, 280 470
+C 160 470, 80 510, 180 545
+C 360 565, 640 565, 840 540
+C 920 525, 940 470, 920 380
+C 905 290, 920 200, 920 130
+C 920 80, 820 50, 700 55
+C 540 60, 360 55, 200 60
+C 140 65, 110 70, 140 70
 Z
 `.trim();
 
