@@ -36,6 +36,14 @@ export function useRaceSounds() {
 
   const play = useCallback((type: RaceSoundType) => {
     if (muted) return;
+    // Consulta prefs por tipo (gerenciadas por RaceAudioPreferences)
+    try {
+      const raw = localStorage.getItem('race_sound_prefs');
+      if (raw) {
+        const prefs = JSON.parse(raw) as Record<string, boolean>;
+        if (prefs[type] === false) return;
+      }
+    } catch { /* noop */ }
     const ctx = ensureCtx();
     if (!ctx) return;
     const now = ctx.currentTime;

@@ -7,6 +7,7 @@ export { RaceEventFeed } from './RaceEventFeed';
 export { FloatingEventFeed } from './FloatingEventFeed';
 export { CarCustomizer } from './CarCustomizer';
 export { RaceSoundToggle } from './RaceSoundToggle';
+export { RaceAudioPreferences } from './RaceAudioPreferences';
 export { VictoryLapOverlay } from './VictoryLapOverlay';
 export { RaceBadgeShowcase } from './RaceBadgeShowcase';
 export { StartSeasonDialog } from './StartSeasonDialog';

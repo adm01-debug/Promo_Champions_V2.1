@@ -21,6 +21,7 @@ import {
   StartSeasonDialog,
   OvertakeHighlight,
   LeaderTakeoverCelebration,
+  RaceAudioPreferences,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -33,6 +34,7 @@ import { useRacePowerups, collectRacePowerup } from '@/hooks/race/useRacePowerup
 import { useRaceScoringRules } from '@/hooks/race/useRaceScoringRules';
 import { useOvertakeDetector } from '@/hooks/race/useOvertakeDetector';
 import { useLeaderTakeoverDetector } from '@/hooks/race/useLeaderTakeoverDetector';
+import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -66,6 +68,20 @@ export default function RaceArenaView({ roleType }: Props) {
   const lastEventIdRef = useRef<string | null>(null);
   const { recentOvertakes, dismissOvertake } = useOvertakeDetector(leaderboard);
   const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(leaderboard, myCar?.salesperson_id);
+
+  const secondsToEnd = useMemo(() => {
+    if (!season?.end_date) return undefined;
+    const s = differenceInSeconds(new Date(season.end_date), new Date());
+    return s >= 0 ? s : undefined;
+  }, [season?.end_date]);
+
+  useRaceAudioEngine({
+    leaderboard,
+    mySalespersonId: myCar?.salesperson_id,
+    secondsToEnd,
+    play,
+    muted,
+  });
 
   useEffect(() => {
     if (recentOvertakes.length > 0) play('overtake');
@@ -149,6 +165,7 @@ export default function RaceArenaView({ roleType }: Props) {
           actions={
             <>
               <RaceSoundToggle muted={muted} onToggle={toggleMute} />
+              <RaceAudioPreferences />
               <Button onClick={() => setCountdownTrigger((t) => t + 1)} variant="outline">
                 <Rocket className="w-4 h-4 mr-2" /> Largada!
               </Button>
