@@ -149,7 +149,9 @@ function SponsorBunting({ x, y, w, count = 8 }: { x: number; y: number; w: numbe
   );
 }
 
-function Grandstand({ x, y, w, h, vertical = false }: { x: number; y: number; w: number; h: number; vertical?: boolean }) {
+function Grandstand({
+  x, y, w, h, vertical = false, waveTrigger = 0,
+}: { x: number; y: number; w: number; h: number; vertical?: boolean; waveTrigger?: number }) {
   const stripes = vertical ? Math.floor(h / 4) : Math.floor(w / 4);
   const palette = ['hsl(0 70% 55%)', 'hsl(45 90% 58%)', 'hsl(210 70% 55%)', 'hsl(280 50% 58%)', 'hsl(0 0% 95%)'];
   return (
@@ -158,10 +160,15 @@ function Grandstand({ x, y, w, h, vertical = false }: { x: number; y: number; w:
       <rect width={vertical ? 4 : w} height={vertical ? h : 4} fill="hsl(var(--race-curb-b))" rx={2} />
       {Array.from({ length: stripes }).map((_, i) => {
         const c = palette[i % palette.length];
+        // La Ola: cada faixa anima sequencialmente da esquerda para a direita
+        const delay = (i / Math.max(1, stripes)) * 1.2;
+        const animStyle = waveTrigger > 0
+          ? { animation: `race-la-ola-wave 1.2s ease-in-out ${delay}s 1`, transformBox: 'fill-box' as const, transformOrigin: 'center bottom' }
+          : undefined;
         return vertical ? (
-          <rect key={i} x={6} y={2 + i * 4} width={w - 10} height={2.5} fill={c} opacity={0.85} />
+          <rect key={`${waveTrigger}-${i}`} x={6} y={2 + i * 4} width={w - 10} height={2.5} fill={c} opacity={0.85} style={animStyle} />
         ) : (
-          <rect key={i} x={2 + i * 4} y={6} width={2.5} height={h - 10} fill={c} opacity={0.85} />
+          <rect key={`${waveTrigger}-${i}`} x={2 + i * 4} y={6} width={2.5} height={h - 10} fill={c} opacity={0.85} style={animStyle} />
         );
       })}
     </g>
