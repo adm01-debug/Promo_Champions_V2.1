@@ -114,6 +114,9 @@ export function RaceArena({
     if (prev.length > 0 && !reducedMotion) {
       const overtakes = detectOvertakes(prev, curr);
       if (overtakes.length > 0) {
+        // Race Control: incrementa contador + dispara bandeira amarela 3s
+        setOvertakesTotal((n) => n + overtakes.length);
+        setYellowFlagUntil(Date.now() + 3000);
         const newFlash = new Set(flashingCars);
         overtakes.forEach((o) => newFlash.add(o.overtaker));
         setFlashingCars(newFlash);
