@@ -15,6 +15,8 @@ interface RaceCarProps {
   tireWear?: number;
   /** Quando true, mostra ícone DRS pulsante no topo do carro. */
   drsActive?: boolean;
+  /** Posição absoluta na corrida (1-based). Mostra medalha (top 3) ou número. */
+  rank?: number;
 }
 
 /**
@@ -33,6 +35,7 @@ export function RaceCar({
   overtakeFlash = false,
   tireWear = 1,
   drsActive = false,
+  rank,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
