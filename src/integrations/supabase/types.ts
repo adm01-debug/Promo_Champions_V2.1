@@ -10686,36 +10686,51 @@ export type Database = {
         Row: {
           avg_days: number
           calculated_at: string
+          computed_at: string
           created_at: string
           id: string
           median_days: number
           owner_id: string | null
+          p50_hours: number
           p75_days: number
+          p75_hours: number
+          p90_hours: number
           sample_size: number
+          segment: string
           stage: string
           updated_at: string
         }
         Insert: {
           avg_days?: number
           calculated_at?: string
+          computed_at?: string
           created_at?: string
           id?: string
           median_days?: number
           owner_id?: string | null
+          p50_hours?: number
           p75_days?: number
+          p75_hours?: number
+          p90_hours?: number
           sample_size?: number
+          segment?: string
           stage: string
           updated_at?: string
         }
         Update: {
           avg_days?: number
           calculated_at?: string
+          computed_at?: string
           created_at?: string
           id?: string
           median_days?: number
           owner_id?: string | null
+          p50_hours?: number
           p75_days?: number
+          p75_hours?: number
+          p90_hours?: number
           sample_size?: number
+          segment?: string
           stage?: string
           updated_at?: string
         }
