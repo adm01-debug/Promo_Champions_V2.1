@@ -1,0 +1,18 @@
+import { FC } from "react";
+import { CalibrationSummaryCard } from "./CalibrationSummaryCard";
+import { CalibrationCurveChart } from "./CalibrationCurveChart";
+import { CalibrationFlagDistribution } from "./CalibrationFlagDistribution";
+import { OverconfidentDealsTable } from "./OverconfidentDealsTable";
+
+export const WinProbabilityCalibratorPanel: FC = () => {
+  return (
+    <div className="space-y-4">
+      <CalibrationSummaryCard />
+      <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <CalibrationCurveChart />
+        <CalibrationFlagDistribution />
+      </div>
+      <OverconfidentDealsTable />
+    </div>
+  );
+};
