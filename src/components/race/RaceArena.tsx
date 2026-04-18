@@ -86,6 +86,17 @@ export function RaceArena({
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
 
+  // Ticker de eventos ao vivo (top 3, expira após 12s — gerenciado pelo componente)
+  const [tickerEvents, setTickerEvents] = useState<RaceTickerEvent[]>([]);
+  const pushTickerEvent = useCallback((text: string, icon?: string) => {
+    setTickerEvents((prev) =>
+      [{ id: `${Date.now()}-${Math.random()}`, text, icon, at: Date.now() }, ...prev].slice(0, 8),
+    );
+  }, []);
+
+  // Screen shake em ultrapassagens top-3
+  const { shaking, trigger: triggerShake } = useScreenShake(280);
+
   // Ciclo 47-52: la-ola, fastest sector, cinematic camera
   const [waveTrigger, setWaveTrigger] = useState(0);
   const lastLapCompletedRef = useRef<number>(0);
@@ -152,7 +163,7 @@ export function RaceArena({
             return next;
           });
         }, 700);
-        // narração + grava último overtake p/ replay
+        // narração + grava último overtake p/ replay + ticker + screen shake top-3
         const o = overtakes[0];
         const attackerName = sorted.find((c) => c.car_id === o.overtaker)?.salesperson_name;
         const defenderName = sorted.find((c) => c.car_id === o.overtaken)?.salesperson_name;
@@ -162,6 +173,19 @@ export function RaceArena({
           attacker: attackerName,
           defender: defenderName,
         }));
+        // Ticker resumido
+        if (attackerName && defenderName) {
+          pushTickerEvent(
+            `${attackerName.split(' ')[0]} ultrapassou ${defenderName.split(' ')[0]}`,
+            inDRS ? '⚡' : '🏁',
+          );
+        }
+        // Screen shake apenas se overtake afeta posições top-3
+        const sortedCurr = [...curr].sort((a, b) => b.progress - a.progress);
+        const overtakerNewRank = sortedCurr.findIndex((x) => x.id === o.overtaker);
+        if (overtakerNewRank >= 0 && overtakerNewRank < 3 && !reducedMotion) {
+          triggerShake();
+        }
         lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
       }
       // dust quando carro cruza um checkpoint (curva)
