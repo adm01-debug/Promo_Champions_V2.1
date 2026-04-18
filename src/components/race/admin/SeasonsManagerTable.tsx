@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlayCircle, Pause, Flag, Plus, Trash2 } from 'lucide-react';
+import { PlayCircle, Pause, Flag, Plus, Trash2, Trophy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -52,6 +52,14 @@ export function SeasonsManagerTable() {
     const { error } = await supabase.from('race_seasons').update({ status }).eq('id', id);
     if (error) toast.error(error.message);
     else toast.success(`Status atualizado para ${status}`);
+  };
+
+  const finalize = async (id: string, name: string) => {
+    if (!confirm(`Finalizar e premiar campeão da temporada "${name}"? Isso encerrará a corrida e disparará a cerimônia para todos.`)) return;
+    const { data, error } = await supabase.rpc('finalize_race_season', { _season_id: id });
+    if (error) { toast.error(error.message); return; }
+    const winnerId = (data as { winner_id?: string } | null)?.winner_id;
+    toast.success(winnerId ? '🏆 Campeão coroado! Cerimônia disparada.' : 'Temporada finalizada (sem vencedor).');
   };
 
   const remove = async (id: string) => {
@@ -113,9 +121,14 @@ export function SeasonsManagerTable() {
                       </Button>
                     )}
                     {s.status === 'active' && (
-                      <Button size="icon-sm" variant="ghost" onClick={() => updateStatus(s.id, 'finished')} title="Encerrar">
-                        <Pause className="w-4 h-4" />
-                      </Button>
+                      <>
+                        <Button size="icon-sm" variant="ghost" onClick={() => finalize(s.id, s.name)} title="Finalizar e premiar campeão" className="text-amber-600 hover:text-amber-700">
+                          <Trophy className="w-4 h-4" />
+                        </Button>
+                        <Button size="icon-sm" variant="ghost" onClick={() => updateStatus(s.id, 'finished')} title="Encerrar sem premiação">
+                          <Pause className="w-4 h-4" />
+                        </Button>
+                      </>
                     )}
                     <Button size="icon-sm" variant="ghost" onClick={() => remove(s.id)} title="Excluir" className="text-destructive">
                       <Trash2 className="w-4 h-4" />

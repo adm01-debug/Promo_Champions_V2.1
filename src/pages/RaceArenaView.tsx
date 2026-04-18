@@ -12,6 +12,7 @@ import {
   CarCustomizer,
   RaceSoundToggle,
   VictoryLapOverlay,
+  MonthlyChampionOverlay,
   PowerUpIcon,
   RaceCountdown,
   ScoreBreakdownCard,
@@ -199,6 +200,8 @@ export default function RaceArenaView({ roleType }: Props) {
             <VictoryLapOverlay events={events} cars={leaderboard} onPlaySound={() => play('victory')} />
           </>
         )}
+
+        <MonthlyChampionOverlay roleType={roleType} onPlaySound={() => play('victory')} />
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />

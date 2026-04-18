@@ -13,3 +13,5 @@ export { PowerUpIcon } from './PowerUpIcon';
 export { RaceCountdown } from './RaceCountdown';
 export { ScoreBreakdownCard } from './ScoreBreakdownCard';
 export { ScoringRulesEditor } from './admin/ScoringRulesEditor';
+export { CheckeredFlag } from './CheckeredFlag';
+export { MonthlyChampionOverlay } from './MonthlyChampionOverlay';
