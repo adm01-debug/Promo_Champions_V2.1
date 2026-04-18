@@ -1060,6 +1060,41 @@ export function RaceArena({
 
       {/* ===== Countdown badge (canto inferior direito) ===== */}
       <RaceCountdownBadge endsAt={seasonEndsAt} />
+
+      {/* ===== Mute toggle (ao lado do countdown) ===== */}
+      <RaceMuteToggle muted={muted} onToggle={toggleMute} />
+
+      {/* ===== Replay button 4s ===== */}
+      <RaceReplayButton
+        onClick={replay.startReplay}
+        disabled={!replay.hasReplay}
+        isPlaying={replay.isPlaying}
+      />
+
+      {/* ===== Pit lane visual (quando há carros parados) ===== */}
+      {pitStopCars.size > 0 && (() => {
+        const firstId = Array.from(pitStopCars)[0];
+        const pilot = sorted.find((c) => c.car_id === firstId);
+        return <PitLane count={pitStopCars.size} pilotName={pilot?.salesperson_name?.split(' ')[0]} />;
+      })()}
+
+      {/* ===== Telemetria do piloto logado ===== */}
+      {telemetry && (
+        <MyTelemetryPanel
+          avgDealsPerDay={telemetry.avgDealsPerDay}
+          bestLap={telemetry.bestLap}
+          ghostDeltaPp={telemetry.ghostDeltaPp}
+          tireFatigue={telemetry.tireFatigue}
+          nextGoalLabel={telemetry.nextGoalLabel}
+          nextGoalPercent={telemetry.nextGoalPercent}
+        />
+      )}
+
+      {/* ===== Lower-third broadcast TV ===== */}
+      <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />
+
+      {/* ===== Easter eggs (konami + fogos overlay quando finale) ===== */}
+      <RaceEasterEggs showFireworks={showFireworks} />
     </div>
   );
 }
