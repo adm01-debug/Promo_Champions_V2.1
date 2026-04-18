@@ -1,4 +1,4 @@
-import { TRACK_VIEWBOX } from './raceTrackHelpers';
+import { TRACK_VIEWBOX, TRACK_OFFSET_Y } from './raceTrackHelpers';
 import { TrackDefs } from './track/TrackDefs';
 import { TrackGrass } from './track/TrackGrass';
 import { TrackPond } from './track/TrackPond';
@@ -9,14 +9,16 @@ import { TrackScenery } from './track/TrackScenery';
 
 interface RaceTrackProps {
   children?: React.ReactNode;
-  /** Quando true, todos os marshals trocam para bandeira amarela. */
   yellowFlag?: boolean;
-  /** Incrementa para disparar uma onda mexicana (la ola) na arquibancada. */
   waveTrigger?: number;
 }
 
 /**
  * Pista top-down vetorial flat (estilo ilustração).
+ * A grama cobre todo o viewBox; o restante do circuito é deslocado
+ * verticalmente por TRACK_OFFSET_Y para centralizar a pista (75% da área).
+ * `getPositionOnTrack` já aplica o offset, então `children` (carros) ficam
+ * naturalmente alinhados sem precisar do translate.
  */
 export function RaceTrack({ children, yellowFlag = false, waveTrigger = 0 }: RaceTrackProps) {
   return (
@@ -26,13 +28,17 @@ export function RaceTrack({ children, yellowFlag = false, waveTrigger = 0 }: Rac
       preserveAspectRatio="xMidYMid meet"
     >
       <TrackDefs />
+      {/* Grama cobre TODO o viewBox estendido */}
       <TrackGrass />
-      <TrackPond />
-      <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} />
-      <TrackAsphalt />
-      <TrackBarriers />
-      <TrackStartGantry />
-      <TrackScenery layer="inner" />
+      {/* Conteúdo da pista deslocado para o centro vertical */}
+      <g transform={`translate(0 ${TRACK_OFFSET_Y})`}>
+        <TrackPond />
+        <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} />
+        <TrackAsphalt />
+        <TrackBarriers />
+        <TrackStartGantry />
+        <TrackScenery layer="inner" />
+      </g>
       {children}
     </svg>
   );
