@@ -2,6 +2,7 @@ import { getPositionOnTrack } from '../raceTrackHelpers';
 
 /**
  * Linha de chegada xadrez perpendicular ao path no progresso 0.
+ * Borda usa token semântico para harmonizar com tema.
  */
 const TRACK_HALF = 32;
 const STRIPE_W = 22;
@@ -10,7 +11,6 @@ export function TrackStartGantry() {
   const center = getPositionOnTrack(0);
   const inner = getPositionOnTrack(0, -TRACK_HALF);
   const outer = getPositionOnTrack(0, TRACK_HALF);
-  // ângulo perpendicular já está embutido na rotação tangente — somamos 90° para a faixa atravessar.
   const rotation = center.rotation + 90;
   const length = Math.hypot(outer.x - inner.x, outer.y - inner.y);
 
@@ -22,7 +22,7 @@ export function TrackStartGantry() {
         width={STRIPE_W}
         height={length}
         fill="url(#finishCheckers)"
-        stroke="#1a1a1a"
+        stroke="hsl(var(--race-checkered-dark))"
         strokeWidth={1.5}
       />
     </g>

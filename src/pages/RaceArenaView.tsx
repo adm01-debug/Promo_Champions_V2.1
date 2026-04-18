@@ -29,6 +29,9 @@ import {
   GhostStatusBadge,
   RaceCommentaryPanel,
   DailyCheckinModal,
+  RaceViewModeToggle,
+  RaceOnboardingChecklist,
+  RaceHighlightsTimeline,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -47,6 +50,7 @@ import { useTrackConditions } from '@/hooks/race/useTrackConditions';
 import { useGhostCar } from '@/hooks/race/useGhostCar';
 import { useRaceCommentary } from '@/hooks/race/useRaceCommentary';
 import { useDailyRaceCheckin } from '@/hooks/race/useDailyRaceCheckin';
+import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -81,6 +85,7 @@ export default function RaceArenaView({ roleType }: Props) {
   const lastEventIdRef = useRef<string | null>(null);
   const { recentOvertakes, dismissOvertake } = useOvertakeDetector(leaderboard);
   const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(leaderboard, myCar?.salesperson_id);
+  const viewMode = useRaceViewMode();
 
   const secondsToEnd = useMemo(() => {
     if (!season?.end_date) return undefined;
@@ -211,6 +216,7 @@ export default function RaceArenaView({ roleType }: Props) {
           topEntries={leaderboard.slice(0, 3)}
           actions={
             <>
+              <RaceViewModeToggle mode={viewMode.mode} onChange={viewMode.setMode} />
               {season && <TrackConditionsBadge conditions={trackConditions} />}
               {season && <GhostStatusBadge ghost={ghost} />}
               <Button onClick={() => setPitStopOpen(true)} variant="outline" disabled={!season}>
@@ -251,12 +257,14 @@ export default function RaceArenaView({ roleType }: Props) {
             </div>
 
             <div className="grid grid-cols-12 gap-4" style={{ minHeight: '70vh' }}>
-              <div className="col-span-12 lg:col-span-3 order-2 lg:order-1 space-y-3">
-                <RaceCommentaryPanel
-                  items={commentary.items}
-                  isGenerating={commentary.isGenerating}
-                  onRegenerate={commentary.regenerate}
-                />
+              <div className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-2' : 'lg:col-span-3'} order-2 lg:order-1 space-y-3`}>
+                {viewMode.showCommentary && (
+                  <RaceCommentaryPanel
+                    items={commentary.items}
+                    isGenerating={commentary.isGenerating}
+                    onRegenerate={commentary.regenerate}
+                  />
+                )}
                 <RaceLeaderboardSidebar
                   entries={leaderboard}
                   goalAmount={Number(season.goal_amount)}
@@ -264,11 +272,14 @@ export default function RaceArenaView({ roleType }: Props) {
                   seasonStart={season.start_date}
                   seasonEnd={season.end_date}
                 />
-                {myEntry && rules.length > 0 && (
+                {viewMode.showScoreBreakdown && myEntry && rules.length > 0 && (
                   <ScoreBreakdownCard entry={myEntry} rules={rules} />
                 )}
+                {viewMode.showScoreBreakdown && (
+                  <RaceHighlightsTimeline events={events} cars={leaderboard} />
+                )}
               </div>
-              <div className="col-span-12 lg:col-span-9 order-1 lg:order-2">
+              <div className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-10' : 'lg:col-span-9'} order-1 lg:order-2`}>
                 <Arena
                   cars={leaderboard}
                   boostingIds={boostingIds}
@@ -288,7 +299,7 @@ export default function RaceArenaView({ roleType }: Props) {
               </div>
             </div>
 
-            <FloatingEventFeed events={events} cars={leaderboard} />
+            {viewMode.showFeed && <FloatingEventFeed events={events} cars={leaderboard} />}
             <VictoryLapOverlay events={events} cars={leaderboard} onPlaySound={() => play('victory')} />
           </>
         )}
@@ -310,6 +321,17 @@ export default function RaceArenaView({ roleType }: Props) {
         />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
         <DailyCheckinModal open={dailyCheckin.open} onOpenChange={dailyCheckin.setOpen} data={dailyCheckin.data} />
+        {season && (
+          <RaceOnboardingChecklist
+            items={[
+              { id: 'car', label: 'Personalize seu carro', done: !!myCar?.car_style, action: () => setCustomizerOpen(true) },
+              { id: 'leaderboard', label: 'Veja o leaderboard', done: leaderboard.length > 0 },
+              { id: 'powerup', label: 'Colete um power-up', done: visiblePowerups.some((p) => p.reachable === false ? false : myPowerups.some((mp) => mp.used_at)) },
+              { id: 'pitstop', label: 'Visite o Pit Stop', done: false, action: () => setPitStopOpen(true) },
+              { id: 'view-mode', label: 'Experimente os modos de visualização', done: viewMode.mode !== 'competitive' },
+            ]}
+          />
+        )}
         {isAdmin && (
           <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
         )}

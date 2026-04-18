@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Flag, Sparkles, History } from 'lucide-react';
 import { CheckeredFlag } from './CheckeredFlag';
+import { RaceGhostDemo } from './RaceGhostDemo';
 import type { RoleType } from '@/hooks/race/useRaceSeasonByRole';
 
 interface Props {
@@ -140,6 +141,19 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
             {isAdmin
               ? `Nenhuma temporada ativa para ${roleLabel}. Solte a bandeira verde e dê a largada na próxima corrida.`
               : `Aguardando o gestor abrir a próxima corrida dos ${roleLabel}. Enquanto isso, revise sua estratégia.`}
+          </p>
+        </motion.div>
+
+        {/* Demo ghost-race ao vivo */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.4 }}
+          className="w-full max-w-2xl"
+        >
+          <RaceGhostDemo />
+          <p className="text-[11px] text-muted-foreground mt-1.5 text-center">
+            👀 Prévia: assim será sua corrida quando a temporada começar
           </p>
         </motion.div>
 
