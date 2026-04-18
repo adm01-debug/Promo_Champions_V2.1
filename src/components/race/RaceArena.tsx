@@ -9,6 +9,9 @@ import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
 import { Fireworks } from './Fireworks';
+import { RaceControlPanel, type RaceFlag } from './RaceControlPanel';
+import { SpeedHUD } from './SpeedHUD';
+import { TrackTireMarks } from './track/TrackTireMarks';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
