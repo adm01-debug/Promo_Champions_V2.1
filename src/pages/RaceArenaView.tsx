@@ -309,6 +309,7 @@ export default function RaceArenaView({ roleType }: Props) {
           onPlaySound={() => play('pitstop')}
         />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
+        <DailyCheckinModal open={dailyCheckin.open} onOpenChange={dailyCheckin.setOpen} data={dailyCheckin.data} />
         {isAdmin && (
           <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
         )}
