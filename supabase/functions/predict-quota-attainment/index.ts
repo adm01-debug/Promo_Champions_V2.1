@@ -176,6 +176,45 @@ Deno.serve(async (req) => {
           .single();
         if (alert) alerts.push(alert);
       }
+
+      // Advanced forecast (Monte Carlo with new band tables)
+      const totalP10 = closedAmount + p10;
+      const totalP50 = closedAmount + p50;
+      const totalP90 = closedAmount + p90;
+      const { data: fc, error: fcErr } = await supabase
+        .from("quota_attainment_forecasts")
+        .upsert({
+          salesperson_id: sp.id,
+          period_start: periodStart.toISOString().slice(0, 10),
+          period_end: periodEnd.toISOString().slice(0, 10),
+          quota: quotaAmount,
+          closed: closedAmount,
+          weighted_open: weightedPipeline,
+          pace_per_day: currentPace,
+          days_remaining: remainingDays,
+          p10: totalP10,
+          p50: totalP50,
+          p90: totalP90,
+          attainment_probability: probAttainment,
+          risk_level: riskLevel,
+          simulations: 1000,
+          computed_at: new Date().toISOString(),
+        }, { onConflict: "salesperson_id,period_start" })
+        .select("id")
+        .single();
+      if (fcErr) {
+        console.error("forecast upsert error", fcErr);
+      } else if (fc) {
+        await supabase.from("quota_attainment_actions").delete().eq("forecast_id", fc.id);
+        await generateAdvancedActions(supabase, {
+          forecastId: fc.id,
+          salespersonName: sp.name,
+          quota: quotaAmount,
+          p50: totalP50,
+          prob: probAttainment,
+          risk: riskLevel,
+        });
+      }
     }
 
     return new Response(
