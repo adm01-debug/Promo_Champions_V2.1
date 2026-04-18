@@ -7,6 +7,8 @@ import { ReactionBar } from './ReactionBar';
 import { MiniMap } from './MiniMap';
 import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
+import { StartLights } from './StartLights';
+import { Fireworks } from './Fireworks';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
@@ -51,7 +53,12 @@ export function RaceArena({
   const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
   const [finaleShown, setFinaleShown] = useState(false);
   const [showFinaleFlag, setShowFinaleFlag] = useState(false);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [startLightsTrigger, setStartLightsTrigger] = useState(0);
   const prevLeaderIdRef = useRef<string | null>(null);
+  // Pit-stop tracking: timestamp do último progresso para cada carro
+  const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(new Map());
+  const [pitStopCars, setPitStopCars] = useState<Set<string>>(new Set());
 
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
@@ -186,9 +193,27 @@ export function RaceArena({
     return map;
   }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
-  // ----- Timing tower (top 3 com gaps) -----
-  const top3 = sorted.slice(0, 3);
-  const leaderProgress = Number(top3[0]?.progress ?? 0);
+  // ----- Timing tower (top 5 com gaps) -----
+  const top5 = sorted.slice(0, 5);
+  const leaderProgress = Number(top5[0]?.progress ?? 0);
+
+  // ----- Gap line líder→2º (apenas se gap < 0.05) -----
+  const second = sorted[1];
+  const gapToSecond = leader && second ? Number(leader.progress) - Number(second.progress) : null;
+  const showGapLine = gapToSecond !== null && gapToSecond > 0 && gapToSecond < 0.05;
+  const gapMidPos = useMemo(() => {
+    if (!showGapLine || !leader || !second) return null;
+    const midProgress = (Number(leader.progress) + Number(second.progress)) / 2;
+    return getPositionOnTrack(midProgress, 0);
+  }, [showGapLine, leader?.progress, second?.progress]);
+  const leaderPosForLine = useMemo(
+    () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
+    [leader?.car_id, leader?.progress],
+  );
+  const secondPos = useMemo(
+    () => (second ? getPositionOnTrack(Number(second.progress), 0) : null),
+    [second?.car_id, second?.progress],
+  );
 
   // ----- Câmera dinâmica (zoom no líder em disputa apertada) -----
   const closeBattle = sorted.length >= 2
@@ -210,12 +235,61 @@ export function RaceArena({
     if (leaderProgress >= 0.95) {
       setFinaleShown(true);
       setShowFinaleFlag(true);
+      setShowFireworks(true);
       const lname = sorted[0]?.salesperson_name;
       pushCommentary(makeCommentaryLine({ type: 'finale', leader: lname }));
-      const t = window.setTimeout(() => setShowFinaleFlag(false), 2200);
-      return () => window.clearTimeout(t);
+      const t1 = window.setTimeout(() => setShowFinaleFlag(false), 2200);
+      const t2 = window.setTimeout(() => setShowFireworks(false), 2600);
+      return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
     }
   }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary]);
+
+  // ----- Start lights: dispara 1x ao montar -----
+  useEffect(() => {
+    if (reducedMotion) return;
+    const t = window.setTimeout(() => setStartLightsTrigger(1), 600);
+    return () => window.clearTimeout(t);
+  }, [reducedMotion]);
+
+  // ----- Pit-stop detector: carro estagnado >3s vai pra "pit" 1.5s -----
+  useEffect(() => {
+    if (reducedMotion) return;
+    const now = Date.now();
+    const next = new Set(pitStopCars);
+    let mutated = false;
+    sorted.forEach((c) => {
+      const prev = pitTrackRef.current.get(c.car_id);
+      const p = Number(c.progress);
+      if (!prev) {
+        pitTrackRef.current.set(c.car_id, { lastProgress: p, stalledSince: now });
+        return;
+      }
+      const moved = Math.abs(p - prev.lastProgress) > 0.0005;
+      if (moved) {
+        pitTrackRef.current.set(c.car_id, { lastProgress: p, stalledSince: now });
+        if (next.has(c.car_id)) { next.delete(c.car_id); mutated = true; }
+      } else {
+        const stalledFor = now - prev.stalledSince;
+        if (stalledFor > 3000 && !next.has(c.car_id) && p > 0.02 && p < 0.98) {
+          next.add(c.car_id);
+          mutated = true;
+          // limpa após 1.5s
+          window.setTimeout(() => {
+            setPitStopCars((s) => {
+              const n = new Set(s);
+              n.delete(c.car_id);
+              return n;
+            });
+            // reset stall timer p/ não disparar imediatamente
+            const cur = pitTrackRef.current.get(c.car_id);
+            if (cur) pitTrackRef.current.set(c.car_id, { ...cur, stalledSince: Date.now() });
+          }, 1500);
+        }
+      }
+    });
+    if (mutated) setPitStopCars(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'), reducedMotion]);
 
   // ----- Replay -----
   const handleReplay = useCallback(() => {
@@ -299,6 +373,7 @@ export function RaceArena({
                 tireWear={tireWearByCar.get(car.car_id) ?? 1}
                 drsActive={drsActiveByCar.get(car.car_id) ?? false}
                 rank={idx + 1}
+                pitStop={pitStopCars.has(car.car_id)}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
@@ -426,6 +501,31 @@ export function RaceArena({
           ))}
         </AnimatePresence>
 
+        {/* ===== Gap line líder→2º (apenas em disputa apertada) ===== */}
+        {showGapLine && leaderPosForLine && secondPos && gapMidPos && gapToSecond !== null && (
+          <g pointerEvents="none">
+            <line
+              x1={leaderPosForLine.x}
+              y1={leaderPosForLine.y}
+              x2={secondPos.x}
+              y2={secondPos.y}
+              stroke="hsl(45 95% 55%)"
+              strokeWidth={2}
+              strokeDasharray="6 5"
+              opacity={0.85}
+            />
+            <g transform={`translate(${gapMidPos.x} ${gapMidPos.y - 18})`}>
+              <rect x={-22} y={-9} width={44} height={16} rx={4}
+                fill="hsl(45 95% 55%)" stroke="hsl(0 0% 10%)" strokeWidth={0.8} />
+              <text y={2} textAnchor="middle" fontSize={9} fontWeight={900}
+                fill="hsl(20 30% 18%)"
+                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.04em' }}>
+                +{(gapToSecond * 100).toFixed(2)}%
+              </text>
+            </g>
+          </g>
+        )}
+
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
@@ -451,13 +551,13 @@ export function RaceArena({
       {/* ===== Mini-mapa do circuito ===== */}
       <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
-      {/* ===== Timing tower (top 3 com gaps, estilo F1) ===== */}
-      {top3.length > 0 && (
+      {/* ===== Timing tower expandido (top 5 com gaps + delta colorido) ===== */}
+      {top5.length > 0 && (
         <div
           className="absolute top-3 right-3 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-2 shadow-lg"
           style={{
-            background: 'hsl(var(--background) / 0.72)',
-            minWidth: 168,
+            background: 'hsl(var(--background) / 0.78)',
+            minWidth: 210,
           }}
         >
           <div className="flex items-center justify-between mb-1.5">
@@ -470,13 +570,24 @@ export function RaceArena({
             </span>
           </div>
           <div className="space-y-1">
-            {top3.map((c, i) => {
+            {top5.map((c, i) => {
               const gap = i === 0 ? null : leaderProgress - Number(c.progress);
               const gapStr = gap === null ? 'LEADER' : `+${(gap * 100).toFixed(2)}%`;
+              const prevPos = prevSnapshotRef.current
+                .slice()
+                .sort((a, b) => b.progress - a.progress)
+                .findIndex((x) => x.id === c.car_id);
+              const delta = prevPos >= 0 ? prevPos - i : 0;
+              const deltaColor = delta > 0
+                ? 'text-emerald-500'
+                : delta < 0
+                ? 'text-destructive'
+                : 'text-muted-foreground/40';
+              const deltaIcon = delta > 0 ? '▲' : delta < 0 ? '▼' : '–';
               return (
                 <div key={c.car_id} className="flex items-center gap-2">
                   <span
-                    className="flex h-4 w-4 items-center justify-center rounded text-[9px] font-black tabular-nums"
+                    className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-black tabular-nums"
                     style={{
                       backgroundColor: c.primary_color,
                       color: c.secondary_color,
@@ -487,8 +598,11 @@ export function RaceArena({
                   <span className="flex-1 truncate text-[11px] font-bold text-foreground">
                     {c.salesperson_name?.split(' ')[0]}
                   </span>
+                  <span className={`text-[9px] font-mono font-bold w-3 text-center ${deltaColor}`}>
+                    {deltaIcon}
+                  </span>
                   <span
-                    className={`text-[9px] font-mono font-bold tabular-nums ${
+                    className={`text-[9px] font-mono font-bold tabular-nums w-12 text-right ${
                       i === 0 ? 'text-primary' : 'text-muted-foreground'
                     }`}
                   >
@@ -557,6 +671,12 @@ export function RaceArena({
           />
         )}
       </AnimatePresence>
+
+      {/* ===== Start Lights (countdown F1 5x luzes) ===== */}
+      <StartLights trigger={startLightsTrigger} />
+
+      {/* ===== Fogos de artifício (bandeirada final) ===== */}
+      <Fireworks active={showFireworks} />
     </div>
   );
 }
