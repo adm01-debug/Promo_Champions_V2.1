@@ -7,6 +7,8 @@ import { ReactionBar } from './ReactionBar';
 import { MiniMap } from './MiniMap';
 import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
+import { StartLights } from './StartLights';
+import { Fireworks } from './Fireworks';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
