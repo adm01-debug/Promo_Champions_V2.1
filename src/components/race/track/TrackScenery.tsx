@@ -1,4 +1,5 @@
 import { TRACK_VIEWBOX } from '../raceTrackHelpers';
+import { TrackBlimp } from './TrackBlimp';
 
 /**
  * Cenário top-down VERTICAL (viewBox 600x1000) com árvores, paddock,
@@ -150,6 +151,9 @@ function Grandstand({
 }: { x: number; y: number; w: number; h: number; vertical?: boolean; waveTrigger?: number }) {
   const stripes = vertical ? Math.floor(h / 4) : Math.floor(w / 4);
   const palette = ['hsl(0 70% 55%)', 'hsl(45 90% 58%)', 'hsl(210 70% 55%)', 'hsl(280 50% 58%)', 'hsl(0 0% 95%)'];
+  // bandeiras agitando ao longo do topo da arquibancada
+  const flagCount = vertical ? Math.max(2, Math.floor(h / 50)) : Math.max(3, Math.floor(w / 60));
+  const flagPalette = ['hsl(0 75% 52%)', 'hsl(45 92% 55%)', 'hsl(210 75% 52%)', 'hsl(140 65% 45%)'];
   return (
     <g transform={`translate(${x} ${y})`} aria-hidden style={{ filter: 'drop-shadow(2px 2px 2px hsl(var(--race-grass-shadow) / 0.5))' }}>
       <rect width={w} height={h} rx={3} fill="hsl(var(--race-building))" stroke="hsl(var(--race-building-edge))" strokeWidth={1} />
@@ -164,6 +168,26 @@ function Grandstand({
           <rect key={`${waveTrigger}-${i}`} x={6} y={2 + i * 4} width={w - 10} height={2.5} fill={c} opacity={0.85} style={animStyle} />
         ) : (
           <rect key={`${waveTrigger}-${i}`} x={2 + i * 4} y={6} width={2.5} height={h - 10} fill={c} opacity={0.85} style={animStyle} />
+        );
+      })}
+      {/* Bandeiras agitando ao longo do topo (ou lateral) */}
+      {!vertical && Array.from({ length: flagCount }).map((_, i) => {
+        const fx = (w / (flagCount + 1)) * (i + 1);
+        const fc = flagPalette[i % flagPalette.length];
+        return (
+          <g key={`flag-${i}`} transform={`translate(${fx} -4)`}>
+            <line x1={0} y1={0} x2={0} y2={-10} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+            <g
+              style={{
+                transformOrigin: '0 -10px',
+                transformBox: 'fill-box',
+                animation: `race-grandstand-flag-wave 1.4s ease-in-out infinite`,
+                animationDelay: `${i * 0.18}s`,
+              }}
+            >
+              <rect x={0} y={-10} width={5} height={3.5} fill={fc} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            </g>
+          </g>
         );
       })}
     </g>
@@ -428,25 +452,48 @@ function CrowdCluster({
     const delay = ((i * 137 + seed * 53) % 600) / 1000; // 0-0.6s pseudo-random
     return { x, y, color, delay };
   });
+  const signColors = ['hsl(0 75% 52%)', 'hsl(45 92% 55%)', 'hsl(140 65% 45%)'];
   return (
     <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1px 1.5px 1px hsl(var(--race-grass-shadow) / 0.5))' }}>
-      {fans.map((f, i) => (
-        <g
-          key={i}
-          transform={`translate(${f.x} ${f.y})`}
-          style={{
-            animation: `race-crowd-jump 0.6s ease-in-out infinite`,
-            animationDelay: `${f.delay}s`,
-            transformBox: 'fill-box',
-            transformOrigin: 'center bottom',
-          }}
-        >
-          {/* corpo (camiseta colorida) */}
-          <rect x={-2} y={-1} width={4} height={6} rx={0.8} fill={f.color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
-          {/* cabeça */}
-          <circle cx={0} cy={-3} r={1.6} fill="hsl(20 35% 60%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
-        </g>
-      ))}
+      {fans.map((f, i) => {
+        // ~25% dos torcedores levantam plaquinhas (sign)
+        const hasSign = (i + seed) % 4 === 1;
+        const signColor = signColors[(i + seed) % signColors.length];
+        return (
+          <g
+            key={i}
+            transform={`translate(${f.x} ${f.y})`}
+            style={{
+              animation: `race-crowd-jump 0.6s ease-in-out infinite`,
+              animationDelay: `${f.delay}s`,
+              transformBox: 'fill-box',
+              transformOrigin: 'center bottom',
+            }}
+          >
+            {/* corpo (camiseta colorida) */}
+            <rect x={-2} y={-1} width={4} height={6} rx={0.8} fill={f.color} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            {/* cabeça */}
+            <circle cx={0} cy={-3} r={1.6} fill="hsl(20 35% 60%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+            {/* plaquinha levantada acima da cabeça */}
+            {hasSign && (
+              <g
+                transform="translate(0 -7)"
+                style={{
+                  animation: `race-fan-sign-bob 0.9s ease-in-out infinite`,
+                  animationDelay: `${f.delay + 0.1}s`,
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center bottom',
+                }}
+              >
+                <line x1={0} y1={0} x2={0} y2={2.5} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+                <rect x={-2.2} y={-2.4} width={4.4} height={3} rx={0.4} fill={signColor} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.3} />
+                <rect x={-1.6} y={-2} width={3.2} height={0.5} fill="hsl(0 0% 100%)" opacity={0.7} />
+                <rect x={-1.6} y={-1.1} width={2.4} height={0.5} fill="hsl(0 0% 100%)" opacity={0.5} />
+              </g>
+            )}
+          </g>
+        );
+      })}
     </g>
   );
 }
@@ -544,6 +591,10 @@ export function TrackScenery({
 
         {/* CICLO 53-58: Helicóptero superior azul */}
         <BroadcastHelicopter bodyColor="hsl(210 75% 50%)" y={0} duration={18} />
+
+        {/* Iteração final: dirigível flutuando lentamente no céu */}
+        <TrackBlimp y={50} duration={70} delay={0} bodyColor="hsl(210 60% 55%)" />
+        <TrackBlimp y={H - 30} duration={90} delay={25} bodyColor="hsl(0 75% 52%)" />
 
         {/* CICLO 53-58: Bandos de pássaros ambientais */}
         <BirdFlock y={150} delay={0} />

@@ -36,7 +36,7 @@ export function TrackAsphalt() {
         strokeLinejoin="round"
       />
 
-      {/* curbs vermelho/branco — duas faixas estreitas nas bordas externas */}
+      {/* curbs vermelho/branco animados — fluxo lento sugere movimento da pista */}
       <path
         d={TRACK_PATH_D}
         fill="none"
@@ -46,6 +46,7 @@ export function TrackAsphalt() {
         strokeLinecap="butt"
         strokeLinejoin="round"
         opacity={0.95}
+        style={{ animation: 'race-rumble-strip-flow 3.2s linear infinite' }}
       />
       <path
         d={TRACK_PATH_D}
@@ -57,6 +58,7 @@ export function TrackAsphalt() {
         strokeLinecap="butt"
         strokeLinejoin="round"
         opacity={0.95}
+        style={{ animation: 'race-rumble-strip-flow 3.2s linear infinite reverse' }}
       />
 
       {/* asfalto base */}
