@@ -27,6 +27,8 @@ import {
   TrackWeatherOverlay,
   GhostCar,
   GhostStatusBadge,
+  RaceCommentaryPanel,
+  DailyCheckinModal,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -43,6 +45,8 @@ import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
 import { usePitStopAnalysis } from '@/hooks/race/usePitStopAnalysis';
 import { useTrackConditions } from '@/hooks/race/useTrackConditions';
 import { useGhostCar } from '@/hooks/race/useGhostCar';
+import { useRaceCommentary } from '@/hooks/race/useRaceCommentary';
+import { useDailyRaceCheckin } from '@/hooks/race/useDailyRaceCheckin';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -108,6 +112,22 @@ export default function RaceArenaView({ roleType }: Props) {
     mySalespersonId: myCar?.salesperson_id,
     currentSeason: season,
     leaderboard,
+  });
+
+  const commentary = useRaceCommentary({
+    seasonId: season?.id,
+    seasonName: season?.name,
+    roleType,
+    leaderboard,
+    recentEvents: events,
+    secondsToEnd,
+    enabled: !!season,
+  });
+
+  const dailyCheckin = useDailyRaceCheckin({
+    seasonId: season?.id,
+    salespersonId: myCar?.salesperson_id,
+    enabled: !!season && !!myCar?.salesperson_id,
   });
 
   useEffect(() => {
@@ -232,6 +252,11 @@ export default function RaceArenaView({ roleType }: Props) {
 
             <div className="grid grid-cols-12 gap-4" style={{ minHeight: '70vh' }}>
               <div className="col-span-12 lg:col-span-3 order-2 lg:order-1 space-y-3">
+                <RaceCommentaryPanel
+                  items={commentary.items}
+                  isGenerating={commentary.isGenerating}
+                  onRegenerate={commentary.regenerate}
+                />
                 <RaceLeaderboardSidebar
                   entries={leaderboard}
                   goalAmount={Number(season.goal_amount)}
@@ -247,6 +272,7 @@ export default function RaceArenaView({ roleType }: Props) {
                 <Arena
                   cars={leaderboard}
                   boostingIds={boostingIds}
+                  currentUserSalespersonId={myCar?.salesperson_id}
                   overlayChildren={
                     <>
                       <GhostCar ghost={ghost} />
@@ -268,7 +294,11 @@ export default function RaceArenaView({ roleType }: Props) {
         )}
 
         <MonthlyChampionOverlay roleType={roleType} onPlaySound={() => play('victory')} />
-        <OvertakeHighlight overtakes={recentOvertakes} onDismiss={dismissOvertake} />
+        <OvertakeHighlight
+          overtakes={recentOvertakes}
+          onDismiss={dismissOvertake}
+          currentUserSalespersonId={myCar?.salesperson_id}
+        />
         <LeaderTakeoverCelebration takeover={takeover} onClear={clearTakeover} onPlaySound={() => play('victory')} />
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
@@ -279,6 +309,7 @@ export default function RaceArenaView({ roleType }: Props) {
           onPlaySound={() => play('pitstop')}
         />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
+        <DailyCheckinModal open={dailyCheckin.open} onOpenChange={dailyCheckin.setOpen} data={dailyCheckin.data} />
         {isAdmin && (
           <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
         )}

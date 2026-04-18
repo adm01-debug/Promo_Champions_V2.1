@@ -25,7 +25,7 @@ import {
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
   TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence,
   // Gamificação & Social
-  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, DesafiosSemanais, HistoricoDesafiosDiarios,
+  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
   // Gestão
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
@@ -72,6 +72,9 @@ export function AppRoutes() {
 
         {/* Public embedded report route (no layout, no auth) */}
         <Route path="/embed/report/:token" element={<EmbedReport />} />
+
+        {/* Race Arena TV — fullscreen, sem MainLayout (autenticação herdada via ProtectedRoute) */}
+        <Route path="/race-arena/tv" element={<ProtectedRoute><RaceArenaTV /></ProtectedRoute>} />
 
         {/* App routes within MainLayout */}
         <Route

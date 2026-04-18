@@ -32,4 +32,6 @@ export { TrackConditionsBadge } from './TrackConditionsBadge';
 export { TrackWeatherOverlay } from './TrackWeatherOverlay';
 export { GhostCar } from './GhostCar';
 export { GhostStatusBadge } from './GhostStatusBadge';
+export { RaceCommentaryPanel } from './RaceCommentaryPanel';
+export { DailyCheckinModal } from './DailyCheckinModal';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
