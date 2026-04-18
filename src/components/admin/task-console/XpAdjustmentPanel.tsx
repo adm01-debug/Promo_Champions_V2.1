@@ -24,7 +24,7 @@ export function XpAdjustmentPanel() {
     queryFn: async () => {
       const { data, error } = await supabase.from('salespeople_public').select('id, name').order('name');
       if (error) throw error;
-      return (data || []);
+      return (data || []).filter((s): s is { id: string; name: string } => !!s.id && !!s.name);
     },
   });
 
