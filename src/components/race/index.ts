@@ -23,4 +23,5 @@ export { RaceTransitionWrapper } from './RaceTransitionWrapper';
 export { ComboStreakBadge } from './ComboStreakBadge';
 export { MiniPodium } from './MiniPodium';
 export { ChampionsHistoryPanel } from './ChampionsHistoryPanel';
+export { OvertakeHighlight } from './OvertakeHighlight';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
