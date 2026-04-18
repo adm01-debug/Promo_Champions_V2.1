@@ -1,45 +1,45 @@
 
-Meta 10/10 do roadmap original foi alcançada (Fases 1-10 entregues: Deal Health, Win/Loss, Forecast, Routing, Conversation Intelligence, Pipeline Pulse Command Center). Para continuar evoluindo rumo à perfeição absoluta, próximo bloco: **Executive Briefing AI** — relatório executivo diário gerado por IA, entregue automaticamente.
+User clarification: gestão de tarefas e pontuação será feita pelo admin. Isso é uma regra de produto para próximos módulos (controle administrativo de tasks/XP). Vou registrar como memória e propor o próximo bloco rumo à perfeição: **Admin Task & Scoring Console** — painel exclusivo admin para criar/atribuir tarefas com pontuação XP customizada e auditoria completa.
 
-## Executive Briefing AI (Fase 11 — Bonus Excellence)
+## Admin Task & Scoring Console (Fase 12)
 
 ### Conceito
-Todo dia às 7h (ou sob demanda), a IA gera um briefing executivo de 1 página combinando dados do Pipeline Pulse, alertas críticos, top 3 oportunidades, top 3 riscos e 3 ações recomendadas para o dia. Entregue no app (com histórico) e opcionalmente por e-mail.
+Apenas admin gerencia o catálogo de tarefas, define valores de XP por tipo/dificuldade, atribui tarefas a vendedores específicos ou squads, valida conclusões e ajusta pontuações manualmente. Vendedor apenas executa e visualiza — não cria nem altera XP.
 
 ### Backend
-**Migration** — tabela `executive_briefings`:
-- `id`, `briefing_date`, `pulse_score`, `headline` (text), `key_wins` (jsonb[]), `key_risks` (jsonb[]), `recommended_actions` (jsonb[]), `narrative` (text — markdown), `generated_by` (`auto`|`manual`), `created_at`
-- Índices em `briefing_date desc`, RLS: gestor/admin leem todos; vendedor lê apenas briefings públicos do time
-- View `latest_briefing_view` retorna o mais recente
+**Migration**:
+- Tabela `task_catalog`: `id`, `title`, `description`, `category`, `difficulty` (`easy|medium|hard|epic`), `xp_reward`, `active`, `created_by`, timestamps
+- Tabela `task_assignments`: `id`, `catalog_id` FK, `assigned_to` (user), `assigned_by` (admin), `due_date`, `status` (`pending|in_progress|submitted|approved|rejected`), `submission_note`, `reviewed_by`, `reviewed_at`, `xp_granted`
+- Tabela `xp_adjustments`: `id`, `user_id`, `amount` (±), `reason`, `adjusted_by` (admin), `created_at` — auditoria de ajustes manuais
+- RLS: SELECT catálogo todos autenticados; INSERT/UPDATE/DELETE catálogo e adjustments **apenas admin** via `has_role(auth.uid(),'admin')`; assignments — vendedor lê só os seus, admin lê/edita todos
+- Trigger: ao `approved`, incrementa XP do usuário via RPC `SECURITY DEFINER` e cria registro em `xp_adjustments`
 
-**Edge function `generate-executive-briefing`**:
-- Chama internamente `pipeline-pulse-aggregator` para snapshot do dia
-- Envia payload + contexto histórico (últimos 7 dias) para Lovable AI (gemini-2.5-pro para narrativa de qualidade)
-- Prompt estruturado retorna JSON: headline, narrative (markdown 4-6 parágrafos), wins[], risks[], actions[]
-- Persiste em `executive_briefings`
+### Frontend (`src/components/admin/task-console/`)
+- `TaskConsoleHub.tsx` (≤300L): tabs Catálogo / Atribuições / Aprovações Pendentes / Ajustes XP
+- `TaskCatalogManager.tsx`: CRUD do catálogo (admin only) com tabela e dialog de edição
+- `TaskAssignmentDialog.tsx`: atribuir tarefa(s) a 1+ vendedores com due date
+- `PendingApprovalsQueue.tsx`: fila de submissões com aprovar/rejeitar e ajuste de XP
+- `XpAdjustmentPanel.tsx`: form de ajuste manual (+/-) com motivo obrigatório e log
+- `taskConsoleHelpers.ts`: enums, difficulty→XP defaults, formatters
+- Hooks em `src/hooks/admin-tasks/`: `useTaskCatalog`, `useTaskAssignments`, `usePendingApprovals`, `useXpAdjustments`
 
-**Cron job opcional**: agenda diária via `pg_cron` chamando a edge function às 7h America/Sao_Paulo
-
-### Frontend (`src/components/executive-briefing/`)
-- `BriefingHub.tsx` (≤300L): página com briefing do dia + histórico lateral
-- `BriefingCard.tsx`: card hero com headline, score, data e CTA "Ler completo"
-- `BriefingNarrative.tsx`: render markdown da narrativa com tipografia Sora/Inter
-- `BriefingActionsList.tsx`: 3 ações recomendadas com checkbox e link de drill-down
-- `BriefingHistoryRail.tsx`: timeline lateral dos últimos 14 briefings
-- `briefingHelpers.ts`: formatters, markdown sanitizer, tone tokens
-- Hooks: `useLatestBriefing.ts`, `useBriefingHistory.ts`, `useGenerateBriefing.ts` (mutation)
+### Vendedor (read-only)
+- `MyAssignedTasks.tsx` no dashboard do vendedor: lista tasks atribuídas com botão "Marcar como concluída" (vai para fila admin)
+- Bloqueio total de criação/edição de XP no client (RLS + UI gating via `useUserRoles().isAdmin`)
 
 ### Integração
-- Nova tab "Briefing Diário" como primeira no `RevenueIntelligenceHub`
-- Card resumo no Dashboard executivo (headline + score + botão "Abrir briefing")
-- Botão "Gerar agora" para admin/gestor (idempotente por data)
+- Nova rota `/admin/tarefas` (protegida com `requiredRole="admin"` no `ProtectedRoute`)
+- Atalho no menu Admin
+- Card "Minhas Tarefas" no dashboard do vendedor
+
+### Memória a salvar
+`mem://gamification/admin-managed-tasks-scoring`: regra "Catálogo de tarefas, atribuições, aprovação de conclusão e ajustes de XP são exclusivos do admin. Vendedor apenas executa e submete. Toda alteração de XP é logada em `xp_adjustments`."
 
 ### Arquivos
-- Migration: tabela + view + RLS + índices
-- Edge: `supabase/functions/generate-executive-briefing/index.ts`
-- Hooks: 3 em `src/hooks/executive-briefing/`
-- Componentes: 5 em `src/components/executive-briefing/`
-- Helpers: `briefingHelpers.ts`
-- Editar: `RevenueIntelligenceHub.tsx`
+- Migration: 3 tabelas + RLS + trigger + RPC `grant_task_xp`
+- Hooks: 4 em `src/hooks/admin-tasks/`
+- Componentes: 5 em `src/components/admin/task-console/` + 1 no dashboard vendedor
+- Helpers: `taskConsoleHelpers.ts`
+- Editar: `AppRoutes.tsx`, navegação Admin, dashboard vendedor
 
-Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, RLS com `has_role`, prompt IA estruturado com JSON validado por Zod.
+Padrões: semantic tokens, Sora/Inter, framer-motion, skeleton, ≤300L, strict TS, RLS com `has_role`, RPC `SECURITY DEFINER` para mutações de XP, UI gating duplo (RLS + role check).
