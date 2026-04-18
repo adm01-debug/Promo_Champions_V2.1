@@ -155,6 +155,38 @@ export function getPositionOnTrack(progress: number, laneOffset = 0): TrackPosit
 
 export const CHECKPOINTS = [0.25, 0.5, 0.75];
 
+/** Curvas nomeadas do circuito, ordenadas por progresso. */
+export const CORNERS: Array<{ progress: number; name: string; isChicane?: boolean }> = [
+  { progress: 0.05, name: 'Curva 1' },
+  { progress: 0.25, name: 'Curva 2' },
+  { progress: 0.50, name: 'Chicane', isChicane: true },
+  { progress: 0.75, name: 'Curva 3' },
+  { progress: 0.95, name: 'Curva 4' },
+];
+
+export interface NextCornerInfo {
+  name: string;
+  isChicane: boolean;
+  /** Distância em % até a curva (0..1). */
+  distance: number;
+  /** Próximo trecho será DRS zone? */
+  isDRS: boolean;
+}
+
+/** Retorna informações da próxima curva à frente do progresso atual. */
+export function getNextCornerInfo(progress: number): NextCornerInfo {
+  const p = ((progress % 1) + 1) % 1;
+  let next = CORNERS.find((c) => c.progress > p);
+  if (!next) next = CORNERS[0]; // wrap-around
+  const distance = next.progress > p ? next.progress - p : 1 - p + next.progress;
+  // DRS zone vai começar em breve se está dentro de ~5% antes do início de uma DRS_ZONE
+  const isDRS = DRS_ZONES.some((z) => {
+    const d = z.start > p ? z.start - p : 1 - p + z.start;
+    return d < distance + 0.02;
+  });
+  return { name: next.name, isChicane: !!next.isChicane, distance, isDRS };
+}
+
 /** Setores cronometrados estilo F1 (S1, S2, S3). Fronteiras em progress 0..1. */
 export const SECTORS: Array<{ name: string; start: number; end: number }> = [
   { name: 'S1', start: 0, end: 1 / 3 },

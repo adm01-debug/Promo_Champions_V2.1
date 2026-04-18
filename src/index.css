@@ -1991,6 +1991,29 @@
   0%, 100% { opacity: 0.10; }
   50%      { opacity: 0.22; }
 }
+
+/* ===== Cycle 47-52: marshal flags + la ola + fastest sector + cinematic zoom ===== */
+@keyframes race-marshal-flag-wave {
+  0%, 100% { transform: rotate(-6deg) scaleX(1); }
+  50%      { transform: rotate(8deg)  scaleX(0.92); }
+}
+@keyframes race-la-ola-wave {
+  0%   { transform: translateY(0)    scaleY(1);    opacity: 0.85; }
+  35%  { transform: translateY(-3px) scaleY(1.35); opacity: 1; }
+  70%  { transform: translateY(-1px) scaleY(1.1);  opacity: 0.95; }
+  100% { transform: translateY(0)    scaleY(1);    opacity: 0.85; }
+}
+@keyframes race-fastest-sector-flash {
+  0%, 100% { background-color: hsl(var(--background) / 0.78); box-shadow: 0 0 0 0 hsl(271 91% 55% / 0); }
+  50%      { background-color: hsl(271 91% 55% / 0.32);        box-shadow: 0 0 14px 2px hsl(271 91% 55% / 0.65); }
+}
+@keyframes race-cinematic-zoom {
+  0%   { transform: scale(1);    filter: brightness(1)    saturate(1); }
+  20%  { transform: scale(1.04); filter: brightness(1.08) saturate(1.12); }
+  80%  { transform: scale(1.04); filter: brightness(1.08) saturate(1.12); }
+  100% { transform: scale(1);    filter: brightness(1)    saturate(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .race-cinematic-intro { animation: none !important; }
   .race-drs-pulse { animation: none !important; }
@@ -2002,4 +2025,8 @@
   .race-firework-burst { animation: none !important; }
   .race-yellow-flag-flash { animation: none !important; }
   .race-track-yellow-overlay { animation: none !important; }
+  .race-marshal-flag-wave { animation: none !important; }
+  .race-la-ola-wave { animation: none !important; }
+  .race-fastest-sector-flash { animation: none !important; }
+  .race-cinematic-zoom { animation: none !important; }
 }
