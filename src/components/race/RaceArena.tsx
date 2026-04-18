@@ -339,6 +339,37 @@ export function RaceArena({
     }
   }, [closeBattle, reducedMotion, zoomActive]);
 
+  // ----- Cinematic focus quando líder abre gap >5% -----
+  useEffect(() => {
+    if (reducedMotion || !gapToSecond) return;
+    const now = Date.now();
+    if (gapToSecond > 0.05 && now - lastCinematicAtRef.current > 8000) {
+      lastCinematicAtRef.current = now;
+      setCinematicFocus(true);
+      if (cinematicTimerRef.current) window.clearTimeout(cinematicTimerRef.current);
+      cinematicTimerRef.current = window.setTimeout(() => setCinematicFocus(false), 1800);
+    }
+  }, [gapToSecond, reducedMotion]);
+
+  // ----- Próxima curva para o usuário logado -----
+  const currentUserCar = useMemo(
+    () => sorted.find((c) => c.salesperson_id === currentUserSalespersonId),
+    [sorted, currentUserSalespersonId],
+  );
+  const nextCornerInfo = useMemo(
+    () => (currentUserCar ? getNextCornerInfo(Number(currentUserCar.progress)) : null),
+    [currentUserCar?.car_id, currentUserCar?.progress],
+  );
+
+  // ----- Aero turbulence: top 3 + DRS ativo -----
+  const aeroTurbByCar = useMemo(() => {
+    const map = new Map<string, boolean>();
+    sorted.forEach((c, idx) => {
+      map.set(c.car_id, idx < 3 && (drsActiveByCar.get(c.car_id) ?? false));
+    });
+    return map;
+  }, [sorted, drsActiveByCar]);
+
   // ----- Bandeira de chegada (líder >= 0.95) -----
   useEffect(() => {
     if (finaleShown || reducedMotion) return;
