@@ -355,6 +355,7 @@ export function RaceArena({
                 tireWear={tireWearByCar.get(car.car_id) ?? 1}
                 drsActive={drsActiveByCar.get(car.car_id) ?? false}
                 rank={idx + 1}
+                pitStop={pitStopCars.has(car.car_id)}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
