@@ -80,6 +80,22 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
   );
 };
 
+function ExtractCommitteeButton({ recordingId }: { recordingId: string }) {
+  const extract = useExtractStakeholders();
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={() => extract.mutate({ recording_id: recordingId })}
+      disabled={extract.isPending}
+      className="gap-1"
+    >
+      <Users className="h-3.5 w-3.5" />
+      {extract.isPending ? "Mapeando..." : "Mapear comitê"}
+    </Button>
+  );
+}
+
 export const useRecordingSummaryDrawer = () => {
   const [openId, setOpenId] = useState<string | null>(null);
   return { openId, open: setOpenId, close: () => setOpenId(null) };
