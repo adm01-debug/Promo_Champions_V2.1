@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Settings2, Flag, Calendar, Rocket } from 'lucide-react';
+import { Settings2, Calendar, Rocket } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import {
   RaceArena as Arena,
@@ -16,6 +16,7 @@ import {
   PowerUpIcon,
   RaceCountdown,
   ScoreBreakdownCard,
+  RaceArenaHeader,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -122,33 +123,30 @@ export default function RaceArenaView({ roleType }: Props) {
       </Helmet>
 
       <div className="container mx-auto p-4 space-y-4">
-        <header className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Button asChild size="icon" variant="ghost">
-              <Link to="/race-arena" aria-label="Voltar ao Hub"><ArrowLeft className="w-5 h-5" /></Link>
-            </Button>
-            <div>
-              <h1 className="text-3xl font-black flex items-center gap-2 font-display">
-                <Flag className="w-7 h-7 text-primary" /> {meta.emoji} {meta.title}
-              </h1>
-              <p className="text-sm text-muted-foreground">{meta.subtitle}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <RaceSoundToggle muted={muted} onToggle={toggleMute} />
-            <Button onClick={() => setCountdownTrigger((t) => t + 1)} variant="outline">
-              <Rocket className="w-4 h-4 mr-2" /> Largada!
-            </Button>
-            {isAdmin && (
-              <Button asChild variant="outline">
-                <Link to="/admin/race-arena">⚙️ Admin Race</Link>
+        <RaceArenaHeader
+          title={meta.title}
+          subtitle={meta.subtitle}
+          emoji={meta.emoji}
+          breadcrumbCurrent={roleType === 'closer' ? 'Pista Closers' : 'Pista SDRs'}
+          hasActiveSeason={!!season}
+          seasonName={season?.name}
+          actions={
+            <>
+              <RaceSoundToggle muted={muted} onToggle={toggleMute} />
+              <Button onClick={() => setCountdownTrigger((t) => t + 1)} variant="outline">
+                <Rocket className="w-4 h-4 mr-2" /> Largada!
               </Button>
-            )}
-            <Button onClick={() => setCustomizerOpen(true)} variant="default">
-              <Settings2 className="w-4 h-4 mr-2" /> Meu Carro
-            </Button>
-          </div>
-        </header>
+              {isAdmin && (
+                <Button asChild variant="outline">
+                  <Link to="/admin/race-arena">⚙️ Admin Race</Link>
+                </Button>
+              )}
+              <Button onClick={() => setCustomizerOpen(true)} variant="default">
+                <Settings2 className="w-4 h-4 mr-2" /> Meu Carro
+              </Button>
+            </>
+          }
+        />
 
         {!season ? (
           <Card>
