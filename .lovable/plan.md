@@ -1,39 +1,43 @@
 
-Próxima: **Melhoria #6/20 — Combo Streak Indicator** (sequência de vendas/dias ativos do piloto).
+Próxima: **Melhoria #7/20 — Mini-Podium animado no RaceArenaHeader**.
 
 ## Plano
 
 ### Problema
-Não há feedback visual de "momentum" — quando o piloto está em sequência quente de vendas/dias, isso passa despercebido. Falta gatilho de dopamina.
+O `RaceArenaHeader` tem badge de "Season ativa" mas não destaca os 3 primeiros colocados. O piloto precisa rolar até a sidebar para ver o pódio. Falta um resumo visual instantâneo do top 3.
 
 ### Solução
-Novo componente `ComboStreakBadge.tsx` (~150L) em `src/components/race/`, exibido no `NextGoalPanel` (canto superior direito) e replicável no `RaceArenaHeader`.
+Novo componente `MiniPodium.tsx` (~150L) em `src/components/race/`, renderizado no slot `belowChildren` do `RaceArenaHeader`:
 
-**Lógica do streak**:
-- Hook `useRaceStreak.ts` (~90L) em `src/hooks/race/`:
-  - Query Supabase: vendas do piloto na temporada (`sales` table filtrada por `salesperson_id` + `created_at` dentro de `season.start_date/end_date`)
-  - Agrupa por dia → calcula sequência consecutiva atual de dias com ≥1 venda
-  - Retorna `{ streakDays, lastSaleAt, isOnFire (≥3), isLegendary (≥7), salesCount }`
-  - Memoizado, `staleTime: 30s`, realtime invalidation via canal `sales` (já existe)
+**Visual:**
+- 3 avatares horizontais lado a lado: 🥇 1º (centro, maior, elevado), 🥈 2º (esquerda), 🥉 3º (direita)
+- Cada slot mostra: Avatar com HexFrame, nome (truncado), valor de vendas formatado (Sora black), número do carro como badge
+- Coroa animada flutuando sobre o líder (`animate-bounce` sutil)
+- Borda dourada/prata/bronze por posição usando tokens semânticos (`warning`, `muted-foreground`, accent custom)
+- Layout responsivo: stack vertical em mobile (<640px), horizontal em desktop
 
-**Visual do badge**:
-- Tiers: 🔥 (3-6 dias, accent warning), ⚡ (7-13, gradient warning→destructive), 👑 (14+, gradient destructive→primary com glow pulse)
-- Nº grande em Sora black + label "DIAS"
-- Motion: pulse contínuo quando `isOnFire`, shimmer sweep quando `isLegendary`
-- Sem streak (0-2 dias): mostra dot pequeno cinza com "Comece sua sequência"
-- A11y: `aria-label="Sequência de N dias consecutivos"`
+**Animações:**
+- Entrada com `staggerChildren` (200ms entre slots)
+- `layoutId` por `car_id` para transição suave quando ranking muda
+- Pulse sutil no líder; respeita `prefers-reduced-motion`
+- Hover: leve `scale: 1.03` com `whileHover`
+
+**A11y:**
+- `role="list"` + `role="listitem"` por slot
+- `aria-label="Top 3 da temporada"` no container
 
 ### Integração
-- `NextGoalPanel.tsx`: receber `salespersonId` e renderizar `<ComboStreakBadge salespersonId={...} seasonStart={...} seasonEnd={...} />` no header (substitui o `P{rank}` simples ou ao lado dele)
-- `RaceLeaderboardSidebar.tsx`: passar `season` (start/end) já disponível
+- `RaceArenaHeader.tsx`: aceitar nova prop opcional `topEntries?: RaceLeaderboardEntry[]` e renderizar `<MiniPodium entries={topEntries} />` no `belowChildren` quando houver ≥1 entry
+- `RaceArenaView.tsx`: passar `entries.slice(0, 3)` como `topEntries` ao header
 - Exportar em `src/components/race/index.ts`
+- Reutilizar formatador `fmt()` de moeda (extrair p/ `src/components/race/raceFormatters.ts` se ainda não existir, ~20L)
 
 ### Arquivos
-- **Criar**: `src/hooks/race/useRaceStreak.ts`, `src/components/race/ComboStreakBadge.tsx`
-- **Editar**: `src/components/race/NextGoalPanel.tsx`, `src/components/race/RaceLeaderboardSidebar.tsx`, `src/components/race/index.ts`
+- **Criar**: `src/components/race/MiniPodium.tsx`, `src/components/race/raceFormatters.ts`
+- **Editar**: `src/components/race/RaceArenaHeader.tsx`, `src/pages/RaceArenaView.tsx`, `src/components/race/index.ts`, `src/components/race/RaceLeaderboardSidebar.tsx` (consumir formatter)
 
 ### Padrões
-Semantic tokens, Sora/Inter, ≤200L, strict TS, `useMemo`+React Query, framer-motion respeitando `prefers-reduced-motion`.
+Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, framer-motion com `useReducedMotion`, sem cores hardcoded.
 
 ### Próximas (preview)
-#7 Mini-podium animado no header → #8 Histórico de campeões mensais → #9 Highlight Reel de ultrapassagens → ... até #20.
+#8 Histórico de campeões mensais → #9 Highlight Reel de ultrapassagens → #10 Predictive ranking → ... até #20.
