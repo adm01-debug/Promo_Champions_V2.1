@@ -1,58 +1,53 @@
 
-Usuário quer notificar todos os vendedores quando um colega fecha uma venda, mostrando o valor.
+Sale Broadcast entregue. Retomo o roadmap mestre.
 
-## Análise do que já existe
+**Revenue Intelligence Hub — 2/4: Pipeline Coverage Forecaster**
 
-Pelo código fornecido (`src/hooks/useSalesRealtime.ts` + `salesRealtimeUtils.ts`):
-- Já há **toast** (`🔥 ${salesperson.name} fechou uma venda!` com valor formatado) para todos os usuários conectados via realtime.
-- Já há **Web Notification** do navegador (apenas se `currentSalespersonId !== newSale.salesperson_id`).
-- Já há filtro `shouldReceiveNotification` por papel (SDR/Closer/Hybrid).
-- Já existe edge function `send-push-notification` (web push para dispositivos offline).
-- Já existe sistema interno de notificações (`useNotifications` + RPC `send_notification` + tabela `notifications`).
+Mede se o pipeline atual cobre a meta do período (coverage ratio = pipeline_aberto / meta_restante). Identifica gaps por owner/segmento, projeta probabilidade de bater meta e recomenda quanto pipeline novo precisa ser gerado.
 
-## Gap
+## Entregáveis
 
-A notificação atual depende do usuário estar **online** (realtime). Quem estiver offline, em outra aba, ou no mobile sem o app aberto **não recebe nada**. Além disso, não fica registro persistente no sino de notificações in-app.
+### 1. Migration
+- `pipeline_coverage_snapshots`: `id`, `period_start date`, `period_end date`, `owner_id uuid`, `segment text`, `quota_amount numeric`, `closed_amount numeric`, `open_pipeline numeric`, `weighted_pipeline numeric`, `gap_amount numeric` (gen), `coverage_ratio numeric` (gen: weighted/gap), `health text` (healthy|at_risk|critical), `snapshot_at timestamptz`. Único `(period_start, owner_id, segment)`.
+- `pipeline_coverage_recommendations`: `id`, `snapshot_id FK`, `recommendation_type` (`generate_pipeline|accelerate_deals|increase_avg_ticket`), `title text`, `description text`, `target_amount numeric`, `priority text`, `created_at`.
+- RLS read authenticated, write admin/manager. Realtime + índices `(period_start, owner_id)`, `(health)`.
 
-## Proposta — "Sale Broadcast"
+### 2. Edge function (verify_jwt=true)
+- `analyze-pipeline-coverage`: para cada owner ativo + período corrente:
+  - calcula `closed_amount` (sales completed no período).
+  - calcula `open_pipeline` (sales abertos com expected_close no período).
+  - calcula `weighted_pipeline` usando `STAGE_WEIGHTS`.
+  - busca `quota_amount` de `goals` ou usa default.
+  - classifica health: ratio ≥ 3x = healthy, 2-3x = at_risk, <2x = critical.
+  - upsert em `pipeline_coverage_snapshots`.
+  - gera 1-3 recomendações via Lovable AI (`gemini-2.5-flash`) baseadas no gap.
 
-Quando uma venda `completed` é inserida, disparar para **todos os vendedores ativos exceto o vendedor da venda**:
+### 3. Hooks `src/hooks/revenue-intelligence/usePipelineCoverage.ts`
+- `useCoverageSnapshots(filters?)` — snapshots por período.
+- `useCoverageRecommendations(snapshotId?)` — recomendações.
+- `useCoverageSummary()` — KPIs: coverage médio, owners críticos, gap total.
+- `useAnalyzeCoverage()` — mutation.
 
-1. **Notificação persistente in-app** (tabela `notifications`, aparece no sino) — categoria `sales`, com nome do colega + valor formatado em BRL.
-2. **Web Push** (via `send-push-notification`) — para quem tem subscription registrada e está offline.
-3. **Manter** o toast/realtime atual para quem está online (zero mudança visual para usuários ativos).
+### 4. Componentes `src/components/revenue-intelligence/coverage/`
+- `CoverageSummaryCard.tsx` (≤180L) — 4 KPIs + ação refresh.
+- `CoverageByOwnerTable.tsx` (≤200L) — tabela com ratio, health badge, gap.
+- `CoverageGapChart.tsx` (≤160L) — bar chart: gap por owner/segmento.
+- `CoverageHealthDistribution.tsx` (≤140L) — donut healthy/at_risk/critical.
+- `CoverageRecommendationsPanel.tsx` (≤180L) — cards de recomendações IA.
+- `coverageHelpers.ts` — labels health, cores, formatadores.
 
-## Implementação
+### 5. Integração
+- Nova aba "Cobertura do Pipeline" em `RevenueIntelligenceHub.tsx`.
+- `supabase/config.toml`: bloco `verify_jwt = true` para `analyze-pipeline-coverage`.
 
-### 1. Edge function `broadcast-sale-notification` (verify_jwt = false; chamada por trigger)
-- Input: `{ sale_id, salesperson_id, salesperson_name, client_name, amount }`.
-- Busca todos `salespeople` ativos com `user_id` definido, exceto o vendedor da venda.
-- Para cada destinatário:
-  - Chama RPC `send_notification` (categoria `sales`, prioridade `medium`, título `🔥 {nome} fechou uma venda!`, mensagem `{cliente} — {valor BRL}`, `action_url=/vendas`, metadata `{ sale_id, amount, seller_id }`).
-- Coleta `user_ids` e chama `send-push-notification` em batch (chunks de 100).
-- Retorna `{ notified: N, pushed: M }`.
-
-### 2. Database trigger `trg_broadcast_sale_completed` em `sales`
-- AFTER INSERT OR UPDATE OF status — quando `NEW.status = 'completed'` e (TG_OP = 'INSERT' OR OLD.status IS DISTINCT FROM 'completed').
-- Faz `pg_net.http_post` para `broadcast-sale-notification` com payload incluindo nome do vendedor (JOIN com `salespeople`).
-- Garantia de não duplicar: usar `pg_advisory_xact_lock` ou checar coluna `broadcast_sent_at` (adicionar em `sales`).
-
-### 3. UI — controle de preferência (opcional, mínimo)
-- Em `useSystemSoundSettings` já existe categoria `newSale`. Manter.
-- Adicionar toggle "Avisos de vendas dos colegas" em Configurações → Notificações que grava em `notification_preferences` (se já existir) ou novo campo. Edge function respeita esse opt-out antes de inserir.
-
-### 4. Realtime atual permanece
-- `useSalesRealtime` continua mostrando toast + confetti para usuários online (UX instantâneo).
-- Como o realtime de `notifications` (`useNotifications`) já está ativo, o sino atualiza sozinho.
+### 6. Validação
+- `supabase--linter` zero novos warnings.
+- Após analyze: cards preenchem, tabela mostra owners por health, recomendações aparecem.
 
 ## Arquivos
-- **Migration**: 1 (coluna `broadcast_sent_at` em `sales` + trigger + grant `pg_net`).
-- **Edge function**: 1 (`broadcast-sale-notification`) + entrada em `supabase/config.toml`.
-- **Sem mudanças** em componentes React (sino já consome notifications em realtime).
+- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
+- **Edge function**: 1.
+- **Criar**: 4 hooks (1 arquivo), 5 componentes + 1 helper.
+- **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`.
 
-## Validação
-- Inserir venda `completed` → todos os outros vendedores recebem entrada no sino + push (se subscritos) + toast (se online).
-- O próprio vendedor da venda **não** recebe broadcast (evita auto-notificação).
-- `supabase--linter` zero novos warnings.
-
-Após esta entrega, sigo para a próxima atômica do roadmap mestre.
+Após esta entrega, sigo para **3/4: Win Probability Calibrator** → **4/4: Quota Attainment Predictor**, fechando Revenue Intelligence em 10/10.
