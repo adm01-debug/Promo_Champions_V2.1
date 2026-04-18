@@ -12197,6 +12197,39 @@ export type Database = {
           },
         ]
       }
+      win_calibration_buckets: {
+        Row: {
+          actual_win_rate: number
+          bucket_max: number
+          bucket_min: number
+          computed_at: string
+          id: string
+          sample_size: number
+          segment: string
+          stage: string
+        }
+        Insert: {
+          actual_win_rate?: number
+          bucket_max: number
+          bucket_min: number
+          computed_at?: string
+          id?: string
+          sample_size?: number
+          segment?: string
+          stage: string
+        }
+        Update: {
+          actual_win_rate?: number
+          bucket_max?: number
+          bucket_min?: number
+          computed_at?: string
+          id?: string
+          sample_size?: number
+          segment?: string
+          stage?: string
+        }
+        Relationships: []
+      }
       win_loss_analyses: {
         Row: {
           amount: number | null
@@ -12357,6 +12390,62 @@ export type Database = {
           stage?: string
         }
         Relationships: []
+      }
+      win_probability_deal_calibrations: {
+        Row: {
+          calibrated_probability: number
+          calibration_delta: number | null
+          computed_at: string
+          confidence: string
+          declared_probability: number
+          flag: string
+          historical_win_rate: number
+          id: string
+          owner_id: string | null
+          sale_id: string
+          sample_size: number
+          segment: string
+          stage: string
+        }
+        Insert: {
+          calibrated_probability?: number
+          calibration_delta?: number | null
+          computed_at?: string
+          confidence?: string
+          declared_probability?: number
+          flag?: string
+          historical_win_rate?: number
+          id?: string
+          owner_id?: string | null
+          sale_id: string
+          sample_size?: number
+          segment?: string
+          stage: string
+        }
+        Update: {
+          calibrated_probability?: number
+          calibration_delta?: number | null
+          computed_at?: string
+          confidence?: string
+          declared_probability?: number
+          flag?: string
+          historical_win_rate?: number
+          id?: string
+          owner_id?: string | null
+          sale_id?: string
+          sample_size?: number
+          segment?: string
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "win_probability_deal_calibrations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       workflow_executions: {
         Row: {
