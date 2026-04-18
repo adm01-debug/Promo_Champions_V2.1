@@ -1,43 +1,48 @@
 
-# Plano: Pista ocupando toda a área verde com serpentina vertical
+# Continuação: Race Arena 10/10 — Etapas 9 e 10 finais
 
-## Diagnóstico
-Pista atual ocupa ~50% da viewport (centralizada, deixa muito gramado vazio em cima/baixo). Carros estão no tamanho ideal e devem permanecer iguais.
+Já entreguei 1-8 (spotlight, commentary IA, daily check-in, modo TV, tokens semânticos, view modes, onboarding+demo, rivalidades+highlights). Restam as duas últimas para fechar 10/10.
 
-## Solução
-Reescrever apenas o **path SVG** da pista em `raceTrackHelpers.ts` para serpentear verticalmente do topo (y≈40) ao fundo (y≈560), usando toda a largura útil (x: 60→940). Sem mexer em carros, viewBox ou componentes.
+## Etapa 9 — Garagem + skins desbloqueáveis
+**DB**
+- Tabela `race_unlocks` (`user_id`, `unlock_key`, `unlocked_at`, unique pair) com RLS: usuário lê/insere apenas o próprio
+- RPC `unlock_race_item(_unlock_key text)` SECURITY DEFINER: valida liga atual via `arena_user_stats` (ou tabela equivalente) antes de inserir
+- Colunas novas em `race_cars`: `nickname text`, `victory_quote text` (default null)
 
-### Novo traçado (serpentina vertical fechada)
-- **Reta superior**: x 200→800 em y≈70
-- **Curva direita topo** descendo até y≈200
-- **S horizontal** indo para esquerda em y≈230
-- **Curva esquerda** descendo até y≈360
-- **S horizontal** voltando para direita em y≈390
-- **Curva direita** descendo até y≈500
-- **Reta inferior** x 800→200 em y≈530
-- **Subida esquerda** fechando o circuito de volta ao start
+**Catálogo**
+- `src/components/race/garage/raceUnlockCatalog.ts`: lista de decals/neons/skins com `key`, `label`, `requiredLeague`, `preview`
 
-Path com bezier cúbicas mantendo o sampling existente (`parsePath` + `resampleByLength` já cuidam do resto — carros, barreiras, lago, cenário e linha de chegada se reposicionam automaticamente via `getPositionOnTrack`).
+**UI**
+- Rota `/race-arena/garage` (`RaceArenaGarage.tsx`) com 3 abas (shadcn Tabs):
+  - **Troféus**: lifetime wins, podiums, MVPs (consulta `race_seasons` + `race_results`)
+  - **Carros**: grid de skins/decals/neons com cadeado se bloqueado, CTA "Desbloquear" quando elegível
+  - **Stats**: deals fechados lifetime, melhor posição, dias em #1, streak máximo
+- Estender `CarCustomizer` com tabs "Decals" e "Neons" (gateadas por unlocks) + inputs `nickname` e `victory_quote`
+- Hook `useRaceUnlocks()` (lista) + `useUnlockRaceItem()` (mutação)
+- Adicionar link "Garagem" no `RaceArenaHeader`
 
-### Ajustes secundários
-- Reposicionar **lago** (`TrackPond`): mover para área central livre da nova serpentina (~cx 500, cy 300)
-- Reposicionar **prédios pit** (`TrackScenery` layer inner): centralizar em região segura entre as voltas
-- Reposicionar **árvores externas**: redistribuir nas 4 bordas e nas "ilhas" entre as serpentinas
+## Etapa 10 — Acessibilidade + Reactions ao vivo
+**Acessibilidade**
+- Setting `colorblind_mode` em Configurações → Skins (já existe a tab); persiste em `user_preferences`
+- `RaceCar.tsx` recebe `pattern?: 'stripes' | 'dots' | 'checker'` derivado do número do carro quando colorblind ativo; `<pattern>` SVG em `TrackDefs`
+- Hook `useRaceMotion()` lê `prefers-reduced-motion`; quando true, `RaceArena` troca `transition` de spring para `{ duration: 0, type: 'tween' }` (saltos discretos por checkpoint)
+- `aria-live="polite"` invisível em `RaceArenaView` anunciando: nova liderança, X minutos para fim, próprio rank mudou
+- Aumentar `fontSize` mínimo dos labels SVG de 11→13
 
-### O que NÃO muda
-- `RaceCar.tsx` (tamanho dos carros preservado)
-- `TRACK_VIEWBOX` (1000x600)
-- Largura do asfalto, run-off, barreiras zebradas
-- Lógica de overtake/checkpoint/spotlight
+**Reactions ao vivo**
+- Tabela `race_reactions` (`id`, `season_id`, `target_car_id`, `reactor_user_id`, `emoji`, `created_at`); RLS: leitura pública na season ativa, insert autenticado (rate-limit via trigger: máx 10/min/usuário)
+- Realtime channel `race-reactions:{seasonId}` no `RaceArena`
+- `ReactionBar.tsx`: 4 emojis fixos (🔥 👏 😱 🚀); aparece on-hover sobre o carro
+- `ReactionFloater.tsx`: emoji sobe e fade-out quando recebido (motion + auto-cleanup 1.5s)
+- Contador agregado por carro nas últimas 60s (badge pequeno acima do label)
 
-## Arquivos
-1. `src/components/race/raceTrackHelpers.ts` — novo `TRACK_PATH_D`
-2. `src/components/race/track/TrackPond.tsx` — recentralizar lago
-3. `src/components/race/track/TrackScenery.tsx` — recolocar prédios e árvores
+## Padrões mantidos
+- ≤400 linhas/arquivo, helpers em `*Helpers.ts`
+- Tokens semânticos (sem cores hardcoded)
+- Framer Motion + haptics
+- Zero erros de console
+- React Query + RLS
+- RPCs SECURITY DEFINER para escritas sensíveis
 
-## Validação
-Após implementação, verificar visualmente em `/race-arena/closer` que:
-- Pista cobre topo→base sem grandes faixas verdes vazias
-- Carros não se sobrepõem ao lago/prédios
-- Linha de chegada visível e perpendicular
-- Barreiras zebradas nas curvas certas
+## Ordem
+9 → 10. Cada etapa = commit completo. Ao concluir 10, listo as 10 entregas e declaro 10/10.
