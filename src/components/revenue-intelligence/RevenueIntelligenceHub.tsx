@@ -72,6 +72,7 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="calibrator">Calibrador (Bucket)</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
+          <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
         <TabsContent value="forecast-accuracy" className="mt-4 space-y-4">
