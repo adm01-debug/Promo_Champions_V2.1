@@ -1601,6 +1601,68 @@ export type Database = {
         }
         Relationships: []
       }
+      call_coaching_scorecards: {
+        Row: {
+          calculated_at: string
+          factors: Json
+          health: string
+          id: string
+          moments_score: number
+          objection_score: number
+          overall_score: number
+          question_score: number
+          recommendations: Json
+          recording_id: string
+          salesperson_id: string | null
+          sentiment_score: number
+          talk_score: number
+          top_gaps: Json
+          top_strengths: Json
+        }
+        Insert: {
+          calculated_at?: string
+          factors?: Json
+          health?: string
+          id?: string
+          moments_score?: number
+          objection_score?: number
+          overall_score?: number
+          question_score?: number
+          recommendations?: Json
+          recording_id: string
+          salesperson_id?: string | null
+          sentiment_score?: number
+          talk_score?: number
+          top_gaps?: Json
+          top_strengths?: Json
+        }
+        Update: {
+          calculated_at?: string
+          factors?: Json
+          health?: string
+          id?: string
+          moments_score?: number
+          objection_score?: number
+          overall_score?: number
+          question_score?: number
+          recommendations?: Json
+          recording_id?: string
+          salesperson_id?: string | null
+          sentiment_score?: number
+          talk_score?: number
+          top_gaps?: Json
+          top_strengths?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_coaching_scorecards_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: true
+            referencedRelation: "call_recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_conversation_metrics: {
         Row: {
           calculated_at: string
@@ -9210,6 +9272,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      salesperson_coaching_aggregates: {
+        Row: {
+          avg_objections: number
+          avg_overall: number
+          avg_questions: number
+          avg_sentiment: number
+          avg_talk: number
+          calls_analyzed: number
+          id: string
+          last_calculated_at: string
+          period_end: string
+          period_start: string
+          salesperson_id: string
+          top_recurring_gap: string | null
+          trend_delta: number
+          trend_direction: string
+        }
+        Insert: {
+          avg_objections?: number
+          avg_overall?: number
+          avg_questions?: number
+          avg_sentiment?: number
+          avg_talk?: number
+          calls_analyzed?: number
+          id?: string
+          last_calculated_at?: string
+          period_end: string
+          period_start: string
+          salesperson_id: string
+          top_recurring_gap?: string | null
+          trend_delta?: number
+          trend_direction?: string
+        }
+        Update: {
+          avg_objections?: number
+          avg_overall?: number
+          avg_questions?: number
+          avg_sentiment?: number
+          avg_talk?: number
+          calls_analyzed?: number
+          id?: string
+          last_calculated_at?: string
+          period_end?: string
+          period_start?: string
+          salesperson_id?: string
+          top_recurring_gap?: string | null
+          trend_delta?: number
+          trend_direction?: string
+        }
+        Relationships: []
       }
       salesperson_custom_field_values: {
         Row: {

@@ -91,6 +91,15 @@ export function useTranscribeRecording() {
               qc.invalidateQueries({ queryKey: ["call-objections", recId] });
               qc.invalidateQueries({ queryKey: ["objection-library"] });
             }
+            return supabase.functions.invoke("aggregate-coaching-scorecard", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) {
+              qc.invalidateQueries({ queryKey: ["coaching-scorecard", recId] });
+              qc.invalidateQueries({ queryKey: ["coaching-leaderboard"] });
+            }
           });
       }
     },

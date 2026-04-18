@@ -17,6 +17,7 @@ import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
 import { ConversationMetricsCard } from "./metrics/ConversationMetricsCard";
 import { QuestionQualityCard } from "./questions/QuestionQualityCard";
 import { ObjectionHandlingCard } from "./objections/ObjectionHandlingCard";
+import { CoachingScorecardCard } from "./coaching/CoachingScorecardCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
@@ -49,6 +50,8 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
               <SummarizeButton recordingId={rec.id} hasSummary={!!rec.summary} />
               {rec.sale_id && <ExtractCommitteeButton recordingId={rec.id} />}
             </div>
+
+            <CoachingScorecardCard recordingId={rec.id} />
 
             {!rec.summary && (
               <div className="text-center py-8 text-muted-foreground border border-dashed rounded-lg">
