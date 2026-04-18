@@ -176,9 +176,9 @@ export function AppRoutes() {
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
-                    <Route path="/race-arena" element={<RaceArena />} />
-                    <Route path="/race-arena/closer" element={<RaceArenaCloser />} />
-                    <Route path="/race-arena/sdr" element={<RaceArenaSDR />} />
+                    <Route path="/race-arena" element={<RaceTransitionWrapper><RaceArena /></RaceTransitionWrapper>} />
+                    <Route path="/race-arena/closer" element={<RaceTransitionWrapper><RaceArenaCloser /></RaceTransitionWrapper>} />
+                    <Route path="/race-arena/sdr" element={<RaceTransitionWrapper><RaceArenaSDR /></RaceTransitionWrapper>} />
                     <Route path="/admin/race-arena" element={<Admin><RaceArenaAdmin /></Admin>} />
                     <Route path="/desafios" element={<DesafiosSemanais />} />
                     <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
