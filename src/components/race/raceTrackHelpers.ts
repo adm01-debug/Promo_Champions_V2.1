@@ -3,6 +3,15 @@
 
 export const TRACK_VIEWBOX = { width: 600, height: 1000 };
 
+// Cena total renderizada no SVG: pista (600x1000) + faixa extra de grama ao redor
+// para reduzir visualmente a pista em ~25% e dar espaço a paddock/pit lane externos.
+// SCENE = TRACK / 0.75 → 800x1333. A pista é centralizada via TRACK_OFFSET.
+export const SCENE_VIEWBOX = { width: 800, height: 1333 };
+export const TRACK_OFFSET = {
+  x: (SCENE_VIEWBOX.width - TRACK_VIEWBOX.width) / 2,   // 100
+  y: (SCENE_VIEWBOX.height - TRACK_VIEWBOX.height) / 2, // 166.5
+};
+
 // Oval estendido VERTICAL com 1 chicane suave na reta da direita — estilo Mario Circuit / kart pro.
 // Largura constante, curvas com arcos amplos, sem retornos serpentinos.
 // Sentido horário: largada no topo da reta esquerda, descendo. Linha de chegada horizontal no topo.
