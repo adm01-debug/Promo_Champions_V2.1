@@ -69,13 +69,13 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
   const H = TRACK_VIEWBOX.height;
 
   if (layer === 'outer') {
-    // árvores nas bordas livres do circuito serpenteante
+    // árvores nos cantos e bordas livres do novo circuito
     const trees: Array<[number, number, number]> = [
-      [40, 50, 1], [110, 30, 0.85], [200, 60, 0.95],
-      [W - 50, 30, 1], [W - 130, 50, 0.9],
-      [40, H - 50, 0.95], [120, H - 30, 1], [240, H - 60, 0.9],
-      [W - 50, H - 40, 1], [W - 140, H - 60, 0.9],
-      [30, H / 2, 0.85], [W - 30, H / 2 - 40, 0.85],
+      [40, 40, 1], [110, 25, 0.85], [200, 40, 0.95], [300, 25, 0.9],
+      [W - 50, 30, 1], [W - 130, 45, 0.9], [W - 220, 30, 0.85],
+      [40, H - 40, 0.95], [120, H - 25, 1], [240, H - 50, 0.9], [340, H - 30, 0.85],
+      [W - 50, H - 40, 1], [W - 140, H - 60, 0.9], [W - 240, H - 35, 0.85],
+      [30, H / 2 + 20, 0.85], [W - 30, H / 2 - 20, 0.85],
     ];
     return (
       <g aria-hidden>
@@ -86,14 +86,15 @@ export function TrackScenery({ layer }: { layer: 'outer' | 'inner' }) {
     );
   }
 
-  // inner: pit area + torre numa região central livre (~280, 380)
+  // inner: pit area + torre na área central-direita livre do novo traçado
   return (
     <g aria-hidden>
-      <Building x={240} y={360} w={100} h={28} doors={3} />
-      <Building x={350} y={360} w={90} h={28} doors={3} />
-      <ControlTower cx={300} cy={330} />
-      <Tree cx={500} cy={330} scale={0.75} />
-      <Tree cx={460} cy={380} scale={0.7} />
+      <Building x={500} y={250} w={100} h={28} doors={3} />
+      <Building x={610} y={250} w={90} h={28} doors={3} />
+      <ControlTower cx={560} cy={220} />
+      <Tree cx={720} cy={250} scale={0.75} />
+      <Tree cx={680} cy={300} scale={0.7} />
+      <Tree cx={560} cy={340} scale={0.7} />
     </g>
   );
 }
