@@ -2,14 +2,16 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { StalledDealsTable } from "@/components/deal-intelligence/StalledDealsTable";
-import { Sparkles } from "lucide-react";
+import { WeakCoverageDealsTable } from "@/components/deal-intelligence/WeakCoverageDealsTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sparkles, Heart, Users } from "lucide-react";
 
 export default function DealIntelligence() {
   return (
     <>
       <Helmet>
-        <title>Saúde dos Deals | Promo Champions</title>
-        <meta name="description" content="Análise preditiva da saúde dos deals com IA" />
+        <title>Inteligência de Deals | Promo Champions</title>
+        <meta name="description" content="Saúde dos deals e mapeamento do comitê de compra com IA" />
       </Helmet>
       <PageTransition>
         <div className="space-y-6">
@@ -23,9 +25,9 @@ export default function DealIntelligence() {
               <Sparkles className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h1 className="text-page-title gradient-text">Saúde dos Deals</h1>
+              <h1 className="text-page-title gradient-text">Inteligência de Deals</h1>
               <p className="text-muted-foreground">
-                Score 0-100 com fatores explicáveis e ações recomendadas por IA
+                Saúde, comitê de compra e ações recomendadas por IA
               </p>
             </div>
           </motion.div>
@@ -35,7 +37,22 @@ export default function DealIntelligence() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <StalledDealsTable />
+            <Tabs defaultValue="health" className="w-full">
+              <TabsList>
+                <TabsTrigger value="health" className="gap-2">
+                  <Heart className="h-4 w-4" /> Saúde dos Deals
+                </TabsTrigger>
+                <TabsTrigger value="committee" className="gap-2">
+                  <Users className="h-4 w-4" /> Comitê de Compra
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="health" className="mt-4">
+                <StalledDealsTable />
+              </TabsContent>
+              <TabsContent value="committee" className="mt-4">
+                <WeakCoverageDealsTable />
+              </TabsContent>
+            </Tabs>
           </motion.div>
         </div>
       </PageTransition>
