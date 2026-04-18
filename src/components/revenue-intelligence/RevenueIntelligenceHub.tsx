@@ -18,6 +18,7 @@ import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
 import { ForecastBiasChart } from "./forecast/ForecastBiasChart";
 import { ConfidenceScoresTable } from "./forecast/ConfidenceScoresTable";
 import { MapeBySegmentChart } from "./forecast/MapeBySegmentChart";
+import { DealHealthHub } from "@/components/deal-intelligence/health/DealHealthHub";
 
 
 export const RevenueIntelligenceHub: FC = () => {
@@ -65,6 +66,7 @@ export const RevenueIntelligenceHub: FC = () => {
       <Tabs defaultValue="forecast-accuracy">
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
+          <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
           <TabsTrigger value="ai-forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="coverage">Cobertura do Pipeline</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
@@ -85,6 +87,9 @@ export const RevenueIntelligenceHub: FC = () => {
             <MapeBySegmentChart />
             <ConfidenceScoresTable />
           </div>
+        </TabsContent>
+        <TabsContent value="deal-health" className="mt-4">
+          <DealHealthHub />
         </TabsContent>
         <TabsContent value="ai-forecast" className="mt-4">
           <AIForecastPanel />
