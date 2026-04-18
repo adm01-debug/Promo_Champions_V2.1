@@ -9151,6 +9151,7 @@ export type Database = {
         Row: {
           account_id: string | null
           amount: number
+          broadcast_sent_at: string | null
           category: string
           client_name: string
           created_at: string
@@ -9168,6 +9169,7 @@ export type Database = {
         Insert: {
           account_id?: string | null
           amount: number
+          broadcast_sent_at?: string | null
           category?: string
           client_name: string
           created_at?: string
@@ -9185,6 +9187,7 @@ export type Database = {
         Update: {
           account_id?: string | null
           amount?: number
+          broadcast_sent_at?: string | null
           category?: string
           client_name?: string
           created_at?: string
