@@ -987,16 +987,19 @@ export function RaceArena({
                   >
                     {i + 1}
                   </span>
-                  <span className="flex-1 truncate text-[11px] font-bold text-foreground">
+                  <span className="flex-1 truncate text-[11px] font-medium text-foreground/90">
                     {c.salesperson_name?.split(' ')[0]}
                   </span>
                   <span className={`text-[9px] font-mono font-bold w-3 text-center ${deltaColor}`}>
                     {deltaIcon}
                   </span>
                   <span
-                    className={`text-[9px] font-mono font-bold tabular-nums w-12 text-right ${
-                      i === 0 ? 'text-primary' : 'text-muted-foreground'
+                    className={`font-mono tabular-nums w-12 text-right ${
+                      i === 0
+                        ? 'text-[11px] font-black text-primary'
+                        : 'text-[10px] font-bold text-muted-foreground'
                     }`}
+                    style={{ letterSpacing: '-0.02em' }}
                   >
                     {gapStr}
                   </span>
