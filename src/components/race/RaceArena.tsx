@@ -147,6 +147,7 @@ export function RaceArena({
                 style={car.car_style}
                 showTrail={boostingIds?.has(car.salesperson_id) ?? false}
                 pattern={pattern}
+                overtakeFlash={flashingCars.has(car.car_id)}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (
