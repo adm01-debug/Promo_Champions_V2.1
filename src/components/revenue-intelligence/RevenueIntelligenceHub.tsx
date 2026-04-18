@@ -90,7 +90,12 @@ export const RevenueIntelligenceHub: FC = () => {
           <AIForecastPanel />
         </TabsContent>
         <TabsContent value="coverage" className="mt-4">
-          <PipelineCoveragePanel />
+          <CoverageRatioGauge
+            ratio={data.coverage.ratio}
+            target={data.coverage.target}
+            weightedPipeline={data.coverage.weighted_pipeline}
+            healthLabel={data.coverage.health_label}
+          />
         </TabsContent>
         <TabsContent value="winrate" className="mt-4">
           <WinRateBreakdownChart
