@@ -8,3 +8,5 @@ export { RaceSoundToggle } from './RaceSoundToggle';
 export { VictoryLapOverlay } from './VictoryLapOverlay';
 export { RaceBadgeShowcase } from './RaceBadgeShowcase';
 export { StartSeasonDialog } from './StartSeasonDialog';
+export { PowerUpIcon } from './PowerUpIcon';
+export { RaceCountdown } from './RaceCountdown';

@@ -207,3 +207,6 @@ verify_jwt = true
 [functions.start-race-season]
 verify_jwt = true
 
+[functions.collect-race-powerup]
+verify_jwt = true
+
