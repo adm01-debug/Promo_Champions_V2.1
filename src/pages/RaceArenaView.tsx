@@ -17,6 +17,7 @@ import {
   RaceCountdown,
   ScoreBreakdownCard,
   RaceArenaHeader,
+  RaceArenaSkeleton,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -45,8 +46,9 @@ export default function RaceArenaView({ roleType }: Props) {
   const meta = ROLE_META[roleType];
   const { muted, toggleMute, play } = useRaceSounds();
   const { isAdmin } = useUserRoles();
-  const { data: season } = useRaceSeasonByRole(roleType);
-  const { data: leaderboard = [] } = useRaceLeaderboard(season?.id);
+  const { data: season, isLoading: loadingSeason } = useRaceSeasonByRole(roleType);
+  const { data: leaderboard = [], isLoading: loadingLb } = useRaceLeaderboard(season?.id);
+  const isInitialLoading = loadingSeason || (!!season && loadingLb && leaderboard.length === 0);
   const { data: events = [] } = useRaceEvents(season?.id);
   const { data: rules = [] } = useRaceScoringRules(season?.id);
   const { data: myCar } = useMyRaceCar();
