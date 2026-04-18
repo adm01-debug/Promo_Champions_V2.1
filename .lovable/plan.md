@@ -1,44 +1,28 @@
 
-Plano: Roadmap de Excelência 10/10 — Race Arena (execução autônoma, 1 melhoria por vez)
+User quer continuar a execução autônoma das 20 melhorias do roadmap 10/10 da Race Arena. Já entreguei #1 (Header unificado). Estou em modo plan agora, então preciso apresentar o plano da próxima entrega (#2 — Skeleton premium) para aprovação, e depois continuar sequencialmente.
 
-Vou executar sequencialmente, sem pausas, as melhorias abaixo até atingir 10/10. Cada item será uma entrega completa, com QA visual e código limpo.
+Próxima entrega: **Melhoria #2 — Skeleton premium no RaceArenaView**.
 
-### Fase 1 — Polimento visual e UX
-1. **Header unificado da Race Arena** com `CheckeredFlag` no topo + breadcrumb (Hub → Pista) + badge de season ativa pulsante.
-2. **Skeleton premium** no `RaceArenaView` (track + sidebar + feed) durante loading inicial.
-3. **Empty states cinematográficos** quando não há season ativa (CTA admin / aviso piloto) com ilustração SVG.
-4. **Transição entre Hub ↔ Pistas** com motion shared layout (slide + fade).
+## Plano: Melhoria #2/20 — Skeleton Premium no RaceArenaView
 
-### Fase 2 — Engajamento e gamificação
-5. **Painel "Próxima Meta"** no sidebar: distância em R$/pontos para ultrapassar o piloto à frente (já existe lógica de micro-goals, integrar).
-6. **Combo Streak indicator** no card do piloto (chama de fogo quando 3+ vendas seguidas no dia).
-7. **Mini-podium fixo no header** mostrando top 3 com avatares + medalhas, atualizado em realtime.
-8. **Histórico de campeões** — nova aba no Hub listando últimos vencedores mensais (Closer/SDR) com bandeira quadriculada.
+### Objetivo
+Substituir o loading vazio/genérico do `RaceArenaView` por um skeleton cinematográfico que espelha o layout final (header + track + sidebar + feed flutuante), usando o sistema `Shimmer` já existente em `SkeletonPrimitives.tsx`.
 
-### Fase 3 — Admin Console premium
-9. **Dashboard de saúde da season** no admin: gráfico de evolução diária, % engajamento, alertas (season sem eventos há X dias).
-10. **Bulk actions na garagem**: resetar customização em massa, exportar CSV de pilotos.
-11. **Preview ao vivo da cerimônia** no admin (botão "Pré-visualizar premiação") sem gravar evento.
-12. **Audit feed com filtros** (tipo de evento, piloto, intervalo de data) + export.
+### Componente novo
+`src/components/race/RaceArenaSkeleton.tsx` (~150L):
+- **Header skeleton**: barra superior com retângulos shimmer simulando título + breadcrumb + actions
+- **Track skeleton**: faixa horizontal com 6 "carros" shimmer em posições escalonadas, linhas de pista pontilhadas, bandeira no fim
+- **Sidebar skeleton (col-span-3)**: 5 cards de piloto shimmer empilhados (avatar + nome + barra XP)
+- **Feed flutuante skeleton**: card no canto inferior direito com 3 linhas shimmer
+- Tudo usando `Shimmer` de `SkeletonPrimitives.tsx` (já tem animação shimmer integrada)
+- Respeita semantic tokens (`bg-muted/60`, `border-border`)
 
-### Fase 4 — Performance e qualidade
-13. **Memoização agressiva** dos componentes pesados (`RaceTrack`, `RaceCar`, `LeaderboardSidebar`) com `React.memo` + `useMemo` em derivações.
-14. **Virtualização do feed** com `@tanstack/react-virtual` quando >50 eventos.
-15. **Code-splitting** do admin (`/admin/race-arena` lazy isolado) e do `MonthlyChampionOverlay` (carregado só quando trigger dispara).
-16. **A11y completo**: roles ARIA na pista, foco visível em todos botões, leitor de tela narrando posições do leaderboard.
+### Integração
+- `src/pages/RaceArenaView.tsx`: detectar `isLoading` de `useRaceSeasonByRole` + `useRaceLeaderboard` e renderizar `<RaceArenaSkeleton />` enquanto carrega, substituindo o conteúdo vazio atual
+- Exportar `RaceArenaSkeleton` em `src/components/race/index.ts`
 
-### Fase 5 — Polimento final
-17. **Sons opcionais** (motor acelerando em overtake, fanfarra na cerimônia) respeitando `RaceSoundToggle`.
-18. **Compartilhamento da cerimônia** gerando imagem PNG via `html-to-image` para download/social.
-19. **Documentação inline** (JSDoc) nos hooks e componentes públicos da pasta `race/`.
-20. **QA visual final** — screenshots Hub, Pista Closer, Pista SDR, Admin, Cerimônia em 1561px e mobile.
+### Padrões
+- Semantic tokens, ≤200L, framer-motion fade-in, mesma estrutura visual do layout real para evitar layout shift (CLS=0)
 
-### Regras de execução
-- 1 melhoria por commit lógico, sem perguntar entre etapas.
-- Semantic tokens, Sora/Inter, ≤300L por arquivo, strict TS, zero console errors.
-- Reaproveitar componentes existentes; criar helpers em `*Helpers.ts` quando exceder limite.
-- Toast de sucesso em ações admin; skeleton em todo loading.
-- Após cada fase, validar tipos (`tsc`) e ausência de regressões visuais.
-
-### Entrega
-Ao concluir as 20 melhorias, a Race Arena estará em padrão Awwwards 10/10 — cinematográfica, performática, acessível e gerenciável.
+### Sequência
+Após aprovação do #2, sigo direto para #3 (Empty states cinematográficos), #4 (transição Hub↔Pistas), e assim por diante até #20, pedindo aprovação 1 por 1 conforme regras do plan mode. Cada plano será curto e focado na entrega seguinte.
