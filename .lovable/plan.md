@@ -1,40 +1,26 @@
 
-## Mudança: Pista horizontal → vertical
+A pista vertical já foi entregue. Próximo ciclo de polish foca em refinar a experiência do novo formato vertical e adicionar a próxima camada de profundidade narrativa.
 
-Hoje o `TRACK_VIEWBOX` é 1000×600 (paisagem). O usuário tem muito espaço vertical sobrando e quer aproveitá-lo. Plano:
+# Ciclo 35-40 (polish do layout vertical)
 
-### 1. Inverter o viewBox e o path da pista
-Em `src/components/race/raceTrackHelpers.ts`:
-- Trocar `TRACK_VIEWBOX` para `{ width: 600, height: 1000 }` (retrato).
-- Reescrever `TRACK_PATH_D` para um oval estendido **vertical** (retas longas verticais nas laterais, curvas em cima/embaixo, mantendo a chicane suave no meio de uma das retas).
-- Recalcular `CHECKPOINTS`, `SECTOR_BOUNDARIES`, `DRS_ZONES` para o novo traçado (mesmas proporções, novo eixo).
-- Linha de largada/chegada agora horizontal no topo.
+**35. Painel lateral de Timing Tower expandido** — aproveitar o espaço lateral livre (que sobrou ao verticalizar a pista) para um painel de timing F1-style com top 10 + gap em tempo real + delta colorido (verde/vermelho), substituindo o timing tower compacto atual.
 
-### 2. Reposicionar todos os elementos do infield
-Coordenadas atuais assumem 1000×600. Atualizar para 600×1000:
-- `TrackPond.tsx` — lago + ilha + palmeira reposicionados ao centro (cx≈300, cy≈560).
-- `TrackScenery.tsx` — paddock, garagens da pit lane, arquibancadas, marshal posts, helicóptero (orbit elíptica vertical), árvores externas/internas.
-- `TrackGrass.tsx` — recalcular `lightBlobs`/`darkBlobs` para o novo canvas vertical.
-- `TrackStartGantry.tsx` — funciona automaticamente (usa `getPositionOnTrack(0)`).
-- `TrackBarriers.tsx` — funciona automaticamente (usa offsets do path).
+**36. Mini-mapa redesenhado para vertical** — atualizar o `MiniMap.tsx` (hoje desenhado para pista horizontal) para refletir o novo path vertical 600×1000, mantendo proporção retrato no radar.
 
-### 3. Ajustar o container externo
-Em `RaceArena.tsx`:
-- O `<svg>` usa `preserveAspectRatio="xMidYMid meet"` então adapta sozinho.
-- O wrapper externo (na page que monta a arena) hoje tem altura limitada para layout horizontal. Vou trocar a classe de altura para `aspect-[3/5]` (ou similar) e/ou `min-h-[78vh]` para o SVG vertical preencher a tela.
-- MiniMap, Timing Tower, ReplayButton e CommentaryBubble já são overlays absolutos — continuam funcionando, só revisar posicionamento (timing tower no canto superior direito; minimap inferior esquerdo continuam ok no formato retrato).
+**37. Bandeira de largada animada (countdown 3-2-1-GO)** — overlay centralizado no topo da pista que aparece 1x ao montar a arena, com luzes vermelhas sequenciais estilo F1 (5 luzes acendendo) e depois apagam = GO, sincronizado com o cinematic intro.
 
-### 4. Pit lane vertical
-A pit lane hoje é horizontal acompanhando a reta superior. No layout vertical ela passa a acompanhar a reta lateral esquerda (ou direita) — refazer geometria das 6 garagens em coluna.
+**38. Pit stop ocasional** — quando um carro fica parado >3s (sem progresso), animar um "pit stop" visual: ele desliza para a pit lane vertical (lateral esquerda), pneus piscando, 1.5s, depois volta para a pista. Conta uma história quando há gargalo.
 
-### 5. Sem mudanças de comportamento
-Toda a lógica de progresso (0..1), ultrapassagens, DRS, setores, replay, comentarista permanece idêntica — depende apenas do `TRACK_PATH_D` via `getPositionOnTrack()`.
+**39. Linha de gap visual entre líder e 2º** — linha pontilhada amarela conectando o carro líder ao 2º colocado seguindo o path da pista, com label "+0.34" no meio. Aparece só quando gap < 0.05.
 
-### Arquivos a editar
-- `src/components/race/raceTrackHelpers.ts` — viewBox + path vertical + checkpoints/sectors/DRS
-- `src/components/race/track/TrackPond.tsx` — recolocar lago
-- `src/components/race/track/TrackScenery.tsx` — paddock, pit lane vertical, helicóptero, árvores
-- `src/components/race/track/TrackGrass.tsx` — manchas reposicionadas
-- `src/pages/RaceArenaView.tsx` (ou onde o `RaceArena` é renderizado) — altura/aspect do container
+**40. Fogos de artifício na bandeirada final** — quando líder cruza 100% (fim da season), além da bandeira xadrez gigante, disparar 3 explosões de partículas coloridas (confetes) saindo dos cantos superiores. Celebração épica.
 
-Sem perguntas. Executo direto.
+## Arquivos a editar
+- `src/components/race/RaceArena.tsx` — timing tower expandido lateral, countdown de largada, gap line, fireworks finais
+- `src/components/race/MiniMap.tsx` — redesenho para path vertical
+- `src/components/race/RaceCar.tsx` — animação de pit stop
+- `src/components/race/StartLights.tsx` — novo componente de luzes 5x F1
+- `src/components/race/Fireworks.tsx` — novo componente de confete/explosão
+- `src/index.css` — keyframes start-lights + fireworks burst
+
+Sem perguntas. Executo as 6 em sequência.
