@@ -8,6 +8,7 @@ import { Flag, Trophy, Users, ArrowRight, Settings, Phone, Handshake } from 'luc
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -128,8 +129,11 @@ export default function RaceArenaHub() {
           )}
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {ROLES.map((cfg, i) => <RoleCard key={cfg.role} cfg={cfg} index={i} />)}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {ROLES.map((cfg, i) => <RoleCard key={cfg.role} cfg={cfg} index={i} />)}
+          </div>
+          <ChampionsHistoryPanel className="lg:col-span-1" />
         </div>
       </div>
     </>
