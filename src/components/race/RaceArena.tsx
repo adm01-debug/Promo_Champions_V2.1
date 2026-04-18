@@ -327,9 +327,53 @@ export function RaceArena({
           ))}
         </AnimatePresence>
 
+        {/* Sector badges (S1/S2/S3 ✓) — flutuam rapidamente quando o líder cruza */}
+        <AnimatePresence>
+          {sectorBadges.map((b) => (
+            <motion.g
+              key={b.id}
+              transform={`translate(${b.x} ${b.y})`}
+              initial={{ opacity: 0, scale: 0.6, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: -10 }}
+              exit={{ opacity: 0, scale: 0.95, y: -22 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              pointerEvents="none"
+            >
+              <rect x={-22} y={-12} width={44} height={18} rx={4}
+                fill="hsl(142 76% 38%)" stroke="hsl(0 0% 100%)" strokeWidth={1.2} />
+              <text y={1} textAnchor="middle" fontSize={10} fontWeight={900}
+                fill="hsl(0 0% 100%)"
+                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}>
+                {b.name} ✓
+              </text>
+            </motion.g>
+          ))}
+        </AnimatePresence>
+
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
+      </div>
+
+      {/* ===== LAP counter HUD (topo central) ===== */}
+      <div
+        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-1.5 shadow-lg"
+        style={{ background: 'hsl(var(--background) / 0.72)' }}
+        aria-label={`Volta ${lapInfo.current} de ${lapInfo.total}`}
+      >
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">
+            Lap
+          </span>
+          <span className="text-[15px] font-black tabular-nums text-foreground" style={{ fontFamily: 'system-ui, sans-serif' }}>
+            {lapInfo.current}
+            <span className="text-muted-foreground font-bold">/{lapInfo.total}</span>
+          </span>
+        </div>
+      </div>
+
+      {/* ===== Mini-mapa do circuito ===== */}
+      <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
       {/* ===== Timing tower (top 3 com gaps, estilo F1) ===== */}
       {top3.length > 0 && (
