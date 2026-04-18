@@ -18,7 +18,7 @@ import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
 import { ForecastBiasChart } from "./forecast/ForecastBiasChart";
 import { ConfidenceScoresTable } from "./forecast/ConfidenceScoresTable";
 import { MapeBySegmentChart } from "./forecast/MapeBySegmentChart";
-import { PipelineCoveragePanel } from "./coverage/PipelineCoveragePanel";
+
 
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
