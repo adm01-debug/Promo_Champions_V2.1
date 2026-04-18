@@ -9,7 +9,7 @@ import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonBy
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
-import { useStreakAchievements } from '@/hooks/useDailyStreakAchievements';
+import { useCurrentStreak } from '@/hooks/useDailyStreakAchievements';
 import { useDailyBriefing } from '@/hooks/race/useDailyBriefing';
 import { useSessionDuration } from '@/hooks/race/useSessionDuration';
 import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
@@ -115,12 +115,12 @@ export default function RaceArenaHub() {
   // Briefing usa a corrida de Closer como contexto principal (pode ser ajustado).
   const { data: closerSeason } = useRaceSeasonByRole('closer');
   const { data: closerLeaderboard = [] } = useRaceLeaderboard(closerSeason?.id);
-  const { data: streakData } = useStreakAchievements(myCar?.salesperson_id);
+  const { data: streakDays = 0 } = useCurrentStreak(myCar?.salesperson_id);
 
   const briefing = useDailyBriefing({
     entries: closerLeaderboard,
     currentUserSalespersonId: myCar?.salesperson_id,
-    streakDays: streakData?.current_streak ?? 0,
+    streakDays,
   });
 
   // Densidade adaptativa: rastreia tempo na arena.
