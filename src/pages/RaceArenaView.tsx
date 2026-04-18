@@ -34,6 +34,7 @@ import { useRacePowerups, collectRacePowerup } from '@/hooks/race/useRacePowerup
 import { useRaceScoringRules } from '@/hooks/race/useRaceScoringRules';
 import { useOvertakeDetector } from '@/hooks/race/useOvertakeDetector';
 import { useLeaderTakeoverDetector } from '@/hooks/race/useLeaderTakeoverDetector';
+import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
