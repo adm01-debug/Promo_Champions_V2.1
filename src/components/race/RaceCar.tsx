@@ -108,6 +108,26 @@ export function RaceCar({
               transition={{ duration: 0.5 + i * 0.05, repeat: 3, delay: i * 0.04, ease: 'easeOut' }}
             />
           ))}
+          {/* Mario-Kart turbo particles (cor do carro) */}
+          {[0, 1, 2, 3, 4].map((i) => {
+            const angle = (i - 2) * 0.35;
+            return (
+              <motion.circle
+                key={`turbo-${i}`}
+                cx={-bodyW / 2 - 2}
+                cy={0}
+                r={2.2 + (i % 2) * 0.6}
+                fill={i % 2 === 0 ? primaryColor : secondaryColor}
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  cx: [-bodyW / 2 - 2, -bodyW / 2 - 26 - i * 6, -bodyW / 2 - 50 - i * 8],
+                  cy: [0, Math.sin(angle) * 10, Math.sin(angle) * 18],
+                }}
+                transition={{ duration: 0.6, repeat: 3, delay: i * 0.05, ease: 'easeOut' }}
+              />
+            );
+          })}
           <motion.circle
             cx={-bodyW / 2}
             cy={0}
