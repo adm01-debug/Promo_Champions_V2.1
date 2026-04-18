@@ -67,6 +67,13 @@ export function RaceArena({
   const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(new Map());
   const [pitStopCars, setPitStopCars] = useState<Set<string>>(new Set());
 
+  // Race Control: contador de overtakes + bandeira atual
+  const [overtakesTotal, setOvertakesTotal] = useState(0);
+  const [yellowFlagUntil, setYellowFlagUntil] = useState<number>(0);
+  // Velocidade simulada do líder (km/h)
+  const [leaderSpeed, setLeaderSpeed] = useState(0);
+  const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
+
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
     const line: CommentaryLine = { id: `${Date.now()}-${Math.random()}`, text, createdAt: Date.now() };
