@@ -431,7 +431,7 @@ export function RaceArena({
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
-      </div>
+      </motion.div>
 
       {/* ===== LAP counter HUD (topo central) ===== */}
       <div
