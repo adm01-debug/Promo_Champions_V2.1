@@ -21,6 +21,7 @@ import { MapeBySegmentChart } from "./forecast/MapeBySegmentChart";
 import { DealHealthHub } from "@/components/deal-intelligence/health/DealHealthHub";
 import { WinLossHub } from "@/components/deal-intelligence/winloss/WinLossHub";
 import { LeadRoutingHub } from "@/components/lead-routing/LeadRoutingHub";
+import { ConversationHub } from "@/components/conversation-intelligence/ConversationHub";
 
 
 export const RevenueIntelligenceHub: FC = () => {
@@ -71,6 +72,7 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
           <TabsTrigger value="win-loss">Win/Loss IA</TabsTrigger>
           <TabsTrigger value="lead-routing">Smart Routing</TabsTrigger>
+          <TabsTrigger value="conversations">Conversas IA</TabsTrigger>
           <TabsTrigger value="ai-forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="coverage">Cobertura do Pipeline</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
@@ -100,6 +102,9 @@ export const RevenueIntelligenceHub: FC = () => {
         </TabsContent>
         <TabsContent value="lead-routing" className="mt-4">
           <LeadRoutingHub />
+        </TabsContent>
+        <TabsContent value="conversations" className="mt-4">
+          <ConversationHub />
         </TabsContent>
         <TabsContent value="ai-forecast" className="mt-4">
           <AIForecastPanel />
