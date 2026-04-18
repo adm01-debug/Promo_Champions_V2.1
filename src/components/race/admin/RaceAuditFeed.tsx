@@ -11,7 +11,7 @@ import { ptBR } from 'date-fns/locale';
 interface RaceEvent {
   id: string;
   event_type: string;
-  message: string | null;
+  metadata: Record<string, unknown> | null;
   created_at: string;
   season_id: string;
   salesperson_id: string;
@@ -24,7 +24,7 @@ export function RaceAuditFeed() {
     queryFn: async (): Promise<RaceEvent[]> => {
       const { data, error } = await supabase
         .from('race_events')
-        .select('id,event_type,message,created_at,season_id,salesperson_id')
+        .select('id,event_type,metadata,created_at,season_id,salesperson_id')
         .order('created_at', { ascending: false })
         .limit(100);
       if (error) throw error;
@@ -56,7 +56,9 @@ export function RaceAuditFeed() {
             {data.map((e) => (
               <div key={e.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/40 transition-colors text-sm">
                 <Badge variant="outline" className="text-[10px] uppercase">{e.event_type}</Badge>
-                <span className="flex-1 truncate">{e.message ?? '—'}</span>
+                <span className="flex-1 truncate text-muted-foreground font-mono text-xs">
+                  {e.metadata ? JSON.stringify(e.metadata) : '—'}
+                </span>
                 <span className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
                   {format(new Date(e.created_at), 'dd/MM HH:mm', { locale: ptBR })}
                 </span>
