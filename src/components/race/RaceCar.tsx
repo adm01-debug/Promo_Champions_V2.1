@@ -464,6 +464,59 @@ export function RaceCar({
           </g>
         </g>
       )}
+
+      {/* ===== Aero turbulence (rajadas de vento na traseira em alta velocidade) ===== */}
+      {aeroTurbulence && (
+        <g pointerEvents="none">
+          {[0, 1, 2].map((i) => {
+            const yOff = (i - 1) * 4.5;
+            return (
+              <motion.line
+                key={`aero-${i}`}
+                x1={-bodyW / 2 - 2}
+                y1={yOff}
+                x2={-bodyW / 2 - 16}
+                y2={yOff + (i - 1) * 1.8}
+                stroke="hsl(0 0% 100%)"
+                strokeWidth={1.2}
+                strokeLinecap="round"
+                opacity={0.55}
+                animate={{
+                  opacity: [0, 0.7, 0],
+                  x1: [-bodyW / 2 - 2, -bodyW / 2 - 8],
+                  x2: [-bodyW / 2 - 16, -bodyW / 2 - 28 - i * 2],
+                }}
+                transition={{
+                  duration: 0.55,
+                  repeat: Infinity,
+                  delay: i * 0.12,
+                  ease: 'easeOut',
+                }}
+              />
+            );
+          })}
+        </g>
+      )}
+
+      {/* ===== FASTEST sector badge (roxo F1) ===== */}
+      {fastestSector && (
+        <motion.g
+          transform={`translate(0 ${-bodyH / 2 - 22})`}
+          initial={{ opacity: 0, scale: 0.5, y: 6 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          pointerEvents="none"
+        >
+          <rect x={-18} y={-6} width={36} height={11} rx={2.5}
+            fill="hsl(271 91% 55%)" stroke="hsl(0 0% 100%)" strokeWidth={0.8} />
+          <text y={2.2} textAnchor="middle" fontSize={6.5} fontWeight={900}
+            fill="hsl(0 0% 100%)"
+            style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.12em' }}>
+            FASTEST
+          </text>
+        </motion.g>
+      )}
     </g>
   );
 }
