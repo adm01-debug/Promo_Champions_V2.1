@@ -676,7 +676,7 @@ export function RaceArena({
         </AnimatePresence>
 
         {/* ===== Gap line líder→2º (apenas em disputa apertada) ===== */}
-        {showGapLine && leaderPosForLine && secondPos && gapMidPos && gapToSecond !== null && (
+        {showGapLine && leaderPosForLine && secondPos && (
           <g pointerEvents="none">
             <line
               x1={leaderPosForLine.x}
@@ -688,16 +688,23 @@ export function RaceArena({
               strokeDasharray="6 5"
               opacity={0.85}
             />
-            <g transform={`translate(${gapMidPos.x} ${gapMidPos.y - 18})`}>
-              <rect x={-22} y={-9} width={44} height={16} rx={4}
-                fill="hsl(45 95% 55%)" stroke="hsl(0 0% 10%)" strokeWidth={0.8} />
-              <text y={2} textAnchor="middle" fontSize={9} fontWeight={900}
-                fill="hsl(20 30% 18%)"
-                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.04em' }}>
-                +{(gapToSecond * 100).toFixed(2)}%
-              </text>
-            </g>
           </g>
+        )}
+
+        {/* ===== Slipstream: linhas de vento atrás do líder quando 2º está colado ===== */}
+        {leader && second && !reducedMotion && (
+          <SlipstreamLines
+            leaderProgress={Number(leader.progress)}
+            chaserProgress={Number(second.progress)}
+          />
+        )}
+
+        {/* ===== Badge "+X.Xs" entre 1º e 2º quando gap < 5% ===== */}
+        {leader && second && (
+          <LeaderGapIndicator
+            leaderProgress={Number(leader.progress)}
+            secondProgress={Number(second.progress)}
+          />
         )}
 
         {overlayChildren}
