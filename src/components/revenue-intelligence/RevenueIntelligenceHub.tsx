@@ -10,6 +10,7 @@ import { PipelineInspectionTable } from "./PipelineInspectionTable";
 import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
 import { AIForecastPanel } from "./AIForecastPanel";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
+import { WinProbabilityCalibratorPanel } from "./calibration/WinProbabilityCalibratorPanel";
 import { QuotaAttainmentPredictor } from "./quota/QuotaAttainmentPredictor";
 import { ForecastAccuracySummary } from "./forecast/ForecastAccuracySummary";
 import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
@@ -67,6 +68,7 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="coverage">Cobertura do Pipeline</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
           <TabsTrigger value="calibration">Win Calibration</TabsTrigger>
+          <TabsTrigger value="calibrator">Calibrador (Bucket)</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
@@ -97,6 +99,9 @@ export const RevenueIntelligenceHub: FC = () => {
         </TabsContent>
         <TabsContent value="calibration" className="mt-4">
           <WinProbabilityCalibrationPanel />
+        </TabsContent>
+        <TabsContent value="calibrator" className="mt-4">
+          <WinProbabilityCalibratorPanel />
         </TabsContent>
         <TabsContent value="inspection" className="mt-4">
           <PipelineInspectionTable
