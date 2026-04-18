@@ -501,6 +501,31 @@ export function RaceArena({
           ))}
         </AnimatePresence>
 
+        {/* ===== Gap line líder→2º (apenas em disputa apertada) ===== */}
+        {showGapLine && leaderPosForLine && secondPos && gapMidPos && gapToSecond !== null && (
+          <g pointerEvents="none">
+            <line
+              x1={leaderPosForLine.x}
+              y1={leaderPosForLine.y}
+              x2={secondPos.x}
+              y2={secondPos.y}
+              stroke="hsl(45 95% 55%)"
+              strokeWidth={2}
+              strokeDasharray="6 5"
+              opacity={0.85}
+            />
+            <g transform={`translate(${gapMidPos.x} ${gapMidPos.y - 18})`}>
+              <rect x={-22} y={-9} width={44} height={16} rx={4}
+                fill="hsl(45 95% 55%)" stroke="hsl(0 0% 10%)" strokeWidth={0.8} />
+              <text y={2} textAnchor="middle" fontSize={9} fontWeight={900}
+                fill="hsl(20 30% 18%)"
+                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.04em' }}>
+                +{(gapToSecond * 100).toFixed(2)}%
+              </text>
+            </g>
+          </g>
+        )}
+
         {overlayChildren}
       </RaceTrack>
       {weatherOverlay}
@@ -526,13 +551,13 @@ export function RaceArena({
       {/* ===== Mini-mapa do circuito ===== */}
       <MiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
-      {/* ===== Timing tower (top 3 com gaps, estilo F1) ===== */}
-      {top3.length > 0 && (
+      {/* ===== Timing tower expandido (top 5 com gaps + delta colorido) ===== */}
+      {top5.length > 0 && (
         <div
           className="absolute top-3 right-3 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-2 shadow-lg"
           style={{
-            background: 'hsl(var(--background) / 0.72)',
-            minWidth: 168,
+            background: 'hsl(var(--background) / 0.78)',
+            minWidth: 210,
           }}
         >
           <div className="flex items-center justify-between mb-1.5">
@@ -545,13 +570,24 @@ export function RaceArena({
             </span>
           </div>
           <div className="space-y-1">
-            {top3.map((c, i) => {
+            {top5.map((c, i) => {
               const gap = i === 0 ? null : leaderProgress - Number(c.progress);
               const gapStr = gap === null ? 'LEADER' : `+${(gap * 100).toFixed(2)}%`;
+              const prevPos = prevSnapshotRef.current
+                .slice()
+                .sort((a, b) => b.progress - a.progress)
+                .findIndex((x) => x.id === c.car_id);
+              const delta = prevPos >= 0 ? prevPos - i : 0;
+              const deltaColor = delta > 0
+                ? 'text-emerald-500'
+                : delta < 0
+                ? 'text-destructive'
+                : 'text-muted-foreground/40';
+              const deltaIcon = delta > 0 ? '▲' : delta < 0 ? '▼' : '–';
               return (
                 <div key={c.car_id} className="flex items-center gap-2">
                   <span
-                    className="flex h-4 w-4 items-center justify-center rounded text-[9px] font-black tabular-nums"
+                    className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-black tabular-nums"
                     style={{
                       backgroundColor: c.primary_color,
                       color: c.secondary_color,
@@ -562,8 +598,11 @@ export function RaceArena({
                   <span className="flex-1 truncate text-[11px] font-bold text-foreground">
                     {c.salesperson_name?.split(' ')[0]}
                   </span>
+                  <span className={`text-[9px] font-mono font-bold w-3 text-center ${deltaColor}`}>
+                    {deltaIcon}
+                  </span>
                   <span
-                    className={`text-[9px] font-mono font-bold tabular-nums ${
+                    className={`text-[9px] font-mono font-bold tabular-nums w-12 text-right ${
                       i === 0 ? 'text-primary' : 'text-muted-foreground'
                     }`}
                   >
@@ -632,6 +671,12 @@ export function RaceArena({
           />
         )}
       </AnimatePresence>
+
+      {/* ===== Start Lights (countdown F1 5x luzes) ===== */}
+      <StartLights trigger={startLightsTrigger} />
+
+      {/* ===== Fogos de artifício (bandeirada final) ===== */}
+      <Fireworks active={showFireworks} />
     </div>
   );
 }
