@@ -1,26 +1,19 @@
 
-Ciclo 41-46 entregue. Próximo ciclo foca em micro-narrativa, presença sonora-visual e refinamentos finais aproveitando ao máximo o layout vertical.
+Adicionar um terceiro helicóptero cruzando o meio da pista (vertical, de cima para baixo ou diagonal), diferente dos dois laterais existentes.
 
-# Ciclo 47-52 (rumo ao 10/10++ definitivo)
+## Mudanças
 
-**47. Marshals com bandeiras animadas nos postos** — substituir os marshal posts estáticos por figurinhas SVG humanoides minimalistas (3px) segurando bandeiras que se agitam. Quando bandeira amarela ativa (Race Control), todos os marshals trocam para bandeira amarela sincronizadamente.
+**`src/index.css`** — novo keyframe `race-helicopter-cross-vertical`:
+- Move o helicóptero do topo (translateY(-80px)) até a base (translateY(1400px))
+- Posicionado no meio horizontal da cena (~x:400)
+- Rotação de 90° para apontar para baixo (nariz na direção do movimento)
+- Duração ~14s, loop infinito com delay para não coincidir com os outros
 
-**48. Indicador de "Setor mais rápido" (purple sector)** — ao detectar que um carro fez o melhor tempo no setor (delta de progresso × tempo), pisca o setor correspondente em roxo (#9333ea) por 1.5s no timing tower e cria pequena badge "FASTEST" no carro por 2s. Estilo F1 oficial.
+**`src/components/race/track/TrackScenery.tsx`**:
+- Estender o componente `BroadcastHelicopter` para suportar nova prop `vertical?: boolean` (ou criar variante `VerticalHelicopter`)
+- Quando `vertical`, aplica animação `race-helicopter-cross-vertical` e rotação inicial de 90°
+- Adicionar instância: cor verde/amarela (terceira cor distinta dos azul/vermelho existentes), atravessando o centro da pista
+- Sombra circular acompanha embaixo
 
-**49. Onda mexicana na arquibancada (La Ola)** — quando o líder cruza a linha de chegada (a cada lap completo), a arquibancada faz uma "ola" sequencial: blocos de espectadores se levantam em onda da esquerda para a direita ao longo de 1.2s. Vida real no estádio.
-
-**50. Rajada de vento visual nos pneus dos carros** — pequenas linhas brancas translúcidas (3-4px) saindo da traseira dos carros em alta velocidade (gap > threshold), simulando turbulência aerodinâmica. Aparecem só nos top 3 e quando carro está em DRS.
-
-**51. Painel de "Próxima Curva" para o usuário** — pequeno HUD no canto inferior direito (acima do ReplayButton) mostrando para o pilot logado: tipo da próxima curva (Curva 1, Chicane, etc), distância em % até ela, e se é DRS zone (badge verde). Telemetria pessoal estilo F1.
-
-**52. Cinematic camera focus no líder em momentos chave** — quando líder cruza setor 3 (final da volta) ou abre gap >5%, o SVG aplica leve zoom (scale 1.04) + pan suave focando no líder por 1.8s, com vinheta nas bordas. Câmera de transmissão.
-
-## Arquivos a editar
-- `src/components/race/track/TrackScenery.tsx` — marshals com bandeiras animadas + ola na arquibancada
-- `src/components/race/RaceArena.tsx` — fastest sector detection, integrar NextCornerHUD, cinematic camera focus, ola trigger
-- `src/components/race/RaceCar.tsx` — badge "FASTEST" + linhas de turbulência aerodinâmica
-- `src/components/race/NextCornerHUD.tsx` — novo HUD lateral pessoal
-- `src/components/race/raceTrackHelpers.ts` — helper `getNextCornerInfo(progress)` retornando tipo+distância+DRS
-- `src/index.css` — keyframes marshal-flag-wave + la-ola-wave + fastest-sector-flash + cinematic-zoom
-
-Sem perguntas. Executo as 6 em sequência.
+## Resultado
+Três helicópteros simultâneos: azul (topo, esquerda→direita), vermelho (base, direita→esquerda), e novo verde/amarelo cruzando verticalmente o meio da pista — cobertura aérea completa estilo F1.
