@@ -592,6 +592,10 @@ export function TrackScenery({
         {/* CICLO 53-58: Helicóptero superior azul */}
         <BroadcastHelicopter bodyColor="hsl(210 75% 50%)" y={0} duration={18} />
 
+        {/* Iteração final: dirigível flutuando lentamente no céu */}
+        <TrackBlimp y={50} duration={70} delay={0} bodyColor="hsl(210 60% 55%)" />
+        <TrackBlimp y={H - 30} duration={90} delay={25} bodyColor="hsl(0 75% 52%)" />
+
         {/* CICLO 53-58: Bandos de pássaros ambientais */}
         <BirdFlock y={150} delay={0} />
         <BirdFlock y={870} delay={12} reverse />
