@@ -8074,6 +8074,47 @@ export type Database = {
         }
         Relationships: []
       }
+      quota_attainment_actions: {
+        Row: {
+          action_type: string
+          created_at: string
+          description: string | null
+          expected_impact: number
+          forecast_id: string
+          id: string
+          priority: number
+          title: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          description?: string | null
+          expected_impact?: number
+          forecast_id: string
+          id?: string
+          priority?: number
+          title: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          expected_impact?: number
+          forecast_id?: string
+          id?: string
+          priority?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quota_attainment_actions_forecast_id_fkey"
+            columns: ["forecast_id"]
+            isOneToOne: false
+            referencedRelation: "quota_attainment_forecasts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quota_attainment_alerts: {
         Row: {
           acknowledged: boolean
@@ -8122,6 +8163,78 @@ export type Database = {
           },
           {
             foreignKeyName: "quota_attainment_alerts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quota_attainment_forecasts: {
+        Row: {
+          attainment_probability: number
+          closed: number
+          computed_at: string
+          days_remaining: number
+          id: string
+          p10: number
+          p50: number
+          p90: number
+          pace_per_day: number
+          period_end: string
+          period_start: string
+          quota: number
+          risk_level: string
+          salesperson_id: string
+          simulations: number
+          weighted_open: number
+        }
+        Insert: {
+          attainment_probability?: number
+          closed?: number
+          computed_at?: string
+          days_remaining?: number
+          id?: string
+          p10?: number
+          p50?: number
+          p90?: number
+          pace_per_day?: number
+          period_end: string
+          period_start: string
+          quota?: number
+          risk_level?: string
+          salesperson_id: string
+          simulations?: number
+          weighted_open?: number
+        }
+        Update: {
+          attainment_probability?: number
+          closed?: number
+          computed_at?: string
+          days_remaining?: number
+          id?: string
+          p10?: number
+          p50?: number
+          p90?: number
+          pace_per_day?: number
+          period_end?: string
+          period_start?: string
+          quota?: number
+          risk_level?: string
+          salesperson_id?: string
+          simulations?: number
+          weighted_open?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quota_attainment_forecasts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quota_attainment_forecasts_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"

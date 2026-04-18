@@ -12,6 +12,7 @@ import { AIForecastPanel } from "./AIForecastPanel";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
 import { WinProbabilityCalibratorPanel } from "./calibration/WinProbabilityCalibratorPanel";
 import { QuotaAttainmentPredictor } from "./quota/QuotaAttainmentPredictor";
+import { QuotaPredictorAdvancedPanel } from "./quota/QuotaPredictorAdvancedPanel";
 import { ForecastAccuracySummary } from "./forecast/ForecastAccuracySummary";
 import { ForecastVsActualChart } from "./forecast/ForecastVsActualChart";
 import { ForecastBiasChart } from "./forecast/ForecastBiasChart";
@@ -71,6 +72,7 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="calibrator">Calibrador (Bucket)</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
+          <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
         </TabsList>
         <TabsContent value="forecast-accuracy" className="mt-4 space-y-4">
@@ -113,6 +115,9 @@ export const RevenueIntelligenceHub: FC = () => {
         </TabsContent>
         <TabsContent value="quota" className="mt-4">
           <QuotaAttainmentPredictor />
+        </TabsContent>
+        <TabsContent value="quota-advanced" className="mt-4">
+          <QuotaPredictorAdvancedPanel />
         </TabsContent>
         <TabsContent value="qbr" className="mt-4">
           <QBRGeneratorPanel />
