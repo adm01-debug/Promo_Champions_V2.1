@@ -70,6 +70,7 @@ const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
 export function RaceArena({
   cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay,
   colorblindMode = false, seasonId = null, seasonStartedAt = null, seasonEndsAt = null,
+  telemetry,
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
