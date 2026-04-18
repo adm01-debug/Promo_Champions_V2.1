@@ -30,4 +30,6 @@ export { LeaderTakeoverCelebration } from './LeaderTakeoverCelebration';
 export { PitStopPanel } from './PitStopPanel';
 export { TrackConditionsBadge } from './TrackConditionsBadge';
 export { TrackWeatherOverlay } from './TrackWeatherOverlay';
+export { GhostCar } from './GhostCar';
+export { GhostStatusBadge } from './GhostStatusBadge';
 export { fmtCurrency, fmtCompact } from './raceFormatters';

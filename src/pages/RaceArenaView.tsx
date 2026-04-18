@@ -25,6 +25,8 @@ import {
   PitStopPanel,
   TrackConditionsBadge,
   TrackWeatherOverlay,
+  GhostCar,
+  GhostStatusBadge,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -40,6 +42,7 @@ import { useLeaderTakeoverDetector } from '@/hooks/race/useLeaderTakeoverDetecto
 import { useRaceAudioEngine } from '@/hooks/race/useRaceAudioEngine';
 import { usePitStopAnalysis } from '@/hooks/race/usePitStopAnalysis';
 import { useTrackConditions } from '@/hooks/race/useTrackConditions';
+import { useGhostCar } from '@/hooks/race/useGhostCar';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -99,6 +102,12 @@ export default function RaceArenaView({ roleType }: Props) {
     events,
     leaderboard,
     seasonStart: season?.start_date,
+  });
+
+  const ghost = useGhostCar({
+    mySalespersonId: myCar?.salesperson_id,
+    currentSeason: season,
+    leaderboard,
   });
 
   useEffect(() => {
@@ -183,6 +192,7 @@ export default function RaceArenaView({ roleType }: Props) {
           actions={
             <>
               {season && <TrackConditionsBadge conditions={trackConditions} />}
+              {season && <GhostStatusBadge ghost={ghost} />}
               <Button onClick={() => setPitStopOpen(true)} variant="outline" disabled={!season}>
                 <Wrench className="w-4 h-4 mr-2" /> Pit Stop
               </Button>
@@ -238,11 +248,14 @@ export default function RaceArenaView({ roleType }: Props) {
                   cars={leaderboard}
                   boostingIds={boostingIds}
                   overlayChildren={
-                    <AnimatePresence>
-                      {visiblePowerups.map((p) => (
-                        <PowerUpIcon key={p.id} type={p.powerup_type} x={p.x} y={p.y} onClick={() => handleCollectPowerup(p.id, p.reachable)} />
-                      ))}
-                    </AnimatePresence>
+                    <>
+                      <GhostCar ghost={ghost} />
+                      <AnimatePresence>
+                        {visiblePowerups.map((p) => (
+                          <PowerUpIcon key={p.id} type={p.powerup_type} x={p.x} y={p.y} onClick={() => handleCollectPowerup(p.id, p.reachable)} />
+                        ))}
+                      </AnimatePresence>
+                    </>
                   }
                   weatherOverlay={<TrackWeatherOverlay condition={trackConditions.condition} />}
                 />
