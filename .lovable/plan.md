@@ -1,35 +1,25 @@
 
-As 7 melhorias do redesign visual da Race Arena já foram **todas concluídas** na rodada anterior:
+O ciclo 11-16 (linha de chegada shimmer, marshal posts, bandeiras patrocinador, shimmer no capô, skid marks, sombra) já foi entregue na rodada anterior. Para continuar rumo ao "10/10++", proponho um novo ciclo de micro-perfeição focado em movimento, atmosfera e detalhes que faltam.
 
-1. ✅ Pista oval estendida limpa com chicane suave
-2. ✅ Curbs e asfalto com gradiente de profundidade
-3. ✅ Carros com labels horizontais (counter-rotate) + chip translúcido
-4. ✅ Infield reorganizado (pit, paddock, lago com ilha+palmeira)
-5. ✅ Árvores com sombra suave + arquibancadas coloridas
-6. ✅ Grama com vinheta mais forte
-7. ✅ Container com saturação +8%, drop-shadow premium e rounded-3xl
+# Ciclo 17-22 (próxima camada de polish)
 
-Não há mais itens pendentes do plano aprovado. Para continuar "rumo à perfeição 10/10++", proponho um **novo ciclo de 6 polish micro-detalhes** que elevam ainda mais o nível visual:
+**17. Drone/helicóptero de transmissão** — pequeno helicóptero estilizado sobrevoando o circuito em loop lento (translate ao longo de path elíptico, 20s), com sombra projetada na grama abaixo. Reforça sensação de evento.
 
-# Ciclo de polish 11-16 (micro-perfeição)
+**18. Pit lane visível** — faixa cinza paralela à reta principal com linha branca tracejada separando da pista, 4-6 garagens numeradas com cores dos times atrás. Hoje só temos paddock genérico.
 
-**11. Linha de largada/chegada xadrez** — faixa quadriculada preta/branca animada sutilmente na posição inicial da pista (atualmente ausente).
+**19. Partículas de poeira/fumaça nas curvas** — quando carro passa por checkpoint de curva, emitir 3-4 circulinhos cinza claro que sobem e dissipam (motion + opacity). Vida de circuito real.
 
-**12. Marshal posts (postes de fiscais)** — 4 pequenos postes laranja com bandeirinha nas curvas principais, dando sensação de circuito real.
+**20. Placar lateral animado (tipo F1 timing tower)** — mini overlay no canto superior direito do SVG com top 3 posições, gap em segundos, cor do time. Glassmorphism leve, atualiza em tempo real.
 
-**13. Sombra dinâmica dos carros** — sombra projetada acompanha rotação do carro (atualmente é elipse fixa); usar `<ellipse>` rotacionado junto com o body.
+**21. Iluminação ambiente dinâmica** — gradiente radial sutil seguindo o líder da corrida (spotlight cinematográfico que segue o 1º lugar), opacity 0.15, blur alto. Foco visual automático.
 
-**14. Trilha de pneu (skid marks)** — quando carro está em "boost" ou ultrapassagem, deixar rastro sutil de pneu que esmaece em 1.5s.
-
-**15. Reflexo metálico no capô** — adicionar gradient linear branco animado (shimmer lento de 4s) que passa pela carroceria, dando aspecto "diecast lustroso".
-
-**16. Bandeiras de patrocinador nas barreiras** — 6-8 bandeirinhas triangulares coloridas alternadas (vermelho/branco/azul) ao longo das tyre stacks, estilo F1.
+**22. Sound design visual (sem áudio)** — quando há ultrapassagem, flash branco de 200ms no carro que ultrapassou + pequeno "ping" visual (círculo expandindo). Feedback de evento épico.
 
 ## Arquivos a editar
-- `src/components/race/track/TrackAsphalt.tsx` — linha de largada xadrez
-- `src/components/race/track/TrackScenery.tsx` — marshal posts + bandeiras patrocinador
-- `src/components/race/RaceCar.tsx` — sombra dinâmica + shimmer no capô + skid marks
-- `src/components/race/track/TrackDefs.tsx` — gradient shimmer + pattern xadrez
-- `src/index.css` — token novo para skid mark
+- `src/components/race/track/TrackScenery.tsx` — helicóptero + pit lane com garagens
+- `src/components/race/RaceArena.tsx` — placar timing tower + spotlight do líder + dust particles
+- `src/components/race/RaceCar.tsx` — flash de ultrapassagem
+- `src/components/race/track/TrackDefs.tsx` — gradient spotlight + filter para fumaça
+- `src/index.css` — token para pit garage colors
 
 Sem perguntas. Executo as 6 em sequência até finalizar.
