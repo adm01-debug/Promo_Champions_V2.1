@@ -1,44 +1,53 @@
 
-Vou substituir a pista oval por um circuito serpenteante (estilo F1/Mario Kart top-down) com curvas variadas, mantendo o sistema de progresso 0..1 dos carros.
+# Plano: Novo traçado do circuito + uso do espaço vertical
 
-## Mudança central
-Em `raceTrackHelpers.ts`, reescrever `getPositionOnTrack(progress)` para seguir um **path SVG fechado serpenteante** ao invés de uma elipse. Estratégia:
+## Problema
+1. O path serpenteante atual tem uma protuberância no topo-esquerda que ficou com formato fálico — precisa ser redesenhado
+2. A pista não usa bem a altura disponível (viewBox 1000x600, mas o circuito fica concentrado no meio-topo)
 
-1. Definir um path SVG fechado (`TRACK_PATH`) com curvas Bezier formando um circuito tipo "8 alongado" / serpentina dentro do viewBox 1000x600
-2. Usar uma instância invisível de `SVGPathElement` via `document.createElementNS` ou pré-computar pontos amostrando o path com matemática Bezier
-3. **Solução prática sem DOM**: pré-computar uma lookup table de ~400 pontos ao longo do path usando aproximação Bezier cúbica, exportar como array e interpolar por progresso
+## Solução
 
-## Implementação
+### 1. Novo `TRACK_PATH_D` em `raceTrackHelpers.ts`
+Substituir por um circuito tipo **"figura-8 horizontal" ou "circuito clássico de F1 estilo Suzuka/Interlagos"** que:
+- Ocupa toda a altura útil (y: 60 → 540, usando ~80% do viewBox vertical)
+- Ocupa toda a largura (x: 80 → 920)
+- Tem curvas balanceadas e simétricas (sem protuberâncias estranhas)
+- Possui variedade: 2 retas longas, 1 hairpin, 1 chicane, 1 curva ampla
 
-**1. `raceTrackHelpers.ts`**:
-- Definir `TRACK_PATH_D` (string SVG path) — circuito serpenteante fechado com 6-8 curvas
-- Função `samplePath(d, n)` que gera array de `{x, y}` amostrando o path manualmente (parser de comandos M/C/Z + De Casteljau para cúbicas)
-- Pré-calcular `TRACK_POINTS = samplePath(TRACK_PATH_D, 400)` no module-load
-- `getPositionOnTrack(progress, laneOffset)` → indexa `TRACK_POINTS`, calcula tangente entre vizinhos, aplica offset perpendicular para a raia
-- Exportar `TRACK_PATH_D` para os componentes desenharem
+**Traçado proposto** (formato "estádio com chicane interna"):
+```
+Start (direita-meio) → reta superior longa → hairpin esquerda no topo →
+desce em S suave pelo lado esquerdo → curva ampla embaixo-esquerda →
+reta inferior → chicane direita embaixo → sobe pelo lado direito →
+fecha no start
+```
 
-**2. `TrackAsphalt.tsx`** — reescrever:
-- Usar `<path d={TRACK_PATH_D}>` para asfalto (stroke largo cinza ~70px)
-- Run-off bege: mesmo path com stroke ainda mais largo (~90px) bege, renderizado abaixo
-- Bordas brancas: mesmo path com stroke fino branco
-- Linha central tracejada: mesmo path com stroke branco dasharray
-- Miolo verde: não precisa, gramado já está abaixo
-- Checkpoints: pontos no path em progresso 0.25, 0.5, 0.75 com pequena marca perpendicular
+Path Bezier aproximado:
+```
+M 880 300                              (start)
+C 880 150, 750 80, 500 80              (reta superior + curva topo)
+C 350 80, 200 100, 140 200             (hairpin topo-esquerda)
+C 100 280, 140 360, 220 380            (S esquerdo descendo)
+C 320 400, 280 480, 200 500            (curva ampla baixo-esquerda)
+C 350 540, 550 540, 650 500            (reta inferior)
+C 720 480, 680 420, 760 420            (chicane direita)
+C 860 420, 880 380, 880 300            (sobe direita + fecha)
+Z
+```
 
-**3. `TrackStartGantry.tsx`** — usar `getPositionOnTrack(0)` (já compatível) para posicionar a faixa xadrez perpendicular ao path
+### 2. Reposicionar elementos cenográficos
+- **`TrackPond.tsx`**: lago no espaço livre central-baixo (~450, 280) que o novo traçado deixa vazio
+- **`TrackScenery.tsx` (inner)**: pit buildings no centro-direita (~550, 280) onde há área livre
+- **`TrackScenery.tsx` (outer)**: árvores nos 4 cantos + bordas, aproveitando a nova distribuição
+- **`TrackBarriers.tsx`**: reposicionar barreiras zebradas nas curvas reais do novo traçado (hairpin topo-esquerda, chicane baixo-direita, curva ampla baixo-esquerda)
 
-**4. `TrackBarriers.tsx`** — já usa `getPositionOnTrack`, reposicionar offsets para fora da pista (perpendicular ao path)
+### 3. Ajuste de `RaceArena.tsx`
+- Garantir que o container SVG estique verticalmente (revisar se há `max-height` limitando) para usar todo o espaço disponível
 
-**5. `TrackPond.tsx`** — reposicionar lago para uma área "vazia" do circuito (não no centro 500,300 que pode ser cruzada pela pista)
+### Padrões
+- Apenas reescrever a string `TRACK_PATH_D` + reposicionar coordenadas estáticas dos componentes de cenário
+- Sistema de progresso 0..1 e amostragem do path **100% preservados** (não mexe na lógica)
+- ≤200L/arquivo mantido
 
-**6. `TrackScenery.tsx`** — manter, ajustar posições de árvores/prédios para áreas livres do novo traçado
-
-**7. `RaceArena.tsx`** — `lane = (idx - sorted.length / 2) * 8` continua válido (laneOffset perpendicular)
-
-## Padrões
-- ≤200L/arquivo, SVG puro, zero deps
-- Path desenhado **uma única vez** (string constante), amostragem **uma única vez** no module-load → zero overhead em render
-- Sistema de progresso dos carros 100% preservado (mesma assinatura `getPositionOnTrack`)
-
-## Próximo passo
-Implementar agora.
+## Arquivos
+- **Editar**: `raceTrackHelpers.ts` (novo path), `TrackPond.tsx`, `TrackScenery.tsx`, `TrackBarriers.tsx`, `RaceArena.tsx` (verificar altura)
