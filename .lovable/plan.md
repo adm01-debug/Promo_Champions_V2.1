@@ -1,50 +1,50 @@
 
-Build corrigido. Sigo com a próxima atômica do Deal Intelligence Hub.
+Deal Intelligence 2/4 entregue. Próxima atômica.
 
-**Deal Intelligence Hub — 2/4: Buying Committee Coverage**
+**Deal Intelligence — 3/4: Stage Velocity Analyzer**
 
-Já existe `deal_committee_coverage` + `deal_stakeholders` + `BuyingCommitteeCard` + `WeakCoverageDealsTable`. Falta o **AI extractor real**, **histórico de evolução**, **role coverage matrix visual** e **insights agregados no hub**.
+Mede tempo que cada deal passa em cada estágio, compara com baseline da equipe/segmento, identifica deals "presos" e estágios-gargalo, e gera recomendações de desbloqueio.
 
 ## Entregáveis
 
 ### 1. Migration
-- `committee_coverage_history`: `id`, `sale_id` FK, `coverage_score numeric`, `tier text`, `stakeholder_count int`, `gaps jsonb`, `snapshot_at timestamptz`. Para sparkline.
-- `committee_extraction_runs`: `id`, `recording_id` FK, `sale_id` FK, `extracted_count int`, `created_count int`, `updated_count int`, `confidence numeric`, `raw_output jsonb`, `created_at timestamptz`. Auditoria de extrações IA.
-- Trigger `after upsert deal_committee_coverage` → insert snapshot history.
+- `deal_stage_transitions`: `id`, `sale_id` FK, `from_stage text`, `to_stage text`, `entered_at timestamptz`, `exited_at timestamptz`, `duration_hours numeric` (gerado), `transitioned_by uuid`, `created_at`. Índices `(sale_id, entered_at)`, `(to_stage)`.
+- `stage_velocity_baselines`: `id`, `stage text`, `segment text` (smb/mid/enterprise/all), `p50_hours numeric`, `p75_hours numeric`, `p90_hours numeric`, `sample_size int`, `computed_at`. Único `(stage, segment)`.
+- `deal_velocity_alerts`: `id`, `sale_id` FK UNIQUE, `current_stage text`, `hours_in_stage numeric`, `baseline_p75 numeric`, `severity` (`watch|stuck|critical`), `recommendation text`, `detected_at`. 
+- Trigger em `sales` para registrar transição quando `stage` muda.
 - RLS read authenticated, write admin/manager. Realtime + índices.
 
-### 2. Edge function `extract-committee-from-call` (verify_jwt=true)
-- Input: `{ recording_id }`. Lê transcript + sale.
-- Lovable AI (`google/gemini-2.5-flash`) com prompt PT-BR estruturado: extrai nome, cargo, dmu_role, influence, sentiment, evidência (quote).
-- Schema Zod no servidor para validar saída.
-- Upsert `deal_stakeholders` (match por nome+sale_id), insert `committee_extraction_runs`, dispara `calculate-committee-coverage`.
+### 2. Edge functions (verify_jwt=true)
+- `recompute-stage-baselines`: agrega `deal_stage_transitions` últimos 90d em percentis por estágio×segmento, upsert `stage_velocity_baselines`.
+- `detect-stuck-deals`: para cada deal aberto, calcula horas no estágio atual, compara com baseline p75/p90, classifica severidade, upsert `deal_velocity_alerts` com recomendação por estágio.
 
-### 3. Hooks `src/hooks/deal-intelligence/useCommitteeCoverage.ts` (estender)
-- `useCommitteeCoverageHistory(saleId)` — sparkline 30d.
-- `useCommitteeInsights()` — agregados: % deals com champion, % com EB, gap mais comum, evolução média.
-- `useExtractCommitteeFromCall()` — mutation chamada do drawer da call.
+### 3. Hooks `src/hooks/deal-intelligence/useStageVelocity.ts`
+- `useDealVelocity(saleId)` — alerta + transições do deal.
+- `useStageBaselines()` — baselines globais.
+- `useStuckDeals(limit?)` — leaderboard stuck/critical.
+- `useStageBottlenecks()` — agregado: estágios com maior tempo médio + nº deals presos.
+- `useRecomputeBaselines()` / `useDetectStuckDeals()` — mutations.
 
-### 4. Componentes `src/components/deal-intelligence/committee/`
-- `CommitteeCoverageSparkline.tsx` (≤120L) — line chart histórico no card existente.
-- `RoleCoverageMatrix.tsx` (≤180L) — grid visual 7 roles × status (mapped/missing) com ícones e influência.
-- `CommitteeInsightsPanel.tsx` (≤220L) — hub: 4 KPIs (% champion, % EB, single-threaded count, avg coverage), gap mais comum, deals que melhoraram.
-- `CommitteeExtractionBadge.tsx` (≤80L) — badge no stakeholder mostrando "Extraído de call" + tooltip com quote.
+### 4. Componentes `src/components/deal-intelligence/velocity/`
+- `StageVelocityCard.tsx` (≤220L) — card no drawer do deal: tempo no estágio atual vs baseline, badge severidade, timeline horizontal das transições, recomendação.
+- `StageTransitionsTimeline.tsx` (≤160L) — chips horizontais com tempo por estágio.
+- `StuckDealsPanel.tsx` (≤220L) — hub: top 10 deals stuck/critical com horas, baseline, dono, ação sugerida.
+- `StageBottlenecksChart.tsx` (≤180L) — Recharts bar: tempo médio por estágio + linha de baseline p75.
+- `velocityHelpers.ts` — labels severidade, cores, recomendações por estágio, formatador horas→legível.
 
 ### 5. Integração
-- `BuyingCommitteeCard.tsx`: adicionar `<CommitteeCoverageSparkline />` e `<RoleCoverageMatrix />`.
-- `RecordingSummaryDrawer.tsx`: botão "Extrair comitê" chamando `extract-committee-from-call`.
-- `DealIntelligence.tsx` aba "Comitê de Compra": adicionar `<CommitteeInsightsPanel />` acima do `<WeakCoverageDealsTable />`.
-- `supabase/config.toml`: `[functions.extract-committee-from-call] verify_jwt = true`.
+- Drawer do deal (Pipeline): `<StageVelocityCard saleId />` abaixo do `<DealHealthCard />`.
+- `DealIntelligence.tsx`: nova aba "Velocidade" com `<StuckDealsPanel />` + `<StageBottlenecksChart />`.
+- `supabase/config.toml`: blocos `verify_jwt = true` para as duas funções.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após extrair: stakeholders aparecem com badge de origem; sparkline mostra evolução; hub mostra insights agregados.
+- Após detect: alertas aparecem no card e no painel; bottlenecks mostram estágio mais lento.
 
 ## Arquivos
-- **Migration**: 1 (2 tabelas + trigger + RLS + realtime).
-- **Edge function**: `extract-committee-from-call`.
-- **Estender**: `useCommitteeCoverage.ts` (3 hooks).
-- **Criar**: 4 componentes.
-- **Editar**: `BuyingCommitteeCard.tsx`, `RecordingSummaryDrawer.tsx`, `DealIntelligence.tsx`, `supabase/config.toml`.
+- **Migration**: 1 (3 tabelas + trigger + RLS + realtime + índices).
+- **Edge functions**: 2.
+- **Criar**: 5 hooks (1 arquivo), 4 componentes + 1 helper.
+- **Editar**: drawer do deal, `DealIntelligence.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo para **3/4: Stage Velocity Analyzer** → **4/4: Win/Loss Pattern Miner**, fechando Deal Intelligence em 10/10.
+Após esta entrega, sigo para **4/4: Win/Loss Pattern Miner**, fechando Deal Intelligence em 10/10.
