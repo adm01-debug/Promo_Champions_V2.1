@@ -21,12 +21,19 @@ export function TrackDefs() {
         <circle cx="4.5" cy="1.5" r="0.3" fill="hsl(var(--race-asphalt-edge))" opacity="0.3" />
       </pattern>
 
-      {/* vinheta radial sobre a grama */}
-      <radialGradient id="grassVignette" cx="50%" cy="50%" r="65%">
+      {/* vinheta radial sobre a grama — mais pronunciada nas bordas */}
+      <radialGradient id="grassVignette" cx="50%" cy="50%" r="70%">
         <stop offset="0%" stopColor="hsl(var(--race-grass))" stopOpacity="0" />
-        <stop offset="75%" stopColor="hsl(var(--race-grass-shadow))" stopOpacity="0" />
-        <stop offset="100%" stopColor="hsl(var(--race-grass-shadow))" stopOpacity="0.45" />
+        <stop offset="60%" stopColor="hsl(var(--race-grass-shadow))" stopOpacity="0" />
+        <stop offset="100%" stopColor="hsl(var(--race-grass-shadow))" stopOpacity="0.6" />
       </radialGradient>
+
+      {/* gradiente de profundidade sobre o asfalto (centro mais claro, bordas mais escuras) */}
+      <linearGradient id="asphaltDepth" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="hsl(0 0% 100%)" stopOpacity="0.08" />
+        <stop offset="50%" stopColor="hsl(0 0% 100%)" stopOpacity="0" />
+        <stop offset="100%" stopColor="hsl(0 0% 0%)" stopOpacity="0.18" />
+      </linearGradient>
 
       {/* profundidade do lago */}
       <radialGradient id="pondDepth" cx="50%" cy="50%" r="55%">
