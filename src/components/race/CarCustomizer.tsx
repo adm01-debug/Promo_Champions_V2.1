@@ -16,9 +16,9 @@ interface Props {
 
 export function CarCustomizer({ open, onOpenChange }: Props) {
   const { data: car, upsert } = useMyRaceCar();
-  const [number, setNumber] = useState(7);
-  const [primary, setPrimary] = useState(RACE_CAR_COLORS[0].primary);
-  const [secondary, setSecondary] = useState(RACE_CAR_COLORS[0].secondary);
+  const [number, setNumber] = useState<number>(7);
+  const [primary, setPrimary] = useState<string>(RACE_CAR_COLORS[0].primary);
+  const [secondary, setSecondary] = useState<string>(RACE_CAR_COLORS[0].secondary);
   const [style, setStyle] = useState<CarStyle>('f1');
   const [nickname, setNickname] = useState('');
 
