@@ -410,8 +410,9 @@ export function RaceArena({
     return map;
   }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
-  // ----- Timing tower (top 5 com gaps) -----
-  const top5 = sorted.slice(0, 5);
+  // ----- Timing tower: 3 em focus/immersive, 5 em competitive/analysis -----
+  const timingCount = viewMode.isFocus || viewMode.isImmersive ? 3 : 5;
+  const top5 = sorted.slice(0, timingCount);
   const leaderProgress = Number(top5[0]?.progress ?? 0);
 
   // ----- Gap line líder→2º (apenas se gap < 0.05) -----
