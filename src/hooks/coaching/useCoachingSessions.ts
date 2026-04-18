@@ -77,9 +77,9 @@ export const useCreateCoachingSession = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Não autenticado");
       const payload = { ...input, coach_id: user.id };
-      const { data, error } = await (supabase
-        .from("coaching_sessions") as unknown as { insert: (v: typeof payload) => { select: () => { single: () => Promise<{ data: unknown; error: Error | null }> } } })
-        .insert(payload)
+      const { data, error } = await supabase
+        .from("coaching_sessions" as never)
+        .insert(payload as never)
         .select()
         .single();
       if (error) throw error;
