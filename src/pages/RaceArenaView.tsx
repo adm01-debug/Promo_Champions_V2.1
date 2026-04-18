@@ -2,8 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Settings2, Calendar, Rocket } from 'lucide-react';
+import { Settings2, Rocket } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import {
   RaceArena as Arena,
@@ -18,6 +17,8 @@ import {
   ScoreBreakdownCard,
   RaceArenaHeader,
   RaceArenaSkeleton,
+  RaceEmptyState,
+  StartSeasonDialog,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -55,6 +56,7 @@ export default function RaceArenaView({ roleType }: Props) {
   const { data: myPowerups = [] } = useRacePowerups(season?.id, myCar?.salesperson_id);
   const qc = useQueryClient();
   const [customizerOpen, setCustomizerOpen] = useState(false);
+  const [startSeasonOpen, setStartSeasonOpen] = useState(false);
   const [countdownTrigger, setCountdownTrigger] = useState(0);
   const [boostingIds, setBoostingIds] = useState<Set<string>>(new Set());
   const lastEventIdRef = useRef<string | null>(null);
@@ -153,20 +155,11 @@ export default function RaceArenaView({ roleType }: Props) {
         {isInitialLoading ? (
           <RaceArenaSkeleton />
         ) : !season ? (
-          <Card>
-            <CardContent className="py-10 text-center space-y-2">
-              <Calendar className="w-10 h-10 mx-auto text-muted-foreground" />
-              <p className="font-semibold">Nenhuma temporada ativa para {roleType === 'closer' ? 'Closers' : 'SDRs'}</p>
-              <p className="text-sm text-muted-foreground">
-                {isAdmin ? 'Acesse o Admin Race para iniciar uma corrida deste papel.' : 'Aguarde o admin iniciar a próxima corrida.'}
-              </p>
-              {isAdmin && (
-                <Button asChild className="mt-2">
-                  <Link to="/admin/race-arena">Abrir Admin Race</Link>
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          <RaceEmptyState
+            roleType={roleType}
+            isAdmin={isAdmin}
+            onStartSeason={() => setStartSeasonOpen(true)}
+          />
         ) : (
           <>
             <div className="text-sm text-muted-foreground">
@@ -207,6 +200,9 @@ export default function RaceArenaView({ roleType }: Props) {
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
+        {isAdmin && (
+          <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
+        )}
       </div>
     </>
   );
