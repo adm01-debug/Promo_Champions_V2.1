@@ -142,8 +142,10 @@
                      radial-gradient(ellipse at 80% 100%, hsl(185 90% 48% / 0.1), transparent 50%);
 
     /* ===== RACE ARENA - Track tokens (light) ===== */
-    --race-grass: 110 30% 50%;
-    --race-grass-shadow: 110 35% 35%;
+    --race-grass: 110 32% 48%;
+    --race-grass-light: 105 38% 56%;
+    --race-grass-dark: 115 35% 38%;
+    --race-grass-shadow: 110 35% 30%;
     --race-asphalt: 220 8% 65%;
     --race-asphalt-edge: 0 0% 100%;
     --race-runoff: 40 35% 73%;
@@ -342,8 +344,10 @@
     --shadow-2xl: 0 32px 64px -12px hsl(0 0% 0% / 0.6);
 
     /* ===== RACE ARENA - Track tokens (dark) ===== */
-    --race-grass: 130 25% 22%;
-    --race-grass-shadow: 130 30% 14%;
+    --race-grass: 130 25% 20%;
+    --race-grass-light: 125 28% 26%;
+    --race-grass-dark: 135 30% 14%;
+    --race-grass-shadow: 130 35% 10%;
     --race-asphalt: 220 6% 28%;
     --race-asphalt-edge: 0 0% 92%;
     --race-runoff: 35 20% 38%;
