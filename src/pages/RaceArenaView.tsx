@@ -269,7 +269,6 @@ export default function RaceArenaView({ roleType }: Props) {
                   currentUserSalespersonId={myCar?.salesperson_id}
                   seasonStart={season.start_date}
                   seasonEnd={season.end_date}
-                  compact={viewMode.isImmersive}
                 />
                 {viewMode.showScoreBreakdown && myEntry && rules.length > 0 && (
                   <ScoreBreakdownCard entry={myEntry} rules={rules} />
