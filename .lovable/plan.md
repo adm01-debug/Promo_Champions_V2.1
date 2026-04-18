@@ -1,26 +1,26 @@
 
-Os ciclos 1-22 já foram entregues. Próximo ciclo de micro-perfeição focado em narrativa de corrida e profundidade visual.
+Ciclo 23-28 entregue. Próximo ciclo foca em narrativa de corrida em tempo real, áudio visual e profundidade cinematográfica.
 
-# Ciclo 23-28 (próxima camada rumo ao 10/10++)
+# Ciclo 29-34 (rumo ao 10/10++ definitivo)
 
-**23. Mini-mapa do circuito** — radar circular no canto inferior esquerdo (80px) com pista simplificada + pontos coloridos representando posição de cada carro em tempo real. Glassmorphism, atualiza junto com main view.
+**29. Replay do "Melhor Momento"** — botão flutuante no canto inferior direito (ícone ▶) que, ao clicar, reproduz os últimos 8s da última ultrapassagem em câmera lenta (0.4x), com overlay "REPLAY" pulsante e borda cinematográfica.
 
-**24. Setores cronometrados (S1/S2/S3)** — dividir pista em 3 setores; quando líder cruza fronteira, exibir badge flutuante "S1 ✓" verde por 800ms na posição do checkpoint. Estilo F1 timing.
+**30. Comentarista IA (texto flutuante)** — bolha de texto estilo "broadcast subtitle" no rodapé que aparece em eventos: "Pedro ataca na curva 3!", "João defende a posição!", "Ultrapassagem na DRS!". Glassmorphism, fade-in/out 3s.
 
-**25. Volta atual + total de voltas** — overlay HUD no topo central: "LAP 3/10" com tipografia condensada, fundo glass. Calcular voltas a partir do progress acumulado.
+**31. Câmera dinâmica (zoom no líder)** — quando há disputa apertada (gap < 0.03), o SVG aplica `transform: scale(1.15)` suave focado no líder por 2s, depois volta. Sensação de close-up de TV.
 
-**26. Tire wear / energia visual** — barra horizontal pequena (16px) abaixo de cada carro mostrando "energia" (proxy: consistência de progresso). Cores: verde→amarelo→vermelho conforme degrada.
+**32. Bandeira de chegada animada** — quando líder cruza 95% do progress total da season, exibir bandeira xadrez gigante saindo da direita com `translateX` + balanço, ocupando 30% da tela por 2s, depois desaparece.
 
-**27. DRS zones (zonas de ultrapassagem)** — 2 trechos retos da pista marcados com listras verdes diagonais sutis no asfalto + label "DRS" pequeno. Quando carro entra nelas com gap < threshold, ícone DRS pisca no topo do carro.
+**33. Posição absoluta com troféus** — ao lado de cada nome no carro, ícone pequeno (🥇🥈🥉 para top3, número para resto) com micro-bounce quando posição muda. Identificação instantânea.
 
-**28. Cinematic intro de 1.2s** — ao montar a arena, câmera "zoom out" do start/finish line para o overview completo (transform scale 1.8 → 1.0 + opacity), uma única vez por sessão. Sensação de "broadcast começando".
+**34. Trilha de partículas no boost** — quando carro está em "boost" (showTrail), emitir partículas coloridas (cor do carro) que voam para trás e dissipam em 600ms. Estilo Mario Kart turbo.
 
 ## Arquivos a editar
-- `src/components/race/RaceArena.tsx` — minimapa, lap counter HUD, sector badges, intro animation
-- `src/components/race/RaceCar.tsx` — barra de tire wear + ícone DRS
-- `src/components/race/track/TrackAsphalt.tsx` — DRS zone stripes
-- `src/components/race/raceTrackHelpers.ts` — helper de setores + DRS zones positions
-- `src/components/race/MiniMap.tsx` — novo componente radar
-- `src/index.css` — keyframes cinematic intro + DRS pulse
+- `src/components/race/RaceArena.tsx` — replay button, comentarista, câmera dinâmica, bandeira final, partículas boost
+- `src/components/race/RaceCar.tsx` — ícone de troféu/posição com bounce
+- `src/components/race/CommentaryBubble.tsx` — novo componente bolha de comentário
+- `src/components/race/ReplayButton.tsx` — novo botão flutuante
+- `src/components/race/raceTrackHelpers.ts` — gerador de frases do comentarista
+- `src/index.css` — keyframes para bandeira xadrez + replay overlay + position bounce
 
 Sem perguntas. Executo as 6 em sequência.
