@@ -20,6 +20,7 @@ import {
   RaceEmptyState,
   StartSeasonDialog,
   OvertakeHighlight,
+  LeaderTakeoverCelebration,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -31,6 +32,7 @@ import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
 import { useRacePowerups, collectRacePowerup } from '@/hooks/race/useRacePowerups';
 import { useRaceScoringRules } from '@/hooks/race/useRaceScoringRules';
 import { useOvertakeDetector } from '@/hooks/race/useOvertakeDetector';
+import { useLeaderTakeoverDetector } from '@/hooks/race/useLeaderTakeoverDetector';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -63,6 +65,7 @@ export default function RaceArenaView({ roleType }: Props) {
   const [boostingIds, setBoostingIds] = useState<Set<string>>(new Set());
   const lastEventIdRef = useRef<string | null>(null);
   const { recentOvertakes, dismissOvertake } = useOvertakeDetector(leaderboard);
+  const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(leaderboard, myCar?.salesperson_id);
 
   useEffect(() => {
     if (recentOvertakes.length > 0) play('overtake');
@@ -213,6 +216,7 @@ export default function RaceArenaView({ roleType }: Props) {
 
         <MonthlyChampionOverlay roleType={roleType} onPlaySound={() => play('victory')} />
         <OvertakeHighlight overtakes={recentOvertakes} onDismiss={dismissOvertake} />
+        <LeaderTakeoverCelebration takeover={takeover} onClear={clearTakeover} onPlaySound={() => play('victory')} />
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
