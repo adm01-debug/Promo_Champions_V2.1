@@ -1,31 +1,43 @@
 
-Admin Task Console entregue (Fase 12). Próximo bloco rumo à perfeição: **Squad Assignment & Bulk Operations** — escalar atribuição de tarefas para grupos (squads/equipes) e operações em lote, eliminando o gargalo de atribuir 1-a-1.
+User wants mock data populated in Race Arena to visualize the system. Currently the arena is empty (no cars on grid, no events). I need to seed mock race data.
 
-## Squad-Based Task Assignment & Bulk Ops (Fase 13)
+Let me check what tables exist for the race system and what mock data would make it visual.
 
-### Conceito
-Admin atribui tarefas para squads inteiros (SDRs, Closers, ou grupos customizados) com 1 clique, programa recorrência (diária/semanal), aplica filtros (top 10 ranking, vendedores em risco), e executa ações em massa na fila de aprovações.
+Key tables (from earlier context):
+- `race_seasons` (já tem temporada ativa "Temporada de Estreia")
+- `race_cars` (carros dos vendedores)
+- `race_leaderboard_view` (view com progresso)
+- `race_events` (narração)
+- `race_powerups`
+- `race_badges`
+- `salespeople` (já tem mock)
 
-### Backend
-**Migration**:
-- Tabela `squads`: `id`, `name`, `description`, `color`, `created_by`, timestamps
-- Tabela `squad_members`: `squad_id` FK, `user_id`, `added_at`, PK composta
-- Coluna em `task_assignments`: `squad_id` (nullable, FK) + `recurrence_rule` (text: `daily|weekly|monthly|null`) + `parent_recurrence_id`
-- RLS: squads CRUD admin only; SELECT autenticados
-- RPC `assign_task_to_squad(catalog_id, squad_id, due_date, recurrence)`: SECURITY DEFINER, cria N assignments em batch
-- RPC `bulk_approve_assignments(ids[], xp_overrides jsonb)`: aprova múltiplas submissões com XP individual
+Plan: criar migration de seed inserindo carros para vendedores existentes + eventos de narração + alguns power-ups + badges, garantindo cobertura de Closer e SDR.
 
-### Frontend
-- `SquadManager.tsx` (nova tab no TaskConsoleHub): CRUD de squads + drag-drop de membros
-- Atualizar `TaskAssignmentDialog`: toggle "Por squad" vs "Por vendedor", seletor de recorrência
-- Atualizar `PendingApprovalsQueue`: checkboxes + barra de ações em lote (aprovar/rejeitar N)
-- `BulkActionBar.tsx`: barra flutuante com contagem e CTAs
-- Hook `useSquads.ts`, `useBulkApprovals.ts`
+## Mock Data Seed for Race Arena
+
+### O que será populado
+1. **race_cars** — 1 carro por vendedor existente (até 12), com cores variadas, números únicos, estilos misturados (f1/stock/kart) e nicknames divertidos
+2. **Progresso simulado** — inserir vendas mock recentes para os top vendedores nas temporadas ativas (Closer e SDR) para que a `race_leaderboard_view` calcule progresso real (15%-85% espalhado)
+3. **race_events** — 8-12 eventos de narração recentes (overtakes, milestones 25%/50%/75%, power-ups coletados) para popular o feed "Narração ao Vivo"
+4. **race_powerups** — 4-5 power-ups espalhados pelo track (boost, shield, double_xp) com `position_pct` em pontos visíveis
+5. **race_badges** — 3-4 badges atribuídos para top performers (first_blood, podium, overtaker)
+
+### Estratégia técnica
+- Migration SQL idempotente (`ON CONFLICT DO NOTHING` em todos inserts)
+- Usar `salespeople` reais via subqueries com `LIMIT` e `ORDER BY` para distribuir entre Closer e SDR
+- Cores em paleta vibrante (hex semântico-friendly): `#FF3B30`, `#007AFF`, `#34C759`, `#FFD60A`, `#AF52DE`, `#FF9500`, `#5AC8FA`, `#FF2D55`
+- Eventos com `created_at` escalonados nos últimos 30 minutos para parecer ao vivo
+- Progresso via inserts em `sales` (table base do leaderboard) com `amount` calibrado para gerar % desejado vs `goal_amount` da season
+
+### Resultado visual esperado
+- Track com 8-12 carros distribuídos pela pista (não todos no início)
+- Sidebar "Grid de Largada" populada com ranking
+- Feed "Narração ao Vivo" com 8+ eventos animados
+- Power-ups visíveis no track (ícones flutuantes)
+- Conquistas (badges) na aba "Conquistas"
 
 ### Arquivos
-- Migration: `squads`, `squad_members`, alter `task_assignments`, 2 RPCs
-- Hooks: 2 novos em `src/hooks/admin-tasks/`
-- Componentes: `SquadManager.tsx`, `BulkActionBar.tsx` + edits em 2 existentes
-- Editar: `TaskConsoleHub.tsx` (nova tab "Squads"), `taskConsoleHelpers.ts` (recurrence labels)
+- 1 migration: `supabase/migrations/<timestamp>_seed_race_arena_mock.sql`
 
-Padrões: ≤300L, semantic tokens, framer-motion, RPC SECURITY DEFINER, RLS via `has_role`.
+Sem mudanças em código TS — puramente seed de dados para visualização.
