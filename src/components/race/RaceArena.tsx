@@ -22,7 +22,15 @@ import { RaceEventTicker, type RaceTickerEvent } from './RaceEventTicker';
 import { DRSZoneOverlay } from './DRSZoneOverlay';
 import { LeaderNeonTrail } from './LeaderNeonTrail';
 import { LapCounterBadge } from './LapCounterBadge';
+import { BroadcastOverlay, type BroadcastEvent } from './BroadcastOverlay';
+import { MyTelemetryPanel } from './MyTelemetryPanel';
+import { PitLane } from './PitLane';
+import { RaceMuteToggle } from './RaceMuteToggle';
+import { RaceReplayButton } from './RaceReplayButton';
+import { RaceEasterEggs } from './RaceEasterEggs';
 import { useScreenShake } from '@/hooks/race/useScreenShake';
+import { useRaceSounds } from '@/hooks/race/useRaceSounds';
+import { useRaceReplay } from '@/hooks/race/useRaceReplay';
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
