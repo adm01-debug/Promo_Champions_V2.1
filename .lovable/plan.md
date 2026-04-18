@@ -1,36 +1,37 @@
 
-Próxima: **Melhoria #10/20 — Predictive Ranking IA** (projeção de posição final da season).
+Próxima: **Melhoria #11/20 — Confetti Burst em P1** (celebração ao assumir liderança).
 
 ## Problema
-O leaderboard mostra apenas a posição atual. Pilotos não conseguem visualizar a tendência: "estou subindo ou caindo?" e "onde vou terminar se mantiver esse ritmo?". Falta um sinal preditivo que crie urgência estratégica.
+Quando um piloto assume P1 da season, não há explosão visual celebrativa. O momento "tomei a liderança!" passa em silêncio — falta o gatilho dopaminérgico que define games competitivos.
 
 ## Solução
-Calcular projeção linear da posição final de cada piloto com base no ritmo atual (vendas/dia desde início da season) versus dias restantes, e exibir um indicador de tendência (▲▼─) ao lado do rank.
+Disparar burst de confetti no instante em que o usuário logado entra em P1, com cores do carro do piloto e som opcional.
 
-### Hook `useRacePredictions.ts` (~120L) em `src/hooks/race/`
-- Recebe `entries: RaceLeaderboardEntry[]` + `season: { start_date, end_date }`
-- Para cada piloto: calcula `paceDaily = total_sales / daysElapsed`
-- Projeta `projectedTotal = total_sales + (paceDaily * daysRemaining)`
-- Re-ranqueia entries pela projeção → `projectedRank`
-- Retorna `Map<salesperson_id, { projectedRank, projectedTotal, trend: 'up' | 'down' | 'stable', deltaRanks }>`
-- `useMemo` pesado, recalcula só quando entries/season mudam
+### Hook `useLeaderTakeoverDetector.ts` (~70L) em `src/hooks/race/`
+- Recebe `entries: RaceLeaderboardEntry[]` + `currentUserSalespersonId`
+- Mantém ref do P1 anterior (`prevLeaderIdRef`)
+- Quando `entries[0].salesperson_id === currentUserSalespersonId` E mudou (não era antes) → emite evento `{ id, primaryColor, secondaryColor, timestamp }`
+- Ignora primeiro snapshot (evita falso positivo no mount)
+- Retorna `{ takeover: TakeoverEvent | null, clear: () => void }`
 
-### Componente `PredictedRankBadge.tsx` (~80L) em `src/components/race/`
-- Pequeno badge inline: ícone `TrendingUp` (success) / `TrendingDown` (destructive) / `Minus` (muted)
-- Tooltip com texto: "Projeção: P{projectedRank} ({±N posições)" e "Ritmo: R$ X/dia"
-- Animação sutil ao mudar tendência
+### Componente `LeaderTakeoverCelebration.tsx` (~120L) em `src/components/race/`
+- Usa `canvas-confetti` (já no projeto) ou implementação manual com framer-motion
+- Verifica via `code--search_files` se `canvas-confetti` está instalado; se não, usar partículas SVG animadas
+- Burst central + 2 laterais com `colors: [primaryColor, secondaryColor, hsl(var(--warning))]`
+- Banner overlay 2.5s: "🏆 LIDERANÇA ASSUMIDA!" Sora black + nome do piloto
+- Auto-clear após animação; respeita `prefers-reduced-motion` (skip burst, só banner)
+- Som opcional via toggle existente (`fanfare` curto)
 
 ### Integração
-- `RaceLeaderboardSidebar.tsx`: consumir hook e renderizar badge ao lado do rank de cada item
-- `NextGoalPanel.tsx`: adicionar linha "Projeção final: P{n}" quando dados disponíveis
-- Exportar em `src/components/race/index.ts`
+- `RaceArenaView.tsx`: instanciar `useLeaderTakeoverDetector(leaderboard, currentUserSalespersonId)` e renderizar `<LeaderTakeoverCelebration takeover={takeover} onClear={clear} />` no nível root, junto do `OvertakeHighlight`
+- Garantir que não conflite visualmente com overtake banner (z-index e posição diferentes — celebração ao centro, overtake top)
 
 ### Arquivos
-- **Criar**: `src/hooks/race/useRacePredictions.ts`, `src/components/race/PredictedRankBadge.tsx`
-- **Editar**: `src/components/race/RaceLeaderboardSidebar.tsx`, `src/components/race/NextGoalPanel.tsx`, `src/components/race/index.ts`
+- **Criar**: `src/hooks/race/useLeaderTakeoverDetector.ts`, `src/components/race/LeaderTakeoverCelebration.tsx`
+- **Editar**: `src/pages/RaceArenaView.tsx`, `src/components/race/index.ts`
 
 ### Padrões
-Semantic tokens, Sora/Inter, ≤200L, strict TS, `useMemo` no hook, Tooltip do shadcn, sem cores hardcoded.
+Semantic tokens, Sora/Inter, ≤200L por arquivo, strict TS, framer-motion com `useReducedMotion`, sem cores hardcoded (exceto `primaryColor`/`secondaryColor` do car que são dados dinâmicos).
 
 ### Próximas (preview)
-#11 Confetti em P1 → #12 Sound effects polish → #13 Pit Stop tactical pause → ... até #20.
+#12 Sound effects polish → #13 Pit Stop tactical pause → #14 Weather/track conditions → ... até #20.
