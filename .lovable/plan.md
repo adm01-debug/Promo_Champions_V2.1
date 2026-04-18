@@ -1,25 +1,26 @@
 
-O ciclo 11-16 (linha de chegada shimmer, marshal posts, bandeiras patrocinador, shimmer no capô, skid marks, sombra) já foi entregue na rodada anterior. Para continuar rumo ao "10/10++", proponho um novo ciclo de micro-perfeição focado em movimento, atmosfera e detalhes que faltam.
+Os ciclos 1-22 já foram entregues. Próximo ciclo de micro-perfeição focado em narrativa de corrida e profundidade visual.
 
-# Ciclo 17-22 (próxima camada de polish)
+# Ciclo 23-28 (próxima camada rumo ao 10/10++)
 
-**17. Drone/helicóptero de transmissão** — pequeno helicóptero estilizado sobrevoando o circuito em loop lento (translate ao longo de path elíptico, 20s), com sombra projetada na grama abaixo. Reforça sensação de evento.
+**23. Mini-mapa do circuito** — radar circular no canto inferior esquerdo (80px) com pista simplificada + pontos coloridos representando posição de cada carro em tempo real. Glassmorphism, atualiza junto com main view.
 
-**18. Pit lane visível** — faixa cinza paralela à reta principal com linha branca tracejada separando da pista, 4-6 garagens numeradas com cores dos times atrás. Hoje só temos paddock genérico.
+**24. Setores cronometrados (S1/S2/S3)** — dividir pista em 3 setores; quando líder cruza fronteira, exibir badge flutuante "S1 ✓" verde por 800ms na posição do checkpoint. Estilo F1 timing.
 
-**19. Partículas de poeira/fumaça nas curvas** — quando carro passa por checkpoint de curva, emitir 3-4 circulinhos cinza claro que sobem e dissipam (motion + opacity). Vida de circuito real.
+**25. Volta atual + total de voltas** — overlay HUD no topo central: "LAP 3/10" com tipografia condensada, fundo glass. Calcular voltas a partir do progress acumulado.
 
-**20. Placar lateral animado (tipo F1 timing tower)** — mini overlay no canto superior direito do SVG com top 3 posições, gap em segundos, cor do time. Glassmorphism leve, atualiza em tempo real.
+**26. Tire wear / energia visual** — barra horizontal pequena (16px) abaixo de cada carro mostrando "energia" (proxy: consistência de progresso). Cores: verde→amarelo→vermelho conforme degrada.
 
-**21. Iluminação ambiente dinâmica** — gradiente radial sutil seguindo o líder da corrida (spotlight cinematográfico que segue o 1º lugar), opacity 0.15, blur alto. Foco visual automático.
+**27. DRS zones (zonas de ultrapassagem)** — 2 trechos retos da pista marcados com listras verdes diagonais sutis no asfalto + label "DRS" pequeno. Quando carro entra nelas com gap < threshold, ícone DRS pisca no topo do carro.
 
-**22. Sound design visual (sem áudio)** — quando há ultrapassagem, flash branco de 200ms no carro que ultrapassou + pequeno "ping" visual (círculo expandindo). Feedback de evento épico.
+**28. Cinematic intro de 1.2s** — ao montar a arena, câmera "zoom out" do start/finish line para o overview completo (transform scale 1.8 → 1.0 + opacity), uma única vez por sessão. Sensação de "broadcast começando".
 
 ## Arquivos a editar
-- `src/components/race/track/TrackScenery.tsx` — helicóptero + pit lane com garagens
-- `src/components/race/RaceArena.tsx` — placar timing tower + spotlight do líder + dust particles
-- `src/components/race/RaceCar.tsx` — flash de ultrapassagem
-- `src/components/race/track/TrackDefs.tsx` — gradient spotlight + filter para fumaça
-- `src/index.css` — token para pit garage colors
+- `src/components/race/RaceArena.tsx` — minimapa, lap counter HUD, sector badges, intro animation
+- `src/components/race/RaceCar.tsx` — barra de tire wear + ícone DRS
+- `src/components/race/track/TrackAsphalt.tsx` — DRS zone stripes
+- `src/components/race/raceTrackHelpers.ts` — helper de setores + DRS zones positions
+- `src/components/race/MiniMap.tsx` — novo componente radar
+- `src/index.css` — keyframes cinematic intro + DRS pulse
 
-Sem perguntas. Executo as 6 em sequência até finalizar.
+Sem perguntas. Executo as 6 em sequência.
