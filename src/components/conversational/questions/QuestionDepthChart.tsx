@@ -32,12 +32,13 @@ export const QuestionDepthChart = ({ questions }: Props) => {
         <XAxis dataKey="label" tick={{ fontSize: 10 }} interval={0} />
         <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
         <Tooltip
-          content={({ active, payload }: RechartsTooltipProps) => {
+          content={(props) => {
+            const { active, payload } = props as { active?: boolean; payload?: Array<{ value: number; payload: { label: string } }> };
             if (!active || !payload?.length) return null;
             const p = payload[0];
             return (
               <div className="rounded-md border bg-popover px-2 py-1 text-xs shadow">
-                {p.payload.label as string}: <span className="font-medium">{p.value}</span>
+                {p.payload.label}: <span className="font-medium">{p.value}</span>
               </div>
             );
           }}

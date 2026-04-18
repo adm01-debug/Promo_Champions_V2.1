@@ -81,6 +81,7 @@ const Column = ({ icon, title, items, onSelect }: ColProps) => (
         {items.map((it) => {
           const rec = it.call_recordings;
           const variant = healthBadgeVariant(it.health);
+          const status = variant === "high" ? "success" : variant === "destructive" ? "error" : variant;
           return (
             <button
               key={it.id}
@@ -91,7 +92,7 @@ const Column = ({ icon, title, items, onSelect }: ColProps) => (
               <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium truncate">{rec?.title ?? "Call"}</span>
                 <StatusBadge
-                  status={variant === "high" ? "success" : variant}
+                  status={status}
                   label={`${Math.round(it.quality_score)} · ${healthLabel(it.health)}`}
                 />
               </div>

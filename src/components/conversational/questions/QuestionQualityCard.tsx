@@ -59,7 +59,11 @@ export const QuestionQualityCard = ({ recordingId }: Props) => {
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Saúde da conversa</span>
-              <StatusBadge status={healthBadgeVariant(analysis.health) === "high" ? "success" : healthBadgeVariant(analysis.health)} label={healthLabel(analysis.health)} />
+              {(() => {
+                const v = healthBadgeVariant(analysis.health);
+                const status = v === "high" ? "success" : v === "destructive" ? "error" : v;
+                return <StatusBadge status={status} label={healthLabel(analysis.health)} />;
+              })()}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
