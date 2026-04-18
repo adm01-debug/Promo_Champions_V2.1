@@ -188,8 +188,42 @@ export function RaceArena({
             }, 900);
             const lname = sorted.find((c) => c.car_id === leaderCurr.id)?.salesperson_name;
             pushCommentary(makeCommentaryLine({ type: 'sector', leader: lname, sector: name }));
+
+            // ===== FASTEST SECTOR detection =====
+            const now = Date.now();
+            const prevEnter = sectorEnterRef.current.get(i);
+            if (prevEnter && prevEnter.carId === leaderCurr.id) {
+              const sectorTime = now - prevEnter.at;
+              const best = bestSectorTimeRef.current.get(i);
+              if (sectorTime > 200 && (best === undefined || sectorTime < best)) {
+                bestSectorTimeRef.current.set(i, sectorTime);
+                // flash setor + badge FASTEST
+                setFlashSectorIdx(i);
+                setFastestCarId(leaderCurr.id);
+                if (fastestTimerRef.current) window.clearTimeout(fastestTimerRef.current);
+                fastestTimerRef.current = window.setTimeout(() => {
+                  setFlashSectorIdx(null);
+                  setFastestCarId(null);
+                }, 2000);
+              }
+            }
+            sectorEnterRef.current.set(i, { carId: leaderCurr.id, at: now });
+
+            // ===== CINEMATIC FOCUS no setor 3 (final da volta, i==2) =====
+            if (i === 2 && now - lastCinematicAtRef.current > 8000) {
+              lastCinematicAtRef.current = now;
+              setCinematicFocus(true);
+              if (cinematicTimerRef.current) window.clearTimeout(cinematicTimerRef.current);
+              cinematicTimerRef.current = window.setTimeout(() => setCinematicFocus(false), 1800);
+            }
           }
         });
+
+        // ===== LA OLA: dispara quando líder completa uma volta (cruza 0) =====
+        if (leaderCurr.progress > 1 && Math.floor(leaderCurr.progress) > lastLapCompletedRef.current) {
+          lastLapCompletedRef.current = Math.floor(leaderCurr.progress);
+          setWaveTrigger((n) => n + 1);
+        }
       }
       // ----- Mudança de líder -----
       const newLeaderId = leaderCurr?.id ?? null;
