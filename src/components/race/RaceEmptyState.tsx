@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Flag, Sparkles, History } from 'lucide-react';
 import { CheckeredFlag } from './CheckeredFlag';
+import { RaceGhostDemo } from './RaceGhostDemo';
 import type { RoleType } from '@/hooks/race/useRaceSeasonByRole';
 
 interface Props {

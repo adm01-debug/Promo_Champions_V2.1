@@ -35,4 +35,6 @@ export { GhostStatusBadge } from './GhostStatusBadge';
 export { RaceCommentaryPanel } from './RaceCommentaryPanel';
 export { DailyCheckinModal } from './DailyCheckinModal';
 export { RaceViewModeToggle } from './RaceViewModeToggle';
+export { RaceGhostDemo } from './RaceGhostDemo';
+export { RaceOnboardingChecklist } from './RaceOnboardingChecklist';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
