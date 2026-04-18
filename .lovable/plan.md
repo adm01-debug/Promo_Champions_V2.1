@@ -1,67 +1,53 @@
 
-Conversation Intelligence 2/4 (Question Quality Scorer) entregue. Próxima atômica do bloco rumo aos 10/10.
+Conversation Intelligence 3/4 (Objection Handling) entregue. Última atômica do bloco rumo aos 10/10.
 
-**Conversation Intelligence — 3/4: Objection Handling Tracker**
+**Conversation Intelligence — 4/4: Coaching Scorecard Aggregator**
 
-Detecta objeções do cliente em cada call, classifica por tipo (preço, timing, autoridade, necessidade, concorrência, confiança), avalia a qualidade da resposta do vendedor (acknowledge → reframe → resolve) e gera score de handling + biblioteca de objeções recorrentes para coaching.
+Agrega todos os scores conversacionais já existentes (metrics, questions, objections, sentiment, critical moments) em um scorecard unificado por vendedor + por call, com tendências, ranking de coaching e recomendações priorizadas.
 
 ## O que entregar
 
 ### 1. Migration
-- `call_objection_analysis`: `id`, `recording_id` FK UNIQUE, `total_objections int`, `resolved_count int`, `partially_resolved_count int`, `unresolved_count int`, `avg_response_time_seconds numeric`, `handling_score numeric` (0-100), `health` (`poor|fair|good|excellent`), `factors jsonb`, `calculated_at timestamptz`. RLS read authenticated, write admin/manager.
-- `call_objections`: `id`, `recording_id` FK, `client_turn_index int`, `objection_text`, `objection_type` (`price|timing|authority|need|competition|trust|other`), `seller_response_text`, `response_quality` (`acknowledged|reframed|resolved|deflected|ignored`), `resolution_status` (`resolved|partial|unresolved`), `start_estimate numeric`, `factors jsonb`, `created_at`. RLS igual.
-- `objection_library`: `id`, `objection_type`, `pattern_text`, `frequency_count int`, `best_response_text`, `best_response_recording_id`, `last_seen_at`, `updated_at`. RLS read authenticated, write admin/manager.
-- Índices em `(recording_id)`, `(objection_type, last_seen_at desc)`. Realtime nas três.
+- `call_coaching_scorecards`: `id`, `recording_id` FK UNIQUE, `salesperson_id` uuid, `overall_score numeric` (0-100), `talk_score numeric`, `question_score numeric`, `objection_score numeric`, `sentiment_score numeric`, `moments_score numeric`, `health` (`poor|fair|good|excellent`), `top_strengths jsonb` (top 2), `top_gaps jsonb` (top 2), `recommendations jsonb` (3-5 ações), `factors jsonb`, `calculated_at timestamptz`. RLS read authenticated, write admin/manager.
+- `salesperson_coaching_aggregates`: `id`, `salesperson_id` UNIQUE, `period_start date`, `period_end date`, `calls_analyzed int`, `avg_overall numeric`, `avg_talk numeric`, `avg_questions numeric`, `avg_objections numeric`, `avg_sentiment numeric`, `trend_direction` (`up|flat|down`), `trend_delta numeric`, `top_recurring_gap text`, `last_calculated_at timestamptz`. RLS igual.
+- Índices `(recording_id)`, `(salesperson_id, calculated_at desc)`, realtime nas duas.
 
-### 2. Edge function `analyze-objection-handling` (verify_jwt=true)
-- Input: `{ recording_id }`. Lê turns do cliente do `diarization`.
-- Detector heurístico PT-BR por tipo:
-  - **price**: "caro", "preço", "valor alto", "custo", "orçamento", "muito dinheiro".
-  - **timing**: "agora não", "depois", "próximo ano", "não é o momento", "ainda não".
-  - **authority**: "preciso falar", "não decido", "meu sócio", "diretor", "comitê", "aprovação".
-  - **need**: "não preciso", "já temos", "não vejo valor", "resolve sozinho".
-  - **competition**: "concorrente", nome de competidores conhecidos, "outra solução", "estamos vendo".
-  - **trust**: "garantia", "nunca ouvi", "case", "referência", "risco", "segurança".
-- Para cada objeção, captura próximos 1-3 turns do vendedor → classifica response_quality:
-  - **resolved**: contém prova/dado/case + acknowledgment ("entendo", "faz sentido") + reframe.
-  - **reframed**: acknowledgment + reframe sem prova concreta.
-  - **acknowledged**: só reconheceu.
-  - **deflected**: mudou de assunto sem reconhecer.
-  - **ignored**: sem resposta no turno seguinte.
-- resolution_status derivado: resolved/reframed→partial/unresolved. response_time = `seller.start - client.end`.
-- handling_score: `(resolved*100 + partial*50 + unresolved*0) / total - latency_penalty(0-15)`.
-- Health: <40 poor, 40-60 fair, 60-80 good, >80 excellent.
-- Replace `call_objections` da recording + upsert `call_objection_analysis`.
-- Atualiza `objection_library`: incrementa frequency_count por type+pattern; se response_quality='resolved' e melhor que existente, salva como best_response.
-- Encadear em `useTranscribeRecording.ts` após `analyze-question-quality`.
+### 2. Edge function `aggregate-coaching-scorecard` (verify_jwt=true)
+- Input: `{ recording_id }`. Lê analyses existentes (metrics, questions, objections, sentiment, critical_moments).
+- Pondera: `overall = talk*0.20 + questions*0.25 + objections*0.25 + sentiment*0.15 + moments*0.15`.
+- Identifica top 2 forças (scores mais altos) e top 2 gaps (mais baixos).
+- Gera 3-5 recomendações por templates por gap (PT-BR), ex.: gap=questions → "Aumentar perguntas abertas e de descoberta nos primeiros 5min".
+- Upsert `call_coaching_scorecards`.
+- Recalcula `salesperson_coaching_aggregates` para o vendedor (últimos 30 dias): médias, tendência (delta vs 30 dias anteriores), gap recorrente.
+- Encadear em `useTranscribeRecording.ts` após `analyze-objection-handling`.
 
-### 3. Hooks `src/hooks/conversational/useObjectionAnalysis.ts`
-- `useObjectionAnalysis(recordingId)` — query summary + realtime.
-- `useCallObjections(recordingId)` — query lista + realtime.
-- `useObjectionLibrary(filters?)` — biblioteca agregada.
-- `useAnalyzeObjectionHandling()` — mutation.
+### 3. Hooks `src/hooks/conversational/useCoachingScorecard.ts`
+- `useCoachingScorecard(recordingId)` — query + realtime.
+- `useSalespersonCoachingAggregate(salespersonId)` — agregado + realtime.
+- `useCoachingLeaderboard(filters?)` — top/bottom vendedores por overall.
+- `useAggregateCoachingScorecard()` — mutation.
 
-### 4. Componentes `src/components/conversational/objections/`
-- `ObjectionHandlingCard.tsx` (≤220L) — card no drawer: handling_score, health, donut por tipo, lista de objeções, botão recalcular.
-- `ObjectionTypeDonut.tsx` (≤140L) — donut Recharts por type com paleta semântica.
-- `ObjectionResolutionBar.tsx` (≤140L) — barra empilhada resolved/partial/unresolved.
-- `ObjectionsList.tsx` (≤220L) — collapsible: cliente diz → vendedor responde, badge de quality + status, timestamp.
-- `ObjectionLibraryPanel.tsx` (≤240L) — grid agregado para o hub: top 10 objeções por frequência, tipo, melhor resposta clicável (abre call).
-- `objectionHelpers.ts` — `classifyObjection`, `classifyResponseQuality`, `qualityToStatus`, paletas, labels PT-BR.
+### 4. Componentes `src/components/conversational/coaching/`
+- `CoachingScorecardCard.tsx` (≤220L) — drawer: overall radial, breakdown por dimensão, forças/gaps, recomendações, botão recalcular.
+- `ScorecardRadial.tsx` (≤140L) — radial Recharts overall_score com cor por health.
+- `ScorecardDimensionsBar.tsx` (≤160L) — 5 barras horizontais: talk/questions/objections/sentiment/moments.
+- `RecommendationsList.tsx` (≤140L) — lista priorizada de ações de coaching com ícone + categoria.
+- `CoachingLeaderboardPanel.tsx` (≤240L) — hub: top 5 + bottom 5 vendedores, sparkline tendência, gap recorrente.
+- `coachingHelpers.ts` — `calcOverall`, `pickStrengthsGaps`, `buildRecommendations`, paletas, labels PT-BR.
 
 ### 5. Integração
-- `RecordingSummaryDrawer.tsx`: `<ObjectionHandlingCard />` após `<QuestionQualityCard />`.
-- `ConversationalIntelligenceHub.tsx`: `<ObjectionLibraryPanel onSelect={drawer.open} />` após `<QuestionFeedPanel />`.
-- `supabase/config.toml`: `[functions.analyze-objection-handling] verify_jwt = true`.
+- `RecordingSummaryDrawer.tsx`: `<CoachingScorecardCard />` após `<ObjectionHandlingCard />` (no topo do drawer como destaque).
+- `ConversationalIntelligenceHub.tsx`: `<CoachingLeaderboardPanel onSelect={drawer.open} />` após `<ObjectionLibraryPanel />`.
+- `supabase/config.toml`: `[functions.aggregate-coaching-scorecard] verify_jwt = true`.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após transcrever uma call: card mostra objeções detectadas, donut por tipo e barra de resolução; biblioteca no hub lista padrões recorrentes com melhor resposta.
+- Após transcrever uma call: scorecard mostra overall, breakdown e recomendações; hub lista ranking de coaching.
 
 ## Arquivos
-- **Migration**: 1 (3 tabelas + RLS + realtime + índices).
-- **Edge function**: `analyze-objection-handling`.
+- **Migration**: 1 (2 tabelas + RLS + realtime + índices).
+- **Edge function**: `aggregate-coaching-scorecard`.
 - **Criar**: 4 hooks (1 arquivo), 5 componentes + 1 helper.
 - **Editar**: `useTranscribeRecording.ts`, `RecordingSummaryDrawer.tsx`, `ConversationalIntelligenceHub.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo para **4/4: Coaching Scorecard Aggregator** fechando Conversation Intelligence em 10/10.
+Após esta entrega, **Conversation Intelligence fecha 4/4 (10/10)** e sigo automaticamente para o próximo bloco do roadmap mestre.
