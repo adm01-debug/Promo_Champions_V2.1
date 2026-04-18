@@ -247,6 +247,7 @@ export default function RaceArenaView({ roleType }: Props) {
                 <Arena
                   cars={leaderboard}
                   boostingIds={boostingIds}
+                  currentUserSalespersonId={myCar?.salesperson_id}
                   overlayChildren={
                     <>
                       <GhostCar ghost={ghost} />
@@ -268,7 +269,11 @@ export default function RaceArenaView({ roleType }: Props) {
         )}
 
         <MonthlyChampionOverlay roleType={roleType} onPlaySound={() => play('victory')} />
-        <OvertakeHighlight overtakes={recentOvertakes} onDismiss={dismissOvertake} />
+        <OvertakeHighlight
+          overtakes={recentOvertakes}
+          onDismiss={dismissOvertake}
+          currentUserSalespersonId={myCar?.salesperson_id}
+        />
         <LeaderTakeoverCelebration takeover={takeover} onClear={clearTakeover} onPlaySound={() => play('victory')} />
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
