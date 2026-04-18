@@ -86,12 +86,39 @@ function Paddock({ x, y, w, h, slots = 6 }: { x: number; y: number; w: number; h
   );
 }
 
-function MarshalPost({ cx, cy, flagColor = 'hsl(28 95% 55%)' }: { cx: number; cy: number; flagColor?: string }) {
+/**
+ * Marshal humanoide minimalista segurando bandeira que se agita.
+ * Quando `yellowFlag` true, troca a cor da bandeira para amarelo F1.
+ * Cada marshal tem `delayMs` para dessincronizar levemente a onda das bandeiras.
+ */
+function MarshalPost({
+  cx, cy, flagColor = 'hsl(28 95% 55%)', yellowFlag = false, delayMs = 0,
+}: { cx: number; cy: number; flagColor?: string; yellowFlag?: boolean; delayMs?: number }) {
+  const flag = yellowFlag ? 'hsl(45 95% 55%)' : flagColor;
   return (
     <g transform={`translate(${cx} ${cy})`} aria-hidden style={{ filter: 'drop-shadow(1.5px 2px 1.5px hsl(var(--race-grass-shadow) / 0.55))' }}>
+      {/* base/post pintado */}
       <circle r={3.5} fill="hsl(28 95% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.8} />
-      <rect x={-0.6} y={-12} width={1.2} height={9} fill="hsl(var(--race-checkered-dark))" />
-      <path d="M0.6,-12 L7,-9.5 L0.6,-7 Z" fill={flagColor} stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.5} />
+      {/* humanoide minimalista (3px): cabeça + tronco */}
+      <circle cx={-1.6} cy={-5.5} r={1.4} fill="hsl(20 35% 55%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+      <rect x={-2.8} y={-4.2} width={2.4} height={3.5} rx={0.6} fill="hsl(210 70% 45%)" stroke="hsl(var(--race-checkered-dark))" strokeWidth={0.4} />
+      {/* mastro */}
+      <rect x={-0.4} y={-12} width={0.9} height={9} fill="hsl(var(--race-checkered-dark))" />
+      {/* bandeira animada (origem na ponta superior do mastro) */}
+      <g
+        style={{
+          transformOrigin: '0px -12px',
+          transformBox: 'fill-box',
+          animation: `race-marshal-flag-wave 0.9s ease-in-out infinite ${delayMs}ms`,
+        }}
+      >
+        <path
+          d="M0.6,-12 L7.5,-10 L6.4,-8.2 L7.6,-6.4 L0.6,-7.5 Z"
+          fill={flag}
+          stroke="hsl(var(--race-checkered-dark))"
+          strokeWidth={0.5}
+        />
+      </g>
       <circle r={1} fill="hsl(0 0% 100%)" opacity={0.6} />
     </g>
   );
