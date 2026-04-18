@@ -317,6 +317,17 @@ export default function RaceArenaView({ roleType }: Props) {
         />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
         <DailyCheckinModal open={dailyCheckin.open} onOpenChange={dailyCheckin.setOpen} data={dailyCheckin.data} />
+        {season && (
+          <RaceOnboardingChecklist
+            items={[
+              { id: 'car', label: 'Personalize seu carro', done: !!myCar?.car_style, action: () => setCustomizerOpen(true) },
+              { id: 'leaderboard', label: 'Veja o leaderboard', done: leaderboard.length > 0 },
+              { id: 'powerup', label: 'Colete um power-up', done: visiblePowerups.some((p) => p.reachable === false ? false : myPowerups.some((mp) => mp.used_at)) },
+              { id: 'pitstop', label: 'Visite o Pit Stop', done: false, action: () => setPitStopOpen(true) },
+              { id: 'view-mode', label: 'Experimente os modos de visualização', done: viewMode.mode !== 'competitive' },
+            ]}
+          />
+        )}
         {isAdmin && (
           <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
         )}
