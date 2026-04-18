@@ -201,3 +201,9 @@ verify_jwt = true
 [functions.generate-revenue-forecast]
 verify_jwt = true
 
+[functions.process-race-event]
+verify_jwt = true
+
+[functions.start-race-season]
+verify_jwt = true
+
