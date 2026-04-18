@@ -1971,6 +1971,17 @@
   70%  { transform: scale(0.92); }
   100% { transform: scale(1); }
 }
+/* ===== Cycle 35-40: start lights + fireworks ===== */
+@keyframes race-start-light-on {
+  0%   { transform: scale(0.7); filter: brightness(0.5); }
+  60%  { transform: scale(1.18); filter: brightness(1.4); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@keyframes race-firework-burst {
+  0%   { transform: scale(0); opacity: 1; }
+  60%  { opacity: 1; }
+  100% { transform: scale(3); opacity: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
   .race-cinematic-intro { animation: none !important; }
   .race-drs-pulse { animation: none !important; }
@@ -1978,4 +1989,6 @@
   .race-checkered-flag { animation: none !important; }
   .race-replay-pulse { animation: none !important; }
   .race-position-bounce { animation: none !important; }
+  .race-start-light-on { animation: none !important; }
+  .race-firework-burst { animation: none !important; }
 }
