@@ -181,19 +181,26 @@ function BroadcastHelicopter({
   duration = 18,
   delay = 0,
   reverse = false,
+  vertical = false,
 }: {
   bodyColor?: string;
   y?: number;
   duration?: number;
   delay?: number;
   reverse?: boolean;
+  vertical?: boolean;
 }) {
+  const animName = vertical
+    ? 'race-helicopter-cross-vertical'
+    : reverse
+      ? 'race-helicopter-fly-reverse'
+      : 'race-helicopter-fly';
   return (
     <g
       aria-hidden
-      transform={`translate(0 ${y})`}
+      transform={vertical ? undefined : `translate(0 ${y})`}
       style={{
-        animation: `${reverse ? 'race-helicopter-fly-reverse' : 'race-helicopter-fly'} ${duration}s linear infinite`,
+        animation: `${animName} ${duration}s linear infinite`,
         animationDelay: `${delay}s`,
       }}
     >
@@ -498,6 +505,7 @@ export function TrackScenery({
         {/* CICLO 53-58: Helicópteros de transmissão (azul + vermelho em sentido contrário) */}
         <BroadcastHelicopter bodyColor="hsl(210 75% 50%)" y={0} duration={18} />
         <BroadcastHelicopter bodyColor="hsl(0 78% 52%)" y={760} duration={22} delay={4} reverse />
+        <BroadcastHelicopter bodyColor="hsl(140 70% 45%)" duration={14} delay={2} vertical />
 
         {/* CICLO 53-58: Bandos de pássaros ambientais */}
         <BirdFlock y={150} delay={0} />
