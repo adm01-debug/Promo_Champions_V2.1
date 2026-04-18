@@ -134,6 +134,7 @@ export default function RaceArenaView({ roleType }: Props) {
           breadcrumbCurrent={roleType === 'closer' ? 'Pista Closers' : 'Pista SDRs'}
           hasActiveSeason={!!season}
           seasonName={season?.name}
+          topEntries={leaderboard.slice(0, 3)}
           actions={
             <>
               <RaceSoundToggle muted={muted} onToggle={toggleMute} />

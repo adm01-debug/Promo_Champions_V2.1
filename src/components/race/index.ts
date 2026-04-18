@@ -21,3 +21,5 @@ export { RaceArenaSkeleton } from './RaceArenaSkeleton';
 export { RaceEmptyState } from './RaceEmptyState';
 export { RaceTransitionWrapper } from './RaceTransitionWrapper';
 export { ComboStreakBadge } from './ComboStreakBadge';
+export { MiniPodium } from './MiniPodium';
+export { fmtCurrency, fmtCompact } from './raceFormatters';
