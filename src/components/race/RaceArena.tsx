@@ -455,8 +455,8 @@ export function RaceArena({
     >
       <motion.div
         className="w-full h-full"
-        animate={{ scale: zoomActive && !reducedMotion ? 1.12 : 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ scale: (zoomActive || cinematicFocus) && !reducedMotion ? (cinematicFocus ? 1.04 : 1.12) : 1 }}
+        transition={{ duration: cinematicFocus ? 1.8 : 0.6, ease: [0.22, 1, 0.36, 1] }}
         style={{
           transformOrigin: leaderPos
             ? `${(leaderPos.x / TRACK_VIEWBOX.width) * 100}% ${(leaderPos.y / TRACK_VIEWBOX.height) * 100}%`
@@ -464,9 +464,10 @@ export function RaceArena({
           animation: reducedMotion
             ? undefined
             : 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+          boxShadow: cinematicFocus && !reducedMotion ? 'inset 0 0 120px 30px hsl(0 0% 0% / 0.45)' : undefined,
         }}
       >
-      <RaceTrack>
+      <RaceTrack yellowFlag={currentFlag === 'yellow'} waveTrigger={waveTrigger}>
         {/* Tire marks (rastros de pneu nas curvas) — abaixo dos carros */}
         <TrackTireMarks cars={tireMarkCars} />
         {sorted.map((car, idx) => {
@@ -517,6 +518,8 @@ export function RaceArena({
                 drsActive={drsActiveByCar.get(car.car_id) ?? false}
                 rank={idx + 1}
                 pitStop={pitStopCars.has(car.car_id)}
+                fastestSector={fastestCarId === car.car_id}
+                aeroTurbulence={aeroTurbByCar.get(car.car_id) ?? false}
               />
               {/* contador de reactions recentes */}
               {carReactions.length > 0 && (

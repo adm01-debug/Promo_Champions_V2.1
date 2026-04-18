@@ -46,3 +46,4 @@ export { StartLights } from './StartLights';
 export { Fireworks } from './Fireworks';
 export { RaceControlPanel } from './RaceControlPanel';
 export { SpeedHUD } from './SpeedHUD';
+export { NextCornerHUD } from './NextCornerHUD';
