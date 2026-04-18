@@ -31,6 +31,7 @@ import {
   DailyCheckinModal,
   RaceViewModeToggle,
   RaceOnboardingChecklist,
+  RaceHighlightsTimeline,
 } from '@/components/race';
 import { getPositionOnTrack } from '@/components/race/raceTrackHelpers';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
@@ -273,6 +274,9 @@ export default function RaceArenaView({ roleType }: Props) {
                 />
                 {viewMode.showScoreBreakdown && myEntry && rules.length > 0 && (
                   <ScoreBreakdownCard entry={myEntry} rules={rules} />
+                )}
+                {viewMode.showScoreBreakdown && (
+                  <RaceHighlightsTimeline events={events} cars={leaderboard} />
                 )}
               </div>
               <div className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-10' : 'lg:col-span-9'} order-1 lg:order-2`}>
