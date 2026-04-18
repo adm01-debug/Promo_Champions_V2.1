@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from 'react';
-import { Sliders } from 'lucide-react';
+import { Sliders, Wind } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useRaceCalm } from '@/contexts/RaceCalmContext';
 import type { RaceSoundType } from '@/hooks/race/useRaceSounds';
 
 const STORAGE_KEY = 'race_sound_prefs';
@@ -46,6 +47,7 @@ function loadPrefs(): Prefs {
  */
 export const RaceAudioPreferences: FC = () => {
   const [prefs, setPrefs] = useState<Prefs>(loadPrefs);
+  const { calm, toggle: toggleCalm } = useRaceCalm();
 
   useEffect(() => {
     try {
@@ -59,17 +61,30 @@ export const RaceAudioPreferences: FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" title="Preferências de som">
+        <Button variant="outline" size="icon" title="Preferências de acessibilidade e som">
           <Sliders className="w-4 h-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-64">
-        <div className="space-y-3">
+      <PopoverContent align="end" className="w-72">
+        <div className="space-y-4">
+          {/* Modo Calm — destaque no topo */}
+          <div className="rounded-lg border border-border/60 bg-muted/30 p-3 space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="pref-calm" className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+                <Wind className="w-4 h-4 text-primary" /> Modo Calm
+              </Label>
+              <Switch id="pref-calm" checked={calm} onCheckedChange={toggleCalm} />
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-snug">
+              Desliga partículas, screen-shake, fogos e neon. Mantém toda a informação.
+            </p>
+          </div>
+
           <div>
             <h4 className="font-display text-sm font-semibold">Sons da Arena</h4>
             <p className="text-xs text-muted-foreground">Ative/desative por evento</p>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
             {(Object.keys(SOUND_LABELS) as RaceSoundType[]).map((k) => (
               <div key={k} className="flex items-center justify-between gap-2">
                 <Label htmlFor={`pref-${k}`} className="text-sm font-normal cursor-pointer">
