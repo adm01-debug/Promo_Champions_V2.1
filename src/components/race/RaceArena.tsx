@@ -4,7 +4,11 @@ import { RaceTrack } from './RaceTrack';
 import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
-import { getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX } from './raceTrackHelpers';
+import { MiniMap } from './MiniMap';
+import {
+  getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
+  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo,
+} from './raceTrackHelpers';
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
