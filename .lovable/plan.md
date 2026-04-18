@@ -1,48 +1,43 @@
 
-Sale Broadcast entregue. Retomo o roadmap mestre.
+Pipeline Coverage (2/4) entregue. Próxima atômica do Revenue Intelligence Hub.
 
-**Revenue Intelligence Hub — 2/4: Pipeline Coverage Forecaster**
+**Revenue Intelligence — 3/4: Win Probability Calibrator**
 
-Mede se o pipeline atual cobre a meta do período (coverage ratio = pipeline_aberto / meta_restante). Identifica gaps por owner/segmento, projeta probabilidade de bater meta e recomenda quanto pipeline novo precisa ser gerado.
+Calibra a probabilidade de fechamento de cada deal aberto comparando a probabilidade declarada (`stage weight` ou `probability` manual) com a taxa real histórica de conversão por estágio/segmento/owner. Detecta deals "super-otimistas" (probabilidade declarada >> real) e "subestimados", e emite probabilidade calibrada via regressão logística simples + isotonic-like binning.
 
 ## Entregáveis
 
 ### 1. Migration
-- `pipeline_coverage_snapshots`: `id`, `period_start date`, `period_end date`, `owner_id uuid`, `segment text`, `quota_amount numeric`, `closed_amount numeric`, `open_pipeline numeric`, `weighted_pipeline numeric`, `gap_amount numeric` (gen), `coverage_ratio numeric` (gen: weighted/gap), `health text` (healthy|at_risk|critical), `snapshot_at timestamptz`. Único `(period_start, owner_id, segment)`.
-- `pipeline_coverage_recommendations`: `id`, `snapshot_id FK`, `recommendation_type` (`generate_pipeline|accelerate_deals|increase_avg_ticket`), `title text`, `description text`, `target_amount numeric`, `priority text`, `created_at`.
-- RLS read authenticated, write admin/manager. Realtime + índices `(period_start, owner_id)`, `(health)`.
+- `win_probability_calibrations`: `id`, `sale_id FK UNIQUE`, `stage text`, `segment text`, `owner_id uuid`, `declared_probability numeric`, `historical_win_rate numeric`, `calibrated_probability numeric`, `calibration_delta numeric` (gen: calibrated - declared), `confidence text` (low|medium|high), `flag text` (overconfident|underconfident|aligned), `sample_size int`, `computed_at timestamptz`.
+- `win_calibration_buckets`: `id`, `stage text`, `segment text`, `bucket_min numeric`, `bucket_max numeric`, `actual_win_rate numeric`, `sample_size int`, `computed_at timestamptz`. Único `(stage, segment, bucket_min)`.
+- RLS read authenticated, write admin/manager. Realtime + índices `(sale_id)`, `(flag)`, `(stage, segment)`.
 
 ### 2. Edge function (verify_jwt=true)
-- `analyze-pipeline-coverage`: para cada owner ativo + período corrente:
-  - calcula `closed_amount` (sales completed no período).
-  - calcula `open_pipeline` (sales abertos com expected_close no período).
-  - calcula `weighted_pipeline` usando `STAGE_WEIGHTS`.
-  - busca `quota_amount` de `goals` ou usa default.
-  - classifica health: ratio ≥ 3x = healthy, 2-3x = at_risk, <2x = critical.
-  - upsert em `pipeline_coverage_snapshots`.
-  - gera 1-3 recomendações via Lovable AI (`gemini-2.5-flash`) baseadas no gap.
+- `calibrate-win-probabilities`:
+  - Para cada combinação `(stage, segment)` com ≥ 20 deals fechados nos últimos 180d, calcula `actual_win_rate = won / (won+lost)` e cria buckets de probabilidade declarada (0-20, 20-40, 40-60, 60-80, 80-100) com `actual_win_rate` por bucket → upsert `win_calibration_buckets`.
+  - Para cada deal aberto: lookup do bucket correspondente; `calibrated_probability = bucket.actual_win_rate`; `flag = overconfident` se `declared - calibrated > 0.15`, `underconfident` se `calibrated - declared > 0.15`, senão `aligned`; `confidence` baseado em `sample_size` (≥100 high, ≥30 medium, senão low) → upsert `win_probability_calibrations`.
 
-### 3. Hooks `src/hooks/revenue-intelligence/usePipelineCoverage.ts`
-- `useCoverageSnapshots(filters?)` — snapshots por período.
-- `useCoverageRecommendations(snapshotId?)` — recomendações.
-- `useCoverageSummary()` — KPIs: coverage médio, owners críticos, gap total.
-- `useAnalyzeCoverage()` — mutation.
+### 3. Hooks `src/hooks/revenue/useWinProbabilityCalibrator.ts`
+- `useCalibrations(filters?)` — calibrations + join sale_id.
+- `useCalibrationBuckets(stage?, segment?)` — buckets para curva.
+- `useCalibrationSummary()` — KPIs: total overconfident, underconfident, gap médio, accuracy global.
+- `useRunCalibration()` — mutation.
 
-### 4. Componentes `src/components/revenue-intelligence/coverage/`
-- `CoverageSummaryCard.tsx` (≤180L) — 4 KPIs + ação refresh.
-- `CoverageByOwnerTable.tsx` (≤200L) — tabela com ratio, health badge, gap.
-- `CoverageGapChart.tsx` (≤160L) — bar chart: gap por owner/segmento.
-- `CoverageHealthDistribution.tsx` (≤140L) — donut healthy/at_risk/critical.
-- `CoverageRecommendationsPanel.tsx` (≤180L) — cards de recomendações IA.
-- `coverageHelpers.ts` — labels health, cores, formatadores.
+### 4. Componentes `src/components/revenue-intelligence/calibration/`
+- `CalibrationSummaryCard.tsx` (≤180L) — 4 KPIs + ação refresh.
+- `CalibrationCurveChart.tsx` (≤180L) — line chart: declared (diagonal) vs actual por bucket.
+- `OverconfidentDealsTable.tsx` (≤200L) — top 20 deals super-otimistas (gap descendente).
+- `CalibrationFlagDistribution.tsx` (≤140L) — donut overconfident/aligned/underconfident.
+- `WinProbabilityCalibrationPanel.tsx` (container).
+- `calibrationHelpers.ts` — labels flag, cores, formatadores.
 
 ### 5. Integração
-- Nova aba "Cobertura do Pipeline" em `RevenueIntelligenceHub.tsx`.
-- `supabase/config.toml`: bloco `verify_jwt = true` para `analyze-pipeline-coverage`.
+- Nova aba "Calibração de Win" em `RevenueIntelligenceHub.tsx`.
+- `supabase/config.toml`: bloco `verify_jwt = true` para `calibrate-win-probabilities`.
 
 ### 6. Validação
 - `supabase--linter` zero novos warnings.
-- Após analyze: cards preenchem, tabela mostra owners por health, recomendações aparecem.
+- Após calibrate: KPIs preenchem, curva mostra desvio do ideal, tabela lista deals super-otimistas.
 
 ## Arquivos
 - **Migration**: 1 (2 tabelas + RLS + realtime + índices).
@@ -50,4 +45,4 @@ Mede se o pipeline atual cobre a meta do período (coverage ratio = pipeline_abe
 - **Criar**: 4 hooks (1 arquivo), 5 componentes + 1 helper.
 - **Editar**: `RevenueIntelligenceHub.tsx`, `supabase/config.toml`.
 
-Após esta entrega, sigo para **3/4: Win Probability Calibrator** → **4/4: Quota Attainment Predictor**, fechando Revenue Intelligence em 10/10.
+Após esta entrega, sigo para **4/4: Quota Attainment Predictor**, fechando Revenue Intelligence em 10/10.
