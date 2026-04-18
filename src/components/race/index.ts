@@ -25,4 +25,5 @@ export { MiniPodium } from './MiniPodium';
 export { ChampionsHistoryPanel } from './ChampionsHistoryPanel';
 export { OvertakeHighlight } from './OvertakeHighlight';
 export { PredictedRankBadge } from './PredictedRankBadge';
+export { LeaderTakeoverCelebration } from './LeaderTakeoverCelebration';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
