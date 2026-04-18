@@ -71,6 +71,16 @@ export function useTranscribeRecording() {
               qc.invalidateQueries({ queryKey: ["conversation-metrics", recId] });
               qc.invalidateQueries({ queryKey: ["conversation-metrics-feed"] });
             }
+            return supabase.functions.invoke("analyze-question-quality", {
+              body: { recording_id: recId },
+            });
+          })
+          .then((res) => {
+            if (res && !res.error) {
+              qc.invalidateQueries({ queryKey: ["question-analysis", recId] });
+              qc.invalidateQueries({ queryKey: ["call-questions", recId] });
+              qc.invalidateQueries({ queryKey: ["question-analysis-feed"] });
+            }
           });
       }
     },
