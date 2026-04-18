@@ -8844,6 +8844,60 @@ export type Database = {
           },
         ]
       }
+      race_daily_snapshots: {
+        Row: {
+          created_at: string
+          deals_count: number
+          id: string
+          progress: number
+          rank: number
+          salesperson_id: string
+          score: number | null
+          season_id: string
+          snapshot_date: string
+          total_sales: number
+        }
+        Insert: {
+          created_at?: string
+          deals_count?: number
+          id?: string
+          progress?: number
+          rank: number
+          salesperson_id: string
+          score?: number | null
+          season_id: string
+          snapshot_date?: string
+          total_sales?: number
+        }
+        Update: {
+          created_at?: string
+          deals_count?: number
+          id?: string
+          progress?: number
+          rank?: number
+          salesperson_id?: string
+          score?: number | null
+          season_id?: string
+          snapshot_date?: string
+          total_sales?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_daily_snapshots_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_daily_snapshots_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       race_events: {
         Row: {
           created_at: string
@@ -9057,6 +9111,51 @@ export type Database = {
             columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_user_daily_checkins: {
+        Row: {
+          checkin_date: string
+          created_at: string
+          id: string
+          reward_granted: boolean
+          season_id: string
+          streak_days: number
+          user_id: string
+        }
+        Insert: {
+          checkin_date?: string
+          created_at?: string
+          id?: string
+          reward_granted?: boolean
+          season_id: string
+          streak_days?: number
+          user_id: string
+        }
+        Update: {
+          checkin_date?: string
+          created_at?: string
+          id?: string
+          reward_granted?: boolean
+          season_id?: string
+          streak_days?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_user_daily_checkins_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_user_daily_checkins_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
             referencedColumns: ["id"]
           },
         ]
@@ -14253,6 +14352,10 @@ export type Database = {
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
+      register_race_daily_checkin: {
+        Args: { _salesperson_id: string; _season_id: string }
+        Returns: Json
+      }
       schedule_next_qbrs: { Args: never; Returns: number }
       search_call_library: {
         Args: { _limit?: number; _query: string }
@@ -14298,6 +14401,7 @@ export type Database = {
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      snapshot_race_daily: { Args: { _season_id: string }; Returns: number }
       toggle_workflow_active: {
         Args: { p_active: boolean; p_workflow_id: string }
         Returns: boolean
