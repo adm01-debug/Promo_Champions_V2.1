@@ -1,61 +1,66 @@
 
-User quer:
-1. **Admin separado para Race Arena** — painel exclusivo de gestão (temporadas, regras, carros, badges, power-ups, auditoria) fora da arena pública.
-2. **Separar módulos de corrida Closer vs SDR** — duas arenas distintas com seus próprios rankings, temporadas e regras de pontuação (já existe `role_type` em `race_seasons` + `useRaceSeasonByRole`, mas a UI atual mistura tudo em `/race-arena`).
+User wants to use the checkered flag victory celebration (VictoryLapOverlay) as a monthly winner celebration — triggered at month-end for the top performer of the Race Arena, not just on individual race victory events.
 
-Já existe infra: `role_type` em `race_seasons` ('closer'|'sdr'), hook `useRaceSeasonByRole`, e `RaceLeaderboardEntry.role_type`. Falta segmentar UI e criar console admin dedicado.
+Let me check the current VictoryLapOverlay and how it's triggered.
 
-## Plano: Race Arena — Split Closer/SDR + Admin Console
+The current `VictoryLapOverlay.tsx` listens to `race_events` of type `'victory'`. We need a separate **MonthlyChampionOverlay** that fires at end-of-month (or when admin closes the season) showing the #1 ranked Closer/SDR with the same gold trophy + checkered flag aesthetic.
 
-### 1. Separação Closer vs SDR (rotas + UI)
-Substituir rota única `/race-arena` por:
-- **`/race-arena/closer`** — Arena dos Closers (temporada ativa role_type='closer')
-- **`/race-arena/sdr`** — Arena dos SDRs (temporada ativa role_type='sdr')
-- **`/race-arena`** — Hub seletor: dois cards grandes (Closer/SDR) com preview do líder atual, total de pilotos e CTA "Entrar na pista"
+## Plano: Cerimônia do Campeão do Mês 🏁
 
-Cada arena consome `useRaceSeasonByRole(role)` + filtra `useRaceLeaderboard` pela season correspondente. Mesmo layout atual (Ranking esquerda, mapa 75%, feed flutuante), apenas escopado por role.
+### Conceito
+Reaproveitar o visual da `VictoryLapOverlay` (troféu dourado + bandeira quadriculada + confetes) para criar uma **cerimônia oficial de premiação mensal** do vencedor da Race Arena (Closer e SDR separadamente).
 
-Sidebar nav: agrupar sob "Race Arena" com sub-itens "Hub", "Pista Closers", "Pista SDRs".
+### Trigger
+Quando o mês vira (ou quando admin fecha a season manualmente):
+1. Sistema identifica o líder do `useRaceLeaderboard` da season encerrada
+2. Registra um evento `monthly_champion` em `race_events` (via RPC ou no fechamento da season)
+3. Overlay aparece para todos os usuários conectados ao abrir a arena daquele role
 
-### 2. Admin Console — `/admin/race-arena`
-Rota protegida (`isAdmin` only via `usePermissions`). Layout em tabs:
+Detecção client-side: hook `useMonthlyChampion(roleType)` que:
+- Busca a season mais recente com `status='finished'` e `ended_at` no mês corrente
+- Identifica o `winner_id` (ou top 1 do leaderboard daquela season)
+- Marca como "visto" em `localStorage` (`monthly-champion-seen-${seasonId}`) para não repetir
+- Retorna `{ champion, season, shouldShow }`
 
-- **Temporadas**: tabela de seasons (filtro role), ações: criar (reusa `StartSeasonDialog` com toggle Closer/SDR), pausar, encerrar, definir vencedor, duplicar regras
-- **Regras de Pontuação**: editor por season (reusa `ScoringRulesEditor`) — pesos por métrica, pontos/unidade
-- **Garagem**: lista todos os `race_cars`, permite admin reatribuir cores/números, resetar customização, banir carro
-- **Power-ups**: CRUD de `race_powerups` ativos no track (tipo, posição %, season)
-- **Badges**: catálogo + atribuição manual a vendedores (audit log)
-- **Auditoria**: feed de `race_events` + ajustes manuais (XP, posição) com motivo obrigatório
+### Componente novo: `MonthlyChampionOverlay.tsx`
+Variação premium do `VictoryLapOverlay`:
+- **Header**: "🏆 CAMPEÃO DO MÊS 🏆" + nome do mês (ex: "Outubro 2025")
+- **Centro**: Avatar grande do vencedor + troféu animado + bandeira quadriculada SVG procedural (não emoji) ondulando com framer-motion
+- **Stats**: Total de vendas, # de deals, dias liderando, XP ganho na season
+- **Ações**: "Compartilhar conquista" (copia link/imagem) + "Fechar"
+- **Animações**: Spring entry, confete dourado contínuo (5s), reveal sequencial (troféu → nome → stats)
+- **Áudio opcional**: respeitar `RaceSoundToggle` setting
 
-Componentes novos em `src/components/race/admin/`:
-- `RaceAdminHub.tsx` (tabs container, ≤200L)
-- `SeasonsManagerTable.tsx`
-- `GaragemAdminTable.tsx`
-- `PowerUpsManager.tsx`
-- `BadgesAssigner.tsx`
-- `RaceAuditFeed.tsx`
+### Bandeira quadriculada SVG
+Componente `CheckeredFlag.tsx` em `src/components/race/`:
+- SVG com padrão de xadrez 8x4 células pretas/brancas
+- Animação de wave usando `<animateTransform>` ou framer-motion `path` morph
+- Reutilizável: usar também no header da arena para reforçar branding
 
-### 3. Páginas e rotas
-- `src/pages/RaceArenaHub.tsx` (novo seletor)
-- `src/pages/RaceArenaCloser.tsx` (novo, role-scoped)
-- `src/pages/RaceArenaSDR.tsx` (novo, role-scoped)
-- `src/pages/admin/RaceArenaAdmin.tsx` (novo console)
-- Renomear/refatorar `src/pages/RaceArena.tsx` → componente compartilhado `RaceArenaView.tsx` (recebe `roleType` prop)
+### Integração
+- `RaceArenaView.tsx`: montar `<MonthlyChampionOverlay roleType={roleType} />` ao lado do `VictoryLapOverlay` existente
+- Admin Console (`SeasonsManagerTable`): ao "Encerrar season", chamar RPC que define `winner_salesperson_id` e insere evento `monthly_champion` → dispara overlay para todos
 
-### 4. Edits
-- `src/routes/AppRoutes.tsx`: 4 novas rotas, gate admin via `isAdmin`
-- Sidebar nav: novo grupo "Race Arena" + entrada admin "Admin Race"
-- `src/components/race/StartSeasonDialog.tsx`: já aceita `role_type` — garantir UX clara (toggle obrigatório)
+### Backend (mínimo)
+Migration leve:
+- Confirmar coluna `winner_salesperson_id` em `race_seasons` (provavelmente já existe)
+- RPC `finalize_race_season(season_id uuid)` SECURITY DEFINER (admin only via `has_role`):
+  1. Calcula top 1 do leaderboard da season
+  2. Set `status='finished'`, `winner_salesperson_id`, `ended_at=now()`
+  3. Insere `race_events` tipo `monthly_champion` com metadata (ranking final top 5)
+  4. Concede badge "Campeão do Mês" via `salesperson_badges`
 
-### 5. Padrões
-- Semantic tokens, Sora títulos / Inter UI
-- Framer-motion nas transições entre tabs e cards
-- Skeleton loading em todas tabelas admin
-- Strict TS, ≤300L por arquivo (extrair helpers se passar)
-- RLS já cobre `race_*` — UI gating duplo via `isAdmin`
-- Toast de sucesso/erro em toda mutação admin
+### Arquivos
+- **Novo**: `src/components/race/MonthlyChampionOverlay.tsx` (~250L)
+- **Novo**: `src/components/race/CheckeredFlag.tsx` (~80L SVG animado)
+- **Novo**: `src/hooks/race/useMonthlyChampion.ts` (~80L)
+- **Editar**: `src/pages/RaceArenaView.tsx` (montar overlay)
+- **Editar**: `src/components/race/admin/SeasonsManagerTable.tsx` (botão "Finalizar e Premiar" → chama RPC)
+- **Editar**: `src/components/race/index.ts` (exportar novos)
+- **Migration**: 1 RPC `finalize_race_season` + garantir colunas
+
+### Padrões
+Semantic tokens (rank-gold, amber-*), Sora p/ "CAMPEÃO DO MÊS", framer-motion spring, ≤300L por arquivo, RPC SECURITY DEFINER + RLS, localStorage para deduplicação client-side.
 
 ### Resultado
-- Closers e SDRs competem em arenas independentes com regras próprias
-- Admin tem console dedicado para curadoria total da gamificação de corrida
-- Hub central deixa claro qual pista entrar
+Cerimônia mensal automática e cinematográfica que coroa o campeão de cada pista (Closer/SDR), reaproveitando o visual de bandeira quadriculada como assinatura da Race Arena.
