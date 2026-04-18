@@ -89,6 +89,16 @@ export function RaceCar({ number, primaryColor, secondaryColor, style, scale = 1
         fill={secondaryColor}
         opacity={0.85}
       />
+      {/* overlay de padrão (acessibilidade colorblind) */}
+      {patternFillId && (
+        <rect
+          x={-bodyW / 2} y={-bodyH / 2}
+          width={bodyW} height={bodyH}
+          rx={isKart ? 4 : isF1 ? 8 : 6}
+          fill={`url(#${patternFillId})`}
+          pointerEvents="none"
+        />
+      )}
       {/* cockpit */}
       <ellipse cx={isF1 ? 4 : 0} cy={0} rx={isF1 ? 6 : 7} ry={isF1 ? 5 : 6} fill="#0f172a" stroke="#1f2937" strokeWidth={1} />
       {/* asa traseira (F1) */}

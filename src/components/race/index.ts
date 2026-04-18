@@ -39,4 +39,6 @@ export { RaceGhostDemo } from './RaceGhostDemo';
 export { RaceOnboardingChecklist } from './RaceOnboardingChecklist';
 export { RivalryBadge } from './RivalryBadge';
 export { RaceHighlightsTimeline } from './RaceHighlightsTimeline';
+export { ReactionBar } from './ReactionBar';
+export { ReactionFloater } from './ReactionFloater';
 export { fmtCurrency, fmtCompact } from './raceFormatters';
