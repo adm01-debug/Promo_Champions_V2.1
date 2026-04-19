@@ -42,7 +42,8 @@ export function SeasonRecapCard({
     if (!ref.current) return;
     setBusy(true);
     try {
-      const { toPng, toBlob } = await import('html-to-image');
+      // Lazy import: html-to-image (~80kb) só entra no bundle ao clicar em compartilhar.
+      const { toPng, toBlob } = await import(/* webpackChunkName: "html-to-image" */ 'html-to-image');
       if (action === 'download') {
         const url = await toPng(ref.current, { pixelRatio: 2, cacheBust: true });
         const a = document.createElement('a');

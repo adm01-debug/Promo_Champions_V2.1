@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RacePanelEmptyState } from './RacePanelEmptyState';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { Flag } from 'lucide-react';
@@ -36,8 +37,11 @@ export function RaceLeaderboardSidebar({
   seasonStart,
   seasonEnd,
 }: Props) {
-  const leader = entries[0];
-  const predictions = useRacePredictions(entries, { start_date: seasonStart, end_date: seasonEnd });
+  // useDeferredValue: suaviza updates em massa (ex: realtime burst de 20+ entries).
+  // O ranking pode renderizar com 1 frame de atraso para manter UI responsiva.
+  const deferredEntries = useDeferredValue(entries);
+  const leader = deferredEntries[0];
+  const predictions = useRacePredictions(deferredEntries, { start_date: seasonStart, end_date: seasonEnd });
   const [hoveredRivalId, setHoveredRivalId] = useState<string | null>(null);
 
   return (
@@ -66,7 +70,7 @@ export function RaceLeaderboardSidebar({
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto space-y-2">
         <AnimatePresence>
-          {entries.map((e, i) => {
+          {deferredEntries.map((e, i) => {
             const gap = leader && i > 0 ? Number(leader.total_sales) - Number(e.total_sales) : 0;
             return (
               <motion.div
@@ -110,8 +114,11 @@ export function RaceLeaderboardSidebar({
             );
           })}
         </AnimatePresence>
-        {entries.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-8">Nenhum carro no grid ainda.</p>
+        {deferredEntries.length === 0 && (
+          <RacePanelEmptyState
+            variant="no-cars"
+            description="Aguarde o início da temporada ou peça ao admin para configurar pilotos."
+          />
         )}
         {goalAmount > 0 && (
           <div className="pt-3 mt-3 border-t text-center text-xs text-muted-foreground">
