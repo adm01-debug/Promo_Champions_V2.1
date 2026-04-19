@@ -1,2 +1,2 @@
 
-Excluir o preset "Orgulho Kart" de `src/components/race/raceColors.ts`.
+Excluir o preset "Kart Mario" de `src/components/race/raceColors.ts`.
