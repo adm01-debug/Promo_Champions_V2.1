@@ -8960,6 +8960,33 @@ export type Database = {
           },
         ]
       }
+      race_overlay_telemetry: {
+        Row: {
+          created_at: string
+          id: string
+          last_viewed_at: string
+          overlay_name: string
+          user_id: string
+          viewed_count: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_viewed_at?: string
+          overlay_name: string
+          user_id: string
+          viewed_count?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_viewed_at?: string
+          overlay_name?: string
+          user_id?: string
+          viewed_count?: number
+        }
+        Relationships: []
+      }
       race_powerups: {
         Row: {
           collected_at: string
