@@ -56,7 +56,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
 
   // ===== Kart =====
   
-  { id: 'kart-luigi', name: 'Kart Luigi', style: 'kart', primary: '#16a34a', secondary: '#ffffff', pattern: 'solid', emoji: '🍀' },
+  
   { id: 'kart-peach', name: 'Kart Peach', style: 'kart', primary: '#f9a8d4', secondary: '#fbbf24', pattern: 'solid', emoji: '👑' },
   
   
