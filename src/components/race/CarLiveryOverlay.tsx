@@ -71,8 +71,8 @@ function PrideRainbow({ x, y, w, h }: { x: number; y: number; w: number; h: numb
 function PrideRainbowDiagonal({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
   const colors = ['#e40303', '#ff8c00', '#ffed00', '#008026', '#004dff', '#750787'];
   // Listras diagonais finas e repetidas cobrindo o corpo (rotacionadas -25°)
-  const stripeW = 1.6;
-  const gap = 1.2;
+  const stripeW = 3;
+  const gap = 2;
   const period = stripeW + gap;
   const cx = x + w / 2;
   const cy = y + h / 2;
