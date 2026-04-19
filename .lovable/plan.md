@@ -1,50 +1,54 @@
 
-Frente A + B + D entregues. Resta **Frente C — Camada identitária** (semanas 5-8) e os **5 refinos cirúrgicos de microinterações**. Vamos executar Frente C agora, que é a de maior impacto emocional restante.
+Frentes A + B + C + D entregues. Resta a última onda: **5 refinos cirúrgicos de microinterações** + **disciplina de remoção** (analytics de overlays).
 
-## Frente C — Camada identitária
+## Iterações sequenciais
 
-### 1. Equipes/Escuderias 🏎️
-- **Migração:** tabela `race_teams` (id, season_id, name, color_primary, color_secondary, emoji) + `race_team_members` (team_id, car_id). RLS: leitura pública autenticada, escrita admin.
-- `useRaceTeams.ts`: lista equipes da season + agregação de pontos (soma `total_sales` dos membros).
-- `TeamLeaderboard.tsx`: ranking de escuderias no sidebar (colapsável, abaixo do Live Timing).
-- `RaceCar.tsx`: aceita `teamColor` opcional como faixa secundária no carro (stripe lateral).
+### 1. Easing F1-real nos carros 🏎️
+- Substituir spring genérico em `RaceCar.tsx`/`RaceTrack.tsx` por curva cubic-bezier estilo F1 (slow-in, fast-out: `cubic-bezier(0.22, 0.61, 0.36, 1)`).
+- Token compartilhado em `src/lib/race/easings.ts` (`EASE_F1_ACCEL`, `EASE_F1_BRAKE`, `EASE_F1_COAST`).
 
-### 2. Rival nomeado persistente ⚔️
-- `useMyRival.ts`: identifica rival = piloto adjacente no ranking (1 acima OU 1 abaixo, alterna por season). Persiste escolha em `race_rivalries` (car_id, rival_car_id, season_id).
-- `MyRivalCard.tsx`: card destacado no sidebar — "Seu rival: João · gap +2.3%" com sparkline de 7 dias do duelo. CTA "Ver no replay".
-- Highlight visual na pista: rival ganha contorno tracejado dourado quando hover no MyRivalCard.
+### 2. Som contextual ao gap 🔊
+- `useRivalProximityAudio.ts`: monitora `gap_pct` do rival. Quando <5%, dispara drone de fundo cujo pitch sobe 1 semitom a cada 1% de aproximação. Para automaticamente quando gap >7% (histerese).
+- Respeita `useCalmMode` e mute global.
 
-### 3. Career Mode (histórico vitalício) 🏆
-- `useMyCareer.ts`: agrega histórico do salesperson em todas as seasons (`race_seasons` + `race_cars` + `race_season_results`).
-- `CareerTimeline.tsx`: nova rota `/race-arena/career` com lista cronológica de seasons (rank final, podiums, takeovers totais, badges permanentes).
-- Card resumo no Hub: "Career: 12 seasons · 3 títulos · 47 podiums".
+### 3. Hover persistente revela "capacete" 🪖
+- `RaceCar.tsx`: ao hover, após 600ms, exibe avatar circular flutuante 32px acima do carro com nome + posição. Fade-in suave, dismiss em mouseleave.
+- Acessível via `aria-describedby` apontando para tooltip.
 
-### 4. Shareable season card 📸
-- `SeasonRecapCard.tsx`: card visual exportável (PNG via html-to-image) gerado ao final de cada season — "Lucas · P2 Season 12 · 3 takeovers · 12 dias de streak".
-- Botão "Compartilhar" no `ChampionsHistoryPanel`. Download direto + cópia para clipboard.
+### 4. Transição cinemática entre view modes 🎥
+- `useRaceViewModeTransition.ts`: ao trocar `competitive ↔ focus ↔ immersive`, aplica blur+scale na pista (300ms) simulando zoom de TV F1.
+- Respeita `useReducedMotion` e `useCalmMode` (nestes casos: cross-fade simples).
+
+### 5. Celebração proporcional ao feito 🎆
+- `getCelebrationIntensity.ts` (helper puro): calcula score (0-100) baseado em `from_rank`, `to_rank`, `is_takeover`, `is_top3`. Retorna `{ shake, fireworks, sound, duration }`.
+- Integra em `RaceFireworks.tsx`, `RaceShakeWrapper.tsx`, `useRaceSounds.ts`. Overtake P15→P14 = pulse sutil; takeover P2→P1 = full fireworks + screen-shake + horn.
+
+### 6. Analytics de overlays (disciplina de remoção) 📊
+- `useOverlayVisibility.ts`: usa IntersectionObserver para registrar quais overlays foram efetivamente vistos por sessão (>2s visível). Salva agregado em `race_overlay_telemetry` (overlay_name, viewed_count, last_viewed_at).
+- Migração: tabela `race_overlay_telemetry` (RLS: insert pelo próprio user, leitura admin).
+- Painel admin existente recebe widget "Overlays usados nos últimos 30 dias" para guiar futuras remoções.
 
 ## Arquivos
 
 **Novos:**
-- `src/hooks/race/useRaceTeams.ts`
-- `src/hooks/race/useMyRival.ts`
-- `src/hooks/race/useMyCareer.ts`
-- `src/components/race/TeamLeaderboard.tsx`
-- `src/components/race/MyRivalCard.tsx`
-- `src/components/race/CareerTimeline.tsx`
-- `src/components/race/SeasonRecapCard.tsx`
-- `src/pages/RaceArenaCareer.tsx`
+- `src/lib/race/easings.ts`
+- `src/lib/race/getCelebrationIntensity.ts`
+- `src/hooks/race/useRivalProximityAudio.ts`
+- `src/hooks/race/useRaceViewModeTransition.ts`
+- `src/hooks/race/useOverlayVisibility.ts`
+- `src/components/race/CarHelmetTooltip.tsx`
 
 **Editados:**
-- `src/components/race/RaceCar.tsx` (faixa lateral teamColor)
-- `src/components/race/RaceLeaderboardSidebar.tsx` (montar TeamLeaderboard + MyRivalCard)
-- `src/components/race/ChampionsHistoryPanel.tsx` (botão "Compartilhar season")
-- `src/pages/RaceArenaHub.tsx` (card Career resumo + link `/race-arena/career`)
-- `src/routes/AppRoutes.tsx` (rota `/race-arena/career`)
+- `src/components/race/RaceCar.tsx` (helmet tooltip + easing F1)
+- `src/components/race/RaceTrack.tsx` (transição cinemática mode swap)
+- `src/components/race/RaceFireworks.tsx` (intensidade proporcional)
+- `src/components/race/RaceShakeWrapper.tsx` (intensidade proporcional)
+- `src/hooks/race/useRaceSounds.ts` (intensidade proporcional)
+- `src/components/race/RaceArena.tsx` (instrumentar overlays + montar proximity audio)
+- `src/pages/admin/RaceArenaAdmin.tsx` (widget telemetria de overlays)
 
 **Migração SQL:**
-- `race_teams`, `race_team_members`, `race_rivalries` (RLS + índices)
-- Trigger para auto-criar rivalidade na 1ª inserção de car em season
+- `race_overlay_telemetry` (id, user_id, overlay_name, viewed_count, last_viewed_at) + RLS
 
 ## Garantias
-Tokens HSL · RLS rigorosa (leitura autenticada, escrita admin) · arquivos < 200 linhas · `aria-label` em todos os badges de equipe/rival · retrocompatível (carros sem team rendem sem stripe) · html-to-image lazy-loaded.
+Tokens HSL · `useReducedMotion` + `useCalmMode` respeitados em todas as animações novas · som opt-in · arquivos < 200 linhas · zero erros de console · retrocompatível (telemetria silenciosa em caso de erro).
