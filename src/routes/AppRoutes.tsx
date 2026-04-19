@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Index from "@/pages/Index";
 import { RaceTransitionWrapper } from "@/components/race";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
+const RaceSpectator = lazy(() => import("@/pages/RaceSpectator"));
 import {
   // Auth & System
   Auth, ResetPassword, NotFound, AccessDenied,
@@ -75,6 +76,9 @@ export function AppRoutes() {
 
         {/* Race Arena TV — fullscreen, sem MainLayout (autenticação herdada via ProtectedRoute) */}
         <Route path="/race-arena/tv" element={<ProtectedRoute><RaceArenaTV /></ProtectedRoute>} />
+
+        {/* Race Arena Spectator — público, sem dados sensíveis */}
+        <Route path="/race-arena/spectator/:seasonId" element={<RaceSpectator />} />
 
         {/* App routes within MainLayout */}
         <Route

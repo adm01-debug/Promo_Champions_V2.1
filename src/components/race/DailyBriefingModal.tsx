@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flag, Trophy, Clock, Flame, Rocket, X } from 'lucide-react';
+import { Flag, Trophy, Clock, Flame, Rocket, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { BriefingData } from '@/hooks/race/useDailyBriefing';
+import type { WhatIfScenario } from '@/hooks/race/useRaceWhatIf';
+import { fmtCompact } from './raceFormatters';
 
 interface Props {
   open: boolean;
@@ -11,6 +13,7 @@ interface Props {
   onDismiss: () => void;
   /** Auto-dismiss em ms. Default 5500. */
   autoDismissMs?: number;
+  whatIf?: WhatIfScenario[];
 }
 
 function flameClass(streak: number) {
