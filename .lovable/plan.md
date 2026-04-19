@@ -1,47 +1,47 @@
 
-Race Arena já está em 10/10 (Frentes A+B+C+D + 5 refinos + telemetria entregues). Você pediu para pular a "Onda Final - Polimento Premium". Para continuar evoluindo rumo à perfeição, proponho uma nova onda focada em **qualidade silenciosa** — coisas que ninguém pede, mas que separam um produto bom de um produto memorável.
+Race Arena já está em 10/10 (Frentes A+B+C+D + 5 refinos cirúrgicos + telemetria de overlays + Onda Extra de Resiliência). Para continuar evoluindo, proponho a próxima onda focada em **inteligência preditiva e engajamento social** — features que diferenciam um produto excelente de um produto inesquecível.
 
-## Onda Extra — Resiliência & Detalhe Invisível
+## Onda Inteligência — Predição & Social
 
-### 1. Empty states ilustrados 🎨
-- Substituir "Nenhum carro no grid ainda" e similares por ilustrações SVG inline (semáforo apagado, pista vazia) + CTA contextual ("Aguarde início da season" ou "Configure carros no admin").
-- Componente `RaceEmptyState.tsx` reutilizável (variantes: no-season, no-cars, no-rival, no-history).
+### 1. Predição "What-If" no Briefing 🔮
+- `useRaceWhatIf.ts`: simula cenários ("se você fechar +R$X hoje, sobe Y posições"). Usa baseline de vendas do líder/rival.
+- Integra ao `DailyBriefingModal` como seção "E se você...?" com 3 cenários (conservador, realista, agressivo).
 
-### 2. Skeleton loaders fiéis ao layout 💀
-- Hoje a Race Arena mostra spinner genérico ao carregar. Trocar por skeletons que **respeitem o layout final** (pista cinza com 5 retângulos representando carros, sidebar com 8 linhas).
-- `RaceArenaSkeleton.tsx` + `RaceSidebarSkeleton.tsx`.
+### 2. Compartilhamento social de conquistas 📸
+- `RaceAchievementShareCard.tsx`: cartão exportável quando piloto faz overtake top-3, vence corrida, ou bate recorde pessoal.
+- Botão "Compartilhar" gera PNG via `html-to-image` (lazy) + Web Share API com fallback download.
 
-### 3. Error boundaries granulares 🛡️
-- Hoje qualquer erro num overlay derruba toda a Race Arena. Envolver `RaceTrack`, `RaceLeaderboardSidebar`, `DailyBriefing`, `MyRivalCard` em `<ErrorBoundary fallback={...}>` individuais.
-- Fallback minimalista: "Este painel está indisponível agora" + botão retry.
+### 3. Modo Espectador 👁️
+- `/race-arena/spectator/:seasonId`: rota pública (RLS-safe via view sanitizada) que mostra pista em tempo real sem dados sensíveis (sem comissões, sem metas individuais).
+- Útil para TVs no escritório, dashboards de gestão.
 
-### 4. Persistência de preferências do usuário 💾
-- Hoje view mode, calm mode e mute estão em localStorage isolados. Consolidar em tabela `race_user_preferences` (user_id, view_mode, calm_mode, audio_muted, tour_completed) com sync automático.
-- Hook `useRacePreferences.ts` com fallback local-first → cloud-sync.
+### 4. Notificações inteligentes de corrida 🔔
+- `useRaceSmartNotifications.ts`: dispara toasts contextuais: "Rival ultrapassou você", "Você está a 1 venda do pódio", "Última hora da corrida".
+- Configurável em `RaceAudioPreferences` (renomear para `RacePreferences`).
 
-### 5. Audit de performance & bundle 📦
-- `React.memo` com comparator em `RaceCar.tsx` (re-render só quando posição muda).
-- `useDeferredValue` no `RaceLeaderboardSidebar` para suavizar updates em massa.
-- Lazy imports reais em `SeasonRecapCard`, `CareerTimeline`, `RaceArenaAdmin`.
+### 5. Replay temporal da temporada ⏮️
+- `SeasonReplayModal.tsx`: scrubber temporal mostrando posições dia-a-dia da season. Útil para post-mortem.
+- Usa `race_events` agregados por dia.
 
 ## Arquivos
 
 **Novos:**
-- `src/components/race/RaceEmptyState.tsx`
-- `src/components/race/RaceArenaSkeleton.tsx`
-- `src/components/race/RaceSidebarSkeleton.tsx`
-- `src/components/race/RacePanelErrorBoundary.tsx`
-- `src/hooks/race/useRacePreferences.ts`
+- `src/hooks/race/useRaceWhatIf.ts`
+- `src/hooks/race/useRaceSmartNotifications.ts`
+- `src/components/race/RaceAchievementShareCard.tsx`
+- `src/components/race/SeasonReplayModal.tsx`
+- `src/pages/RaceSpectator.tsx`
 
 **Editados:**
-- `src/components/race/RaceLeaderboardSidebar.tsx` (empty states + useDeferredValue)
-- `src/components/race/RaceTrack.tsx` (skeleton + memoização)
-- `src/components/race/RaceCar.tsx` (React.memo comparator)
-- `src/pages/RaceArenaHub.tsx` (error boundaries + skeleton)
-- `src/components/race/SeasonRecapCard.tsx` (lazy html-to-image confirmado)
+- `src/components/race/DailyBriefingModal.tsx` (seção What-If)
+- `src/components/race/RaceAudioPreferences.tsx` (renomear → RacePreferences + toggle notificações)
+- `src/components/race/SeasonRecapCard.tsx` (botão "Compartilhar conquista")
+- `src/routes/AppRoutes.tsx` (rota spectator pública)
+- `src/pages/RaceArenaHub.tsx` (montar SmartNotifications)
 
 **Migração SQL:**
-- `race_user_preferences` (RLS: user só lê/escreve o próprio registro)
+- View `race_spectator_view` (sanitiza dados sensíveis: sem `commission`, sem `personal_goal`, só posição+nome+score)
+- Política pública de leitura na view
 
 ## Garantias
-Tokens HSL · Skeletons respeitam reduced-motion · Error boundaries não engolem erros (logam via console em dev) · Preferências local-first (não bloqueia UI se cloud falhar) · arquivos < 200 linhas · zero regressões.
+Tokens HSL · `useReducedMotion` + `useCalmMode` respeitados · Notificações opt-in (default OFF) · Spectator sem dados sensíveis (RLS via view) · arquivos < 200 linhas · zero regressões · html-to-image lazy.
