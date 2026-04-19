@@ -1,8 +1,8 @@
 
-Adicionar novo preset F1 "O PAI TA ON" em `src/components/race/raceColors.ts`, no bloco F1 (após `power-girl`):
+Adicionar novo preset F1 "Rocket Man" em `src/components/race/raceColors.ts`, no bloco F1 (após `pai-ta-on`):
 
 ```ts
-{ id: 'pai-ta-on', name: 'O PAI TA ON', style: 'f1', primary: '#0a0a0a', secondary: '#faff00', pattern: 'stripes', accent: '#faff00', emoji: '👑' }
+{ id: 'rocket-man', name: 'Rocket Man', style: 'f1', primary: '#0a0a0a', secondary: '#ff0033', pattern: 'stripes', accent: '#ff0033', emoji: '🚀' }
 ```
 
-Preto `#0a0a0a` base + amarelo neon `#faff00` nas listras/accent. Mesmo padrão visual do Black Thunder e Power Girl, mantendo consistência da trinca neon. Zero migração SQL.
+Preto `#0a0a0a` base + vermelho vivo `#ff0033` nas listras/accent. Mantém consistência visual da família neon-on-black (Black Thunder, Power Girl, O PAI TA ON). Zero migração SQL.
