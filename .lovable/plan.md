@@ -1,8 +1,8 @@
 
-Adicionar novo preset F1 todo preto chamado "Black Power" em `src/components/race/raceColors.ts`.
+Adicionar novo preset F1 preto com detalhes em azul neon chamado "Scuderia Alpha" em `src/components/race/raceColors.ts`.
 
 ```ts
-{ id: 'black-power', name: 'Black Power', style: 'f1', primary: '#0a0a0a', secondary: '#1a1a1a', pattern: 'solid', emoji: '✊🏿' }
+{ id: 'scuderia-alpha', name: 'Scuderia Alpha', style: 'f1', primary: '#0a0a0a', secondary: '#00d4ff', pattern: 'stripes', accent: '#00d4ff', emoji: '🔵' }
 ```
 
-Preto sólido (corpo `#0a0a0a` + detalhes `#1a1a1a`). Adicionado ao final do array `RACE_CAR_PRESETS`. Zero migração SQL.
+Preto `#0a0a0a` no corpo + azul neon `#00d4ff` nas listras/accent. Adicionado ao final do array `RACE_CAR_PRESETS`. Zero migração SQL.
