@@ -1,8 +1,8 @@
 
-Alterar `rocket-man` em `src/components/race/raceColors.ts` para preto base + vermelho vivo nos detalhes:
+Renomear o preset `pride-f1` (atualmente "Orgulho F1") para "Pride Force" em `src/components/race/raceColors.ts`.
 
 ```ts
-{ id: 'rocket-man', name: 'Rocket Man', style: 'f1', primary: '#0a0a0a', secondary: '#ff0033', pattern: 'stripes', accent: '#ff0033', emoji: '🚀' }
+{ id: 'pride-f1', name: 'Pride Force', ... }
 ```
 
-Preto `#0a0a0a` no corpo + vermelho vivo `#ff0033` nas listras/accent. Zero migração SQL.
+Mantém id, cores e tudo mais. Zero migração SQL.
