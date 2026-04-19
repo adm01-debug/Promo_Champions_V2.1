@@ -24,6 +24,9 @@ export interface RaceLeaderboardEntry {
   rank?: number;
 }
 
+// Round 3 — dedupe de canais por seasonId.
+const channelRefs = new Map<string, { count: number; channel: ReturnType<typeof supabase.channel> }>();
+
 export function useRaceLeaderboard(seasonId?: string) {
   const queryClient = useQueryClient();
 
@@ -46,16 +49,31 @@ export function useRaceLeaderboard(seasonId?: string) {
 
   useEffect(() => {
     if (!seasonId) return;
-    const channel = supabase
-      .channel(`race-lb-${seasonId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'race_cars' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    const key = `race-lb-${seasonId}`;
+    const existing = channelRefs.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      const channel = supabase
+        .channel(key)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
+          queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'race_cars' }, () => {
+          queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
+        })
+        .subscribe();
+      channelRefs.set(key, { count: 1, channel });
+    }
+    return () => {
+      const ref = channelRefs.get(key);
+      if (!ref) return;
+      ref.count -= 1;
+      if (ref.count <= 0) {
+        supabase.removeChannel(ref.channel);
+        channelRefs.delete(key);
+      }
+    };
   }, [seasonId, queryClient]);
 
   return query;
