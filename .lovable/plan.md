@@ -1,2 +1,2 @@
 
-Renomear preset "Alpine Azure" → "A MÃE TA ON" em `src/components/race/raceColors.ts` (preset com `id: 'alpine-azure'`).
+Renomear preset verde/preto (provavelmente `id: 'monster'` ou similar) para "Monster League" em `src/components/race/raceColors.ts`.
