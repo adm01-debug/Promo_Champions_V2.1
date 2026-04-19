@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
@@ -8,11 +9,16 @@ import { useRacePredictions } from '@/hooks/race/useRacePredictions';
 import { NextGoalPanel } from './NextGoalPanel';
 import { PredictedRankBadge } from './PredictedRankBadge';
 import { RankBadge } from './RankBadge';
+import { TeamLeaderboard } from './TeamLeaderboard';
+import { MyRivalCard } from './MyRivalCard';
+import { cn } from '@/lib/utils';
 
 interface Props {
   entries: RaceLeaderboardEntry[];
   goalAmount: number;
   currentUserSalespersonId?: string;
+  currentUserCarId?: string;
+  seasonId?: string;
   seasonStart?: string;
   seasonEnd?: string;
 }
@@ -21,9 +27,18 @@ function fmt(n: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
 }
 
-export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespersonId, seasonStart, seasonEnd }: Props) {
+export function RaceLeaderboardSidebar({
+  entries,
+  goalAmount,
+  currentUserSalespersonId,
+  currentUserCarId,
+  seasonId,
+  seasonStart,
+  seasonEnd,
+}: Props) {
   const leader = entries[0];
   const predictions = useRacePredictions(entries, { start_date: seasonStart, end_date: seasonEnd });
+  const [hoveredRivalId, setHoveredRivalId] = useState<string | null>(null);
 
   return (
     <Card className="h-full flex flex-col">
@@ -37,6 +52,13 @@ export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespe
             seasonEnd={seasonEnd}
           />
         )}
+        <MyRivalCard
+          seasonId={seasonId}
+          myCarId={currentUserCarId}
+          entries={entries}
+          onHoverRival={setHoveredRivalId}
+        />
+        <TeamLeaderboard seasonId={seasonId} />
         <CardTitle className="flex items-center gap-2 text-lg">
           <Flag className="w-5 h-5 text-primary" />
           Ranking Champions
@@ -54,7 +76,10 @@ export function RaceLeaderboardSidebar({ entries, goalAmount, currentUserSalespe
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-                className="flex items-center gap-3 p-2 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors"
+                className={cn(
+                  'flex items-center gap-3 p-2 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors',
+                  hoveredRivalId === e.car_id && 'ring-2 ring-warning ring-offset-1 ring-offset-background outline-dashed outline-2 outline-warning/60',
+                )}
               >
                 <RankBadge rank={i + 1} size="md" />
                 <div

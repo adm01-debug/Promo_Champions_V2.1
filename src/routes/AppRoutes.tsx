@@ -25,7 +25,7 @@ import {
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
   TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence,
   // Gamificação & Social
-  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, RaceArenaGarage, DesafiosSemanais, HistoricoDesafiosDiarios,
+  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, RaceArenaGarage, RaceArenaCareer, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
   // Gestão
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
@@ -184,6 +184,7 @@ export function AppRoutes() {
                     <Route path="/race-arena/closer" element={<RaceTransitionWrapper><RaceArenaCloser /></RaceTransitionWrapper>} />
                     <Route path="/race-arena/sdr" element={<RaceTransitionWrapper><RaceArenaSDR /></RaceTransitionWrapper>} />
                     <Route path="/race-arena/garage" element={<RaceTransitionWrapper><RaceArenaGarage /></RaceTransitionWrapper>} />
+                    <Route path="/race-arena/career" element={<RaceTransitionWrapper><RaceArenaCareer /></RaceTransitionWrapper>} />
                     <Route path="/admin/race-arena" element={<Admin><RaceArenaAdmin /></Admin>} />
                     <Route path="/desafios" element={<DesafiosSemanais />} />
                     <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
