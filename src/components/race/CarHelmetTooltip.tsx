@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { EASE_F1_BRAKE } from '@/lib/race/easings';
 
+const EASE = [...EASE_F1_BRAKE] as number[];
+
 interface Props {
   visible: boolean;
   name: string;
