@@ -58,6 +58,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   
   
   { id: 'kart-peach', name: 'Kart Peach', style: 'kart', primary: '#f9a8d4', secondary: '#fbbf24', pattern: 'solid', emoji: '👑' },
+  { id: 'f1-princess-force', name: 'Princess Force', style: 'f1', primary: '#f9a8d4', secondary: '#fde047', pattern: 'solid', emoji: '👑' },
   
   
 
