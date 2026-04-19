@@ -9402,6 +9402,39 @@ export type Database = {
           },
         ]
       }
+      race_user_preferences: {
+        Row: {
+          audio_muted: boolean
+          calm_mode: boolean
+          created_at: string
+          id: string
+          tour_completed: boolean
+          updated_at: string
+          user_id: string
+          view_mode: string
+        }
+        Insert: {
+          audio_muted?: boolean
+          calm_mode?: boolean
+          created_at?: string
+          id?: string
+          tour_completed?: boolean
+          updated_at?: string
+          user_id: string
+          view_mode?: string
+        }
+        Update: {
+          audio_muted?: boolean
+          calm_mode?: boolean
+          created_at?: string
+          id?: string
+          tour_completed?: boolean
+          updated_at?: string
+          user_id?: string
+          view_mode?: string
+        }
+        Relationships: []
+      }
       rank_change_notifications: {
         Row: {
           context: string | null
