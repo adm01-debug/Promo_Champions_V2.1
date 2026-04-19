@@ -53,8 +53,7 @@ export function SeasonRecapCard({
       } else {
         const blob = await toBlob(ref.current, { pixelRatio: 2, cacheBust: true });
         if (blob && navigator.clipboard && 'write' in navigator.clipboard) {
-          // @ts-expect-error: ClipboardItem types vary across browsers
-          await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': blob })]);
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
           toast.success('📋 Copiado para área de transferência!');
         } else {
           toast.error('Cópia para clipboard não suportada neste navegador.');

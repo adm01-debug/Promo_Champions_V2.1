@@ -69,8 +69,8 @@ export function useRaceTeams(seasonId?: string) {
           .select('car_id, total_sales')
           .eq('season_id', seasonId)
           .in('car_id', carIds);
-        (lb ?? []).forEach((r: { car_id: string; total_sales: number | string }) => {
-          lbMap.set(r.car_id, Number(r.total_sales));
+        (lb ?? []).forEach((r) => {
+          if (r.car_id) lbMap.set(r.car_id, Number(r.total_sales ?? 0));
         });
       }
 
