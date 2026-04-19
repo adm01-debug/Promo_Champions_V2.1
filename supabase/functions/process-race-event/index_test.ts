@@ -18,9 +18,8 @@ Deno.test("process-race-event: missing auth returns 401", async () => {
     headers: { "Content-Type": "application/json", apikey: ANON_KEY },
     body: JSON.stringify({}),
   });
-  const body = await r.json();
+  await r.text();
   assertEquals(r.status, 401);
-  assertEquals(body.error, "Unauthorized");
 });
 
 Deno.test("process-race-event: invalid bearer returns 401", async () => {

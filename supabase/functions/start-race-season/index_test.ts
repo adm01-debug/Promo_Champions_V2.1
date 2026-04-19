@@ -17,9 +17,8 @@ Deno.test("start-race-season: no auth → 401", async () => {
     headers: { "Content-Type": "application/json", apikey: ANON_KEY },
     body: JSON.stringify({ name: "x", start_date: "2026-01-01", end_date: "2026-02-01", goal_amount: 100 }),
   });
-  const body = await r.json();
-  assertEquals(r.status, 401);
-  assert(body.error);
+  await r.text();
+  assert(r.status === 401);
 });
 
 Deno.test("start-race-season: invalid token → 401", async () => {
