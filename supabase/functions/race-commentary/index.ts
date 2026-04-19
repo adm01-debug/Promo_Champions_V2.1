@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     ].filter(Boolean).join('\n');
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s hard cap
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s cap
 
     let aiResp: Response;
     try {
@@ -87,9 +87,14 @@ Deno.serve(async (req) => {
       clearTimeout(timeoutId);
       const aborted = (err as Error)?.name === "AbortError";
       console.error("AI gateway fetch failed:", err);
+      // Return 200 with empty commentary so the UI doesn't blank-screen on timeouts
       return new Response(
-        JSON.stringify({ error: aborted ? "AI gateway timeout" : "AI gateway unreachable", commentary: "" }),
-        { status: 504, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          commentary: "",
+          skipped: true,
+          reason: aborted ? "ai_timeout" : "ai_unreachable",
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
     clearTimeout(timeoutId);
