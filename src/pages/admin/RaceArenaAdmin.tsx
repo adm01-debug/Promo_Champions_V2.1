@@ -9,8 +9,10 @@ import { GarageAdminTable } from '@/components/race/admin/GarageAdminTable';
 import { RaceAuditFeed } from '@/components/race/admin/RaceAuditFeed';
 import { OverlayTelemetryPanel } from '@/components/race/admin/OverlayTelemetryPanel';
 import { RaceBadgeShowcase } from '@/components/race';
+import { useRaceViewTelemetry } from '@/hooks/race/useRaceViewTelemetry';
 
 export default function RaceArenaAdmin() {
+  useRaceViewTelemetry('/admin/race-arena', true);
   return (
     <>
       <Helmet>

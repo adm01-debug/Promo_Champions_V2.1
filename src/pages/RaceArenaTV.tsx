@@ -6,6 +6,7 @@ import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonBy
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useRaceEvents } from '@/hooks/race/useRaceEvents';
 import { useRaceCommentary } from '@/hooks/race/useRaceCommentary';
+import { useRaceViewTelemetry } from '@/hooks/race/useRaceViewTelemetry';
 import { differenceInSeconds, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Trophy, Flag } from 'lucide-react';
@@ -109,6 +110,7 @@ function TvPista({ roleType }: { roleType: RoleType }) {
 
 export default function RaceArenaTV() {
   const [current, setCurrent] = useState<RoleType>('closer');
+  useRaceViewTelemetry('/race-arena/tv', true);
 
   useEffect(() => {
     const t = window.setInterval(() => {

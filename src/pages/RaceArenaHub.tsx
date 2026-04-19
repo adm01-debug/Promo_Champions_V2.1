@@ -16,6 +16,7 @@ import { useRaceSmartNotifications } from '@/hooks/race/useRaceSmartNotification
 import { useMyRival } from '@/hooks/race/useMyRival';
 import { useMyCareer } from '@/hooks/race/useMyCareer';
 import { useSessionDuration } from '@/hooks/race/useSessionDuration';
+import { useRaceViewTelemetry } from '@/hooks/race/useRaceViewTelemetry';
 import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
 import { DailyBriefingModal } from '@/components/race/DailyBriefingModal';
 import { NextRaceActionCard } from '@/components/race/NextRaceActionCard';
@@ -142,6 +143,7 @@ export default function RaceArenaHub() {
 
   // Densidade adaptativa: rastreia tempo na arena.
   useSessionDuration({ fatigueThresholdMs: 10 * 60 * 1000, notify: true });
+  useRaceViewTelemetry('/race-arena', !!closerSeason);
 
   return (
     <RaceCalmProvider>
