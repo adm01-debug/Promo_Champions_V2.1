@@ -31,6 +31,8 @@ interface RaceCarProps {
   liveryAccent?: string;
   /** ID único para clipPath da livery (use car_id ou similar). */
   liveryUid?: string;
+  /** Cor da escuderia/equipe — renderizada como faixa lateral (stripe) sutil. */
+  teamColor?: string | null;
 }
 
 /**
@@ -56,6 +58,7 @@ export function RaceCar({
   livery = 'solid',
   liveryAccent,
   liveryUid,
+  teamColor = null,
 }: RaceCarProps) {
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
@@ -238,6 +241,32 @@ export function RaceCar({
       {/* duas linhas finas de detalhe */}
       <rect x={-bodyW / 2 + 5} y={-bodyH / 2 + 3} width={bodyW - 10} height={0.8} fill={secondaryColor} opacity={0.5} />
       <rect x={-bodyW / 2 + 5} y={bodyH / 2 - 3.8} width={bodyW - 10} height={0.8} fill={secondaryColor} opacity={0.5} />
+
+      {/* faixa lateral da escuderia (sutil, abaixo da livery) */}
+      {teamColor && (
+        <>
+          <rect
+            x={-bodyW / 2 + 4}
+            y={-bodyH / 2 + 1.2}
+            width={bodyW - 8}
+            height={1.2}
+            rx={0.6}
+            fill={teamColor}
+            opacity={0.75}
+            pointerEvents="none"
+          />
+          <rect
+            x={-bodyW / 2 + 4}
+            y={bodyH / 2 - 2.4}
+            width={bodyW - 8}
+            height={1.2}
+            rx={0.6}
+            fill={teamColor}
+            opacity={0.75}
+            pointerEvents="none"
+          />
+        </>
+      )}
 
       {/* highlight superior (brilho) */}
       <rect

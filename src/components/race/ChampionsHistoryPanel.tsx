@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ChevronDown, Crown, Trophy } from 'lucide-react';
+import { ChevronDown, Crown, Share2, Trophy } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useChampionsHistory, type ChampionHistoryEntry } from '@/hooks/race/useChampionsHistory';
 import type { RoleType } from '@/hooks/race/useRaceSeasonByRole';
+import { SeasonRecapCard } from './SeasonRecapCard';
 import { fmtCompact } from './raceFormatters';
 
 interface Props {
@@ -77,49 +80,78 @@ export function ChampionsHistoryPanel({ roleType, limit = 12, defaultOpen = true
 }
 
 function ChampionRow({ entry, isLatest, delay }: { entry: ChampionHistoryEntry; isLatest: boolean; delay: number }) {
+  const [shareOpen, setShareOpen] = useState(false);
   const initials = entry.championName.split(' ').slice(0, 2).map((p) => p[0]).join('').toUpperCase();
   return (
-    <motion.li
-      role="listitem"
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, duration: 0.25 }}
-      className={cn(
-        'flex items-center gap-3 p-3 rounded-lg border transition-colors',
-        isLatest
-          ? 'bg-warning/5 border-warning/30 shadow-sm'
-          : 'bg-card/50 border-border/40 hover:border-border'
-      )}
-    >
-      <div className="relative shrink-0">
-        <Avatar className={cn('w-11 h-11 ring-2', isLatest ? 'ring-warning' : 'ring-border')}>
-          {entry.avatarUrl && <AvatarImage src={entry.avatarUrl} alt={entry.championName} />}
-          <AvatarFallback className="text-xs font-bold">{initials || '🏁'}</AvatarFallback>
-        </Avatar>
-        {isLatest && (
-          <Crown className="absolute -top-2 -right-1 w-4 h-4 text-warning fill-warning drop-shadow" />
+    <>
+      <motion.li
+        role="listitem"
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay, duration: 0.25 }}
+        className={cn(
+          'flex items-center gap-3 p-3 rounded-lg border transition-colors',
+          isLatest
+            ? 'bg-warning/5 border-warning/30 shadow-sm'
+            : 'bg-card/50 border-border/40 hover:border-border'
         )}
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="font-semibold text-sm truncate">{entry.championName}</p>
-          {entry.carNumber != null && (
-            <Badge variant="outline" className="h-4 px-1 text-[10px] font-mono shrink-0">
-              #{entry.carNumber}
-            </Badge>
+      >
+        <div className="relative shrink-0">
+          <Avatar className={cn('w-11 h-11 ring-2', isLatest ? 'ring-warning' : 'ring-border')}>
+            {entry.avatarUrl && <AvatarImage src={entry.avatarUrl} alt={entry.championName} />}
+            <AvatarFallback className="text-xs font-bold">{initials || '🏁'}</AvatarFallback>
+          </Avatar>
+          {isLatest && (
+            <Crown className="absolute -top-2 -right-1 w-4 h-4 text-warning fill-warning drop-shadow" />
           )}
         </div>
-        <p className="text-xs text-muted-foreground truncate">
-          {entry.seasonName} · {format(new Date(entry.endDate), "dd 'de' MMM yyyy", { locale: ptBR })}
-        </p>
-      </div>
 
-      <div className="text-right shrink-0">
-        <div className="font-display font-black text-sm tabular-nums">{fmtCompact(entry.totalSales)}</div>
-        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">pts</div>
-      </div>
-    </motion.li>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-sm truncate">{entry.championName}</p>
+            {entry.carNumber != null && (
+              <Badge variant="outline" className="h-4 px-1 text-[10px] font-mono shrink-0">
+                #{entry.carNumber}
+              </Badge>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground truncate">
+            {entry.seasonName} · {format(new Date(entry.endDate), "dd 'de' MMM yyyy", { locale: ptBR })}
+          </p>
+        </div>
+
+        <div className="text-right shrink-0">
+          <div className="font-display font-black text-sm tabular-nums">{fmtCompact(entry.totalSales)}</div>
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground">pts</div>
+        </div>
+
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="h-7 w-7 shrink-0"
+          onClick={() => setShareOpen(true)}
+          aria-label={`Compartilhar season ${entry.seasonName}`}
+        >
+          <Share2 className="w-3.5 h-3.5" aria-hidden />
+        </Button>
+      </motion.li>
+
+      <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Compartilhar conquista</DialogTitle>
+          </DialogHeader>
+          <SeasonRecapCard
+            championName={entry.championName}
+            avatarUrl={entry.avatarUrl}
+            seasonName={entry.seasonName}
+            rank={1}
+            totalSales={entry.totalSales}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
