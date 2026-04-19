@@ -1,2 +1,2 @@
 
-Excluir o preset "Kart Toad" de `src/components/race/raceColors.ts`.
+Excluir o preset "Kart Shadow" de `src/components/race/raceColors.ts`.
