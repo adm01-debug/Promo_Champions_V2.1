@@ -1,34 +1,40 @@
 
-Todos os 4 bugs do relatório (B1, B2, B3, B5) já foram resolvidos na rodada anterior. O relatório atual em `docs/reports/race-arena-test-report.md` já marca o módulo Race Arena como **10/10 — production-ready, zero defeitos abertos**.
+Status atual: Race Arena está em **10/10 + Hardening Round 2** — todos os bugs (B1–B5) e as 6 melhorias da última rodada já estão aplicados. Para continuar evoluindo rumo a "perfeição contínua", proponho **Hardening Round 3** focado em observabilidade, performance e DX.
 
-Para continuar a busca por perfeição, proponho uma **segunda rodada de hardening** focada em pontos que não estavam no escopo original mas elevam o módulo acima do 10/10 atual.
+## Plano: Race Arena Hardening Round 3
 
-## Plano: Race Arena Hardening Round 2
+**Melhoria 1 — Trigger DB que valida `race_events`**
+- Função `validate_race_event()` + trigger BEFORE INSERT em `race_events`:
+  - Bloqueia eventos com `season_id` de temporada inativa/encerrada.
+  - Bloqueia eventos sem `race_car` correspondente para o `salesperson_id`.
+  - Garante `points >= 0`.
+- Substitui a query de auditoria semanal (Round 2) por prevenção em tempo real.
 
-**Melhoria 1 — Garantir temporada SDR ativa**
-- Hoje só existe temporada Closer ativa; SDRs veem empty state.
-- Criar temporada SDR default ("Temporada de Estreia SDR 🎯") via insert, com regras de scoring (`leads_qualified`, `meetings_booked`, `connect_rate`, `routine_compliance`).
+**Melhoria 2 — Índice composto para leaderboard**
+- Migration: `CREATE INDEX race_events_season_salesperson_idx ON race_events (season_id, salesperson_id, created_at DESC)` para acelerar agregações do leaderboard (hoje sequential scan em ~milhares de eventos).
 
-**Melhoria 2 — Índice único parcial em `race_seasons`**
-- Migration adicionando `UNIQUE (role_type) WHERE is_active = true` para impedir, no nível do banco, duas temporadas ativas do mesmo role (hoje só validado em código).
+**Melhoria 3 — Realtime opt-in nos hooks Race**
+- `useRaceLeaderboard` e `useRaceEvents` hoje fazem subscribe sem `cleanup` defensivo se o componente desmonta durante reconnect. Adicionar `AbortController` + dedupe de canais por `seasonId`.
 
-**Melhoria 3 — Rate limiting na `race-commentary`**
-- Adicionar cache em memória (Map com TTL 60s por `seasonId+context`) para evitar chamadas redundantes ao gateway de IA quando múltiplos clientes (TV + closer + admin) pedem narração simultaneamente.
+**Melhoria 4 — Skeleton states padronizados**
+- HUD do Closer/SDR mostra "Carregando…" texto puro durante fetch inicial. Substituir por `<Skeleton>` shimmer (padrão UX 10/10 do projeto) em `RaceLeaderboardCard`, `MyCarStatusCard`, `CommentaryFeed`.
 
-**Melhoria 4 — Telemetria de eventos órfãos**
-- Query de auditoria semanal: `race_events` sem `race_car` correspondente ou com `season_id` de temporada já encerrada → registrar em `race_audit_log` para o admin revisar.
+**Melhoria 5 — Telemetria de performance**
+- Instrumentar `track('race_view_loaded', { route, ms })` em `RaceArenaCloser`, `RaceArenaSdr`, `RaceArenaTV`, `RaceArenaAdmin` para medir TTI por rota (consumido pelo Product Analytics existente).
 
-**Melhoria 5 — Acessibilidade do CarPresetCard**
-- Adicionar `role="radio"` + `aria-checked` ao grid de presets (hoje usa `aria-pressed` que é semanticamente para toggle, não para seleção exclusiva). Wrapper recebe `role="radiogroup"`.
-
-**Melhoria 6 — Atualizar relatório**
-- Marcar as 5 melhorias como aplicadas e registrar status final **"10/10 + Hardening Round 2"**.
+**Melhoria 6 — Documentação operacional**
+- Criar `docs/runbooks/race-arena.md` com:
+  - Como criar nova temporada (admin UI + SQL fallback)
+  - Como reprocessar eventos órfãos
+  - Como invalidar cache da `race-commentary`
+  - Troubleshooting realtime/RLS
+- Atualizar `docs/reports/race-arena-test-report.md` para **10/10 + Hardening Round 3**.
 
 ## Entregáveis
-- 1 insert (temporada SDR + regras)
-- 1 migration (índice único parcial)
-- 2 arquivos editados (`race-commentary/index.ts`, `CarPresetCard.tsx` + container)
-- 1 query de auditoria documentada
-- Relatório atualizado
+- 1 migration (trigger validação + índice composto)
+- 2 hooks editados (`useRaceLeaderboard`, `useRaceEvents`)
+- 3 componentes editados (skeletons)
+- 4 páginas instrumentadas (telemetria)
+- 1 runbook novo + relatório atualizado
 
-Execução sequencial, autônoma, sem pausas, após aprovação.
+Execução sequencial e autônoma após aprovação.
