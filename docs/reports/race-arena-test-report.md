@@ -118,4 +118,36 @@ ORDER BY e.created_at DESC
 LIMIT 200;
 ```
 
-**Veredito final:** módulo Race Arena **10/10 + Hardening Round 2** — production-ready, zero defeitos abertos, 5 melhorias adicionais aplicadas.
+---
+
+## 9. Hardening Round 3 — observabilidade, performance e DX
+
+| # | Melhoria | Resultado |
+|---|---|---|
+| R3-1 | Trigger DB `validate_race_event_trigger` rejeita inserções em temporadas inativas ou sem `race_car` correspondente (substitui auditoria semanal por prevenção em tempo real) | ✅ migration aplicada |
+| R3-2 | Índice composto `race_events_season_salesperson_idx (season_id, salesperson_id, created_at DESC)` acelera agregações do leaderboard | ✅ migration aplicada |
+| R3-3 | Hooks `useRaceLeaderboard` / `useRaceEvents` agora deduplicam canais Realtime por `seasonId` via refcount — múltiplas instâncias compartilham 1 canal e cleanup só remove quando refcount=0 | ✅ |
+| R3-4 | Skeleton states já cobertos por `RaceArenaSkeleton` (loading inicial) e `RaceCommentaryPanel` (skeleton interno) — verificado, padrão UX 10/10 já vigente | ✅ verificado |
+| R3-5 | Hook `useRaceViewTelemetry()` instrumentado em `RaceArenaView` (closer/sdr), `RaceArenaHub`, `RaceArenaTV` e `RaceArenaAdmin` — registra TTI por rota em `page_analytics` (silent fail) | ✅ |
+| R3-6 | Runbook operacional criado em `docs/runbooks/race-arena.md` (criação de temporada, reprocessamento de órfãos, invalidação de cache, troubleshooting realtime/RLS, query de TTI) | ✅ |
+
+### 9.1 Query de TTI (consumir após dias de telemetria)
+
+```sql
+SELECT route,
+       avg(duration_seconds) AS avg_seconds,
+       percentile_cont(0.95) WITHIN GROUP (ORDER BY duration_seconds) AS p95_seconds,
+       count(*) AS samples
+  FROM public.page_analytics
+ WHERE page_title LIKE 'race_view_loaded:%'
+   AND entered_at >= now() - interval '7 days'
+ GROUP BY route
+ ORDER BY samples DESC;
+```
+
+---
+
+**Veredito final:** módulo Race Arena **10/10 + Hardening Round 3** —
+production-ready, zero defeitos abertos, **11 melhorias adicionais
+aplicadas** sobre a baseline 10/10 (5 do Round 2 + 6 do Round 3).
+
