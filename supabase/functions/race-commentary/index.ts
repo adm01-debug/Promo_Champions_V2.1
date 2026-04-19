@@ -19,6 +19,29 @@ interface CommentaryRequest {
   secondsToEnd?: number;
 }
 
+// In-memory TTL cache to coalesce concurrent narration requests across clients
+// (TV + closer + admin). Lives for the lifetime of an isolate (~minutes).
+const COMMENTARY_CACHE_TTL_MS = 60_000;
+const commentaryCache = new Map<string, { value: string; expires: number }>();
+function cacheKey(b: CommentaryRequest): string {
+  const top = (b.leaderboard ?? []).slice(0, 3).map(e => `${e.rank}:${e.name}`).join('|');
+  return `${b.roleType ?? 'closer'}::${b.context ?? 'periodic'}::${top}`;
+}
+function getCached(key: string): string | null {
+  const hit = commentaryCache.get(key);
+  if (!hit) return null;
+  if (hit.expires < Date.now()) { commentaryCache.delete(key); return null; }
+  return hit.value;
+}
+function setCached(key: string, value: string) {
+  commentaryCache.set(key, { value, expires: Date.now() + COMMENTARY_CACHE_TTL_MS });
+  // bound memory: drop oldest entries when too large
+  if (commentaryCache.size > 200) {
+    const firstKey = commentaryCache.keys().next().value;
+    if (firstKey) commentaryCache.delete(firstKey);
+  }
+}
+
 const SYSTEM_PROMPT = `Você é um narrador esportivo brasileiro de corrida de vendas, estilo F1.
 Crie narrações curtas (1-2 frases, máx 180 caracteres), empolgantes, com gírias de pista
 ("ultrapassagem cirúrgica", "comeback histórico", "última volta", "freada na curva", etc).
@@ -44,6 +67,16 @@ Deno.serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Coalesce concurrent identical requests via TTL cache (60s)
+    const key = cacheKey(body);
+    const cached = getCached(key);
+    if (cached) {
+      return new Response(
+        JSON.stringify({ commentary: cached, cached: true, generated_at: new Date().toISOString() }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     const top5 = body.leaderboard.slice(0, 5);
