@@ -7,6 +7,7 @@ export type LiveryPattern =
   | 'checkers'
   | 'dots'
   | 'pride-rainbow'
+  | 'pride-rainbow-diagonal'
   | 'pride-trans'
   | 'pride-bi';
 
