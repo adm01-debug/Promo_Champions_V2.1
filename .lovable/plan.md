@@ -1,46 +1,34 @@
 
-Plano de execução autônoma para corrigir os 4 bugs do relatório Race Arena, um por vez, até atingir 10/10.
+Todos os 4 bugs do relatório (B1, B2, B3, B5) já foram resolvidos na rodada anterior. O relatório atual em `docs/reports/race-arena-test-report.md` já marca o módulo Race Arena como **10/10 — production-ready, zero defeitos abertos**.
 
-## Sequência de execução (sem pausas, sem perguntas)
+Para continuar a busca por perfeição, proponho uma **segunda rodada de hardening** focada em pontos que não estavam no escopo original mas elevam o módulo acima do 10/10 atual.
 
-**Fix 1 — B1 (Médio): Backfill `race_scoring_rules`**
-- Migration que insere regras default para a temporada ativa "Temporada de Estreia 🏁" (closer) usando `ROLE_METRICS.closer` de `useRaceScoringRules.ts`:
-  - `sales_value`: weight 1.0, points_per_unit 0.001 (1pt por R$1.000)
-  - `markup_pct`: weight 1.0, points_per_unit 10 (1% = 10pts)
-  - `new_clients_activated`: weight 1.0, points_per_unit 50
-  - `routine_compliance`: weight 1.0, points_per_unit 5
-- Idempotente via `ON CONFLICT (season_id, metric_code) DO NOTHING`.
-- Cobre também qualquer temporada ativa SDR futura via loop sobre `race_seasons WHERE is_active = true`.
+## Plano: Race Arena Hardening Round 2
 
-**Fix 2 — B2 (Baixo): `getPresetById` respeita `DEFAULT_PRESET_ID`**
-- Em `src/components/race/raceColors.ts`, alterar fallback para:
-  ```ts
-  return RACE_CAR_PRESETS.find(p => p.id === DEFAULT_PRESET_ID) ?? RACE_CAR_PRESETS[0];
-  ```
-- Atualizar `raceColors.test.ts` (testes `getPresetById null/undefined/empty/unknown`) para esperar `DEFAULT_PRESET_ID`.
+**Melhoria 1 — Garantir temporada SDR ativa**
+- Hoje só existe temporada Closer ativa; SDRs veem empty state.
+- Criar temporada SDR default ("Temporada de Estreia SDR 🎯") via insert, com regras de scoring (`leads_qualified`, `meetings_booked`, `connect_rate`, `routine_compliance`).
 
-**Fix 3 — B3 (Baixo): `inferPresetFromColors` com tie-breaker de `secondary`**
-- Aceitar parâmetro opcional `secondary?: string`; quando vários presets compartilham `primary+style`, desempatar por `secondary` (case-insensitive); manter assinatura backward-compatible.
-- Atualizar callers se necessário (busca rápida confirma uso só em customizer).
-- Adicionar testes cobrindo o desempate.
+**Melhoria 2 — Índice único parcial em `race_seasons`**
+- Migration adicionando `UNIQUE (role_type) WHERE is_active = true` para impedir, no nível do banco, duas temporadas ativas do mesmo role (hoje só validado em código).
 
-**Fix 4 — B5 (Info): `race-commentary` retorna 200/skipped sem `LOVABLE_API_KEY`**
-- Em `supabase/functions/race-commentary/index.ts`, trocar o early-return 500 por:
-  ```ts
-  return new Response(JSON.stringify({ commentary: "", skipped: true, reason: "no_api_key" }), { status: 200, headers: ... });
-  ```
-- Atualizar `index_test.ts` para refletir o novo contrato.
+**Melhoria 3 — Rate limiting na `race-commentary`**
+- Adicionar cache em memória (Map com TTL 60s por `seasonId+context`) para evitar chamadas redundantes ao gateway de IA quando múltiplos clientes (TV + closer + admin) pedem narração simultaneamente.
 
-## Validação após cada fix
-- Fix 1: `SELECT count(*) FROM race_scoring_rules WHERE season_id = '12cba1ad-...'` → 4.
-- Fix 2/3: rodar `vitest` na suíte race; tudo verde.
-- Fix 4: rodar `supabase--test_edge_functions` em `race-commentary`; deploy.
+**Melhoria 4 — Telemetria de eventos órfãos**
+- Query de auditoria semanal: `race_events` sem `race_car` correspondente ou com `season_id` de temporada já encerrada → registrar em `race_audit_log` para o admin revisar.
 
-## Entregáveis finais
-- 1 migration SQL (Fix 1)
-- 2 arquivos editados em `src/components/race/raceColors.ts` + testes (Fix 2, 3)
-- 1 edge function + teste editados (Fix 4)
-- Atualização do `docs/reports/race-arena-test-report.md` marcando B1–B5 como ✅ resolvidos
-- Status final: módulo Race Arena **10/10**.
+**Melhoria 5 — Acessibilidade do CarPresetCard**
+- Adicionar `role="radio"` + `aria-checked` ao grid de presets (hoje usa `aria-pressed` que é semanticamente para toggle, não para seleção exclusiva). Wrapper recebe `role="radiogroup"`.
 
-Execução começa imediatamente após sua aprovação.
+**Melhoria 6 — Atualizar relatório**
+- Marcar as 5 melhorias como aplicadas e registrar status final **"10/10 + Hardening Round 2"**.
+
+## Entregáveis
+- 1 insert (temporada SDR + regras)
+- 1 migration (índice único parcial)
+- 2 arquivos editados (`race-commentary/index.ts`, `CarPresetCard.tsx` + container)
+- 1 query de auditoria documentada
+- Relatório atualizado
+
+Execução sequencial, autônoma, sem pausas, após aprovação.
