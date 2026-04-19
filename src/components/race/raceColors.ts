@@ -60,7 +60,10 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   
   
   { id: 'f1-princess-force', name: 'Princess Force', style: 'f1', primary: '#fbcfe8', secondary: '#facc15', pattern: 'stripes', accent: '#0a0a0a', emoji: '👑' },
-  { id: 'f1-sun-tzu-force', name: 'Phanter Group', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '☀️' },
+  { id: 'f1-sun-tzu-force', name: 'Sun Tzu Force', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '☀️' },
+  { id: 'f1-pai-on', name: 'Scuderia o Pai ta ON', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '👨' },
+  { id: 'f1-mae-on', name: 'Scuderia a Mãe ta ON', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '👩' },
+  { id: 'f1-phanter-group', name: 'Phanter Group', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '🐆' },
   
   
 
