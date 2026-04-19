@@ -42,6 +42,7 @@ export function CarLiveryOverlay({
       </defs>
       <g clipPath={`url(#${clipId})`}>
         {pattern === 'pride-rainbow' && <PrideRainbow x={x} y={y} w={bodyW} h={bodyH} />}
+        {pattern === 'pride-rainbow-diagonal' && <PrideRainbowDiagonal x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'pride-trans' && <PrideTrans x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'pride-bi' && <PrideBi x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'flames' && <Flames x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? '#fbbf24'} secondary={secondary} />}
@@ -62,6 +63,28 @@ function PrideRainbow({ x, y, w, h }: { x: number; y: number; w: number; h: numb
     <g opacity={0.92}>
       {colors.map((c, i) => (
         <rect key={c} x={x} y={y + i * stripeH} width={w} height={stripeH + 0.3} fill={c} />
+      ))}
+    </g>
+  );
+}
+
+function PrideRainbowDiagonal({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
+  const colors = ['#e40303', '#ff8c00', '#ffed00', '#008026', '#004dff', '#750787'];
+  // Listras diagonais cobrindo o corpo (rotacionadas 25°)
+  const stripeW = (w * 1.6) / colors.length;
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  return (
+    <g opacity={0.92} transform={`rotate(-25 ${cx} ${cy})`}>
+      {colors.map((c, i) => (
+        <rect
+          key={c}
+          x={x - w * 0.3 + i * stripeW}
+          y={y - h * 0.5}
+          width={stripeW + 0.4}
+          height={h * 2}
+          fill={c}
+        />
       ))}
     </g>
   );
