@@ -117,7 +117,7 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
         <div>
           <Label>Modelo & Pintura</Label>
           <ScrollArea className="mt-1 h-72 rounded-md border p-2">
-            <div className="grid grid-cols-4 gap-2">
+            <div role="radiogroup" aria-label="Modelo e pintura do carro" className="grid grid-cols-4 gap-2">
               {RACE_CAR_PRESETS.map((p) => (
                 <CarPresetCard
                   key={p.id}

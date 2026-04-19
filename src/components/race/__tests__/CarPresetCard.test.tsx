@@ -24,14 +24,15 @@ describe('CarPresetCard', () => {
     expect(onSelect).toHaveBeenCalledWith(preset.id);
   });
 
-  it('reflects selected state via aria-pressed', () => {
+  it('reflects selected state via aria-checked (radio semantics)', () => {
     const preset = RACE_CAR_PRESETS[1];
     const { rerender } = render(
       <CarPresetCard preset={preset} selected={false} carNumber={1} onSelect={() => {}} />
     );
-    expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
+    const btn = screen.getByRole('radio');
+    expect(btn).toHaveAttribute('aria-checked', 'false');
     rerender(<CarPresetCard preset={preset} selected={true} carNumber={1} onSelect={() => {}} />);
-    expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('radio')).toHaveAttribute('aria-checked', 'true');
   });
 
   it('renders SVG car preview', () => {
