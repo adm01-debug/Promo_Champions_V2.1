@@ -56,14 +56,6 @@ export function CarPresetCard({ preset, selected, carNumber, onSelect }: CarPres
         <span className="truncate text-[10px] font-semibold leading-tight">{preset.name}</span>
       </div>
 
-      {preset.pride && (
-        <Badge
-          variant="secondary"
-          className="absolute left-1 top-1 h-4 px-1 py-0 text-[8px] font-bold uppercase tracking-wider"
-        >
-          Pride
-        </Badge>
-      )}
     </button>
   );
 }
