@@ -1,2 +1,2 @@
 
-Trocar `secondary` e `accent` de `#ffffff` para azul (`#3b82f6`) no preset `alpine-azure` em `src/components/race/raceColors.ts`. Manter rosa pink como primária.
+Excluir o preset "Phanter Group" de `src/components/race/raceColors.ts` (provavelmente id contendo "phanter"/"panther"). Verificar arquivo e remover apenas essa entrada do array `RACE_CAR_PRESETS`.
