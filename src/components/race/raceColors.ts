@@ -42,7 +42,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   { id: 'full-energy', name: 'Full Energy', style: 'f1', primary: '#ffd60a', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' },
   { id: 'monster', name: 'Monster League', style: 'f1', primary: '#0a0a0a', secondary: '#39ff14', pattern: 'stripes', accent: '#39ff14', emoji: '👹' },
   { id: 'pink', name: 'Pink Leagues', style: 'f1', primary: '#ff10f0', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '💗' },
-  { id: 'black-power', name: 'Scudeira Black Power', style: 'f1', primary: '#0a0a0a', secondary: '#1a1a1a', pattern: 'solid', emoji: '✊🏿' },
+  { id: 'black-power', name: 'Scuderia Black Power', style: 'f1', primary: '#0a0a0a', secondary: '#1a1a1a', pattern: 'solid', emoji: '✊🏿' },
   { id: 'scuderia-alpha', name: 'Scuderia Alpha', style: 'f1', primary: '#0a0a0a', secondary: '#00d4ff', pattern: 'stripes', accent: '#00d4ff', emoji: '🔵' },
   { id: 'shadow-force', name: 'Shadow Force', style: 'f1', primary: '#0a0a0a', secondary: '#7f1d1d', pattern: 'stripes', accent: '#7f1d1d', emoji: '🖤' },
 
@@ -60,7 +60,10 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   
   
   { id: 'f1-princess-force', name: 'Princess Force', style: 'f1', primary: '#fbcfe8', secondary: '#facc15', pattern: 'stripes', accent: '#0a0a0a', emoji: '👑' },
-  { id: 'f1-sun-tzu-force', name: 'Phanter Group', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '☀️' },
+  { id: 'f1-sun-tzu-force', name: 'Sun Tzu Force', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '☀️' },
+  { id: 'f1-pai-on', name: 'Scuderia o Pai ta ON', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '👨' },
+  { id: 'f1-mae-on', name: 'Scuderia a Mãe ta ON', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '👩' },
+  { id: 'f1-phanter-group', name: 'Phanter Group', style: 'f1', primary: '#0a0a0a', secondary: '#b8860b', pattern: 'stripes', accent: '#b8860b', emoji: '🐆' },
   
   
 
