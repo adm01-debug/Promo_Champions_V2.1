@@ -70,7 +70,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   { id: 'pride-rainbow', name: 'Pride Force', style: 'f1', primary: '#ef4444', secondary: '#ffffff', pattern: 'pride-rainbow', emoji: '🏳️‍🌈', pride: true },
   
   { id: 'pride-bi', name: 'Scuderia Pride', style: 'stock', primary: '#ef4444', secondary: '#ffffff', pattern: 'pride-rainbow', emoji: '💗', pride: true },
-  { id: 'gold-fury', name: 'Gold Fury', style: 'f1', primary: '#d4af37', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '🏆' },
+  { id: 'gold-fury', name: 'Scuderia Gold Fury', style: 'f1', primary: '#d4af37', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '🏆' },
 ] as const;
 
 export const DEFAULT_PRESET_ID = 'ferrari-scuderia';
