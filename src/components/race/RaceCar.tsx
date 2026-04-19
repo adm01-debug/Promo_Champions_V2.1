@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { CarLiveryOverlay } from './CarLiveryOverlay';
+import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
 
 interface RaceCarProps {
@@ -33,6 +35,8 @@ interface RaceCarProps {
   liveryUid?: string;
   /** Cor da escuderia/equipe — renderizada como faixa lateral (stripe) sutil. */
   teamColor?: string | null;
+  /** Nome do piloto exibido em "capacete" flutuante após hover persistente. */
+  pilotName?: string;
 }
 
 /**
@@ -59,7 +63,26 @@ export function RaceCar({
   liveryAccent,
   liveryUid,
   teamColor = null,
+  pilotName,
 }: RaceCarProps) {
+  const [helmetVisible, setHelmetVisible] = useState(false);
+  const hoverTimerRef = useRef<number | null>(null);
+  const tooltipId = `helmet-tip-${number}`;
+
+  useEffect(() => () => {
+    if (hoverTimerRef.current != null) window.clearTimeout(hoverTimerRef.current);
+  }, []);
+
+  const onEnter = () => {
+    if (!pilotName || rank === undefined) return;
+    if (hoverTimerRef.current != null) window.clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = window.setTimeout(() => setHelmetVisible(true), 600);
+  };
+  const onLeave = () => {
+    if (hoverTimerRef.current != null) window.clearTimeout(hoverTimerRef.current);
+    setHelmetVisible(false);
+  };
+
   const patternFillId =
     pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
 
@@ -75,7 +98,21 @@ export function RaceCar({
   const wheelOffsetY = bodyH / 2 + 1;
 
   return (
-    <g transform={`scale(${scale})`}>
+    <g
+      transform={`scale(${scale})`}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      aria-describedby={pilotName ? tooltipId : undefined}
+    >
+      {pilotName && rank !== undefined && (
+        <CarHelmetTooltip
+          id={tooltipId}
+          visible={helmetVisible}
+          name={pilotName}
+          rank={rank}
+          color={primaryColor}
+        />
+      )}
       {/* ===== Boost trail ===== */}
       {showTrail && (
         <>

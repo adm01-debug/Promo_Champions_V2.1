@@ -7,6 +7,7 @@ import { SeasonsManagerTable } from '@/components/race/admin/SeasonsManagerTable
 import { SeasonRulesPanel } from '@/components/race/admin/SeasonRulesPanel';
 import { GarageAdminTable } from '@/components/race/admin/GarageAdminTable';
 import { RaceAuditFeed } from '@/components/race/admin/RaceAuditFeed';
+import { OverlayTelemetryPanel } from '@/components/race/admin/OverlayTelemetryPanel';
 import { RaceBadgeShowcase } from '@/components/race';
 
 export default function RaceArenaAdmin() {
@@ -48,12 +49,14 @@ export default function RaceArenaAdmin() {
             <TabsTrigger value="rules">🎯 Regras</TabsTrigger>
             <TabsTrigger value="garage">🚗 Garagem</TabsTrigger>
             <TabsTrigger value="badges">🏆 Badges</TabsTrigger>
+            <TabsTrigger value="telemetry">📊 Telemetria UI</TabsTrigger>
             <TabsTrigger value="audit">📜 Auditoria</TabsTrigger>
           </TabsList>
           <TabsContent value="seasons" className="mt-4"><SeasonsManagerTable /></TabsContent>
           <TabsContent value="rules" className="mt-4"><SeasonRulesPanel /></TabsContent>
           <TabsContent value="garage" className="mt-4"><GarageAdminTable /></TabsContent>
           <TabsContent value="badges" className="mt-4"><RaceBadgeShowcase /></TabsContent>
+          <TabsContent value="telemetry" className="mt-4"><OverlayTelemetryPanel /></TabsContent>
           <TabsContent value="audit" className="mt-4"><RaceAuditFeed /></TabsContent>
         </Tabs>
       </div>
