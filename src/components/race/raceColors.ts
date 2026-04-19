@@ -47,7 +47,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   { id: 'shadow-force', name: 'Shadow Force', style: 'f1', primary: '#0a0a0a', secondary: '#7f1d1d', pattern: 'stripes', accent: '#7f1d1d', emoji: '🖤' },
 
   // ===== Stock / NASCAR =====
-  { id: 'nascar-thunder', name: 'NASCAR Thunder', style: 'stock', primary: '#dc2626', secondary: '#0a0a0a', pattern: 'flames', accent: '#fbbf24', emoji: '🔥' },
+  
   { id: 'stock-lightning', name: 'Stock Lightning', style: 'stock', primary: '#facc15', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' },
   { id: 'f1-fire-force', name: 'Fire Force', style: 'f1', primary: '#dc2626', secondary: '#0a0a0a', pattern: 'flames', accent: '#fbbf24', emoji: '🔥' },
   
