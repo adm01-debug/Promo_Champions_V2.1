@@ -1,2 +1,2 @@
 
-Renomear preset "Rocket Man" → "Rocket Man Group" em `src/components/race/raceColors.ts`.
+Excluir o preset "Kart Toad" de `src/components/race/raceColors.ts`.
