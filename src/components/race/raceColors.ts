@@ -48,7 +48,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
 
   // ===== Stock / NASCAR =====
   
-  { id: 'stock-lightning', name: 'Stock Lightning', style: 'stock', primary: '#facc15', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' },
+  
   { id: 'f1-fire-force', name: 'Fire Force', style: 'f1', primary: '#dc2626', secondary: '#0a0a0a', pattern: 'flames', accent: '#fbbf24', emoji: '🔥' },
   
   { id: 'stock-forest', name: 'Stock Forest', style: 'stock', primary: '#15803d', secondary: '#ffffff', pattern: 'solid', emoji: '🌲' },
