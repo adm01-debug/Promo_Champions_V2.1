@@ -16,6 +16,7 @@ import { useSessionDuration } from '@/hooks/race/useSessionDuration';
 import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
 import { DailyBriefingModal } from '@/components/race/DailyBriefingModal';
 import { NextRaceActionCard } from '@/components/race/NextRaceActionCard';
+import { RacePanelErrorBoundary } from '@/components/race/RacePanelErrorBoundary';
 import { RaceCalmProvider } from '@/contexts/RaceCalmContext';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -135,7 +136,9 @@ export default function RaceArenaHub() {
         <meta name="description" content="Hub central da Race Arena. Escolha entre a corrida dos Closers ou dos SDRs e acompanhe o ranking ao vivo." />
       </Helmet>
 
-      <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} />
+      <RacePanelErrorBoundary panelName="Briefing diário" fallback={null}>
+        <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} />
+      </RacePanelErrorBoundary>
 
       <div className="container mx-auto p-4 space-y-4">
         <header className="flex flex-wrap items-center justify-between gap-3">
@@ -154,7 +157,9 @@ export default function RaceArenaHub() {
           )}
         </header>
 
-        <NextRaceActionCard salespersonId={myCar?.salesperson_id} />
+        <RacePanelErrorBoundary panelName="Próxima ação">
+          <NextRaceActionCard salespersonId={myCar?.salesperson_id} />
+        </RacePanelErrorBoundary>
 
         {career && career.summary.total_seasons > 0 && (
           <Link
@@ -187,9 +192,15 @@ export default function RaceArenaHub() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {ROLES.map((cfg, i) => <RoleCard key={cfg.role} cfg={cfg} index={i} />)}
+            {ROLES.map((cfg, i) => (
+              <RacePanelErrorBoundary key={cfg.role} panelName={cfg.title}>
+                <RoleCard cfg={cfg} index={i} />
+              </RacePanelErrorBoundary>
+            ))}
           </div>
-          <ChampionsHistoryPanel className="lg:col-span-1" />
+          <RacePanelErrorBoundary panelName="Histórico de campeões">
+            <ChampionsHistoryPanel className="lg:col-span-1" />
+          </RacePanelErrorBoundary>
         </div>
       </div>
     </RaceCalmProvider>
