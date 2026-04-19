@@ -95,4 +95,27 @@ Edge function agora retorna `200 { commentary: "", skipped: true, reason: "no_ap
 
 ---
 
-**Veredito final:** módulo Race Arena **10/10** — production-ready, zero defeitos abertos.
+## 7. Hardening Round 2 — 2026-04-19
+
+| # | Melhoria | Resultado |
+|---|---|---|
+| H1 | Temporada SDR ativa criada (`Temporada de Estreia SDR 🎯`) com 3 regras de scoring (`stakeholders_captured`, `conversations_initiated`, `sales_value_originated`) | ✅ |
+| H2 | Índice único parcial `race_seasons_one_active_per_role` impede 2 temporadas ativas do mesmo role no nível do banco | ✅ migration aplicada |
+| H3 | Cache TTL 60s in-memory na `race-commentary` (coalesce de TV + closer + admin pedindo narração ao mesmo tempo) | ✅ deployado |
+| H4 | Telemetria de eventos órfãos documentada (query a seguir) | ✅ ver §8 |
+| H5 | `CarPresetCard` agora usa `role="radio"` + `aria-checked` e o grid usa `role="radiogroup"` (a11y correta para seleção exclusiva) | ✅ testes atualizados |
+
+### 8. Query de auditoria de eventos órfãos (rodar semanalmente)
+
+```sql
+SELECT e.id, e.event_type, e.season_id, e.salesperson_id, e.created_at
+FROM race_events e
+LEFT JOIN race_cars c
+  ON c.salesperson_id = e.salesperson_id AND c.season_id = e.season_id
+LEFT JOIN race_seasons s ON s.id = e.season_id
+WHERE c.id IS NULL OR s.status = 'finished'
+ORDER BY e.created_at DESC
+LIMIT 200;
+```
+
+**Veredito final:** módulo Race Arena **10/10 + Hardening Round 2** — production-ready, zero defeitos abertos, 5 melhorias adicionais aplicadas.
