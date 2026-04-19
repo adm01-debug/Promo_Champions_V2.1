@@ -1,8 +1,10 @@
 
-Adicionar novo preset F1 "Pink" em `src/components/race/raceColors.ts`, no bloco F1 (após `monster`):
+Usuário quer inverter as cores do preset "Pink": carro **rosa neon como base** e **detalhes em preto** (atualmente está preto base + rosa nas listras).
+
+Alterar em `src/components/race/raceColors.ts` o preset `pink`:
 
 ```ts
-{ id: 'pink', name: 'Pink', style: 'f1', primary: '#0a0a0a', secondary: '#ff10f0', pattern: 'stripes', accent: '#ff10f0', emoji: '💗' }
+{ id: 'pink', name: 'Pink', style: 'f1', primary: '#ff10f0', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '💗' }
 ```
 
-Preto `#0a0a0a` base + rosa neon `#ff10f0` nas listras/accent. Mantém consistência da família neon-on-black (Black Thunder, Girl Force, The Panther, Monster). Zero migração SQL.
+Rosa neon `#ff10f0` como cor primária (corpo) + preto `#0a0a0a` nas listras/accent. Zero migração SQL.
