@@ -60,14 +60,14 @@ describe('raceColors — RACE_CAR_PRESETS', () => {
 });
 
 describe('raceColors — getPresetById', () => {
-  it('returns first preset when id is null/undefined/empty', () => {
-    expect(getPresetById(null)).toBe(RACE_CAR_PRESETS[0]);
-    expect(getPresetById(undefined)).toBe(RACE_CAR_PRESETS[0]);
-    expect(getPresetById('')).toBe(RACE_CAR_PRESETS[0]);
+  it('returns DEFAULT_PRESET_ID preset when id is null/undefined/empty', () => {
+    expect(getPresetById(null).id).toBe(DEFAULT_PRESET_ID);
+    expect(getPresetById(undefined).id).toBe(DEFAULT_PRESET_ID);
+    expect(getPresetById('').id).toBe(DEFAULT_PRESET_ID);
   });
 
-  it('returns first preset for unknown id (fallback)', () => {
-    expect(getPresetById('does-not-exist').id).toBe(RACE_CAR_PRESETS[0].id);
+  it('returns DEFAULT_PRESET_ID preset for unknown id (fallback)', () => {
+    expect(getPresetById('does-not-exist').id).toBe(DEFAULT_PRESET_ID);
   });
 
   it.each(RACE_CAR_PRESETS.map((p) => p.id))(
@@ -108,6 +108,23 @@ describe('raceColors — inferPresetFromColors', () => {
     const p = RACE_CAR_PRESETS[0];
     const r = inferPresetFromColors(p.primary.toUpperCase(), p.style);
     expect(r.primary.toLowerCase()).toBe(p.primary.toLowerCase());
+  });
+
+  it('uses secondary as tie-breaker when multiple presets share primary+style', () => {
+    // 'power-girl' shares primary #0a0a0a + f1 with many; secondary #ff1493 disambiguates
+    const r = inferPresetFromColors('#0a0a0a', 'f1', '#ff1493');
+    expect(r.id).toBe('power-girl');
+  });
+
+  it('tie-breaker is case-insensitive on secondary', () => {
+    const r = inferPresetFromColors('#0a0a0a', 'f1', '#FF1493');
+    expect(r.id).toBe('power-girl');
+  });
+
+  it('falls back to first candidate when secondary tie-breaker has no match', () => {
+    const r = inferPresetFromColors('#0a0a0a', 'f1', '#abcdef');
+    expect(r.primary.toLowerCase()).toBe('#0a0a0a');
+    expect(r.style).toBe('f1');
   });
 
   // Fuzz: 1000 random calls never throw and always return a valid preset
