@@ -1,10 +1,8 @@
 
-Adicionar novo preset F1 "Black Thunder" em `src/components/race/raceColors.ts`:
+Adicionar novo preset F1 "Power Girl" em `src/components/race/raceColors.ts`, no bloco F1 (após `black-thunder`):
 
 ```ts
-{ id: 'black-thunder', name: 'Black Thunder', style: 'f1', primary: '#0a0a0a', secondary: '#39ff14', pattern: 'stripes', accent: '#39ff14', emoji: '⚡' }
+{ id: 'power-girl', name: 'Power Girl', style: 'f1', primary: '#0a0a0a', secondary: '#ff1493', pattern: 'stripes', accent: '#ff1493', emoji: '💖' }
 ```
 
-Inserir no final do bloco F1 (após `alpine-azure`). Verde neon `#39ff14` como secundária + accent nas listras sobre o preto. Mantém `RACE_CAR_PRESETS` ordenado por categoria.
-
-Sem outras mudanças. Zero migração SQL.
+Preto `#0a0a0a` como base + rosa neon `#ff1493` nas listras/accent. Mesmo padrão visual do Black Thunder, mantendo consistência. Zero migração SQL.
