@@ -33,6 +33,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   { id: 'lotus-classic', name: 'Lotus Classic', style: 'f1', primary: '#0a0a0a', secondary: '#eab308', pattern: 'stripes', accent: '#eab308', emoji: '🖤' },
   { id: 'alpine-azure', name: 'Alpine Azure', style: 'f1', primary: '#1e40af', secondary: '#ec4899', pattern: 'solid', emoji: '🩵' },
   { id: 'black-thunder', name: 'Black Thunder', style: 'f1', primary: '#0a0a0a', secondary: '#39ff14', pattern: 'stripes', accent: '#39ff14', emoji: '⚡' },
+  { id: 'power-girl', name: 'Power Girl', style: 'f1', primary: '#0a0a0a', secondary: '#ff1493', pattern: 'stripes', accent: '#ff1493', emoji: '💖' },
 
   // ===== Stock / NASCAR =====
   { id: 'nascar-thunder', name: 'NASCAR Thunder', style: 'stock', primary: '#dc2626', secondary: '#0a0a0a', pattern: 'flames', accent: '#fbbf24', emoji: '🔥' },
