@@ -126,6 +126,25 @@ export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500
                   {current.title}
                 </h2>
                 <p className="text-base text-muted-foreground">{current.subtitle}</p>
+                {slide === slides.length - 1 && whatIf && whatIf.length > 0 && (
+                  <div className="mt-5 rounded-xl border border-primary/30 bg-primary/5 p-4 text-left space-y-2">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-primary flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3" /> E se você…
+                    </p>
+                    <div className="space-y-1.5">
+                      {whatIf.map((s) => (
+                        <div key={s.label} className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">
+                            <span className="font-semibold text-foreground">{s.label}</span> · +{fmtCompact(s.delta)} pts
+                          </span>
+                          <span className={`tabular-nums font-bold ${s.positionsGained > 0 ? 'text-success' : 'text-muted-foreground'}`}>
+                            {s.positionsGained > 0 ? `↑${s.positionsGained}` : '—'} → P{s.newRank}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
 
