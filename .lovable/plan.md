@@ -1,10 +1,8 @@
 
-Aplicar as 3 correções em `src/components/race/raceColors.ts`:
+O preset "The Panther" (provavelmente id `panther` ou similar) precisa ser renomeado para "Phanter Group". Preciso localizar o id exato em `src/components/race/raceColors.ts` antes de aplicar.
 
-1. Reverter `f1-sun-tzu-force` → `name: 'Sun Tzu Force'` (mantém cores preto/dourado atuais).
-2. Adicionar 3 novos presets F1 com novos ids:
-   - `f1-pai-on` → "Scuderia o Pai ta ON"
-   - `f1-mae-on` → "Scuderia a Mãe ta ON"
-   - `f1-phanter-group` → "Phanter Group"
-   - Todos com style `f1`, primary `#0a0a0a`, secondary/accent `#b8860b`, pattern `stripes`.
-3. Corrigir typo no preset `black-power`: `Scudeira Black Power` → `Scuderia Black Power`.
+Plano:
+1. Localizar o preset com `name: 'The Panther'` em `src/components/race/raceColors.ts`.
+2. Renomear `name` para `'Phanter Group'`, mantendo id, cores, style e demais propriedades intactos.
+
+Observação: já existe um preset `f1-phanter-group` (estilo F1, preto/dourado). Este é um preset diferente (estilo Panther, laranja/preto na imagem). Serão dois presets distintos com o mesmo `name` exibido — se preferir nomes únicos, me avise para diferenciar (ex: "Phanter Group GT").
