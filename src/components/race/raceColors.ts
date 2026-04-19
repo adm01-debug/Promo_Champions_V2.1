@@ -52,7 +52,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   
   { id: 'stock-forest', name: 'Stock Forest', style: 'stock', primary: '#15803d', secondary: '#ffffff', pattern: 'solid', emoji: '🌲' },
   { id: 'stock-midnight', name: 'Scuderia Midnight', style: 'stock', primary: '#1e1b4b', secondary: '#a855f7', pattern: 'stripes', accent: '#a855f7', emoji: '🌙' },
-  { id: 'stock-sunset', name: 'Stock Sunset', style: 'stock', primary: '#f97316', secondary: '#ec4899', pattern: 'stripes', accent: '#ec4899', emoji: '🌅' },
+  
 
   // ===== Kart =====
   
