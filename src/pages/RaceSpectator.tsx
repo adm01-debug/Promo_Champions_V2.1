@@ -31,7 +31,7 @@ export default function RaceSpectator() {
       const { data } = await supabase
         .from('race_spectator_view')
         .select('car_id, salesperson_id, salesperson_name, avatar_url, car_number, primary_color, total_sales, progress')
-        .eq('season_id', seasonId);
+        .eq('season_id', seasonId as string);
       if (cancelled) return;
       const sorted = (data ?? []).sort((a, b) => Number(b.progress) - Number(a.progress));
       setRows(sorted as SpectatorRow[]);
