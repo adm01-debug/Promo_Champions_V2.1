@@ -1,8 +1,8 @@
 
-Adicionar novo preset F1 "Full Energy" em `src/components/race/raceColors.ts`, no bloco F1 (após `the-panther`):
+Adicionar novo preset F1 "Monster" em `src/components/race/raceColors.ts`, no bloco F1 (após `full-energy`):
 
 ```ts
-{ id: 'full-energy', name: 'Full Energy', style: 'f1', primary: '#ffd60a', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' }
+{ id: 'monster', name: 'Monster', style: 'f1', primary: '#0a0a0a', secondary: '#39ff14', pattern: 'stripes', accent: '#39ff14', emoji: '👹' }
 ```
 
-Amarelo vibrante `#ffd60a` base + preto `#0a0a0a` nas listras/accent. Estilo "abelha/hornet" alto-contraste. Zero migração SQL.
+Preto `#0a0a0a` base + verde neon `#39ff14` nas listras/accent. Mantém consistência da família neon-on-black (Black Thunder, Girl Force, Rocket Man, The Panther). Zero migração SQL.
