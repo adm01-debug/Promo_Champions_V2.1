@@ -70,20 +70,24 @@ function PrideRainbow({ x, y, w, h }: { x: number; y: number; w: number; h: numb
 
 function PrideRainbowDiagonal({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
   const colors = ['#e40303', '#ff8c00', '#ffed00', '#008026', '#004dff', '#750787'];
-  // Listras diagonais cobrindo o corpo (rotacionadas 25°)
-  const stripeW = (w * 1.6) / colors.length;
+  // Listras diagonais finas e repetidas cobrindo o corpo (rotacionadas -25°)
+  const stripeW = 1.6;
+  const gap = 1.2;
+  const period = stripeW + gap;
   const cx = x + w / 2;
   const cy = y + h / 2;
+  const totalW = w * 2;
+  const count = Math.ceil(totalW / period);
   return (
-    <g opacity={0.92} transform={`rotate(-25 ${cx} ${cy})`}>
-      {colors.map((c, i) => (
+    <g opacity={0.95} transform={`rotate(-25 ${cx} ${cy})`}>
+      {Array.from({ length: count }).map((_, i) => (
         <rect
-          key={c}
-          x={x - w * 0.3 + i * stripeW}
+          key={i}
+          x={x - w * 0.5 + i * period}
           y={y - h * 0.5}
-          width={stripeW + 0.4}
+          width={stripeW}
           height={h * 2}
-          fill={c}
+          fill={colors[i % colors.length]}
         />
       ))}
     </g>
