@@ -68,6 +68,28 @@ function PrideRainbow({ x, y, w, h }: { x: number; y: number; w: number; h: numb
   );
 }
 
+function PrideRainbowDiagonal({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
+  const colors = ['#e40303', '#ff8c00', '#ffed00', '#008026', '#004dff', '#750787'];
+  // Listras diagonais cobrindo o corpo (rotacionadas 25°)
+  const stripeW = (w * 1.6) / colors.length;
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  return (
+    <g opacity={0.92} transform={`rotate(-25 ${cx} ${cy})`}>
+      {colors.map((c, i) => (
+        <rect
+          key={c}
+          x={x - w * 0.3 + i * stripeW}
+          y={y - h * 0.5}
+          width={stripeW + 0.4}
+          height={h * 2}
+          fill={c}
+        />
+      ))}
+    </g>
+  );
+}
+
 function PrideTrans({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
   const colors = ['#5BCEFA', '#F5A9B8', '#FFFFFF', '#F5A9B8', '#5BCEFA'];
   const stripeH = h / colors.length;
