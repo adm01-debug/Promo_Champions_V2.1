@@ -42,6 +42,7 @@ export function CarLiveryOverlay({
       </defs>
       <g clipPath={`url(#${clipId})`}>
         {pattern === 'pride-rainbow' && <PrideRainbow x={x} y={y} w={bodyW} h={bodyH} />}
+        {pattern === 'pride-rainbow-diagonal' && <PrideRainbowDiagonal x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'pride-trans' && <PrideTrans x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'pride-bi' && <PrideBi x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'flames' && <Flames x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? '#fbbf24'} secondary={secondary} />}
