@@ -51,7 +51,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   
   { id: 'f1-fire-force', name: 'Fire Force', style: 'f1', primary: '#dc2626', secondary: '#0a0a0a', pattern: 'flames', accent: '#fbbf24', emoji: '🔥' },
   
-  { id: 'stock-forest', name: 'Stock Forest', style: 'stock', primary: '#15803d', secondary: '#ffffff', pattern: 'solid', emoji: '🌲' },
+  
   { id: 'cooper-league', name: 'Cooper League', style: 'f1', primary: '#15803d', secondary: '#ffffff', pattern: 'stripes', accent: '#ffffff', emoji: '🌲' },
   { id: 'religion-force', name: 'Religion Force', style: 'f1', primary: '#ffffff', secondary: '#d4af37', pattern: 'stripes', accent: '#d4af37', emoji: '✝️' },
   
