@@ -1,2 +1,2 @@
 
-A imagem mostra o carro ainda com nome antigo "A MÃE TA ON". Preciso verificar o estado atual do preset `f1-mae-on` em `raceColors.ts`.
+Trocar `secondary` e `accent` de `#ffffff` para azul (`#3b82f6`) no preset `alpine-azure` em `src/components/race/raceColors.ts`. Manter rosa pink como primária.
