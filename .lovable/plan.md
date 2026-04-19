@@ -1,2 +1,2 @@
 
-Excluir o preset "Stock Patriot" de `src/components/race/raceColors.ts`.
+Renomear o preset "Black Thunder" para "Black Thunder League" em `src/components/race/raceColors.ts`.
