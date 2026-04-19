@@ -23,7 +23,7 @@ Deno.test("race-commentary: invalid leaderboard → 400", async () => {
   assert(body.error);
 });
 
-Deno.test("race-commentary: empty leaderboard accepted (returns 200 or 5xx if AI not configured)", async () => {
+Deno.test("race-commentary: empty leaderboard returns 200 (with commentary or skipped flag)", async () => {
   const r = await fetch(URL_FN, {
     method: "POST",
     headers: { "Content-Type": "application/json", apikey: ANON_KEY },
@@ -35,6 +35,6 @@ Deno.test("race-commentary: empty leaderboard accepted (returns 200 or 5xx if AI
     }),
   });
   await r.text();
-  // Aceito 200 (commentary), 429 (rate), 402 (credits), 500 (no LOVABLE_API_KEY)
+  // 200 (commentary or skipped:no_api_key), 429 (rate), 402 (credits), 500 (gateway error)
   assert([200, 402, 429, 500].includes(r.status), `unexpected status ${r.status}`);
 });

@@ -61,23 +61,35 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
 export const DEFAULT_PRESET_ID = 'ferrari-scuderia';
 
 export function getPresetById(id: string | null | undefined): RaceCarPreset {
-  if (!id) return RACE_CAR_PRESETS[0];
-  return RACE_CAR_PRESETS.find((p) => p.id === id) ?? RACE_CAR_PRESETS[0];
+  const fallback =
+    RACE_CAR_PRESETS.find((p) => p.id === DEFAULT_PRESET_ID) ?? RACE_CAR_PRESETS[0];
+  if (!id) return fallback;
+  return RACE_CAR_PRESETS.find((p) => p.id === id) ?? fallback;
 }
 
 /**
  * Inferência retrocompatível: mapeia carros antigos (sem preset_id)
  * para o preset visualmente mais próximo via cor + estilo.
+ * Quando vários presets compartilham `primary+style`, `secondary` (opcional)
+ * é usado como tie-breaker case-insensitive.
  */
 export function inferPresetFromColors(
   primary: string,
   style: CarStyle,
+  secondary?: string,
 ): RaceCarPreset {
-  const match = RACE_CAR_PRESETS.find(
-    (p) => p.style === style && p.primary.toLowerCase() === primary.toLowerCase(),
+  const p = primary.toLowerCase();
+  const s = secondary?.toLowerCase();
+  const candidates = RACE_CAR_PRESETS.filter(
+    (preset) => preset.style === style && preset.primary.toLowerCase() === p,
   );
-  if (match) return match;
-  const sameStyle = RACE_CAR_PRESETS.find((p) => p.style === style);
+  if (candidates.length === 1) return candidates[0];
+  if (candidates.length > 1 && s) {
+    const tie = candidates.find((c) => c.secondary.toLowerCase() === s);
+    if (tie) return tie;
+  }
+  if (candidates.length > 0) return candidates[0];
+  const sameStyle = RACE_CAR_PRESETS.find((preset) => preset.style === style);
   return sameStyle ?? RACE_CAR_PRESETS[0];
 }
 

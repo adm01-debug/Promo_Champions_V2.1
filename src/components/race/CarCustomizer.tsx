@@ -33,7 +33,7 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
       setNickname(car.nickname ?? '');
       const inferred = car.preset_id
         ? getPresetById(car.preset_id).id
-        : inferPresetFromColors(car.primary_color, car.car_style).id;
+        : inferPresetFromColors(car.primary_color, car.car_style, car.secondary_color).id;
       setPresetId(inferred);
     }
   }, [car, open]);
