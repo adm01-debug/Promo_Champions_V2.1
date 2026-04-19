@@ -71,6 +71,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
 
   // ===== Pride / Inclusivos =====
   { id: 'pride-rainbow', name: 'Pride Force', style: 'f1', primary: '#ef4444', secondary: '#ffffff', pattern: 'pride-rainbow', emoji: '🏳️‍🌈', pride: true },
+  { id: 'scuderia-pride', name: 'Scuderia Pride', style: 'f1', primary: '#0a0a0a', secondary: '#ffffff', pattern: 'pride-rainbow-diagonal', emoji: '🌈', pride: true },
   
   
   { id: 'gold-fury', name: 'Scuderia Gold Fury', style: 'f1', primary: '#d4af37', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '🏆' },
