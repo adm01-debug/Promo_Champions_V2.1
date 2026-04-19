@@ -60,6 +60,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   
   
   { id: 'f1-princess-force', name: 'Princess Force', style: 'f1', primary: '#fbcfe8', secondary: '#facc15', pattern: 'stripes', accent: '#0a0a0a', emoji: '👑' },
+  { id: 'f1-sun-tzu-force', name: 'Sun Tzu Force', style: 'f1', primary: '#facc15', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '☀️' },
   
   
 
