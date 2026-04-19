@@ -44,6 +44,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   { id: 'pink', name: 'Pink Leagues', style: 'f1', primary: '#ff10f0', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '💗' },
   { id: 'black-power', name: 'Black Power', style: 'f1', primary: '#0a0a0a', secondary: '#1a1a1a', pattern: 'solid', emoji: '✊🏿' },
   { id: 'scuderia-alpha', name: 'Scuderia Alpha', style: 'f1', primary: '#0a0a0a', secondary: '#00d4ff', pattern: 'stripes', accent: '#00d4ff', emoji: '🔵' },
+  { id: 'shadow-force', name: 'Shadow Force', style: 'f1', primary: '#0a0a0a', secondary: '#7f1d1d', pattern: 'stripes', accent: '#7f1d1d', emoji: '🖤' },
 
   // ===== Stock / NASCAR =====
   { id: 'nascar-thunder', name: 'NASCAR Thunder', style: 'stock', primary: '#dc2626', secondary: '#0a0a0a', pattern: 'flames', accent: '#fbbf24', emoji: '🔥' },
