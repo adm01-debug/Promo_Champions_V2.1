@@ -1,2 +1,2 @@
 
-Excluir o preset "Phanter Group" de `src/components/race/raceColors.ts` (provavelmente id contendo "phanter"/"panther"). Verificar arquivo e remover apenas essa entrada do array `RACE_CAR_PRESETS`.
+Excluir o preset "NASCAR Thunder" de `src/components/race/raceColors.ts`. Localizar entrada por nome/emoji 🔥 e remover apenas essa linha do array `RACE_CAR_PRESETS`.
