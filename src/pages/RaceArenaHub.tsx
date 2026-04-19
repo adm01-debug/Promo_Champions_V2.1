@@ -151,7 +151,7 @@ export default function RaceArenaHub() {
       </Helmet>
 
       <RacePanelErrorBoundary panelName="Briefing diário" fallback={null}>
-        <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} />
+        <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} whatIf={whatIf} />
       </RacePanelErrorBoundary>
 
       <div className="container mx-auto p-4 space-y-4">
