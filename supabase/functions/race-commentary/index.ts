@@ -31,10 +31,11 @@ Deno.serve(async (req) => {
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: "AI not configured" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      // Return 200 + skipped flag so the UI doesn't blank-screen when AI isn't configured
+      return new Response(
+        JSON.stringify({ commentary: "", skipped: true, reason: "no_api_key" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     const body = (await req.json()) as CommentaryRequest;
