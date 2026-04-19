@@ -1,6 +1,6 @@
 import { useDeferredValue, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RaceEmptyState } from './RaceEmptyState';
+import { RacePanelEmptyState } from './RacePanelEmptyState';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { Flag } from 'lucide-react';
@@ -115,7 +115,7 @@ export function RaceLeaderboardSidebar({
           })}
         </AnimatePresence>
         {deferredEntries.length === 0 && (
-          <RaceEmptyState
+          <RacePanelEmptyState
             variant="no-cars"
             description="Aguarde o início da temporada ou peça ao admin para configurar pilotos."
           />
