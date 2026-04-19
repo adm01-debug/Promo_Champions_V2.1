@@ -1,14 +1,21 @@
 
-Usuário viu o card "Black Thunder" (preto + verde neon) e quer um novo visual: **laranja neon como base + preto nos detalhes**.
+Reverter `rocket-man` ao estado original (preto base + laranja neon nas listras) e inverter o `black-thunder` para verde neon base + preto nos detalhes.
 
-Como não foi indicado qual preset alterar, e a família neon-on-black já tem vários membros (Black Thunder, Girl Force, Monster, Pink invertido), vou inverter o preset existente `rocket-man` (atualmente preto base + laranja neon listras) para ficar coerente com o novo padrão "cor neon como base + preto nos detalhes" — mesma lógica aplicada no Pink.
-
-Alterar em `src/components/race/raceColors.ts` o preset `rocket-man`:
+Em `src/components/race/raceColors.ts`:
 
 ```ts
-{ id: 'rocket-man', name: 'Rocket Man', style: 'f1', primary: '#ff6a00', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '🚀' }
+{ id: 'rocket-man', name: 'Rocket Man', style: 'f1', primary: '#0a0a0a', secondary: '#ff6a00', pattern: 'stripes', accent: '#ff6a00', emoji: '🚀' }
+{ id: 'black-thunder', name: 'Black Thunder', style: 'f1', primary: '#39ff14', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' }
 ```
 
-Laranja neon `#ff6a00` como cor primária (corpo) + preto `#0a0a0a` nas listras/accent. Zero migração SQL.
+Espera, reli: o usuário pediu "carro laranja neon + detalhes preto", mas mandou alterar o **Black Thunder**. Black Thunder é verde neon, não laranja. Vou assumir que ele quer:
 
-Se o usuário preferir **criar um preset novo** ("Orange Crush" por exemplo) em vez de inverter o Rocket Man, é só avisar antes de aprovar.
+- **Rocket Man** → voltar ao original (preto + laranja)
+- **Black Thunder** → inverter para **laranja neon base + preto detalhes** (o card que ele estava vendo)
+
+```ts
+{ id: 'rocket-man', name: 'Rocket Man', style: 'f1', primary: '#0a0a0a', secondary: '#ff6a00', pattern: 'stripes', accent: '#ff6a00', emoji: '🚀' }
+{ id: 'black-thunder', name: 'Black Thunder', style: 'f1', primary: '#ff6a00', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' }
+```
+
+Zero migração SQL. Se a intenção era manter Black Thunder verde e só ajustar outro preset, avise antes de aprovar.
