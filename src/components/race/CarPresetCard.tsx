@@ -19,8 +19,9 @@ export function CarPresetCard({ preset, selected, carNumber, onSelect }: CarPres
   return (
     <button
       type="button"
+      role="radio"
+      aria-checked={selected}
       onClick={() => onSelect(preset.id)}
-      aria-pressed={selected}
       aria-label={`Selecionar carro ${preset.name}`}
       className={cn(
         'group relative flex flex-col items-center gap-1 rounded-lg border-2 p-2 transition-all',

@@ -156,6 +156,7 @@ Deno.serve(async (req) => {
 
     const data = await aiResp.json();
     const commentary = data?.choices?.[0]?.message?.content?.trim() ?? '';
+    if (commentary) setCached(key, commentary);
 
     return new Response(
       JSON.stringify({ commentary, generated_at: new Date().toISOString() }),
