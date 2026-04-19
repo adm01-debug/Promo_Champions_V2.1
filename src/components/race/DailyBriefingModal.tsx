@@ -29,7 +29,7 @@ const SLIDE_DURATION = 1400;
  * Daily Briefing: 4 slides cinemáticos (saudação → posição → streak → CTA),
  * auto-dismiss em ~5.5s, skip disponível, mostrado 1x/dia.
  */
-export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500 }: Props) {
+export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500, whatIf }: Props) {
   const reduced = useReducedMotion();
   const [slide, setSlide] = useState(0);
 
