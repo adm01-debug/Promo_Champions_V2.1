@@ -9046,6 +9046,76 @@ export type Database = {
         }
         Relationships: []
       }
+      race_rivalries_persistent: {
+        Row: {
+          car_id: string
+          created_at: string
+          id: string
+          rival_car_id: string
+          season_id: string
+          updated_at: string
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          id?: string
+          rival_car_id: string
+          season_id: string
+          updated_at?: string
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          id?: string
+          rival_car_id?: string
+          season_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_rivalries_persistent_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "race_cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["car_id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_rival_car_id_fkey"
+            columns: ["rival_car_id"]
+            isOneToOne: false
+            referencedRelation: "race_cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_rival_car_id_fkey"
+            columns: ["rival_car_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["car_id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       race_scoring_rules: {
         Row: {
           created_at: string
@@ -9144,6 +9214,97 @@ export type Database = {
             columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_team_members: {
+        Row: {
+          car_id: string
+          id: string
+          joined_at: string
+          team_id: string
+        }
+        Insert: {
+          car_id: string
+          id?: string
+          joined_at?: string
+          team_id: string
+        }
+        Update: {
+          car_id?: string
+          id?: string
+          joined_at?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_team_members_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "race_cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_team_members_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["car_id"]
+          },
+          {
+            foreignKeyName: "race_team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "race_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_teams: {
+        Row: {
+          color_primary: string
+          color_secondary: string
+          created_at: string
+          emoji: string | null
+          id: string
+          name: string
+          season_id: string
+          updated_at: string
+        }
+        Insert: {
+          color_primary?: string
+          color_secondary?: string
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          name: string
+          season_id: string
+          updated_at?: string
+        }
+        Update: {
+          color_primary?: string
+          color_secondary?: string
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          name?: string
+          season_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_teams_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "race_teams_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_seasons"
             referencedColumns: ["id"]
           },
         ]
