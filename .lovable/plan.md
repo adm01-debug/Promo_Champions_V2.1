@@ -1,2 +1,2 @@
 
-Excluir o preset "Stock Sunset" de `src/components/race/raceColors.ts`.
+Excluir o preset "Stock Patriot" de `src/components/race/raceColors.ts`.
