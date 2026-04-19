@@ -26,12 +26,12 @@ export interface RaceCarPreset {
 
 export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   // ===== Fórmula 1 =====
-  { id: 'ferrari-scuderia', name: 'Red Force', style: 'f1', primary: '#dc2626', secondary: '#ffffff', pattern: 'solid', emoji: '🏎️' },
-  { id: 'mercedes-silver', name: 'Scuderia Shine', style: 'f1', primary: '#9ca3af', secondary: '#0d9488', pattern: 'stripes', accent: '#0d9488', emoji: '🥈' },
+  { id: 'ferrari-scuderia', name: 'RED FORCE', style: 'f1', primary: '#dc2626', secondary: '#ffffff', pattern: 'solid', emoji: '🏎️' },
+  { id: 'mercedes-silver', name: 'Mercedes Silver Arrow', style: 'f1', primary: '#9ca3af', secondary: '#0d9488', pattern: 'stripes', accent: '#0d9488', emoji: '🥈' },
   { id: 'mclaren-papaya', name: 'McLaren Papaya', style: 'f1', primary: '#f97316', secondary: '#1e3a8a', pattern: 'solid', emoji: '🧡' },
-  { id: 'williams-heritage', name: 'Williams Heritage', style: 'f1', primary: '#1d4ed8', secondary: '#ffffff', pattern: 'stripes', accent: '#ffffff', emoji: '💙' },
-  { id: 'lotus-classic', name: 'Sun Tzu Force', style: 'f1', primary: '#0a0a0a', secondary: '#eab308', pattern: 'stripes', accent: '#eab308', emoji: '🖤' },
-  { id: 'alpine-azure', name: 'A Mãe Ta On', style: 'f1', primary: '#1e40af', secondary: '#ec4899', pattern: 'solid', emoji: '🩵' },
+  { id: 'williams-heritage', name: 'Scuderia Classic', style: 'f1', primary: '#1d4ed8', secondary: '#ffffff', pattern: 'stripes', accent: '#ffffff', emoji: '💙' },
+  { id: 'lotus-classic', name: 'Lotus Classic', style: 'f1', primary: '#0a0a0a', secondary: '#eab308', pattern: 'stripes', accent: '#eab308', emoji: '🖤' },
+  { id: 'alpine-azure', name: 'Alpine Azure', style: 'f1', primary: '#1e40af', secondary: '#ec4899', pattern: 'solid', emoji: '🩵' },
   { id: 'black-thunder', name: 'Black Thunder', style: 'f1', primary: '#ff6a00', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' },
   { id: 'power-girl', name: 'Power Girl', style: 'f1', primary: '#0a0a0a', secondary: '#ff1493', pattern: 'stripes', accent: '#ff1493', emoji: '💖' },
   { id: 'pai-ta-on', name: 'O PAI TA ON', style: 'f1', primary: '#0a0a0a', secondary: '#faff00', pattern: 'stripes', accent: '#faff00', emoji: '👑' },
@@ -41,7 +41,7 @@ export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   { id: 'the-panther', name: 'The Panther', style: 'f1', primary: '#0a0a0a', secondary: '#ff6a00', pattern: 'stripes', accent: '#ff6a00', emoji: '🐈‍⬛' },
   { id: 'full-energy', name: 'Full Energy', style: 'f1', primary: '#ffd60a', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '⚡' },
   { id: 'monster', name: 'Monster', style: 'f1', primary: '#0a0a0a', secondary: '#39ff14', pattern: 'stripes', accent: '#39ff14', emoji: '👹' },
-  { id: 'pink', name: 'Pink Leagues', style: 'f1', primary: '#ff10f0', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '💗' },
+  { id: 'pink', name: 'PINK LEAGUES', style: 'f1', primary: '#ff10f0', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '💗' },
   { id: 'black-power', name: 'Black Power', style: 'f1', primary: '#0a0a0a', secondary: '#1a1a1a', pattern: 'solid', emoji: '✊🏿' },
   { id: 'scuderia-alpha', name: 'Scuderia Alpha', style: 'f1', primary: '#0a0a0a', secondary: '#00d4ff', pattern: 'stripes', accent: '#00d4ff', emoji: '🔵' },
 
