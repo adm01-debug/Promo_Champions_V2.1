@@ -129,6 +129,17 @@ export default function RaceArenaHub() {
     streakDays,
   });
 
+  const whatIf = useRaceWhatIf({
+    entries: closerLeaderboard,
+    currentUserSalespersonId: myCar?.salesperson_id,
+  });
+
+  useRaceSmartNotifications({
+    entries: closerLeaderboard,
+    currentUserSalespersonId: myCar?.salesperson_id,
+    seasonEndDate: closerSeason?.end_date,
+  });
+
   // Densidade adaptativa: rastreia tempo na arena.
   useSessionDuration({ fatigueThresholdMs: 10 * 60 * 1000, notify: true });
 
