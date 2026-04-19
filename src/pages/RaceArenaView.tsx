@@ -269,6 +269,8 @@ export default function RaceArenaView({ roleType }: Props) {
                   entries={leaderboard}
                   goalAmount={Number(season.goal_amount)}
                   currentUserSalespersonId={myCar?.salesperson_id}
+                  currentUserCarId={myCar?.id}
+                  seasonId={season.id}
                   seasonStart={season.start_date}
                   seasonEnd={season.end_date}
                 />
