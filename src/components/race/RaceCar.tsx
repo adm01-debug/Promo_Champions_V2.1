@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { CarLiveryOverlay } from './CarLiveryOverlay';
 import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
@@ -44,7 +44,7 @@ interface RaceCarProps {
  * Sombra projetada destacada, carroceria com brilho, rodas com aros,
  * cockpit/spoiler conforme estilo. Aponta para a direita →.
  */
-export function RaceCar({
+function RaceCarInner({
   number,
   primaryColor,
   secondaryColor,
@@ -611,3 +611,32 @@ export function RaceCar({
     </g>
   );
 }
+
+/**
+ * Memoizado com comparator custom: re-renderiza apenas quando props visualmente
+ * relevantes mudam. Movimento (translate via CSS/SVG transform) é controlado pelo pai.
+ */
+export const RaceCar = memo(RaceCarInner, (prev, next) => {
+  return (
+    prev.number === next.number &&
+    prev.primaryColor === next.primaryColor &&
+    prev.secondaryColor === next.secondaryColor &&
+    prev.style === next.style &&
+    prev.scale === next.scale &&
+    prev.showTrail === next.showTrail &&
+    prev.pattern === next.pattern &&
+    prev.overtakeFlash === next.overtakeFlash &&
+    prev.tireWear === next.tireWear &&
+    prev.drsActive === next.drsActive &&
+    prev.rank === next.rank &&
+    prev.pitStop === next.pitStop &&
+    prev.fastestSector === next.fastestSector &&
+    prev.aeroTurbulence === next.aeroTurbulence &&
+    prev.livery === next.livery &&
+    prev.liveryAccent === next.liveryAccent &&
+    prev.liveryUid === next.liveryUid &&
+    prev.teamColor === next.teamColor &&
+    prev.pilotName === next.pilotName
+  );
+});
+RaceCar.displayName = 'RaceCar';
