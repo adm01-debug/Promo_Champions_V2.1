@@ -26,7 +26,7 @@ export interface RaceCarPreset {
 
 export const RACE_CAR_PRESETS: readonly RaceCarPreset[] = [
   // ===== Fórmula 1 =====
-  { id: 'ferrari-scuderia', name: 'RED FORCE', style: 'f1', primary: '#dc2626', secondary: '#ffffff', pattern: 'solid', emoji: '🏎️' },
+  { id: 'ferrari-scuderia', name: 'Red Force', style: 'f1', primary: '#dc2626', secondary: '#ffffff', pattern: 'solid', emoji: '🏎️' },
   { id: 'mercedes-silver', name: 'Scuderia Shine', style: 'f1', primary: '#9ca3af', secondary: '#0d9488', pattern: 'stripes', accent: '#0d9488', emoji: '🥈' },
   { id: 'mclaren-papaya', name: 'McLaren Papaya', style: 'f1', primary: '#f97316', secondary: '#1e3a8a', pattern: 'solid', emoji: '🧡' },
   { id: 'williams-heritage', name: 'Scuderia Classic', style: 'f1', primary: '#1d4ed8', secondary: '#ffffff', pattern: 'stripes', accent: '#ffffff', emoji: '💙' },
