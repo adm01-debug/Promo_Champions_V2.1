@@ -51,6 +51,7 @@ import { useGhostCar } from '@/hooks/race/useGhostCar';
 import { useRaceCommentary } from '@/hooks/race/useRaceCommentary';
 import { useDailyRaceCheckin } from '@/hooks/race/useDailyRaceCheckin';
 import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
+import { useRaceViewTelemetry } from '@/hooks/race/useRaceViewTelemetry';
 import { format, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -86,6 +87,7 @@ export default function RaceArenaView({ roleType }: Props) {
   const { recentOvertakes, dismissOvertake } = useOvertakeDetector(leaderboard);
   const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(leaderboard, myCar?.salesperson_id);
   const viewMode = useRaceViewMode();
+  useRaceViewTelemetry(`/race-arena/${roleType}`, !isInitialLoading);
 
   const secondsToEnd = useMemo(() => {
     if (!season?.end_date) return undefined;
