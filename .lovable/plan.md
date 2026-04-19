@@ -1,8 +1,8 @@
 
-Adicionar novo preset F1 "Rocket Man" em `src/components/race/raceColors.ts`, no bloco F1 (após `pai-ta-on`):
+Adicionar novo preset F1 "Lady Force" em `src/components/race/raceColors.ts`, no bloco F1 (após `rocket-man`):
 
 ```ts
-{ id: 'rocket-man', name: 'Rocket Man', style: 'f1', primary: '#0a0a0a', secondary: '#ff0033', pattern: 'stripes', accent: '#ff0033', emoji: '🚀' }
+{ id: 'lady-force', name: 'Lady Force', style: 'f1', primary: '#ffffff', secondary: '#ffb6d9', pattern: 'stripes', accent: '#ffb6d9', emoji: '🎀' }
 ```
 
-Preto `#0a0a0a` base + vermelho vivo `#ff0033` nas listras/accent. Mantém consistência visual da família neon-on-black (Black Thunder, Power Girl, O PAI TA ON). Zero migração SQL.
+Branco `#ffffff` base + rosa claro `#ffb6d9` nas listras/accent. Inverte a fórmula da família neon-on-black para uma variação clean & soft. Zero migração SQL.
