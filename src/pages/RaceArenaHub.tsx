@@ -4,13 +4,14 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Flag, Trophy, Users, ArrowRight, Settings, Phone, Handshake } from 'lucide-react';
+import { Flag, Trophy, Users, ArrowRight, Settings, Phone, Handshake, Award } from 'lucide-react';
 import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonByRole';
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
 import { useCurrentStreak } from '@/hooks/useDailyStreakAchievements';
 import { useDailyBriefing } from '@/hooks/race/useDailyBriefing';
+import { useMyCareer } from '@/hooks/race/useMyCareer';
 import { useSessionDuration } from '@/hooks/race/useSessionDuration';
 import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
 import { DailyBriefingModal } from '@/components/race/DailyBriefingModal';
@@ -116,6 +117,7 @@ export default function RaceArenaHub() {
   const { data: closerSeason } = useRaceSeasonByRole('closer');
   const { data: closerLeaderboard = [] } = useRaceLeaderboard(closerSeason?.id);
   const { data: streakDays = 0 } = useCurrentStreak(myCar?.salesperson_id);
+  const { data: career } = useMyCareer(myCar?.salesperson_id);
 
   const briefing = useDailyBriefing({
     entries: closerLeaderboard,
@@ -153,6 +155,35 @@ export default function RaceArenaHub() {
         </header>
 
         <NextRaceActionCard salespersonId={myCar?.salesperson_id} />
+
+        {career && career.summary.total_seasons > 0 && (
+          <Link
+            to="/race-arena/career"
+            className="block group"
+            aria-label="Abrir minha carreira"
+          >
+            <Card className="border-warning/30 bg-gradient-to-r from-warning/10 via-card to-card hover:border-warning/60 transition-all">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="w-11 h-11 rounded-xl bg-warning/20 flex items-center justify-center shrink-0">
+                  <Award className="w-6 h-6 text-warning" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+                    Sua Carreira
+                  </p>
+                  <p className="text-sm font-bold">
+                    {career.summary.total_seasons} season{career.summary.total_seasons === 1 ? '' : 's'}
+                    {' · '}
+                    <span className="text-warning">{career.summary.total_titles} título{career.summary.total_titles === 1 ? '' : 's'}</span>
+                    {' · '}
+                    {career.summary.total_podiums} pódio{career.summary.total_podiums === 1 ? '' : 's'}
+                  </p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+              </CardContent>
+            </Card>
+          </Link>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
