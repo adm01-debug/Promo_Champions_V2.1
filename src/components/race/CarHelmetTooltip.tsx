@@ -27,7 +27,7 @@ export function CarHelmetTooltip({ visible, name, rank, color = 'hsl(var(--prima
             initial={{ opacity: 0, y: 6, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.95 }}
-            transition={{ duration: 0.22, ease: EASE_F1_BRAKE as unknown as number[] }}
+            transition={{ duration: 0.22, ease: EASE_F1_BRAKE as any }}
             style={{
               display: 'flex',
               alignItems: 'center',
