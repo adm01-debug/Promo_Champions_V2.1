@@ -1,2 +1,2 @@
 
-Renomear preset verde/preto (provavelmente `id: 'monster'` ou similar) para "Monster League" em `src/components/race/raceColors.ts`.
+Renomear preset "Stock Midnight" → "Scuderia Midnight" em `src/components/race/raceColors.ts`.
