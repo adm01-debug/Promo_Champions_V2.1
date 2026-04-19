@@ -11,6 +11,9 @@ import { useUserRoles } from '@/hooks/useUserRoles';
 import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
 import { useCurrentStreak } from '@/hooks/useDailyStreakAchievements';
 import { useDailyBriefing } from '@/hooks/race/useDailyBriefing';
+import { useRaceWhatIf } from '@/hooks/race/useRaceWhatIf';
+import { useRaceSmartNotifications } from '@/hooks/race/useRaceSmartNotifications';
+import { useMyRival } from '@/hooks/race/useMyRival';
 import { useMyCareer } from '@/hooks/race/useMyCareer';
 import { useSessionDuration } from '@/hooks/race/useSessionDuration';
 import { ChampionsHistoryPanel } from '@/components/race/ChampionsHistoryPanel';
@@ -126,6 +129,17 @@ export default function RaceArenaHub() {
     streakDays,
   });
 
+  const whatIf = useRaceWhatIf({
+    entries: closerLeaderboard,
+    currentUserSalespersonId: myCar?.salesperson_id,
+  });
+
+  useRaceSmartNotifications({
+    entries: closerLeaderboard,
+    currentUserSalespersonId: myCar?.salesperson_id,
+    seasonEndDate: closerSeason?.end_date,
+  });
+
   // Densidade adaptativa: rastreia tempo na arena.
   useSessionDuration({ fatigueThresholdMs: 10 * 60 * 1000, notify: true });
 
@@ -137,7 +151,7 @@ export default function RaceArenaHub() {
       </Helmet>
 
       <RacePanelErrorBoundary panelName="Briefing diário" fallback={null}>
-        <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} />
+        <DailyBriefingModal open={briefing.open} data={briefing.data} onDismiss={briefing.dismiss} whatIf={whatIf} />
       </RacePanelErrorBoundary>
 
       <div className="container mx-auto p-4 space-y-4">

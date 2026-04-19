@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flag, Trophy, Clock, Flame, Rocket, X } from 'lucide-react';
+import { Flag, Trophy, Clock, Flame, Rocket, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { BriefingData } from '@/hooks/race/useDailyBriefing';
+import type { WhatIfScenario } from '@/hooks/race/useRaceWhatIf';
+import { fmtCompact } from './raceFormatters';
 
 interface Props {
   open: boolean;
@@ -11,6 +13,7 @@ interface Props {
   onDismiss: () => void;
   /** Auto-dismiss em ms. Default 5500. */
   autoDismissMs?: number;
+  whatIf?: WhatIfScenario[];
 }
 
 function flameClass(streak: number) {
@@ -26,7 +29,7 @@ const SLIDE_DURATION = 1400;
  * Daily Briefing: 4 slides cinemáticos (saudação → posição → streak → CTA),
  * auto-dismiss em ~5.5s, skip disponível, mostrado 1x/dia.
  */
-export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500 }: Props) {
+export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500, whatIf }: Props) {
   const reduced = useReducedMotion();
   const [slide, setSlide] = useState(0);
 
@@ -123,6 +126,25 @@ export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500
                   {current.title}
                 </h2>
                 <p className="text-base text-muted-foreground">{current.subtitle}</p>
+                {slide === slides.length - 1 && whatIf && whatIf.length > 0 && (
+                  <div className="mt-5 rounded-xl border border-primary/30 bg-primary/5 p-4 text-left space-y-2">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-primary flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3" /> E se você…
+                    </p>
+                    <div className="space-y-1.5">
+                      {whatIf.map((s) => (
+                        <div key={s.label} className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">
+                            <span className="font-semibold text-foreground">{s.label}</span> · +{fmtCompact(s.delta)} pts
+                          </span>
+                          <span className={`tabular-nums font-bold ${s.positionsGained > 0 ? 'text-success' : 'text-muted-foreground'}`}>
+                            {s.positionsGained > 0 ? `↑${s.positionsGained}` : '—'} → P{s.newRank}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
 

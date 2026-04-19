@@ -8782,6 +8782,13 @@ export type Database = {
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "race_badges_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
+          },
         ]
       }
       race_cars: {
@@ -8902,6 +8909,13 @@ export type Database = {
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "race_daily_snapshots_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
+          },
         ]
       }
       race_events: {
@@ -8957,6 +8971,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_events_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
           },
         ]
       }
@@ -9044,6 +9065,13 @@ export type Database = {
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "race_powerups_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
+          },
         ]
       }
       race_reactions: {
@@ -9114,6 +9142,13 @@ export type Database = {
             referencedColumns: ["car_id"]
           },
           {
+            foreignKeyName: "race_rivalries_persistent_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["car_id"]
+          },
+          {
             foreignKeyName: "race_rivalries_persistent_rival_car_id_fkey"
             columns: ["rival_car_id"]
             isOneToOne: false
@@ -9125,6 +9160,13 @@ export type Database = {
             columns: ["rival_car_id"]
             isOneToOne: false
             referencedRelation: "race_leaderboard_view"
+            referencedColumns: ["car_id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_rival_car_id_fkey"
+            columns: ["rival_car_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
             referencedColumns: ["car_id"]
           },
           {
@@ -9140,6 +9182,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_rivalries_persistent_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
           },
         ]
       }
@@ -9185,6 +9234,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_scoring_rules_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
           },
         ]
       }
@@ -9280,6 +9336,13 @@ export type Database = {
             referencedColumns: ["car_id"]
           },
           {
+            foreignKeyName: "race_team_members_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["car_id"]
+          },
+          {
             foreignKeyName: "race_team_members_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -9333,6 +9396,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_teams_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
           },
         ]
       }
@@ -9399,6 +9469,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "race_seasons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_user_daily_checkins_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
           },
         ]
       }
@@ -14039,6 +14116,48 @@ export type Database = {
             columns: ["season_id"]
             isOneToOne: false
             referencedRelation: "race_seasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_events_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "race_spectator_view"
+            referencedColumns: ["season_id"]
+          },
+        ]
+      }
+      race_spectator_view: {
+        Row: {
+          avatar_url: string | null
+          car_id: string | null
+          car_number: number | null
+          car_style: string | null
+          deals_count: number | null
+          nickname: string | null
+          primary_color: string | null
+          progress: number | null
+          role_type: string | null
+          salesperson_id: string | null
+          salesperson_name: string | null
+          score: number | null
+          season_id: string | null
+          secondary_color: string | null
+          total_sales: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "salespeople_public"
             referencedColumns: ["id"]
           },
         ]
