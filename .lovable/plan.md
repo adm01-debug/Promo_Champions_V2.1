@@ -1,49 +1,50 @@
 
-Frente A entregue. Próxima onda: **Frente B (Loop diário 30s)** + **Frente D (Acessibilidade real)** — alto impacto, pouco risco.
+Frente A + B + D entregues. Resta **Frente C — Camada identitária** (semanas 5-8) e os **5 refinos cirúrgicos de microinterações**. Vamos executar Frente C agora, que é a de maior impacto emocional restante.
 
-## Iterações sequenciais
+## Frente C — Camada identitária
 
-### 1. Daily Briefing cinemático (5s) 🎬
-- `useDailyBriefing.ts`: gera mensagem personalizada com dados existentes (rank atual, gap líder, streak, próximo objetivo, melhor janela horária heurística baseada em activities por hora).
-- `DailyBriefingModal.tsx`: overlay full-screen com 4 slides animados (saudação → posição → janela ouro → CTA), auto-dismiss em 5s, "skip" disponível. Mostrado 1x/dia (localStorage `briefing_last_shown`).
-- Integrado em `RaceArenaHub` no mount.
+### 1. Equipes/Escuderias 🏎️
+- **Migração:** tabela `race_teams` (id, season_id, name, color_primary, color_secondary, emoji) + `race_team_members` (team_id, car_id). RLS: leitura pública autenticada, escrita admin.
+- `useRaceTeams.ts`: lista equipes da season + agregação de pontos (soma `total_sales` dos membros).
+- `TeamLeaderboard.tsx`: ranking de escuderias no sidebar (colapsável, abaixo do Live Timing).
+- `RaceCar.tsx`: aceita `teamColor` opcional como faixa secundária no carro (stripe lateral).
 
-### 2. "1 ação sugerida" sticky 🎯
-- `NextRaceActionCard.tsx`: card compacto top-right do Hub com a próxima jogada (lead mais quente do pipeline + CTA "Trabalhar agora"). Reusa `useNextBestAction` existente.
-- Persistente até clicado/dispensado; reaparece após nova season.
+### 2. Rival nomeado persistente ⚔️
+- `useMyRival.ts`: identifica rival = piloto adjacente no ranking (1 acima OU 1 abaixo, alterna por season). Persiste escolha em `race_rivalries` (car_id, rival_car_id, season_id).
+- `MyRivalCard.tsx`: card destacado no sidebar — "Seu rival: João · gap +2.3%" com sparkline de 7 dias do duelo. CTA "Ver no replay".
+- Highlight visual na pista: rival ganha contorno tracejado dourado quando hover no MyRivalCard.
 
-### 3. Streak proeminente no Briefing 🔥
-- Slide dedicado no Briefing: "🔥 Você acendeu o motor 12 dias seguidos" com chama animada proporcional (3+ dias = laranja, 7+ = vermelha, 30+ = azul plasma).
-- Reusa `useStreak` existente.
+### 3. Career Mode (histórico vitalício) 🏆
+- `useMyCareer.ts`: agrega histórico do salesperson em todas as seasons (`race_seasons` + `race_cars` + `race_season_results`).
+- `CareerTimeline.tsx`: nova rota `/race-arena/career` com lista cronológica de seasons (rank final, podiums, takeovers totais, badges permanentes).
+- Card resumo no Hub: "Career: 12 seasons · 3 títulos · 47 podiums".
 
-### 4. Modo Calm ♿
-- Toggle persistente em `RaceAudioPreferences` (renomear para `RaceAccessibilityPreferences`): "Modo Calm" desliga partículas, screen-shake, fireworks, neon trails, exhaust chamas. Mantém toda informação.
-- Provider `RaceCalmContext` consumido pelos componentes decorativos via hook `useCalmMode()`.
-
-### 5. Hierarquia sem cor (forma + ícone por rank) 🏆
-- `RankBadge.tsx`: P1 = Crown, P2 = Trophy, P3 = Medal, P4-10 = número em hexágono. Substitui dependência de cor pura nos leaderboards e timing tower.
-- Integra em `RaceArena` Live Timing tower e `LeaderboardSidebar`.
-
-### 6. Densidade adaptativa anti-fadiga 🧘
-- `useSessionDuration.ts`: track tempo na arena. Após 10min contínuos, automaticamente reduz: desliga commentary loop, baixa intensidade de animações, mostra toast sutil "Modo descanso ativado — recarregue você também ☕".
+### 4. Shareable season card 📸
+- `SeasonRecapCard.tsx`: card visual exportável (PNG via html-to-image) gerado ao final de cada season — "Lucas · P2 Season 12 · 3 takeovers · 12 dias de streak".
+- Botão "Compartilhar" no `ChampionsHistoryPanel`. Download direto + cópia para clipboard.
 
 ## Arquivos
 
 **Novos:**
-- `src/hooks/race/useDailyBriefing.ts`
-- `src/hooks/race/useCalmMode.ts`
-- `src/hooks/race/useSessionDuration.ts`
-- `src/contexts/RaceCalmContext.tsx`
-- `src/components/race/DailyBriefingModal.tsx`
-- `src/components/race/NextRaceActionCard.tsx`
-- `src/components/race/RankBadge.tsx`
+- `src/hooks/race/useRaceTeams.ts`
+- `src/hooks/race/useMyRival.ts`
+- `src/hooks/race/useMyCareer.ts`
+- `src/components/race/TeamLeaderboard.tsx`
+- `src/components/race/MyRivalCard.tsx`
+- `src/components/race/CareerTimeline.tsx`
+- `src/components/race/SeasonRecapCard.tsx`
+- `src/pages/RaceArenaCareer.tsx`
 
 **Editados:**
-- `src/pages/RaceArenaHub.tsx` (montar Briefing + ActionCard + provider Calm + session tracking)
-- `src/components/race/RaceAudioPreferences.tsx` → renomear conceito + add toggle Calm
-- `src/components/race/RaceArena.tsx` (consumir `useCalmMode`, integrar `RankBadge` na timing tower)
-- `src/components/race/LeaderboardSidebar.tsx` (usar `RankBadge`)
-- `src/index.css` (keyframes briefing-slide, flame-pulse-strong)
+- `src/components/race/RaceCar.tsx` (faixa lateral teamColor)
+- `src/components/race/RaceLeaderboardSidebar.tsx` (montar TeamLeaderboard + MyRivalCard)
+- `src/components/race/ChampionsHistoryPanel.tsx` (botão "Compartilhar season")
+- `src/pages/RaceArenaHub.tsx` (card Career resumo + link `/race-arena/career`)
+- `src/routes/AppRoutes.tsx` (rota `/race-arena/career`)
+
+**Migração SQL:**
+- `race_teams`, `race_team_members`, `race_rivalries` (RLS + índices)
+- Trigger para auto-criar rivalidade na 1ª inserção de car em season
 
 ## Garantias
-Tokens HSL · `useReducedMotion` respeitado · Briefing skipável e 1x/dia · arquivos < 200 linhas · zero erros de console · retrocompatível · `RankBadge` com `aria-label` semântico.
+Tokens HSL · RLS rigorosa (leitura autenticada, escrita admin) · arquivos < 200 linhas · `aria-label` em todos os badges de equipe/rival · retrocompatível (carros sem team rendem sem stripe) · html-to-image lazy-loaded.
