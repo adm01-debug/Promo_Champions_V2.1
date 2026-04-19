@@ -1,8 +1,8 @@
 
-Adicionar novo preset F1 preto com detalhes em azul neon chamado "Scuderia Alpha" em `src/components/race/raceColors.ts`.
+Adicionar novo preset F1 dourado com detalhes em preto chamado "Gold Fury" em `src/components/race/raceColors.ts`.
 
 ```ts
-{ id: 'scuderia-alpha', name: 'Scuderia Alpha', style: 'f1', primary: '#0a0a0a', secondary: '#00d4ff', pattern: 'stripes', accent: '#00d4ff', emoji: '🔵' }
+{ id: 'gold-fury', name: 'Gold Fury', style: 'f1', primary: '#d4af37', secondary: '#0a0a0a', pattern: 'stripes', accent: '#0a0a0a', emoji: '🏆' }
 ```
 
-Preto `#0a0a0a` no corpo + azul neon `#00d4ff` nas listras/accent. Adicionado ao final do array `RACE_CAR_PRESETS`. Zero migração SQL.
+Dourado `#d4af37` no corpo + preto `#0a0a0a` nas listras/accent. Adicionado ao final do array `RACE_CAR_PRESETS`. Zero migração SQL.
