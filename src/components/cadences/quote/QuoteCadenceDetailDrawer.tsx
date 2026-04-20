@@ -13,6 +13,7 @@ import { CheckCircle2, SkipForward, Clock, CalendarClock, Phone, Mail, MessageSq
 import { useState } from "react";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 import { motion } from "framer-motion";
+import { useGamificationSafe } from "@/contexts/GamificationContext";
 
 interface Props {
   row: QuoteCadenceRow | null;
@@ -39,8 +40,20 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
   const complete = useCompleteCadenceTask();
   const skip = useSkipCadenceTask();
   const reschedule = useRescheduleCadenceTask();
+  const gamification = useGamificationSafe();
   const [notesById, setNotesById] = useState<Record<string, string>>({});
   const [rescheduleById, setRescheduleById] = useState<Record<string, string>>({});
+
+  const handleComplete = (taskId: string) => {
+    complete.mutate(
+      { taskId, notes: notesById[taskId] },
+      {
+        onSuccess: () => {
+          gamification?.rewardXP(15, "Tarefa de cadência concluída");
+        },
+      },
+    );
+  };
 
   if (!row) return null;
   const q = row.quote;
@@ -119,11 +132,12 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
                       <div className="flex flex-wrap gap-2">
                         <Button
                           size="sm"
-                          onClick={() => complete.mutate({ taskId: t.id, notes: notesById[t.id] })}
+                          onClick={() => handleComplete(t.id)}
                           disabled={complete.isPending}
+                          aria-label="Concluir tarefa e ganhar XP"
                         >
                           <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
-                          Concluir
+                          Concluir <span className="ml-1 text-[10px] opacity-80">+15 XP</span>
                         </Button>
                         <Button
                           size="sm"
