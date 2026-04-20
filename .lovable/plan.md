@@ -1,41 +1,48 @@
 
-## Plano: Migrar carros mock para os 10 novos presets
+**Objetivo:** Remover número fixo do carro; mostrar apenas o RANK (posição na corrida) com destaque visual.
 
-**Situação atual**
-- 11 carros mock no banco com `preset_id = NULL` e cores hex antigas (#1F2937, #FF3B30, #007AFF…) que não correspondem aos 27 presets premium do `raceColors.ts`.
-- Visualmente isso quebra a identidade ("Pedro" roxo simples, "Ana" amarelo simples) — eles não usam liveries (chamas, listras, pride).
+**Investigação rápida:**
+- `RaceCar` aceita prop `number` que renderiza o número no chassi
+- Componentes que renderizam carros na pista: `RaceCarOnTrack` (provável), `GhostCar`, `RaceGhostDemo`, `CarPresetCard`, `CarCustomizer`
+- Leaderboard já calcula `rank` (1..N) em `useRaceLeaderboard`
 
-**Objetivo**
-- Substituir os 11 carros antigos por 10 carros novos, cada um vinculado a um `preset_id` distinto do catálogo, mantendo 10 vendedores reais.
+**Plano:**
 
-**Mapeamento proposto (10 vendedores ↔ 10 presets)**
+1. **`RaceCar.tsx`** — tornar `number` opcional. Quando ausente/null, não renderizar o numeral no chassi (manter o círculo limpo ou remover o círculo do número).
 
-| # | Vendedor | Preset escolhido | Nº carro | Apelido |
-|---|----------|------------------|----------|---------|
-| 1 | João Silva | `ferrari-scuderia` 🏎️ | 7 | Red Force |
-| 2 | Maria Santos | `power-girl` 💖 | 11 | Power Girl |
-| 3 | Carlos Oliveira | `monster` 👹 | 23 | Monster |
-| 4 | Pedro Lima | `powerfull-girl` 💜 | 88 | Girl Force |
-| 5 | Ana Costa | `full-energy` ⚡ | 4 | Full Energy |
-| 6 | Gaby | `pink` 💗 | 9 | Pink Leagues |
-| 7 | JOAQUIM ROSA | `scuderia-alpha` 🔵 | 27 | Alpha |
-| 8 | Closer Teste | `f1-fire-force` 🔥 | 17 | Fire Force |
-| 9 | SDR Teste | `cooper-league` 🌲 | 33 | Cooper |
-| 10 | Admin Teste | `gold-fury` 🏆 | 1 | Gold Fury |
+2. **Componentes na pista (corrida ao vivo)** — onde os carros dos vendedores aparecem correndo:
+   - Não passar mais `number={car_number}` para `<RaceCar>`.
+   - Adicionar um **badge de RANK** flutuante acima do carro (ex: `P1`, `P2`, `P3`…) com:
+     - Visual destacado: círculo dourado para P1, prata P2, bronze P3, neutro demais
+     - Fonte bold, contorno para legibilidade sobre a pista
+     - Posicionado acima do nome/avatar do piloto
 
-→ "Teste QA" (11º) será **deletado** para fechar em 10 carros, conforme pedido.
+3. **`GhostCar.tsx`** — já usa `number={0}`; trocar para sem número (carro fantasma também sem numeral).
 
-**Execução (1 migration SQL)**
-1. `DELETE FROM race_cars WHERE salesperson_id = '<Teste QA id>'` (remove o 11º).
-2. `UPDATE race_cars SET preset_id, primary_color, secondary_color, car_style, nickname` para cada um dos 10, copiando exatamente os valores do preset correspondente em `raceColors.ts` (primary, secondary, style).
-3. Cascata limpa automaticamente eventuais `race_events`/`race_powerups` do QA via FK ON DELETE CASCADE existente.
+4. **`RaceGhostDemo.tsx`** — demo: remover números (carros limpos, apenas livery).
 
-**Por que migration UPDATE em vez de DELETE+INSERT**
-- Preserva os `id`s dos carros → não invalida `race_events`, `race_leaderboard_view`, snapshots e referências em hooks/cache.
-- Trigger `validate_race_event` (Round 3) continua válida.
+5. **MANTER número** em:
+   - `CarPresetCard` (preview de seleção) — usuário ainda escolhe número customizado? → Decisão: manter input mas o número **não aparece mais na pista**. Apenas no customizer como referência interna / histórico. *Alternativa: remover totalmente o input "Número 1-99" do `CarCustomizer`.*
+   - **Decisão proposta:** remover também o input de número do `CarCustomizer` (já que nunca mais aparecerá em lugar nenhum visualmente). Simplifica UX.
 
-**Entregável**
-- 1 migration SQL idempotente atualizando os 10 carros + removendo o QA.
-- Sem mudanças em código React (os hooks já leem `preset_id` via `getPresetById`/`inferPresetFromColors`).
+**Arquivos a editar:**
+- `src/components/race/RaceCar.tsx` — number opcional
+- `src/components/race/RaceCarOnTrack.tsx` (ou equivalente que renderiza carros vivos) — adicionar badge de rank, remover number
+- `src/components/race/GhostCar.tsx` — remover number
+- `src/components/race/RaceGhostDemo.tsx` — remover number do demo
+- `src/components/race/CarCustomizer.tsx` — remover input de número
+- `src/components/race/CarPresetCard.tsx` — remover prop carNumber/preview sem número
 
-Após aplicar, o preview de `/race-arena/closer` mostrará os 10 carros com liveries premium (chamas, listras, pride, etc.) em vez dos blocos de cor sólida atuais.
+**Badge de Rank (novo elemento SVG sobre o carro):**
+```
+<g transform="translate(0,-36)">
+  <circle r="11" fill={rankColor} stroke="hsl(var(--background))" strokeWidth="2"/>
+  <text textAnchor="middle" dy="4" fontSize="12" fontWeight="900" fill="white">P{rank}</text>
+</g>
+```
+- P1: gold `hsl(var(--rank-gold))`
+- P2: silver `#C0C0C0`
+- P3: bronze `#CD7F32`
+- P4+: `hsl(var(--muted))`
+
+**Resultado esperado:** carros limpos sem o "7", "11", "23" no chassi. Em vez disso, um badge "P1/P2/P3…" acima do carro indicando posição em tempo real na corrida — atualizado dinamicamente conforme leaderboard muda.
