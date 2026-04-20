@@ -12,7 +12,7 @@ import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
 import { QuoteCadenceEmptyState } from "@/components/cadences/quote/QuoteCadenceEmptyState";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
