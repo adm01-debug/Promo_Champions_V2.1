@@ -4,9 +4,12 @@ import { useMemo } from "react";
 import type { ReasonMatrixCell } from "@/hooks/win-loss/useWinLossAggregations";
 import { stageLabel } from "@/components/deal-intelligence/winloss/winLossHelpers";
 
-interface Props { cells: ReasonMatrixCell[] }
+interface Props {
+  cells: ReasonMatrixCell[];
+  onCellClick?: (reason: string, stage: string) => void;
+}
 
-export function WinLossReasonMatrix({ cells }: Props) {
+export function WinLossReasonMatrix({ cells, onCellClick }: Props) {
   const { reasons, stages, max, lookup } = useMemo(() => {
     const r = Array.from(new Set(cells.map(c => c.reason))).slice(0, 8);
     const s = Array.from(new Set(cells.map(c => c.stage)));
@@ -47,15 +50,20 @@ export function WinLossReasonMatrix({ cells }: Props) {
                       const intensity = v / max;
                       return (
                         <td key={s} className="p-1 text-center">
-                          <div
-                            className="rounded-md py-1.5 text-[11px] font-medium tabular-nums"
+                          <button
+                            type="button"
+                            disabled={!v || !onCellClick}
+                            onClick={() => onCellClick?.(r, s)}
+                            className="w-full rounded-md py-1.5 text-[11px] font-medium tabular-nums transition-transform hover:scale-105 disabled:cursor-default disabled:hover:scale-100"
                             style={{
                               background: v ? `hsl(var(--destructive) / ${0.1 + intensity * 0.6})` : "transparent",
                               color: intensity > 0.5 ? "hsl(var(--destructive-foreground))" : undefined,
+                              cursor: v && onCellClick ? "pointer" : "default",
                             }}
+                            aria-label={v ? `Ver ${v} deals: ${r} em ${stageLabel(s)}` : undefined}
                           >
                             {v || "—"}
-                          </div>
+                          </button>
                         </td>
                       );
                     })}

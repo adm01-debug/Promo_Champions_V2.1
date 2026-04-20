@@ -8,9 +8,10 @@ import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 interface Props {
   monthly: TrendPoint[];
   weekly: TrendPoint[];
+  onPointClick?: (period: string) => void;
 }
 
-export function WinLossTrendChart({ monthly, weekly }: Props) {
+export function WinLossTrendChart({ monthly, weekly, onPointClick }: Props) {
   const [gran, setGran] = useState<"week" | "month">("month");
   const data = gran === "week" ? weekly : monthly;
 
@@ -40,7 +41,14 @@ export function WinLossTrendChart({ monthly, weekly }: Props) {
           <p className="text-sm text-muted-foreground py-12 text-center">Sem dados no período.</p>
         ) : (
           <ResponsiveContainer width="100%" height={260}>
-            <ComposedChart data={data}>
+            <ComposedChart
+              data={data}
+              onClick={(e) => {
+                const period = (e?.activePayload?.[0]?.payload as TrendPoint | undefined)?.period;
+                if (period && onPointClick) onPointClick(period);
+              }}
+              style={{ cursor: onPointClick ? "pointer" : undefined }}
+            >
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="period" className="text-xs" />
               <YAxis yAxisId="left" className="text-xs" />

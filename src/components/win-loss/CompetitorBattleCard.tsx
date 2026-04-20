@@ -5,9 +5,12 @@ import { motion } from "framer-motion";
 import type { CompetitorStat } from "@/hooks/win-loss/useWinLossAggregations";
 import { fmtBRL, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
 
-interface Props { competitors: CompetitorStat[] }
+interface Props {
+  competitors: CompetitorStat[];
+  onCompetitorClick?: (name: string) => void;
+}
 
-export function CompetitorBattleCard({ competitors }: Props) {
+export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) {
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-2">
@@ -24,12 +27,14 @@ export function CompetitorBattleCard({ competitors }: Props) {
             {competitors.map((c, idx) => {
               const losingBadly = c.winRateVs < 30;
               return (
-                <motion.div
+                <motion.button
                   key={c.name}
+                  type="button"
+                  onClick={() => onCompetitorClick?.(c.name)}
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25, delay: idx * 0.04 }}
-                  className="rounded-lg border border-border/50 p-3 bg-card"
+                  className="rounded-lg border border-border/50 p-3 bg-card text-left hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
