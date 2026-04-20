@@ -1,32 +1,47 @@
 
-**Status atual:** Módulo Cadência de Orçamentos já está em 10/10 — todas as 10 melhorias planejadas foram concluídas (#1 cards premium, #2 stagger, #3 métricas, #4 gráfico conversão, #5 drawer + mutations, #6 triggers XP, #7 badge topbar + filtro today, #8 SEO + a11y, #9 skeletons + empty state, #10 documentação) e os 3 bugs do teste E2E foram corrigidos.
 
-Como você pediu para continuar rumo à perfeição, proponho **Fase 2 — Polimento Avançado (5 novas melhorias)** elevando o módulo de 10/10 funcional para *Awwwards-tier*.
+## Status: Fase 1 (#1–#10) e Fase 2 (#11–#15) concluídas ✅
 
-### #11 — Bulk actions nos cards
-Seleção múltipla via checkbox no `QuoteCadenceCard`, barra flutuante inferior com ações em lote: Pausar, Retomar, Cancelar, Reagendar próxima ação. Hook novo: `useBulkQuoteCadenceMutations`.
+Todas as 15 melhorias listadas já foram implementadas com sucesso. Não há itens pendentes.
 
-### #12 — Exportação CSV/Excel
-Botão "Exportar" no header da página gerando CSV (client-side via `papaparse`) com colunas: Cliente, Nº Orçamento, Valor, Status, Step Atual, Próxima Ação, Vendedor. Respeita filtros ativos.
+---
 
-### #13 — Histórico de interações no Drawer
-Nova aba "Histórico" no `QuoteCadenceDetailDrawer` listando tarefas concluídas em ordem cronológica reversa, com ícone do canal (email/whatsapp/call), data relativa (`date-fns`) e nota opcional do vendedor.
+## Fase 3 — Polimento Final (5 melhorias para 10/10 absoluto)
 
-### #14 — Realtime updates
-Subscrever `prospect_cadences` e `cadence_tasks` via `supabase.channel` filtrado por `salesperson_id`. Invalidar queries React Query no evento. Toast sutil "Nova tarefa do dia" quando insert chega. Migration: adicionar tabelas ao `supabase_realtime` publication.
+### #16 — Responsividade mobile aprimorada
+- Cards em 1 coluna com `snap-x` horizontal opcional (swipe entre cards no mobile).
+- BulkBar reposicionada com `safe-area-inset-bottom` para notch de iPhones.
+- Drawer com `max-h-[85vh]` e scroll suave no mobile.
+- Filtros colapsáveis no mobile (accordion) para não ocupar tela inteira.
 
-### #15 — Comparativo de cadências (mini-BI)
-Nova seção colapsável na página: tabela comparando cadências usadas (nome, total enrolados, taxa conversão, tempo médio até aprovação). Hook `useQuoteCadenceComparison` agregando via SQL. Útil para identificar qual template performa melhor.
+### #17 — Contagem regressiva e urgência visual
+- Cards com `next_action_date = hoje` ganham borda pulsante `animate-pulse` sutil (respeitando `prefers-reduced-motion`).
+- Cards atrasados (`next_action_date < hoje`) exibem badge vermelho "Atrasado X dias".
+- Métricas adicionam "Atrasados" como 4º card com ícone `AlertTriangle`.
 
-### Padrões mantidos
-Tokens semânticos, Sora/Inter, ≤400 linhas/arquivo, TS strict, RLS preservada, zero warnings, Framer Motion + skeletons, react-helmet-async.
+### #18 — Keyboard shortcuts (power users)
+- `Ctrl+E` abre/fecha exportação CSV.
+- `Ctrl+A` seleciona/deseleciona todos os cards visíveis (bulk).
+- `Escape` limpa seleção ou fecha drawer.
+- Hook `useQuoteCadenceShortcuts` com cleanup de listeners.
 
-### Ordem de execução (sequencial, sem perguntas)
-1. #11 Bulk actions
-2. #12 Exportação CSV
-3. #13 Histórico no drawer
-4. #14 Realtime
-5. #15 Comparativo de cadências
-6. Teste E2E final + relatório consolidado 10/10
+### #19 — Animação de transição entre tabs
+- `AnimatePresence` com `mode="wait"` nos `TabsContent` (Ativos/Pausados/Concluídos/Todos).
+- Cross-fade de 200ms com `y: 4` de offset (sutil, respeitando `prefers-reduced-motion`).
+- Mesma técnica no drawer (aba Tarefas ↔ Histórico).
 
-**Sem impacto** em outros módulos. Schema só altera publication do realtime.
+### #20 — Atualizar documentação e memória
+- Atualizar `mem://features/quote-cadence-module` com Fase 2 + Fase 3 completas.
+- Registrar novos componentes: `QuoteCadenceBulkBar`, `QuoteCadenceComparison`.
+- Registrar hooks: `useBulkQuoteCadenceMutations`, `useQuoteCadenceComparison`, `useQuoteCadenceRealtime`, `useQuoteCadenceShortcuts`.
+- Atualizar `mem://index.md`.
+
+### Ordem de execução
+1. #16 — Mobile responsivo
+2. #17 — Urgência visual
+3. #18 — Keyboard shortcuts
+4. #19 — Animações de tab
+5. #20 — Documentação final
+
+Sequencial, sem pausas, sem perguntas. Padrões: tokens semânticos, ≤400 linhas, TS strict, Framer Motion, a11y completo.
+
