@@ -9,16 +9,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useWinLossInsights } from "@/hooks/deal-intelligence/useWinLoss";
 import { severityClasses, severityLabel, insightTypeLabel, type Severity } from "@/components/deal-intelligence/winloss/winLossHelpers";
+import { InsightPinCard } from "./InsightPinCard";
 
 const NEW_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
 
 type SeverityFilter = "all" | Severity;
 
-export function ActionableInsightsPanel() {
+interface Props {
+  onCopilot?: (insight: { id: string; title: string; description: string }) => void;
+}
+
+export function ActionableInsightsPanel({ onCopilot }: Props = {}) {
   const { data, isLoading } = useWinLossInsights();
   const qc = useQueryClient();
   const [filter, setFilter] = useState<SeverityFilter>("all");
-  const insights = (data ?? []).filter(i => filter === "all" || i.severity === filter);
+  const all = data ?? [];
+  const insights = all.filter(i => filter === "all" || i.severity === filter);
 
   const apply = async (id: string) => {
     const { error } = await supabase
