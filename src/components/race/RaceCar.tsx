@@ -203,6 +203,67 @@ function RaceCarInner({
         </>
       )}
 
+      {/* ===== Aura dourada pulsante do líder (P1) — embaixo do carro ===== */}
+      {rank === 1 && (
+        <g pointerEvents="none">
+          {/* Halo radial difuso */}
+          <motion.ellipse
+            cx={0}
+            cy={bodyH / 2 + 2}
+            rx={bodyW * 0.75}
+            ry={9}
+            fill="hsl(45 95% 55%)"
+            animate={{ opacity: [0.22, 0.6, 0.22] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ filter: 'blur(5px)' }}
+          />
+          {/* Aura interna mais concentrada */}
+          <motion.ellipse
+            cx={0}
+            cy={bodyH / 2 + 1}
+            rx={bodyW * 0.55}
+            ry={5}
+            fill="hsl(48 100% 65%)"
+            animate={{ opacity: [0.35, 0.8, 0.35] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ filter: 'blur(2.5px)' }}
+          />
+          {/* Glow dourado contornando o chassi */}
+          <motion.rect
+            x={-bodyW / 2 - 2}
+            y={-bodyH / 2 - 2}
+            width={bodyW + 4}
+            height={bodyH + 4}
+            rx={bodyR + 2}
+            fill="hsl(45 95% 55%)"
+            animate={{ opacity: [0.25, 0.55, 0.25] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ filter: 'blur(6px)' }}
+          />
+          {/* Faíscas douradas atrás (rastro de brilho) */}
+          {[0, 1, 2].map((i) => (
+            <motion.circle
+              key={`spark-${i}`}
+              cy={(i - 1) * 3}
+              r={1.4}
+              fill="hsl(48 100% 70%)"
+              initial={{ cx: -bodyW / 2, opacity: 0 }}
+              animate={{
+                cx: [-bodyW / 2, -bodyW / 2 - 18],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 0.8,
+                repeat: Infinity,
+                delay: i * 0.25,
+                ease: 'easeOut',
+              }}
+              style={{ filter: 'drop-shadow(0 0 2px hsl(48 100% 65%))' }}
+            />
+          ))}
+        </g>
+      )}
+
       {/* ===== Sombra dinâmica do sol (elipse alongada para baixo-esquerda, blur SVG) ===== */}
       <ellipse
         cx={5}
@@ -544,6 +605,26 @@ function RaceCarInner({
             >
               P{rank}
             </text>
+            {isLeader && (
+              <motion.g
+                transform="translate(0 -20)"
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ filter: 'drop-shadow(0 0 3px hsl(45 95% 55%))' }}
+              >
+                {/* Coroa dourada simples */}
+                <path
+                  d="M -6 2 L -6 -2 L -3 0 L 0 -4 L 3 0 L 6 -2 L 6 2 Z"
+                  fill="hsl(45 95% 55%)"
+                  stroke="hsl(20 30% 14%)"
+                  strokeWidth={0.6}
+                  strokeLinejoin="round"
+                />
+                <circle cx={-6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
+                <circle cx={0} cy={-4} r={1} fill="hsl(48 100% 75%)" />
+                <circle cx={6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
+              </motion.g>
+            )}
           </motion.g>
         );
       })()}
