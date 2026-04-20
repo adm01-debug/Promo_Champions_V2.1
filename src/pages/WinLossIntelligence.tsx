@@ -1,10 +1,8 @@
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState, useCallback } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
-import { Button } from "@/components/ui/button";
-import { Trophy, RefreshCw, Sparkles } from "lucide-react";
 
+import { WinLossPageHeader } from "@/components/win-loss/WinLossPageHeader";
 import { WinLossFilters } from "@/components/win-loss/WinLossFilters";
 import { WinLossKpiBanner } from "@/components/win-loss/WinLossKpiBanner";
 import { WinLossTrendChart } from "@/components/win-loss/WinLossTrendChart";
@@ -12,7 +10,14 @@ import { WinLossReasonMatrix } from "@/components/win-loss/WinLossReasonMatrix";
 import { SalespersonWinLossTable } from "@/components/win-loss/SalespersonWinLossTable";
 import { CompetitorBattleCard } from "@/components/win-loss/CompetitorBattleCard";
 import { ActionableInsightsPanel } from "@/components/win-loss/ActionableInsightsPanel";
-import { WinLossDealsDrawer } from "@/components/win-loss/WinLossDealsDrawer";
+import { WinLossDealsDrawer, type DrawerFilter } from "@/components/win-loss/WinLossDealsDrawer";
+import { WinLossEmptyState } from "@/components/win-loss/WinLossEmptyState";
+import {
+  KpiBannerSkeleton,
+  ChartSkeleton,
+  TableSkeleton,
+  CompetitorGridSkeleton,
+} from "@/components/win-loss/WinLossSkeletons";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
@@ -24,7 +29,11 @@ import {
 } from "@/hooks/win-loss/useWinLossAggregations";
 import { useSalespersonWinLossStats } from "@/hooks/win-loss/useWinLossSalespersonStats";
 import { useWinLossRealtime } from "@/hooks/win-loss/useWinLossRealtime";
-import { useAnalyzeWinLoss, useMinePatterns } from "@/hooks/deal-intelligence/useWinLoss";
+import { useRunWinLossAnalysis } from "@/hooks/win-loss/useRunWinLossAnalysis";
+import { useWinLossExport } from "@/hooks/win-loss/useWinLossExport";
+import { useWinLossShortcuts } from "@/hooks/win-loss/useWinLossShortcuts";
+
+const SITE = "https://championgifts.lovable.app";
 
 export default function WinLossIntelligence() {
   useWinLossRealtime();
@@ -35,83 +44,106 @@ export default function WinLossIntelligence() {
   const weekly = useWLTrend(rows, "week");
   const competitors = useMemo(() => aggregateByCompetitor(rows), [rows]);
   const matrix = useMemo(() => aggregateReasonMatrix(rows), [rows]);
-  const { data: spStats, isLoading: spLoading } = useSalespersonWinLossStats(rows);
+  const { data: spStats = [], isLoading: spLoading } = useSalespersonWinLossStats(rows);
 
-  const analyze = useAnalyzeWinLoss();
-  const mine = useMinePatterns();
+  const runAnalysis = useRunWinLossAnalysis();
+  const exportCsv = useWinLossExport(rows);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState("");
-  const [drawerRows, setDrawerRows] = useState<typeof rows>([]);
+  const [drawerFilter, setDrawerFilter] = useState<DrawerFilter | undefined>(undefined);
 
-  const openWins = () => { setDrawerTitle("Deals ganhos"); setDrawerRows(rows.filter(r => r.outcome === "won")); setDrawerOpen(true); };
-  const openLosses = () => { setDrawerTitle("Deals perdidos"); setDrawerRows(rows.filter(r => r.outcome === "lost")); setDrawerOpen(true); };
+  const openDrawer = useCallback((title: string, filter?: DrawerFilter) => {
+    setDrawerTitle(title);
+    setDrawerFilter(filter);
+    setDrawerOpen(true);
+  }, []);
+
+  const onWins = () => openDrawer(`${kpis.wins} deals ganhos`, { outcome: "won" });
+  const onLosses = () => openDrawer(`${kpis.losses} deals perdidos`, { outcome: "lost" });
+  const onPeriod = (period: string) => openDrawer(`Deals em ${period}`, { period });
+  const onMatrix = (reason: string, stage: string) => openDrawer(`${reason} · ${stage}`, { outcome: "lost", reason, stage });
+  const onCompetitor = (name: string) => openDrawer(`vs. ${name}`, { competitor: name });
+  const onSalesperson = (id: string, name: string) => {
+    setFilters({ salespersonIds: [id] });
+    openDrawer(`Deals de ${name}`);
+  };
+
+  useWinLossShortcuts({
+    onExport: exportCsv,
+    onRun: () => runAnalysis.mutate(),
+    onEscape: () => setDrawerOpen(false),
+  });
+
+  const isEmpty = !isLoading && rows.length === 0;
+  const url = `${SITE}/win-loss-intelligence`;
 
   return (
     <>
       <Helmet>
         <title>Win/Loss Intelligence | Promo Champions</title>
-        <meta name="description" content="Análise robusta de vitórias e derrotas com IA, filtros, tendências e battle cards de concorrentes." />
+        <meta name="description" content="Análise robusta de vitórias e derrotas com IA, filtros, tendências, drill-down por deal e battle cards de concorrentes." />
+        <link rel="canonical" href={url} />
+        <meta property="og:title" content="Win/Loss Intelligence | Promo Champions" />
+        <meta property="og:description" content="Padrões de win/loss, tendências e benchmarks por vendedor com inteligência artificial." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={url} />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
+
       <PageTransition>
-        <div className="space-y-4">
-          <motion.div
-            className="flex items-center gap-3"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="p-3 rounded-xl gradient-primary">
-              <Trophy className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-page-title gradient-text">Win/Loss Intelligence</h1>
-              <p className="text-muted-foreground text-sm">
-                Padrões de vitória, derrota e concorrência — com IA e drill-down por deal.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => analyze.mutate()} disabled={analyze.isPending}>
-                <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${analyze.isPending ? "animate-spin" : ""}`} />
-                Analisar deals
-              </Button>
-              <Button size="sm" onClick={() => mine.mutate()} disabled={mine.isPending}>
-                <Sparkles className={`h-3.5 w-3.5 mr-1.5 ${mine.isPending ? "animate-pulse" : ""}`} />
-                Minerar padrões
-              </Button>
-            </div>
-          </motion.div>
+        <div className="space-y-4 pb-[env(safe-area-inset-bottom)]">
+          <WinLossPageHeader
+            onRun={() => runAnalysis.mutate()}
+            onExport={exportCsv}
+            isRunning={runAnalysis.isPending}
+          />
 
           <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
 
-          <WinLossKpiBanner kpis={kpis} isLoading={isLoading} />
+          {isLoading ? (
+            <>
+              <KpiBannerSkeleton />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2"><ChartSkeleton /></div>
+                <div><ChartSkeleton height={220} /></div>
+              </div>
+              <TableSkeleton rows={5} />
+              <CompetitorGridSkeleton />
+            </>
+          ) : isEmpty ? (
+            <WinLossEmptyState
+              onAdjustFilters={reset}
+              onRunAnalysis={() => runAnalysis.mutate()}
+              isAnalyzing={runAnalysis.isPending}
+            />
+          ) : (
+            <>
+              <WinLossKpiBanner kpis={kpis} onWinsClick={onWins} onLossesClick={onLosses} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              <WinLossTrendChart monthly={monthly} weekly={weekly} />
-            </div>
-            <div>
-              <WinLossReasonMatrix cells={matrix} />
-            </div>
-          </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2">
+                  <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
+                </div>
+                <div>
+                  <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
+                </div>
+              </div>
 
-          <SalespersonWinLossTable stats={spStats} isLoading={spLoading} />
+              <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
 
-          <CompetitorBattleCard competitors={competitors} />
+              <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+            </>
+          )}
 
           <ActionableInsightsPanel />
-
-          {/* Quick drill-down buttons */}
-          <div className="flex gap-2">
-            <Button size="sm" variant="ghost" onClick={openWins}>Ver {kpis.wins} wins</Button>
-            <Button size="sm" variant="ghost" onClick={openLosses}>Ver {kpis.losses} losses</Button>
-          </div>
 
           <WinLossDealsDrawer
             open={drawerOpen}
             onOpenChange={setDrawerOpen}
             title={drawerTitle}
-            rows={drawerRows}
+            rows={rows}
+            filter={drawerFilter}
           />
         </div>
       </PageTransition>

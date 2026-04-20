@@ -22,7 +22,11 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Carregando…</p>
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-9 rounded bg-muted/40 animate-pulse" />
+            ))}
+          </div>
         ) : !stats.length ? (
           <p className="text-sm text-muted-foreground py-8 text-center">Sem deals analisados no período.</p>
         ) : (
