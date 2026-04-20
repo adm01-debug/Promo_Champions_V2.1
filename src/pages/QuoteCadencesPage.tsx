@@ -7,12 +7,15 @@ import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
+import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
+import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 
 type Filter = "all" | "active" | "paused" | "completed";
 
 export default function QuoteCadencesPage() {
   const { data, isLoading } = useQuoteCadences();
   const [filter, setFilter] = useState<Filter>("active");
+  const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
 
   const rows = (data ?? []).filter((r) => filter === "all" || r.status === filter);
 
@@ -62,13 +65,26 @@ export default function QuoteCadencesPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rows.map((r) => (
-                  <QuoteCadenceCard key={r.id} row={r} />
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => setSelected(r)}
+                    className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
+                  >
+                    <QuoteCadenceCard row={r} />
+                  </button>
                 ))}
               </div>
             )}
           </TabsContent>
         </Tabs>
       </motion.div>
+
+      <QuoteCadenceDetailDrawer
+        row={selected}
+        open={!!selected}
+        onOpenChange={(o) => !o && setSelected(null)}
+      />
     </>
   );
 }
