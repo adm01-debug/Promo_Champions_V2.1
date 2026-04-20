@@ -124,6 +124,7 @@ export function useActiveCadencesBySaleIds(saleIds: string[]) {
       
       const cadenceMap: Record<string, { cadenceName: string; currentStep: number; status: 'active' | 'paused' }> = {};
       data?.forEach(pc => {
+        if (!pc.sale_id) return;
         const cadenceData = pc.cadence as { name: string } | null;
         cadenceMap[pc.sale_id] = {
           cadenceName: cadenceData?.name || "Cadência",
