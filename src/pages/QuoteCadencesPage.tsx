@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Send, Download } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
@@ -162,47 +162,57 @@ export default function QuoteCadencesPage() {
             <TabsTrigger value="all">Todos</TabsTrigger>
           </TabsList>
 
-          <TabsContent value={filter} className="mt-0">
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <SkeletonShimmer key={i} className="h-44 rounded-xl" />
-                ))}
-              </div>
-            ) : rows.length === 0 ? (
-              <QuoteCadenceEmptyState />
-            ) : (
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: { opacity: 1, transition: { staggerChildren: 0.03 } },
-                }}
-              >
-                {rows.map((r) => (
-                  <motion.button
-                    key={r.id}
-                    type="button"
-                    onClick={() => setSelected(r)}
-                    aria-label={`Abrir detalhes da cadência de ${r.quote?.client_name ?? "cliente"} — status ${r.status}`}
-                    className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl snap-start"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={filter}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+            >
+              <TabsContent value={filter} className="mt-0" forceMount>
+                {isLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <SkeletonShimmer key={i} className="h-44 rounded-xl" />
+                    ))}
+                  </div>
+                ) : rows.length === 0 ? (
+                  <QuoteCadenceEmptyState />
+                ) : (
+                  <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2"
+                    initial="hidden"
+                    animate="visible"
                     variants={{
-                      hidden: { opacity: 0, y: 8 },
-                      visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
+                      hidden: { opacity: 0 },
+                      visible: { opacity: 1, transition: { staggerChildren: 0.03 } },
                     }}
                   >
-                    <QuoteCadenceCard
-                      row={r}
-                      selected={selectedIds.includes(r.id)}
-                      onToggleSelect={toggleSelect}
-                    />
-                  </motion.button>
-                ))}
-              </motion.div>
-            )}
-          </TabsContent>
+                    {rows.map((r) => (
+                      <motion.button
+                        key={r.id}
+                        type="button"
+                        onClick={() => setSelected(r)}
+                        aria-label={`Abrir detalhes da cadência de ${r.quote?.client_name ?? "cliente"} — status ${r.status}`}
+                        className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl snap-start"
+                        variants={{
+                          hidden: { opacity: 0, y: 8 },
+                          visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
+                        }}
+                      >
+                        <QuoteCadenceCard
+                          row={r}
+                          selected={selectedIds.includes(r.id)}
+                          onToggleSelect={toggleSelect}
+                        />
+                      </motion.button>
+                    ))}
+                  </motion.div>
+                )}
+              </TabsContent>
+            </motion.div>
+          </AnimatePresence>
         </Tabs>
       </motion.div>
 
