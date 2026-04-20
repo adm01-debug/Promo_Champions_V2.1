@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
+import { QuoteCadenceConversionChart } from "@/components/cadences/quote/QuoteCadenceConversionChart";
 import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -62,6 +63,8 @@ export default function QuoteCadencesPage() {
         </header>
 
         <QuoteCadenceMetrics />
+
+        <QuoteCadenceConversionChart />
 
         <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
 
