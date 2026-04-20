@@ -1,6 +1,7 @@
 import { RefObject } from "react";
-import { useLocation } from "react-router-dom";
-import { Bell, Sparkles } from "lucide-react";
+import { useLocation, Link } from "react-router-dom";
+import { Bell, Sparkles, FileText } from "lucide-react";
+import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
@@ -53,6 +54,8 @@ interface DesktopTopBarProps {
 
 export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
+  const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
+  const quoteTasksCount = todaysQuoteTasks?.count ?? 0;
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const isTopLevel = pathSegments.length < 2;
@@ -117,6 +120,31 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
 
           {/* Divider */}
           <div className="w-px h-5 bg-border/50 mx-1.5" />
+
+          {/* Quote cadence tasks for today */}
+          {quoteTasksCount > 0 && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to="/cadencias-orcamentos?filter=today"
+                  className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-ring outline-none"
+                  aria-label={`${quoteTasksCount} tarefa${quoteTasksCount > 1 ? "s" : ""} de cadência de orçamento para hoje`}
+                >
+                  <FileText className="h-4 w-4 text-primary" />
+                  <NotificationBadge
+                    count={quoteTasksCount}
+                    size="sm"
+                    pulse={quoteTasksCount > 3}
+                    variant="info"
+                    className="absolute -top-1 -right-1"
+                  />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Tarefas de cadência de orçamento para hoje ({quoteTasksCount})</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
 
           {/* Notifications */}
           <Tooltip>

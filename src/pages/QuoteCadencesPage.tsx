@@ -1,22 +1,27 @@
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
 import { QuoteCadenceConversionChart } from "@/components/cadences/quote/QuoteCadenceConversionChart";
 import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useMemo, useState } from "react";
 import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceFilters, emptyQuoteCadenceFilters, type QuoteCadenceFilterValues } from "@/components/cadences/quote/QuoteCadenceFilters";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays, isToday } from "date-fns";
 
 type Filter = "all" | "active" | "paused" | "completed";
 
 export default function QuoteCadencesPage() {
   const { data, isLoading } = useQuoteCadences();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const todayOnly = searchParams.get("filter") === "today";
   const [filter, setFilter] = useState<Filter>("active");
   const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
   const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(emptyQuoteCadenceFilters);
@@ -40,9 +45,19 @@ export default function QuoteCadencesPage() {
         if (!sentAt) return false;
         if (differenceInCalendarDays(today, sentAt) < advanced.daysWithoutResponse) return false;
       }
+      if (todayOnly) {
+        if (!r.next_action_date) return false;
+        if (!isToday(new Date(r.next_action_date))) return false;
+      }
       return true;
     });
-  }, [data, filter, advanced]);
+  }, [data, filter, advanced, todayOnly]);
+
+  const clearTodayFilter = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("filter");
+    setSearchParams(next, { replace: true });
+  };
 
   return (
     <>
