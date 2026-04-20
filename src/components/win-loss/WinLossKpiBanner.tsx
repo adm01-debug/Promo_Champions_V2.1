@@ -58,8 +58,8 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
         >
           <Card className="border-border/50">
             <CardContent className="p-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{it.label}</span>
+              <div className="flex items-center justify-between mb-1.5 gap-1">
+                <span className="text-[11px] uppercase tracking-wide text-muted-foreground truncate">{it.label}</span>
                 <div className={`p-1 rounded-md ${toneClasses[it.tone]}`}>
                   <it.icon className="h-3.5 w-3.5" />
                 </div>
@@ -70,6 +70,16 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
               >
                 {isLoading ? "…" : it.value}
               </p>
+              <div className="flex items-center gap-1.5 mt-0.5 min-h-[14px]">
+                {it.delta != null && (
+                  <WinLossKpiDelta value={it.delta} invert={it.invertDelta} label={`${it.label} vs. período anterior`} />
+                )}
+                {it.badge && (
+                  <Badge variant="outline" className="text-[9px] h-4 px-1 border-amber-500/40 text-amber-700">
+                    <Sparkles className="h-2 w-2 mr-0.5" /> {it.badge}
+                  </Badge>
+                )}
+              </div>
             </CardContent>
           </Card>
         </motion.div>
