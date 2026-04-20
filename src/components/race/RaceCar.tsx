@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { memo, useEffect, useRef, useState } from 'react';
+import { forwardRef, memo, useEffect, useRef, useState } from 'react';
 import { CarLiveryOverlay } from './CarLiveryOverlay';
 import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
@@ -45,7 +45,7 @@ interface RaceCarProps {
  * Sombra projetada destacada, carroceria com brilho, rodas com aros,
  * cockpit/spoiler conforme estilo. Aponta para a direita →.
  */
-function RaceCarInner({
+const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner({
   number,
   primaryColor,
   secondaryColor,
@@ -65,7 +65,7 @@ function RaceCarInner({
   liveryUid,
   teamColor = null,
   pilotName,
-}: RaceCarProps) {
+}, ref) {
   const [helmetVisible, setHelmetVisible] = useState(false);
   const hoverTimerRef = useRef<number | null>(null);
   const tooltipId = `helmet-tip-${number ?? 'anon'}`;
@@ -100,6 +100,7 @@ function RaceCarInner({
 
   return (
     <g
+      ref={ref}
       transform={`scale(${scale})`}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
@@ -725,7 +726,7 @@ function RaceCarInner({
       )}
     </g>
   );
-}
+});
 
 /**
  * Memoizado com comparator custom: re-renderiza apenas quando props visualmente
