@@ -29,7 +29,7 @@ export function useTodaysQuoteCadenceTasks() {
       const { data: sp } = await supabase
         .from("salespeople")
         .select("id")
-        .eq("user_id", userId)
+        .eq("auth_user_id", userId)
         .maybeSingle();
       const salespersonId = sp?.id;
       if (!salespersonId) return { count: 0, tasks: [] as TodaysQuoteCadenceTask[] };
