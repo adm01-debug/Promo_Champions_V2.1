@@ -1,36 +1,23 @@
 
-**Objetivo:** Carro do líder (P1) com pulso dourado contínuo + glow exclusivo, separando-o visualmente dos demais.
+**Objetivo:** Pílula com nome do piloto acima do carro ganha fundo na cor primária do preset do carro (livery), criando vínculo visual imediato.
 
-**Localização:** `src/components/race/RaceCar.tsx` — componente raiz do carro (root `<g>` ou wrapper SVG).
+**Investigação:** Preciso localizar onde o nome do piloto é renderizado acima do carro em `RaceCar.tsx` e confirmar o acesso à `primary_color` do preset.
 
-**Estado atual:**
-- Badge P1 já tem pulso dourado (feito no passo anterior).
-- Carro em si do líder não tem distinção visual — mesma renderização dos outros.
+**Mudanças (apenas `src/components/race/RaceCar.tsx`):**
 
-**Mudanças (apenas em `RaceCar.tsx`):**
+1. **Pílula do nome** (atualmente provavelmente fundo escuro neutro):
+   - `fill={primaryColor}` no `<rect>` da pílula.
+   - `stroke="hsl(0 0% 100% / 0.85)"` `strokeWidth={1.2}` para destacar sobre a pista.
+   - `rx={6}` para cantos arredondados.
 
-1. **Aura dourada pulsante embaixo do carro (P1 only):**
-   - Adicionar `<motion.ellipse>` antes do chassi (atrás), `cx=0 cy=bodyH/2+2`, `rx=bodyW*0.7 ry=6`.
-   - Fill: `radial-gradient` simulado via `fill="hsl(45 95% 55%)"` com `opacity` animado `[0.25, 0.6, 0.25]` em loop 1.6s (sincronizado com o badge).
-   - `filter: blur(4px)` via style para suavizar.
+2. **Cor do texto adaptativa** (contraste WCAG):
+   - Helper `getReadableTextColor(hex)` que calcula luminância YIQ:
+     - `(r*299 + g*587 + b*114) / 1000 >= 140` → texto preto `hsl(0 0% 8%)`
+     - Caso contrário → texto branco `hsl(0 0% 98%)`
+   - Garante leitura tanto em liveries claras (amarelo, branco) quanto escuras (preto, navy).
 
-2. **Glow dourado no chassi (P1 only):**
-   - Wrapper `<motion.g>` no carro inteiro com `style={{ filter: 'drop-shadow(0 0 8px hsl(45 95% 55% / 0.7)) drop-shadow(0 0 16px hsl(45 95% 55% / 0.4))' }}` quando `rank === 1`.
-   - Animar a intensidade do drop-shadow via `animate` em loop (alternar entre 0.5 e 0.9 de opacidade).
+3. **Halo sutil** atrás da pílula: `<rect>` com mesma forma + 1.5px maior, `fill="hsl(0 0% 0% / 0.35)"` `filter="blur(2px)"` — mantém legibilidade sobre asfalto.
 
-3. **Faíscas/partículas douradas atrás (opcional leve):**
-   - 3 pequenos `<circle r=1.2>` com `animate={{ x: [-bodyW/2, -bodyW/2-15], opacity: [1, 0] }}` em loop 0.8s, com delay escalonado — simula rastro de brilho.
-   - Cor `hsl(45 95% 65%)`.
+4. **Sem impacto** em: badge P1/P2/P3 (mantém medalha), aura dourada do líder, lógica de leaderboard, demais carros.
 
-4. **Coroa dourada flutuante acima do badge P1 (toque premium):**
-   - Pequeno path SVG de coroa (~10px) acima do badge `(0, -bodyH/2 - 32)`.
-   - `motion` com `y: [0, -2, 0]` em loop 2s — flutuação sutil.
-
-**Sem impacto em:**
-- Carros P2+ permanecem idênticos.
-- Lógica de leaderboard/rank.
-- Performance: animações CSS/SVG nativas, sem re-render React.
-
-**Resultado:** o líder fica imediatamente identificável a 2m de distância da tela — aura dourada pulsando sob o carro, chassi com glow, coroinha flutuando. Estética "F1 race leader" premium.
-
-**Arquivo único:** `src/components/race/RaceCar.tsx`.
+**Resultado:** olhando a pista, cada nome "vibra" na mesma cor do carro — vínculo visual instantâneo nome ↔ livery.
