@@ -12,7 +12,6 @@ export interface HourCell {
 
 interface SaleRow {
   status: string | null;
-  closed_at: string | null;
   updated_at: string | null;
 }
 
@@ -25,7 +24,7 @@ export function useWinByHourMatrix() {
 
       const { data, error } = await supabase
         .from("sales")
-        .select("status, closed_at, updated_at")
+        .select("status, updated_at")
         .in("status", ["won", "lost"])
         .gte("updated_at", ninetyDaysAgo.toISOString())
         .limit(2000);
@@ -41,9 +40,8 @@ export function useWinByHourMatrix() {
       }
 
       rows.forEach((r) => {
-        const ts = r.closed_at ?? r.updated_at;
-        if (!ts) return;
-        const dt = new Date(ts);
+        if (!r.updated_at) return;
+        const dt = new Date(r.updated_at);
         const k = `${dt.getDay()}-${dt.getHours()}`;
         const cell = grid.get(k);
         if (!cell) return;

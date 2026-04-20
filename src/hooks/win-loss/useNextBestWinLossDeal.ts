@@ -16,15 +16,13 @@ interface SaleRow {
   client_name: string | null;
   amount: number | null;
   status: string | null;
-  stage: string | null;
+  category: string | null;
   updated_at: string | null;
   salesperson_id: string | null;
 }
 
 /**
- * Lightweight heuristic: pick the highest-amount open deal whose stage is
- * past 'qualified' but stagnated (updated > 7d ago). No edge call needed —
- * deterministic, fast, respects existing RLS.
+ * Heuristic: highest-value open deal stagnated > 7d. Deterministic, no edge call.
  */
 export function useNextBestWinLossDeal() {
   return useQuery({
@@ -35,7 +33,7 @@ export function useNextBestWinLossDeal() {
 
       const { data, error } = await supabase
         .from("sales")
-        .select("id, account_id, client_name, amount, status, stage, updated_at, salesperson_id")
+        .select("id, account_id, client_name, amount, status, category, updated_at, salesperson_id")
         .not("status", "in", "(won,lost)")
         .lte("updated_at", sevenDaysAgo.toISOString())
         .order("amount", { ascending: false, nullsFirst: false })
@@ -53,7 +51,7 @@ export function useNextBestWinLossDeal() {
         saleId: row.id,
         accountId: row.account_id,
         clientName: row.client_name ?? "Cliente",
-        reason: `Maior ticket parado há ${days} dias no estágio ${row.stage ?? "—"}.`,
+        reason: `Maior ticket parado há ${days} dias (${row.category ?? "sem categoria"}).`,
         suggestedScript:
           "Reconectar com pergunta de valor: 'Desde nossa última conversa, o que mudou na prioridade desse projeto?' — depois reposicionar próximo passo concreto.",
         amount: row.amount,
