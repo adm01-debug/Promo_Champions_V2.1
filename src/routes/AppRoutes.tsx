@@ -16,7 +16,7 @@ import {
   // CRM Core
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
-  Atividades, Cadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
+  Atividades, Cadencias, QuoteCadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
   LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, RevenueForecast, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
@@ -107,7 +107,8 @@ export function AppRoutes() {
 
                     {/* ─── Prospecção & Atividades ───────────────── */}
                     <Route path="/atividades" element={<Atividades />} />
-                    <Route path="/cadencias" element={<Cadencias />} />
+                  <Route path="/cadencias" element={<Cadencias />} />
+                  <Route path="/cadencias-orcamentos" element={<QuoteCadencias />} />
                     <Route path="/tarefas" element={<Tarefas />} />
                     <Route path="/icp" element={<Manager><ICP /></Manager>} />
                     <Route path="/fonte-leads" element={<Manager><FonteLeads /></Manager>} />
