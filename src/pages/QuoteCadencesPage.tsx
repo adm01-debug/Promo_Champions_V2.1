@@ -21,6 +21,7 @@ import { differenceInCalendarDays, isToday } from "date-fns";
 import { useQuoteCadenceRealtime } from "@/hooks/cadences/useQuoteCadenceRealtime";
 import { exportToCSV } from "@/lib/csvExporter";
 import { quoteCadencesToCsvRows } from "@/lib/quoteCadenceExport";
+import { useQuoteCadenceShortcuts } from "@/hooks/cadences/useQuoteCadenceShortcuts";
 
 type Filter = "all" | "active" | "paused" | "completed";
 
