@@ -1,41 +1,32 @@
 
-**Corrigir 3 bugs identificados no teste E2E + concluir Melhoria #10** (documentação) — fechamento 10/10 do módulo Cadência de Orçamentos.
+**Status atual:** Módulo Cadência de Orçamentos já está em 10/10 — todas as 10 melhorias planejadas foram concluídas (#1 cards premium, #2 stagger, #3 métricas, #4 gráfico conversão, #5 drawer + mutations, #6 triggers XP, #7 badge topbar + filtro today, #8 SEO + a11y, #9 skeletons + empty state, #10 documentação) e os 3 bugs do teste E2E foram corrigidos.
 
-### BUG-01 — Visibilidade dos dados mockados (CRITICAL)
-**Problema:** RLS de `quotes`/`prospect_cadences` filtra por `created_by = auth.uid()` ou `salesperson_id` do user logado. Mock data foi inserido com `created_by` aleatório → dashboard mostra 0.
+Como você pediu para continuar rumo à perfeição, proponho **Fase 2 — Polimento Avançado (5 novas melhorias)** elevando o módulo de 10/10 funcional para *Awwwards-tier*.
 
-**Correção (migration de UPDATE):**
-- Reatribuir todas as 12 quotes `MOCK-CAD-*`: `UPDATE quotes SET created_by = (primeiro auth.users id existente que tenha salesperson) WHERE quote_number LIKE 'MOCK-CAD-%'`.
-- Reatribuir as 12 `prospect_cadences` correspondentes: `salesperson_id = (salesperson.id do mesmo user)`.
-- Reatribuir as ~30 `cadence_tasks`: `assigned_to = mesmo auth user id`.
-- Garantir `next_action_date = CURRENT_DATE` em ≥3 prospect_cadences daquele user.
+### #11 — Bulk actions nos cards
+Seleção múltipla via checkbox no `QuoteCadenceCard`, barra flutuante inferior com ações em lote: Pausar, Retomar, Cancelar, Reagendar próxima ação. Hook novo: `useBulkQuoteCadenceMutations`.
 
-### BUG-02 — Hook `useTodaysQuoteCadenceTasks` usa coluna errada
-**Arquivo:** `src/hooks/cadences/useTodaysQuoteCadenceTasks.ts` linha 22.
-**Correção:** trocar `.eq("user_id", userId)` por `.eq("auth_user_id", userId)` na query de `salespeople` (consistente com fix de `enroll_quote_in_cadence`).
+### #12 — Exportação CSV/Excel
+Botão "Exportar" no header da página gerando CSV (client-side via `papaparse`) com colunas: Cliente, Nº Orçamento, Valor, Status, Step Atual, Próxima Ação, Vendedor. Respeita filtros ativos.
 
-### BUG-03 — SEO meta tags não detectadas
-**Investigação rápida:** confirmar que `HelmetProvider` envolve `App` (já confirmado em `src/App.tsx`). Provável causa: `<Helmet>` aninhado em wrapper que não monta no head no SSR-less. Garantir que tags estão no nível raiz do JSX da página, sem `<>`+condicionais que atrasem render. Validar `<title>`, `<meta name="description">`, `<link rel="canonical">`, OG e twitter:card em `QuoteCadencesPage.tsx`. Se já corretos, problema era apenas o snapshot do extractor — registrar como falso-positivo.
+### #13 — Histórico de interações no Drawer
+Nova aba "Histórico" no `QuoteCadenceDetailDrawer` listando tarefas concluídas em ordem cronológica reversa, com ícone do canal (email/whatsapp/call), data relativa (`date-fns`) e nota opcional do vendedor.
 
-### Melhoria #10 — Documentação + memória
-- Criar `mem://features/quote-cadence-module` com:
-  - Arquitetura: página `QuoteCadencesPage`, componentes (`QuoteCadenceMetrics`, `QuoteCadenceCard`, `QuoteCadenceConversionChart`, `QuoteCadenceDetailDrawer`, `QuoteCadenceEmptyState`), hooks (`useQuoteCadences`, `useQuoteCadenceStats`, `useTodaysQuoteCadenceTasks`, `useQuoteCadenceMutations`), RPC `enroll_quote_in_cadence`.
-  - Fluxo end-to-end: enroll → tarefas geradas → execução diária → conclusão/conversão → triggers XP.
-  - Triggers SQL: `trg_award_xp_on_quote_cadence_task_complete`, `trg_award_xp_on_quote_approved_via_cadence`.
-  - RLS: visibilidade restrita ao salesperson dono ou admin.
-  - Filtro `?filter=today` + badge topbar.
-- Atualizar `mem://follow-up/intelligent-reactivation-and-cadence` adicionando parágrafo final mencionando extensão para cadências de orçamentos.
-- Atualizar `mem://index.md` (seção `## Memories`) com nova linha:
-  `- [Quote Cadence Module](mem://features/quote-cadence-module) — Follow-up automatizado de orçamentos com triggers XP, filtro today e drawer premium`
+### #14 — Realtime updates
+Subscrever `prospect_cadences` e `cadence_tasks` via `supabase.channel` filtrado por `salesperson_id`. Invalidar queries React Query no evento. Toast sutil "Nova tarefa do dia" quando insert chega. Migration: adicionar tabelas ao `supabase_realtime` publication.
+
+### #15 — Comparativo de cadências (mini-BI)
+Nova seção colapsável na página: tabela comparando cadências usadas (nome, total enrolados, taxa conversão, tempo médio até aprovação). Hook `useQuoteCadenceComparison` agregando via SQL. Útil para identificar qual template performa melhor.
+
+### Padrões mantidos
+Tokens semânticos, Sora/Inter, ≤400 linhas/arquivo, TS strict, RLS preservada, zero warnings, Framer Motion + skeletons, react-helmet-async.
 
 ### Ordem de execução (sequencial, sem perguntas)
-1. Migration: corrigir `created_by`/`salesperson_id`/`assigned_to` dos registros `MOCK-CAD-*`.
-2. Edit `useTodaysQuoteCadenceTasks.ts`: trocar `user_id` → `auth_user_id`.
-3. Validar/ajustar Helmet em `QuoteCadencesPage.tsx`.
-4. Criar `mem://features/quote-cadence-module`.
-5. Atualizar `mem://follow-up/intelligent-reactivation-and-cadence`.
-6. Atualizar `mem://index.md`.
-7. Relatório final consolidado: scores 10/10 por critério.
+1. #11 Bulk actions
+2. #12 Exportação CSV
+3. #13 Histórico no drawer
+4. #14 Realtime
+5. #15 Comparativo de cadências
+6. Teste E2E final + relatório consolidado 10/10
 
-**Padrões mantidos:** tokens semânticos, ≤400 linhas, TS strict, RLS rigorosa, zero warnings.
-**Sem impacto** em outros módulos.
+**Sem impacto** em outros módulos. Schema só altera publication do realtime.
