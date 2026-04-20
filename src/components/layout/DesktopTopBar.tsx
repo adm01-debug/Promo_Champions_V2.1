@@ -23,6 +23,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/tarefas': 'Tarefas',
   '/atividades': 'Atividades',
   '/cadencias': 'Cadências',
+  '/cadencias-orcamentos': 'Cadências de Orçamento',
   '/metas': 'Metas',
   '/analytics': 'Analytics',
   '/relatorios': 'Relatórios',
