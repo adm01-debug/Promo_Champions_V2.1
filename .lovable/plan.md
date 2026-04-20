@@ -1,45 +1,41 @@
 
-**Bateria de testes E2E do módulo Cadência de Orçamentos** (melhorias #1–#9 + dados mockados)
+**Corrigir 3 bugs identificados no teste E2E + concluir Melhoria #10** (documentação) — fechamento 10/10 do módulo Cadência de Orçamentos.
 
-### Escopo
-Validar exclusivamente o que foi implementado nas melhorias #1–#9 do módulo `/cadencias-orcamentos`, usando os dados mockados (`MOCK-CAD-*`) recém-inseridos.
+### BUG-01 — Visibilidade dos dados mockados (CRITICAL)
+**Problema:** RLS de `quotes`/`prospect_cadences` filtra por `created_by = auth.uid()` ou `salesperson_id` do user logado. Mock data foi inserido com `created_by` aleatório → dashboard mostra 0.
 
-### Camadas de teste
+**Correção (migration de UPDATE):**
+- Reatribuir todas as 12 quotes `MOCK-CAD-*`: `UPDATE quotes SET created_by = (primeiro auth.users id existente que tenha salesperson) WHERE quote_number LIKE 'MOCK-CAD-%'`.
+- Reatribuir as 12 `prospect_cadences` correspondentes: `salesperson_id = (salesperson.id do mesmo user)`.
+- Reatribuir as ~30 `cadence_tasks`: `assigned_to = mesmo auth user id`.
+- Garantir `next_action_date = CURRENT_DATE` em ≥3 prospect_cadences daquele user.
 
-**1. Banco de dados (read queries via `supabase--read_query`)**
-- Confirmar 12 quotes `MOCK-CAD-*`, 12 `prospect_cadences` com `quote_id`, ~30 `cadence_tasks`.
-- Validar distribuição de status (active/paused/completed/cancelled) e `next_action_date` = hoje em ≥3 registros.
-- Verificar triggers de XP (#6): existência de `award_xp_on_quote_cadence_task_complete` e `award_xp_on_quote_approved_via_cadence` em `pg_trigger`.
-- Verificar RLS de `prospect_cadences`/`cadence_tasks` (permissões corretas).
+### BUG-02 — Hook `useTodaysQuoteCadenceTasks` usa coluna errada
+**Arquivo:** `src/hooks/cadences/useTodaysQuoteCadenceTasks.ts` linha 22.
+**Correção:** trocar `.eq("user_id", userId)` por `.eq("auth_user_id", userId)` na query de `salespeople` (consistente com fix de `enroll_quote_in_cadence`).
 
-**2. Edge functions / RPCs**
-- Testar `enroll_quote_in_cadence` via `supabase--read_query` (dry-run com SELECT) confirmando que `auth_user_id` foi corrigido.
+### BUG-03 — SEO meta tags não detectadas
+**Investigação rápida:** confirmar que `HelmetProvider` envolve `App` (já confirmado em `src/App.tsx`). Provável causa: `<Helmet>` aninhado em wrapper que não monta no head no SSR-less. Garantir que tags estão no nível raiz do JSX da página, sem `<>`+condicionais que atrasem render. Validar `<title>`, `<meta name="description">`, `<link rel="canonical">`, OG e twitter:card em `QuoteCadencesPage.tsx`. Se já corretos, problema era apenas o snapshot do extractor — registrar como falso-positivo.
 
-**3. UI funcional (browser automation)**
-- **Navegação**: `/cadencias-orcamentos` carrega sem erro, H1 "Cadência de Orçamentos" presente.
-- **Métricas (#3, #9)**: 3 cards com valores > 0; shimmer some após load; ARIA `role="region"` + `aria-live` presentes.
-- **Gráfico de conversão (#4)**: renderiza curva Enviados vs Aprovados; ToggleGroup (30/60/90d) muda período; `aria-label` correto.
-- **Cards (#1, #2, #9)**: 12 cards exibidos com stagger animation; status badges corretos; foco visível ao tabular.
-- **Filtro `?filter=today` (#7)**: navegar para `/cadencias-orcamentos?filter=today` exibe chip ativo + reduz lista a 3 cards.
-- **Topbar badge (#7)**: ícone `FileText` no `DesktopTopBar` mostra contagem de tarefas do dia; click leva à página filtrada.
-- **Drawer de detalhes (#5)**: abrir card → drawer mostra timeline de tarefas, ações Pausar/Retomar/Cancelar, `aria-describedby`.
-- **Mutations (#5)**: testar Pausar (sem confirmar destrutivo), validar toast e revalidação.
-- **Empty state premium (#9)**: navegar com filtro impossível (ex.: `?filter=today` quando não há) → SVG animado aparece.
-- **SEO (#8)**: inspecionar `<head>`: title, description, canonical, OG, twitter:card.
+### Melhoria #10 — Documentação + memória
+- Criar `mem://features/quote-cadence-module` com:
+  - Arquitetura: página `QuoteCadencesPage`, componentes (`QuoteCadenceMetrics`, `QuoteCadenceCard`, `QuoteCadenceConversionChart`, `QuoteCadenceDetailDrawer`, `QuoteCadenceEmptyState`), hooks (`useQuoteCadences`, `useQuoteCadenceStats`, `useTodaysQuoteCadenceTasks`, `useQuoteCadenceMutations`), RPC `enroll_quote_in_cadence`.
+  - Fluxo end-to-end: enroll → tarefas geradas → execução diária → conclusão/conversão → triggers XP.
+  - Triggers SQL: `trg_award_xp_on_quote_cadence_task_complete`, `trg_award_xp_on_quote_approved_via_cadence`.
+  - RLS: visibilidade restrita ao salesperson dono ou admin.
+  - Filtro `?filter=today` + badge topbar.
+- Atualizar `mem://follow-up/intelligent-reactivation-and-cadence` adicionando parágrafo final mencionando extensão para cadências de orçamentos.
+- Atualizar `mem://index.md` (seção `## Memories`) com nova linha:
+  `- [Quote Cadence Module](mem://features/quote-cadence-module) — Follow-up automatizado de orçamentos com triggers XP, filtro today e drawer premium`
 
-**4. Acessibilidade**
-- Tab navigation: foco visível em todos cards/botões.
-- ARIA labels nos botões de ação, ToggleGroup, DropdownMenu.
+### Ordem de execução (sequencial, sem perguntas)
+1. Migration: corrigir `created_by`/`salesperson_id`/`assigned_to` dos registros `MOCK-CAD-*`.
+2. Edit `useTodaysQuoteCadenceTasks.ts`: trocar `user_id` → `auth_user_id`.
+3. Validar/ajustar Helmet em `QuoteCadencesPage.tsx`.
+4. Criar `mem://features/quote-cadence-module`.
+5. Atualizar `mem://follow-up/intelligent-reactivation-and-cadence`.
+6. Atualizar `mem://index.md`.
+7. Relatório final consolidado: scores 10/10 por critério.
 
-**5. Console & rede**
-- `code--read_console_logs` filtrado por `cadenc` / `error` — zero erros relacionados ao módulo.
-- `browser--list_network_requests` confirma queries Supabase 200 OK.
-
-### Entregáveis
-Relatório consolidado em formato tabela:
-| # | Camada | Cenário | Resultado | Evidência |
-|---|--------|---------|-----------|-----------|
-- Bugs encontrados (se houver) listados separadamente com severidade.
-- Score final 0–10 por critério: Funcionalidade, UX, A11y, Performance, SEO.
-
-**Sem mutações destrutivas reais** (DELETE/CANCEL serão apenas verificados via UI sem confirmar). **Sem alterações de código** nesta fase — apenas validação. Bugs identificados serão reportados; correções entram em plano separado.
+**Padrões mantidos:** tokens semânticos, ≤400 linhas, TS strict, RLS rigorosa, zero warnings.
+**Sem impacto** em outros módulos.
