@@ -13,7 +13,7 @@ import { ptBR } from "date-fns/locale";
 import { CheckCircle2, SkipForward, Clock, CalendarClock, Phone, Mail, MessageSquare, FileText, History } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useGamificationSafe } from "@/contexts/GamificationContext";
 
 interface Props {
