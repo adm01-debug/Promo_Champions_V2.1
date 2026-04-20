@@ -93,6 +93,12 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
             <Badge variant="outline" className={statusVariant[row.status] ?? ""}>
               {row.status}
             </Badge>
+            {isOverdue && (
+              <Badge variant="destructive" className="gap-1 text-[10px] px-1.5">
+                <AlertTriangle className="h-3 w-3" />
+                {overdueDays}d
+              </Badge>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={stop}>
                 <Button
