@@ -1,55 +1,117 @@
 
 
-## Bateria E2E — Fase 3 (#16–#20) do módulo Cadência de Orçamentos
+## Módulo Win/Loss Intelligence — Evolução robusta
 
-### Escopo
-Validar exclusivamente as 5 melhorias da Fase 3 (mobile responsivo, urgência visual, keyboard shortcuts, animações de tab, documentação) sem alterar código.
+### Estado atual
+Já existem 7 componentes em `src/components/deal-intelligence/winloss/`, hook `useWinLoss.ts`, edge functions `analyze-win-loss` + `mine-win-loss-patterns`, e tabelas `win_loss_analyses`, `win_loss_patterns`, `win_loss_insights`, `competitors_registry`, `competitor_mentions` (todas vazias — só `deal_outcomes` tem 26 registros). Hoje vive como aba dentro de `/deal-intelligence`.
 
-### Camadas
+### Objetivo
+Promover Win/Loss a **módulo dedicado de classe mundial** com rota própria, filtros avançados, séries temporais, drill-down e benchmarks por vendedor/segmento/origem.
 
-**1. Banco (read-only via `supabase--read_query`)**
-- Contagens de `prospect_cadences` por status (active/paused/completed/cancelled) com `quote_id NOT NULL`.
-- Quantos têm `next_action_date = hoje` (validar #17 borda pulsante).
-- Quantos têm `next_action_date < hoje` (validar #17 badge "Atrasado").
-- Confirmar mocks `MOCK-CAD-*` continuam visíveis ao usuário logado.
+---
 
-**2. Build & estática**
-- `tsc --noEmit` (zero erros).
-- `wc -l` em `QuoteCadencesPage.tsx`, `QuoteCadenceCard.tsx`, `QuoteCadenceDetailDrawer.tsx`, `QuoteCadenceMetrics.tsx`, `useQuoteCadences.ts` — confirmar ≤400 linhas.
-- `grep` confirmando uso real de `useQuoteCadenceShortcuts`, `AnimatePresence`, `animate-pulse`, `safe-area-inset-bottom`.
+## Entregas
 
-**3. UI Desktop 1561×861 em `/cadencias-orcamentos`**
-- **#17 Métrica "Atrasados":** screenshot dos 4 cards de métrica, ícone `AlertTriangle`, valor numérico.
-- **#17 Borda pulsante:** identificar card com ação hoje + badge "Atrasado X dias" em cards vencidos.
-- **#19 Animações tabs:** clicar Ativos → Pausados → Concluídos → Todos, capturar cross-fade.
-- **#19 Drawer:** abrir card, alternar Tarefas ↔ Histórico, observar transição.
-- **#18 Ctrl+E:** disparar atalho, monitorar download CSV via network log.
-- **#18 Ctrl+A:** selecionar todos, confirmar `QuoteCadenceBulkBar` aparece.
-- **#18 Escape:** limpar seleção; abrir drawer e fechar via Esc.
-- **#18 Atalho ignorado em input:** focar campo de busca, digitar "a", garantir que não dispara seleção.
+### 1. Rota dedicada `/win-loss-intelligence`
+- Nova página `src/pages/WinLossIntelligence.tsx` (lazy, com Helmet/SEO).
+- Item no sidebar dentro de "Inteligência" + atalho no Cmd+K.
+- A aba antiga em `/deal-intelligence` passa a redirecionar via link "Ver módulo completo".
 
-**4. UI Mobile 390×844**
-- **#16 Snap-x:** scroll horizontal entre cards, screenshot.
-- **#16 BulkBar safe-area:** acionar bulk no mobile, confirmar `pb-[env(safe-area-inset-bottom)]`.
-- **#16 Métricas 2×2:** grid responsivo nos 4 cards.
+### 2. Cabeçalho com filtros globais (`WinLossFilters.tsx`)
+- Período (7/30/90/180/365 dias + custom).
+- Vendedor (multi-select).
+- Segmento / origem / categoria de produto.
+- Faixa de ticket (slider).
+- Persistência em URL params + `saved_filters`.
 
-**5. A11y & motion**
-- `observe` confirmando `role="region"`, `aria-label` na BulkBar e nas métricas.
-- `aria-live="polite"` nos valores de métrica.
-- Verificar respeito a `prefers-reduced-motion` (hook `useReducedMotion` já no projeto).
+### 3. Banner de KPIs ampliado
+Substitui `WinLossSummaryCard` atual com 6 KPIs animados (CountUp + sparkline):
+Win Rate · Δ vs período anterior · Ciclo médio Won/Lost · Ticket médio Won · Total deals analisados · Win rate forecast (próx 30d).
 
-**6. Console & rede**
-- `code--read_console_logs` filtrando "error"/"warn".
-- `browser--list_network_requests` durante export e troca de tabs — sem 4xx/5xx.
+### 4. Tendência temporal (`WinLossTrendChart.tsx`)
+- Linha dupla (wins/losses) + barra empilhada de motivos por mês.
+- Toggle: Mensal / Semanal / Trimestral.
+- Tooltip rico com drill-down ao clicar em um ponto.
 
-### Entrega
-Relatório consolidado em tabela:
+### 5. Matriz de motivos (heatmap) (`WinLossReasonMatrix.tsx`)
+- Eixos: motivo × estágio (ou motivo × segmento).
+- Cor = frequência; tooltip = win rate + ticket médio.
 
-```text
-| # | Camada | Cenário | Resultado | Evidência |
+### 6. Comparativo por vendedor (`SalespersonWinLossTable.tsx`)
+Tabela ordenável: vendedor · win rate · ciclo médio · ticket médio · top motivo win · top motivo loss · top concorrente. Linha do top performer destacada como benchmark.
+
+### 7. Análise competitiva expandida (`CompetitorBattleCard.tsx`)
+Substitui a tabela atual: card por concorrente com win rate contra ele, ticket médio perdido, motivos recorrentes e botão "Ver battle card" (`competitors_registry.default_battle_card_id`).
+
+### 8. Drill-down de deals (`WinLossDealsDrawer.tsx`)
+Drawer lateral abre ao clicar em qualquer KPI/barra/célula: lista de deals filtrados, sentimento da última conversa (join `conversation_insights_summary`), link para timeline do cliente.
+
+### 9. Insights acionáveis aprimorados
+`WinLossInsightsPanel` ganha:
+- Filtro por severidade (info/oportunidade/risco).
+- Botão "Marcar como aplicado" (nova coluna `applied_at` em `win_loss_insights`).
+- Badge "novo" para insights < 7 dias.
+- Botão "Gerar plano de ação" → abre próxima call-to-action no Copilot.
+
+### 10. Auto-refresh + telemetria
+- Realtime subscription nas 3 tabelas (`win_loss_analyses/patterns/insights`).
+- Botão "Analisar" mostra progresso real (toast com counter).
+- Cron diário sugerido via `pg_cron` chamando as 2 edge functions (migration).
+
+### 11. Seed de demo (mocks)
+Seed em `win_loss_analyses` (40 linhas baseadas nos 26 `deal_outcomes` reais + 14 sintéticos) e `competitors_registry` (5 concorrentes) para o módulo nascer "vivo". Marcados com prefixo `MOCK-WL-*`.
+
+### 12. Documentação
+- `mem://features/win-loss-intelligence-module` (novo).
+- Atualizar `mem://analytics/sales-performance-analytics` e `mem://index.md`.
+
+---
+
+## Detalhes técnicos
+
+**Arquivos novos**
+```
+src/pages/WinLossIntelligence.tsx
+src/components/win-loss/
+  WinLossFilters.tsx
+  WinLossKpiBanner.tsx
+  WinLossTrendChart.tsx
+  WinLossReasonMatrix.tsx
+  SalespersonWinLossTable.tsx
+  CompetitorBattleCard.tsx
+  WinLossDealsDrawer.tsx
+  winLossFiltersHelpers.ts
+src/hooks/win-loss/
+  useWinLossFilters.ts
+  useWinLossTrend.ts
+  useWinLossBySalesperson.ts
+  useCompetitorBattle.ts
+  useWinLossRealtime.ts
 ```
 
-Bugs encontrados (se houver) listados separadamente com severidade. Score final 0–10 por critério: Funcionalidade, UX, A11y, Performance, Mobile.
+**Arquivos modificados**
+- `src/routes/lazyPages.ts` + `AppRoutes.tsx`: nova rota.
+- `src/components/sidebar/*` ou `navigation`: novo item.
+- `src/hooks/deal-intelligence/useWinLoss.ts`: aceitar filtros (período/vendedor/segmento).
+- `src/pages/DealIntelligence.tsx`: aba Win/Loss vira teaser com botão "Abrir módulo completo".
 
-**Sem mutações destrutivas reais.** Bulk cancel apenas observado na UI sem confirmar. Bugs viram plano separado.
+**Migrations**
+1. `ALTER TABLE win_loss_insights ADD COLUMN applied_at timestamptz, applied_by uuid`.
+2. RLS policies + índices em `(analyzed_at)`, `(outcome, segment)`, `(competitor)`.
+3. Seed `MOCK-WL-*` (insert tool).
+4. (Opcional) cron diário `analyze-win-loss` 03:00 + `mine-win-loss-patterns` 04:00.
+
+**Padrões mantidos**
+Tokens semânticos, Sora/Inter, ≤400 linhas/arquivo, TS strict, Framer Motion, react-helmet-async, RLS, zero warnings, useReducedMotion.
+
+**Sem impacto** em outros módulos — apenas novos artefatos + um teaser no `/deal-intelligence`.
+
+### Ordem de execução
+1. Migrations (schema + seed)
+2. Hooks de filtros/trend/salesperson/competitor/realtime
+3. Página + rota + sidebar
+4. Componentes na ordem da seção "Entregas"
+5. Atualização do teaser em DealIntelligence
+6. Documentação
+7. Teste E2E final
 
