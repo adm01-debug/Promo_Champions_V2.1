@@ -1,43 +1,40 @@
 
 
-## Win/Loss Intelligence — Fase 4: Refinamento sensorial e inteligência preditiva (10 melhorias)
+## Win/Loss Intelligence — Fase 5: Inteligência colaborativa e ações automatizadas (10 melhorias)
 
-Módulo já em 10/10 funcional. Esta fase adiciona camadas de **profundidade analítica, deleite sensorial e automação inteligente** — elevando de "excelente" para "referência de mercado".
+Módulo já em nível "referência de mercado". Esta fase fecha o ciclo: do **insight à ação**, com colaboração, automação e métricas de impacto real no negócio.
 
 ---
 
-### #1 — Cohort de Win Rate por safra de lead
-Novo `WinLossCohortHeatmap.tsx`: matriz mês-de-criação × mês-de-fechamento, célula = win rate. Revela se safras recentes estão melhorando ou piorando. Click → drawer.
+### #1 — Comentários colaborativos por insight
+Cada insight aceita thread de comentários (tabela nova `win_loss_insight_comments`). Avatar do autor, timestamp relativo, markdown-lite. Realtime via Supabase channel.
 
-### #2 — Anomaly detection nos KPIs
-Hook `useWinLossAnomalies.ts` calcula z-score sobre série de win rate semanal. Quando |z| > 2, banner amarelo no topo: "Win rate desta semana 2.3σ acima da média — investigar". Click abre o drawer da semana.
+### #2 — Atribuir insight a um responsável
+Botão "Atribuir" no card do insight → seletor de salesperson. Grava `assigned_to`/`assigned_at` (colunas novas). Badge no avatar do responsável + filtro "Meus insights".
 
-### #3 — Explicação IA por insight ("Why?")
-Botão `Sparkles` em cada insight do `ActionableInsightsPanel` chama edge `analyze-win-loss` com `mode: "explain", insight_id` e mostra explicação em popover (markdown-lite). Cache em `localStorage` por 24h.
+### #3 — Criar tarefa direto do insight
+Botão "Criar tarefa" → modal com título pré-preenchido (do insight), prazo sugerido (7d), prioridade (deriva da severidade). Insere em `tasks` e linka via `source_insight_id`.
 
-### #4 — Histograma de tempo até fechamento (Won vs Lost)
-Novo `CycleTimeHistogram.tsx`: bins de 0-7d, 8-14d, 15-30d, 31-60d, 60+. Duas séries (won verde / lost rosa). Identifica zona de fricção. Click em bin → drawer.
+### #4 — Win/Loss Score por vendedor (gamificação)
+Hook `useWinLossSalespersonScore.ts`: combina win rate + ciclo + ticket + adoção de insights aplicados → score 0-100. Badge no `SalespersonWinLossTable` (Bronze/Prata/Ouro/Diamante).
 
-### #5 — Funnel de motivos de perda (Sankey-like)
-`LossReasonFlow.tsx`: estágio → motivo top → próximo motivo. Visualização hierárquica com `recharts` Treemap (mais leve que sankey). Mostra onde concentrar esforço.
+### #5 — Painel "Impacto dos Insights aplicados"
+Novo `InsightsImpactPanel.tsx`: mostra deals fechados após aplicar insight X vs. antes. Calcula uplift de win rate por insight aplicado (group by `applied_at` window).
 
-### #6 — Toggle "Comparar com período anterior" no Trend Chart
-Sobrepõe linha pontilhada do período equivalente anterior no `WinLossTrendChart`. Revela sazonalidade. Toggle persiste em URL.
+### #6 — Sugestão de próximo deal a trabalhar (IA)
+Card no topo "Próximo melhor movimento": chama edge `next-best-action` com contexto win/loss → retorna 1 deal específico + razão + script sugerido. Botão "Abrir deal".
 
-### #7 — Quick filters chips abaixo do header
-Chips clicáveis: "Só Wins", "Só Losses", "Top concorrente", "Ciclo > 30d", "Ticket > 10k". Aplicam filtros instantâneos sem abrir o painel. Visual `Badge` com `X` para remover.
+### #7 — Notificação por e-mail/Slack de novo padrão crítico
+Trigger DB: ao inserir `win_loss_patterns` com `confidence > 0.85`, chama edge `notify-critical-pattern` que envia via Resend (e-mail) ao admin. Toggle on/off em settings.
 
-### #8 — Notificação de novo padrão detectado
-`useWinLossRealtime` ganha listener para INSERT em `win_loss_patterns`: dispara `toast.success` com botão "Ver" → abre `ActionableInsightsPanel` em scroll-into-view e destaca o card por 3s (anel pulsante).
+### #8 — Heatmap de horário ótimo de fechamento
+Novo `WinByHourHeatmap.tsx`: matriz dia-da-semana × hora, célula = win rate. Identifica janelas quentes para priorizar follow-ups. Click → drawer.
 
-### #9 — Smart digest exportável (Markdown)
-Botão extra no header: "Copiar resumo executivo" → gera Markdown com KPIs + delta + top 3 insights + top 3 concorrentes + recomendação IA. `navigator.clipboard.writeText` + toast. Hook `useWinLossDigest.ts`.
+### #9 — A/B comparison de scripts/abordagens
+`ScriptABPanel.tsx`: agrupa deals por tag de script usado (campo `script_variant` em `sales`), mostra win rate de cada variante com significância estatística (chi-square). Identifica vencedor.
 
-### #10 — Microinterações sensoriais
-- KPI cards: hover lift sutil (translateY -2px) com `useReducedMotion` guard.
-- Drawer abre com spring (stiffness 300, damping 30).
-- Sucesso de "análise rodada": confetti discreto (canvas-confetti, 1.2s, 30 partículas, cores semânticas).
-- Som opcional desligado por padrão (`mute` em localStorage).
+### #10 — Histórico completo do deal no drawer (timeline)
+No `WinLossDealsDrawer`, expandir cada deal para mostrar timeline cronológica: criação, mudanças de estágio, atividades, conversas, decisão final. Reusa componente `ClientTimeline`.
 
 ---
 
@@ -45,47 +42,93 @@ Botão extra no header: "Copiar resumo executivo" → gera Markdown com KPIs + d
 
 **Arquivos novos**
 ```
-src/hooks/win-loss/useWinLossAnomalies.ts
-src/hooks/win-loss/useWinLossCohort.ts
-src/hooks/win-loss/useWinLossDigest.ts
-src/hooks/win-loss/useInsightExplanation.ts
-src/components/win-loss/WinLossCohortHeatmap.tsx
-src/components/win-loss/WinLossAnomalyBanner.tsx
-src/components/win-loss/CycleTimeHistogram.tsx
-src/components/win-loss/LossReasonFlow.tsx
-src/components/win-loss/WinLossQuickFilterChips.tsx
-src/components/win-loss/InsightExplainPopover.tsx
+src/hooks/win-loss/useInsightComments.ts
+src/hooks/win-loss/useInsightAssignment.ts
+src/hooks/win-loss/useInsightTaskCreation.ts
+src/hooks/win-loss/useWinLossSalespersonScore.ts
+src/hooks/win-loss/useInsightsImpact.ts
+src/hooks/win-loss/useNextBestWinLossDeal.ts
+src/hooks/win-loss/useWinByHourMatrix.ts
+src/hooks/win-loss/useScriptABTest.ts
+src/components/win-loss/InsightCommentsThread.tsx
+src/components/win-loss/InsightAssignPopover.tsx
+src/components/win-loss/InsightCreateTaskModal.tsx
+src/components/win-loss/SalespersonScoreBadge.tsx
+src/components/win-loss/InsightsImpactPanel.tsx
+src/components/win-loss/NextBestWinLossCard.tsx
+src/components/win-loss/WinByHourHeatmap.tsx
+src/components/win-loss/ScriptABPanel.tsx
+src/components/win-loss/DealTimelineExpand.tsx
+supabase/functions/notify-critical-pattern/index.ts
+```
+
+**Migration única**
+```sql
+-- comentários
+create table public.win_loss_insight_comments (
+  id uuid primary key default gen_random_uuid(),
+  insight_id uuid not null references public.win_loss_insights(id) on delete cascade,
+  author_id uuid not null,
+  body text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.win_loss_insight_comments enable row level security;
+create policy "auth read" on public.win_loss_insight_comments for select to authenticated using (true);
+create policy "auth insert own" on public.win_loss_insight_comments for insert to authenticated with check (author_id = auth.uid());
+create policy "owner delete" on public.win_loss_insight_comments for delete to authenticated using (author_id = auth.uid());
+alter publication supabase_realtime add table public.win_loss_insight_comments;
+
+-- atribuição
+alter table public.win_loss_insights add column if not exists assigned_to uuid;
+alter table public.win_loss_insights add column if not exists assigned_at timestamptz;
+
+-- linkagem tarefa
+alter table public.tasks add column if not exists source_insight_id uuid references public.win_loss_insights(id) on delete set null;
+
+-- script variant
+alter table public.sales add column if not exists script_variant text;
+
+-- trigger de notificação crítica
+create or replace function public.notify_critical_winloss_pattern()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if NEW.confidence > 0.85 then
+    perform net.http_post(
+      url := current_setting('app.functions_url', true) || '/notify-critical-pattern',
+      headers := jsonb_build_object('content-type','application/json'),
+      body := jsonb_build_object('pattern_id', NEW.id, 'name', NEW.name, 'confidence', NEW.confidence)
+    );
+  end if;
+  return NEW;
+end; $$;
+create trigger trg_notify_critical_winloss
+after insert on public.win_loss_patterns
+for each row execute function public.notify_critical_winloss_pattern();
 ```
 
 **Arquivos modificados**
-- `WinLossTrendChart.tsx` — toggle de comparação período anterior.
-- `ActionableInsightsPanel.tsx` — botão "Why?" + popover de explicação IA.
-- `WinLossPageHeader.tsx` — botão "Copiar digest".
-- `WinLossKpiBanner.tsx` — hover lift respeitando `useReducedMotion`.
-- `WinLossDealsDrawer.tsx` — animação spring na abertura.
-- `useRunWinLossAnalysis.ts` — confetti no `onSuccess`.
-- `useWinLossRealtime.ts` — listener de patterns + toast.
-- `WinLossIntelligence.tsx` — orquestra novos componentes (Cohort, Histogram, LossFlow, AnomalyBanner, QuickFilterChips).
+- `ActionableInsightsPanel.tsx` — integra comentários, atribuição, criar tarefa.
+- `SalespersonWinLossTable.tsx` — coluna Score com badge.
+- `WinLossDealsDrawer.tsx` — expansão de timeline por deal.
+- `WinLossIntelligence.tsx` — orquestra `NextBestWinLossCard`, `InsightsImpactPanel`, `WinByHourHeatmap`, `ScriptABPanel`.
 
-**Edge function reutilizada**
-`analyze-win-loss` (já existe) — adiciona suporte a `mode: "explain"` retornando `explanation: string`. Sem nova função.
-
-**Dependência nova**
-`canvas-confetti` (≈ 8kb) — única adição. Importada dinamicamente para não pesar bundle inicial.
+**Edge function nova**
+`notify-critical-pattern` — usa secret `RESEND_API_KEY` (já existe no projeto se notificações estiverem ativas; senão pedir via add_secret).
 
 **Padrões mantidos**
-Tokens semânticos · Sora/Inter · ≤400 linhas/arquivo · TS strict · Framer Motion + `useReducedMotion` · zero warnings · RLS preservada · react-helmet-async · sem mutações destrutivas (apenas leitura + clipboard + toast).
+Tokens semânticos · Sora/Inter · ≤400 linhas/arquivo · TS strict · Framer Motion + `useReducedMotion` · zero warnings · RLS preservada · react-helmet-async · realtime via channel dedicado.
 
 ### Ordem de execução (sequencial, sem perguntas)
-1. #1 Cohort heatmap
-2. #2 Anomaly detection + banner
-3. #3 Explicação IA (edge + popover)
-4. #4 Histograma de ciclo
-5. #5 Funnel de motivos (Treemap)
-6. #6 Toggle comparativo no Trend
-7. #7 Quick filter chips
-8. #8 Notificação de novo padrão
-9. #9 Digest Markdown copiável
-10. #10 Microinterações + confetti
-11. Build check + relatório 10/10
+1. Migration (comentários + colunas + trigger)
+2. #1 Comentários
+3. #2 Atribuição
+4. #3 Criar tarefa
+5. #4 Score do vendedor
+6. #5 Impact panel
+7. #6 Next best deal
+8. #7 Edge notify-critical-pattern + secret
+9. #8 Win by hour heatmap
+10. #9 Script A/B
+11. #10 Timeline expand no drawer
+12. Build check + relatório 10/10
 
