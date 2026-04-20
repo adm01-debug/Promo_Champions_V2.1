@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useWinLossInsights } from "@/hooks/deal-intelligence/useWinLoss";
 import { severityClasses, severityLabel, insightTypeLabel, type Severity } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import { InsightPinCard } from "./InsightPinCard";
+import { InsightExplainPopover } from "./InsightExplainPopover";
 
 const NEW_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
 
