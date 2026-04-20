@@ -55,7 +55,7 @@ export const useSaveWinLossView = () => {
         user_id: u.user.id,
         entity_type: ENTITY,
         name,
-        filters: filters as unknown as Record<string, unknown>,
+        filters: filters as never,
         is_default: !!makeDefault,
       }]);
       if (error) throw error;
