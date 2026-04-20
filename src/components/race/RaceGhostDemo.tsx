@@ -4,9 +4,9 @@ import { getPositionOnTrack } from './raceTrackHelpers';
 import { RaceTrack } from './RaceTrack';
 
 const DEMO_CARS = [
-  { number: 7, primary: 'hsl(var(--destructive))', secondary: 'hsl(var(--background))', style: 'f1' as const, lane: -8, offset: 0 },
+  { number: 7, primary: 'hsl(var(--destructive))', secondary: 'hsl(var(--background))', style: 'f1' as const, lane: -16, offset: 0 },
   { number: 11, primary: 'hsl(var(--accent))', secondary: 'hsl(var(--background))', style: 'stock' as const, lane: 0, offset: 0.12 },
-  { number: 22, primary: 'hsl(var(--coins))', secondary: 'hsl(var(--background))', style: 'kart' as const, lane: 8, offset: 0.24 },
+  { number: 22, primary: 'hsl(var(--coins))', secondary: 'hsl(var(--background))', style: 'kart' as const, lane: 16, offset: 0.24 },
 ];
 
 /**
