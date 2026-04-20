@@ -128,5 +128,6 @@ export function ActionableInsightsPanel({ onCopilot }: Props = {}) {
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }
