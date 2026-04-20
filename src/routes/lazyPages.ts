@@ -25,6 +25,7 @@ export const Portfolio = lazy(() => import("@/pages/Portfolio"));
 // ─── Prospecção & Atividades ────────────────────────────────────────
 export const Atividades = lazy(() => import("@/pages/Atividades"));
 export const Cadencias = lazy(() => import("@/pages/Cadencias"));
+export const QuoteCadencias = lazy(() => import("@/pages/QuoteCadencesPage"));
 export const Tarefas = lazy(() => import("@/pages/Tarefas"));
 export const ICP = lazy(() => import("@/pages/ICP"));
 export const FonteLeads = lazy(() => import("@/pages/FonteLeads"));

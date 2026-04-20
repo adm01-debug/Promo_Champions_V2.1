@@ -1576,6 +1576,7 @@ export type Database = {
       }
       cadences: {
         Row: {
+          cadence_type: Database["public"]["Enums"]["cadence_type"]
           created_at: string
           description: string | null
           id: string
@@ -1584,6 +1585,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cadence_type?: Database["public"]["Enums"]["cadence_type"]
           created_at?: string
           description?: string | null
           id?: string
@@ -1592,6 +1594,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cadence_type?: Database["public"]["Enums"]["cadence_type"]
           created_at?: string
           description?: string | null
           id?: string
@@ -8060,7 +8063,8 @@ export type Database = {
           next_action_date: string | null
           paused_at: string | null
           paused_reason: string | null
-          sale_id: string
+          quote_id: string | null
+          sale_id: string | null
           salesperson_id: string | null
           started_at: string
           status: string
@@ -8077,7 +8081,8 @@ export type Database = {
           next_action_date?: string | null
           paused_at?: string | null
           paused_reason?: string | null
-          sale_id: string
+          quote_id?: string | null
+          sale_id?: string | null
           salesperson_id?: string | null
           started_at?: string
           status?: string
@@ -8094,7 +8099,8 @@ export type Database = {
           next_action_date?: string | null
           paused_at?: string | null
           paused_reason?: string | null
-          sale_id?: string
+          quote_id?: string | null
+          sale_id?: string | null
           salesperson_id?: string | null
           started_at?: string
           status?: string
@@ -8113,6 +8119,13 @@ export type Database = {
             columns: ["enrolled_via_rule_id"]
             isOneToOne: false
             referencedRelation: "cadence_enrollment_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospect_cadences_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
           {
@@ -14414,6 +14427,10 @@ export type Database = {
       detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
+      enroll_quote_in_cadence: {
+        Args: { _cadence_id: string; _quote_id: string }
+        Returns: string
+      }
       finalize_race_season: { Args: { _season_id: string }; Returns: Json }
       find_matching_cadence_rule: {
         Args: { _sale_id: string }
@@ -14956,6 +14973,7 @@ export type Database = {
         | "whatsapp"
         | "other"
       app_role: "admin" | "manager" | "salesperson"
+      cadence_type: "prospecting" | "quote_followup"
       cs_survey_type: "csat" | "ces"
       expansion_opp_status:
         | "identified"
@@ -15139,6 +15157,7 @@ export const Constants = {
         "other",
       ],
       app_role: ["admin", "manager", "salesperson"],
+      cadence_type: ["prospecting", "quote_followup"],
       cs_survey_type: ["csat", "ces"],
       expansion_opp_status: [
         "identified",

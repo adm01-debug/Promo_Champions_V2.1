@@ -9,6 +9,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { QUOTE_STATUSES, type Quote } from "@/hooks/useQuotes";
 import { differenceInDays } from "date-fns";
+import { EnrollQuoteCadenceDialog } from "@/components/cadences/quote/EnrollQuoteCadenceDialog";
 
 interface QuoteCardProps {
   quote: Quote;
@@ -65,6 +66,7 @@ export const QuoteCard = React.memo(function QuoteCard({ quote, onView, onUpdate
           )}
           {quote.status === "sent" && (
             <>
+              <EnrollQuoteCadenceDialog quoteId={quote.id} clientName={quote.client_name} />
               <Button size="sm" variant="outline" className="gap-1 text-xs text-status-success border-status-success/30" onClick={() => onUpdateStatus({ id: quote.id, status: "approved" })}><CheckCircle2 className="h-3 w-3" />Aprovar</Button>
               <Button size="sm" variant="outline" className="gap-1 text-xs text-destructive border-destructive/30" onClick={() => onUpdateStatus({ id: quote.id, status: "rejected" })}><XCircle className="h-3 w-3" />Rejeitar</Button>
             </>
