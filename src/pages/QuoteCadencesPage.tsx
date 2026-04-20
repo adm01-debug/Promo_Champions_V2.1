@@ -62,8 +62,26 @@ export default function QuoteCadencesPage() {
   return (
     <>
       <Helmet>
-        <title>Cadências de Orçamento | CRM</title>
-        <meta name="description" content="Acompanhe follow-ups automatizados de orçamentos enviados aos clientes." />
+        <title>Cadência de Orçamentos | Promo Champions</title>
+        <meta
+          name="description"
+          content="Follow-up automatizado de orçamentos: acompanhe etapas, conversão e tarefas do dia em uma cadência inteligente."
+        />
+        <link rel="canonical" href="https://championgifts.lovable.app/cadencias-orcamentos" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://championgifts.lovable.app/cadencias-orcamentos" />
+        <meta property="og:title" content="Cadência de Orçamentos | Promo Champions" />
+        <meta
+          property="og:description"
+          content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
+        />
+        <meta property="og:image" content="https://championgifts.lovable.app/favicon.ico" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Cadência de Orçamentos | Promo Champions" />
+        <meta
+          name="twitter:description"
+          content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
+        />
       </Helmet>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 p-4 md:p-6">
@@ -125,7 +143,8 @@ export default function QuoteCadencesPage() {
                     key={r.id}
                     type="button"
                     onClick={() => setSelected(r)}
-                    className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
+                    aria-label={`Abrir detalhes da cadência de ${r.quote?.client_name ?? "cliente"} — status ${r.status}`}
+                    className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl"
                   >
                     <QuoteCadenceCard row={r} />
                   </button>

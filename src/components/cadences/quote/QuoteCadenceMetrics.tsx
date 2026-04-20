@@ -13,18 +13,29 @@ export function QuoteCadenceMetrics() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div
+      role="region"
+      aria-label="Métricas de cadência de orçamentos"
+      className="grid grid-cols-1 md:grid-cols-3 gap-4"
+    >
       {items.map((it) => (
         <Card key={it.label} className="glass border-border/50">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{it.label}</span>
-              <it.icon className={`h-4 w-4 ${it.color}`} />
+              <it.icon className={`h-4 w-4 ${it.color}`} aria-hidden="true" />
             </div>
             {isLoading ? (
               <Skeleton className="h-8 w-20" />
             ) : (
-              <p className="font-display text-3xl font-bold">{it.value}</p>
+              <p
+                role="status"
+                aria-live="polite"
+                aria-label={`${it.label}: ${it.value}`}
+                className="font-display text-3xl font-bold"
+              >
+                {it.value}
+              </p>
             )}
           </CardContent>
         </Card>
