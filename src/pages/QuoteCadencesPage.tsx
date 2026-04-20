@@ -38,7 +38,20 @@ export default function QuoteCadencesPage() {
   const toggleSelect = (id: string) =>
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  const handleExport = () => exportToCSV(quoteCadencesToCsvRows(rows), "cadencias-orcamentos");
+  const handleExport = useCallback(() => exportToCSV(quoteCadencesToCsvRows(rows), "cadencias-orcamentos"), [rows]);
+
+  const handleSelectAll = useCallback(() => {
+    setSelectedIds((prev) => (prev.length === rows.length ? [] : rows.map((r) => r.id)));
+  }, [rows]);
+
+  useQuoteCadenceShortcuts({
+    onExport: handleExport,
+    onSelectAll: handleSelectAll,
+    onClearSelection: () => setSelectedIds([]),
+    onCloseDrawer: () => setSelected(null),
+    hasSelection: selectedIds.length > 0,
+    drawerOpen: !!selected,
+  });
 
   const rows = useMemo(() => {
     const base = (data ?? []).filter((r) => filter === "all" || r.status === filter);
