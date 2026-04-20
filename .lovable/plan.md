@@ -26,14 +26,6 @@
 
 ---
 
-**Padrões obrigatórios em cada passo:**
-- Tokens semânticos (zero hex hardcoded), Sora títulos / Inter corpo.
-- Arquivos ≤400 linhas, TS strict (zero `any`), zero warnings de console.
-- React Query + Framer Motion + skeletons shimmer.
-- RLS rigorosa; triggers `SECURITY DEFINER` com `search_path = public`.
+**Padrões obrigatórios:** tokens semânticos, Sora/Inter, ≤400 linhas, TS strict, React Query + Framer Motion, RLS rigorosa.
 
-**Modo:** sequencial, 1 melhoria por mensagem assistente, sem perguntas. Relatório consolidado ao fim da #10.
-
-**Sem impacto em:** prospect cadences, race arena, demais módulos.
-
-**Resultado:** Cadência de Orçamentos 10/10 — notificações de tarefas do dia, SEO/a11y completos, animações premium, documentação atualizada.
+**Modo:** sequencial, 1 melhoria por mensagem, sem perguntas. Relatório consolidado ao fim da #10.
