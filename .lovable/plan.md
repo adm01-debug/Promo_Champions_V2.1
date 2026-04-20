@@ -1,42 +1,43 @@
 
 
-## Win/Loss Intelligence — Fase 3: Excelência absoluta (10 melhorias finais)
+## Win/Loss Intelligence — Fase 4: Refinamento sensorial e inteligência preditiva (10 melhorias)
 
-Módulo já completo (rota, filtros, KPIs, drill-down, atalhos, export, skeletons, empty state, SEO, docs). Agora elevar do 9.5/10 atual para **10/10 absoluto** com refinamentos de profundidade.
+Módulo já em 10/10 funcional. Esta fase adiciona camadas de **profundidade analítica, deleite sensorial e automação inteligente** — elevando de "excelente" para "referência de mercado".
 
 ---
 
-### #1 — Comparativo período anterior (Δ vs. anterior)
-KPIs ganham delta real comparando período atual vs. janela equivalente anterior. Setas ▲▼ coloridas + tooltip "vs. últimos N dias".
+### #1 — Cohort de Win Rate por safra de lead
+Novo `WinLossCohortHeatmap.tsx`: matriz mês-de-criação × mês-de-fechamento, célula = win rate. Revela se safras recentes estão melhorando ou piorando. Click → drawer.
 
-### #2 — Forecast IA da próxima janela
-Card no banner com projeção de Win Rate dos próximos 14/30 dias usando regressão linear sobre os últimos 8 períodos. Badge "IA" + intervalo de confiança.
+### #2 — Anomaly detection nos KPIs
+Hook `useWinLossAnomalies.ts` calcula z-score sobre série de win rate semanal. Quando |z| > 2, banner amarelo no topo: "Win rate desta semana 2.3σ acima da média — investigar". Click abre o drawer da semana.
 
-### #3 — Sentimento da última conversa no drawer
-`WinLossDealsDrawer` faz join com `conversation_insights_summary` (se existir) e mostra emoji + score por deal. Link "Ver timeline" para a página do cliente.
+### #3 — Explicação IA por insight ("Why?")
+Botão `Sparkles` em cada insight do `ActionableInsightsPanel` chama edge `analyze-win-loss` com `mode: "explain", insight_id` e mostra explicação em popover (markdown-lite). Cache em `localStorage` por 24h.
 
-### #4 — Top 3 Insights destacados
-`ActionableInsightsPanel` ganha seção "Pin do dia" no topo com os 3 insights de maior impacto/severidade, cards expandidos com CTA "Gerar plano de ação" → Copilot.
+### #4 — Histograma de tempo até fechamento (Won vs Lost)
+Novo `CycleTimeHistogram.tsx`: bins de 0-7d, 8-14d, 15-30d, 31-60d, 60+. Duas séries (won verde / lost rosa). Identifica zona de fricção. Click em bin → drawer.
 
-### #5 — Compare Mode (vendedor vs. vendedor)
-Botão "Comparar" na `SalespersonWinLossTable` permite selecionar até 3 vendedores e abrir modal lado-a-lado com radar chart (win rate, ciclo, ticket, motivo top).
+### #5 — Funnel de motivos de perda (Sankey-like)
+`LossReasonFlow.tsx`: estágio → motivo top → próximo motivo. Visualização hierárquica com `recharts` Treemap (mais leve que sankey). Mostra onde concentrar esforço.
 
-### #6 — Histórico de execuções de análise
-Painel colapsável "Última análise" mostrando quando rodou pela última vez, deals processados, padrões encontrados (lê `win_loss_analyses.analyzed_at` mais recente).
+### #6 — Toggle "Comparar com período anterior" no Trend Chart
+Sobrepõe linha pontilhada do período equivalente anterior no `WinLossTrendChart`. Revela sazonalidade. Toggle persiste em URL.
 
-### #7 — Saved Views (filtros salvos)
-Botão "Salvar visão" persiste combinação atual em `saved_filters` (tabela já existe). Dropdown "Minhas visões" carrega presets. Suporta default por usuário.
+### #7 — Quick filters chips abaixo do header
+Chips clicáveis: "Só Wins", "Só Losses", "Top concorrente", "Ciclo > 30d", "Ticket > 10k". Aplicam filtros instantâneos sem abrir o painel. Visual `Badge` com `X` para remover.
 
-### #8 — Battle card modal completo
-Clique em "Ver battle card" no `CompetitorBattleCard` abre modal full-screen com: pontos fortes/fracos, objeções comuns, scripts de resposta, win rate histórico, casos perdidos recentes.
+### #8 — Notificação de novo padrão detectado
+`useWinLossRealtime` ganha listener para INSERT em `win_loss_patterns`: dispara `toast.success` com botão "Ver" → abre `ActionableInsightsPanel` em scroll-into-view e destaca o card por 3s (anel pulsante).
 
-### #9 — Print/PDF executivo
-Botão "Imprimir relatório" no header → layout otimizado para impressão (A4, sem sidebar/header, KPIs + charts + top insights). Window.print() + CSS @media print.
+### #9 — Smart digest exportável (Markdown)
+Botão extra no header: "Copiar resumo executivo" → gera Markdown com KPIs + delta + top 3 insights + top 3 concorrentes + recomendação IA. `navigator.clipboard.writeText` + toast. Hook `useWinLossDigest.ts`.
 
-### #10 — Telemetria + a11y audit
-- Track `winloss_view`, `winloss_drill`, `winloss_export`, `winloss_run` via `analytics`.
-- Audit ARIA: roles, labels, focus trap no drawer/modal, navegação por teclado em todas as tabelas.
-- Anúncios via `aria-live` para mudanças de filtro e conclusão de análise.
+### #10 — Microinterações sensoriais
+- KPI cards: hover lift sutil (translateY -2px) com `useReducedMotion` guard.
+- Drawer abre com spring (stiffness 300, damping 30).
+- Sucesso de "análise rodada": confetti discreto (canvas-confetti, 1.2s, 30 partículas, cores semânticas).
+- Som opcional desligado por padrão (`mute` em localStorage).
 
 ---
 
@@ -44,43 +45,47 @@ Botão "Imprimir relatório" no header → layout otimizado para impressão (A4,
 
 **Arquivos novos**
 ```
-src/hooks/win-loss/usePreviousPeriodKpis.ts
-src/hooks/win-loss/useWinLossForecast.ts
-src/hooks/win-loss/useWinLossSavedViews.ts
-src/hooks/win-loss/useWinLossTelemetry.ts
-src/components/win-loss/WinLossKpiDelta.tsx
-src/components/win-loss/WinLossLastRunCard.tsx
-src/components/win-loss/WinLossSavedViews.tsx
-src/components/win-loss/WinLossCompareModal.tsx
-src/components/win-loss/CompetitorBattleCardModal.tsx
-src/components/win-loss/WinLossPrintLayout.tsx
-src/components/win-loss/InsightPinCard.tsx
-src/styles/winloss-print.css
+src/hooks/win-loss/useWinLossAnomalies.ts
+src/hooks/win-loss/useWinLossCohort.ts
+src/hooks/win-loss/useWinLossDigest.ts
+src/hooks/win-loss/useInsightExplanation.ts
+src/components/win-loss/WinLossCohortHeatmap.tsx
+src/components/win-loss/WinLossAnomalyBanner.tsx
+src/components/win-loss/CycleTimeHistogram.tsx
+src/components/win-loss/LossReasonFlow.tsx
+src/components/win-loss/WinLossQuickFilterChips.tsx
+src/components/win-loss/InsightExplainPopover.tsx
 ```
 
 **Arquivos modificados**
-- `WinLossKpiBanner.tsx` — integra delta + forecast.
-- `WinLossDealsDrawer.tsx` — join sentimento + link timeline.
-- `ActionableInsightsPanel.tsx` — seção Pin do dia + CTA Copilot.
-- `SalespersonWinLossTable.tsx` — checkboxes de comparação + botão "Comparar".
-- `CompetitorBattleCard.tsx` — botão abre modal completo.
-- `WinLossPageHeader.tsx` — botões Imprimir, Salvar visão, dropdown visões.
-- `WinLossIntelligence.tsx` — orquestra todos os novos componentes.
+- `WinLossTrendChart.tsx` — toggle de comparação período anterior.
+- `ActionableInsightsPanel.tsx` — botão "Why?" + popover de explicação IA.
+- `WinLossPageHeader.tsx` — botão "Copiar digest".
+- `WinLossKpiBanner.tsx` — hover lift respeitando `useReducedMotion`.
+- `WinLossDealsDrawer.tsx` — animação spring na abertura.
+- `useRunWinLossAnalysis.ts` — confetti no `onSuccess`.
+- `useWinLossRealtime.ts` — listener de patterns + toast.
+- `WinLossIntelligence.tsx` — orquestra novos componentes (Cohort, Histogram, LossFlow, AnomalyBanner, QuickFilterChips).
 
-**Sem migrations** — usa `saved_filters` e `conversation_insights_summary` existentes; insights/analyses já têm colunas necessárias.
+**Edge function reutilizada**
+`analyze-win-loss` (já existe) — adiciona suporte a `mode: "explain"` retornando `explanation: string`. Sem nova função.
 
-**Padrões mantidos**: tokens semânticos · Sora/Inter · ≤400 linhas · TS strict · Framer Motion + `useReducedMotion` · zero warnings · RLS preservada · react-helmet-async.
+**Dependência nova**
+`canvas-confetti` (≈ 8kb) — única adição. Importada dinamicamente para não pesar bundle inicial.
+
+**Padrões mantidos**
+Tokens semânticos · Sora/Inter · ≤400 linhas/arquivo · TS strict · Framer Motion + `useReducedMotion` · zero warnings · RLS preservada · react-helmet-async · sem mutações destrutivas (apenas leitura + clipboard + toast).
 
 ### Ordem de execução (sequencial, sem perguntas)
-1. #1 Delta período anterior
-2. #2 Forecast IA
-3. #3 Sentimento no drawer
-4. #4 Pin de insights
-5. #5 Compare mode
-6. #6 Última execução
-7. #7 Saved Views
-8. #8 Battle card modal
-9. #9 Print/PDF
-10. #10 Telemetria + a11y
+1. #1 Cohort heatmap
+2. #2 Anomaly detection + banner
+3. #3 Explicação IA (edge + popover)
+4. #4 Histograma de ciclo
+5. #5 Funnel de motivos (Treemap)
+6. #6 Toggle comparativo no Trend
+7. #7 Quick filter chips
+8. #8 Notificação de novo padrão
+9. #9 Digest Markdown copiável
+10. #10 Microinterações + confetti
 11. Build check + relatório 10/10
 
