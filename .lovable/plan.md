@@ -1,31 +1,34 @@
 
-**Continuar execução autônoma das melhorias #7 a #10** do módulo Cadência de Orçamentos. Status: #1–#6 concluídas. Restam 4.
+**Executar Melhoria #8 — SEO + a11y** no módulo Cadência de Orçamentos. Status: #1–#7 concluídas. Restam 3 (#8, #9, #10).
 
-### #7 — Notificação de tarefa do dia
-- **Hook** `src/hooks/cadences/useTodaysQuoteCadenceTasks.ts`: query em `cadence_tasks` filtrando `assigned_to = auth.uid()`, `scheduled_date = today`, `status = 'pending'`, com inner join em `prospect_cadences` onde `quote_id IS NOT NULL`. Retorna `{ count, tasks }`.
-- **Badge no NotificationsBell** (topbar): adicionar contagem dedicada de tarefas de cadência de orçamento. Click navega para `/cadencias-orcamentos?filter=today`.
-- **QuoteCadencesPage**: ler `useSearchParams`; se `filter=today`, pré-aplicar filtro mostrando apenas cards cuja `next_action_date` é hoje.
+### #8 — SEO + a11y completos
 
-### #8 — SEO + a11y
-- **Helmet** enriquecido em `QuoteCadencesPage`: `<title>`, `<meta description>`, canonical absoluto (`https://championgifts.lovable.app/cadencias-orcamentos`), OG title/description/image, twitter:card.
-- **ARIA**:
-  - `role="region"` + `aria-label="Métricas de cadência"` em `QuoteCadenceMetrics`; `role="status"` + `aria-live="polite"` nos números.
-  - `aria-label` em todos botões de ação (DropdownMenu trigger, ações do drawer, toggle do chart).
-  - `aria-describedby` no `QuoteCadenceDetailDrawer`.
-- **Foco visível** (`focus-visible:ring-2 focus-visible:ring-ring`) nos cards e botões.
+**SEO (`src/pages/QuoteCadencesPage.tsx`)**
+- Helmet enriquecido:
+  - `<title>Cadência de Orçamentos | Promo Champions</title>`
+  - `<meta name="description">` (≤160 chars) descrevendo follow-up automatizado de orçamentos.
+  - `<link rel="canonical" href="https://championgifts.lovable.app/cadencias-orcamentos" />`
+  - OG: `og:title`, `og:description`, `og:type=website`, `og:url`, `og:image` (favicon/branded).
+  - Twitter: `twitter:card=summary_large_image`, `twitter:title`, `twitter:description`.
+- H1 semântico único na página (já existe — validar).
 
-### #9 — Skeletons + transições premium
-- Substituir `<Skeleton>` por `<Shimmer>` (de `SkeletonPrimitives`) em `QuoteCadenceMetrics` e nos placeholders de cards (loading state).
-- **Framer Motion stagger 30ms** nos cards via variantes container/item em `QuoteCadencesPage`.
-- **Empty state premium**: SVG inline ilustrado (envelope + setas circulares animadas) substituindo o placeholder atual.
+**Acessibilidade**
+- `QuoteCadenceMetrics.tsx`:
+  - Container com `role="region"` + `aria-label="Métricas de cadência de orçamentos"`.
+  - Cada valor numérico em `<span role="status" aria-live="polite">`.
+- `QuoteCadenceCard` / lista:
+  - `aria-label` descritivo no card raiz (cliente + status).
+  - `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2` em cards interativos e botões.
+- `QuoteCadenceDetailDrawer`:
+  - `aria-describedby` apontando para descrição interna.
+  - `aria-label` em todos os botões de ação (Pausar, Retomar, Cancelar, Concluir tarefa).
+- `QuoteCadenceConversionChart`:
+  - `aria-label` no `ToggleGroup` ("Período do gráfico").
+  - `aria-label` em cada `ToggleGroupItem` ("Últimos 30 dias", etc.).
+- DropdownMenu triggers (ações do card): `aria-label="Ações do orçamento {cliente}"`.
 
-### #10 — Documentação + memória
-- Criar `mem://features/quote-cadence-module` com: arquitetura (página, componentes, hooks, mutations), fluxo end-to-end (enroll → tarefas → conversão → XP), triggers SQL (`award_xp_on_quote_cadence_task_complete`, `award_xp_on_quote_approved_via_cadence`), RLS, integração com `prospect_cadences`/`quotes`.
-- Atualizar `mem://follow-up/intelligent-reactivation-and-cadence` mencionando extensão para cadências de orçamentos.
-- Atualizar `mem://index.md` (seção `## Memories`) adicionando referência `[Quote Cadence Module](mem://features/quote-cadence-module)`.
+**Padrões mantidos:**
+- Tokens semânticos, Sora/Inter, ≤400 linhas, TS strict, zero warnings.
+- Sem alterações de schema, sem impacto em outros módulos.
 
----
-
-**Padrões obrigatórios:** tokens semânticos, Sora/Inter, ≤400 linhas, TS strict, React Query + Framer Motion, RLS rigorosa.
-
-**Modo:** sequencial, 1 melhoria por mensagem, sem perguntas. Relatório consolidado ao fim da #10.
+**Próximos passos após #8:** #9 (skeletons shimmer + stagger Framer Motion + empty state SVG) e #10 (memória `mem://features/quote-cadence-module` + atualização do índice).
