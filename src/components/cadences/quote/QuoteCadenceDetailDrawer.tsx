@@ -44,6 +44,7 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
   const gamification = useGamificationSafe();
   const [notesById, setNotesById] = useState<Record<string, string>>({});
   const [rescheduleById, setRescheduleById] = useState<Record<string, string>>({});
+  const [drawerTab, setDrawerTab] = useState<"tasks" | "history">("tasks");
 
   const history = useMemo(
     () =>
