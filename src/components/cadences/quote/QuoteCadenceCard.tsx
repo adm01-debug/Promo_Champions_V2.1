@@ -1,10 +1,23 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CalendarClock, User, FileText, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { CalendarClock, User, FileText, TrendingUp, MoreVertical, Pause, Play, XCircle } from "lucide-react";
 import { differenceInDays, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
+import {
+  usePauseQuoteCadence,
+  useResumeQuoteCadence,
+  useCancelQuoteCadence,
+} from "@/hooks/cadences/useQuoteCadenceMutations";
 
 interface Props {
   row: QuoteCadenceRow;
