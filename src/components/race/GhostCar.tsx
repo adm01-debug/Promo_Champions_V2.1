@@ -29,7 +29,6 @@ export function GhostCar({ ghost }: Props) {
     >
       <g style={{ filter: 'drop-shadow(0 0 4px hsl(var(--muted-foreground) / 0.5))' }}>
         <RaceCar
-          number={0}
           primaryColor="hsl(var(--muted-foreground))"
           secondaryColor="hsl(var(--muted))"
           style="f1"

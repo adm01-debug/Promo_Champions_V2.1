@@ -683,7 +683,6 @@ export function RaceArena({
                 hidden={pitStopCars.has(car.car_id)}
               />
               <RaceCar
-                number={car.car_number}
                 primaryColor={car.primary_color}
                 secondaryColor={car.secondary_color}
                 style={car.car_style}

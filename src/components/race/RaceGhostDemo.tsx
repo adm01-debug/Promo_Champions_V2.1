@@ -50,7 +50,7 @@ function DemoCarLoop({
       animate={{ x: xs, y: ys, rotate: rots }}
       transition={{ duration: 9, ease: 'linear', repeat: Infinity }}
     >
-      <RaceCar number={number} primaryColor={primary} secondaryColor={secondary} style={style} />
+      <RaceCar primaryColor={primary} secondaryColor={secondary} style={style} />
     </motion.g>
   );
 }
