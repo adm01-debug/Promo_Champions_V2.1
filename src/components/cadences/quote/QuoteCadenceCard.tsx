@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,8 @@ import {
 interface Props {
   row: QuoteCadenceRow;
   totalSteps?: number;
+  selected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
 const statusVariant: Record<string, string> = {
