@@ -86,7 +86,7 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
           </DrawerDescription>
         </DrawerHeader>
 
-        <Tabs defaultValue="tasks" className="overflow-hidden flex flex-col">
+        <Tabs value={drawerTab} onValueChange={(v) => setDrawerTab(v as "tasks" | "history")} className="overflow-hidden flex flex-col">
           <TabsList className="mx-4 md:mx-6 mt-3 self-start">
             <TabsTrigger value="tasks">Tarefas</TabsTrigger>
             <TabsTrigger value="history">
@@ -95,7 +95,9 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="tasks" className="overflow-y-auto p-4 md:p-6 space-y-3 mt-0">
+          <AnimatePresence mode="wait">
+            <motion.div key={drawerTab} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.2 }}>
+          <TabsContent value="tasks" className="overflow-y-auto p-4 md:p-6 space-y-3 mt-0" forceMount>
             {isLoading ? (
               <div className="space-y-3">
                 {Array.from({ length: 5 }).map((_, i) => (
