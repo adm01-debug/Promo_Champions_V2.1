@@ -28,17 +28,11 @@ interface Props {
 
 interface SaleMeta {
   id: string;
-  client_id: string | null;
-  sentiment_score: number | null;
+  account_id: string | null;
+  client_name: string | null;
 }
 
-const sentimentEmoji = (score: number | null | undefined): string => {
-  if (score == null) return "·";
-  if (score >= 0.5) return "😊";
-  if (score >= 0) return "🙂";
-  if (score >= -0.5) return "😐";
-  return "😟";
-};
+const sentimentEmoji = (outcome: "won" | "lost"): string => (outcome === "won" ? "😊" : "😟");
 
 export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: Props) {
   const filtered = useMemo(() => {
@@ -60,14 +54,14 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
     queryFn: async (): Promise<Record<string, SaleMeta>> => {
       const { data: sales } = await supabase
         .from("sales")
-        .select("id, client_id, conversation_sentiment_score")
+        .select("id, account_id, client_name")
         .in("id", saleIds);
       const map: Record<string, SaleMeta> = {};
-      (sales ?? []).forEach((s: { id: string; client_id: string | null; conversation_sentiment_score: number | null }) => {
+      ((sales as Array<{ id: string; account_id: string | null; client_name: string | null }> | null) ?? []).forEach((s) => {
         map[s.id] = {
           id: s.id,
-          client_id: s.client_id,
-          sentiment_score: s.conversation_sentiment_score ?? null,
+          account_id: s.account_id,
+          client_name: s.client_name,
         };
       });
       return map;
