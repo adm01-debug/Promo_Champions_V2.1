@@ -1,63 +1,59 @@
 
-**Objetivo:** Executar autonomamente as 9 melhorias restantes (#2 a #10) do backlog do módulo de Cadência de Orçamentos, sequencialmente, sem pausas, até alcançar 10/10.
+**Continuar execução autônoma das melhorias #3 a #10** do módulo Cadência de Orçamentos. Status: #1 e #2 concluídas. Restam 8.
 
-**Status atual:** Melhoria #1 (warning ref no `RaceCar`) já concluída. Restam 9 melhorias.
+### #3 — Controles no card (pausar/retomar/cancelar)
+- `DropdownMenu` no `QuoteCadenceCard` (canto sup. dir.) com 3 ações condicionais ao status.
+- Reutilizar mutations já existentes em `useQuoteCadenceMutations.ts`.
+- `stopPropagation` para não abrir o drawer ao clicar.
 
----
-
-### Sequência de execução (1 por mensagem, automática):
-
-**#2 — Drill-down de cadência**
-- `QuoteCadenceDetailDrawer.tsx` (Vaul drawer) acionado ao clicar no card.
-- Hook `useCadenceTasksByEnrollment(enrollmentId)`.
-- Timeline dos 5 steps com status, botões Concluir/Pular/Reagendar, campo notas.
-
-**#3 — Controles no card (pausar/retomar/cancelar)**
-- `DropdownMenu` no `QuoteCadenceCard` com 3 ações.
-- Reutilizar mutations de `useProspectCadenceMutations` (já existem).
-- Toast + invalidação de queries.
-
-**#4 — Filtros avançados**
-- Dropdown vendedor, slider dias sem resposta, range valor, busca cliente.
+### #4 — Filtros avançados
+- Painel colapsável com: busca cliente (input), vendedor (Select), dias sem resposta (Slider 0–30), valor mínimo/máximo (range).
 - Persistência via `useSavedFilters('quote_cadences')`.
-- Botão "Limpar filtros".
+- Botão "Limpar filtros" + chip count de filtros ativos.
 
-**#5 — Gráfico de conversão**
-- `QuoteCadenceConversionChart.tsx` (Recharts LineChart).
-- 30/60/90 dias: enviados vs aprovados.
-- Tipagem via `src/types/recharts.ts`.
+### #5 — Gráfico de conversão pós-cadência
+- `QuoteCadenceConversionChart.tsx` com Recharts AreaChart.
+- Toggle 30/60/90 dias; séries: enviados vs aprovados.
+- Tipagem via `src/types/recharts.ts`. Inserido na `QuoteCadenceMetrics`.
 
-**#6 — XP/Gamificação**
-- Trigger SQL: ao completar `cadence_task` de quote → +15 XP; quote vira `approved` → +50 XP via `increment_user_xp`.
-- Toast "+15 XP" no frontend.
+### #6 — XP/Gamificação
+- Migration: trigger `award_xp_on_quote_cadence_task_complete` em `cadence_tasks` — quando `status` vai para `completed` e enrollment tem `quote_id`, chama `increment_user_xp(15)`.
+- Trigger `award_xp_on_quote_approved` em `quotes` — `status='approved'` + cadência ativa → +50 XP.
+- Toast "+15 XP" no frontend ao completar tarefa via drawer.
 
-**#7 — Notificação tarefa do dia**
-- Hook `useTodaysQuoteCadenceTasks` (filtrado por `auth.uid()`).
-- Badge no bell icon do topbar com contagem.
+### #7 — Notificação de tarefa do dia
+- Hook `useTodaysQuoteCadenceTasks` (filtro `auth.uid()` + `scheduled_date = today` + `status='pending'`).
+- Badge no `NotificationsBell` (topbar) com contagem.
 - Click → `/cadencias-orcamentos?filter=today`.
+- Página lê query param e aplica filtro inicial.
 
-**#8 — SEO + a11y**
-- Helmet com canonical, OpenGraph, description rica.
-- ARIA labels, `role="status"` nas métricas, skip link, foco visível.
+### #8 — SEO + a11y
+- Helmet enriquecido (canonical, OG title/description/image).
+- ARIA: `role="status"` nas métricas, `aria-label` nos botões de ação, `aria-live` em toasts críticos.
+- Skip link, foco visível (ring), navegação por teclado nos cards (Enter/Space).
 
-**#9 — Skeletons + animações premium**
-- Shimmer skeletons (substituir básicos).
-- Framer stagger 30ms nos cards.
-- Empty state ilustrado (SVG inline).
+### #9 — Skeletons + transições premium
+- Substituir `<Skeleton>` básico por `<Shimmer>` de `SkeletonPrimitives`.
+- Framer Motion stagger 30ms nos cards (variantes container/item).
+- Empty state com SVG ilustrado inline (envelope + setas circulares).
 
-**#10 — Documentação + memória**
-- Atualizar `mem://follow-up/intelligent-reactivation-and-cadence`.
-- Criar `mem://features/quote-cadence-module`.
+### #10 — Documentação + memória
+- Criar `mem://features/quote-cadence-module` (arquitetura, RPCs, trigger, RLS, hooks, componentes).
+- Atualizar `mem://follow-up/intelligent-reactivation-and-cadence` mencionando extensão para quotes.
+- Atualizar `mem://index.md` com referência nova.
 
 ---
 
-**Fix paralelo (silencioso):** Erro runtime atual `Failed to fetch dynamically imported module: Vendedores.tsx` — investigar e corrigir antes de prosseguir, pois bloqueia preview.
+**Padrões obrigatórios em cada passo:**
+- Tokens semânticos (zero hex hardcoded).
+- Sora títulos / Inter corpo.
+- Arquivos ≤400 linhas.
+- TS strict (zero `any`), zero warnings.
+- React Query + Framer Motion + skeletons shimmer.
+- RLS rigorosa (vendedor vê só suas; admin/gestor vê tudo).
 
-**Padrões obrigatórios (todos os passos):**
-- Tokens semânticos, Sora/Inter, ≤400 linhas/arquivo, RLS rigorosa, TS strict, zero warnings, React Query + Framer Motion + skeletons.
-
-**Modo:** sequencial, 1 melhoria por mensagem, sem perguntas. Relatório consolidado ao final.
+**Modo:** sequencial, 1 melhoria por mensagem assistente, sem perguntas. Relatório consolidado ao fim da #10.
 
 **Sem impacto em:** prospect cadences, race arena, demais módulos.
 
-**Resultado:** Cadência de Orçamentos 10/10 — drill-down, controles, filtros, gráficos, XP, notificações, SEO, a11y, animações, docs.
+**Resultado:** Cadência de Orçamentos 10/10 — controles completos, filtros persistentes, gráfico de conversão, XP integrado, notificações, SEO/a11y, animações premium, documentação atualizada.
