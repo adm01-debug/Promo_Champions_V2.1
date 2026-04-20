@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
-import { Send, CheckCircle2, TrendingUp } from "lucide-react";
+import { Send, CheckCircle2, TrendingUp, AlertTriangle } from "lucide-react";
 import { useQuoteCadenceStats } from "@/hooks/cadences/useQuoteCadences";
 
 export function QuoteCadenceMetrics() {
@@ -10,13 +10,14 @@ export function QuoteCadenceMetrics() {
     { label: "Follow-ups ativos", value: data?.activeFollowUps ?? 0, icon: Send, color: "text-primary" },
     { label: "Tarefas concluídas hoje", value: data?.tasksCompletedToday ?? 0, icon: CheckCircle2, color: "text-emerald-500" },
     { label: "Taxa de conversão", value: `${data?.conversionRate ?? 0}%`, icon: TrendingUp, color: "text-amber-500" },
+    { label: "Atrasados", value: data?.overdueCount ?? 0, icon: AlertTriangle, color: "text-destructive" },
   ];
 
   return (
     <div
       role="region"
       aria-label="Métricas de cadência de orçamentos"
-      className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      className="grid grid-cols-2 md:grid-cols-4 gap-4"
     >
       {items.map((it) => (
         <Card key={it.label} className="glass border-border/50">
