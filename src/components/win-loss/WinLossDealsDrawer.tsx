@@ -1,8 +1,12 @@
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { ExternalLink, MessageCircle } from "lucide-react";
 import { fmtBRL, stageLabel } from "@/components/deal-intelligence/winloss/winLossHelpers";
+import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 
 export interface DrawerFilter {
@@ -22,6 +26,14 @@ interface Props {
   filter?: DrawerFilter;
 }
 
+interface SaleMeta {
+  id: string;
+  account_id: string | null;
+  client_name: string | null;
+}
+
+const sentimentEmoji = (outcome: "won" | "lost"): string => (outcome === "won" ? "😊" : "😟");
+
 export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: Props) {
   const filtered = useMemo(() => {
     if (!filter) return rows;
@@ -33,6 +45,29 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
       return true;
     });
   }, [rows, filter]);
+
+  const saleIds = useMemo(() => filtered.slice(0, 30).map(r => r.sale_id), [filtered]);
+
+  const { data: salesMeta = {} } = useQuery({
+    queryKey: ["wl-drawer-sales-meta", saleIds.sort().join(",")],
+    enabled: open && saleIds.length > 0,
+    queryFn: async (): Promise<Record<string, SaleMeta>> => {
+      const { data: sales } = await supabase
+        .from("sales")
+        .select("id, account_id, client_name")
+        .in("id", saleIds);
+      const map: Record<string, SaleMeta> = {};
+      ((sales as Array<{ id: string; account_id: string | null; client_name: string | null }> | null) ?? []).forEach((s) => {
+        map[s.id] = {
+          id: s.id,
+          account_id: s.account_id,
+          client_name: s.client_name,
+        };
+      });
+      return map;
+    },
+    staleTime: 30_000,
+  });
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -55,25 +90,42 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
             {!filtered.length && (
               <p className="text-sm text-muted-foreground py-12 text-center">Sem deals para essa seleção.</p>
             )}
-            {filtered.map(r => (
-              <div key={r.id} className="rounded-lg border border-border/50 p-3 bg-card">
-                <div className="flex items-center justify-between gap-2 mb-1">
-                  <Badge variant="outline" className={r.outcome === "won" ? "border-emerald-500/40 text-emerald-700" : "border-rose-500/40 text-rose-700"}>
-                    {r.outcome === "won" ? "Won" : "Lost"}
-                  </Badge>
-                  <span className="text-xs tabular-nums text-muted-foreground">
-                    {fmtBRL(Number(r.amount) || 0)}
-                  </span>
+            {filtered.map(r => {
+              const meta = salesMeta[r.sale_id];
+              return (
+                <div key={r.id} className="rounded-lg border border-border/50 p-3 bg-card">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <Badge variant="outline" className={r.outcome === "won" ? "border-emerald-500/40 text-emerald-700" : "border-rose-500/40 text-rose-700"}>
+                      {r.outcome === "won" ? "Won" : "Lost"}
+                    </Badge>
+                    <span className="text-xs tabular-nums text-muted-foreground">
+                      {fmtBRL(Number(r.amount) || 0)}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium truncate">{r.primary_reason ?? "Sem motivo"}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-1.5 text-[11px] text-muted-foreground">
+                    {r.lost_stage && <span>Estágio: {stageLabel(r.lost_stage)}</span>}
+                    {r.competitor && <span>· vs. {r.competitor}</span>}
+                    {r.cycle_days && <span>· {Number(r.cycle_days).toFixed(0)}d</span>}
+                    {r.segment && <span>· {r.segment}</span>}
+                  </div>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/40">
+                    <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1" title={`Cliente: ${meta?.client_name ?? "—"}`}>
+                      <MessageCircle className="h-3 w-3" />
+                      {sentimentEmoji(r.outcome)} {meta?.client_name ?? "—"}
+                    </span>
+                    {meta?.account_id && (
+                      <Link
+                        to={`/contas/${meta.account_id}`}
+                        className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5"
+                      >
+                        Ver timeline <ExternalLink className="h-2.5 w-2.5" />
+                      </Link>
+                    )}
+                  </div>
                 </div>
-                <p className="text-sm font-medium truncate">{r.primary_reason ?? "Sem motivo"}</p>
-                <div className="flex flex-wrap gap-1.5 mt-1.5 text-[11px] text-muted-foreground">
-                  {r.lost_stage && <span>Estágio: {stageLabel(r.lost_stage)}</span>}
-                  {r.competitor && <span>· vs. {r.competitor}</span>}
-                  {r.cycle_days && <span>· {Number(r.cycle_days).toFixed(0)}d</span>}
-                  {r.segment && <span>· {r.segment}</span>}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </ScrollArea>
       </SheetContent>

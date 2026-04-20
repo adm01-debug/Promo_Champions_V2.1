@@ -1,15 +1,21 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Trophy, TrendingDown, Clock, Target, BarChart3, Zap } from "lucide-react";
+import { Trophy, TrendingDown, Clock, Target, BarChart3, Zap, Sparkles } from "lucide-react";
 import type { WLKpis } from "@/hooks/win-loss/useWinLossAggregations";
 import { fmtBRL, fmtDays, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import type { LucideIcon } from "lucide-react";
+import { WinLossKpiDelta } from "./WinLossKpiDelta";
+import type { KpiDelta } from "@/hooks/win-loss/usePreviousPeriodKpis";
+import type { ForecastResult } from "@/hooks/win-loss/useWinLossForecast";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   kpis: WLKpis;
   isLoading?: boolean;
   onWinsClick?: () => void;
   onLossesClick?: () => void;
+  delta?: KpiDelta;
+  forecast?: ForecastResult;
 }
 
 interface Item {
@@ -17,6 +23,9 @@ interface Item {
   value: string;
   icon: LucideIcon;
   tone: "success" | "danger" | "info" | "primary" | "warning";
+  delta?: number;
+  invertDelta?: boolean;
+  badge?: string;
 }
 
 const toneClasses: Record<Item["tone"], string> = {
@@ -27,14 +36,15 @@ const toneClasses: Record<Item["tone"], string> = {
   warning: "text-amber-600 bg-amber-500/10",
 };
 
-export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick }: Props) {
+export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, delta, forecast }: Props) {
+  const forecastValue = forecast ? fmtPct(forecast.next14d) : fmtPct(kpis.forecastWinRate);
   const items: Item[] = [
-    { label: "Win Rate", value: fmtPct(kpis.winRate), icon: Trophy, tone: "success" },
-    { label: "Forecast 14d", value: fmtPct(kpis.forecastWinRate), icon: Zap, tone: "warning" },
-    { label: "Total analisado", value: String(kpis.total), icon: BarChart3, tone: "info" },
-    { label: "Ciclo médio (Won)", value: fmtDays(kpis.avgCycleWon), icon: Clock, tone: "primary" },
+    { label: "Win Rate", value: fmtPct(kpis.winRate), icon: Trophy, tone: "success", delta: delta?.winRate },
+    { label: "Forecast 14d", value: forecastValue, icon: Zap, tone: "warning", badge: forecast ? `IA · ${forecast.confidence}%` : undefined },
+    { label: "Total analisado", value: String(kpis.total), icon: BarChart3, tone: "info", delta: delta?.total },
+    { label: "Ciclo médio (Won)", value: fmtDays(kpis.avgCycleWon), icon: Clock, tone: "primary", delta: delta?.avgCycleWon },
     { label: "Ciclo médio (Lost)", value: fmtDays(kpis.avgCycleLost), icon: Clock, tone: "danger" },
-    { label: "Ticket médio (Won)", value: fmtBRL(kpis.avgAmountWon), icon: Target, tone: "primary" },
+    { label: "Ticket médio (Won)", value: fmtBRL(kpis.avgAmountWon), icon: Target, tone: "primary", delta: delta?.avgAmountWon },
   ];
 
   return (
@@ -48,8 +58,8 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick }
         >
           <Card className="border-border/50">
             <CardContent className="p-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{it.label}</span>
+              <div className="flex items-center justify-between mb-1.5 gap-1">
+                <span className="text-[11px] uppercase tracking-wide text-muted-foreground truncate">{it.label}</span>
                 <div className={`p-1 rounded-md ${toneClasses[it.tone]}`}>
                   <it.icon className="h-3.5 w-3.5" />
                 </div>
@@ -60,6 +70,16 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick }
               >
                 {isLoading ? "…" : it.value}
               </p>
+              <div className="flex items-center gap-1.5 mt-0.5 min-h-[14px]">
+                {it.delta != null && (
+                  <WinLossKpiDelta value={it.delta} invert={it.invertDelta} label={`${it.label} vs. período anterior`} />
+                )}
+                {it.badge && (
+                  <Badge variant="outline" className="text-[9px] h-4 px-1 border-amber-500/40 text-amber-700">
+                    <Sparkles className="h-2 w-2 mr-0.5" /> {it.badge}
+                  </Badge>
+                )}
+              </div>
             </CardContent>
           </Card>
         </motion.div>

@@ -1,18 +1,24 @@
 import { motion } from "framer-motion";
-import { Trophy, RefreshCw, Download, Keyboard } from "lucide-react";
+import { Trophy, RefreshCw, Download, Keyboard, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { WinLossSavedViews } from "./WinLossSavedViews";
+import type { WinLossFilterState } from "./winLossFiltersHelpers";
+import type { SavedView } from "@/hooks/win-loss/useWinLossSavedViews";
 
 interface Props {
   onRun: () => void;
   onExport: () => void;
+  onPrint: () => void;
   isRunning?: boolean;
+  filters: WinLossFilterState;
+  onLoadView: (v: SavedView) => void;
 }
 
-export function WinLossPageHeader({ onRun, onExport, isRunning }: Props) {
+export function WinLossPageHeader({ onRun, onExport, onPrint, isRunning, filters, onLoadView }: Props) {
   return (
     <motion.div
-      className="flex flex-col sm:flex-row sm:items-center gap-3"
+      className="flex flex-col sm:flex-row sm:items-center gap-3 no-print"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
@@ -28,6 +34,18 @@ export function WinLossPageHeader({ onRun, onExport, isRunning }: Props) {
       </div>
       <TooltipProvider delayDuration={300}>
         <div className="flex flex-wrap gap-2">
+          <WinLossSavedViews currentFilters={filters} onLoad={onLoadView} />
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="sm" variant="outline" onClick={onPrint} aria-label="Imprimir relatório">
+                <Printer className="h-3.5 w-3.5 mr-1.5" />
+                Imprimir
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="text-[11px]">Relatório executivo (A4)</TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="sm" variant="outline" onClick={onExport}>
@@ -39,6 +57,7 @@ export function WinLossPageHeader({ onRun, onExport, isRunning }: Props) {
               <Keyboard className="h-3 w-3 inline mr-1" /> Ctrl + E
             </TooltipContent>
           </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="sm" onClick={onRun} disabled={isRunning}>

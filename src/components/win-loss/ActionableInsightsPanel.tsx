@@ -9,16 +9,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useWinLossInsights } from "@/hooks/deal-intelligence/useWinLoss";
 import { severityClasses, severityLabel, insightTypeLabel, type Severity } from "@/components/deal-intelligence/winloss/winLossHelpers";
+import { InsightPinCard } from "./InsightPinCard";
 
 const NEW_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
 
 type SeverityFilter = "all" | Severity;
 
-export function ActionableInsightsPanel() {
+interface Props {
+  onCopilot?: (insight: { id: string; title: string; description: string }) => void;
+}
+
+export function ActionableInsightsPanel({ onCopilot }: Props = {}) {
   const { data, isLoading } = useWinLossInsights();
   const qc = useQueryClient();
   const [filter, setFilter] = useState<SeverityFilter>("all");
-  const insights = (data ?? []).filter(i => filter === "all" || i.severity === filter);
+  const all = data ?? [];
+  const insights = all.filter(i => filter === "all" || i.severity === filter);
 
   const apply = async (id: string) => {
     const { error } = await supabase
@@ -34,7 +40,20 @@ export function ActionableInsightsPanel() {
   };
 
   return (
-    <Card className="border-border/50">
+    <div className="space-y-3">
+      {!isLoading && all.length > 0 && (
+        <InsightPinCard
+          insights={all.map(i => ({
+            id: i.id,
+            title: i.title,
+            description: i.description ?? "",
+            severity: i.severity,
+            insight_type: i.insight_type,
+          }))}
+          onCopilot={onCopilot ? (i) => onCopilot({ id: i.id, title: i.title, description: i.description }) : undefined}
+        />
+      )}
+      <Card className="border-border/50">
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Lightbulb className="h-4 w-4 text-primary" />
@@ -109,5 +128,6 @@ export function ActionableInsightsPanel() {
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }
