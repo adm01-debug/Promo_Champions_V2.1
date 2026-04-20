@@ -10101,6 +10101,7 @@ export type Database = {
           pipeline_id: string | null
           product_name: string
           salesperson_id: string | null
+          script_variant: string | null
           source: string | null
           status: string
           updated_at: string
@@ -10119,6 +10120,7 @@ export type Database = {
           pipeline_id?: string | null
           product_name: string
           salesperson_id?: string | null
+          script_variant?: string | null
           source?: string | null
           status?: string
           updated_at?: string
@@ -10137,6 +10139,7 @@ export type Database = {
           pipeline_id?: string | null
           product_name?: string
           salesperson_id?: string | null
+          script_variant?: string | null
           source?: string | null
           status?: string
           updated_at?: string
@@ -12469,6 +12472,7 @@ export type Database = {
           priority: Database["public"]["Enums"]["task_priority"]
           sale_id: string | null
           salesperson_id: string | null
+          source_insight_id: string | null
           status: Database["public"]["Enums"]["task_status"]
           task_type: Database["public"]["Enums"]["task_type"]
           title: string
@@ -12484,6 +12488,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["task_priority"]
           sale_id?: string | null
           salesperson_id?: string | null
+          source_insight_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           task_type?: Database["public"]["Enums"]["task_type"]
           title: string
@@ -12499,6 +12504,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["task_priority"]
           sale_id?: string | null
           salesperson_id?: string | null
+          source_insight_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           task_type?: Database["public"]["Enums"]["task_type"]
           title?: string
@@ -12524,6 +12530,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_source_insight_id_fkey"
+            columns: ["source_insight_id"]
+            isOneToOne: false
+            referencedRelation: "win_loss_insights"
             referencedColumns: ["id"]
           },
         ]
@@ -13503,10 +13516,44 @@ export type Database = {
           },
         ]
       }
+      win_loss_insight_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          insight_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          insight_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          insight_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "win_loss_insight_comments_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "win_loss_insights"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       win_loss_insights: {
         Row: {
           applied_at: string | null
           applied_by: string | null
+          assigned_at: string | null
+          assigned_to: string | null
           created_at: string
           description: string
           evidence: Json
@@ -13518,6 +13565,8 @@ export type Database = {
         Insert: {
           applied_at?: string | null
           applied_by?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
           created_at?: string
           description: string
           evidence?: Json
@@ -13529,6 +13578,8 @@ export type Database = {
         Update: {
           applied_at?: string | null
           applied_by?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
           created_at?: string
           description?: string
           evidence?: Json
