@@ -5,7 +5,12 @@ import type { WLKpis } from "@/hooks/win-loss/useWinLossAggregations";
 import { fmtBRL, fmtDays, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import type { LucideIcon } from "lucide-react";
 
-interface Props { kpis: WLKpis; isLoading?: boolean }
+interface Props {
+  kpis: WLKpis;
+  isLoading?: boolean;
+  onWinsClick?: () => void;
+  onLossesClick?: () => void;
+}
 
 interface Item {
   label: string;
@@ -22,7 +27,7 @@ const toneClasses: Record<Item["tone"], string> = {
   warning: "text-amber-600 bg-amber-500/10",
 };
 
-export function WinLossKpiBanner({ kpis, isLoading }: Props) {
+export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick }: Props) {
   const items: Item[] = [
     { label: "Win Rate", value: fmtPct(kpis.winRate), icon: Trophy, tone: "success" },
     { label: "Forecast 14d", value: fmtPct(kpis.forecastWinRate), icon: Zap, tone: "warning" },
@@ -65,11 +70,25 @@ export function WinLossKpiBanner({ kpis, isLoading }: Props) {
           <CardContent className="p-3 flex items-center gap-3">
             <TrendingDown className="h-4 w-4 text-muted-foreground rotate-180" />
             <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden flex">
-              <div className="bg-emerald-500" style={{ width: `${kpis.winRate}%` }} />
-              <div className="bg-rose-500" style={{ width: `${100 - kpis.winRate}%` }} />
+              <button
+                type="button"
+                onClick={onWinsClick}
+                className="bg-emerald-500 transition-opacity hover:opacity-80 cursor-pointer"
+                style={{ width: `${kpis.winRate}%` }}
+                aria-label={`Ver ${kpis.wins} wins`}
+              />
+              <button
+                type="button"
+                onClick={onLossesClick}
+                className="bg-rose-500 transition-opacity hover:opacity-80 cursor-pointer"
+                style={{ width: `${100 - kpis.winRate}%` }}
+                aria-label={`Ver ${kpis.losses} losses`}
+              />
             </div>
             <span className="text-xs text-muted-foreground tabular-nums">
-              {kpis.wins} won · {kpis.losses} lost
+              <button type="button" onClick={onWinsClick} className="hover:text-emerald-600 transition-colors">{kpis.wins} won</button>
+              {" · "}
+              <button type="button" onClick={onLossesClick} className="hover:text-rose-600 transition-colors">{kpis.losses} lost</button>
             </span>
           </CardContent>
         </Card>
