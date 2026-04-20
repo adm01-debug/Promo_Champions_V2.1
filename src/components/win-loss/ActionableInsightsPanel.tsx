@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useWinLossInsights } from "@/hooks/deal-intelligence/useWinLoss";
 import { severityClasses, severityLabel, insightTypeLabel, type Severity } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import { InsightPinCard } from "./InsightPinCard";
+import { InsightExplainPopover } from "./InsightExplainPopover";
 
 const NEW_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -115,11 +116,14 @@ export function ActionableInsightsPanel({ onCopilot }: Props = {}) {
                     <p className="text-[11px] text-muted-foreground">
                       {evidence?.sample_size ? `Baseado em ${evidence.sample_size} deals` : ""}
                     </p>
-                    {!applied && (
-                      <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => apply(i.id)}>
-                        <CheckCircle2 className="h-3 w-3 mr-1" /> Marcar aplicado
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-1">
+                      <InsightExplainPopover insightId={i.id} title={i.title} description={i.description ?? ""} />
+                      {!applied && (
+                        <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => apply(i.id)}>
+                          <CheckCircle2 className="h-3 w-3 mr-1" /> Marcar aplicado
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

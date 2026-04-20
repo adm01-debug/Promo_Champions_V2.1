@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Trophy, RefreshCw, Download, Keyboard, Printer } from "lucide-react";
+import { Trophy, RefreshCw, Download, Keyboard, Printer, Clipboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { WinLossSavedViews } from "./WinLossSavedViews";
@@ -10,12 +10,13 @@ interface Props {
   onRun: () => void;
   onExport: () => void;
   onPrint: () => void;
+  onCopyDigest?: () => void;
   isRunning?: boolean;
   filters: WinLossFilterState;
   onLoadView: (v: SavedView) => void;
 }
 
-export function WinLossPageHeader({ onRun, onExport, onPrint, isRunning, filters, onLoadView }: Props) {
+export function WinLossPageHeader({ onRun, onExport, onPrint, onCopyDigest, isRunning, filters, onLoadView }: Props) {
   return (
     <motion.div
       className="flex flex-col sm:flex-row sm:items-center gap-3 no-print"
@@ -35,6 +36,18 @@ export function WinLossPageHeader({ onRun, onExport, onPrint, isRunning, filters
       <TooltipProvider delayDuration={300}>
         <div className="flex flex-wrap gap-2">
           <WinLossSavedViews currentFilters={filters} onLoad={onLoadView} />
+
+          {onCopyDigest && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="sm" variant="outline" onClick={onCopyDigest} aria-label="Copiar resumo executivo">
+                  <Clipboard className="h-3.5 w-3.5 mr-1.5" />
+                  Digest
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-[11px]">Copia resumo Markdown</TooltipContent>
+            </Tooltip>
+          )}
 
           <Tooltip>
             <TooltipTrigger asChild>

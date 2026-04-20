@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useRef } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
 import { WinLossPageHeader } from "@/components/win-loss/WinLossPageHeader";
@@ -14,6 +14,11 @@ import { WinLossDealsDrawer, type DrawerFilter } from "@/components/win-loss/Win
 import { WinLossEmptyState } from "@/components/win-loss/WinLossEmptyState";
 import { WinLossLastRunCard } from "@/components/win-loss/WinLossLastRunCard";
 import { WinLossPrintLayout } from "@/components/win-loss/WinLossPrintLayout";
+import { WinLossCohortHeatmap } from "@/components/win-loss/WinLossCohortHeatmap";
+import { WinLossAnomalyBanner } from "@/components/win-loss/WinLossAnomalyBanner";
+import { CycleTimeHistogram } from "@/components/win-loss/CycleTimeHistogram";
+import { LossReasonFlow } from "@/components/win-loss/LossReasonFlow";
+import { WinLossQuickFilterChips } from "@/components/win-loss/WinLossQuickFilterChips";
 import {
   KpiBannerSkeleton,
   ChartSkeleton,
@@ -37,14 +42,40 @@ import { useWinLossShortcuts } from "@/hooks/win-loss/useWinLossShortcuts";
 import { usePreviousKpisComputed, computeKpiDelta } from "@/hooks/win-loss/usePreviousPeriodKpis";
 import { useWinLossForecast } from "@/hooks/win-loss/useWinLossForecast";
 import { useWinLossTelemetry } from "@/hooks/win-loss/useWinLossTelemetry";
+import { useWinLossAnomalies } from "@/hooks/win-loss/useWinLossAnomalies";
+import { useWinLossDigest } from "@/hooks/win-loss/useWinLossDigest";
+import { useWinLossInsights } from "@/hooks/deal-intelligence/useWinLoss";
 import type { SavedView } from "@/hooks/win-loss/useWinLossSavedViews";
 
 const SITE = "https://championgifts.lovable.app";
 
 export default function WinLossIntelligence() {
-  useWinLossRealtime();
+  const insightsRef = useRef<HTMLDivElement | null>(null);
+  const [pulse, setPulse] = useState(false);
+
+  const focusInsights = useCallback(() => {
+    insightsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setPulse(true);
+    setTimeout(() => setPulse(false), 3000);
+  }, []);
+
+  useWinLossRealtime({ onNewPattern: focusInsights });
+
   const { filters, setFilters, reset } = useWinLossFilters();
-  const { data: rows = [], isLoading } = useFilteredWinLossAnalyses(filters);
+  const { data: allRows = [], isLoading } = useFilteredWinLossAnalyses(filters);
+
+  // Quick filter overlay state (client-side, doesn't refetch)
+  const [outcomeFilter, setOutcomeFilter] = useState<"won" | "lost" | null>(null);
+  const [competitorFilter, setCompetitorFilter] = useState<string | null>(null);
+
+  const rows = useMemo(() => {
+    return allRows.filter(r => {
+      if (outcomeFilter && r.outcome !== outcomeFilter) return false;
+      if (competitorFilter && r.competitor !== competitorFilter) return false;
+      return true;
+    });
+  }, [allRows, outcomeFilter, competitorFilter]);
+
   const kpis = useWLKpis(rows);
   const monthly = useWLTrend(rows, "month");
   const weekly = useWLTrend(rows, "week");
@@ -55,7 +86,16 @@ export default function WinLossIntelligence() {
   const { kpis: prevKpis } = usePreviousKpisComputed(filters);
   const delta = useMemo(() => computeKpiDelta(kpis, prevKpis), [kpis, prevKpis]);
   const forecast = useWinLossForecast(monthly, 8);
+  const anomaly = useWinLossAnomalies(weekly);
   const track = useWinLossTelemetry();
+
+  const { data: insightsData = [] } = useWinLossInsights();
+  const digest = useWinLossDigest(
+    kpis,
+    delta,
+    insightsData.map(i => ({ title: i.title, description: i.description ?? null, severity: i.severity ?? null })),
+    competitors,
+  );
 
   const runAnalysis = useRunWinLossAnalysis();
   const exportCsv = useWinLossExport(rows);
@@ -80,6 +120,9 @@ export default function WinLossIntelligence() {
     setFilters({ salespersonIds: [id] });
     openDrawer(`Deals de ${name}`);
   };
+  const onCohort = (created: string, closed: string) => openDrawer(`Cohort ${created} → ${closed}`);
+  const onCycleBin = (bin: string, outcome: "won" | "lost") => openDrawer(`Ciclo ${bin} · ${outcome === "won" ? "Won" : "Lost"}`, { outcome });
+  const onLossLeaf = (stage: string, reason: string) => openDrawer(`${reason} · ${stage}`, { outcome: "lost", reason, stage });
 
   const handleExport = useCallback(() => {
     track("winloss_export", { count: rows.length });
@@ -96,9 +139,21 @@ export default function WinLossIntelligence() {
     window.print();
   }, [track]);
 
+  const handleCopyDigest = useCallback(() => {
+    track("winloss_digest");
+    digest();
+  }, [digest, track]);
+
   const handleLoadView = useCallback((v: SavedView) => {
     track("winloss_load_view", { name: v.name });
     setFilters(v.filters);
+  }, [setFilters, track]);
+
+  const handleQuickFilter = useCallback((patch: { filters?: Partial<typeof filters>; outcome?: "won" | "lost" | null; competitor?: string | null }) => {
+    if (patch.filters) setFilters(patch.filters);
+    if (patch.outcome !== undefined) setOutcomeFilter(patch.outcome);
+    if (patch.competitor !== undefined) setCompetitorFilter(patch.competitor);
+    track("winloss_quick_filter", { ...patch });
   }, [setFilters, track]);
 
   useWinLossShortcuts({
@@ -107,7 +162,7 @@ export default function WinLossIntelligence() {
     onEscape: () => setDrawerOpen(false),
   });
 
-  const isEmpty = !isLoading && rows.length === 0;
+  const isEmpty = !isLoading && allRows.length === 0;
   const url = `${SITE}/win-loss-intelligence`;
 
   return (
@@ -129,6 +184,7 @@ export default function WinLossIntelligence() {
             onRun={handleRun}
             onExport={handleExport}
             onPrint={handlePrint}
+            onCopyDigest={handleCopyDigest}
             isRunning={runAnalysis.isPending}
             filters={filters}
             onLoadView={handleLoadView}
@@ -137,6 +193,20 @@ export default function WinLossIntelligence() {
           <div className="no-print">
             <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
           </div>
+
+          {!isEmpty && !isLoading && (
+            <WinLossQuickFilterChips
+              filters={filters}
+              topCompetitor={competitors[0]}
+              outcomeFilter={outcomeFilter}
+              competitorFilter={competitorFilter}
+              onApply={handleQuickFilter}
+            />
+          )}
+
+          {anomaly.isAnomaly && (
+            <WinLossAnomalyBanner anomaly={anomaly} onInvestigate={onPeriod} />
+          )}
 
           <WinLossPrintLayout kpis={kpis} />
 
@@ -179,13 +249,25 @@ export default function WinLossIntelligence() {
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
+                <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
+              </div>
+
+              <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
+
               <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
 
               <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
             </>
           )}
 
-          <ActionableInsightsPanel />
+          <div
+            ref={insightsRef}
+            className={pulse ? "rounded-xl ring-2 ring-primary/60 ring-offset-2 ring-offset-background animate-pulse transition-all" : ""}
+          >
+            <ActionableInsightsPanel />
+          </div>
 
           <WinLossDealsDrawer
             open={drawerOpen}

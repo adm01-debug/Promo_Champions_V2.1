@@ -55,8 +55,9 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: idx * 0.05 }}
+          whileHover={{ y: -2, transition: { type: "spring", stiffness: 380, damping: 22 } }}
         >
-          <Card className="border-border/50">
+          <Card className="border-border/50 transition-shadow hover:shadow-md">
             <CardContent className="p-3">
               <div className="flex items-center justify-between mb-1.5 gap-1">
                 <span className="text-[11px] uppercase tracking-wide text-muted-foreground truncate">{it.label}</span>

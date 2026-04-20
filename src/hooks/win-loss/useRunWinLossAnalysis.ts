@@ -22,6 +22,22 @@ export const useRunWinLossAnalysis = () => {
           `${a.data?.processed ?? 0} deals · ${m.data?.patterns ?? 0} padrões · ${m.data?.insights ?? 0} insights`,
           { id: tId },
         );
+        // Discrete celebration confetti — dynamic import keeps initial bundle lean.
+        try {
+          const reduce = typeof window !== "undefined"
+            && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+          if (!reduce) {
+            const { default: confetti } = await import("canvas-confetti");
+            confetti({
+              particleCount: 30,
+              spread: 60,
+              origin: { y: 0.3 },
+              colors: ["hsl(160 70% 45%)", "hsl(220 70% 50%)", "hsl(280 65% 55%)"],
+              scalar: 0.8,
+              ticks: 80,
+            });
+          }
+        } catch { /* ignore */ }
         return { analyze: a.data, mine: m.data };
       } catch (e) {
         toast.error(e instanceof Error ? e.message : "Erro na análise", { id: tId });
