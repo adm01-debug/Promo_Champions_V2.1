@@ -150,7 +150,7 @@ export default function QuoteCadencesPage() {
 
           <TabsContent value={filter} className="mt-0">
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <SkeletonShimmer key={i} className="h-44 rounded-xl" />
                 ))}
@@ -173,7 +173,7 @@ export default function QuoteCadencesPage() {
                     type="button"
                     onClick={() => setSelected(r)}
                     aria-label={`Abrir detalhes da cadência de ${r.quote?.client_name ?? "cliente"} — status ${r.status}`}
-                    className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl"
+                    className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl snap-start"
                     variants={{
                       hidden: { opacity: 0, y: 8 },
                       visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
