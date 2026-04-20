@@ -81,6 +81,18 @@ export default function QuoteCadencesPage() {
 
         <QuoteCadenceConversionChart />
 
+        {todayOnly && (
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              Tarefas para hoje
+            </Badge>
+            <Button variant="ghost" size="sm" onClick={clearTodayFilter} aria-label="Limpar filtro de hoje">
+              Limpar filtro
+            </Button>
+          </div>
+        )}
+
         <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
 
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)} className="space-y-4">
