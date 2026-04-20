@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { memo, useEffect, useRef, useState } from 'react';
+import { forwardRef, memo, useEffect, useRef, useState } from 'react';
 import { CarLiveryOverlay } from './CarLiveryOverlay';
 import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
