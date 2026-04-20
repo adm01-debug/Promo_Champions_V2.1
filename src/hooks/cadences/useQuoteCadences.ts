@@ -52,7 +52,7 @@ export function useQuoteCadenceStats() {
     queryFn: async () => {
       const today = new Date().toISOString().slice(0, 10);
 
-      const [{ count: active }, { count: completedTasksToday }, { data: convertedRows }] = await Promise.all([
+      const [{ count: active }, { count: completedTasksToday }, { data: convertedRows }, { count: overdue }] = await Promise.all([
         supabase
           .from("prospect_cadences")
           .select("id", { count: "exact", head: true })
@@ -69,6 +69,12 @@ export function useQuoteCadenceStats() {
           .select("id, quote:quotes(status)")
           .not("quote_id", "is", null)
           .in("status", ["completed", "cancelled"]),
+        supabase
+          .from("prospect_cadences")
+          .select("id", { count: "exact", head: true })
+          .not("quote_id", "is", null)
+          .eq("status", "active")
+          .lt("next_action_date", today),
       ]);
 
       const finished = convertedRows ?? [];
@@ -82,6 +88,7 @@ export function useQuoteCadenceStats() {
         activeFollowUps: active ?? 0,
         tasksCompletedToday: completedTasksToday ?? 0,
         conversionRate,
+        overdueCount: overdue ?? 0,
       };
     },
     refetchInterval: 60_000,

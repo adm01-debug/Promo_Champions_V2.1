@@ -10,8 +10,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { CalendarClock, User, FileText, TrendingUp, MoreVertical, Pause, Play, XCircle } from "lucide-react";
-import { differenceInDays, format, parseISO } from "date-fns";
+import { CalendarClock, User, FileText, TrendingUp, MoreVertical, Pause, Play, XCircle, AlertTriangle } from "lucide-react";
+import { differenceInDays, format, isToday, isBefore, startOfDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 import {
@@ -19,6 +19,7 @@ import {
   useResumeQuoteCadence,
   useCancelQuoteCadence,
 } from "@/hooks/cadences/useQuoteCadenceMutations";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 interface Props {
   row: QuoteCadenceRow;
@@ -42,6 +43,13 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
     ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(q.total_value)
     : "—";
 
+  const reducedMotion = usePrefersReducedMotion();
+
+  const nextDate = row.next_action_date ? parseISO(row.next_action_date) : null;
+  const isActionToday = nextDate ? isToday(nextDate) : false;
+  const isOverdue = nextDate && row.status === "active" ? isBefore(nextDate, startOfDay(new Date())) : false;
+  const overdueDays = isOverdue && nextDate ? differenceInDays(new Date(), nextDate) : 0;
+
   const pause = usePauseQuoteCadence();
   const resume = useResumeQuoteCadence();
   const cancel = useCancelQuoteCadence();
@@ -52,8 +60,14 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
 
   const isFinal = row.status === "completed" || row.status === "cancelled";
 
+  const urgencyBorder = isOverdue
+    ? "border-destructive/60 shadow-destructive/10"
+    : isActionToday && !reducedMotion
+      ? "border-primary/60 animate-pulse"
+      : "";
+
   return (
-    <Card className={`glass border-border/50 hover:border-primary/50 transition-colors ${selected ? "border-primary ring-2 ring-primary/30" : ""}`}>
+    <Card className={`glass border-border/50 hover:border-primary/50 transition-colors ${urgencyBorder} ${selected ? "border-primary ring-2 ring-primary/30" : ""}`}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-2 min-w-0 flex-1">
@@ -79,6 +93,12 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
             <Badge variant="outline" className={statusVariant[row.status] ?? ""}>
               {row.status}
             </Badge>
+            {isOverdue && (
+              <Badge variant="destructive" className="gap-1 text-[10px] px-1.5">
+                <AlertTriangle className="h-3 w-3" />
+                {overdueDays}d
+              </Badge>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={stop}>
                 <Button
