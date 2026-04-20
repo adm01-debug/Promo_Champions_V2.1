@@ -51,13 +51,13 @@ export const useSaveWinLossView = () => {
           .eq("user_id", u.user.id)
           .eq("entity_type", ENTITY);
       }
-      const { error } = await supabase.from("saved_filters").insert({
+      const { error } = await supabase.from("saved_filters").insert([{
         user_id: u.user.id,
         entity_type: ENTITY,
         name,
         filters: filters as unknown as Record<string, unknown>,
         is_default: !!makeDefault,
-      });
+      }]);
       if (error) throw error;
     },
     onSuccess: () => {
