@@ -98,19 +98,33 @@ export default function QuoteCadencesPage() {
       </Helmet>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 p-4 md:p-6">
-        <header className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
-            <Send className="h-5 w-5 text-primary" />
+        <header className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
+              <Send className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="font-display text-page-title">Cadências de Orçamento</h1>
+              <p className="text-sm text-muted-foreground">Follow-up automatizado de propostas enviadas</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-display text-page-title">Cadências de Orçamento</h1>
-            <p className="text-sm text-muted-foreground">Follow-up automatizado de propostas enviadas</p>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={rows.length === 0}
+            aria-label="Exportar cadências filtradas para CSV"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Exportar CSV
+          </Button>
         </header>
 
         <QuoteCadenceMetrics />
 
         <QuoteCadenceConversionChart />
+
+        <QuoteCadenceComparison />
 
         {todayOnly && (
           <div className="flex items-center gap-2">
