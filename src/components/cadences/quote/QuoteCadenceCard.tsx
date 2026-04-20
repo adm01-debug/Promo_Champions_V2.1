@@ -70,10 +70,10 @@ export function QuoteCadenceCard({ row, totalSteps = 5 }: Props) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7"
-                  aria-label="Ações do follow-up"
+                  className="h-7 w-7 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label={`Ações do orçamento ${q?.client_name ?? "cliente"}`}
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <MoreVertical className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44" onClick={stop}>

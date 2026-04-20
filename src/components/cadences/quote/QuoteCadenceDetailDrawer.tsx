@@ -60,10 +60,10 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh]">
+      <DrawerContent className="max-h-[90vh]" aria-describedby="quote-cadence-drawer-desc">
         <DrawerHeader className="border-b border-border/40">
           <DrawerTitle className="font-display">{q?.client_name ?? "Cliente"}</DrawerTitle>
-          <DrawerDescription>
+          <DrawerDescription id="quote-cadence-drawer-desc">
             {q?.quote_number ?? "Orçamento"} ·{" "}
             {q?.total_value
               ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(q.total_value)
@@ -144,8 +144,9 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
                           variant="outline"
                           onClick={() => skip.mutate({ taskId: t.id, notes: notesById[t.id] })}
                           disabled={skip.isPending}
+                          aria-label="Pular esta tarefa"
                         >
-                          <SkipForward className="h-3.5 w-3.5 mr-1.5" />
+                          <SkipForward className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                           Pular
                         </Button>
                         <div className="flex items-center gap-1.5">
@@ -163,8 +164,9 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
                               reschedule.mutate({ taskId: t.id, newDate: rescheduleById[t.id] })
                             }
                             disabled={reschedule.isPending || !rescheduleById[t.id]}
+                            aria-label="Reagendar tarefa para a data selecionada"
                           >
-                            <Clock className="h-3.5 w-3.5 mr-1.5" />
+                            <Clock className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                             Reagendar
                           </Button>
                         </div>

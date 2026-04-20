@@ -49,10 +49,11 @@ export function QuoteCadenceConversionChart() {
           size="sm"
           value={String(range)}
           onValueChange={(v) => v && setRange(Number(v) as Range)}
+          aria-label="Período do gráfico de conversão"
         >
-          <ToggleGroupItem value="30" aria-label="30 dias">30d</ToggleGroupItem>
-          <ToggleGroupItem value="60" aria-label="60 dias">60d</ToggleGroupItem>
-          <ToggleGroupItem value="90" aria-label="90 dias">90d</ToggleGroupItem>
+          <ToggleGroupItem value="30" aria-label="Últimos 30 dias">30d</ToggleGroupItem>
+          <ToggleGroupItem value="60" aria-label="Últimos 60 dias">60d</ToggleGroupItem>
+          <ToggleGroupItem value="90" aria-label="Últimos 90 dias">90d</ToggleGroupItem>
         </ToggleGroup>
       </CardHeader>
       <CardContent>
