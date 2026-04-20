@@ -63,6 +63,8 @@ export default function QuoteCadencesPage() {
 
         <QuoteCadenceMetrics />
 
+        <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
+
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)} className="space-y-4">
           <TabsList>
             <TabsTrigger value="active">Ativos</TabsTrigger>
