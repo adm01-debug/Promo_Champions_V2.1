@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils';
 interface CarPresetCardProps {
   preset: RaceCarPreset;
   selected: boolean;
-  carNumber: number;
+  /** Mantido por compatibilidade — não é mais renderizado no preview do carro. */
+  carNumber?: number;
   onSelect: (id: string) => void;
 }
 
@@ -15,7 +16,7 @@ interface CarPresetCardProps {
  * Card de seleção de preset com mini-preview SVG do carro real.
  * Mostra emoji, nome e badge "Pride" para temas inclusivos.
  */
-export function CarPresetCard({ preset, selected, carNumber, onSelect }: CarPresetCardProps) {
+export function CarPresetCard({ preset, selected, onSelect }: CarPresetCardProps) {
   return (
     <button
       type="button"
@@ -40,7 +41,6 @@ export function CarPresetCard({ preset, selected, carNumber, onSelect }: CarPres
       <div className="flex h-14 w-full items-center justify-center overflow-hidden rounded-md bg-gradient-to-b from-sky-100 to-sky-50 dark:from-slate-800 dark:to-slate-900">
         <svg viewBox="-40 -22 80 44" className="h-12 w-20" aria-hidden>
           <RaceCar
-            number={carNumber}
             primaryColor={preset.primary}
             secondaryColor={preset.secondary}
             style={preset.style}

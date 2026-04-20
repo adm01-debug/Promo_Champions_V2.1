@@ -5,7 +5,8 @@ import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
 
 interface RaceCarProps {
-  number: number;
+  /** Número do piloto. Quando ausente/null, nenhum numeral é renderizado no chassi. */
+  number?: number | null;
   primaryColor: string;
   secondaryColor: string;
   style: 'f1' | 'stock' | 'kart';
@@ -67,7 +68,7 @@ function RaceCarInner({
 }: RaceCarProps) {
   const [helmetVisible, setHelmetVisible] = useState(false);
   const hoverTimerRef = useRef<number | null>(null);
-  const tooltipId = `helmet-tip-${number}`;
+  const tooltipId = `helmet-tip-${number ?? 'anon'}`;
 
   useEffect(() => () => {
     if (hoverTimerRef.current != null) window.clearTimeout(hoverTimerRef.current);
@@ -338,7 +339,7 @@ function RaceCarInner({
           primary={primaryColor}
           secondary={secondaryColor}
           accent={liveryAccent}
-          uid={liveryUid ?? `${number}-${primaryColor.replace('#', '')}`}
+          uid={liveryUid ?? `${number ?? 'x'}-${primaryColor.replace('#', '')}`}
         />
       )}
 
@@ -403,20 +404,24 @@ function RaceCarInner({
       <rect x={-bodyW / 2 + 0.5} y={-bodyH / 2 + 3} width={1.6} height={2.5} rx={0.5} fill="#dc2626" opacity={0.9} />
       <rect x={-bodyW / 2 + 0.5} y={bodyH / 2 - 5.5} width={1.6} height={2.5} rx={0.5} fill="#dc2626" opacity={0.9} />
 
-      {/* ===== Número do piloto ===== */}
-      <circle cx={-bodyW / 2 + 14} cy={0} r={5.5} fill={secondaryColor} stroke="#0f172a" strokeWidth={0.8} />
-      <text
-        x={-bodyW / 2 + 14}
-        y={0}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={7.5}
-        fontWeight={900}
-        fill={primaryColor}
-        style={{ fontFamily: 'system-ui, sans-serif' }}
-      >
-        {number}
-      </text>
+      {/* ===== Número do piloto (renderizado apenas quando explicitamente passado > 0) ===== */}
+      {number != null && number > 0 && (
+        <>
+          <circle cx={-bodyW / 2 + 14} cy={0} r={5.5} fill={secondaryColor} stroke="#0f172a" strokeWidth={0.8} />
+          <text
+            x={-bodyW / 2 + 14}
+            y={0}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontSize={7.5}
+            fontWeight={900}
+            fill={primaryColor}
+            style={{ fontFamily: 'system-ui, sans-serif' }}
+          >
+            {number}
+          </text>
+        </>
+      )}
 
       {/* ===== Flash de ultrapassagem (sound design visual) ===== */}
       {overtakeFlash && (

@@ -35,7 +35,7 @@ export function RaceGhostDemo() {
 }
 
 function DemoCarLoop({
-  number, primary, secondary, style, lane, offset,
+  primary, secondary, style, lane, offset,
 }: typeof DEMO_CARS[number]) {
   // Anima progresso 0..1 em loop e amostra a pista a cada frame via framer keyframes
   const STEPS = 60;
@@ -50,7 +50,7 @@ function DemoCarLoop({
       animate={{ x: xs, y: ys, rotate: rots }}
       transition={{ duration: 9, ease: 'linear', repeat: Infinity }}
     >
-      <RaceCar number={number} primaryColor={primary} secondaryColor={secondary} style={style} />
+      <RaceCar primaryColor={primary} secondaryColor={secondary} style={style} />
     </motion.g>
   );
 }

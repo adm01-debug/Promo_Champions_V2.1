@@ -67,7 +67,6 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
           <div className="flex items-center justify-center">
             <svg viewBox="-50 -28 100 56" className="h-32 w-56" aria-label={`Preview ${preset.name}`}>
               <RaceCar
-                number={number}
                 primaryColor={preset.primary}
                 secondaryColor={preset.secondary}
                 style={preset.style}
@@ -88,29 +87,16 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
           </p>
         </div>
 
-        {/* Inputs número + apelido */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label htmlFor="car-number">Número (1-99)</Label>
-            <Input
-              id="car-number"
-              type="number"
-              min={1}
-              max={99}
-              value={number}
-              onChange={(e) => setNumber(Math.max(1, Math.min(99, Number(e.target.value) || 1)))}
-            />
-          </div>
-          <div>
-            <Label htmlFor="car-nick">Apelido</Label>
-            <Input
-              id="car-nick"
-              maxLength={20}
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder="Ex: Relâmpago"
-            />
-          </div>
+        {/* Apelido (sem número — o ranking é exibido dinamicamente em corrida) */}
+        <div>
+          <Label htmlFor="car-nick">Apelido</Label>
+          <Input
+            id="car-nick"
+            maxLength={20}
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            placeholder="Ex: Relâmpago"
+          />
         </div>
 
         {/* Grid de presets */}
@@ -123,7 +109,6 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
                   key={p.id}
                   preset={p}
                   selected={p.id === presetId}
-                  carNumber={number}
                   onSelect={setPresetId}
                 />
               ))}
