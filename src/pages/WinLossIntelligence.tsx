@@ -19,6 +19,10 @@ import { WinLossAnomalyBanner } from "@/components/win-loss/WinLossAnomalyBanner
 import { CycleTimeHistogram } from "@/components/win-loss/CycleTimeHistogram";
 import { LossReasonFlow } from "@/components/win-loss/LossReasonFlow";
 import { WinLossQuickFilterChips } from "@/components/win-loss/WinLossQuickFilterChips";
+import { NextBestWinLossCard } from "@/components/win-loss/NextBestWinLossCard";
+import { InsightsImpactPanel } from "@/components/win-loss/InsightsImpactPanel";
+import { WinByHourHeatmap } from "@/components/win-loss/WinByHourHeatmap";
+import { ScriptABPanel } from "@/components/win-loss/ScriptABPanel";
 import {
   KpiBannerSkeleton,
   ChartSkeleton,
@@ -240,6 +244,10 @@ export default function WinLossIntelligence() {
                 forecast={forecast}
               />
 
+              <div className="no-print">
+                <NextBestWinLossCard />
+              </div>
+
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
                   <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
@@ -256,9 +264,13 @@ export default function WinLossIntelligence() {
 
               <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
 
+              <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+
               <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
 
               <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+
+              <ScriptABPanel />
             </>
           )}
 
@@ -266,7 +278,10 @@ export default function WinLossIntelligence() {
             ref={insightsRef}
             className={pulse ? "rounded-xl ring-2 ring-primary/60 ring-offset-2 ring-offset-background animate-pulse transition-all" : ""}
           >
-            <ActionableInsightsPanel />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <ActionableInsightsPanel />
+              <InsightsImpactPanel />
+            </div>
           </div>
 
           <WinLossDealsDrawer
