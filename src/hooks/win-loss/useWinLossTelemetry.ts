@@ -9,7 +9,9 @@ type WLEvent =
   | "winloss_print"
   | "winloss_save_view"
   | "winloss_load_view"
-  | "winloss_battle_card";
+  | "winloss_battle_card"
+  | "winloss_digest"
+  | "winloss_quick_filter";
 
 interface AnalyticsHost {
   analytics?: { track: (event: string, payload?: Record<string, unknown>) => void };
