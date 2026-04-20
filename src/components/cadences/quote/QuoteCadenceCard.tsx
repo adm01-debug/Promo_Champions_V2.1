@@ -34,7 +34,7 @@ const statusVariant: Record<string, string> = {
   cancelled: "bg-destructive/15 text-destructive border-destructive/30",
 };
 
-export function QuoteCadenceCard({ row, totalSteps = 5 }: Props) {
+export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect }: Props) {
   const q = row.quote;
   const daysSinceSent = q?.sent_at ? differenceInDays(new Date(), parseISO(q.sent_at)) : null;
   const progress = Math.min((row.current_step / totalSteps) * 100, 100);
