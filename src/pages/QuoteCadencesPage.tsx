@@ -179,7 +179,11 @@ export default function QuoteCadencesPage() {
                       visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
                     }}
                   >
-                    <QuoteCadenceCard row={r} />
+                    <QuoteCadenceCard
+                      row={r}
+                      selected={selectedIds.includes(r.id)}
+                      onToggleSelect={toggleSelect}
+                    />
                   </motion.button>
                 ))}
               </motion.div>
@@ -187,6 +191,8 @@ export default function QuoteCadencesPage() {
           </TabsContent>
         </Tabs>
       </motion.div>
+
+      <QuoteCadenceBulkBar selectedIds={selectedIds} onClear={() => setSelectedIds([])} />
 
       <QuoteCadenceDetailDrawer
         row={selected}
