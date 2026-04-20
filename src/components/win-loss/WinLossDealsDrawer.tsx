@@ -71,7 +71,7 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-xl max-h-[85vh] sm:max-h-screen overflow-hidden flex flex-col">
+      <SheetContent className="w-full sm:max-w-xl max-h-[85vh] sm:max-h-screen overflow-hidden flex flex-col data-[state=open]:duration-300">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           <p className="text-xs text-muted-foreground">{filtered.length} deals</p>
