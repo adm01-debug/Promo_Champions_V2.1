@@ -1,117 +1,83 @@
 
 
-## Módulo Win/Loss Intelligence — Evolução robusta
+## Win/Loss Intelligence — Fase 2: Polimento até 10/10
 
-### Estado atual
-Já existem 7 componentes em `src/components/deal-intelligence/winloss/`, hook `useWinLoss.ts`, edge functions `analyze-win-loss` + `mine-win-loss-patterns`, e tabelas `win_loss_analyses`, `win_loss_patterns`, `win_loss_insights`, `competitors_registry`, `competitor_mentions` (todas vazias — só `deal_outcomes` tem 26 registros). Hoje vive como aba dentro de `/deal-intelligence`.
-
-### Objetivo
-Promover Win/Loss a **módulo dedicado de classe mundial** com rota própria, filtros avançados, séries temporais, drill-down e benchmarks por vendedor/segmento/origem.
+Módulo já entregue com fundação sólida (rota, hooks, 8 componentes, migration + seeds). Agora elevar a "classe mundial" com 10 melhorias sequenciais.
 
 ---
 
-## Entregas
+### #1 — SEO + Helmet na página
+Adicionar `<Helmet>` com title, description, canonical e OG em `WinLossIntelligence.tsx` (padrão do projeto via react-helmet-async).
 
-### 1. Rota dedicada `/win-loss-intelligence`
-- Nova página `src/pages/WinLossIntelligence.tsx` (lazy, com Helmet/SEO).
-- Item no sidebar dentro de "Inteligência" + atalho no Cmd+K.
-- A aba antiga em `/deal-intelligence` passa a redirecionar via link "Ver módulo completo".
+### #2 — Skeleton loaders premium
+Substituir "Carregando…" por skeletons animados em KPI Banner, Trend Chart, Reason Matrix, Salesperson Table e Competitor Cards. Padrão `animate-pulse` + `useReducedMotion`.
 
-### 2. Cabeçalho com filtros globais (`WinLossFilters.tsx`)
-- Período (7/30/90/180/365 dias + custom).
-- Vendedor (multi-select).
-- Segmento / origem / categoria de produto.
-- Faixa de ticket (slider).
-- Persistência em URL params + `saved_filters`.
+### #3 — Empty states ilustrados
+Quando `analyses.length === 0`, exibir banner único com ícone, copy ("Nenhuma análise no período"), CTA "Ajustar filtros" + "Rodar análise agora" (chama edge `analyze-win-loss`).
 
-### 3. Banner de KPIs ampliado
-Substitui `WinLossSummaryCard` atual com 6 KPIs animados (CountUp + sparkline):
-Win Rate · Δ vs período anterior · Ciclo médio Won/Lost · Ticket médio Won · Total deals analisados · Win rate forecast (próx 30d).
+### #4 — Drill-down clicável em todos os charts
+- Clique em barra do TrendChart → abre `WinLossDealsDrawer` filtrado por período.
+- Clique em célula do ReasonMatrix → abre drawer filtrado por motivo+estágio.
+- Clique em CompetitorBattleCard → drawer filtrado por concorrente.
+- Clique em linha do SalespersonTable → drawer filtrado por vendedor.
 
-### 4. Tendência temporal (`WinLossTrendChart.tsx`)
-- Linha dupla (wins/losses) + barra empilhada de motivos por mês.
-- Toggle: Mensal / Semanal / Trimestral.
-- Tooltip rico com drill-down ao clicar em um ponto.
+### #5 — Botão "Rodar análise agora" + toast com progresso
+Header da página ganha botão `Sparkles` → invoca `analyze-win-loss` + `mine-win-loss-patterns` em paralelo, mostra toast com counter, invalida queries ao terminar.
 
-### 5. Matriz de motivos (heatmap) (`WinLossReasonMatrix.tsx`)
-- Eixos: motivo × estágio (ou motivo × segmento).
-- Cor = frequência; tooltip = win rate + ticket médio.
+### #6 — Marcar insight como aplicado
+`ActionableInsightsPanel`: botão "✓ Aplicado" grava `applied_at`/`applied_by` (colunas já existentes). Badge "Novo" para `created_at < 7d`. Filtro por severidade (info/warn/danger).
 
-### 6. Comparativo por vendedor (`SalespersonWinLossTable.tsx`)
-Tabela ordenável: vendedor · win rate · ciclo médio · ticket médio · top motivo win · top motivo loss · top concorrente. Linha do top performer destacada como benchmark.
+### #7 — Export CSV dos deals filtrados
+Botão no header → gera CSV com outcome, valor, ciclo, motivo, concorrente, vendedor, segmento. Reutiliza padrão de `quote-cadence-module`.
 
-### 7. Análise competitiva expandida (`CompetitorBattleCard.tsx`)
-Substitui a tabela atual: card por concorrente com win rate contra ele, ticket médio perdido, motivos recorrentes e botão "Ver battle card" (`competitors_registry.default_battle_card_id`).
+### #8 — Keyboard shortcuts
+- `Ctrl+E` → export CSV
+- `Ctrl+R` → rodar análise
+- `Escape` → fecha drawer
+- Hook `useWinLossShortcuts.ts` (ignora inputs).
 
-### 8. Drill-down de deals (`WinLossDealsDrawer.tsx`)
-Drawer lateral abre ao clicar em qualquer KPI/barra/célula: lista de deals filtrados, sentimento da última conversa (join `conversation_insights_summary`), link para timeline do cliente.
+### #9 — Mobile responsivo + safe-area
+KPI Banner em 2×3 no mobile, charts stacked, drawer `max-h-[85vh]`, filtros colapsáveis, snap-x opcional nas competitor cards.
 
-### 9. Insights acionáveis aprimorados
-`WinLossInsightsPanel` ganha:
-- Filtro por severidade (info/oportunidade/risco).
-- Botão "Marcar como aplicado" (nova coluna `applied_at` em `win_loss_insights`).
-- Badge "novo" para insights < 7 dias.
-- Botão "Gerar plano de ação" → abre próxima call-to-action no Copilot.
-
-### 10. Auto-refresh + telemetria
-- Realtime subscription nas 3 tabelas (`win_loss_analyses/patterns/insights`).
-- Botão "Analisar" mostra progresso real (toast com counter).
-- Cron diário sugerido via `pg_cron` chamando as 2 edge functions (migration).
-
-### 11. Seed de demo (mocks)
-Seed em `win_loss_analyses` (40 linhas baseadas nos 26 `deal_outcomes` reais + 14 sintéticos) e `competitors_registry` (5 concorrentes) para o módulo nascer "vivo". Marcados com prefixo `MOCK-WL-*`.
-
-### 12. Documentação
+### #10 — Documentação + memória
 - `mem://features/win-loss-intelligence-module` (novo).
-- Atualizar `mem://analytics/sales-performance-analytics` e `mem://index.md`.
+- Atualizar `mem://analytics/sales-performance-analytics` referenciando rota dedicada.
+- Atualizar `mem://index.md`.
 
 ---
 
-## Detalhes técnicos
+### Detalhes técnicos
 
 **Arquivos novos**
 ```
-src/pages/WinLossIntelligence.tsx
-src/components/win-loss/
-  WinLossFilters.tsx
-  WinLossKpiBanner.tsx
-  WinLossTrendChart.tsx
-  WinLossReasonMatrix.tsx
-  SalespersonWinLossTable.tsx
-  CompetitorBattleCard.tsx
-  WinLossDealsDrawer.tsx
-  winLossFiltersHelpers.ts
-src/hooks/win-loss/
-  useWinLossFilters.ts
-  useWinLossTrend.ts
-  useWinLossBySalesperson.ts
-  useCompetitorBattle.ts
-  useWinLossRealtime.ts
+src/hooks/win-loss/useWinLossShortcuts.ts
+src/hooks/win-loss/useWinLossExport.ts
+src/hooks/win-loss/useRunWinLossAnalysis.ts
+src/components/win-loss/WinLossEmptyState.tsx
+src/components/win-loss/WinLossSkeletons.tsx
+src/components/win-loss/WinLossPageHeader.tsx
 ```
 
 **Arquivos modificados**
-- `src/routes/lazyPages.ts` + `AppRoutes.tsx`: nova rota.
-- `src/components/sidebar/*` ou `navigation`: novo item.
-- `src/hooks/deal-intelligence/useWinLoss.ts`: aceitar filtros (período/vendedor/segmento).
-- `src/pages/DealIntelligence.tsx`: aba Win/Loss vira teaser com botão "Abrir módulo completo".
-
-**Migrations**
-1. `ALTER TABLE win_loss_insights ADD COLUMN applied_at timestamptz, applied_by uuid`.
-2. RLS policies + índices em `(analyzed_at)`, `(outcome, segment)`, `(competitor)`.
-3. Seed `MOCK-WL-*` (insert tool).
-4. (Opcional) cron diário `analyze-win-loss` 03:00 + `mine-win-loss-patterns` 04:00.
+- `src/pages/WinLossIntelligence.tsx` (Helmet, header com botões, integração drill-down)
+- `WinLossKpiBanner.tsx`, `WinLossTrendChart.tsx`, `WinLossReasonMatrix.tsx`, `SalespersonWinLossTable.tsx`, `CompetitorBattleCard.tsx`, `ActionableInsightsPanel.tsx` (drill-down + skeletons)
+- `WinLossDealsDrawer.tsx` (aceita filtros adicionais: período/motivo/estágio/concorrente/vendedor)
 
 **Padrões mantidos**
-Tokens semânticos, Sora/Inter, ≤400 linhas/arquivo, TS strict, Framer Motion, react-helmet-async, RLS, zero warnings, useReducedMotion.
+Tokens semânticos · Sora/Inter · ≤400 linhas/arquivo · TS strict · Framer Motion + `useReducedMotion` · react-helmet-async · zero warnings · RLS preservada.
 
-**Sem impacto** em outros módulos — apenas novos artefatos + um teaser no `/deal-intelligence`.
+**Sem mutações destrutivas.** Apenas leitura adicional + 2 colunas de update controlado em `win_loss_insights` (já existem).
 
-### Ordem de execução
-1. Migrations (schema + seed)
-2. Hooks de filtros/trend/salesperson/competitor/realtime
-3. Página + rota + sidebar
-4. Componentes na ordem da seção "Entregas"
-5. Atualização do teaser em DealIntelligence
-6. Documentação
-7. Teste E2E final
+### Ordem de execução (sequencial, sem perguntas)
+1. #1 SEO/Helmet
+2. #2 Skeletons
+3. #3 Empty state
+4. #4 Drill-down universal
+5. #5 Run analysis + toast
+6. #6 Insights aplicados + filtros
+7. #7 Export CSV
+8. #8 Keyboard shortcuts
+9. #9 Mobile responsivo
+10. #10 Documentação
+11. Teste E2E final + relatório 10/10
 
