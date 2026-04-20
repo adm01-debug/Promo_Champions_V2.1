@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
 import { Send, CheckCircle2, TrendingUp } from "lucide-react";
 import { useQuoteCadenceStats } from "@/hooks/cadences/useQuoteCadences";
 
@@ -26,7 +26,7 @@ export function QuoteCadenceMetrics() {
               <it.icon className={`h-4 w-4 ${it.color}`} aria-hidden="true" />
             </div>
             {isLoading ? (
-              <Skeleton className="h-8 w-20" />
+              <SkeletonShimmer width={80} height={32} />
             ) : (
               <p
                 role="status"

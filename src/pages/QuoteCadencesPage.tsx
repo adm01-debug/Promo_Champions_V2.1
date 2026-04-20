@@ -6,12 +6,13 @@ import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
 import { QuoteCadenceConversionChart } from "@/components/cadences/quote/QuoteCadenceConversionChart";
 import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useMemo, useState } from "react";
 import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
+import { QuoteCadenceEmptyState } from "@/components/cadences/quote/QuoteCadenceEmptyState";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceFilters, emptyQuoteCadenceFilters, type QuoteCadenceFilterValues } from "@/components/cadences/quote/QuoteCadenceFilters";
 import { differenceInCalendarDays, isToday } from "date-fns";
@@ -125,31 +126,37 @@ export default function QuoteCadencesPage() {
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton key={i} className="h-44 rounded-xl" />
+                  <SkeletonShimmer key={i} className="h-44 rounded-xl" />
                 ))}
               </div>
             ) : rows.length === 0 ? (
-              <div className="text-center py-16 border border-dashed border-border/50 rounded-xl bg-muted/10">
-                <Send className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-                <p className="font-medium">Nenhum follow-up encontrado</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Envie um orçamento para iniciar o follow-up automático.
-                </p>
-              </div>
+              <QuoteCadenceEmptyState />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1, transition: { staggerChildren: 0.03 } },
+                }}
+              >
                 {rows.map((r) => (
-                  <button
+                  <motion.button
                     key={r.id}
                     type="button"
                     onClick={() => setSelected(r)}
                     aria-label={`Abrir detalhes da cadência de ${r.quote?.client_name ?? "cliente"} — status ${r.status}`}
                     className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl"
+                    variants={{
+                      hidden: { opacity: 0, y: 8 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
+                    }}
                   >
                     <QuoteCadenceCard row={r} />
-                  </button>
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             )}
           </TabsContent>
         </Tabs>
