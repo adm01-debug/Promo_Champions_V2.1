@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,8 @@ import {
 interface Props {
   row: QuoteCadenceRow;
   totalSteps?: number;
+  selected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
 const statusVariant: Record<string, string> = {
@@ -31,7 +34,7 @@ const statusVariant: Record<string, string> = {
   cancelled: "bg-destructive/15 text-destructive border-destructive/30",
 };
 
-export function QuoteCadenceCard({ row, totalSteps = 5 }: Props) {
+export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect }: Props) {
   const q = row.quote;
   const daysSinceSent = q?.sent_at ? differenceInDays(new Date(), parseISO(q.sent_at)) : null;
   const progress = Math.min((row.current_step / totalSteps) * 100, 100);
@@ -50,16 +53,27 @@ export function QuoteCadenceCard({ row, totalSteps = 5 }: Props) {
   const isFinal = row.status === "completed" || row.status === "cancelled";
 
   return (
-    <Card className="glass border-border/50 hover:border-primary/50 transition-colors">
+    <Card className={`glass border-border/50 hover:border-primary/50 transition-colors ${selected ? "border-primary ring-2 ring-primary/30" : ""}`}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-              <FileText className="h-3 w-3" />
-              <span>{q?.quote_number ?? "Orçamento"}</span>
+          <div className="flex items-start gap-2 min-w-0 flex-1">
+            {onToggleSelect && (
+              <span onClick={stop} className="pt-0.5">
+                <Checkbox
+                  checked={!!selected}
+                  onCheckedChange={() => onToggleSelect(row.id)}
+                  aria-label={`Selecionar cadência de ${q?.client_name ?? "cliente"}`}
+                />
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                <FileText className="h-3 w-3" />
+                <span>{q?.quote_number ?? "Orçamento"}</span>
+              </div>
+              <h3 className="font-display font-semibold truncate">{q?.client_name ?? "Cliente"}</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">{formatted}</p>
             </div>
-            <h3 className="font-display font-semibold truncate">{q?.client_name ?? "Cliente"}</h3>
-            <p className="text-sm text-muted-foreground mt-0.5">{formatted}</p>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <Badge variant="outline" className={statusVariant[row.status] ?? ""}>

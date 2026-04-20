@@ -1,11 +1,13 @@
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { Send, Download } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
 import { QuoteCadenceConversionChart } from "@/components/cadences/quote/QuoteCadenceConversionChart";
 import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
+import { QuoteCadenceComparison } from "@/components/cadences/quote/QuoteCadenceComparison";
+import { QuoteCadenceBulkBar } from "@/components/cadences/quote/QuoteCadenceBulkBar";
 import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,16 +18,26 @@ import { QuoteCadenceEmptyState } from "@/components/cadences/quote/QuoteCadence
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceFilters, emptyQuoteCadenceFilters, type QuoteCadenceFilterValues } from "@/components/cadences/quote/QuoteCadenceFilters";
 import { differenceInCalendarDays, isToday } from "date-fns";
+import { useQuoteCadenceRealtime } from "@/hooks/cadences/useQuoteCadenceRealtime";
+import { exportToCSV } from "@/lib/csvExporter";
+import { quoteCadencesToCsvRows } from "@/lib/quoteCadenceExport";
 
 type Filter = "all" | "active" | "paused" | "completed";
 
 export default function QuoteCadencesPage() {
+  useQuoteCadenceRealtime();
   const { data, isLoading } = useQuoteCadences();
   const [searchParams, setSearchParams] = useSearchParams();
   const todayOnly = searchParams.get("filter") === "today";
   const [filter, setFilter] = useState<Filter>("active");
   const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
   const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(emptyQuoteCadenceFilters);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) =>
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const handleExport = () => exportToCSV(quoteCadencesToCsvRows(rows), "cadencias-orcamentos");
 
   const rows = useMemo(() => {
     const base = (data ?? []).filter((r) => filter === "all" || r.status === filter);
@@ -86,19 +98,33 @@ export default function QuoteCadencesPage() {
       </Helmet>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 p-4 md:p-6">
-        <header className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
-            <Send className="h-5 w-5 text-primary" />
+        <header className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
+              <Send className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="font-display text-page-title">Cadências de Orçamento</h1>
+              <p className="text-sm text-muted-foreground">Follow-up automatizado de propostas enviadas</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-display text-page-title">Cadências de Orçamento</h1>
-            <p className="text-sm text-muted-foreground">Follow-up automatizado de propostas enviadas</p>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={rows.length === 0}
+            aria-label="Exportar cadências filtradas para CSV"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Exportar CSV
+          </Button>
         </header>
 
         <QuoteCadenceMetrics />
 
         <QuoteCadenceConversionChart />
+
+        <QuoteCadenceComparison />
 
         {todayOnly && (
           <div className="flex items-center gap-2">
@@ -153,7 +179,11 @@ export default function QuoteCadencesPage() {
                       visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
                     }}
                   >
-                    <QuoteCadenceCard row={r} />
+                    <QuoteCadenceCard
+                      row={r}
+                      selected={selectedIds.includes(r.id)}
+                      onToggleSelect={toggleSelect}
+                    />
                   </motion.button>
                 ))}
               </motion.div>
@@ -161,6 +191,8 @@ export default function QuoteCadencesPage() {
           </TabsContent>
         </Tabs>
       </motion.div>
+
+      <QuoteCadenceBulkBar selectedIds={selectedIds} onClear={() => setSelectedIds([])} />
 
       <QuoteCadenceDetailDrawer
         row={selected}
