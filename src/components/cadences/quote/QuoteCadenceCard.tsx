@@ -10,8 +10,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { CalendarClock, User, FileText, TrendingUp, MoreVertical, Pause, Play, XCircle } from "lucide-react";
-import { differenceInDays, format, parseISO } from "date-fns";
+import { CalendarClock, User, FileText, TrendingUp, MoreVertical, Pause, Play, XCircle, AlertTriangle } from "lucide-react";
+import { differenceInDays, format, isToday, isBefore, startOfDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
 import {
@@ -19,6 +19,7 @@ import {
   useResumeQuoteCadence,
   useCancelQuoteCadence,
 } from "@/hooks/cadences/useQuoteCadenceMutations";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 interface Props {
   row: QuoteCadenceRow;
