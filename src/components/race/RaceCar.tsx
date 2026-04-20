@@ -496,24 +496,53 @@ function RaceCarInner({
         </g>
       )}
 
-      {/* ===== Rank badge (medalha top 3 ou número) ===== */}
+      {/* ===== Rank badge — destacado e centralizado acima do carro ===== */}
       {rank !== undefined && rank > 0 && (() => {
-        const xPos = bodyW / 2 + 8;
         const isPodium = rank <= 3;
-        const medalColor = rank === 1 ? 'hsl(45 95% 55%)' : rank === 2 ? 'hsl(0 0% 75%)' : rank === 3 ? 'hsl(28 75% 50%)' : 'hsl(var(--muted))';
-        const fg = isPodium ? 'hsl(20 30% 18%)' : 'hsl(var(--foreground))';
+        const isLeader = rank === 1;
+        const medalColor =
+          rank === 1 ? 'hsl(45 95% 55%)' :
+          rank === 2 ? 'hsl(0 0% 80%)' :
+          rank === 3 ? 'hsl(28 78% 52%)' :
+          'hsl(0 0% 15%)';
+        const ringColor =
+          rank === 1 ? 'hsl(45 95% 55%)' :
+          rank === 2 ? 'hsl(0 0% 80%)' :
+          rank === 3 ? 'hsl(28 78% 52%)' :
+          'hsl(0 0% 100% / 0.6)';
+        const fg = isPodium ? 'hsl(20 30% 14%)' : 'hsl(0 0% 100%)';
         return (
           <motion.g
-            transform={`translate(${xPos} ${-bodyH / 2 - 6})`}
+            transform={`translate(0 ${-bodyH / 2 - 16})`}
             key={`rank-${rank}`}
-            initial={{ scale: 1 }}
-            animate={{ scale: [1, 1.45, 0.92, 1] }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={
+              isLeader
+                ? { scale: [1, 1.08, 1], opacity: 1 }
+                : { scale: [0.8, 1.45, 0.92, 1], opacity: 1 }
+            }
+            transition={
+              isLeader
+                ? { scale: { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }, opacity: { duration: 0.3 } }
+                : { duration: 0.6, ease: 'easeOut' }
+            }
             pointerEvents="none"
+            style={isPodium ? { filter: `drop-shadow(0 0 4px ${medalColor})` } : undefined}
           >
-            <circle r={6.5} fill={medalColor} stroke="hsl(0 0% 100%)" strokeWidth={1.2} />
-            <text y={2.4} textAnchor="middle" fontSize={7.5} fontWeight={900} fill={fg} style={{ fontFamily: 'system-ui, sans-serif' }}>
-              {rank}
+            <circle r={13} fill="hsl(0 0% 0% / 0.6)" />
+            <circle r={11} fill={medalColor} stroke="hsl(0 0% 100%)" strokeWidth={2.2} />
+            {isPodium && (
+              <circle r={12.4} fill="none" stroke={ringColor} strokeWidth={1} opacity={0.85} />
+            )}
+            <text
+              y={3.8}
+              textAnchor="middle"
+              fontSize={11}
+              fontWeight={900}
+              fill={fg}
+              style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '-0.03em' }}
+            >
+              P{rank}
             </text>
           </motion.g>
         );
