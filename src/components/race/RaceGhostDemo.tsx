@@ -35,7 +35,7 @@ export function RaceGhostDemo() {
 }
 
 function DemoCarLoop({
-  number, primary, secondary, style, lane, offset,
+  primary, secondary, style, lane, offset,
 }: typeof DEMO_CARS[number]) {
   // Anima progresso 0..1 em loop e amostra a pista a cada frame via framer keyframes
   const STEPS = 60;
