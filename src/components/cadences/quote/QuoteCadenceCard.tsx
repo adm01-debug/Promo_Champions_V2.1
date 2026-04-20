@@ -39,6 +39,16 @@ export function QuoteCadenceCard({ row, totalSteps = 5 }: Props) {
     ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(q.total_value)
     : "—";
 
+  const pause = usePauseQuoteCadence();
+  const resume = useResumeQuoteCadence();
+  const cancel = useCancelQuoteCadence();
+
+  const stop = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+  };
+
+  const isFinal = row.status === "completed" || row.status === "cancelled";
+
   return (
     <Card className="glass border-border/50 hover:border-primary/50 transition-colors">
       <CardContent className="p-4 space-y-3">
@@ -51,9 +61,63 @@ export function QuoteCadenceCard({ row, totalSteps = 5 }: Props) {
             <h3 className="font-display font-semibold truncate">{q?.client_name ?? "Cliente"}</h3>
             <p className="text-sm text-muted-foreground mt-0.5">{formatted}</p>
           </div>
-          <Badge variant="outline" className={statusVariant[row.status] ?? ""}>
-            {row.status}
-          </Badge>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Badge variant="outline" className={statusVariant[row.status] ?? ""}>
+              {row.status}
+            </Badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={stop}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  aria-label="Ações do follow-up"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44" onClick={stop}>
+                {row.status === "active" && (
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      pause.mutate(row.id);
+                    }}
+                  >
+                    <Pause className="h-3.5 w-3.5 mr-2" />
+                    Pausar
+                  </DropdownMenuItem>
+                )}
+                {row.status === "paused" && (
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      resume.mutate(row.id);
+                    }}
+                  >
+                    <Play className="h-3.5 w-3.5 mr-2" />
+                    Retomar
+                  </DropdownMenuItem>
+                )}
+                {!isFinal && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        cancel.mutate(row.id);
+                      }}
+                    >
+                      <XCircle className="h-3.5 w-3.5 mr-2" />
+                      Cancelar
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {isFinal && <DropdownMenuItem disabled>Sem ações disponíveis</DropdownMenuItem>}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         <div className="space-y-1.5">
