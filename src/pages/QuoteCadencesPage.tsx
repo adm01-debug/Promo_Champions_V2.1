@@ -159,7 +159,7 @@ export default function QuoteCadencesPage() {
               <QuoteCadenceEmptyState />
             ) : (
               <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2"
                 initial="hidden"
                 animate="visible"
                 variants={{
