@@ -1,23 +1,41 @@
 
-**Objetivo:** Pílula com nome do piloto acima do carro ganha fundo na cor primária do preset do carro (livery), criando vínculo visual imediato.
+**Objetivo:** Validar a implementação recente do sistema visual de líder/ranking na Race Arena (badge P1/P2/P3, aura dourada do P1, coroa flutuante, faíscas, e pílula do nome com cor da livery).
 
-**Investigação:** Preciso localizar onde o nome do piloto é renderizado acima do carro em `RaceCar.tsx` e confirmar o acesso à `primary_color` do preset.
+**Escopo do teste (somente o que foi implementado nas últimas 4 mudanças):**
+1. Badge de rank acima do carro (`RaceCar.tsx`) — tamanho, posição, prefixo "P", cores podium.
+2. Pulso contínuo do badge P1.
+3. Aura dourada + glow + faíscas + coroa do líder (P1).
+4. Pílula do nome (`CarHelmetTooltip.tsx`) com fundo na cor primária da livery e texto adaptativo (YIQ).
 
-**Mudanças (apenas `src/components/race/RaceCar.tsx`):**
+**Plano de testes (3 camadas):**
 
-1. **Pílula do nome** (atualmente provavelmente fundo escuro neutro):
-   - `fill={primaryColor}` no `<rect>` da pílula.
-   - `stroke="hsl(0 0% 100% / 0.85)"` `strokeWidth={1.2}` para destacar sobre a pista.
-   - `rx={6}` para cantos arredondados.
+### Camada 1 — Inspeção estática de código
+- Reler `src/components/race/RaceCar.tsx` confirmando: helper de cor de medalha, animação loop só quando `rank === 1`, coroa SVG presente, faíscas com delay escalonado, glow via `drop-shadow`.
+- Reler `src/components/race/CarHelmetTooltip.tsx` confirmando: helper `getReadableTextColor` com cálculo YIQ correto, prop `color` aplicada ao background, fallback quando `color` é undefined.
+- Verificar parsing de cores: hex (`#RRGGBB`, `#RGB`), `hsl()`, `rgb()` — validar se o helper cobre todos os formatos de `primary_color` que vêm do preset.
+- Conferir se nenhum carro recebe `rank=undefined` por engano (que faria badge sumir ou pulso vazar).
 
-2. **Cor do texto adaptativa** (contraste WCAG):
-   - Helper `getReadableTextColor(hex)` que calcula luminância YIQ:
-     - `(r*299 + g*587 + b*114) / 1000 >= 140` → texto preto `hsl(0 0% 8%)`
-     - Caso contrário → texto branco `hsl(0 0% 98%)`
-   - Garante leitura tanto em liveries claras (amarelo, branco) quanto escuras (preto, navy).
+### Camada 2 — Testes visuais no preview (browser tools)
+- `navigate_to_sandbox` para `/race-arena-sdr` (e depois `/race-arena-closer`).
+- Screenshot inicial: confirmar que todos os carros têm badge "P1/P2/P3/…" centralizado acima.
+- Screenshot focado no líder: verificar aura dourada pulsando, coroa flutuando, faíscas atrás, glow no chassi.
+- Screenshot dos carros P2+: confirmar que NÃO têm aura/coroa/faíscas (efeito exclusivo do P1).
+- Verificar pílula do nome: cores variadas conforme livery, contraste do texto preto/branco aplicado corretamente em pelo menos 3 cores diferentes.
+- Confirmar que badges P4+ usam fundo cinza escuro (`hsl(0 0% 15%)`) e não somem sobre o asfalto.
 
-3. **Halo sutil** atrás da pílula: `<rect>` com mesma forma + 1.5px maior, `fill="hsl(0 0% 0% / 0.35)"` `filter="blur(2px)"` — mantém legibilidade sobre asfalto.
+### Camada 3 — Edge cases
+- Carro sem preset/cor definida → pílula deve usar fallback sem quebrar.
+- Apenas 1 piloto na corrida → P1 com todos os efeitos, sem outros.
+- Mudança de líder em tempo real (se houver dados ao vivo) → coroa/aura migra para o novo P1.
+- Console: zero warnings/errors novos relacionados a `RaceCar` ou `CarHelmetTooltip`.
+- Performance: confirmar que animações não geram jank (checar via screenshot que renderiza limpo).
 
-4. **Sem impacto** em: badge P1/P2/P3 (mantém medalha), aura dourada do líder, lógica de leaderboard, demais carros.
+### Entrega
+Relatório final com:
+- ✅/❌ por item testado
+- Screenshots anexados via tool
+- Lista de bugs encontrados (se houver) com localização exata
+- Recomendações de ajuste fino (se aplicável)
 
-**Resultado:** olhando a pista, cada nome "vibra" na mesma cor do carro — vínculo visual instantâneo nome ↔ livery.
+**Arquivos lidos (read-only):** `RaceCar.tsx`, `CarHelmetTooltip.tsx`, hooks de leaderboard relacionados.
+**Sem edições nesta etapa** — só validação. Bugs encontrados → reporto e aguardo aprovação para corrigir.
