@@ -6,9 +6,11 @@ import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMet
 import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
 import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
+import { QuoteCadenceFilters, emptyQuoteCadenceFilters, type QuoteCadenceFilterValues } from "@/components/cadences/quote/QuoteCadenceFilters";
+import { differenceInCalendarDays } from "date-fns";
 
 type Filter = "all" | "active" | "paused" | "completed";
 
@@ -16,8 +18,30 @@ export default function QuoteCadencesPage() {
   const { data, isLoading } = useQuoteCadences();
   const [filter, setFilter] = useState<Filter>("active");
   const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
+  const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(emptyQuoteCadenceFilters);
 
-  const rows = (data ?? []).filter((r) => filter === "all" || r.status === filter);
+  const rows = useMemo(() => {
+    const base = (data ?? []).filter((r) => filter === "all" || r.status === filter);
+    const search = advanced.search.trim().toLowerCase();
+    const seller = advanced.seller.trim().toLowerCase();
+    const min = advanced.minValue !== "" ? Number(advanced.minValue) : null;
+    const max = advanced.maxValue !== "" ? Number(advanced.maxValue) : null;
+    const today = new Date();
+
+    return base.filter((r) => {
+      const q = r.quote;
+      if (search && !(q?.client_name ?? "").toLowerCase().includes(search)) return false;
+      if (seller && !(q?.seller_name ?? "").toLowerCase().includes(seller)) return false;
+      if (min !== null && (q?.total_value ?? 0) < min) return false;
+      if (max !== null && (q?.total_value ?? 0) > max) return false;
+      if (advanced.daysWithoutResponse > 0) {
+        const sentAt = q?.sent_at ? new Date(q.sent_at) : (r.started_at ? new Date(r.started_at) : null);
+        if (!sentAt) return false;
+        if (differenceInCalendarDays(today, sentAt) < advanced.daysWithoutResponse) return false;
+      }
+      return true;
+    });
+  }, [data, filter, advanced]);
 
   return (
     <>
