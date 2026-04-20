@@ -110,13 +110,13 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
                     {r.segment && <span>· {r.segment}</span>}
                   </div>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/40">
-                    <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1" title={`Sentimento: ${meta?.sentiment_score ?? "n/d"}`}>
+                    <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1" title={`Cliente: ${meta?.client_name ?? "—"}`}>
                       <MessageCircle className="h-3 w-3" />
-                      {sentimentEmoji(meta?.sentiment_score)} {meta?.sentiment_score != null ? meta.sentiment_score.toFixed(2) : "—"}
+                      {sentimentEmoji(r.outcome)} {meta?.client_name ?? "—"}
                     </span>
-                    {meta?.client_id && (
+                    {meta?.account_id && (
                       <Link
-                        to={`/clientes/${meta.client_id}`}
+                        to={`/contas/${meta.account_id}`}
                         className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5"
                       >
                         Ver timeline <ExternalLink className="h-2.5 w-2.5" />
