@@ -1,68 +1,69 @@
 
-**Objetivo:** Criar módulo de **Cadência de Orçamentos** — fluxo automatizado de follow-up para vendedores acompanharem propostas/orçamentos enviados, com tarefas programadas, lembretes e métricas de conversão.
+**Objetivo:** Elevar o módulo de Cadência de Orçamentos a 10/10 com execução autônoma e sequencial de melhorias, uma por vez, sem pausas até a conclusão.
 
-**Contexto encontrado:** Já existe infraestrutura robusta de cadências (`cadences`, `cadence_steps`, `prospect_cadences`, `cadence_tasks`, edge function `auto-enroll-cadence`, hooks em `src/hooks/cadences/`, componentes em `src/components/cadences/`). Hoje cadências rodam em `sales` (prospects). Vamos **estender** para suportar tipo "quote" (orçamento) sem duplicar código.
+**Backlog priorizado (ordem de execução):**
+
+### 1. Corrigir warning de ref no `RaceCar` (débito técnico aberto)
+- Envolver `RaceCarInner` em `forwardRef` antes do `memo` em `src/components/race/RaceCar.tsx`.
+- Eliminar warning "Function components cannot be given refs".
+
+### 2. Detalhamento de cadência de orçamento (drill-down)
+- Criar `QuoteCadenceDetailDrawer.tsx` — abre ao clicar no `QuoteCadenceCard`.
+- Mostra timeline dos 5 steps, status de cada tarefa, botão "Concluir/Pular/Reagendar", notas do vendedor.
+- Hook `useCadenceTasksByEnrollment(enrollmentId)`.
+
+### 3. Ações de controle no card (pausar/retomar/cancelar)
+- Botões com `DropdownMenu` no `QuoteCadenceCard`.
+- Mutations `usePauseCadence`, `useResumeCadence`, `useCancelCadence` (já parcialmente existem em `useProspectCadenceMutations` — reutilizar).
+- Toast de feedback + invalidação de queries.
+
+### 4. Filtros avançados na página
+- Filtro por vendedor (dropdown), por dias sem resposta (slider), por valor do orçamento (range), busca por cliente.
+- Persistir via `useSavedFilters` (padrão do projeto).
+- Botão "Limpar filtros".
+
+### 5. Gráfico de conversão pós-cadência
+- Novo componente `QuoteCadenceConversionChart.tsx` com Recharts.
+- Linha temporal: orçamentos enviados vs aprovados nos últimos 30/60/90 dias.
+- Tipagem estrita via `src/types/recharts.ts`.
+
+### 6. Integração XP/Gamificação
+- Trigger no banco: ao completar `cadence_task` de quote, chamar RPC `increment_user_xp` (+15 XP por tarefa, +50 XP se quote vira `approved`).
+- Toast "+15 XP" no frontend ao concluir tarefa.
+
+### 7. Notificação in-app de tarefa do dia
+- Bell icon no topbar destaca quantidade de tarefas de cadência de quote pendentes hoje.
+- Hook `useTodaysQuoteCadenceTasks` (filtro por `salesperson_id = auth.uid()`).
+- Click → navega para `/cadencias-orcamentos?filter=today`.
+
+### 8. SEO + acessibilidade da página
+- Helmet com canonical, OpenGraph, description rica.
+- ARIA labels nos botões de ação, `role="status"` nas métricas.
+- Skip link, foco visível, navegação por teclado nos cards.
+
+### 9. Skeleton + transições premium
+- Substituir skeletons básicos por versão com shimmer.
+- Framer Motion stagger nos cards (delay 30ms cada).
+- Empty state ilustrado (atualmente texto puro).
+
+### 10. Documentação + memória
+- Atualizar `mem://follow-up/intelligent-reactivation-and-cadence` com a extensão para quotes.
+- Criar `mem://features/quote-cadence-module` descrevendo arquitetura, RPCs, trigger, RLS.
 
 ---
 
-## Camada 1 — Banco de Dados
-
-1. **Nova coluna em `cadences`:** `cadence_type` enum (`'prospecting' | 'quote_followup'`) — default `'prospecting'`.
-2. **Nova coluna em `prospect_cadences`:** `quote_id uuid` (nullable, FK → `quotes.id`) — alternativa a `sale_id`.
-3. **Trigger `auto_enroll_quote_cadence`** em `quotes`: quando `status` muda para `'sent'`, dispara enroll automático na cadência padrão de quote followup do vendedor.
-4. **RLS:** mesma política dos prospects (vendedor vê apenas suas cadências; admin/gestor vê tudo).
-5. **Seed:** 1 cadência padrão "Follow-up de Orçamento" com 5 steps:
-   - Dia 1: WhatsApp confirmação de recebimento
-   - Dia 3: Ligação de feedback
-   - Dia 7: Email com case de sucesso
-   - Dia 14: Última tentativa + oferta de desconto
-   - Dia 21: Marcar como perdido se sem resposta
-
-## Camada 2 — Backend (Edge Function)
-
-- **Estender `auto-enroll-cadence`** para aceitar `quote_ids` além de `sale_ids`, e usar a RPC `find_matching_cadence_rule` com filtro por `cadence_type='quote_followup'`.
-- Nova RPC `enroll_quote_in_cadence(_quote_id, _cadence_id)` — chamada manual pelo vendedor.
-
-## Camada 3 — Hooks
-
-Em `src/hooks/cadences/`:
-- `useQuoteCadences(quoteId)` — lista cadências ativas do orçamento.
-- `useEnrollQuoteInCadence()` — mutation manual.
-- Reutilizar `useCadenceSteps`, `useCadenceTasks` (já genéricos).
-
-## Camada 4 — UI
-
-1. **Nova rota:** `/cadencias-orcamentos` (lazy-loaded em `AppRoutes.tsx`).
-2. **Página `QuoteCadencesPage.tsx`:**
-   - KPIs no topo: orçamentos em follow-up, taxa de conversão pós-cadência, tarefas hoje.
-   - Lista de orçamentos com cadência ativa (cliente, valor, vendedor, próximo passo, dias decorridos).
-   - Filtros: vendedor, status, dias sem resposta.
-3. **Componentes novos** em `src/components/cadences/quote/`:
-   - `QuoteCadenceCard.tsx` — card do orçamento com progresso da cadência.
-   - `EnrollQuoteCadenceDialog.tsx` — variante de `EnrollCadenceDialog` para quotes.
-   - `QuoteCadenceMetrics.tsx` — gráficos de conversão.
-4. **Integração na tela de orçamentos existente:** botão "Iniciar Follow-up" em cada quote enviado.
-5. **Sidebar:** novo item "Cadências de Orçamento" sob CRM (progressive disclosure).
-6. **Topbar chip semântico:** "Cadências de Orçamento" quando na rota.
-
-## Camada 5 — Notificações & Gamificação
-
-- Tarefas de cadência de quote contam **XP** ao serem completadas (integrar com `admin-managed-tasks-scoring`).
-- Notificação push/in-app no dia da tarefa.
-
----
-
-**Padrões respeitados:**
-- Tokens semânticos (sem cores hardcoded).
+**Padrões obrigatórios em cada passo:**
+- Tokens semânticos (zero hex hardcoded).
 - Sora títulos / Inter corpo.
-- Arquivos ≤400 linhas (extrair helpers).
-- RLS rigorosa por vendedor.
-- React Query, Framer Motion, skeletons.
-- Lazy load da rota.
+- Arquivos ≤400 linhas (extrair `*Helpers.ts`).
+- React Query + Framer Motion + skeletons.
+- RLS rigorosa (vendedor vê apenas suas; admin/gestor vê tudo).
+- Zero console errors/warnings.
+- TypeScript strict (sem `any`).
+- Validação Zod em edge functions novas (se houver).
 
-**Arquivos novos:** ~8 (1 página, 3 componentes, 1 hook, 1 migration, 1 seed, 1 edge function update).
-**Arquivos editados:** `AppRoutes.tsx`, sidebar config, página de orçamentos existente, `auto-enroll-cadence/index.ts`.
+**Modo de execução:** sequencial, 1 melhoria por mensagem, sem pausas para perguntas. Após cada implementação, sigo automaticamente para a próxima até concluir as 10. Ao final, relatório consolidado.
 
-**Sem impacto em:** cadências de prospect existentes (extensão aditiva, retrocompatível).
+**Sem impacto em:** cadências de prospect, race arena, demais módulos.
 
-**Resultado:** vendedor envia orçamento → sistema agenda automaticamente sequência de follow-up → tarefas aparecem no dashboard diário → gestor acompanha taxa de conversão pós-cadência em painel dedicado.
+**Resultado final:** módulo de Cadência de Orçamentos 10/10 — drill-down funcional, controles completos, filtros avançados, gráficos, XP integrado, notificações, SEO, a11y, animações premium, documentação atualizada.
