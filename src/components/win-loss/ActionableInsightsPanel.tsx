@@ -40,7 +40,20 @@ export function ActionableInsightsPanel({ onCopilot }: Props = {}) {
   };
 
   return (
-    <Card className="border-border/50">
+    <div className="space-y-3">
+      {!isLoading && all.length > 0 && (
+        <InsightPinCard
+          insights={all.map(i => ({
+            id: i.id,
+            title: i.title,
+            description: i.description ?? "",
+            severity: i.severity,
+            insight_type: i.insight_type,
+          }))}
+          onCopilot={onCopilot ? (i) => onCopilot({ id: i.id, title: i.title, description: i.description }) : undefined}
+        />
+      )}
+      <Card className="border-border/50">
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Lightbulb className="h-4 w-4 text-primary" />
