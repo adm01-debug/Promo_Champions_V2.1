@@ -726,7 +726,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       )}
     </g>
   );
-}
+});
 
 /**
  * Memoizado com comparator custom: re-renderiza apenas quando props visualmente
