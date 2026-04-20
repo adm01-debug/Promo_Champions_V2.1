@@ -1,48 +1,42 @@
 
 
-## Win/Loss Intelligence — Fase 2: Polimento até 10/10
+## Win/Loss Intelligence — Fase 3: Excelência absoluta (10 melhorias finais)
 
-Módulo já entregue com fundação sólida (rota, hooks, 8 componentes, migration + seeds). Agora elevar a "classe mundial" com 10 melhorias sequenciais.
+Módulo já completo (rota, filtros, KPIs, drill-down, atalhos, export, skeletons, empty state, SEO, docs). Agora elevar do 9.5/10 atual para **10/10 absoluto** com refinamentos de profundidade.
 
 ---
 
-### #1 — SEO + Helmet na página
-Adicionar `<Helmet>` com title, description, canonical e OG em `WinLossIntelligence.tsx` (padrão do projeto via react-helmet-async).
+### #1 — Comparativo período anterior (Δ vs. anterior)
+KPIs ganham delta real comparando período atual vs. janela equivalente anterior. Setas ▲▼ coloridas + tooltip "vs. últimos N dias".
 
-### #2 — Skeleton loaders premium
-Substituir "Carregando…" por skeletons animados em KPI Banner, Trend Chart, Reason Matrix, Salesperson Table e Competitor Cards. Padrão `animate-pulse` + `useReducedMotion`.
+### #2 — Forecast IA da próxima janela
+Card no banner com projeção de Win Rate dos próximos 14/30 dias usando regressão linear sobre os últimos 8 períodos. Badge "IA" + intervalo de confiança.
 
-### #3 — Empty states ilustrados
-Quando `analyses.length === 0`, exibir banner único com ícone, copy ("Nenhuma análise no período"), CTA "Ajustar filtros" + "Rodar análise agora" (chama edge `analyze-win-loss`).
+### #3 — Sentimento da última conversa no drawer
+`WinLossDealsDrawer` faz join com `conversation_insights_summary` (se existir) e mostra emoji + score por deal. Link "Ver timeline" para a página do cliente.
 
-### #4 — Drill-down clicável em todos os charts
-- Clique em barra do TrendChart → abre `WinLossDealsDrawer` filtrado por período.
-- Clique em célula do ReasonMatrix → abre drawer filtrado por motivo+estágio.
-- Clique em CompetitorBattleCard → drawer filtrado por concorrente.
-- Clique em linha do SalespersonTable → drawer filtrado por vendedor.
+### #4 — Top 3 Insights destacados
+`ActionableInsightsPanel` ganha seção "Pin do dia" no topo com os 3 insights de maior impacto/severidade, cards expandidos com CTA "Gerar plano de ação" → Copilot.
 
-### #5 — Botão "Rodar análise agora" + toast com progresso
-Header da página ganha botão `Sparkles` → invoca `analyze-win-loss` + `mine-win-loss-patterns` em paralelo, mostra toast com counter, invalida queries ao terminar.
+### #5 — Compare Mode (vendedor vs. vendedor)
+Botão "Comparar" na `SalespersonWinLossTable` permite selecionar até 3 vendedores e abrir modal lado-a-lado com radar chart (win rate, ciclo, ticket, motivo top).
 
-### #6 — Marcar insight como aplicado
-`ActionableInsightsPanel`: botão "✓ Aplicado" grava `applied_at`/`applied_by` (colunas já existentes). Badge "Novo" para `created_at < 7d`. Filtro por severidade (info/warn/danger).
+### #6 — Histórico de execuções de análise
+Painel colapsável "Última análise" mostrando quando rodou pela última vez, deals processados, padrões encontrados (lê `win_loss_analyses.analyzed_at` mais recente).
 
-### #7 — Export CSV dos deals filtrados
-Botão no header → gera CSV com outcome, valor, ciclo, motivo, concorrente, vendedor, segmento. Reutiliza padrão de `quote-cadence-module`.
+### #7 — Saved Views (filtros salvos)
+Botão "Salvar visão" persiste combinação atual em `saved_filters` (tabela já existe). Dropdown "Minhas visões" carrega presets. Suporta default por usuário.
 
-### #8 — Keyboard shortcuts
-- `Ctrl+E` → export CSV
-- `Ctrl+R` → rodar análise
-- `Escape` → fecha drawer
-- Hook `useWinLossShortcuts.ts` (ignora inputs).
+### #8 — Battle card modal completo
+Clique em "Ver battle card" no `CompetitorBattleCard` abre modal full-screen com: pontos fortes/fracos, objeções comuns, scripts de resposta, win rate histórico, casos perdidos recentes.
 
-### #9 — Mobile responsivo + safe-area
-KPI Banner em 2×3 no mobile, charts stacked, drawer `max-h-[85vh]`, filtros colapsáveis, snap-x opcional nas competitor cards.
+### #9 — Print/PDF executivo
+Botão "Imprimir relatório" no header → layout otimizado para impressão (A4, sem sidebar/header, KPIs + charts + top insights). Window.print() + CSS @media print.
 
-### #10 — Documentação + memória
-- `mem://features/win-loss-intelligence-module` (novo).
-- Atualizar `mem://analytics/sales-performance-analytics` referenciando rota dedicada.
-- Atualizar `mem://index.md`.
+### #10 — Telemetria + a11y audit
+- Track `winloss_view`, `winloss_drill`, `winloss_export`, `winloss_run` via `analytics`.
+- Audit ARIA: roles, labels, focus trap no drawer/modal, navegação por teclado em todas as tabelas.
+- Anúncios via `aria-live` para mudanças de filtro e conclusão de análise.
 
 ---
 
@@ -50,34 +44,43 @@ KPI Banner em 2×3 no mobile, charts stacked, drawer `max-h-[85vh]`, filtros col
 
 **Arquivos novos**
 ```
-src/hooks/win-loss/useWinLossShortcuts.ts
-src/hooks/win-loss/useWinLossExport.ts
-src/hooks/win-loss/useRunWinLossAnalysis.ts
-src/components/win-loss/WinLossEmptyState.tsx
-src/components/win-loss/WinLossSkeletons.tsx
-src/components/win-loss/WinLossPageHeader.tsx
+src/hooks/win-loss/usePreviousPeriodKpis.ts
+src/hooks/win-loss/useWinLossForecast.ts
+src/hooks/win-loss/useWinLossSavedViews.ts
+src/hooks/win-loss/useWinLossTelemetry.ts
+src/components/win-loss/WinLossKpiDelta.tsx
+src/components/win-loss/WinLossLastRunCard.tsx
+src/components/win-loss/WinLossSavedViews.tsx
+src/components/win-loss/WinLossCompareModal.tsx
+src/components/win-loss/CompetitorBattleCardModal.tsx
+src/components/win-loss/WinLossPrintLayout.tsx
+src/components/win-loss/InsightPinCard.tsx
+src/styles/winloss-print.css
 ```
 
 **Arquivos modificados**
-- `src/pages/WinLossIntelligence.tsx` (Helmet, header com botões, integração drill-down)
-- `WinLossKpiBanner.tsx`, `WinLossTrendChart.tsx`, `WinLossReasonMatrix.tsx`, `SalespersonWinLossTable.tsx`, `CompetitorBattleCard.tsx`, `ActionableInsightsPanel.tsx` (drill-down + skeletons)
-- `WinLossDealsDrawer.tsx` (aceita filtros adicionais: período/motivo/estágio/concorrente/vendedor)
+- `WinLossKpiBanner.tsx` — integra delta + forecast.
+- `WinLossDealsDrawer.tsx` — join sentimento + link timeline.
+- `ActionableInsightsPanel.tsx` — seção Pin do dia + CTA Copilot.
+- `SalespersonWinLossTable.tsx` — checkboxes de comparação + botão "Comparar".
+- `CompetitorBattleCard.tsx` — botão abre modal completo.
+- `WinLossPageHeader.tsx` — botões Imprimir, Salvar visão, dropdown visões.
+- `WinLossIntelligence.tsx` — orquestra todos os novos componentes.
 
-**Padrões mantidos**
-Tokens semânticos · Sora/Inter · ≤400 linhas/arquivo · TS strict · Framer Motion + `useReducedMotion` · react-helmet-async · zero warnings · RLS preservada.
+**Sem migrations** — usa `saved_filters` e `conversation_insights_summary` existentes; insights/analyses já têm colunas necessárias.
 
-**Sem mutações destrutivas.** Apenas leitura adicional + 2 colunas de update controlado em `win_loss_insights` (já existem).
+**Padrões mantidos**: tokens semânticos · Sora/Inter · ≤400 linhas · TS strict · Framer Motion + `useReducedMotion` · zero warnings · RLS preservada · react-helmet-async.
 
 ### Ordem de execução (sequencial, sem perguntas)
-1. #1 SEO/Helmet
-2. #2 Skeletons
-3. #3 Empty state
-4. #4 Drill-down universal
-5. #5 Run analysis + toast
-6. #6 Insights aplicados + filtros
-7. #7 Export CSV
-8. #8 Keyboard shortcuts
-9. #9 Mobile responsivo
-10. #10 Documentação
-11. Teste E2E final + relatório 10/10
+1. #1 Delta período anterior
+2. #2 Forecast IA
+3. #3 Sentimento no drawer
+4. #4 Pin de insights
+5. #5 Compare mode
+6. #6 Última execução
+7. #7 Saved Views
+8. #8 Battle card modal
+9. #9 Print/PDF
+10. #10 Telemetria + a11y
+11. Build check + relatório 10/10
 
