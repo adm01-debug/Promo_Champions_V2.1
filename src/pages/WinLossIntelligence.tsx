@@ -12,6 +12,8 @@ import { CompetitorBattleCard } from "@/components/win-loss/CompetitorBattleCard
 import { ActionableInsightsPanel } from "@/components/win-loss/ActionableInsightsPanel";
 import { WinLossDealsDrawer, type DrawerFilter } from "@/components/win-loss/WinLossDealsDrawer";
 import { WinLossEmptyState } from "@/components/win-loss/WinLossEmptyState";
+import { WinLossLastRunCard } from "@/components/win-loss/WinLossLastRunCard";
+import { WinLossPrintLayout } from "@/components/win-loss/WinLossPrintLayout";
 import {
   KpiBannerSkeleton,
   ChartSkeleton,
@@ -32,6 +34,10 @@ import { useWinLossRealtime } from "@/hooks/win-loss/useWinLossRealtime";
 import { useRunWinLossAnalysis } from "@/hooks/win-loss/useRunWinLossAnalysis";
 import { useWinLossExport } from "@/hooks/win-loss/useWinLossExport";
 import { useWinLossShortcuts } from "@/hooks/win-loss/useWinLossShortcuts";
+import { usePreviousKpisComputed, computeKpiDelta } from "@/hooks/win-loss/usePreviousPeriodKpis";
+import { useWinLossForecast } from "@/hooks/win-loss/useWinLossForecast";
+import { useWinLossTelemetry } from "@/hooks/win-loss/useWinLossTelemetry";
+import type { SavedView } from "@/hooks/win-loss/useWinLossSavedViews";
 
 const SITE = "https://championgifts.lovable.app";
 
@@ -46,6 +52,11 @@ export default function WinLossIntelligence() {
   const matrix = useMemo(() => aggregateReasonMatrix(rows), [rows]);
   const { data: spStats = [], isLoading: spLoading } = useSalespersonWinLossStats(rows);
 
+  const { kpis: prevKpis } = usePreviousKpisComputed(filters);
+  const delta = useMemo(() => computeKpiDelta(kpis, prevKpis), [kpis, prevKpis]);
+  const forecast = useWinLossForecast(monthly, 8);
+  const track = useWinLossTelemetry();
+
   const runAnalysis = useRunWinLossAnalysis();
   const exportCsv = useWinLossExport(rows);
 
@@ -57,7 +68,8 @@ export default function WinLossIntelligence() {
     setDrawerTitle(title);
     setDrawerFilter(filter);
     setDrawerOpen(true);
-  }, []);
+    track("winloss_drill", { title, ...filter });
+  }, [track]);
 
   const onWins = () => openDrawer(`${kpis.wins} deals ganhos`, { outcome: "won" });
   const onLosses = () => openDrawer(`${kpis.losses} deals perdidos`, { outcome: "lost" });
@@ -69,9 +81,29 @@ export default function WinLossIntelligence() {
     openDrawer(`Deals de ${name}`);
   };
 
+  const handleExport = useCallback(() => {
+    track("winloss_export", { count: rows.length });
+    exportCsv();
+  }, [exportCsv, rows.length, track]);
+
+  const handleRun = useCallback(() => {
+    track("winloss_run");
+    runAnalysis.mutate();
+  }, [runAnalysis, track]);
+
+  const handlePrint = useCallback(() => {
+    track("winloss_print");
+    window.print();
+  }, [track]);
+
+  const handleLoadView = useCallback((v: SavedView) => {
+    track("winloss_load_view", { name: v.name });
+    setFilters(v.filters);
+  }, [setFilters, track]);
+
   useWinLossShortcuts({
-    onExport: exportCsv,
-    onRun: () => runAnalysis.mutate(),
+    onExport: handleExport,
+    onRun: handleRun,
     onEscape: () => setDrawerOpen(false),
   });
 
@@ -92,14 +124,25 @@ export default function WinLossIntelligence() {
       </Helmet>
 
       <PageTransition>
-        <div className="space-y-4 pb-[env(safe-area-inset-bottom)]">
+        <div className="space-y-4 pb-[env(safe-area-inset-bottom)]" role="main" aria-label="Win/Loss Intelligence">
           <WinLossPageHeader
-            onRun={() => runAnalysis.mutate()}
-            onExport={exportCsv}
+            onRun={handleRun}
+            onExport={handleExport}
+            onPrint={handlePrint}
             isRunning={runAnalysis.isPending}
+            filters={filters}
+            onLoadView={handleLoadView}
           />
 
-          <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
+          <div className="no-print">
+            <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
+          </div>
+
+          <WinLossPrintLayout kpis={kpis} />
+
+          <div className="no-print">
+            <WinLossLastRunCard onRun={handleRun} isRunning={runAnalysis.isPending} />
+          </div>
 
           {isLoading ? (
             <>
@@ -114,12 +157,18 @@ export default function WinLossIntelligence() {
           ) : isEmpty ? (
             <WinLossEmptyState
               onAdjustFilters={reset}
-              onRunAnalysis={() => runAnalysis.mutate()}
+              onRunAnalysis={handleRun}
               isAnalyzing={runAnalysis.isPending}
             />
           ) : (
             <>
-              <WinLossKpiBanner kpis={kpis} onWinsClick={onWins} onLossesClick={onLosses} />
+              <WinLossKpiBanner
+                kpis={kpis}
+                onWinsClick={onWins}
+                onLossesClick={onLosses}
+                delta={delta}
+                forecast={forecast}
+              />
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
