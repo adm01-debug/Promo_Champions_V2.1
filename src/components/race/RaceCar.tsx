@@ -45,7 +45,7 @@ interface RaceCarProps {
  * Sombra projetada destacada, carroceria com brilho, rodas com aros,
  * cockpit/spoiler conforme estilo. Aponta para a direita →.
  */
-function RaceCarInner({
+const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner({
   number,
   primaryColor,
   secondaryColor,
@@ -65,7 +65,7 @@ function RaceCarInner({
   liveryUid,
   teamColor = null,
   pilotName,
-}: RaceCarProps) {
+}, ref) {
   const [helmetVisible, setHelmetVisible] = useState(false);
   const hoverTimerRef = useRef<number | null>(null);
   const tooltipId = `helmet-tip-${number ?? 'anon'}`;
