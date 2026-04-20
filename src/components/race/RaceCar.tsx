@@ -605,6 +605,26 @@ function RaceCarInner({
             >
               P{rank}
             </text>
+            {isLeader && (
+              <motion.g
+                transform="translate(0 -20)"
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ filter: 'drop-shadow(0 0 3px hsl(45 95% 55%))' }}
+              >
+                {/* Coroa dourada simples */}
+                <path
+                  d="M -6 2 L -6 -2 L -3 0 L 0 -4 L 3 0 L 6 -2 L 6 2 Z"
+                  fill="hsl(45 95% 55%)"
+                  stroke="hsl(20 30% 14%)"
+                  strokeWidth={0.6}
+                  strokeLinejoin="round"
+                />
+                <circle cx={-6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
+                <circle cx={0} cy={-4} r={1} fill="hsl(48 100% 75%)" />
+                <circle cx={6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
+              </motion.g>
+            )}
           </motion.g>
         );
       })()}
