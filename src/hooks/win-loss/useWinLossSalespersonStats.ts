@@ -38,8 +38,8 @@ export const useSalespersonWinLossStats = (
     enabled: spIds.length > 0,
   });
 
-  const salesMap = new Map(sales.map(s => [s.id, s.salesperson_id ?? ""]));
-  const nameMap = new Map(people.map(p => [p.id, p.name]));
+  const salesMap = new Map<string, string>(sales.map(s => [s.id, s.salesperson_id ?? ""]));
+  const nameMap = new Map<string, string>(people.map(p => [p.id ?? "", p.name ?? ""]));
   const stats = rows ? aggregateBySalesperson(rows, salesMap, nameMap) : [];
   return { data: stats, isLoading: l1 || l2 };
 };
