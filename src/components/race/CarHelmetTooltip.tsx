@@ -7,20 +7,48 @@ interface Props {
   visible: boolean;
   name: string;
   rank: number;
-  /** Cor primária para o anel do "capacete". */
+  /** Cor primária do livery do carro — usada como fundo da pílula. */
   color?: string;
   id?: string;
 }
 
 /**
+ * Calcula cor de texto legível (preto ou branco) sobre uma cor de fundo arbitrária.
+ * Suporta formatos: #rrggbb, #rgb, hsl(...), hsl(var(--token)).
+ * Para tokens CSS dinâmicos, usa fallback branco (mais seguro sobre cores saturadas comuns de livery).
+ */
+function getReadableTextColor(bg: string): string {
+  const hexMatch = bg.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch) {
+    let hex = hexMatch[1];
+    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 140 ? 'hsl(0 0% 8%)' : 'hsl(0 0% 98%)';
+  }
+  // hsl(H S% L%) — usa lightness como proxy
+  const hslMatch = bg.match(/hsl\(\s*\d+\s+\d+%\s+(\d+(?:\.\d+)?)%/i);
+  if (hslMatch) {
+    const l = parseFloat(hslMatch[1]);
+    return l >= 60 ? 'hsl(0 0% 8%)' : 'hsl(0 0% 98%)';
+  }
+  return 'hsl(0 0% 98%)';
+}
+
+/**
  * Tooltip flutuante "capacete" exibido acima do carro em hover persistente (>600ms).
- * Renderizado via foreignObject para permitir HTML arbitrário dentro do SVG.
+ * Pílula com fundo na cor primária do livery + texto adaptativo (contraste WCAG).
  */
 export function CarHelmetTooltip({ visible, name, rank, color = 'hsl(var(--primary))', id }: Props) {
+  const textColor = getReadableTextColor(color);
+  const badgeBg = textColor === 'hsl(0 0% 98%)' ? 'hsl(0 0% 100% / 0.22)' : 'hsl(0 0% 0% / 0.18)';
+
   return (
     <AnimatePresence>
       {visible && (
-        <foreignObject x={-40} y={-46} width={80} height={36} style={{ overflow: 'visible' }}>
+        <foreignObject x={-44} y={-46} width={88} height={36} style={{ overflow: 'visible' }}>
           <motion.div
             id={id}
             role="tooltip"
@@ -32,16 +60,15 @@ export function CarHelmetTooltip({ visible, name, rank, color = 'hsl(var(--prima
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              padding: '4px 8px',
+              padding: '4px 9px',
               borderRadius: 999,
-              background: 'hsl(var(--background) / 0.92)',
-              border: `1px solid ${color}`,
-              boxShadow: '0 6px 20px hsl(var(--foreground) / 0.18)',
+              background: color,
+              border: '1.2px solid hsl(0 0% 100% / 0.85)',
+              boxShadow: '0 2px 6px hsl(0 0% 0% / 0.45), 0 6px 20px hsl(0 0% 0% / 0.25)',
               fontSize: 11,
-              fontWeight: 600,
-              color: 'hsl(var(--foreground))',
+              fontWeight: 700,
+              color: textColor,
               whiteSpace: 'nowrap',
-              backdropFilter: 'blur(6px)',
             }}
           >
             <span
@@ -51,9 +78,9 @@ export function CarHelmetTooltip({ visible, name, rank, color = 'hsl(var(--prima
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: 18, height: 18, borderRadius: 999,
-                background: color,
-                color: 'hsl(var(--primary-foreground))',
-                fontSize: 10, fontWeight: 800,
+                background: badgeBg,
+                color: textColor,
+                fontSize: 10, fontWeight: 900,
               }}
             >
               {rank}
