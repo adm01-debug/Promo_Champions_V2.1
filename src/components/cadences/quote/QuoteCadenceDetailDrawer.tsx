@@ -45,6 +45,18 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
   const [notesById, setNotesById] = useState<Record<string, string>>({});
   const [rescheduleById, setRescheduleById] = useState<Record<string, string>>({});
 
+  const history = useMemo(
+    () =>
+      (tasks ?? [])
+        .filter((t) => t.status === "completed" || t.status === "skipped")
+        .sort((a, b) => {
+          const da = new Date(a.completed_at ?? a.scheduled_date).getTime();
+          const db = new Date(b.completed_at ?? b.scheduled_date).getTime();
+          return db - da;
+        }),
+    [tasks],
+  );
+
   const handleComplete = (taskId: string) => {
     complete.mutate(
       { taskId, notes: notesById[taskId] },
