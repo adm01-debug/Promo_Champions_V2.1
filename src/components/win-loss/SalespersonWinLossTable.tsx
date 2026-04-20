@@ -4,9 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { fmtBRL, fmtDays, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import type { SalespersonStat } from "@/hooks/win-loss/useWinLossAggregations";
 
-interface Props { stats: SalespersonStat[]; isLoading?: boolean }
+interface Props {
+  stats: SalespersonStat[];
+  isLoading?: boolean;
+  onRowClick?: (salespersonId: string, name: string) => void;
+}
 
-export function SalespersonWinLossTable({ stats, isLoading }: Props) {
+export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props) {
   const top = stats[0];
   return (
     <Card className="border-border/50">
@@ -18,7 +22,11 @@ export function SalespersonWinLossTable({ stats, isLoading }: Props) {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Carregando…</p>
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-9 rounded bg-muted/40 animate-pulse" />
+            ))}
+          </div>
         ) : !stats.length ? (
           <p className="text-sm text-muted-foreground py-8 text-center">Sem deals analisados no período.</p>
         ) : (
@@ -42,7 +50,8 @@ export function SalespersonWinLossTable({ stats, isLoading }: Props) {
                   return (
                     <tr
                       key={s.salespersonId}
-                      className={`border-b border-border/30 ${isTop ? "bg-primary/5" : ""}`}
+                      onClick={() => onRowClick?.(s.salespersonId, s.name)}
+                      className={`border-b border-border/30 ${isTop ? "bg-primary/5" : ""} ${onRowClick ? "cursor-pointer hover:bg-muted/40 transition-colors" : ""}`}
                     >
                       <td className="p-2 font-medium">
                         <div className="flex items-center gap-1.5">
