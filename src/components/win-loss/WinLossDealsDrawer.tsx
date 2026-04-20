@@ -1,13 +1,17 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ExternalLink, MessageCircle, ChevronDown, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { fmtBRL, stageLabel } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
+import { DealTimelineExpand } from "./DealTimelineExpand";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export interface DrawerFilter {
   outcome?: "won" | "lost";
@@ -35,6 +39,15 @@ interface SaleMeta {
 const sentimentEmoji = (outcome: "won" | "lost"): string => (outcome === "won" ? "😊" : "😟");
 
 export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: Props) {
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const reduced = useReducedMotion();
+  const toggleExpand = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
   const filtered = useMemo(() => {
     if (!filter) return rows;
     return rows.filter(r => {
@@ -92,6 +105,7 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
             )}
             {filtered.map(r => {
               const meta = salesMeta[r.sale_id];
+              const isExpanded = expandedIds.has(r.sale_id);
               return (
                 <div key={r.id} className="rounded-lg border border-border/50 p-3 bg-card">
                   <div className="flex items-center justify-between gap-2 mb-1">
@@ -114,15 +128,41 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
                       <MessageCircle className="h-3 w-3" />
                       {sentimentEmoji(r.outcome)} {meta?.client_name ?? "—"}
                     </span>
-                    {meta?.account_id && (
-                      <Link
-                        to={`/contas/${meta.account_id}`}
-                        className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5"
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => toggleExpand(r.sale_id)}
+                        className="h-6 px-1.5 text-[11px]"
+                        aria-expanded={isExpanded}
+                        aria-label={isExpanded ? "Recolher histórico" : "Expandir histórico"}
                       >
-                        Ver timeline <ExternalLink className="h-2.5 w-2.5" />
-                      </Link>
-                    )}
+                        {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                        Histórico
+                      </Button>
+                      {meta?.account_id && (
+                        <Link
+                          to={`/contas/${meta.account_id}`}
+                          className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5"
+                        >
+                          Conta <ExternalLink className="h-2.5 w-2.5" />
+                        </Link>
+                      )}
+                    </div>
                   </div>
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        initial={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                        animate={reduced ? { opacity: 1 } : { opacity: 1, height: "auto" }}
+                        exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                        transition={{ duration: reduced ? 0.1 : 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <DealTimelineExpand saleId={r.sale_id} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}

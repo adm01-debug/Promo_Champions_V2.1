@@ -7,6 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { fmtBRL, fmtDays, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
 import type { SalespersonStat } from "@/hooks/win-loss/useWinLossAggregations";
 import { WinLossCompareModal } from "./WinLossCompareModal";
+import { useWinLossSalespersonScore } from "@/hooks/win-loss/useWinLossSalespersonScore";
+import { SalespersonScoreBadge } from "./SalespersonScoreBadge";
 
 interface Props {
   stats: SalespersonStat[];
@@ -18,6 +20,7 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
   const top = stats[0];
   const [selected, setSelected] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
+  const scores = useWinLossSalespersonScore(stats);
 
   const toggle = (id: string) => {
     setSelected(prev => {
@@ -63,6 +66,7 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
                 <tr className="text-left text-muted-foreground border-b border-border/50">
                   <th className="p-2 font-normal w-8" aria-label="Selecionar"></th>
                   <th className="p-2 font-normal">Vendedor</th>
+                  <th className="p-2 font-normal text-right">Score</th>
                   <th className="p-2 font-normal text-right">Win Rate</th>
                   <th className="p-2 font-normal text-right">Total</th>
                   <th className="p-2 font-normal text-right">Ciclo méd.</th>
@@ -98,6 +102,9 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
                           {isTop && <Crown className="h-3.5 w-3.5 text-amber-500" aria-label="Top performer" />}
                           {s.name}
                         </div>
+                      </td>
+                      <td className="p-2 text-right">
+                        <SalespersonScoreBadge score={scores.get(s.salespersonId)} />
                       </td>
                       <td className="p-2 text-right tabular-nums">
                         <Badge
