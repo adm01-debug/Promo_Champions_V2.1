@@ -43,6 +43,13 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
     ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(q.total_value)
     : "—";
 
+  const reducedMotion = usePrefersReducedMotion();
+
+  const nextDate = row.next_action_date ? parseISO(row.next_action_date) : null;
+  const isActionToday = nextDate ? isToday(nextDate) : false;
+  const isOverdue = nextDate && row.status === "active" ? isBefore(nextDate, startOfDay(new Date())) : false;
+  const overdueDays = isOverdue && nextDate ? differenceInDays(new Date(), nextDate) : 0;
+
   const pause = usePauseQuoteCadence();
   const resume = useResumeQuoteCadence();
   const cancel = useCancelQuoteCadence();
@@ -53,8 +60,14 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
 
   const isFinal = row.status === "completed" || row.status === "cancelled";
 
+  const urgencyBorder = isOverdue
+    ? "border-destructive/60 shadow-destructive/10"
+    : isActionToday && !reducedMotion
+      ? "border-primary/60 animate-pulse"
+      : "";
+
   return (
-    <Card className={`glass border-border/50 hover:border-primary/50 transition-colors ${selected ? "border-primary ring-2 ring-primary/30" : ""}`}>
+    <Card className={`glass border-border/50 hover:border-primary/50 transition-colors ${urgencyBorder} ${selected ? "border-primary ring-2 ring-primary/30" : ""}`}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-2 min-w-0 flex-1">
