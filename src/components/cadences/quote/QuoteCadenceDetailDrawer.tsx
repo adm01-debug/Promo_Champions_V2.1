@@ -73,7 +73,7 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh]" aria-describedby="quote-cadence-drawer-desc">
+      <DrawerContent className="max-h-[85vh] md:max-h-[90vh]" aria-describedby="quote-cadence-drawer-desc">
         <DrawerHeader className="border-b border-border/40">
           <DrawerTitle className="font-display">{q?.client_name ?? "Cliente"}</DrawerTitle>
           <DrawerDescription id="quote-cadence-drawer-desc">
