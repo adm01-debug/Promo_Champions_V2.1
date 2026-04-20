@@ -67,7 +67,7 @@ export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) 
                       Top motivo perda: <span className="text-foreground">{c.topReason}</span>
                     </p>
                   )}
-                </motion.div>
+                </motion.button>
               );
             })}
           </div>
