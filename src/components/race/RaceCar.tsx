@@ -100,6 +100,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
 
   return (
     <g
+      ref={ref}
       transform={`scale(${scale})`}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
