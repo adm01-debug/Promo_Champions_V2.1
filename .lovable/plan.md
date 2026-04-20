@@ -1,48 +1,27 @@
 
-**Objetivo:** Remover número fixo do carro; mostrar apenas o RANK (posição na corrida) com destaque visual.
+**Objetivo:** Aumentar tamanho e contraste do badge P1/P2/P3 sobre os carros na pista.
 
-**Investigação rápida:**
-- `RaceCar` aceita prop `number` que renderiza o número no chassi
-- Componentes que renderizam carros na pista: `RaceCarOnTrack` (provável), `GhostCar`, `RaceGhostDemo`, `CarPresetCard`, `CarCustomizer`
-- Leaderboard já calcula `rank` (1..N) em `useRaceLeaderboard`
+**Localização:** `src/components/race/RaceCar.tsx` linhas 499–520 (bloco "Rank badge").
 
-**Plano:**
+**Estado atual:**
+- Círculo `r=6.5`, fonte `7.5`, posicionado à direita do carro (`xPos = bodyW/2 + 8`, `y = -bodyH/2 - 6`).
+- Cores OK (gold/silver/bronze) mas pequenas e sem contorno escuro — somem sobre asfalto cinza.
+- Sem prefixo "P", apenas o número.
 
-1. **`RaceCar.tsx`** — tornar `number` opcional. Quando ausente/null, não renderizar o numeral no chassi (manter o círculo limpo ou remover o círculo do número).
+**Mudanças propostas (apenas SVG, sem nova lógica):**
 
-2. **Componentes na pista (corrida ao vivo)** — onde os carros dos vendedores aparecem correndo:
-   - Não passar mais `number={car_number}` para `<RaceCar>`.
-   - Adicionar um **badge de RANK** flutuante acima do carro (ex: `P1`, `P2`, `P3`…) com:
-     - Visual destacado: círculo dourado para P1, prata P2, bronze P3, neutro demais
-     - Fonte bold, contorno para legibilidade sobre a pista
-     - Posicionado acima do nome/avatar do piloto
+1. **Maior**: `r` 6.5 → **11**; fonte 7.5 → **11**.
+2. **Reposicionar centralizado acima do carro** (mais visível durante corrida): `xPos = 0` (em vez de à direita), `y = -bodyH/2 - 14`.
+3. **Contraste duplo (halo escuro + anel branco)**:
+   - Sombra/halo: `<circle r=12.5 fill="hsl(0 0% 0% / 0.55)" />` atrás do badge.
+   - Anel externo branco: `strokeWidth` 1.2 → **2.2**.
+   - Top-3 ganham segundo anel da própria cor (gold/silver/bronze) com leve glow via `filter="url(#glow)"` se já existir, senão usar `drop-shadow` CSS.
+4. **Prefixo "P"** para clareza semântica (P1, P2, P3, P4…) — fonte black, `letter-spacing: -0.02em` para caber.
+5. **Pulse contínuo só para o líder (P1)**: animar `scale: [1, 1.08, 1]` em loop 1.6s para chamar atenção. Demais ranks mantêm o pop inicial atual.
+6. **Fundo do número (top-3)**: manter cor da medalha. **P4+**: trocar `hsl(var(--muted))` por `hsl(0 0% 15%)` com texto branco — muito mais legível que o cinza atual.
 
-3. **`GhostCar.tsx`** — já usa `number={0}`; trocar para sem número (carro fantasma também sem numeral).
+**Arquivo único editado:** `src/components/race/RaceCar.tsx` (apenas o bloco linhas 499–520).
 
-4. **`RaceGhostDemo.tsx`** — demo: remover números (carros limpos, apenas livery).
+**Sem impacto em:** `RankBadge.tsx` (usado nos painéis laterais — já está bom), leaderboard, hooks, lógica de rank.
 
-5. **MANTER número** em:
-   - `CarPresetCard` (preview de seleção) — usuário ainda escolhe número customizado? → Decisão: manter input mas o número **não aparece mais na pista**. Apenas no customizer como referência interna / histórico. *Alternativa: remover totalmente o input "Número 1-99" do `CarCustomizer`.*
-   - **Decisão proposta:** remover também o input de número do `CarCustomizer` (já que nunca mais aparecerá em lugar nenhum visualmente). Simplifica UX.
-
-**Arquivos a editar:**
-- `src/components/race/RaceCar.tsx` — number opcional
-- `src/components/race/RaceCarOnTrack.tsx` (ou equivalente que renderiza carros vivos) — adicionar badge de rank, remover number
-- `src/components/race/GhostCar.tsx` — remover number
-- `src/components/race/RaceGhostDemo.tsx` — remover number do demo
-- `src/components/race/CarCustomizer.tsx` — remover input de número
-- `src/components/race/CarPresetCard.tsx` — remover prop carNumber/preview sem número
-
-**Badge de Rank (novo elemento SVG sobre o carro):**
-```
-<g transform="translate(0,-36)">
-  <circle r="11" fill={rankColor} stroke="hsl(var(--background))" strokeWidth="2"/>
-  <text textAnchor="middle" dy="4" fontSize="12" fontWeight="900" fill="white">P{rank}</text>
-</g>
-```
-- P1: gold `hsl(var(--rank-gold))`
-- P2: silver `#C0C0C0`
-- P3: bronze `#CD7F32`
-- P4+: `hsl(var(--muted))`
-
-**Resultado esperado:** carros limpos sem o "7", "11", "23" no chassi. Em vez disso, um badge "P1/P2/P3…" acima do carro indicando posição em tempo real na corrida — atualizado dinamicamente conforme leaderboard muda.
+**Resultado:** badges visivelmente maiores, centralizados acima do carro, com halo escuro garantindo legibilidade sobre qualquer cor de pista, prefixo "P" e pulso dourado contínuo no líder.
