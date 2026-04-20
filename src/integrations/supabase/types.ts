@@ -13505,6 +13505,8 @@ export type Database = {
       }
       win_loss_insights: {
         Row: {
+          applied_at: string | null
+          applied_by: string | null
           created_at: string
           description: string
           evidence: Json
@@ -13514,6 +13516,8 @@ export type Database = {
           title: string
         }
         Insert: {
+          applied_at?: string | null
+          applied_by?: string | null
           created_at?: string
           description: string
           evidence?: Json
@@ -13523,6 +13527,8 @@ export type Database = {
           title: string
         }
         Update: {
+          applied_at?: string | null
+          applied_by?: string | null
           created_at?: string
           description?: string
           evidence?: Json

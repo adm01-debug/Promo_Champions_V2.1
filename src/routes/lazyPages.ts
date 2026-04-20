@@ -93,6 +93,7 @@ export const PurchaseIntelligence = lazy(() => import("@/pages/PurchaseIntellige
 export const CoachingInteligente = lazy(() => import("@/pages/CoachingInteligente"));
 export const RevOpsHub = lazy(() => import("@/pages/RevOpsHub"));
 export const DealIntelligence = lazy(() => import("@/pages/DealIntelligence"));
+export const WinLossIntelligence = lazy(() => import("@/pages/WinLossIntelligence"));
 
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
