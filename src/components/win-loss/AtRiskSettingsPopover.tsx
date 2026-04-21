@@ -7,8 +7,15 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SlidersHorizontal, RotateCcw, Search, Bug, X } from "lucide-react";
 import type { AtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
+import {
+  AT_RISK_PRESETS,
+  detectActivePreset,
+  getPresetById,
+  type AtRiskPresetId,
+} from "@/hooks/win-loss/atRiskPresets";
 import {
   RISK_REASON_CODES,
   RISK_REASON_LABELS,
@@ -74,6 +81,14 @@ export function AtRiskSettingsPopover({
     settings.keywordFilter.length > 0 ||
     settings.reasonCodes.length > 0;
 
+  const activePreset = detectActivePreset(settings.threshold, settings.limit);
+
+  const applyPreset = (id: string) => {
+    if (!id) return;
+    const preset = getPresetById(id as AtRiskPresetId);
+    if (preset) onUpdate({ threshold: preset.threshold, limit: preset.limit });
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -103,6 +118,33 @@ export function AtRiskSettingsPopover({
           <p className="text-[11px] text-muted-foreground mt-0.5">
             Threshold {settings.threshold} · mostrando {totalShown} de {totalAnalyzed} analisados
           </p>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-1.5">
+          <Label className="text-xs">Presets de risco</Label>
+          <ToggleGroup
+            type="single"
+            value={activePreset ?? ""}
+            onValueChange={applyPreset}
+            className="flex flex-wrap justify-start gap-1"
+            aria-label="Presets rápidos de threshold e limit"
+          >
+            {AT_RISK_PRESETS.map((p) => (
+              <ToggleGroupItem
+                key={p.id}
+                value={p.id}
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-[10px]"
+                title={p.description}
+                aria-label={`Preset ${p.label}: ${p.description}`}
+              >
+                {p.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </div>
 
         <Separator />
