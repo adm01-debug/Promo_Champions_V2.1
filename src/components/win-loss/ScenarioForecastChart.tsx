@@ -37,8 +37,9 @@ function readBandMode(): BandMode {
 }
 
 function readSeeOlsInflation(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(SEE_OLS_KEY) === "1";
+  if (typeof window === "undefined") return true;
+  // Default ON (PI 1σ). Only the explicit "0" sentinel disables (legacy approx).
+  return window.localStorage.getItem(SEE_OLS_KEY) !== "0";
 }
 
 interface TooltipPayloadItem {
