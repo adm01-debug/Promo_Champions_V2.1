@@ -70,7 +70,8 @@ describe("useUserDashboardLayout", () => {
   it("anexa novos widgets ao final quando faltam no layout salvo", async () => {
     storedRow = { layout: ["kpi", "trend"] };
     const { result } = renderHook(() => useUserDashboardLayout(), { wrapper });
-    await waitFor(() => expect(result.current.layout.length).toBe(DEFAULT_LAYOUT.length));
+    // espera o layout passar de DEFAULT (fallback inicial) para a versão merged
+    await waitFor(() => expect(result.current.layout[1]).toBe("trend"));
     expect(result.current.layout.slice(0, 2)).toEqual(["kpi", "trend"]);
     // todos os widgets default presentes (sem duplicatas)
     const set = new Set(result.current.layout);
