@@ -4,6 +4,18 @@ import { toast } from "sonner";
 
 export type RiskSeverity = "low" | "medium" | "high" | "critical";
 
+export type { RiskReasonCode, RiskReasonSource } from "@/lib/winloss/riskReasons";
+
+import type { RiskReasonCode, RiskReasonSource } from "@/lib/winloss/riskReasons";
+
+export interface RiskReason {
+  code: RiskReasonCode;
+  message: string;
+  params: Record<string, string | number>;
+  source: RiskReasonSource;
+  contribution: number;
+}
+
 export interface RiskBreakdown {
   stagnation: number;
   amount_alignment: number;
@@ -12,6 +24,7 @@ export interface RiskBreakdown {
   matched_pattern_type: string;
   matched_confidence: number;
   reasons: string[];
+  reasons_v2?: RiskReason[];
   matched_keywords?: string[];
   competitor_matches?: Array<{
     keyword: string;
