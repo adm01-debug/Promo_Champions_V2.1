@@ -255,6 +255,49 @@ export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakd
         </div>
       </div>
 
+      {/* Keywords competitivas detectadas (regex + substring + confiança) */}
+      {breakdown.competitor_matches && breakdown.competitor_matches.length > 0 && (
+        <div className="space-y-1">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              Keywords competitivas detectadas ({breakdown.competitor_matches.length})
+            </p>
+            <p className="text-[10px] text-muted-foreground/80">
+              baseado no padrão de maior confiança do tipo competitor
+            </p>
+          </div>
+          <ul className="space-y-1">
+            {breakdown.competitor_matches.map((cm, i) => (
+              <li
+                key={`${cm.keyword}-${i}`}
+                aria-label={`Keyword competitiva: ${cm.keyword}, casou em '${cm.matched_substring}' via ${cm.regex}, confiança ${Math.round(cm.confidence * 100)}%`}
+                className="rounded border-l-2 border-destructive/60 bg-background/40 pl-2 pr-2 py-1 space-y-0.5"
+              >
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Swords className="h-3 w-3 text-destructive shrink-0" aria-hidden />
+                  <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                    {cm.keyword}
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 tabular-nums">
+                    conf {Math.round(cm.confidence * 100)}%
+                  </Badge>
+                </div>
+                <div className="font-mono text-[10px] flex flex-wrap gap-x-2 gap-y-0.5">
+                  <span>
+                    <span className="text-muted-foreground">match:</span>{" "}
+                    <span className="bg-muted px-1 rounded">"{cm.matched_substring}"</span>
+                  </span>
+                  <span>
+                    <span className="text-muted-foreground">regex:</span>{" "}
+                    <span className="text-muted-foreground">{cm.regex}</span>
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Razões completas — cada item liga a um campo do cálculo acima */}
       {breakdown.reasons.length > 0 && (
         <div className="space-y-1">

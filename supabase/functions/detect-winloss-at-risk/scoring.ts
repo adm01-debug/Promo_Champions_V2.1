@@ -35,6 +35,13 @@ export interface OpenDeal {
 
 export type RiskSeverity = "low" | "medium" | "high" | "critical";
 
+export interface CompetitorMatch {
+  keyword: string;
+  matched_substring: string;
+  regex: string;
+  confidence: number;
+}
+
 export interface RiskBreakdown {
   stagnation: number;
   amount_alignment: number;
@@ -45,6 +52,7 @@ export interface RiskBreakdown {
   reasons: string[];
   // Debug fields (optional for backward compatibility on the client).
   matched_keywords?: string[];
+  competitor_matches?: CompetitorMatch[];
   days_stagnant?: number;
   avg_loss_cycle_days?: number | null;
   avg_loss_amount?: number | null;
@@ -57,21 +65,56 @@ export interface RiskBreakdown {
 
 export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
 
-export function extractCompetitorKeywords(source: string | null | undefined): string[] {
+const COMPETITOR_REGEX_LABEL: Array<[string, string]> = [
+  ["concorr", "/concorr\\w*/i"],
+  ["competitor", "/competitor\\w*/i"],
+  ["leila", "/leila\\w*/i"],
+  ["cota", "/cota[c\u00e7]\\w*/i"],
+];
+
+function attributeRegexSource(hit: string): string {
+  const lower = hit.toLowerCase();
+  for (const [needle, label] of COMPETITOR_REGEX_LABEL) {
+    if (lower.includes(needle)) return label;
+  }
+  return "/" + COMPETITOR_KEYWORDS_RE.source + "/gi";
+}
+
+// CompetitorMatch interface declared at the top of this file (near RiskBreakdown).
+
+/**
+ * Detailed competitor matches with original substring and originating regex.
+ * Dedup by lowercased keyword preserving first occurrence.
+ */
+export function extractCompetitorMatches(
+  source: string | null | undefined,
+  confidence = 0.5,
+): CompetitorMatch[] {
   if (!source) return [];
-  const matches = source.match(COMPETITOR_KEYWORDS_RE);
-  if (!matches) return [];
-  // Dedupe (case-insensitive) preserving order.
+  // Split on commas / whitespace to recover the "token" each match lives in.
+  const tokens = source.split(/[\s,;]+/).filter(Boolean);
   const seen = new Set<string>();
-  const out: string[] = [];
-  for (const m of matches) {
-    const k = m.toLowerCase();
-    if (!seen.has(k)) {
-      seen.add(k);
-      out.push(m);
+  const out: CompetitorMatch[] = [];
+  for (const token of tokens) {
+    const m = token.match(COMPETITOR_KEYWORDS_RE);
+    if (!m) continue;
+    for (const hit of m) {
+      const key = hit.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({
+        keyword: hit,
+        matched_substring: token,
+        regex: attributeRegexSource(hit),
+        confidence,
+      });
     }
   }
   return out;
+}
+
+export function extractCompetitorKeywords(source: string | null | undefined): string[] {
+  return extractCompetitorMatches(source).map(m => m.keyword);
 }
 
 export interface RiskResult {
@@ -268,7 +311,13 @@ export function computeDealRisk(
     reasons.push(`Estágio "${deal.status}" historicamente travado`);
   }
   // Competitor signal (proxy: source contém termos competitivos OU presença de padrão).
-  const matchedKeywords = extractCompetitorKeywords(deal.source);
+  const bestCompetitor = competitorPatterns.reduce<LossPattern | null>((best, p) => {
+    if (!best) return p;
+    return (p.confidence ?? 0) > (best.confidence ?? 0) ? p : best;
+  }, null);
+  const competitorConfidence = bestCompetitor?.confidence ?? 0.5;
+  const competitorMatches = extractCompetitorMatches(deal.source, competitorConfidence);
+  const matchedKeywords = competitorMatches.map(m => m.keyword);
   if (competitorPatterns.length && matchedKeywords.length > 0) {
     reasons.push(`Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`);
   }
@@ -346,6 +395,7 @@ export function computeDealRisk(
       matched_confidence: dominant.confidence,
       reasons,
       matched_keywords: matchedKeywords,
+      competitor_matches: competitorMatches.length ? competitorMatches : undefined,
       days_stagnant: days,
       avg_loss_cycle_days: bestLoss?.avg_cycle_days ?? null,
       avg_loss_amount: bestLoss?.avg_amount ?? null,

@@ -13,6 +13,12 @@ export interface RiskBreakdown {
   matched_confidence: number;
   reasons: string[];
   matched_keywords?: string[];
+  competitor_matches?: Array<{
+    keyword: string;
+    matched_substring: string;
+    regex: string;
+    confidence: number;
+  }>;
   days_stagnant?: number;
   avg_loss_cycle_days?: number | null;
   avg_loss_amount?: number | null;
