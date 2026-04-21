@@ -5,4 +5,11 @@
  */
 export * from "./atRiskFixtures";
 export * from "./riskReasons";
-export * from "./riskSeverity";
+export {
+  SEVERITY_RULES,
+  deriveSeverity,
+  summarizeActionMatrix,
+  type SeverityRule,
+  type ActionMatrixKind,
+  type ActionMatrixSummary,
+} from "./riskSeverity";

@@ -1,10 +1,16 @@
-import { Swords } from "lucide-react";
+import { Swords, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { RiskBreakdown, RiskReason } from "@/hooks/win-loss/useAtRiskFromPatterns";
 import {
   getReasonKindMeta,
   inferReasonCode,
 } from "@/lib/winloss/riskReasons";
+import {
+  SEVERITY_RULES,
+  deriveSeverity,
+  summarizeActionMatrix,
+  type RiskSeverity,
+} from "@/lib/winloss/riskSeverity";
 
 /** Build a RiskReason-shaped record from a legacy free-form string. */
 function reasonFromLegacy(message: string, b: RiskBreakdown): RiskReason {
@@ -108,7 +114,14 @@ function Bar({ value, max }: { value: number; max: number }) {
   );
 }
 
-export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakdown; riskScore: number }) {
+interface RiskDebugPanelProps {
+  breakdown: RiskBreakdown;
+  riskScore: number;
+  suggestedAction?: string;
+  outcome?: string | null;
+}
+
+export function RiskDebugPanel({ breakdown, riskScore, suggestedAction, outcome }: RiskDebugPanelProps) {
   const rows: ContribRow[] = [
     { label: "Estagnação", value: breakdown.stagnation, max: 50 },
     { label: "Alinhamento de ticket", value: breakdown.amount_alignment, max: 25 },
@@ -117,6 +130,8 @@ export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakd
   const raw = breakdown.raw_score ?? rows.reduce((s, r) => s + r.value, 0);
   const conf = breakdown.confidence_weight ?? Math.max(0.5, Math.min(1, breakdown.matched_confidence));
   const final = breakdown.final_score ?? riskScore;
+  const derived: RiskSeverity = deriveSeverity(final, breakdown.matched_confidence);
+  const matrix = summarizeActionMatrix(breakdown.matched_pattern_type, derived, outcome);
 
   return (
     <div
