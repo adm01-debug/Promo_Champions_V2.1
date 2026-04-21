@@ -27,7 +27,7 @@ const POSITIVE_RE = /vencedora|reaplicar/i;
  * 0 = no temporal urgency marker
  */
 function urgencyLevel(action: string): 0 | 1 | 2 | 3 {
-  if (/IMEDIATA|URGENTE|24h|\bhoje\b/.test(action)) return 3;
+  if (/imediata|urgente|24h|\bhoje\b/i.test(action)) return 3;
   if (/48h/.test(action)) return 2;
   if (/semana|72h/i.test(action)) return 1;
   return 0;
