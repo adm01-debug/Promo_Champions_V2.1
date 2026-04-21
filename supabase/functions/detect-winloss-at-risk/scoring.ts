@@ -58,17 +58,13 @@ export interface RiskBreakdown {
 
 export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
 
-/** Sub-regexes used to attribute each match to a single named pattern. */
-interface SubRegex {
-  regex: RegExp;
-  source: string;
+function attributeRegexSource(hit: string): string {
+  if (/concorr/i.test(hit)) return "/concorr\\w*/i";
+  if (/competitor/i.test(hit)) return "/competitor\\w*/i";
+  if (/leila/i.test(hit)) return "/leila\\w*/i";
+  if (/cota[cç]/i.test(hit)) return "/cota[cç]\\w*/i";
+  return "/" + COMPETITOR_KEYWORDS_RE.source + "/gi";
 }
-const COMPETITOR_SUB_REGEXES: SubRegex[] = [
-  { regex: /concorr\w*/i, source: "/concorr\\w*/i" },
-  { regex: /competitor\w*/i, source: "/competitor\\w*/i" },
-  { regex: /leila\w*/i, source: "/leila\\w*/i" },
-  { regex: /cota[cç]\w*/i, source: "/cota[cç]\\w*/i" },
-];
 
 export interface CompetitorMatch {
   /** The actual matched substring as it appeared in the source (preserves original case). */
