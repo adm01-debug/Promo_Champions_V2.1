@@ -120,7 +120,51 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.keywordFilter).toBe("");
   });
 
-  it("debug flag survives unmount/remount (simulates page reload)", () => {
+  it("sanitize whitelists reasonCodes (drops invalid)", () => {
+    const out = sanitize({
+      reasonCodes: ["STAGNATION_HIGH", "INVALID", "AMOUNT_ALIGNED"] as never,
+    });
+    expect(out.reasonCodes).toEqual(["STAGNATION_HIGH", "AMOUNT_ALIGNED"]);
+    expect(sanitize({ reasonCodes: "nope" as never }).reasonCodes).toEqual([]);
+  });
+
+  it("migrates v2 payload preserving fields and adding empty reasonCodes", () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 2,
+        settings: {
+          threshold: 60,
+          limit: 25,
+          maxVisible: 10,
+          debug: true,
+          stageFilter: ["Negociação"],
+          keywordFilter: "preço",
+        },
+      }),
+    );
+    const { result } = renderHook(() => useAtRiskSettings());
+    expect(result.current.settings.threshold).toBe(60);
+    expect(result.current.settings.debug).toBe(true);
+    expect(result.current.settings.stageFilter).toEqual(["Negociação"]);
+    expect(result.current.settings.keywordFilter).toBe("preço");
+    expect(result.current.settings.reasonCodes).toEqual([]);
+  });
+
+  it("clearFilters also clears reasonCodes", () => {
+    const { result } = renderHook(() => useAtRiskSettings());
+    act(() =>
+      result.current.update({
+        threshold: 70,
+        reasonCodes: ["STAGNATION_HIGH"],
+        stageFilter: ["Negociação"],
+      }),
+    );
+    act(() => result.current.clearFilters());
+    expect(result.current.settings.threshold).toBe(70);
+    expect(result.current.settings.reasonCodes).toEqual([]);
+    expect(result.current.settings.stageFilter).toEqual([]);
+  });
     const first = renderHook(() => useAtRiskSettings());
     act(() => first.result.current.update({ debug: true, threshold: 55 }));
     expect(first.result.current.settings.debug).toBe(true);
