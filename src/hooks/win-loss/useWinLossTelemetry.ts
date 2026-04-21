@@ -11,7 +11,15 @@ type WLEvent =
   | "winloss_load_view"
   | "winloss_battle_card"
   | "winloss_digest"
-  | "winloss_quick_filter";
+  | "winloss_quick_filter"
+  // Phase 6 — adoption metrics
+  | "winloss_filter_applied"
+  | "winloss_quick_filter_clicked"
+  | "winloss_digest_copied"
+  | "winloss_view_saved"
+  | "winloss_compare_opened"
+  | "winloss_script_ab_viewed"
+  | "winloss_next_best_clicked";
 
 interface AnalyticsHost {
   analytics?: { track: (event: string, payload?: Record<string, unknown>) => void };
