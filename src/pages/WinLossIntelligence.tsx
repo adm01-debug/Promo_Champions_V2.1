@@ -31,6 +31,7 @@ import { SentimentTrendChart } from "@/components/win-loss/SentimentTrendChart";
 import { SeasonComparisonPanel } from "@/components/win-loss/SeasonComparisonPanel";
 import { AtRiskDealsFromPatterns } from "@/components/win-loss/AtRiskDealsFromPatterns";
 import { WebhookSubscriptionsPanel } from "@/components/win-loss/WebhookSubscriptionsPanel";
+import { WebhookHealthPanel } from "@/components/win-loss/WebhookHealthPanel";
 import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterPanel";
 import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
 
@@ -359,7 +360,10 @@ export default function WinLossIntelligence() {
                   <AtRiskDealsFromPatterns />
                 </WinLossErrorBoundary>
                 <WinLossErrorBoundary section="Webhooks">
-                  <WebhookSubscriptionsPanel />
+                  <div className="space-y-4">
+                    <WebhookHealthPanel />
+                    <WebhookSubscriptionsPanel />
+                  </div>
                 </WinLossErrorBoundary>
                 <WinLossErrorBoundary section="Webhooks Dead Letter">
                   <WebhookDeadLetterPanel />
