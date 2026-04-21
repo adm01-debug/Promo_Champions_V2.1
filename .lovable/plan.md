@@ -1,123 +1,127 @@
 
 
-## Comparação lado a lado de dois deals no debug de risco
+## Padronizar reasons com códigos/IDs estáveis
 
 ### Estado atual
-Hoje o `RiskDebugPanel` é renderizado por deal, isolado dentro do card do deal no `AtRiskDealsFromPatterns`. Não há forma de pegar dois deals e ver, lado a lado:
-- Quanto cada componente (estagnação, ticket, estágio) contribuiu em cada um.
-- Como o `raw_score` foi formado.
-- Qual `confidence_weight` (e por quê — pattern casado + tipo) cada deal recebeu.
-- O `final_score` resultante e qual deal "perdeu mais" para o clamp/confiança.
-- Quais keywords competitivas foram detectadas em cada um.
-
-Isso obriga o usuário a abrir o debug em dois cards separados e comparar mentalmente.
+Hoje cada `reason` em `RiskBreakdown.reasons` é uma string PT-BR livre (ex.: `"23 dias sem atualização (média de loss: 18d)"`). Consequências:
+- **Filtros frágeis**: o `RiskDebugPanel.classifyReason` depende de regex sobre prefixos PT-BR (`/dias sem atualização/i`, `/^ticket alinhado/i`). Trocar uma palavra do backend quebra a UI silenciosamente.
+- **Testes acoplados a copy**: mudar tradução requer atualizar dezenas de asserts.
+- **i18n impossível**: traduzir para EN destruiria a classificação.
+- **Sem identidade machine-readable** para filtros, agrupamento ou métricas de "qual sinal mais aparece".
 
 ### O que será feito
 
-**1. Estado de seleção no `AtRiskDealsFromPatterns`**
-- Adicionar `useState<string[]>([])` para `compareIds` (máx. 2 sale_ids).
-- Só visível quando `settings.debug === true` (recurso é puramente analítico).
-- Cada card de deal ganha um `Checkbox` discreto no canto (label `aria-label="Selecionar para comparar"`) que adiciona/remove do array; quando 2 já estão selecionados, demais checkboxes ficam `disabled` com tooltip "Máximo 2 deals para comparar".
-- Botão flutuante na barra do header: `Comparar (2)` aparece quando `compareIds.length === 2` → abre modal.
-- Botão `Limpar seleção` ao lado quando há 1+ selecionados.
+**1. Schema novo: `RiskReason` (estruturado) + retrocompat com `reasons: string[]`**
 
-**2. Novo componente `RiskCompareModal.tsx` em `src/components/win-loss/`**
-- Recebe props `{ open, onOpenChange, dealA, dealB }` onde cada deal é o `AtRiskDealFromPattern` completo (já tem `breakdown`).
-- Layout em 3 colunas:
-  - Coluna esquerda: rótulo da métrica.
-  - Coluna do meio: valor do Deal A + cliente.
-  - Coluna direita: valor do Deal B + cliente.
-- Usa o componente `Dialog` (mesmo padrão do `WinLossCompareModal`).
-- Largura `max-w-4xl`, scroll interno.
+Em `scoring.ts`, criar:
 
-**3. Conteúdo do modal — 5 seções**
+```ts
+export type RiskReasonCode =
+  | "STAGNATION_HIGH"     // estagnação severa (≥30 pts)
+  | "STAGNATION_LOW"      // estagnação leve (>0 e <30)
+  | "AMOUNT_ALIGNED"      // ticket dentro da faixa de loss
+  | "STAGE_STUCK"         // estágio historicamente travado
+  | "COMPETITOR_PRESSURE" // keywords competitivas detectadas
+  | "CROSSED_SIGNALS";    // fallback
 
-**a) Header de identificação**
-Duas mini-cards lado a lado mostrando:
-- Cliente, ticket (`fmtBRL`), estágio, score final em badge `tone()` igual ao card.
-- Borda esquerda colorida: `border-l-primary` para A, `border-l-destructive` para B (apenas para distinção visual, não semântica).
+export interface RiskReason {
+  code: RiskReasonCode;
+  message: string;                              // texto pt-BR (UX atual)
+  params: Record<string, string | number>;      // valores numéricos para i18n/testes
+  source: "stagnation" | "amount" | "stage" | "competitor" | "generic";
+  contribution: number;                         // contrib absoluta ao raw_score
+}
+```
 
-**b) Tabela "Componentes do raw_score"**
-| Componente | Deal A | Deal B | Δ |
-|---|---|---|---|
-| Estagnação (max 50) | `40` (barra 80%) | `25` (barra 50%) | `+15` |
-| Ticket alinhado (max 25) | `25` | `0` | `+25` |
-| Estágio elegível (max 25) | `15` | `15` | `0` |
-| **Raw total** | **`80`** | **`40`** | **`+40`** |
+Adicionar ao `RiskBreakdown`:
+```ts
+reasons_v2?: RiskReason[];   // novo (opcional, rollout aditivo)
+reasons: string[];           // mantido (retrocompat)
+```
 
-- Δ pintado: positivo verde (`text-status-success`), negativo destructive, zero muted.
-- Barra de contribuição inline em cada célula (mesma `ScoreContributionBar`-like, mas inline e fina) reusando o estilo de barras já presente no `RiskDebugPanel`.
+**2. Construção determinística no `computeDealRisk`**
+Função interna `buildReasons(...)` retorna `{ messages, structured }`. `messages` continua idêntico ao array PT-BR atual; `structured` vai em `breakdown.reasons_v2`. Ordem fixa: stagnation → amount → stage → competitor → fallback.
 
-**c) Tabela "Confiança e clamp"**
-| Passo | Deal A | Deal B |
-|---|---|---|
-| Padrão casado | `Estagnação crítica` | `Ticket fora do ICP` |
-| Tipo do padrão | `stagnation` | `amount` |
-| Confidence original | `0.85` | `0.30` (piso aplicado → `0.50`) |
-| `raw × conf` | `80 × 0.85 = 68` | `40 × 0.50 = 20` |
-| Clamp aplicado? | Não | Não |
-| **Final score** | **`68`** | **`20`** |
+**3. Helpers compartilhados (frontend) — novo `src/lib/winloss/riskReasons.ts`**
+- `RISK_REASON_CODES` (const array tipada).
+- `RISK_REASON_LABELS: Record<RiskReasonCode, string>` (rótulo curto: "Estagnação severa", "Ticket alinhado", etc.) — fonte única de verdade para chips/filtros.
+- `getReasonKindMeta(code)` retorna `{ icon, variant, color }` (move o `KIND_META` que hoje vive dentro do `RiskDebugPanel`).
+- `inferReasonCode(message)`: fallback determinístico para deals legados sem `reasons_v2` (mesmas regex que vivem hoje em `classifyReason`, isoladas e testadas).
 
-- Linha "Confidence" destaca quando piso/teto foi aplicado com badge `warning` "(piso 0.5)" ou "(teto 1.0)".
-- Linha "Clamp" mostra "Sim → teto 100" em badge `destructive` quando `raw × conf > 100`.
+**4. Refatorar `RiskDebugPanel.tsx`**
+- Aceita `reasons_v2` quando existir; cai para `inferReasonCode` quando ausente.
+- Substitui `classifyReason` por leitura direta do `code`.
+- Cada `<li>` recebe `data-reason-code={code}` para testabilidade DOM.
+- Mantém highlighting numérico e pills competitivas.
 
-**d) Diff de keywords competitivas**
-Duas colunas com listas das `competitor_matches`:
-- Verde (badge `success`) para keywords presentes só em A ou só em B (exclusivas — diferenciador).
-- Cinza (badge `outline`) para keywords presentes em ambos.
-- Texto `"Nenhuma keyword competitiva detectada"` quando vazio.
-- Rodapé: `"X exclusivas de A · Y exclusivas de B · Z em comum"`.
+**5. Refatorar `RiskCompareModal.tsx`**
+- `pairReasonsByKind` agora pareia por `code` (e não por inferência regex). Razões só em A ou só em B = exclusivas.
 
-**e) Diff de razões (`reasons`)**
-Reusa o `classifyReason` já criado na iteração anterior. Mostra um diff visual:
-- Razões do mesmo `kind` em ambos: lado a lado na mesma linha.
-- Razões só em um: linha com lado oposto vazio (placeholder `—`).
-- Cada razão renderizada com o mesmo highlight numérico e ícone do `RiskDebugPanel`.
+**6. Filtro por código no popover**
+- Adicionar a `AtRiskSettings` o campo `reasonCodes: RiskReasonCode[]` (default `[]` = sem filtro).
+- Sanitização preserva apenas códigos válidos (whitelist contra `RISK_REASON_CODES`).
+- Schema sobe para **v3**; migration v2→v3 mantém todos campos antigos e injeta `reasonCodes: []`.
+- `AtRiskSettingsPopover`: nova seção "Sinais" com 5 chips toggláveis (excluindo `CROSSED_SIGNALS`).
+- `AtRiskDealsFromPatterns`: filtra deals que tenham **ao menos um** `reasons_v2[i].code` em `settings.reasonCodes`. Quando vazio, sem filtro.
 
-**4. Conclusão automática no rodapé do modal**
-Pequeno parágrafo gerado da diferença, ex.:
-> *Deal A tem score final 48 pontos maior que Deal B. Principal contribuinte: ticket alinhado (+25 raw) e maior confiança no padrão casado (0.85 vs 0.50). Deal B sofreu piso de confiança aplicado.*
+**7. Retrocompat e edge function**
+- `index.ts` da edge function não muda — payload puramente aditivo.
+- `useAtRiskFromPatterns.ts` ganha `RiskReasonCode` e `reasons_v2` no tipo `RiskBreakdown`.
+- Deals em cache antigos (sem `reasons_v2`) continuam funcionando via `inferReasonCode`.
 
-Lógica determinística (não-IA), em helper `buildCompareSummary(a, b)` no próprio arquivo.
+### Cobertura de teste
 
-**5. Acessibilidade e i18n**
-- `Dialog` tem `aria-labelledby` apontando para o `DialogTitle`.
-- Tabela com `<caption className="sr-only">` descrevendo o conteúdo.
-- Cada Δ tem `aria-label` falado: ex.: `"Diferença: Deal A maior em 15 pontos"`.
-- Strings em pt-BR (consistente com o resto do painel).
+**Backend (Deno)** — `supabase/functions/detect-winloss-at-risk/reasons_codes_test.ts` (novo):
+1. Deal com 50 dias estagnado → `code: "STAGNATION_HIGH"`, `params.days === 50`, `contribution === breakdown.stagnation`.
+2. Deal com ticket próximo da média → `code: "AMOUNT_ALIGNED"`.
+3. Deal em `negotiation` com bestStuck → `code: "STAGE_STUCK"`, `params.stage === "negotiation"`.
+4. Deal com `source = "leilao_publico"` + competitor pattern → `code: "COMPETITOR_PRESSURE"`, `params.keywordCount === 1`.
+5. Deal sem sinais fortes → único `code: "CROSSED_SIGNALS"`.
+6. Ordem dos códigos é determinística.
+7. `reasons` (string[]) continua idêntico ao formato atual.
 
-### Mudanças técnicas
-- **Novo arquivo** `src/components/win-loss/RiskCompareModal.tsx` (~250 linhas, contendo componente + helpers `buildCompareSummary`, `diffKeywords`, `pairReasonsByKind`).
-- **Editar** `src/components/win-loss/AtRiskDealsFromPatterns.tsx`:
-  - Estado `compareIds`, handlers `toggleCompare(id)`, `clearCompare()`.
-  - Checkbox por card (visível apenas em modo debug).
-  - Barra de ações compacta no topo do card content: chips dos selecionados + botão `Comparar` + `Limpar`.
-  - Renderização condicional do `<RiskCompareModal>`.
-- **Não tocar** em scoring, hooks, edge functions, types — payload já tem tudo (`breakdown.raw_score`, `confidence_weight`, `final_score`, `competitor_matches`, `reasons`, `matched_pattern_label`, `matched_pattern_type`).
-- **Reusar** `Dialog`, `Checkbox` (shadcn já presente), `Badge`, `Tooltip`, `cn`, `fmtBRL` local.
+**Frontend (Vitest)** — `src/test/lib/riskReasons.test.ts` (novo):
+- `inferReasonCode` para cada um dos 5 prefixos atuais + fallback.
+- `RISK_REASON_LABELS` exhaustivo: tem entrada para cada `RiskReasonCode`.
 
-### Testes
-**Novo arquivo** `src/test/components/winloss/RiskCompareModal.test.tsx` com 5 casos:
-1. Renderiza ambos os deals com cliente e final_score corretos.
-2. Δ é calculado corretamente (raw_total e final_score) e tem sinal apropriado.
-3. Quando `confidence_weight === 0.5` mas pattern_confidence original era `< 0.5`, mostra badge "(piso aplicado)".
-4. Diff de keywords classifica corretamente exclusivas vs comuns.
-5. `buildCompareSummary` produz string contendo o nome do pattern dominante e o delta numérico.
+**Hook settings** — adições em `useAtRiskSettings.test.ts`:
+- `sanitize` com array misto preserva só códigos válidos.
+- Migration v2→v3 preserva campos antigos e adiciona `reasonCodes: []`.
+
+**Compare modal** — atualizar 1 caso em `RiskCompareModal.test.tsx` para verificar pareamento por `code`.
+
+### Arquivos tocados
+
+**Backend**
+- `supabase/functions/detect-winloss-at-risk/scoring.ts` — tipos `RiskReasonCode`/`RiskReason`, `buildReasons`, popular `breakdown.reasons_v2`.
+- `supabase/functions/detect-winloss-at-risk/reasons_codes_test.ts` — **novo**.
+
+**Frontend (lib + hook + UI)**
+- `src/lib/winloss/riskReasons.ts` — **novo**.
+- `src/lib/winloss/index.ts` — re-export.
+- `src/hooks/win-loss/useAtRiskFromPatterns.ts` — tipos novos.
+- `src/hooks/win-loss/useAtRiskSettings.ts` — `reasonCodes`, sanitize, migration v3.
+- `src/components/win-loss/RiskDebugPanel.tsx` — usar `code` quando disponível, remover `KIND_META` local.
+- `src/components/win-loss/RiskCompareModal.tsx` — pareamento por `code`.
+- `src/components/win-loss/AtRiskSettingsPopover.tsx` — seção "Sinais" com chips.
+- `src/components/win-loss/AtRiskDealsFromPatterns.tsx` — aplicar filtro.
+
+**Testes**
+- `src/test/lib/riskReasons.test.ts` — **novo**.
+- `src/test/hooks/useAtRiskSettings.test.ts` — +2 casos.
+- `src/test/components/winloss/RiskCompareModal.test.tsx` — atualizar 1 caso.
 
 ### Critérios de aceite
-1. Em modo debug, cada card tem um checkbox; selecionar 2 abre o botão `Comparar (2)` no header do painel.
-2. Modal abre com layout em 3 colunas (rótulo / Deal A / Deal B), sem scroll horizontal em viewport ≥ 1024px.
-3. Coluna Δ pinta verde/destructive/muted conforme sinal e zero.
-4. Badges de piso/teto aparecem somente quando aplicável (verificável forçando `matched_confidence: 0.3` em fixtures).
-5. Diff de keywords mostra exclusivas em verde e comuns em cinza; rodapé conta corretamente.
-6. Conclusão automática referencia o pattern com maior contribuição absoluta.
-7. Fechar o modal preserva a seleção; clicar `Limpar` zera; após 2º deal limpo, botão `Comparar` some.
-8. Tudo só visível com `settings.debug === true`; modo normal não mostra checkboxes nem barra de ações.
-9. `npm test -- RiskCompareModal` → 5/5 verdes; `tsc` sem erros.
+1. Cada `RiskBreakdown` em respostas novas tem `reasons_v2: RiskReason[]` completo. `reasons: string[]` continua idêntico (zero quebra).
+2. Painel debug renderiza `<li data-reason-code="STAGNATION_HIGH">` (verificável via DOM).
+3. Popover ganha 5 chips de sinal; selecionar filtra a lista visível.
+4. Recarregar a página preserva `reasonCodes` (migration v2→v3 funciona).
+5. Trocar a string `"Ticket alinhado..."` por `"Ticket dentro da faixa..."` em `scoring.ts` **não quebra nenhum teste de UI** nem o filtro (tudo roteia por `code`).
+6. `supabase--test_edge_functions ["detect-winloss-at-risk"]` → todos verdes (incluindo 7 novos).
+7. `npm test -- riskReasons useAtRiskSettings RiskCompareModal` → todos verdes.
 
 ### Verificação manual
-1. Ativar Debug → selecionar 2 deals com scores próximos → comparar → ver Δ pequeno em raw mas Δ grande em final por causa de confidence diferente.
-2. Selecionar deal `stagnation` puro vs deal `competitor` → diff de keywords mostra divergência clara.
-3. Forçar deal com `raw × conf > 100` (cenário de teste) → linha "Clamp" aparece com badge destructive em uma das colunas.
-4. Desligar Debug com 2 deals selecionados → barra de ações some; reativar → seleção foi descartada (estado é local ao card, não persistido — esperado).
-
+1. Ativar Debug → inspecionar `data-reason-code` no DOM; ver `breakdown.reasons_v2` em DevTools React.
+2. Filtrar por "Estagnação severa" → painel mostra só deals com `STAGNATION_HIGH`.
+3. Combinar com filtro de estágio → ambos aplicam (AND).
+4. Recarregar com 2 chips ativos → seleção persistida.
