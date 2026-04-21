@@ -8,8 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { SlidersHorizontal, RotateCcw, Search, Bug, X } from "lucide-react";
-import type { AtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
+import { SlidersHorizontal, RotateCcw, Search, Bug, X, CloudOff, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import type { AtRiskSettings, SyncStatus } from "@/hooks/win-loss/useAtRiskSettings";
 import {
   AT_RISK_PRESETS,
   AT_RISK_SEVERITY_PRESETS,
