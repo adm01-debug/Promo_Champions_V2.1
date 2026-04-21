@@ -310,6 +310,77 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                   </TooltipContent>
                 </UITooltip>
               </ToggleGroup>
+              {bandMode === "see" && (
+                <Popover>
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 px-2 text-[10px] font-medium tabular-nums"
+                          aria-label={`Nível de confiança: z=${confidenceZ.toFixed(2)} (${zPctLabel})`}
+                        >
+                          z={confidenceZ.toFixed(2)} <span className="ml-1 text-muted-foreground">({zPctLabel})</span>
+                        </Button>
+                      </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs max-w-[220px]">
+                      Multiplicador z aplicado à largura da banda SEE. 1.96 ≈ 95% de cobertura.
+                    </TooltipContent>
+                  </UITooltip>
+                  <PopoverContent align="end" className="w-64 space-y-3">
+                    <div>
+                      <p className="text-xs font-medium mb-2">Nível de confiança</p>
+                      <RadioGroup
+                        value={
+                          Z_PRESETS.find((p) => Math.abs(p.z - confidenceZ) < 0.01)
+                            ? confidenceZ.toString()
+                            : ""
+                        }
+                        onValueChange={(v) => {
+                          const n = Number(v);
+                          if (Number.isFinite(n)) setConfidenceZ(n);
+                        }}
+                      >
+                        {Z_PRESETS.map((p) => (
+                          <div key={p.z} className="flex items-center gap-2">
+                            <RadioGroupItem value={p.z.toString()} id={`z-${p.z}`} />
+                            <Label htmlFor={`z-${p.z}`} className="text-xs cursor-pointer flex-1">
+                              {p.label} <span className="text-muted-foreground tabular-nums">(z={p.z.toFixed(2)})</span>
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                    <div className="border-t pt-3">
+                      <div className="flex items-baseline justify-between mb-1.5">
+                        <Label className="text-xs">Personalizado</Label>
+                        <span className="text-xs font-mono tabular-nums text-muted-foreground">
+                          z={confidenceZ.toFixed(2)}
+                        </span>
+                      </div>
+                      <Slider
+                        value={[confidenceZ]}
+                        min={Z_MIN}
+                        max={Z_MAX}
+                        step={0.05}
+                        onValueChange={([v]) => setConfidenceZ(v)}
+                        aria-label="Ajustar z personalizado"
+                      />
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full h-7 text-xs"
+                      onClick={() => setConfidenceZ(1)}
+                      disabled={confidenceZ === 1}
+                    >
+                      Restaurar padrão (z=1)
+                    </Button>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </TooltipProvider>
           <span
@@ -318,7 +389,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
           >
             {bandMode === "pi95" && tCritical != null
               ? `PI 95% · t=${tCritical.toFixed(2)} · σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`
-              : `σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`}
+              : `σ ±${stdDev.toFixed(1)}pp · z=${confidenceZ.toFixed(2)} · fit em ${fitN}`}
           </span>
         </CardTitle>
       </CardHeader>
