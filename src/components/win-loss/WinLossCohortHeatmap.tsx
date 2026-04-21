@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Grid3x3 } from "lucide-react";
@@ -18,7 +18,7 @@ const cellTone = (winRate: number, total: number): string => {
   return "bg-rose-500/60 text-white";
 };
 
-export function WinLossCohortHeatmap({ rows, onCellClick }: Props) {
+export const WinLossCohortHeatmap = memo(function WinLossCohortHeatmap({ rows, onCellClick }: Props) {
   const { cells, createdMonths, closedMonths } = useWinLossCohort(rows);
 
   const matrix = useMemo(() => {
@@ -54,12 +54,12 @@ export function WinLossCohortHeatmap({ rows, onCellClick }: Props) {
       <CardContent>
         <TooltipProvider delayDuration={200}>
           <div className="overflow-x-auto">
-            <table className="text-[11px] border-separate border-spacing-1">
+            <table className="text-[11px] border-separate border-spacing-1" role="grid" aria-label="Cohort de Win Rate · safra de criação por mês de fechamento">
               <thead>
-                <tr>
-                  <th className="text-left text-muted-foreground font-normal px-1">Criado ↓ / Fechado →</th>
+                <tr role="row">
+                  <th className="text-left text-muted-foreground font-normal px-1" scope="col">Criado ↓ / Fechado →</th>
                   {closedMonths.map(cm => (
-                    <th key={cm} className="text-muted-foreground font-normal px-1 tabular-nums">{cm}</th>
+                    <th key={cm} className="text-muted-foreground font-normal px-1 tabular-nums" scope="col">{cm}</th>
                   ))}
                 </tr>
               </thead>
@@ -105,4 +105,4 @@ export function WinLossCohortHeatmap({ rows, onCellClick }: Props) {
       </CardContent>
     </Card>
   );
-}
+});

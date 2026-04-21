@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -11,7 +11,7 @@ interface Props {
   onPointClick?: (period: string) => void;
 }
 
-export function WinLossTrendChart({ monthly, weekly, onPointClick }: Props) {
+export const WinLossTrendChart = memo(function WinLossTrendChart({ monthly, weekly, onPointClick }: Props) {
   const [gran, setGran] = useState<"week" | "month">("month");
   const [compare, setCompare] = useState(false);
   const data = gran === "week" ? weekly : monthly;
@@ -90,4 +90,4 @@ export function WinLossTrendChart({ monthly, weekly, onPointClick }: Props) {
       </CardContent>
     </Card>
   );
-}
+});

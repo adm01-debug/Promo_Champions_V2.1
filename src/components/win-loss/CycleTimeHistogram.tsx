@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { Hourglass } from "lucide-react";
@@ -19,7 +19,7 @@ const BINS: { label: string; min: number; max: number }[] = [
 
 interface BinDatum { label: string; won: number; lost: number }
 
-export function CycleTimeHistogram({ rows, onBinClick }: Props) {
+export const CycleTimeHistogram = memo(function CycleTimeHistogram({ rows, onBinClick }: Props) {
   const data: BinDatum[] = useMemo(() => {
     const buckets = BINS.map(b => ({ label: b.label, won: 0, lost: 0 }));
     rows.forEach(r => {
@@ -78,4 +78,4 @@ export function CycleTimeHistogram({ rows, onBinClick }: Props) {
       </CardContent>
     </Card>
   );
-}
+});

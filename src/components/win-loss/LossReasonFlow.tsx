@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, Treemap, Tooltip } from "recharts";
 import { GitBranch } from "lucide-react";
@@ -22,7 +22,7 @@ const COLORS = [
   "hsl(40 90% 55%)",
 ];
 
-export function LossReasonFlow({ rows, onLeafClick }: Props) {
+export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }: Props) {
   const data: Node[] = useMemo(() => {
     const grouped = new Map<string, Map<string, number>>();
     rows.filter(r => r.outcome === "lost").forEach(r => {
@@ -82,4 +82,4 @@ export function LossReasonFlow({ rows, onLeafClick }: Props) {
       </CardContent>
     </Card>
   );
-}
+});
