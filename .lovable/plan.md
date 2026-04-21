@@ -1,63 +1,44 @@
 
 
-## Detalhar keywords competitivas detectadas no debug
+## Persistência do modo debug no painel "Deals em risco"
 
-### Estado atual
-`RiskDebugPanel` já mostra `breakdown.matched_keywords` em duas formas:
-- Como pills `warning` na seção "Sinais detectados".
-- Como pills inline na linha de razão "Possível pressão competitiva detectada".
+### Diagnóstico
+A persistência **já existe e funciona** — a auditoria do código mostra:
 
-Mas falta transparência sobre **como** cada keyword foi detectada:
-- Qual termo do regex casou (ex.: detectado `leila` dentro de `"leilao_publico"`).
-- A substring original em que o match aconteceu (`leilao_publico`).
-- Qual a confiança do `competitor` pattern utilizada para essa decisão.
+- `useAtRiskSettings` (`src/hooks/win-loss/useAtRiskSettings.ts`) já tem `debug: boolean` no schema (v2), grava em `localStorage` (chave `winloss-at-risk-settings`) via `useEffect` e re-hidrata na inicialização via `read()`.
+- `AtRiskSettingsPopover` liga o `Switch` "Modo debug" diretamente a `onUpdate({ debug: v })`, sem state local efêmero.
+- `AtRiskDealsFromPatterns` consome `settings.debug` direto do hook persistido.
+- `useAtRiskSettings.test.ts` cobre: persistência do flag debug, migração v1→v2 preservando valor default, sanitização booleana.
 
-`extractCompetitorKeywords(deal.source)` hoje retorna apenas `string[]` — perdendo o offset, a substring original e o regex que casou.
+Resultado: ao recarregar a página, `settings.debug` volta com o último valor escolhido. **Nada falta na persistência.**
 
-### O que será feito
+### O gap real
+O que falta é **feedback visual** de que o modo debug está ligado quando o popover está fechado — hoje o usuário não sabe se reativou ou não sem reabrir o popover. Vou adicionar isso.
 
-**1. Estender `extractCompetitorKeywords` em `scoring.ts`**
-Manter a assinatura atual e adicionar uma função companheira `extractCompetitorMatches(source: string | null)` que retorna `Array<{ keyword: string; matched_substring: string; regex: string }>` — uma entrada por match único (dedup case-insensitive por `keyword`). A função antiga continua existindo (re-implementada como `extractCompetitorMatches(...).map(m => m.keyword)`) para não quebrar testes.
+### Mudanças
 
-**2. Expor no breakdown**
-Adicionar campo opcional `competitor_matches?: Array<{ keyword: string; matched_substring: string; regex: string; confidence: number }>` no tipo `RiskBreakdown` (em `scoring.ts` e refletido em `useAtRiskFromPatterns.ts`).
-- `confidence`: vem do `bestCompetitor` pattern (maior `confidence` entre `pattern_type === "competitor"`), ou `0.5` se nenhum competitor pattern existir mas a regex casou (fallback).
-- Populado apenas quando `matches.length > 0`. `matched_keywords` continua existindo (compat).
+**1. `src/components/win-loss/AtRiskSettingsPopover.tsx`**
+- No `PopoverTrigger`, adicionar um pequeno indicador (ícone `Bug` 10px ou ponto âmbar) ao lado do badge `≥{threshold}` quando `settings.debug === true`.
+- Atualizar `aria-label` do trigger para incluir "debug ativo" quando ligado.
+- Atualizar `title` para refletir estado.
 
-**3. Nova seção visual no `RiskDebugPanel`**
-Renderizar — entre "Sinais detectados" e "Razões" — um bloco condicional só quando `breakdown.competitor_matches?.length > 0`:
-```
-KEYWORDS COMPETITIVAS DETECTADAS (3)
-┌─ Swords  leilão              conf 70%
-│  match: "leilao_publico"     regex: /leila/i
-├─ Swords  cotação             conf 70%
-│  match: "COTACAO"            regex: /cota/i
-└─ Swords  concorrência        conf 70%
-   match: "concorrencia"       regex: /concorr/i
-```
-Implementação:
-- `<ul>` com cada `<li>` em `flex flex-col` com border esquerda destructive.
-- Linha 1: ícone Swords + nome da keyword (Badge `destructive`) + Badge `conf XX%`.
-- Linha 2: `match: "<substring>"` (mono, `bg-muted`) e `regex: /xxx/i` (mono, `text-muted-foreground`).
-- `aria-label` na `<li>`: `"Keyword competitiva: leilão, casou em 'leilao_publico' via /leila/i, confiança 70%"`.
-- Texto curto em rodapé: `"baseado no padrão de maior confiança do tipo competitor"`.
+**2. `src/components/win-loss/AtRiskDealsFromPatterns.tsx`**
+- Quando `settings.debug` estiver ativo, exibir uma `Badge` discreta `variant="outline"` com ícone `Bug` no header do card (ao lado do título "Deals em risco — padrões de loss"), clicável para desligar rapidamente via `update({ debug: false })`. Isso dá:
+  - Confirmação visual imediata pós-reload de que o modo persistiu.
+  - Atalho para sair do modo sem reabrir o popover.
 
-**4. Cobertura de teste (Deno)**
-Adicionar 1 caso em `debug_breakdown_test.ts`:
-- Source `"leilao_publico, COTACAO, inbound_form"` → `competitor_matches.length === 2`, primeira entry tem `matched_substring === "leilao_publico"` e `regex.includes("leila")`, todas têm `confidence === 0.7` (vindo do `Concorrente X` pattern).
-- Source sem match → `competitor_matches` é `undefined`/vazio.
+**3. `src/test/hooks/useAtRiskSettings.test.ts`**
+- Adicionar 1 teste explícito: "debug flag survives remount" — montar o hook, ligar debug, desmontar, remontar e verificar `settings.debug === true` (simula reload).
 
-### Mudanças técnicas
-- **Editar** `supabase/functions/detect-winloss-at-risk/scoring.ts`: nova `extractCompetitorMatches`, refator de `extractCompetitorKeywords` em cima dela, novo campo no `RiskBreakdown`, popular no `computeDealRisk` lendo `bestCompetitor.confidence`.
-- **Editar** `src/hooks/win-loss/useAtRiskFromPatterns.ts`: adicionar campo opcional `competitor_matches` no tipo `RiskBreakdown`.
-- **Editar** `src/components/win-loss/RiskDebugPanel.tsx`: nova seção condicional "Keywords competitivas detectadas".
-- **Editar** `supabase/functions/detect-winloss-at-risk/debug_breakdown_test.ts`: 1 novo `Deno.test` para o shape de `competitor_matches`.
-- **Não tocar** em `index.ts` da edge, fixtures, hooks de UI ou outros componentes — payload é puramente aditivo.
+### Critérios de aceite
+1. Ligar debug → recarregar página (F5) → painel renderiza com debug já ativo, sem clique extra.
+2. Header do card mostra badge `Bug "Debug"` quando ativo; some quando desligado.
+3. Trigger do popover mostra dot/ícone âmbar quando debug ativo (visível mesmo com popover fechado).
+4. Clicar na badge do header desliga debug e remove a badge instantaneamente; valor persiste como `false` em `localStorage`.
+5. Testes de hook (incluindo o novo "survives remount") passam.
 
-### Verificação
-1. `supabase--test_edge_functions ["detect-winloss-at-risk"]` → todos os ~50 verdes + 1 novo.
-2. Ativar Debug em deal com `source = "leilao_publico"` → seção lista 1 keyword com substring `"leilao_publico"`, regex `/leila/i`, confiança 70%.
-3. Deal sem source competitivo → seção não aparece (sem ruído visual).
-4. Deal com 3 keywords distintas no source → 3 entries; nenhuma duplicada se a mesma keyword aparece duas vezes (`COTACAO, cotacao` → 1 entry).
-5. Inspeção a11y: leitor de tela anuncia `aria-label` completo de cada match.
+### Arquivos tocados
+- `src/components/win-loss/AtRiskSettingsPopover.tsx` (indicador no trigger)
+- `src/components/win-loss/AtRiskDealsFromPatterns.tsx` (badge no header + atalho)
+- `src/test/hooks/useAtRiskSettings.test.ts` (teste de remount)
 
