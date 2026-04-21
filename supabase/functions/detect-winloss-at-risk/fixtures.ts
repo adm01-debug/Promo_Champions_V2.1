@@ -76,8 +76,12 @@ export interface ScenarioExpect {
   patternTypeOneOf?: string[];
   /** Each substring must appear in at least one of `result.reasons` (case-insensitive). */
   reasonsInclude?: string[];
-  /** Substring that must appear in `result.suggested_action` (case-insensitive). */
-  actionIncludes?: string;
+  /**
+   * Substring(s) that must appear in `result.suggested_action` (case-insensitive).
+   * - `string`: substring must appear.
+   * - `string[]`: OR semantics — at least one substring must appear.
+   */
+  actionIncludes?: string | string[];
 }
 
 export interface Scenario {
