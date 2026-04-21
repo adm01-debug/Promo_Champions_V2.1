@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X, SkipForward } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X, SkipForward, Copy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -47,6 +47,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
   const [lastResults, setLastResults] = useState<Map<string, "ok" | "skipped" | "fail">>(
     new Map(),
   );
+  const [requestIds, setRequestIds] = useState<Map<string, string>>(new Map());
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   // Reset selection when drawer closes
@@ -54,6 +55,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
     if (!open) {
       setSelected(new Set());
       setProcessingIds(new Set());
+      setRequestIds(new Map());
     }
   }, [open]);
 
@@ -82,8 +84,21 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
 
   const recordResults = (
     ids: string[],
-    payload: { results: Array<{ id: string; succeeded: boolean; skipped?: boolean }> } | undefined,
+    payload:
+      | {
+          requestId?: string;
+          results: Array<{ id: string; succeeded: boolean; skipped?: boolean }>;
+        }
+      | undefined,
   ) => {
+    const reqId = payload?.requestId;
+    if (reqId) {
+      setRequestIds((prev) => {
+        const next = new Map(prev);
+        for (const id of ids) next.set(id, reqId);
+        return next;
+      });
+    }
     setLastResults((prev) => {
       const next = new Map(prev);
       const returned = new Set<string>();
