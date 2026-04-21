@@ -43,16 +43,24 @@ describe("useWinLossScenarios", () => {
   });
 
   it("computes residual σ correctly (not population σ around mean)", () => {
-    // y = [10, 22, 30, 42, 50]: linha quase perfeita 0, 12, 20, 32, 40 vs ajuste.
-    // Slope ≈ 10.4, intercept ≈ 8.8 → resíduos ≈ [1.2, 2.8, -0.8, 0.6, -3.6]
-    // SSE ≈ 22.8 → σ = sqrt(22.8/3) ≈ 2.76
-    const { result } = renderHook(() =>
-      useWinLossScenarios(mkPoints([10, 22, 30, 42, 50])),
-    );
-    expect(result.current.stdDev).toBeGreaterThan(2);
-    expect(result.current.stdDev).toBeLessThan(4);
-    // Importante: σ residual << σ populacional (que seria ~14.4 vs média).
-    expect(result.current.stdDev).toBeLessThan(5);
+    // y = [10, 22, 30, 42, 50] — quase linear. Slope ≈ 10.4, σ residual ≈ 1.26.
+    // Crucialmente, σ POPULACIONAL ao redor da média (30.8) seria ≈ 14.7.
+    // Esse teste prova que estamos medindo ruído ao redor do trend, NÃO a
+    // dispersão dos valores absolutos.
+    const points = mkPoints([10, 22, 30, 42, 50]);
+    const { result } = renderHook(() => useWinLossScenarios(points));
+
+    // População σ (vs média) — referência manual.
+    const ys = points.map((p) => p.winRate);
+    const mean = ys.reduce((a, b) => a + b, 0) / ys.length;
+    const populationStd = Math.sqrt(ys.reduce((a, y) => a + (y - mean) ** 2, 0) / ys.length);
+
+    expect(populationStd).toBeGreaterThan(14); // ~14.7
+    expect(result.current.stdDev).toBeGreaterThan(0.5);
+    expect(result.current.stdDev).toBeLessThan(3);
+    // O ponto-chave: residual << populacional. Antes do refactor as bandas usavam
+    // o populacional, inflando a incerteza. Agora reflete ruído real.
+    expect(result.current.stdDev).toBeLessThan(populationStd / 5);
   });
 
   it("forecast bands widen with horizon", () => {
