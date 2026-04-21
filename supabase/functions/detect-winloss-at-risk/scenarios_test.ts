@@ -120,3 +120,93 @@ Deno.test("scenarios: every included scenario declares actionIncludes (anti-regr
     `included scenarios missing actionIncludes (suggested_action coherence not asserted): ${missing.join(", ")}`,
   );
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tabular tests: load all fixtures at once and validate the entire table in
+// aggregated assertions (better for at-a-glance review and bulk diagnostics).
+// ─────────────────────────────────────────────────────────────────────────────
+
+function actionNeedles(a: string | string[] | undefined): string[] {
+  if (a === undefined) return [];
+  return Array.isArray(a) ? a : [a];
+}
+
+Deno.test("fixtures table: included flag matches threshold filter (40)", () => {
+  const diff: Array<{ name: string; expected: boolean; got: boolean; score: number | null }> = [];
+  for (const s of SCENARIOS) {
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+    const gotIncluded = r !== null;
+    if (gotIncluded !== s.expect.included) {
+      diff.push({ name: s.name, expected: s.expect.included, got: gotIncluded, score: r?.risk_score ?? null });
+    }
+  }
+  assertEquals(
+    diff,
+    [],
+    `included-flag mismatches:\n${diff.map((d) => `  - ${d.name}: expected included=${d.expected}, got=${d.got} (score=${d.score})`).join("\n")}`,
+  );
+});
+
+Deno.test("fixtures table: every included scenario respects minScore/maxScore + 0–100", () => {
+  const violations: string[] = [];
+  for (const s of SCENARIOS) {
+    if (!s.expect.included) continue;
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+    if (!r) {
+      violations.push(`${s.name}: expected included but got null`);
+      continue;
+    }
+    if (r.risk_score < 0 || r.risk_score > 100) {
+      violations.push(`${s.name}: score ${r.risk_score} out of [0,100]`);
+    }
+    if (typeof s.expect.minScore === "number" && r.risk_score < s.expect.minScore) {
+      violations.push(`${s.name}: score ${r.risk_score} < minScore ${s.expect.minScore}`);
+    }
+    if (typeof s.expect.maxScore === "number" && r.risk_score > s.expect.maxScore) {
+      violations.push(`${s.name}: score ${r.risk_score} > maxScore ${s.expect.maxScore}`);
+    }
+  }
+  assertEquals(violations, [], `score-band violations:\n  - ${violations.join("\n  - ")}`);
+});
+
+Deno.test("fixtures table: reasons & action substrings present per scenario", () => {
+  const failures: string[] = [];
+  for (const s of SCENARIOS) {
+    if (!s.expect.included) continue;
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+    if (!r) {
+      failures.push(`${s.name}: expected included but got null`);
+      continue;
+    }
+    // reasonsInclude → all needles must hit some reason (AND).
+    for (const needle of s.expect.reasonsInclude ?? []) {
+      const hit = r.reasons.some((reason) => includesCI(reason, needle));
+      if (!hit) {
+        failures.push(`${s.name}: reason needle "${needle}" not found in ${JSON.stringify(r.reasons)}`);
+      }
+    }
+    // actionIncludes → string=AND single, array=OR (any match).
+    const needles = actionNeedles(s.expect.actionIncludes);
+    if (needles.length > 0) {
+      const hit = needles.some((n) => includesCI(r.suggested_action, n));
+      if (!hit) {
+        failures.push(`${s.name}: action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`);
+      }
+    }
+  }
+  assertEquals(failures, [], `reasons/action substring failures:\n  - ${failures.join("\n  - ")}`);
+});
+
+Deno.test("fixtures table: excluded scenarios stay below threshold even at threshold=0", () => {
+  const violations: string[] = [];
+  for (const s of SCENARIOS) {
+    if (s.expect.included) continue;
+    // threshold=0 → never returns null due to filter; only null if no signals at all.
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 0);
+    const score = r?.risk_score ?? 0;
+    if (score >= 40) {
+      violations.push(`${s.name}: excluded but score ${score} >= 40 at threshold=0 (would leak in)`);
+    }
+  }
+  assertEquals(violations, [], `excluded-but-leaky scenarios:\n  - ${violations.join("\n  - ")}`);
+});
