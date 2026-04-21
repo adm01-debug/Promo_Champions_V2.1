@@ -132,7 +132,7 @@ export function WebhookDeadLetterPanel({
           </div>
         )}
 
-        <ScrollArea className="max-h-[420px] pr-2">
+        <ScrollArea className={fullWidth ? "max-h-[70vh] pr-2" : "max-h-[420px] pr-2"}>
           <ul className="space-y-1.5" role="list" aria-label="Dead letters">
             {list.isLoading && <li className="text-xs text-muted-foreground py-3 text-center">Carregando…</li>}
             {!list.isLoading && items.length === 0 && (
