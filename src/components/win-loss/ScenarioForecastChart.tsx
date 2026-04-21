@@ -83,7 +83,11 @@ function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
   );
 }
 
-export const ScenarioForecastChart = memo(function ScenarioForecastChart({ points }: Props) {
+export const ScenarioForecastChart = memo(function ScenarioForecastChart({
+  points,
+  horizon = 3,
+  onHorizonChange,
+}: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
 
   useEffect(() => {
@@ -96,7 +100,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
 
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
     useWinLossScenarios(points, {
-      forecastSteps: 3,
+      forecastSteps: horizon,
       bandMode,
     });
 
@@ -128,8 +132,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode]);
+    return `scenario-${bandMode}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon]);
 
   if (!data.length) {
     return (
