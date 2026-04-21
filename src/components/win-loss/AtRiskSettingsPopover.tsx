@@ -62,8 +62,8 @@ export function AtRiskSettingsPopover({
           size="sm"
           variant="ghost"
           className="h-7 px-2 gap-1"
-          aria-label="Configurar filtros de risco"
-          title="Ajustar score, filtros e debug"
+          aria-label={`Configurar filtros de risco${settings.debug ? " (debug ativo)" : ""}`}
+          title={settings.debug ? "Ajustar score, filtros e debug (debug ativo)" : "Ajustar score, filtros e debug"}
         >
           <SlidersHorizontal className="h-3 w-3" />
           <span className="text-[10px] font-medium tabular-nums">≥{settings.threshold}</span>
