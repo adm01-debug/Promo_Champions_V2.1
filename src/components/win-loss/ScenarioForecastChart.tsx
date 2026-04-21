@@ -547,6 +547,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
       <ScenarioForecastAuditPanel
         slope={slope}
