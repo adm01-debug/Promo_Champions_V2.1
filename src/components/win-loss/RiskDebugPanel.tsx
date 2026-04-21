@@ -1,45 +1,44 @@
-import { Clock, DollarSign, Layers, Swords, Info, type LucideIcon } from "lucide-react";
-import { Badge, type BadgeProps } from "@/components/ui/badge";
-import type { RiskBreakdown } from "@/hooks/win-loss/useAtRiskFromPatterns";
+import { Swords } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import type { RiskBreakdown, RiskReason } from "@/hooks/win-loss/useAtRiskFromPatterns";
+import {
+  getReasonKindMeta,
+  inferReasonCode,
+} from "@/lib/winloss/riskReasons";
 
-type ReasonKind = "stagnation" | "amount" | "stage" | "competitor" | "generic";
-
-interface KindMeta {
-  icon: LucideIcon;
-  label: string;
-  variant: BadgeProps["variant"];
-  color: string;
+/** Build a RiskReason-shaped record from a legacy free-form string. */
+function reasonFromLegacy(message: string, b: RiskBreakdown): RiskReason {
+  const code = inferReasonCode(message);
+  let contribution = 0;
+  switch (code) {
+    case "STAGNATION_HIGH":
+    case "STAGNATION_LOW":
+      contribution = b.stagnation;
+      break;
+    case "AMOUNT_ALIGNED":
+      contribution = b.amount_alignment;
+      break;
+    case "STAGE_STUCK":
+      contribution = b.stage_match;
+      break;
+    case "COMPETITOR_PRESSURE":
+      contribution = b.matched_keywords?.length ?? 0;
+      break;
+    default:
+      contribution = 0;
+  }
+  return {
+    code,
+    message,
+    params: {},
+    source: getReasonKindMeta(code).source,
+    contribution,
+  };
 }
 
-const KIND_META: Record<ReasonKind, KindMeta> = {
-  stagnation: { icon: Clock, label: "Estagnação", variant: "warning", color: "text-warning" },
-  amount: { icon: DollarSign, label: "Ticket", variant: "qualified", color: "text-primary" },
-  stage: { icon: Layers, label: "Estágio", variant: "secondary", color: "text-secondary-foreground" },
-  competitor: { icon: Swords, label: "Concorrência", variant: "destructive", color: "text-destructive" },
-  generic: { icon: Info, label: "Sinal", variant: "outline", color: "text-muted-foreground" },
-};
-
-interface ClassifiedReason {
-  kind: ReasonKind;
-  contribValue: number | null;
-  contribMax: number | null;
-}
-
-function classifyReason(reason: string, b: RiskBreakdown): ClassifiedReason {
-  if (/dias sem atualização/i.test(reason)) {
-    return { kind: "stagnation", contribValue: b.stagnation, contribMax: 50 };
-  }
-  if (/^ticket alinhado/i.test(reason)) {
-    return { kind: "amount", contribValue: b.amount_alignment, contribMax: 25 };
-  }
-  if (/estágio .* travado/i.test(reason)) {
-    return { kind: "stage", contribValue: b.stage_match, contribMax: 25 };
-  }
-  if (/pressão competitiva/i.test(reason)) {
-    const len = b.matched_keywords?.length ?? 0;
-    return { kind: "competitor", contribValue: len, contribMax: Math.max(1, len) };
-  }
-  return { kind: "generic", contribValue: null, contribMax: null };
+function resolveReasons(b: RiskBreakdown): RiskReason[] {
+  if (b.reasons_v2 && b.reasons_v2.length > 0) return b.reasons_v2;
+  return (b.reasons ?? []).map((m) => reasonFromLegacy(m, b));
 }
 
 /**
