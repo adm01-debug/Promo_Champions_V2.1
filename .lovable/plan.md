@@ -1,43 +1,44 @@
 
 
-## Fórmula completa do risk_score passo a passo no debug
+## Realçar reasons no debug com vínculo aos campos do breakdown
 
 ### Estado atual
-`RiskDebugPanel` já mostra contribuições por componente (estagnação, ticket, estágio) com barras, mas a fórmula final aparece comprimida em uma única linha: `raw 78 × conf 0.85 = 66`. Isso esconde:
-- O que cada parcela soma para formar o `raw`.
-- O piso/teto aplicado em `confidence_weight` (max(0.5, min(1, conf))).
-- O `Math.round` antes do clamp.
-- O clamp final em [0, 100] e quando ele dispara.
+`RiskDebugPanel` exibe `breakdown.reasons` como uma `<ul>` simples de bullets cinza — texto puro, sem indicação visual de qual sinal originou cada razão. Hoje o leitor precisa cruzar mentalmente:
+- `"23 dias sem atualização (média de loss: 18d)"` ← `stagnation` + `days_stagnant` + `avg_loss_cycle_days`
+- `"Ticket alinhado ao perfil típico de loss (45.000)"` ← `amount_alignment` + `avg_loss_amount`
+- `"Estágio "Negociação" historicamente travado"` ← `stage_match` + `stage_eligible`
+- `"Possível pressão competitiva detectada (concorrente, leilão)"` ← `matched_keywords`
 
-A fórmula real (de `scoring.ts`): `final = clamp(0, 100, round((stagnation + amount_alignment + stage_match) × max(0.5, min(1, matched_confidence))))`.
+As razões saem do edge function (`scoring.ts` linhas 258–274) com prefixos estáveis em PT-BR — basta classificar no client, sem mexer no servidor.
 
 ### O que será feito
 
-Substituir a linha única de fórmula em `RiskDebugPanel.tsx` por uma lista numerada de 4 passos, cada um em um bloco mono-espaçado, com os valores numéricos reais do deal:
+**1. Helper local `classifyReason(reason, breakdown)` em `RiskDebugPanel.tsx`**
+Retorna `{ kind, icon, badgeLabel, contribValue, contribMax, accent }` casando por regex case-insensitive:
+- `/dias sem atualização/` → `stagnation` (ícone Clock, "Estagnação", value=`breakdown.stagnation`/50, accent amber)
+- `/^ticket alinhado/` → `amount` (DollarSign, "Ticket", value=`breakdown.amount_alignment`/25, accent primary)
+- `/estágio .* travado/` → `stage` (Layers, "Estágio", value=`breakdown.stage_match`/25, accent secondary)
+- `/pressão competitiva/` → `competitor` (Swords, "Concorrência", value=`matched_keywords?.length`, accent destructive)
+- fallback → `generic` (Info, "Sinal", sem contribuição numérica)
 
-```
-1. raw = 40 (estag) + 18 (ticket) + 20 (estágio) = 78/100
-2. conf_weight = max(0.5, min(1, 0.85)) = 0.85
-3. round(78 × 0.85) = 66
-4. clamp(0, 100) → final = 66/100
-```
+**2. Renderização rica das reasons**
+Substituir o `<ul className="list-disc">` final por uma lista em que cada `<li>` contém:
+- Ícone do tipo + Badge compacta (`"Estagnação 40/50"`, `tabular-nums`).
+- Texto da razão com **trechos numéricos destacados** via helper `highlightNumbers(text)` que envolve matches de `\d[\d.,]*d?` em `<mark>` com classes `bg-primary/10 text-primary px-0.5 rounded font-medium tabular-nums` (sem amarelo nativo).
+- Quando `kind === "competitor"`, cada keyword vira `<Badge variant="warning">` inline substituindo o trecho parentético.
+- `aria-label` na `<li>` resume: `"Razão de risco: Estagnação, contribui 40/50"`.
 
-Cada passo:
-- Renderiza valores numéricos atuais (sem placeholders).
-- Marca visualmente quando piso/teto disparam:
-  - Passo 2: "(piso aplicado)" se `matched_confidence < 0.5`; "(teto aplicado)" se `> 1`.
-  - Passo 4: "(teto 100 aplicado)" / "(piso 0 aplicado)" quando o `round` saiu do intervalo.
-- O passo final destacado com borda/bg `primary` para fechar o raciocínio.
-
-Sem mudança em scoring, edge function, hooks ou tipos — o `RiskBreakdown` já expõe `raw_score`, `confidence_weight`, `final_score` e `matched_confidence`.
+**3. Conexão visual com o breakdown**
+Manter o título "Razões" e adicionar subtítulo: `"cada item liga a um campo do cálculo acima"` em `text-muted-foreground text-[10px]`.
 
 ### Mudanças técnicas
-- **Editar** `src/components/win-loss/RiskDebugPanel.tsx`: substituir o `<div>` de fórmula compacta (linhas 53–57) pela seção "Fórmula passo a passo" com `<ol>` de 4 `<li>` mono-espaçados. Manter `aria-label="Detalhes de cálculo do risco"` no container externo.
-- **Não tocar** em `scoring.ts`, edge function, hooks (`useAtRiskFromPatterns`), `AtRiskDealsFromPatterns` nem testes Deno.
+- **Editar** `src/components/win-loss/RiskDebugPanel.tsx`: adicionar `KIND_META`, `classifyReason`, `highlightNumbers`, reescrever bloco "Razões".
+- **Não tocar** em `scoring.ts`, edge function, hooks, fixtures, testes Deno ou qualquer outro arquivo — prefixos já são determinísticos no servidor.
 
 ### Verificação
-1. Ativar Modo Debug no popover do painel "Deals em risco" → cada deal mostra a lista numerada com valores reais.
-2. Deal com `matched_confidence = 0.3` → passo 2 marca "(piso aplicado)" e usa `0.50`.
-3. Deal com `raw × conf > 100` (cenário extremo de teste) → passo 4 marca "(teto 100 aplicado)".
-4. Conferência aritmética: passo 1 deve bater com a soma das 3 barras de contribuição já exibidas acima; passo 4 deve bater com o número grande do badge de risco do card.
+1. Ativar Debug em deal de "Negociação travada" → 3 reasons com ícone+badge corretos; `23`, `18d`, `45.000` realçados em primary.
+2. Deal com keywords competitivas → linha exibe ícone Swords e cada keyword como pill `warning`.
+3. Reason fallback (`"Sinais cruzados de risco"`) → badge neutra "Sinal", sem contribuição, layout estável.
+4. Inspeção a11y: cada `<li>` tem `aria-label` descritivo com nome do sinal e contribuição.
+5. Trocar temporariamente o prefixo de uma reason em `scoring.ts` → a row cai para `generic` (prova que classificação é por prefixo, não global).
 
