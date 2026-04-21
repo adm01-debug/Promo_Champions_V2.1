@@ -214,6 +214,8 @@ export const SCENARIOS: Scenario[] = [
       // 45d satura stagnation (50) → ultrapassa stage_match (20), então loss_factor pode dominar.
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["45 dias"],
+      // medium severity → "valor"/"ROI"/"semana"
+      actionIncludes: ["valor", "ROI", "semana"],
     },
   },
   {
