@@ -1,61 +1,126 @@
 
 
-## Seção "Severidade & matriz de ação" no `RiskDebugPanel`
+## Matriz exaustiva `patternType × severity × outcome` para `suggested_action`
 
-### Estado atual
-O `RiskDebugPanel` já mostra contribuições, fórmula passo-a-passo do score, padrão dominante (com badge minúscula de severity), sinais e razões. **Falta** explicar **como** `severity` foi derivada e **qual linha** da matriz `(patternType × severity)` produziu a `suggested_action`. Hoje o usuário vê o resultado mas não a regra.
+### Objetivo
+Criar **um único teste tabular** que percorre todas as combinações de `patternType` × `severity` × `outcome` e valida, para cada célula:
+1. `suggested_action` contém as **keywords esperadas** daquela célula.
+2. `suggested_action` **não contém marcadores de urgência** (`URGENTE`, `IMEDIATA`, `24h`, `hoje`) quando severity é `medium`/`low` ou quando é override `won`/`win_factor`.
+3. A frase tem ≥ 15 chars e é determinística (mesma entrada → mesma saída).
 
-### O que será adicionado
+### Espaço da matriz
 
-**Nova seção "Severidade" entre "Fórmula passo a passo" e "Padrão dominante"**:
+- `patternType`: `loss_factor`, `stuck_stage`, `competitor`, `win_factor`, `generic` (5)
+- `severity`: `critical`, `high`, `medium`, `low` (4)
+- `outcome`: `lost`, `won`, `null` (3)
 
-1. **Tabela visual das 4 regras** (`severityFromScore`, espelho determinístico do backend):
-   - `score ≥ 80 ∧ conf ≥ 0.7` → `critical`
-   - `score ≥ 65` → `high`
-   - `score ≥ 50` → `medium`
-   - `< 50` → `low`
-   - A linha aplicada recebe `bg-primary/10` + ícone `CheckCircle2`. Outras ficam opacas com `XCircle`.
-   - Cada linha mostra os valores efetivos em monospace ao lado: `final=72  conf=0.80`.
+Total: **5 × 4 × 3 = 60 células**, todas geradas e asseridas via `t.step` dinâmico.
 
-2. **Bloco "Matriz de ação acionada"**:
-   - `matriz: <patternType> × <severity>` em mono.
-   - Casos especiais:
-     - `outcome === "won"` ou `patternType === "win_factor"` → `override: outcome=won → frase positiva`.
-     - `patternType` desconhecido (`generic`, `null`, `""`) → `fallback: branch default`.
-   - Logo abaixo, a `suggested_action` em destaque num bloco `border-primary/30` para marcar que aquela é a frase derivada da matriz.
+### Tabela de keywords esperadas (espelho de `scoring.ts:256-292`)
 
-3. **Severity badge** no padrão dominante continua existindo — agora com contexto logo acima.
+| patternType   | critical                                  | high                          | medium                         | low                            |
+|---------------|-------------------------------------------|-------------------------------|--------------------------------|--------------------------------|
+| `loss_factor` | `IMEDIATA`, `24h`, `resgate`              | `48h`, `valor`                | `valor`, `semana`              | `confirmar`, `interesse`       |
+| `stuck_stage` | `URGENTE`, `hoje`, `desbloquear`, `<stage>` | `48h`, `<stage>`            | `semana`, `<stage>`            | `<stage>`, `critério`          |
+| `competitor`  | `24h`, `battle card`, `decisor`           | `48h`, `diferenciação`        | `competitivo`, `contra-argumentos` | `concorrente`, `objeções`  |
+| `generic`     | `urgente`, `gestor`                       | `48h`                         | `72h`                          | `próximo passo`                |
+| `win_factor`  | (override) sempre `vencedora` + `consultiva`, sem urgência (todas as severidades) |
 
-### Detalhes técnicos
+**Override**: para qualquer `patternType`, se `outcome === "won"`, célula esperada = `vencedora`/`reaplicar`, **sem** urgência.
 
-- `RiskDebugPanel` aceita prop opcional nova `suggestedAction?: string` (atualmente recebe só `breakdown` + `riskScore`).
-- Único caller: `AtRiskDealsFromPatterns.tsx` — passa `suggestedAction={deal.suggested_action}`.
-- Helpers puros novos em `src/lib/winloss/riskSeverity.ts`:
-  - `deriveSeverity(final, conf): RiskSeverity` — espelho 1:1 do `severityFromScore` do backend.
-  - `summarizeActionMatrix(type, sev, outcome): { kind: "matrix" | "win-override" | "default-fallback", label: string }`.
-- Tudo via design tokens (`bg-primary/10`, `text-success`, `text-muted-foreground`, `border-primary/30`). Sem cores hard-coded.
+### Regras de "não contém urgência"
+
+`mustNotInclude` aplicado quando:
+- `severity ∈ {medium, low}` (qualquer type não-win) → bloqueia `/URGENTE|IMEDIATA|24h|^hoje\b/i`
+- `patternType === "win_factor"` ou `outcome === "won"` (qualquer severity) → bloqueia urgência **integral**
+
+### Implementação
+
+**Novo arquivo**: `supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts` (~160 linhas)
+
+Estrutura:
+```ts
+import { assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { suggestedActionFor, type RiskSeverity } from "./scoring.ts";
+
+const TYPES = ["loss_factor","stuck_stage","competitor","win_factor","generic"] as const;
+const SEVERITIES: RiskSeverity[] = ["critical","high","medium","low"];
+const OUTCOMES = ["lost","won",null] as const;
+const STAGE = "negotiation";
+const URGENCY_RE = /urgente|imediata|24h|\bhoje\b/i;
+
+const KEYWORDS: Record<string, Record<RiskSeverity, RegExp[]>> = {
+  loss_factor: {
+    critical: [/IMEDIATA/, /24h/, /resgate/i],
+    high:     [/48h/, /valor/i],
+    medium:   [/valor/i, /semana/i],
+    low:      [/confirmar/i, /interesse/i],
+  },
+  stuck_stage: {
+    critical: [/URGENTE/, /hoje/i, /desbloquear/i, new RegExp(STAGE)],
+    high:     [/48h/, new RegExp(STAGE)],
+    medium:   [/semana/i, new RegExp(STAGE)],
+    low:      [new RegExp(STAGE), /critério/i],
+  },
+  competitor: { /* ...idem tabela */ },
+  generic:    { /* ...idem tabela */ },
+};
+
+const WIN_KEYWORDS = [/vencedora|reaplicar/i, /consultiva/i];
+
+Deno.test("matrix: patternType × severity × outcome covers all 60 cells", async (t) => {
+  for (const type of TYPES) {
+    for (const sev of SEVERITIES) {
+      for (const outcome of OUTCOMES) {
+        await t.step(`${type} × ${sev} × ${outcome ?? "null"}`, () => {
+          const action = suggestedActionFor(type, STAGE, { severity: sev, outcome });
+
+          assert(action.trim().length >= 15);
+
+          const isWinOverride = type === "win_factor" || outcome === "won";
+
+          // Determinismo
+          for (let i = 0; i < 5; i++) {
+            const a2 = suggestedActionFor(type, STAGE, { severity: sev, outcome });
+            assert(a2 === action, `non-deterministic for ${type}/${sev}/${outcome}`);
+          }
+
+          if (isWinOverride) {
+            for (const re of WIN_KEYWORDS) assert(re.test(action), `win missing ${re}: "${action}"`);
+            assert(!URGENCY_RE.test(action), `win override leaked urgency: "${action}"`);
+            return;
+          }
+
+          // Matrix branch
+          const keys = type === "generic" ? KEYWORDS_GENERIC[sev] : KEYWORDS[type][sev];
+          for (const re of keys) {
+            assert(re.test(action), `${type}/${sev}: missing ${re} in "${action}"`);
+          }
+
+          if (sev === "medium" || sev === "low") {
+            assert(!URGENCY_RE.test(action), `${type}/${sev} leaked urgency: "${action}"`);
+          }
+        });
+      }
+    }
+  }
+});
+```
+
+Plus 1 teste extra de **interpolação de stage** para `stuck_stage` em 4 stages distintos (`qualified|proposal|negotiation|null`) garantindo que o stage (ou `"atual"`) aparece literalmente.
 
 ### Arquivos
 
-**Novos**
-- `src/lib/winloss/riskSeverity.ts` (~40 linhas)
-- `src/test/lib/riskSeverity.test.ts` — 4 níveis de severity + override won + fallback default + paridade contra fixtures do backend.
+**Novo**
+- `supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts`
 
-**Editados**
-- `src/components/win-loss/RiskDebugPanel.tsx` — nova seção, nova prop opcional.
-- `src/components/win-loss/AtRiskDealsFromPatterns.tsx` — passa `suggestedAction`.
-- `src/lib/winloss/index.ts` — re-export.
+**Não alterado**
+- `scoring.ts`, demais testes — esta matriz é puramente complementar (60 células × asserções).
 
-### Critérios de aceite
-
-1. Debug ativo → cada card AtRisk mostra tabela de 4 regras com a linha aplicada destacada.
-2. Linha "matriz: loss_factor × critical" aparece para deals normais; "override: outcome=won" para wins; "fallback: branch default" para `generic`.
-3. Texto exato de `suggested_action` aparece no bloco destacado da matriz.
-4. `deriveSeverity(final, conf) === breakdown.severity` para todos os fixtures do backend.
-5. `npm test -- riskSeverity` verde; suite Deno do `detect-winloss-at-risk` continua verde (zero mudança no backend).
-
-### Verificação manual
-1. Card severity `critical` → linha `score ≥ 80 ∧ conf ≥ 0.7` destacada, valores efetivos ao lado.
-2. Card severity `medium` → linha do meio destacada, demais opacas.
-3. Bloco "matriz" mostra `patternType × severity` que corresponde ao texto de `suggested_action`.
+### Critério de aceite
+- `supabase--test_edge_functions ["detect-winloss-at-risk"]` 100% verde, incluindo as 60 `t.step` + stage-interpolation.
+- Cobertura explícita das 60 células `(5 types × 4 severities × 3 outcomes)`.
+- Toda célula `medium`/`low` (não-win) prova ausência de urgência.
+- Todo override `win` (qualquer severidade) prova ausência de urgência + presença de `vencedora`/`reaplicar`/`consultiva`.
+- Determinismo verificado 5× por célula.
 
