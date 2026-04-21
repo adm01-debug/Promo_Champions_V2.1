@@ -165,6 +165,8 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.reasonCodes).toEqual([]);
     expect(result.current.settings.stageFilter).toEqual([]);
   });
+
+  it("debug flag survives unmount/remount (simulates page reload)", () => {
     const first = renderHook(() => useAtRiskSettings());
     act(() => first.result.current.update({ debug: true, threshold: 55 }));
     expect(first.result.current.settings.debug).toBe(true);
