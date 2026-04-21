@@ -2,6 +2,7 @@ import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.t
 import {
   computeDealRisk,
   extractCompetitorKeywords,
+  extractCompetitorMatches,
   type LossPattern,
   type OpenDeal,
 } from "./scoring.ts";
