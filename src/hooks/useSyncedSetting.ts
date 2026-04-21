@@ -94,12 +94,14 @@ export function useSyncedSetting<T>(opts: Options<T>) {
         const { error } = await supabase
           .from("user_app_settings")
           .upsert(
-            {
-              user_id: userId,
-              key: opts.key,
-              value: next as unknown as Record<string, unknown>,
-              updated_at: updatedAt,
-            },
+            [
+              {
+                user_id: userId,
+                key: opts.key,
+                value: next as unknown as Record<string, unknown>,
+                updated_at: updatedAt,
+              },
+            ],
             { onConflict: "user_id,key" },
           );
         setSyncStatus(error ? "error" : "synced");
