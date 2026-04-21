@@ -219,6 +219,10 @@ export default function WinLossIntelligence() {
             onLoadView={handleLoadView}
           />
 
+          <div className="flex justify-end no-print">
+            <ExportPdfButton filters={filters} />
+          </div>
+
           <div className="no-print">
             <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
           </div>
