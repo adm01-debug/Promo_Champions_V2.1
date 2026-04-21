@@ -126,6 +126,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 90,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["21 dias", "Ticket alinhado"],
+      // medium severity loss_factor → "Reforçar valor percebido…ROI nesta semana"
+      actionIncludes: ["valor", "ROI"],
     },
   },
   {
