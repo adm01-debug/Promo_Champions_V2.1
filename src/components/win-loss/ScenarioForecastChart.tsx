@@ -15,6 +15,11 @@ import {
 import { Sparkles } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
