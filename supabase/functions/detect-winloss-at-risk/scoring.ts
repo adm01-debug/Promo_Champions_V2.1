@@ -332,16 +332,52 @@ export function computeDealRisk(
   const stageScore = stageMatchScore(deal.status, bestStuck);
 
   const reasons: string[] = [];
+  const reasonsV2: RiskReason[] = [];
+  const avgCycle = Math.round(bestLoss?.avg_cycle_days ?? 0);
   if (stagnation >= 30) {
-    reasons.push(`${days} dias sem atualização (média de loss: ${Math.round(bestLoss?.avg_cycle_days ?? 0)}d)`);
+    const msg = `${days} dias sem atualização (média de loss: ${avgCycle}d)`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "STAGNATION_HIGH",
+      message: msg,
+      params: { days, avgCycle },
+      source: "stagnation",
+      contribution: stagnation,
+    });
   } else if (stagnation > 0) {
-    reasons.push(`${days} dias sem atualização`);
+    const msg = `${days} dias sem atualização`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "STAGNATION_LOW",
+      message: msg,
+      params: { days },
+      source: "stagnation",
+      contribution: stagnation,
+    });
   }
   if (amountAlign >= 15) {
-    reasons.push(`Ticket alinhado ao perfil típico de loss (${Math.round(bestLoss?.avg_amount ?? 0).toLocaleString("pt-BR")})`);
+    const avgAmount = Math.round(bestLoss?.avg_amount ?? 0);
+    const msg = `Ticket alinhado ao perfil típico de loss (${avgAmount.toLocaleString("pt-BR")})`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "AMOUNT_ALIGNED",
+      message: msg,
+      params: { dealAmount, avgAmount },
+      source: "amount",
+      contribution: amountAlign,
+    });
   }
   if (stageScore > 0) {
-    reasons.push(`Estágio "${deal.status}" historicamente travado`);
+    const stage = deal.status ?? "";
+    const msg = `Estágio "${stage}" historicamente travado`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "STAGE_STUCK",
+      message: msg,
+      params: { stage },
+      source: "stage",
+      contribution: stageScore,
+    });
   }
   // Competitor signal (proxy: source contém termos competitivos OU presença de padrão).
   const bestCompetitor = competitorPatterns.reduce<LossPattern | null>((best, p) => {
@@ -352,7 +388,15 @@ export function computeDealRisk(
   const competitorMatches = extractCompetitorMatches(deal.source, competitorConfidence);
   const matchedKeywords = competitorMatches.map(m => m.keyword);
   if (competitorPatterns.length && matchedKeywords.length > 0) {
-    reasons.push(`Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`);
+    const msg = `Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "COMPETITOR_PRESSURE",
+      message: msg,
+      params: { keywordCount: matchedKeywords.length, keywords: matchedKeywords.join(",") },
+      source: "competitor",
+      contribution: matchedKeywords.length,
+    });
   }
 
   // Pick the dominant pattern for the label.
