@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { RISK_REASON_CODES, isRiskReasonCode, type RiskReasonCode } from "@/lib/winloss/riskReasons";
+import type { RiskSeverity } from "@/lib/winloss/severityFromScore";
+
+const VALID_SEVERITIES: readonly RiskSeverity[] = ["low", "medium", "high", "critical"] as const;
+
+function isRiskSeverity(v: unknown): v is RiskSeverity {
+  return typeof v === "string" && (VALID_SEVERITIES as readonly string[]).includes(v);
+}
 
 export interface AtRiskSettings {
   threshold: number;
@@ -9,6 +16,7 @@ export interface AtRiskSettings {
   stageFilter: string[];
   keywordFilter: string;
   reasonCodes: RiskReasonCode[];
+  severityFilter: RiskSeverity[];
 }
 
 export const AT_RISK_DEFAULTS: AtRiskSettings = {
@@ -19,10 +27,11 @@ export const AT_RISK_DEFAULTS: AtRiskSettings = {
   stageFilter: [],
   keywordFilter: "",
   reasonCodes: [],
+  severityFilter: [],
 };
 
 const STORAGE_KEY = "winloss-at-risk-settings";
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 4;
 
 const clamp = (n: number, min: number, max: number) =>
   Math.max(min, Math.min(max, Math.round(n)));
@@ -47,6 +56,12 @@ function sanitizeReasonCodes(input: unknown): RiskReasonCode[] {
   return Array.from(new Set(cleaned)).slice(0, RISK_REASON_CODES.length);
 }
 
+export function sanitizeSeverities(input: unknown): RiskSeverity[] {
+  if (!Array.isArray(input)) return [];
+  const cleaned = input.filter(isRiskSeverity);
+  return Array.from(new Set(cleaned)).slice(0, VALID_SEVERITIES.length);
+}
+
 export function sanitize(input: Partial<AtRiskSettings>): AtRiskSettings {
   return {
     threshold: clamp(Number(input.threshold ?? AT_RISK_DEFAULTS.threshold), 0, 100),
@@ -56,6 +71,7 @@ export function sanitize(input: Partial<AtRiskSettings>): AtRiskSettings {
     stageFilter: sanitizeStages(input.stageFilter),
     keywordFilter: sanitizeKeyword(input.keywordFilter),
     reasonCodes: sanitizeReasonCodes(input.reasonCodes),
+    severityFilter: sanitizeSeverities(input.severityFilter),
   };
 }
 
@@ -66,8 +82,8 @@ function read(): AtRiskSettings {
     if (!raw) return AT_RISK_DEFAULTS;
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return AT_RISK_DEFAULTS;
-    // v1/v2/v3 → v3 migration: keep all known fields, fill defaults for new ones.
-    if (parsed.version === 1 || parsed.version === 2 || parsed.version === SCHEMA_VERSION) {
+    // Migrate v1/v2/v3 → v4: keep known fields, fill defaults (incl. severityFilter:[]).
+    if ([1, 2, 3, SCHEMA_VERSION].includes(parsed.version)) {
       return sanitize(parsed.settings ?? {});
     }
     return AT_RISK_DEFAULTS;
@@ -110,7 +126,13 @@ export function useAtRiskSettings() {
 
   const clearFilters = useCallback(() => {
     setSettings((prev) =>
-      sanitize({ ...prev, stageFilter: [], keywordFilter: "", reasonCodes: [] }),
+      sanitize({
+        ...prev,
+        stageFilter: [],
+        keywordFilter: "",
+        reasonCodes: [],
+        severityFilter: [],
+      }),
     );
   }, []);
 
