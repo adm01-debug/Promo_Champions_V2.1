@@ -16,6 +16,8 @@ interface Props {
   bandMode: BandMode;
   tCritical: number | null;
   seeUseOlsInflation: boolean;
+  confidenceZ: number;
+  bandLabel: string;
   onToggleSeeOlsInflation: (value: boolean) => void;
 }
 
