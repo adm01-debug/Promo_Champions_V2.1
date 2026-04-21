@@ -15,6 +15,11 @@ import {
 import { Sparkles } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
@@ -29,6 +34,17 @@ interface Props {
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
 const SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
+const CONFIDENCE_Z_KEY = "winloss-scenario-confidence-z";
+
+const Z_PRESETS: ReadonlyArray<{ z: number; label: string; pct: string }> = [
+  { z: 1.0, label: "68%", pct: "1 desvio-padrão" },
+  { z: 1.28, label: "80%", pct: "z = 1.28" },
+  { z: 1.645, label: "90%", pct: "z = 1.645" },
+  { z: 1.96, label: "95%", pct: "z = 1.96" },
+];
+
+const Z_MIN = 0.5;
+const Z_MAX = 3.0;
 
 function readBandMode(): BandMode {
   if (typeof window === "undefined") return "see";
@@ -40,6 +56,32 @@ function readSeeOlsInflation(): boolean {
   if (typeof window === "undefined") return true;
   // Default ON (PI 1σ). Only the explicit "0" sentinel disables (legacy approx).
   return window.localStorage.getItem(SEE_OLS_KEY) !== "0";
+}
+
+function readConfidenceZ(): number {
+  if (typeof window === "undefined") return 1;
+  const raw = window.localStorage.getItem(CONFIDENCE_Z_KEY);
+  if (!raw) return 1;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < Z_MIN || n > Z_MAX) return 1;
+  return n;
+}
+
+function pctFromZ(z: number): string {
+  // Approximation of the two-tailed normal CDF coverage for the chip label.
+  const preset = Z_PRESETS.find((p) => Math.abs(p.z - z) < 0.01);
+  if (preset) return preset.label;
+  // Abramowitz & Stegun cheap approximation
+  const erf = (x: number) => {
+    const sign = x < 0 ? -1 : 1;
+    const ax = Math.abs(x);
+    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+    const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+    const t = 1 / (1 + p * ax);
+    const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax);
+    return sign * y;
+  };
+  return `${Math.round(erf(z / Math.SQRT2) * 100)}%`;
 }
 
 interface TooltipPayloadItem {
@@ -55,9 +97,10 @@ interface CustomTooltipProps {
   payload?: TooltipPayloadItem[];
   label?: string;
   mode?: BandMode;
+  bandLabel?: string;
 }
 
-function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, label, mode, bandLabel }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   const isForecast = payload[0]?.payload?.isForecast;
   return (
@@ -83,7 +126,7 @@ function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
         ))}
       {isForecast && mode && (
         <p className="mt-1 pt-1 border-t border-border/50 text-[10px] text-muted-foreground">
-          Modo: {mode === "pi95" ? "PI 95%" : "SEE ±σ"}
+          Modo: {bandLabel ?? (mode === "pi95" ? "PI 95%" : "SEE ±σ")}
         </p>
       )}
     </div>
@@ -97,6 +140,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
   const [seeUseOlsInflation, setSeeUseOlsInflation] = useState<boolean>(() => readSeeOlsInflation());
+  const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
 
   useEffect(() => {
     try {
@@ -114,11 +158,20 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [seeUseOlsInflation]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(CONFIDENCE_Z_KEY, confidenceZ.toString());
+    } catch {
+      /* ignore */
+    }
+  }, [confidenceZ]);
+
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
     useWinLossScenarios(points, {
       forecastSteps: horizon,
       bandMode,
       seeUseOlsInflation,
+      confidenceZ,
     });
 
   const data = useMemo(
@@ -141,6 +194,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     return lastHistorical?.period ?? null;
   }, [series]);
 
+  const zPctLabel = useMemo(() => pctFromZ(confidenceZ), [confidenceZ]);
+
   // Stable key: forces Recharts to fully reset internals (axes, scales, tooltip
   // cache) when filters change the underlying dataset. Includes a compact
   // signature of every point so two distinct series of equal length cannot
@@ -149,8 +204,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation]);
+    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-z${confidenceZ.toFixed(2)}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation, confidenceZ]);
 
   if (!data.length) {
     return (
@@ -256,6 +311,77 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                   </TooltipContent>
                 </UITooltip>
               </ToggleGroup>
+              {bandMode === "see" && (
+                <Popover>
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 px-2 text-[10px] font-medium tabular-nums"
+                          aria-label={`Nível de confiança: z=${confidenceZ.toFixed(2)} (${zPctLabel})`}
+                        >
+                          z={confidenceZ.toFixed(2)} <span className="ml-1 text-muted-foreground">({zPctLabel})</span>
+                        </Button>
+                      </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs max-w-[220px]">
+                      Multiplicador z aplicado à largura da banda SEE. 1.96 ≈ 95% de cobertura.
+                    </TooltipContent>
+                  </UITooltip>
+                  <PopoverContent align="end" className="w-64 space-y-3">
+                    <div>
+                      <p className="text-xs font-medium mb-2">Nível de confiança</p>
+                      <RadioGroup
+                        value={
+                          Z_PRESETS.find((p) => Math.abs(p.z - confidenceZ) < 0.01)
+                            ? confidenceZ.toString()
+                            : ""
+                        }
+                        onValueChange={(v) => {
+                          const n = Number(v);
+                          if (Number.isFinite(n)) setConfidenceZ(n);
+                        }}
+                      >
+                        {Z_PRESETS.map((p) => (
+                          <div key={p.z} className="flex items-center gap-2">
+                            <RadioGroupItem value={p.z.toString()} id={`z-${p.z}`} />
+                            <Label htmlFor={`z-${p.z}`} className="text-xs cursor-pointer flex-1">
+                              {p.label} <span className="text-muted-foreground tabular-nums">(z={p.z.toFixed(2)})</span>
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                    <div className="border-t pt-3">
+                      <div className="flex items-baseline justify-between mb-1.5">
+                        <Label className="text-xs">Personalizado</Label>
+                        <span className="text-xs font-mono tabular-nums text-muted-foreground">
+                          z={confidenceZ.toFixed(2)}
+                        </span>
+                      </div>
+                      <Slider
+                        value={[confidenceZ]}
+                        min={Z_MIN}
+                        max={Z_MAX}
+                        step={0.05}
+                        onValueChange={([v]) => setConfidenceZ(v)}
+                        aria-label="Ajustar z personalizado"
+                      />
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full h-7 text-xs"
+                      onClick={() => setConfidenceZ(1)}
+                      disabled={confidenceZ === 1}
+                    >
+                      Restaurar padrão (z=1)
+                    </Button>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </TooltipProvider>
           <span
@@ -264,7 +390,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
           >
             {bandMode === "pi95" && tCritical != null
               ? `PI 95% · t=${tCritical.toFixed(2)} · σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`
-              : `σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`}
+              : `σ ±${stdDev.toFixed(1)}pp · z=${confidenceZ.toFixed(2)} · fit em ${fitN}`}
           </span>
         </CardTitle>
       </CardHeader>
@@ -274,7 +400,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
             <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" fontSize={11} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} unit="%" domain={[0, 100]} />
-            <Tooltip content={<CustomTooltip mode={bandMode} />} />
+            <Tooltip content={<CustomTooltip mode={bandMode} bandLabel={bandLabel} />} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             {junctionPeriod && (
               <ReferenceLine
@@ -346,6 +472,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         bandMode={bandMode}
         tCritical={tCritical}
         seeUseOlsInflation={seeUseOlsInflation}
+        confidenceZ={confidenceZ}
+        bandLabel={bandLabel}
         onToggleSeeOlsInflation={setSeeUseOlsInflation}
       />
     </Card>

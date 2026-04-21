@@ -91,6 +91,8 @@ export interface ScenarioForecast {
   bandLabel: string;
   /** Whether SEE mode is using the full OLS inflation factor instead of √(1+step/n). */
   seeUseOlsInflation: boolean;
+  /** Multiplicador `z` aplicado à largura SEE (1.00≈68% · 1.96≈95%). PI 95% ignora. */
+  confidenceZ: number;
 }
 
 export interface ScenarioOptions {
@@ -105,7 +107,20 @@ export interface ScenarioOptions {
    * Ignored in `pi95` mode (always uses the full PI factor with t multiplier).
    */
   seeUseOlsInflation?: boolean;
+  /**
+   * Multiplicador `z` aplicado à largura da banda no modo `see`
+   * (em ambos os caminhos: PI 1σ default e legado √(1+step/n)).
+   * Default `1` (≈68% de cobertura). Presets úteis:
+   *   1.00=68%  ·  1.28=80%  ·  1.645=90%  ·  1.96=95%
+   * Clamp em `[0.1, 5]`. Ignorado em `pi95` (que usa o t-Student).
+   */
+  confidenceZ?: number;
 }
+
+const Z_MIN = 0.1;
+const Z_MAX = 5;
+const clampZ = (v: number) =>
+  Number.isFinite(v) ? Math.max(Z_MIN, Math.min(Z_MAX, v)) : 1;
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
 
@@ -152,20 +167,24 @@ export const useWinLossScenarios = (
 ): ScenarioForecast => {
   const opts: Required<ScenarioOptions> =
     typeof optionsOrSteps === "number"
-      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: true }
+      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: true, confidenceZ: 1 }
       : {
           forecastSteps: optionsOrSteps.forecastSteps ?? 3,
           bandMode: optionsOrSteps.bandMode ?? "see",
           seeUseOlsInflation: optionsOrSteps.seeUseOlsInflation ?? true,
+          confidenceZ: clampZ(optionsOrSteps.confidenceZ ?? 1),
         };
 
-  const { forecastSteps, bandMode, seeUseOlsInflation } = opts;
+  const { forecastSteps, bandMode, seeUseOlsInflation, confidenceZ } = opts;
 
   return useMemo(() => {
     const safePoints = points ?? [];
     const n = safePoints.length;
 
-    const seeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ · √(1+step/n)";
+    const zSuffix = confidenceZ === 1 ? "" : ` z=${confidenceZ.toFixed(2)}`;
+    const seeLabel = seeUseOlsInflation
+      ? `SEE${zSuffix || " 1σ"} (PI)`
+      : `SEE${zSuffix ? ` ${zSuffix.trim()}` : " ±σ"} · √(1+step/n)`;
     const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : seeLabel);
 
     // Need at least 3 points for a meaningful regression + residual σ.
@@ -191,6 +210,7 @@ export const useWinLossScenarios = (
         tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
         bandLabel: labelFor(bandMode),
         seeUseOlsInflation,
+        confidenceZ,
       };
     }
 
@@ -238,14 +258,16 @@ export const useWinLossScenarios = (
       const base = slope * x + intercept;
 
       // width = (multiplicador) · σ̂ · (fator de inflação)
-      //   pi95 → t-Student;  see+OLS → 1;  see legado → √(1+step/n) sem (x−x̄).
+      //   pi95 → t-Student (ignora confidenceZ);
+      //   see+OLS → confidenceZ · √(1+1/n+(x−x̄)²/Sxx);
+      //   see legado → confidenceZ · √(1+step/n) sem (x−x̄).
       let width: number;
       if (bandMode === "pi95") {
         width = t * residualStdDev * olsFactor(x);
       } else if (seeUseOlsInflation) {
-        width = residualStdDev * olsFactor(x);
+        width = confidenceZ * residualStdDev * olsFactor(x);
       } else {
-        width = residualStdDev * Math.sqrt(1 + step / n);
+        width = confidenceZ * residualStdDev * Math.sqrt(1 + step / n);
       }
 
       forecast.push({
@@ -271,6 +293,7 @@ export const useWinLossScenarios = (
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
       seeUseOlsInflation,
+      confidenceZ,
     };
-  }, [points, forecastSteps, bandMode, seeUseOlsInflation]);
+  }, [points, forecastSteps, bandMode, seeUseOlsInflation, confidenceZ]);
 };
