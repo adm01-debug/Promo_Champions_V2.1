@@ -81,10 +81,18 @@ export function AtRiskSettingsPopover({
     onUpdate({ reasonCodes: next });
   };
 
+  const toggleSeverity = (sev: RiskSeverity) => {
+    const next = settings.severityFilter.includes(sev)
+      ? settings.severityFilter.filter((s) => s !== sev)
+      : [...settings.severityFilter, sev];
+    onUpdate({ severityFilter: next });
+  };
+
   const filtersActive =
     settings.stageFilter.length > 0 ||
     settings.keywordFilter.length > 0 ||
-    settings.reasonCodes.length > 0;
+    settings.reasonCodes.length > 0 ||
+    settings.severityFilter.length > 0;
 
   const activePreset = detectActivePreset(settings.threshold, settings.limit);
 
