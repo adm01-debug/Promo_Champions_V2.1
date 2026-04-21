@@ -19,8 +19,12 @@ import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossS
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
+type ForecastHorizon = 3 | 6 | 12;
+
 interface Props {
   points: TrendPoint[];
+  horizon?: ForecastHorizon;
+  onHorizonChange?: (h: ForecastHorizon) => void;
 }
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
@@ -79,7 +83,11 @@ function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
   );
 }
 
-export const ScenarioForecastChart = memo(function ScenarioForecastChart({ points }: Props) {
+export const ScenarioForecastChart = memo(function ScenarioForecastChart({
+  points,
+  horizon = 3,
+  onHorizonChange,
+}: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
 
   useEffect(() => {
@@ -92,7 +100,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
 
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
     useWinLossScenarios(points, {
-      forecastSteps: 3,
+      forecastSteps: horizon,
       bandMode,
     });
 
@@ -124,8 +132,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode]);
+    return `scenario-${bandMode}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon]);
 
   if (!data.length) {
     return (
@@ -174,35 +182,64 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
           <Sparkles className="h-4 w-4 text-primary" aria-hidden />
           Forecast com cenários
           <TooltipProvider delayDuration={150}>
-            <ToggleGroup
-              type="single"
-              size="sm"
-              value={bandMode}
-              onValueChange={(v) => v && setBandMode(v as BandMode)}
-              className="ml-auto"
-              aria-label="Modo de banda de incerteza"
-            >
-              <UITooltip>
-                <TooltipTrigger asChild>
-                  <ToggleGroupItem value="see" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo SEE (1σ)">
-                    SEE
-                  </ToggleGroupItem>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="text-xs max-w-[220px]">
-                  Banda ±σ residual (Standard Error of Estimate). Mais estreita, ~68% de confiança.
-                </TooltipContent>
-              </UITooltip>
-              <UITooltip>
-                <TooltipTrigger asChild>
-                  <ToggleGroupItem value="pi95" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo PI 95%">
-                    PI 95%
-                  </ToggleGroupItem>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="text-xs max-w-[240px]">
-                  Intervalo de previsão 95% (t·σ·√(1+1/n+(x−x̄)²/Sxx)). Mais conservador, leva em conta a distância do centro dos dados.
-                </TooltipContent>
-              </UITooltip>
-            </ToggleGroup>
+            <div className="ml-auto flex items-center gap-1.5">
+              <ToggleGroup
+                type="single"
+                size="sm"
+                value={String(horizon)}
+                onValueChange={(v) => {
+                  if (!v) return;
+                  const n = Number(v) as ForecastHorizon;
+                  if ([3, 6, 12].includes(n)) onHorizonChange?.(n);
+                }}
+                aria-label="Horizonte de previsão"
+              >
+                {([3, 6, 12] as const).map((h) => (
+                  <UITooltip key={h}>
+                    <TooltipTrigger asChild>
+                      <ToggleGroupItem
+                        value={String(h)}
+                        className="h-6 px-2 text-[10px] font-medium tabular-nums"
+                        aria-label={`${h} períodos`}
+                      >
+                        {h}
+                      </ToggleGroupItem>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs">
+                      Projetar {h} períodos à frente
+                    </TooltipContent>
+                  </UITooltip>
+                ))}
+              </ToggleGroup>
+              <ToggleGroup
+                type="single"
+                size="sm"
+                value={bandMode}
+                onValueChange={(v) => v && setBandMode(v as BandMode)}
+                aria-label="Modo de banda de incerteza"
+              >
+                <UITooltip>
+                  <TooltipTrigger asChild>
+                    <ToggleGroupItem value="see" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo SEE (1σ)">
+                      SEE
+                    </ToggleGroupItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="text-xs max-w-[220px]">
+                    Banda ±σ residual (Standard Error of Estimate). Mais estreita, ~68% de confiança.
+                  </TooltipContent>
+                </UITooltip>
+                <UITooltip>
+                  <TooltipTrigger asChild>
+                    <ToggleGroupItem value="pi95" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo PI 95%">
+                      PI 95%
+                    </ToggleGroupItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="text-xs max-w-[240px]">
+                    Intervalo de previsão 95% (t·σ·√(1+1/n+(x−x̄)²/Sxx)). Mais conservador, leva em conta a distância do centro dos dados.
+                  </TooltipContent>
+                </UITooltip>
+              </ToggleGroup>
+            </div>
           </TooltipProvider>
           <span
             className="text-xs text-muted-foreground font-normal tabular-nums w-full sm:w-auto"
