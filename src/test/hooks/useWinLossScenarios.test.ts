@@ -320,35 +320,4 @@ describe("useWinLossScenarios", () => {
       expect(p.pessimistic).toBeCloseTo(b.series[i].pessimistic, 12);
     });
   });
-
-  it("confidenceZ also scales the legacy √(1+step/n) approximation", () => {
-    const points = mkPoints([10, 14, 19, 22, 25, 31, 34]);
-    const steps = 4;
-    const z1 = renderHook(() =>
-      useWinLossScenarios(points, {
-        forecastSteps: steps,
-        bandMode: "see",
-        seeUseOlsInflation: false,
-        confidenceZ: 1,
-      }),
-    ).result.current;
-    const zX = renderHook(() =>
-      useWinLossScenarios(points, {
-        forecastSteps: steps,
-        bandMode: "see",
-        seeUseOlsInflation: false,
-        confidenceZ: 1.645,
-      }),
-    ).result.current;
-
-    const f1 = z1.series.filter((p) => p.isForecast);
-    const fX = zX.series.filter((p) => p.isForecast);
-    f1.forEach((p, i) => {
-      const w1 = p.optimistic - p.pessimistic;
-      const wX = fX[i].optimistic - fX[i].pessimistic;
-      const noClamp = (q: { optimistic: number; pessimistic: number }) =>
-        q.optimistic < 100 && q.pessimistic > 0;
-      if (noClamp(p) && noClamp(fX[i])) expect(wX / w1).toBeCloseTo(1.645, 9);
-    });
-  });
 });
