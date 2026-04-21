@@ -210,6 +210,7 @@ export const useWinLossScenarios = (
         tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
         bandLabel: labelFor(bandMode),
         seeUseOlsInflation,
+        confidenceZ,
       };
     }
 
