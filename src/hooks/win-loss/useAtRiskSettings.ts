@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { RISK_REASON_CODES, isRiskReasonCode, type RiskReasonCode } from "@/lib/winloss/riskReasons";
 import type { RiskSeverity } from "@/lib/winloss/severityFromScore";
+import { useSyncedSetting, type SyncStatus } from "@/hooks/useSyncedSetting";
 
 const VALID_SEVERITIES: readonly RiskSeverity[] = ["low", "medium", "high", "critical"] as const;
 
@@ -31,6 +32,7 @@ export const AT_RISK_DEFAULTS: AtRiskSettings = {
 };
 
 const STORAGE_KEY = "winloss-at-risk-settings";
+const SERVER_KEY = "winloss-at-risk";
 const SCHEMA_VERSION = 4;
 
 const clamp = (n: number, min: number, max: number) =>
@@ -62,79 +64,39 @@ export function sanitizeSeverities(input: unknown): RiskSeverity[] {
   return Array.from(new Set(cleaned)).slice(0, VALID_SEVERITIES.length);
 }
 
-export function sanitize(input: Partial<AtRiskSettings>): AtRiskSettings {
+export function sanitize(input: unknown): AtRiskSettings {
+  const obj = (input && typeof input === "object" ? input : {}) as Partial<AtRiskSettings>;
   return {
-    threshold: clamp(Number(input.threshold ?? AT_RISK_DEFAULTS.threshold), 0, 100),
-    limit: clamp(Number(input.limit ?? AT_RISK_DEFAULTS.limit), 5, 50),
-    maxVisible: clamp(Number(input.maxVisible ?? AT_RISK_DEFAULTS.maxVisible), 3, 20),
-    debug: Boolean(input.debug ?? AT_RISK_DEFAULTS.debug),
-    stageFilter: sanitizeStages(input.stageFilter),
-    keywordFilter: sanitizeKeyword(input.keywordFilter),
-    reasonCodes: sanitizeReasonCodes(input.reasonCodes),
-    severityFilter: sanitizeSeverities(input.severityFilter),
+    threshold: clamp(Number(obj.threshold ?? AT_RISK_DEFAULTS.threshold), 0, 100),
+    limit: clamp(Number(obj.limit ?? AT_RISK_DEFAULTS.limit), 5, 50),
+    maxVisible: clamp(Number(obj.maxVisible ?? AT_RISK_DEFAULTS.maxVisible), 3, 20),
+    debug: Boolean(obj.debug ?? AT_RISK_DEFAULTS.debug),
+    stageFilter: sanitizeStages(obj.stageFilter),
+    keywordFilter: sanitizeKeyword(obj.keywordFilter),
+    reasonCodes: sanitizeReasonCodes(obj.reasonCodes),
+    severityFilter: sanitizeSeverities(obj.severityFilter),
   };
 }
 
-function read(): AtRiskSettings {
-  if (typeof window === "undefined") return AT_RISK_DEFAULTS;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return AT_RISK_DEFAULTS;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") return AT_RISK_DEFAULTS;
-    // Migrate v1/v2/v3 → v4: keep known fields, fill defaults (incl. severityFilter:[]).
-    if ([1, 2, 3, SCHEMA_VERSION].includes(parsed.version)) {
-      return sanitize(parsed.settings ?? {});
-    }
-    return AT_RISK_DEFAULTS;
-  } catch {
-    return AT_RISK_DEFAULTS;
-  }
-}
-
-function write(settings: AtRiskSettings) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ version: SCHEMA_VERSION, settings }),
-    );
-  } catch {
-    /* ignore quota errors */
-  }
-}
+export type { SyncStatus };
 
 export function useAtRiskSettings() {
-  const [settings, setSettings] = useState<AtRiskSettings>(() => read());
-
-  useEffect(() => {
-    write(settings);
-  }, [settings]);
-
-  const update = useCallback((partial: Partial<AtRiskSettings>) => {
-    setSettings((prev) => sanitize({ ...prev, ...partial }));
-  }, []);
-
-  const reset = useCallback(() => {
-    setSettings(AT_RISK_DEFAULTS);
-    try {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
-  }, []);
+  const { value: settings, update, reset, syncStatus } = useSyncedSetting<AtRiskSettings>({
+    key: SERVER_KEY,
+    storageKey: STORAGE_KEY,
+    schemaVersion: SCHEMA_VERSION,
+    defaults: AT_RISK_DEFAULTS,
+    sanitize,
+  });
 
   const clearFilters = useCallback(() => {
-    setSettings((prev) =>
-      sanitize({
-        ...prev,
-        stageFilter: [],
-        keywordFilter: "",
-        reasonCodes: [],
-        severityFilter: [],
-      }),
-    );
-  }, []);
+    update({
+      stageFilter: [],
+      keywordFilter: "",
+      reasonCodes: [],
+      severityFilter: [],
+    });
+  }, [update]);
 
-  return { settings, update, reset, clearFilters };
+  return { settings, update, reset, clearFilters, syncStatus };
 }

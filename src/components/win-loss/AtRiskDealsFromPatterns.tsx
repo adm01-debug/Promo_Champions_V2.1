@@ -28,7 +28,7 @@ const scoreLabel = (score: number) =>
   score >= 75 ? "Crítico" : score >= 50 ? "Alto risco" : "Atenção";
 
 export function AtRiskDealsFromPatterns() {
-  const { settings, update, reset, clearFilters } = useAtRiskSettings();
+  const { settings, update, reset, clearFilters, syncStatus } = useAtRiskSettings();
   const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns({
     threshold: settings.threshold,
     limit: settings.limit,
@@ -145,6 +145,7 @@ export function AtRiskDealsFromPatterns() {
                 totalShown={visible.length}
                 availableStages={availableStages}
                 severityCounts={severityCounts}
+                syncStatus={syncStatus}
               />
               <Button
                 size="sm"

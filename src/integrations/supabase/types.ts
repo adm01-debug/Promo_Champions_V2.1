@@ -13013,6 +13013,30 @@ export type Database = {
           },
         ]
       }
+      user_app_settings: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          user_id: string
+          value?: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          user_id?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       user_mfa_settings: {
         Row: {
           backup_codes: string[] | null
