@@ -1,70 +1,73 @@
 
 
-## Persistir preferências de visualização Win/Loss (horizonte + granularidade)
+## Backoff jitter determinístico — RNG injetável + testes do intervalo permitido
 
 ### Objetivo
-Salvar as escolhas do usuário de **granularidade** (semanal/mensal) e **horizonte de previsão** (3, 6 ou 12 períodos) entre sessões, e expor um seletor de horizonte no `ScenarioForecastChart` (hoje fixo em 3).
+Tornar o jitter de `calculateBackoffDelay` testável de forma determinística (sem flakiness), aceitando uma função `rand` injetável, e cobrir com testes que validem o intervalo permitido em cada tentativa.
+
+### Estado atual
+`src/hooks/useRetryMutation.ts` linhas 29-38 usa `Math.random()` direto:
+
+```ts
+const exponentialDelay = baseDelay * Math.pow(multiplier, attemptNumber - 1);
+const jitter = Math.random() * 0.3 * exponentialDelay; // até 30% jitter
+return Math.min(exponentialDelay + jitter, maxDelay);
+```
+
+Os testes atuais em `src/test/hooks/useCircuitBreaker.test.ts` validam apenas faixas aproximadas (ex.: `≤ base + 30%`), sujeitos a flakiness e sem cobrir os limites com `maxDelay`.
 
 ### Mudanças
 
-**1. Novo hook `src/hooks/win-loss/useWinLossViewPrefs.ts`**
-Modelo igual ao `useAtRiskSettings` (já existente, padrão consolidado): localStorage versionado + `sanitize()` + `update/reset`.
+**1. `src/hooks/useRetryMutation.ts`** — RNG injetável + constante exportada
+- Exportar `JITTER_FACTOR = 0.3`.
+- Adicionar 5º parâmetro opcional `rand: () => number = Math.random`.
+- 100% retrocompatível (o default usa `Math.random`).
 
 ```ts
-export interface WinLossViewPrefs {
-  granularity: "week" | "month";
-  forecastHorizon: 3 | 6 | 12;
+export const JITTER_FACTOR = 0.3;
+
+export function calculateBackoffDelay(
+  attemptNumber: number,
+  baseDelay: number,
+  maxDelay: number,
+  multiplier: number,
+  rand: () => number = Math.random,
+): number {
+  const exponentialDelay = baseDelay * Math.pow(multiplier, attemptNumber - 1);
+  const jitter = rand() * JITTER_FACTOR * exponentialDelay;
+  return Math.min(exponentialDelay + jitter, maxDelay);
 }
-export const VIEW_PREFS_DEFAULTS = { granularity: "month", forecastHorizon: 3 };
 ```
 
-- Storage key: `winloss-view-prefs`, schema version `1`.
-- `sanitize` valida enum (fallback para default em valor inválido).
-- API: `{ prefs, update(partial), reset() }`.
+**2. Novo `src/test/hooks/useBackoffJitter.test.ts`** — suíte 100% determinística
 
-**2. `WinLossTrendChart.tsx`**
-- Remover `useState` local de `gran`.
-- Aceitar `granularity` + `onGranularityChange` via props (controlled). Manter `compare` local (não é uma preferência persistente — pertence ao gesto da sessão).
-- Os botões "Semanal/Mensal" passam a usar essas props.
+Cobre:
+- **Borda inferior (`rand=0`)**: para n=1..6 com `base=1000, mult=2`, espera **exatamente** `base · 2^(n-1)` (sem jitter).
+- **Borda superior (`rand≈1`, usa `0.999999`)**: espera `expDelay · (1 + JITTER_FACTOR)`.
+- **Meio (`rand=0.5`)**: espera `expDelay · 1.15`.
+- **Intervalo permitido**: rand sequencial `[0, 0.25, 0.5, 0.75, 0.999]` — cada delay ∈ `[expDelay, expDelay·1.3]` e bate com `expDelay·(1 + 0.3·r)`.
+- **Cap em `maxDelay`**: n=20 com `rand=0.999` → resultado **===** `maxDelay` mesmo com jitter máximo.
+- **Cap quando jitter empurra acima**: `n=4, base=1000, mult=2, max=8500, rand=0.999` → expDelay=8000, com jitter daria ~10.397 → capado em 8500.
+- **`baseDelay=0`**: sempre 0 independente do rand.
+- **`multiplier=1`**: delay ∈ `[base, base·1.3]` para qualquer n.
+- **Snapshot da progressão (`rand=0.5`)**: `base=100, mult=2`, n=1..5 → `[115, 230, 460, 920, 1840]`.
+- **Monotonicidade com rand fixo**: `delay(n+1) > delay(n)` enquanto não capado.
+- **Auditoria de não-acumulação**: 100 chamadas com `rand=0.5` somam exatamente `100 · 1000 · 1.15 = 115_000` (verifica ausência de drift).
 
-**3. `ScenarioForecastChart.tsx`**
-- Adicionar prop opcional `horizon?: 3 | 6 | 12` (default `3`) e `onHorizonChange?`.
-- No header, ao lado do `ToggleGroup` do bandMode, novo `ToggleGroup` "3 / 6 / 12" com `aria-label="Horizonte de previsão"`.
-- Passar `forecastSteps: horizon` para o hook.
-- Incluir `horizon` no `chartKey` para garantir reset limpo do Recharts.
-
-**4. `pages/WinLossIntelligence.tsx`**
-- Instanciar `useWinLossViewPrefs()` uma vez.
-- Passar `prefs.granularity` + `update({ granularity })` para `WinLossTrendChart`.
-- Passar `prefs.forecastHorizon` + `update({ forecastHorizon })` para `ScenarioForecastChart`.
-- (As preferências persistem automaticamente via efeito do hook — sem tocar em URL/searchParams; horizonte e granularidade são preferências de UI, não filtros compartilháveis.)
-
-**5. Testes — `src/test/hooks/useWinLossViewPrefs.test.ts` (novo)**
-Replicar a estrutura de `useAtRiskSettings.test.ts`:
-- defaults quando storage vazio
-- `update` parcial persiste e mescla
-- `sanitize` rejeita valores inválidos (granularity="dia", horizon=99)
-- `reset` restaura defaults
-- fallback em JSON inválido / version errada
-
-Rodar `npx vitest run src/test/hooks/useWinLossViewPrefs.test.ts` — esperado **6/6**.
+Total: ~11 casos determinísticos, sem `Math.random()`.
 
 ### Detalhes técnicos
-- Padrão segue `useAtRiskSettings` (mesma forma de SSR-safe, versionamento, clamp/whitelist). Sem nova dependência.
-- `forecastHorizon` afeta apenas a quantidade de steps projetados; bandas continuam respeitando o `bandMode` já persistido em `winloss-scenario-bandmode` (preferência separada — não consolidamos os dois storages para preservar retrocompatibilidade).
-- `compare` no trend chart **não** é persistido (decisão consciente: é um toggle de exploração).
-- `granularity` deixa de ser estado local do componente — fica controlled a partir da página.
+- Injeção opcional → zero impacto em `withRetry` / `useRetryMutation` / chamadores existentes.
+- Asserts usam igualdade exata onde a matemática permite (rand=0) e `toBeCloseTo(_, 6)` apenas onde envolve floats não inteiros.
+- `JITTER_FACTOR` vira fonte única da verdade — testes referenciam a constante em vez de hardcodar 0.3.
+- A suíte antiga em `useCircuitBreaker.test.ts` continua passando (default inalterado).
 
 ### Arquivos
-- **Criar**: `src/hooks/win-loss/useWinLossViewPrefs.ts`
-- **Criar**: `src/test/hooks/useWinLossViewPrefs.test.ts`
-- **Modificar**: `src/components/win-loss/WinLossTrendChart.tsx`
-- **Modificar**: `src/components/win-loss/ScenarioForecastChart.tsx`
-- **Modificar**: `src/pages/WinLossIntelligence.tsx`
+- **Modificar**: `src/hooks/useRetryMutation.ts` — adicionar param `rand` + exportar `JITTER_FACTOR`.
+- **Criar**: `src/test/hooks/useBackoffJitter.test.ts` — suíte determinística.
 
 ### Ordem
-1. Criar hook + testes (rodar suite).
-2. Tornar `WinLossTrendChart` controlled na granularidade.
-3. Adicionar seletor de horizonte ao `ScenarioForecastChart`.
-4. Plugar prefs na página.
+1. Editar `useRetryMutation.ts` (param opcional + constante).
+2. Criar a nova suíte.
+3. Rodar `npx vitest run src/test/hooks/useBackoffJitter.test.ts src/test/hooks/useCircuitBreaker.test.ts` — esperado os 11 novos + a suíte antiga ✓.
 
