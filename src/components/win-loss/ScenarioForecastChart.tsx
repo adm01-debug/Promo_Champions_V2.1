@@ -16,6 +16,7 @@ import { Sparkles } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
+import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
 interface Props {
@@ -89,10 +90,11 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     }
   }, [bandMode]);
 
-  const { series, stdDev, fitN, tCritical, bandLabel } = useWinLossScenarios(points, {
-    forecastSteps: 3,
-    bandMode,
-  });
+  const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
+    useWinLossScenarios(points, {
+      forecastSteps: 3,
+      bandMode,
+    });
 
   const data = useMemo(
     () =>
@@ -278,6 +280,18 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
+      <ScenarioForecastAuditPanel
+        slope={slope}
+        intercept={intercept}
+        stdDev={stdDev}
+        sse={sse}
+        dof={dof}
+        fitN={fitN}
+        meanX={meanX}
+        sxx={sxx}
+        bandMode={bandMode}
+        tCritical={tCritical}
+      />
     </Card>
   );
 });

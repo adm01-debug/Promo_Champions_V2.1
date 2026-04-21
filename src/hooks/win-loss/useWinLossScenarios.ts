@@ -17,6 +17,16 @@ export interface ScenarioForecast {
   stdDev: number;
   /** Slope of the linear trend (pp per period). */
   slope: number;
+  /** Intercept (β₀) of the OLS linear fit. */
+  intercept: number;
+  /** Sum of squared errors Σ(y−ŷ)². */
+  sse: number;
+  /** Degrees of freedom (n−2, min 1). */
+  dof: number;
+  /** Mean of x used in the fit (period index). */
+  meanX: number;
+  /** Σ(x − x̄)² used in the fit. */
+  sxx: number;
   /** Number of historical points actually used for the fit. */
   fitN: number;
   /** Active band mode used to compute uncertainty widths. */
@@ -95,6 +105,11 @@ export const useWinLossScenarios = (
         series: flat,
         stdDev: 0,
         slope: 0,
+        intercept: 0,
+        sse: 0,
+        dof: 1,
+        meanX: 0,
+        sxx: 0,
         fitN: n,
         bandMode,
         tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
@@ -153,6 +168,11 @@ export const useWinLossScenarios = (
       series: [...historical, ...forecast],
       stdDev: residualStdDev,
       slope,
+      intercept,
+      sse,
+      dof,
+      meanX,
+      sxx,
       fitN: n,
       bandMode,
       tCritical: bandMode === "pi95" ? t : null,
