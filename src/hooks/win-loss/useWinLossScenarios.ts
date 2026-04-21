@@ -75,16 +75,19 @@ export function tCritical975(dof: number): number {
  * Projects 3 scenarios (optimistic / realistic / pessimistic) using OLS linear
  * regression over historical winRate. Two band modes are supported:
  *
- * - `see`  (default, narrower): `width = σ · √(1 + step/n)` — simplified SEE band.
- * - `pi95` (wider, conservative): `width = t · σ · √(1 + 1/n + (x − meanX)² / Sxx)` —
- *   full OLS prediction interval at 95%, accounts for the distance of the
- *   forecasted x to the centroid of the fit.
+ * - `see`  (default): 1σ band using the full OLS prediction-interval inflation
+ *   factor — `width = σ · √(1 + 1/n + (x − x̄)² / Sxx)`. ~68% confidence,
+ *   widens correctly with the distance of the forecasted x to the centroid.
+ *   Set `seeUseOlsInflation: false` to fall back to the legacy approximation
+ *   `width = σ · √(1 + step/n)` (kept for debugging / backward compat).
+ * - `pi95` (wider, conservative): same shape, multiplied by the t-Student
+ *   critical value at 95% — `width = t · σ · √(1 + 1/n + (x − x̄)² / Sxx)`.
  *
  * Historical points always have collapsed bands (= observed winRate), so the
  * uncertainty fan only opens at the forecast junction.
  *
  * Backward-compatible: `useWinLossScenarios(points, 3)` is equivalent to
- * `useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see" })`.
+ * `useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", seeUseOlsInflation: true })`.
  */
 export const useWinLossScenarios = (
   points: TrendPoint[],
@@ -92,11 +95,11 @@ export const useWinLossScenarios = (
 ): ScenarioForecast => {
   const opts: Required<ScenarioOptions> =
     typeof optionsOrSteps === "number"
-      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: false }
+      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: true }
       : {
           forecastSteps: optionsOrSteps.forecastSteps ?? 3,
           bandMode: optionsOrSteps.bandMode ?? "see",
-          seeUseOlsInflation: optionsOrSteps.seeUseOlsInflation ?? false,
+          seeUseOlsInflation: optionsOrSteps.seeUseOlsInflation ?? true,
         };
 
   const { forecastSteps, bandMode, seeUseOlsInflation } = opts;
@@ -105,7 +108,7 @@ export const useWinLossScenarios = (
     const safePoints = points ?? [];
     const n = safePoints.length;
 
-    const seeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ";
+    const seeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ · √(1+step/n)";
     const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : seeLabel);
 
     // Need at least 3 points for a meaningful regression + residual σ.
