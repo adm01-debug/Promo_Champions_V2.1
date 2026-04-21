@@ -44,12 +44,13 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
   bandMode,
   tCritical,
   seeUseOlsInflation,
+  confidenceZ,
+  bandLabel,
   onToggleSeeOlsInflation,
 }: Props) {
   const sign = slope >= 0 ? "+" : "−";
   const equation = `ŷ = ${intercept.toFixed(2)} ${sign} ${Math.abs(slope).toFixed(3)}·x`;
   const showOlsRows = bandMode === "pi95" || (bandMode === "see" && seeUseOlsInflation);
-  const seeModeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ · √(1+step/n)";
   const toggleId = "see-ols-inflation-toggle";
 
   return (
@@ -76,8 +77,15 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
           <Row label="Graus de liberdade" value={`n − 2 = ${dof}`} />
           <Row
             label="Modo de banda"
-            value={bandMode === "pi95" ? `PI 95% (t=${(tCritical ?? 0).toFixed(2)})` : seeModeLabel}
+            value={bandMode === "pi95" ? `PI 95% (t=${(tCritical ?? 0).toFixed(2)})` : bandLabel}
           />
+          {bandMode === "see" && (
+            <Row
+              label="z (multiplicador SEE)"
+              value={confidenceZ.toFixed(3)}
+              hint="1.00=68% · 1.28=80% · 1.645=90% · 1.96=95%"
+            />
+          )}
           {showOlsRows && (
             <>
               <Row label="x̄" value={meanX.toFixed(2)} hint="Centro do x usado no fator de inflação OLS" />
