@@ -714,6 +714,72 @@ Deno.test("fan-out: cada POST carrega header X-Winloss-Event correto e payload s
   assertEquals((aInit.init.headers as Record<string, string>)["X-Winloss-Signature"], undefined);
 });
 
+Deno.test("fan-out: asserções consolidadas — fetch count por URL + X-Winloss-Event + body.deal_id por subscription", async () => {
+  const h = makeFanoutHarness({
+    [SUB_A.url]: () => new Response("ok", { status: 200 }),
+    [SUB_B.url]: () => new Response("ok", { status: 200 }),
+    [SUB_C.url]: () => new Response("ok", { status: 200 }),
+  });
+  const payload = { event: "x", deal_id: "deal-fan-123", extra: { foo: "bar" } };
+  const subs = [SUB_A, SUB_B, SUB_C];
+  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+
+  // 1) Contagem de fetch por URL — exatamente 1 POST por subscription, sem cross-fire
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1);
+  assertEquals(h.fetchesByUrl[SUB_B.url], 1);
+  assertEquals(h.fetchesByUrl[SUB_C.url], 1);
+  assertEquals(Object.keys(h.fetchesByUrl).length, 3);
+  assertEquals(h.capturedInits.length, 3);
+
+  // 2/3/4) Para cada init capturado: método, headers e body.deal_id
+  const seenUrls = new Set<string>();
+  for (const { url, init } of h.capturedInits) {
+    seenUrls.add(url);
+    assertEquals(init.method, "POST");
+    const headers = init.headers as Record<string, string>;
+    assertEquals(headers["X-Winloss-Event"], "x", `header X-Winloss-Event ausente/errado para ${url}`);
+    assertEquals(headers["Content-Type"], "application/json");
+
+    const parsed = JSON.parse(String(init.body));
+    assertEquals(parsed.deal_id, "deal-fan-123", `body.deal_id ausente/errado para ${url}`);
+    assertEquals(parsed.event, "x");
+  }
+  // Cobertura de URLs: as 3 subs receberam o POST
+  assertEquals(seenUrls.size, 3);
+  assert(seenUrls.has(SUB_A.url) && seenUrls.has(SUB_B.url) && seenUrls.has(SUB_C.url));
+});
+
+Deno.test("fan-out N=20: contagem por URL, header X-Winloss-Event e deal_id chegam em todas as subs", async () => {
+  const N = 20;
+  const subs: Subscription[] = Array.from({ length: N }, (_, i) => ({
+    id: `sub-${i}`,
+    url: `https://sub-${i}.test/hook`,
+    events: ["x"],
+    secret: null,
+  }));
+  const routes: Record<string, () => Response> = {};
+  for (const s of subs) routes[s.url] = () => new Response("ok", { status: 200 });
+
+  const h = makeFanoutHarness(routes);
+  const payload = { event: "x", deal_id: "deal-bulk-999" };
+  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+
+  // Contagem por URL: 1 POST por sub, total = N
+  assertEquals(Object.keys(h.fetchesByUrl).length, N);
+  for (const s of subs) assertEquals(h.fetchesByUrl[s.url], 1);
+  const totalFetches = Object.values(h.fetchesByUrl).reduce((a, b) => a + b, 0);
+  assertEquals(totalFetches, N);
+  assertEquals(h.capturedInits.length, N);
+
+  // Header + body por captura
+  for (const { url, init } of h.capturedInits) {
+    const headers = init.headers as Record<string, string>;
+    assertEquals(headers["X-Winloss-Event"], "x", `X-Winloss-Event ausente em ${url}`);
+    const parsed = JSON.parse(String(init.body));
+    assertEquals(parsed.deal_id, "deal-bulk-999", `deal_id ausente em ${url}`);
+  }
+});
+
 Deno.test("fan-out: retries de uma sub não acoplam às outras (sleeps isolados)", async () => {
   const h = makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
