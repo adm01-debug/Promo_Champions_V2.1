@@ -38,6 +38,7 @@ interface Props {
   totalShown: number;
   availableStages: string[];
   severityCounts: Record<RiskSeverity, number>;
+  syncStatus?: SyncStatus;
 }
 
 export function AtRiskSettingsPopover({
