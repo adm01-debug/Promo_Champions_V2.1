@@ -10,6 +10,14 @@ export interface RiskBreakdown {
   matched_pattern_type: string;
   matched_confidence: number;
   reasons: string[];
+  matched_keywords?: string[];
+  days_stagnant?: number;
+  avg_loss_cycle_days?: number | null;
+  avg_loss_amount?: number | null;
+  raw_score?: number;
+  confidence_weight?: number;
+  final_score?: number;
+  stage_eligible?: boolean;
 }
 
 export interface AtRiskDealFromPattern {
