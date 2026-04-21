@@ -688,6 +688,64 @@ Deno.test("fan-out: sucesso e falha são independentes por subscription", async 
   assertEquals(resById["sub-C"], true);
 });
 
+Deno.test("fan-out: 1 sub falha em todas as 3 tentativas; demais seguem com POST e last_status correto", async () => {
+  const h = makeFanoutHarness({
+    [SUB_A.url]: () => new Response("ok", { status: 200 }),
+    [SUB_B.url]: () => new Response("boom", { status: 500 }),
+    [SUB_C.url]: () => new Response("ok", { status: 202 }),
+  }, { withDeadLetter: true });
+
+  // Ordem invertida na chamada para reforçar independência da ordem
+  const subs = [SUB_C, SUB_B, SUB_A];
+  const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
+
+  // Fetch por URL: A=1, C=1; B esgotou MAX_ATTEMPTS
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1);
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS);
+  assertEquals(h.fetchesByUrl[SUB_C.url], 1);
+
+  // last_status por sub: 1 update cada, valor final correto
+  const aUpdates = h.updates.filter((u) => u.id === "sub-A");
+  const bUpdates = h.updates.filter((u) => u.id === "sub-B");
+  const cUpdates = h.updates.filter((u) => u.id === "sub-C");
+  assertEquals(aUpdates.length, 1);
+  assertEquals(bUpdates.length, 1);
+  assertEquals(cUpdates.length, 1);
+  assertEquals(aUpdates[0].status, 200);
+  assertEquals(bUpdates[0].status, 500);
+  assertEquals(cUpdates[0].status, 202);
+
+  // Deliveries persistidos por sub
+  const dA = h.deliveries.filter((d) => d.subscription_id === "sub-A");
+  const dB = h.deliveries.filter((d) => d.subscription_id === "sub-B");
+  const dC = h.deliveries.filter((d) => d.subscription_id === "sub-C");
+  assertEquals(dA.length, 1);
+  assertEquals(dC.length, 1);
+  assertEquals(dB.length, MAX_ATTEMPTS);
+  const bAttempts = dB.map((d) => d.attempt).sort();
+  assertEquals(bAttempts, Array.from({ length: MAX_ATTEMPTS }, (_, i) => i + 1));
+  for (const d of dB) assertEquals(d.succeeded, false);
+  assertEquals(dA[0].succeeded, true);
+  assertEquals(dC[0].succeeded, true);
+
+  // DLQ: apenas B
+  assertEquals(h.deadLetters.length, 1);
+  assertEquals(h.deadLetters[0].subscription_id, "sub-B");
+  assertEquals(h.deadLetters[0].attempts, MAX_ATTEMPTS);
+  assertEquals(h.deadLetters[0].last_status, 500);
+  assert(typeof h.deadLetters[0].total_latency_ms === "number");
+
+  // Resultados finais por id
+  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
+  assertEquals(resById["sub-A"].succeeded, true);
+  assertEquals(resById["sub-A"].status, 200);
+  assertEquals(resById["sub-B"].succeeded, false);
+  assertEquals(resById["sub-B"].status, 500);
+  assertEquals(resById["sub-B"].attempts, MAX_ATTEMPTS);
+  assertEquals(resById["sub-C"].succeeded, true);
+  assertEquals(resById["sub-C"].status, 202);
+});
+
 Deno.test("fan-out: cada POST carrega header X-Winloss-Event correto e payload sanitizado", async () => {
   const h = makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
