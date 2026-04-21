@@ -289,6 +289,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                 const checkboxDisabled =
                   d.succeeded || isReplaying || (atLimit && !isChecked);
                 const result = lastResults.get(d.id);
+                const reqId = requestIds.get(d.id);
                 return (
                   <li
                     key={d.id}
