@@ -25,6 +25,7 @@ import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 import { buildScenarioChartKey } from "@/lib/winloss/scenarioChartKey";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type ForecastHorizon = 3 | 6 | 12;
 
@@ -165,8 +166,13 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [confidenceZ]);
 
+  // Debounce only the data input. Internal toggles (horizon/mode/z) stay
+  // instant; rapid filter changes from the parent (which mutate `points`)
+  // are coalesced into a single OLS recomputation + chart remount.
+  const debouncedPoints = useDebouncedValue(points, 200);
+
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
-    useWinLossScenarios(points, {
+    useWinLossScenarios(debouncedPoints, {
       forecastSteps: horizon,
       bandMode,
       confidenceZ,
