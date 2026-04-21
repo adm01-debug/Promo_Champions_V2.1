@@ -141,31 +141,52 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
 
   const clearSelection = () => setSelected(new Set());
 
-  const handleReplay = (id: string) => {
-    setPendingId(id);
-    setProcessingIds((prev) => new Set(prev).add(id));
-    replay([id], {
-      onSuccess: (payload) => recordResults([id], payload),
-      onSettled: () => {
-        setPendingId(null);
-        clearProcessing([id]);
-      },
-    });
-  };
+  // --- Confirmation state ---
+  const [confirm, setConfirm] = useState<{ ids: string[] } | null>(null);
 
-  const handleReplaySelected = () => {
-    if (selected.size === 0) return;
-    const ids = Array.from(selected);
+  const confirmSummary = useMemo(() => {
+    if (!confirm || !data) return { count: 0, byEvent: [] as { event: string; count: number }[] };
+    const idSet = new Set(confirm.ids);
+    const map = new Map<string, number>();
+    for (const d of data) {
+      if (idSet.has(d.id)) map.set(d.event, (map.get(d.event) ?? 0) + 1);
+    }
+    return {
+      count: confirm.ids.length,
+      byEvent: Array.from(map, ([event, count]) => ({ event, count })).sort((a, b) => b.count - a.count),
+    };
+  }, [confirm, data]);
+
+  const requestReplay = (ids: string[]) => setConfirm({ ids });
+
+  const executeReplay = () => {
+    if (!confirm) return;
+    const ids = confirm.ids;
+    setConfirm(null);
+
+    if (ids.length === 1) {
+      setPendingId(ids[0]);
+    }
     setProcessingIds((prev) => {
       const next = new Set(prev);
       for (const id of ids) next.add(id);
       return next;
     });
-    clearSelection();
+    if (ids.length > 1) clearSelection();
     replay(ids, {
       onSuccess: (payload) => recordResults(ids, payload),
-      onSettled: () => clearProcessing(ids),
+      onSettled: () => {
+        if (ids.length === 1) setPendingId(null);
+        clearProcessing(ids);
+      },
     });
+  };
+
+  const handleReplay = (id: string) => requestReplay([id]);
+
+  const handleReplaySelected = () => {
+    if (selected.size === 0) return;
+    requestReplay(Array.from(selected));
   };
 
   return (
