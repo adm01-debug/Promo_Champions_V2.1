@@ -32,6 +32,17 @@ export function AtRiskDealsFromPatterns() {
     limit: settings.limit,
   });
   const [showCatalog, setShowCatalog] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleCompare = useCallback((id: string) => {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= 2) return prev; // cap at 2
+      return [...prev, id];
+    });
+  }, []);
+  const clearCompare = useCallback(() => setCompareIds([]), []);
 
   const availableStages = useMemo(() => {
     const set = new Set<string>();
@@ -142,6 +153,28 @@ export function AtRiskDealsFromPatterns() {
               {visible.map(d => (
                 <li key={d.sale_id} className={`rounded-md border px-3 py-2 ${tone(d.risk_score)}`}>
                   <div className="flex items-center justify-between gap-2">
+                    {debug && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>
+                            <Checkbox
+                              checked={compareIds.includes(d.sale_id)}
+                              disabled={!compareIds.includes(d.sale_id) && compareIds.length >= 2}
+                              onCheckedChange={() => toggleCompare(d.sale_id)}
+                              aria-label={`Selecionar ${d.client_name ?? "deal"} para comparar`}
+                              className="shrink-0"
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="text-xs">
+                          {compareIds.includes(d.sale_id)
+                            ? "Remover da comparação"
+                            : compareIds.length >= 2
+                              ? "Máximo 2 deals para comparar"
+                              : "Selecionar para comparar"}
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{d.client_name ?? "Cliente"}</p>
                       <p className="text-[11px] opacity-80 truncate" title={d.matched_pattern}>
