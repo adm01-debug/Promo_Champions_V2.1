@@ -148,8 +148,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode, horizon]);
+    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation]);
 
   if (!data.length) {
     return (
