@@ -1,3 +1,57 @@
+/**
+ * ============================================================================
+ * WIN/LOSS SCENARIO FORECAST — Background estatístico
+ * ============================================================================
+ *
+ * Por que Standard Error of the Estimate (SEE) dos resíduos?
+ * --------------------------------------------------------------------------
+ * Ajustamos uma reta OLS  ŷ = β₀ + β₁·x  sobre a série histórica de winRate.
+ * O SEE  σ̂ = √(SSE / (n−2))  mede o "ruído típico" em torno dessa reta —
+ * isto é, o quanto a realidade costuma se desviar do modelo nos próprios
+ * dados de treino. É a métrica natural para responder "quão errado eu
+ * costumo estar?" sem precisar assumir uma distribuição prévia: vem direto
+ * dos resíduos observados (y − ŷ).
+ *
+ * Escolhemos SEE em vez de:
+ *   - desvio-padrão simples de y → ignora a tendência (slope), superestima a
+ *     incerteza quando há trend claro;
+ *   - bootstrap / IC empírico → custoso para n pequeno (séries curtas de
+ *     winRate por período), instável e sem forma fechada para auditoria;
+ *   - intervalos bayesianos → exigiria prior, fora do escopo de um forecast
+ *     leve client-side.
+ *
+ * Como SEE vira "banda histórica" (fan de cenários)?
+ * --------------------------------------------------------------------------
+ * Para cada step futuro x, o **valor central** (cenário realista) é a própria
+ * predição OLS  ŷ(x). A **largura da banda** é σ̂ multiplicado por um fator
+ * de inflação que cresce conforme x se afasta do centro x̄ dos dados:
+ *
+ *     width(x) = σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )       [PI 1σ, ~68%]
+ *     width(x) = t · σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )    [PI 95%, t-Student]
+ *
+ *   - O termo  1            → variância irredutível de uma observação futura.
+ *   - O termo  1/n          → incerteza no intercept (β₀).
+ *   - O termo  (x−x̄)²/Sxx  → incerteza no slope, que se amplifica longe do
+ *     centro do treino. É **isso** que faz a banda se abrir no horizonte.
+ *
+ * Cenários otimista/pessimista são  ŷ(x) ± width(x), depois clamp em [0, 100]
+ * porque winRate é percentual.
+ *
+ * Pontos históricos têm banda colapsada (otimista = realista = pessimista =
+ * winRate observado): só medimos incerteza onde estamos extrapolando.
+ *
+ * Modo legado  width = σ̂ · √(1 + step/n)  é mantido como opt-in
+ * (`seeUseOlsInflation: false`) para comparação visual; cresce muito devagar
+ * e ignora o efeito da distância ao centróide.
+ *
+ * Limitações conhecidas
+ * --------------------------------------------------------------------------
+ *   - Assume ruído homocedástico e aproximadamente normal (válido para n ≥ ~6).
+ *   - n < 3 → bandas colapsam (sem regressão); o caller deve tratar como
+ *     "dados insuficientes".
+ *   - dof ≥ 30 → t converge para 1.96 (fallback normal).
+ * ============================================================================
+ */
 import { useMemo } from "react";
 import type { TrendPoint } from "./useWinLossAggregations";
 
