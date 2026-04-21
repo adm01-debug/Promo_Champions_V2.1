@@ -105,7 +105,20 @@ export interface ScenarioOptions {
    * Ignored in `pi95` mode (always uses the full PI factor with t multiplier).
    */
   seeUseOlsInflation?: boolean;
+  /**
+   * Multiplicador `z` aplicado à largura da banda no modo `see`
+   * (em ambos os caminhos: PI 1σ default e legado √(1+step/n)).
+   * Default `1` (≈68% de cobertura). Presets úteis:
+   *   1.00=68%  ·  1.28=80%  ·  1.645=90%  ·  1.96=95%
+   * Clamp em `[0.1, 5]`. Ignorado em `pi95` (que usa o t-Student).
+   */
+  confidenceZ?: number;
 }
+
+const Z_MIN = 0.1;
+const Z_MAX = 5;
+const clampZ = (v: number) =>
+  Number.isFinite(v) ? Math.max(Z_MIN, Math.min(Z_MAX, v)) : 1;
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
 
