@@ -1,5 +1,5 @@
-import { memo, useCallback, useRef } from "react";
-import { VariableSizeList, type ListChildComponentProps } from "react-window";
+import { memo } from "react";
+import { List, type RowComponentProps } from "react-window";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, MessageCircle, ChevronDown, ChevronRight } from "lucide-react";
@@ -24,19 +24,20 @@ interface Props {
   onToggle: (id: string) => void;
 }
 
-const ROW_BASE = 132;
-const ROW_EXPANDED = 360;
-
-const sentimentEmoji = (outcome: "won" | "lost"): string => (outcome === "won" ? "😊" : "😟");
-
-function RowRenderer({ index, style, data }: ListChildComponentProps<{
+interface RowProps {
   rows: WLAnalysisRow[];
   salesMeta: Record<string, SaleMeta>;
   expandedIds: Set<string>;
   onToggle: (id: string) => void;
   reduced: boolean;
-}>) {
-  const { rows, salesMeta, expandedIds, onToggle, reduced } = data;
+}
+
+const ROW_BASE = 132;
+const ROW_EXPANDED = 360;
+
+const sentimentEmoji = (outcome: "won" | "lost"): string => (outcome === "won" ? "😊" : "😟");
+
+function DealRow({ index, style, rows, salesMeta, expandedIds, onToggle, reduced }: RowComponentProps<RowProps>) {
   const r = rows[index];
   const meta = salesMeta[r.sale_id];
   const isExpanded = expandedIds.has(r.sale_id);
@@ -51,9 +52,7 @@ function RowRenderer({ index, style, data }: ListChildComponentProps<{
           >
             {r.outcome === "won" ? "Won" : "Lost"}
           </Badge>
-          <span className="text-xs tabular-nums text-muted-foreground">
-            {fmtBRL(Number(r.amount) || 0)}
-          </span>
+          <span className="text-xs tabular-nums text-muted-foreground">{fmtBRL(Number(r.amount) || 0)}</span>
         </div>
         <p className="text-sm font-medium truncate">{r.primary_reason ?? "Sem motivo"}</p>
         <div className="flex flex-wrap gap-1.5 mt-1.5 text-[11px] text-muted-foreground">
@@ -117,27 +116,15 @@ export const VirtualDealsList = memo(function VirtualDealsList({
   expandedIds,
   onToggle,
 }: Props) {
-  const listRef = useRef<VariableSizeList>(null);
-  const getItemSize = useCallback(
-    (idx: number) => (expandedIds.has(rows[idx].sale_id) ? ROW_EXPANDED : ROW_BASE),
-    [expandedIds, rows],
-  );
   const reduced = useReducedMotion();
-
-  // Reset cached sizes when expansion set changes
-  if (listRef.current) listRef.current.resetAfterIndex(0, false);
-
   return (
-    <VariableSizeList
-      ref={listRef}
-      height={height}
-      itemCount={rows.length}
-      itemSize={getItemSize}
-      width="100%"
-      itemData={{ rows, salesMeta, expandedIds, onToggle, reduced }}
+    <List
+      rowComponent={DealRow}
+      rowCount={rows.length}
+      rowHeight={(idx: number) => (expandedIds.has(rows[idx].sale_id) ? ROW_EXPANDED : ROW_BASE)}
+      rowProps={{ rows, salesMeta, expandedIds, onToggle, reduced }}
+      style={{ height }}
       overscanCount={4}
-    >
-      {RowRenderer}
-    </VariableSizeList>
+    />
   );
 });
