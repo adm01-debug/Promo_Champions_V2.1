@@ -130,6 +130,58 @@ function CustomTooltip({ active, payload, label, mode, bandLabel }: CustomToolti
   );
 }
 
+interface ActiveFormulaBadgeProps {
+  bandMode: BandMode;
+  confidenceZ: number;
+  zPctLabel: string;
+  tCritical: number | null;
+  dof: number;
+  stdDev: number;
+  fitN: number;
+}
+
+function ActiveFormulaBadge({
+  bandMode,
+  confidenceZ,
+  zPctLabel,
+  tCritical,
+  dof,
+  stdDev,
+  fitN,
+}: ActiveFormulaBadgeProps) {
+  const isPi = bandMode === "pi95";
+  const formula = isPi
+    ? "PI 95% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)"
+    : "SEE · ±z·σ";
+  const paramLine = isPi
+    ? `t = ${(tCritical ?? 0).toFixed(2)}  (gl=${dof})`
+    : `z = ${confidenceZ.toFixed(2)}  (${zPctLabel})`;
+  const sigmaLine = `σ = ${stdDev.toFixed(1)} pp · fit n=${fitN}`;
+  const a11y = `Fórmula ativa: ${isPi ? "PI 95%" : "SEE"}, ${
+    isPi ? `t crítico ${(tCritical ?? 0).toFixed(2)} com ${dof} graus de liberdade` : `z ${confidenceZ.toFixed(2)} (${zPctLabel})`
+  }, sigma ${stdDev.toFixed(1)} pontos percentuais em ${fitN} períodos`;
+
+  return (
+    <div
+      className="hidden sm:block absolute top-2 right-3 z-10 max-w-[230px] rounded-md border border-border/60 bg-popover/85 backdrop-blur-sm px-2 py-1.5 shadow-sm pointer-events-none"
+      role="status"
+      aria-live="polite"
+      aria-label={a11y}
+    >
+      <div className="flex items-center gap-1 text-[10px] font-medium text-foreground leading-tight">
+        <Sigma className="h-3 w-3 text-primary shrink-0" aria-hidden />
+        <span className="truncate" title={formula}>{formula}</span>
+      </div>
+      <div className="mt-0.5 text-[10px] font-mono tabular-nums text-muted-foreground leading-tight">
+        {paramLine}
+      </div>
+      <div className="text-[10px] font-mono tabular-nums text-muted-foreground leading-tight">
+        {sigmaLine}
+      </div>
+    </div>
+  );
+}
+
 export const ScenarioForecastChart = memo(function ScenarioForecastChart({
   points,
   horizon = 3,
