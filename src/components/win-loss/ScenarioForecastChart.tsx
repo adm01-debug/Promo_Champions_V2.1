@@ -97,9 +97,10 @@ interface CustomTooltipProps {
   payload?: TooltipPayloadItem[];
   label?: string;
   mode?: BandMode;
+  bandLabel?: string;
 }
 
-function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, label, mode, bandLabel }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   const isForecast = payload[0]?.payload?.isForecast;
   return (
@@ -125,7 +126,7 @@ function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
         ))}
       {isForecast && mode && (
         <p className="mt-1 pt-1 border-t border-border/50 text-[10px] text-muted-foreground">
-          Modo: {mode === "pi95" ? "PI 95%" : "SEE ±σ"}
+          Modo: {bandLabel ?? (mode === "pi95" ? "PI 95%" : "SEE ±σ")}
         </p>
       )}
     </div>
