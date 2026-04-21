@@ -36,7 +36,7 @@ const computeStats = (rows: WLAnalysisRow[], label: string): SeasonStats => {
   return { label, total, wins, winRate: total ? (wins / total) * 100 : 0, totalAmount, avgCycle };
 };
 
-export const useSeasonComparison = (rows: WLAnalysisRow[], salespersonId: string | null): SeasonComparison => {
+export const useSeasonComparison = (rows: WLAnalysisRow[]): SeasonComparison => {
   return useMemo(() => {
     const now = new Date();
     const currentQ = Math.floor(now.getMonth() / 3);
@@ -45,9 +45,8 @@ export const useSeasonComparison = (rows: WLAnalysisRow[], salespersonId: string
     const startPrev = new Date(now.getFullYear(), currentQ * 3 - 3, 1);
     const endPrev = startCurrent;
 
-    const filtered = salespersonId ? rows.filter(r => r.salesperson_id === salespersonId) : rows;
-    const cur = filtered.filter(r => inRange(r.analyzed_at, startCurrent, endCurrent));
-    const prev = filtered.filter(r => inRange(r.analyzed_at, startPrev, endPrev));
+    const cur = rows.filter(r => inRange(r.analyzed_at, startCurrent, endCurrent));
+    const prev = rows.filter(r => inRange(r.analyzed_at, startPrev, endPrev));
 
     const current = computeStats(cur, `${startCurrent.getFullYear()}·Q${currentQ + 1}`);
     const previous = computeStats(prev, `${startPrev.getFullYear()}·Q${(currentQ + 4) % 4 || 4}`);
