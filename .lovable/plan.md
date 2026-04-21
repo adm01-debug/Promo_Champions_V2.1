@@ -1,48 +1,50 @@
 
 
-## Debounce de `points` no `ScenarioForecastChart`
+## Persistência do seletor de modo de banda — verificação + cobertura de testes
 
-### Objetivo
-Evitar que cada troca de filtro (que muda `points` instantaneamente) dispare em cascata: hook OLS pesado → `useMemo` do `data` → `chartKey` → remount do Recharts. Atrasar a reação a `points` em ~200ms acumula múltiplas mudanças rápidas (ex: trocar período + alternar canal) num único recálculo.
+### Estado atual (já implementado)
+O `ScenarioForecastChart` **já persiste** corretamente no `localStorage`:
 
-### Estratégia
+- Chave `winloss-scenario-bandmode` (`"see"` | `"pi95"`) — função `readBandMode()` no init + `useEffect` grava em toda mudança.
+- Chave `winloss-scenario-confidence-z` (número entre 0.5 e 3.0) — função `readConfidenceZ()` com sanitização (range + `Number.isFinite`) + `useEffect` grava como string.
+- Migração silenciosa: a chave legada `winloss-scenario-see-ols-inflation` é removida no mount.
+- `useState(() => readX())` lazy-init garante que o valor restaurado já aparece **no primeiro render** após reload — sem flash de default.
 
-Debounce **interno** ao componente, sobre a prop `points`. O componente já é `memo` e centraliza todo o pipeline pesado (hook + memos + key). Não tocar no `useWinLossFilters` — ele já tem debounce de 250ms para URL, mas isso é um nível diferente (URL → `localFilters` → `monthly` → `points`).
+Ao recarregar a página, o gráfico já reflete o último modo escolhido. Não há bug a corrigir.
 
-### Mudanças
+### O que falta: cobertura de testes contra regressão
 
-**1. `src/hooks/useDebouncedValue.ts`** (novo, ~25 linhas, se ainda não existir)
-- Hook genérico `useDebouncedValue<T>(value: T, delayMs = 200): T`.
-- `useState` inicializado com `value`; `useEffect` com `setTimeout` que atualiza após `delayMs`; cleanup em mudança/unmount.
-- Verificar antes se já existe `useDebounce`/`useDebouncedValue` no projeto e reaproveitar.
+Hoje só existem testes da **mudança via UI** (`ScenarioForecastChartKey.test.tsx`). Não há teste que prove que:
+1. Um valor pré-existente em `localStorage` é honrado no mount.
+2. A escrita acontece (não só a leitura).
+3. Sanitização de valores corruptos funciona.
+4. O ciclo completo "trocar → desmontar → remontar → restaurar" preserva a escolha.
 
-**2. `src/components/win-loss/ScenarioForecastChart.tsx`**
-- Adicionar `const debouncedPoints = useDebouncedValue(points, 200);` no topo do componente.
-- Trocar `useWinLossScenarios(points, …)` → `useWinLossScenarios(debouncedPoints, …)`.
-- **Não** debouncear `horizon`, `bandMode`, `confidenceZ` — são interações diretas no próprio card; resposta deve ser instantânea.
-- Empty-state (`!data.length`) e estado `fitN < 3` continuam reagindo do mesmo hook (que já lê o input debounced) — não bloqueia skeleton inicial porque o `useState` do debounce é inicializado com o valor atual no primeiro render.
+### Mudança única
 
-**3. `src/test/hooks/useDebouncedValue.test.ts`** (novo, 3 testes)
-- `vi.useFakeTimers()`.
-- Caso 1: valor inicial retornado imediatamente (sem esperar delay).
-- Caso 2: múltiplos `rerender` em <delay → valor permanece o anterior; após `vi.advanceTimersByTime(delay)` → atualiza para o último.
-- Caso 3: trocar `delay` em runtime aplica o novo timeout.
+**`src/test/components/winloss/ScenarioForecastPersistence.test.tsx`** (novo, ~110 linhas)
 
-**4. `src/test/components/winloss/ScenarioForecastChartKey.test.tsx`** — ajuste mínimo
-- O teste "muda quando os points (filtros externos) mudam" hoje espera atualização síncrona. Com debounce de 200ms, precisará usar `vi.useFakeTimers()` + `vi.advanceTimersByTime(200)` antes do segundo `getKey()`. Setup/teardown de fake timers só nesse caso (`describe.each` ou bloco isolado).
-- Os outros 4 testes não trocam `points` durante o teste — permanecem síncronos.
+Reaproveita o mesmo stub de `recharts` (ResponsiveContainer expõe `key` via `data-chart-key`) usado em `ScenarioForecastChartKey.test.tsx`. 9 casos:
+
+1. **Default `see`** quando localStorage vazio → key começa com `scenario-see-`.
+2. **Restaura `pi95`** pré-gravado em localStorage no mount → key começa com `scenario-pi95-`.
+3. **Restaura `confidenceZ=1.96`** pré-gravado → key contém `-z1.96-`.
+4. **Sanitização de range**: `confidenceZ="999"` → cai para `1.00`.
+5. **Sanitização de tipo**: `confidenceZ="abc"` → cai para `1.00`.
+6. **Roundtrip bandMode**: clica `PI 95%` → localStorage gravado → unmount → remount → key restaurada.
+7. **Roundtrip z**: clica `95%` no popover → localStorage gravado → unmount → remount → key restaurada.
+8. **Migração legada**: `winloss-scenario-see-ols-inflation` pré-existente é removido no mount.
+9. **Sanitização de bandMode inválido**: valor estranho em localStorage → cai para `see`.
 
 ### Não-mudanças
-- Hook `useWinLossScenarios`: assinatura, lógica e bandas idênticos.
-- `buildScenarioChartKey`: idêntico.
-- `WinLossIntelligence.tsx`: continua passando `monthly` direto — debounce é encapsulado no filho.
-- Painel de auditoria, modal de explicação, strip de diagnósticos: idênticos (mesmo hook, input debounced).
+- Nenhum arquivo de produção alterado. A implementação atual já é correta.
+- `useDebouncedValue`, `buildScenarioChartKey`, `useWinLossScenarios`: intactos.
+- Testes existentes (14 entre `ScenarioChartKey.test.ts`, `ScenarioForecastChartKey.test.tsx`, `useDebouncedValue.test.ts`): permanecem verdes.
 
 ### Critério de aceite
-1. Trocar 3+ filtros em sequência rápida (<200ms entre eles) dispara **uma** recomputação do hook OLS, não três.
-2. Toggles internos do card (horizonte, modo, z) reagem instantaneamente.
-3. Primeiro render mostra dados imediatamente (sem aguardar 200ms inicial).
-4. `useDebouncedValue.test.ts`: 3 testes verdes.
-5. `ScenarioForecastChartKey.test.tsx`: 5 testes verdes (1 ajustado para fake timers).
-6. Sem regressão em outras suítes.
+1. 9 testes novos verdes em `ScenarioForecastPersistence.test.tsx`.
+2. `localStorage.getItem("winloss-scenario-bandmode")` retorna `"pi95"` após click em `Modo PI 95%`.
+3. `localStorage.getItem("winloss-scenario-confidence-z")` retorna `"1.96"` após selecionar 95% no popover.
+4. Após remount limpo (cleanup + render), a key do gráfico reflete os valores persistidos sem precisar interagir.
+5. Suíte completa do projeto continua verde.
 
