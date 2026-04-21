@@ -19,8 +19,12 @@ import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossS
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
+type ForecastHorizon = 3 | 6 | 12;
+
 interface Props {
   points: TrendPoint[];
+  horizon?: ForecastHorizon;
+  onHorizonChange?: (h: ForecastHorizon) => void;
 }
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
