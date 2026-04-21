@@ -564,6 +564,8 @@ Deno.test("dispatchOne: onDeadLetter NÃO chamado quando deps.onDeadLetter é un
   assertEquals(r.attempts, MAX_ATTEMPTS);
   assertEquals(h.deadLetters.length, 0);
 });
+
+Deno.test("dispatchOne: payload com __replay_of/__target_subscription_id NÃO vai no body externo", async () => {
   let capturedBody = "";
   const h = makeHarness(() => new Response("ok", { status: 200 }));
   const origFetch = h.deps.fetchFn;
