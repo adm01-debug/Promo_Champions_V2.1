@@ -34,7 +34,10 @@ interface Props {
   url?: string;
 }
 
-const MAX_REPLAY = 50;
+import { toast } from "sonner";
+import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
+
+const MAX_REPLAY = MAX_REPLAY_IDS;
 
 export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, url }: Props) {
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
@@ -157,7 +160,14 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
     };
   }, [confirm, data]);
 
-  const requestReplay = (ids: string[]) => setConfirm({ ids });
+  const requestReplay = (ids: string[]) => {
+    const validation = validateReplayIds(ids);
+    if (!validation.ok) {
+      toast.error(validation.message);
+      return;
+    }
+    setConfirm({ ids: validation.ids });
+  };
 
   const executeReplay = () => {
     if (!confirm) return;
