@@ -289,4 +289,78 @@ describe("useWinLossScenarios", () => {
       }
     });
   });
+
+  it("confidenceZ scales SEE band width linearly", () => {
+    const points = mkPoints([10, 14, 19, 22, 25, 31, 34]);
+    const steps = 6;
+    const z1 = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: steps, bandMode: "see", confidenceZ: 1 }),
+    ).result.current;
+    const z2 = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: steps, bandMode: "see", confidenceZ: 2 }),
+    ).result.current;
+    const z196 = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: steps, bandMode: "see", confidenceZ: 1.96 }),
+    ).result.current;
+
+    const fc1 = z1.series.filter((p) => p.isForecast);
+    const fc2 = z2.series.filter((p) => p.isForecast);
+    const fc196 = z196.series.filter((p) => p.isForecast);
+
+    fc1.forEach((p, i) => {
+      const w1 = p.optimistic - p.pessimistic;
+      const w2 = fc2[i].optimistic - fc2[i].pessimistic;
+      const w196 = fc196[i].optimistic - fc196[i].pessimistic;
+      const noClamp = (q: { optimistic: number; pessimistic: number }) =>
+        q.optimistic < 100 && q.pessimistic > 0;
+      if (noClamp(p) && noClamp(fc2[i])) expect(w2 / w1).toBeCloseTo(2, 9);
+      if (noClamp(p) && noClamp(fc196[i])) expect(w196 / w1).toBeCloseTo(1.96, 9);
+    });
+    expect(z196.confidenceZ).toBe(1.96);
+  });
+
+  it("confidenceZ does not affect bandMode 'pi95'", () => {
+    const points = mkPoints([10, 14, 19, 22, 25, 31, 34]);
+    const a = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: 4, bandMode: "pi95", confidenceZ: 1 }),
+    ).result.current;
+    const b = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: 4, bandMode: "pi95", confidenceZ: 2.5 }),
+    ).result.current;
+    a.series.forEach((p, i) => {
+      expect(p.optimistic).toBeCloseTo(b.series[i].optimistic, 12);
+      expect(p.pessimistic).toBeCloseTo(b.series[i].pessimistic, 12);
+    });
+  });
+
+  it("confidenceZ also scales the legacy √(1+step/n) approximation", () => {
+    const points = mkPoints([10, 14, 19, 22, 25, 31, 34]);
+    const steps = 4;
+    const z1 = renderHook(() =>
+      useWinLossScenarios(points, {
+        forecastSteps: steps,
+        bandMode: "see",
+        seeUseOlsInflation: false,
+        confidenceZ: 1,
+      }),
+    ).result.current;
+    const zX = renderHook(() =>
+      useWinLossScenarios(points, {
+        forecastSteps: steps,
+        bandMode: "see",
+        seeUseOlsInflation: false,
+        confidenceZ: 1.645,
+      }),
+    ).result.current;
+
+    const f1 = z1.series.filter((p) => p.isForecast);
+    const fX = zX.series.filter((p) => p.isForecast);
+    f1.forEach((p, i) => {
+      const w1 = p.optimistic - p.pessimistic;
+      const wX = fX[i].optimistic - fX[i].pessimistic;
+      const noClamp = (q: { optimistic: number; pessimistic: number }) =>
+        q.optimistic < 100 && q.pessimistic > 0;
+      if (noClamp(p) && noClamp(fX[i])) expect(wX / w1).toBeCloseTo(1.645, 9);
+    });
+  });
 });
