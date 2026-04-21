@@ -1,53 +1,54 @@
 
 
-## Seletor de modo de banda no `ScenarioForecastChart`: SEE vs Prediction Interval 95%
+## Painel de auditoria do forecast (slope, intercept, SSE, σ, fitN)
 
 ### Objetivo
-Permitir alternar, dentro do gráfico de cenário, entre dois modos de incerteza:
-- **SEE** (atual): σ residual da regressão alargado por `σ · √(1 + step/n)`. Bandas estreitas, "1σ".
-- **PI 95%** (novo, conservador): fórmula completa da OLS com t-Student → `t · σ · √(1 + 1/n + (x − meanX)² / Sxx)`. Bandas mais largas, leva em conta a distância do centro dos dados.
+Expor as estatísticas internas da regressão OLS usadas no `ScenarioForecastChart` num painel colapsável, para auditoria rápida da projeção sem precisar abrir devtools.
 
 ### Mudanças
 
-**1. `src/hooks/win-loss/useWinLossScenarios.ts`**
-- Aceitar `options: { forecastSteps?: number; bandMode?: "see" | "pi95" }`.
-- Manter compat: se receber number, equivale a `{ forecastSteps: n }`.
-- Tabela `tCritical(dof, 0.975)` hardcoded para df 1–30; >30 → 1.96.
-- Largura da banda por step:
-  - `see`: `σ · √(1 + step/n)` (atual).
-  - `pi95`: `t · σ · √(1 + 1/n + (x − meanX)² / Sxx)`.
-- Histórico continua colapsado (fan só abre na junção).
-- Retorno ganha: `bandMode`, `tCritical` (number ou null), `bandLabel`.
+**1. `src/hooks/win-loss/useWinLossScenarios.ts`** — expor mais estatísticas
+- Adicionar ao `ScenarioForecast`:
+  - `intercept: number` — coeficiente β₀ da reta.
+  - `sse: number` — soma dos quadrados dos resíduos (Σ(y−ŷ)²).
+  - `meanX: number`, `sxx: number` — úteis para reproduzir a fórmula PI 95%.
+  - `dof: number` — graus de liberdade (n−2, mín. 1).
+- Preencher esses campos no caminho normal (n≥3) e zerar no fallback (n<3).
+- Mantém retrocompatibilidade — só adiciona campos.
 
-**2. `src/components/win-loss/ScenarioForecastChart.tsx`**
-- `useState<"see"|"pi95">("see")`, persistido em `localStorage` (`winloss-scenario-bandmode`).
-- `<ToggleGroup type="single" size="sm">` no header com itens "SEE" / "PI 95%", `aria-label="Modo de banda"`, tooltips explicando.
-- Badge do header reflete o modo:
-  - `see`: `σ ±X.Xpp · fit em N`
-  - `pi95`: `PI 95% · t=Y.YY · σ ±X.Xpp · fit em N`
-- `chartKey` (signature completa já existente) ganha `bandMode` no prefixo → reset limpo do Recharts ao alternar.
-- Tooltip do gráfico mostra "Modo: SEE" ou "Modo: PI 95%" no rodapé.
+**2. Novo componente `src/components/win-loss/ScenarioForecastAuditPanel.tsx`**
+- Props: `{ slope, intercept, stdDev, sse, fitN, dof, bandMode, tCritical, meanX, sxx }`.
+- Cartão compacto colapsável (`<details>` nativo, ícone chevron, sem dependência extra) com título "Auditoria do ajuste".
+- Grid 2 colunas com pares label → valor tabular-nums:
+  - **Slope (β₁)**: `X.XXX pp/período`
+  - **Intercept (β₀)**: `X.XX pp`
+  - **Equação**: `ŷ = β₀ + β₁·x` (renderizada com valores)
+  - **SSE**: `X.XX`
+  - **Residual σ (SEE)**: `X.XX pp`
+  - **Graus de liberdade**: `n−2 = X`
+  - **fitN**: `N períodos`
+  - **Modo de banda**: `SEE` ou `PI 95% (t=Y.YY)`
+  - **x̄ / Sxx** (só se `pi95`): para auditar a fórmula PI completa
+- Um parágrafo curto de rodapé explicando: "σ menor = ajuste mais aderente; |slope| baixo = sem tendência clara; SSE cresce com ruído."
+- Acessível: `<summary>` com role/aria padrão do `<details>`, `aria-label` no card.
 
-**3. Testes — `src/test/hooks/useWinLossScenarios.test.ts`** (estender)
-- `pi95 produces wider bands than see for same data` — `[10,22,30,42,50]`.
-- `pi95 bands widen with horizon and stay clamped to [0,100]`.
-- `pi95 with large n approximates 1.96σ at center` — 35 pts com ruído leve.
-- `legacy numeric arg ≡ { forecastSteps, bandMode: "see" }` (back-compat).
-
-Rodar `npx vitest run src/test/hooks/useWinLossScenarios.test.ts` — esperado **9 + 4 = 13/13**.
+**3. `src/components/win-loss/ScenarioForecastChart.tsx`**
+- Importar e renderizar `<ScenarioForecastAuditPanel />` logo após o `<CardContent>` do gráfico (dentro do mesmo `<Card>`, em um bloco separado com borda superior leve `border-t`), passando os campos novos do hook.
+- Não renderizar quando `fitN < 3` (já cai no early-return existente).
 
 ### Detalhes técnicos
-- Tabela t two-tailed α=0.05 hardcoded — acuracidade suficiente para df ≤ 30.
-- `bandMode` muda só os steps de previsão; `stdDev`, `slope`, `fitN` continuam idênticos.
-- API do hook segue retrocompatível para qualquer chamada existente.
+- Sem novas libs; `<details>/<summary>` + classes Tailwind existentes.
+- Tipos novos (`intercept`, `sse`, `dof`, `meanX`, `sxx`) são campos adicionais — não quebram chamadas existentes.
+- Painel é puramente apresentacional, memoizado por props.
 
 ### Arquivos
 - **Modificar**: `src/hooks/win-loss/useWinLossScenarios.ts`
+- **Criar**: `src/components/win-loss/ScenarioForecastAuditPanel.tsx`
 - **Modificar**: `src/components/win-loss/ScenarioForecastChart.tsx`
-- **Modificar**: `src/test/hooks/useWinLossScenarios.test.ts`
+- **Modificar**: `src/test/hooks/useWinLossScenarios.test.ts` — adicionar 2 testes: (a) `intercept + slope reconstrói meanY no centro`; (b) `sse ≈ 0 para dados perfeitamente lineares`.
 
 ### Ordem
-1. Estender hook (options, tabela t, fórmula PI).
-2. Adicionar testes e rodar suite.
-3. Adicionar toggle no header do chart + persistência + ajustes de badge/tooltip/chartKey.
+1. Estender retorno do hook + testes (rodar `vitest run src/test/hooks/useWinLossScenarios.test.ts` — esperado 15/15).
+2. Criar `ScenarioForecastAuditPanel`.
+3. Plugar no `ScenarioForecastChart`.
 
