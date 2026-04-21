@@ -139,6 +139,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
   const [seeUseOlsInflation, setSeeUseOlsInflation] = useState<boolean>(() => readSeeOlsInflation());
+  const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
 
   useEffect(() => {
     try {
@@ -156,11 +157,20 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [seeUseOlsInflation]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(CONFIDENCE_Z_KEY, confidenceZ.toString());
+    } catch {
+      /* ignore */
+    }
+  }, [confidenceZ]);
+
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
     useWinLossScenarios(points, {
       forecastSteps: horizon,
       bandMode,
       seeUseOlsInflation,
+      confidenceZ,
     });
 
   const data = useMemo(
@@ -183,6 +193,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     return lastHistorical?.period ?? null;
   }, [series]);
 
+  const zPctLabel = useMemo(() => pctFromZ(confidenceZ), [confidenceZ]);
+
   // Stable key: forces Recharts to fully reset internals (axes, scales, tooltip
   // cache) when filters change the underlying dataset. Includes a compact
   // signature of every point so two distinct series of equal length cannot
@@ -191,8 +203,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation]);
+    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-z${confidenceZ.toFixed(2)}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation, confidenceZ]);
 
   if (!data.length) {
     return (
