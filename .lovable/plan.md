@@ -1,36 +1,46 @@
 
 
-## Provar isolamento temporal: backoff de uma sub não atrasa nem impede updateSubscription das demais
+## Cobrir validação Zod do `winloss-webhook-replay` com testes Deno isolados
 
 ### Estado atual
-O teste **"fan-out: retries de uma sub não acoplam às outras (sleeps isolados)"** (linha ~717 de `retry_test.ts`) já valida fetches por URL e que `updateSubscription` é chamado 1× por sub. Porém:
-- Mede sleeps por **URL** (via `currentUrl` global no harness — racy sob `Promise.all`).
-- Não comprova os **valores exatos** dos backoffs de B.
-- Não valida temporalmente que A e C não esperaram pelos backoffs de B.
+A validação **já existe e funciona** em `supabase/functions/winloss-webhook-replay/index.ts` (linhas 36–56):
+- `idArray = z.array(z.string().uuid()).min(1).max(50)`.
+- `z.union` exige exatamente um dos arrays (`dead_letter_ids` XOR `delivery_ids`).
+- `safeParse` retorna **400** com `{ error: "invalid_input", message, details: error.flatten(), requestId }`.
+
+Porém **não há testes Deno** isolando esse schema — só existe `retry_test.ts` do dispatcher.
 
 ### O que será adicionado
-Um teste autônomo em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts`, inserido após o teste da linha ~808, com **harness próprio por subscription**:
-- Cada `dispatchOne` recebe um `DispatchDeps` exclusivo via closure → `sleeps` e `fetches` são amarrados ao `subId`, não a estado global racy.
-- `rand: () => 0` (jitter zero) para backoff determinístico: `[250, 500]` em B.
-- Relógio virtual `virtualNow` avançado apenas pelos `sleep()` daquela thread.
 
-Cenário: A=200 (1 fetch), B=500 em todas (esgota), C=200 (1 fetch).
+1. **Extrair `BodySchema`** de `index.ts` para `supabase/functions/winloss-webhook-replay/schema.ts` (export nomeado). Re-importar em `index.ts` — zero mudança de comportamento em runtime.
+2. **Criar `supabase/functions/winloss-webhook-replay/schema_test.ts`** com ~18 casos Deno:
 
-### Asserções
-1. **fetches por id**: A=1, B=`MAX_ATTEMPTS`, C=1.
-2. **sleeps por id**:
-   - A e C: zero sleeps.
-   - B: exatamente `[250, 500]`.
-3. **updates por id**: cada sub fez `updateSubscription` exatamente 1×, com status final correto (200, 500, 200).
-4. **prova temporal** via `virtualNow` no momento do update:
-   - `byId["sub-B"].at >= 750` (B esperou seus 2 backoffs).
-   - A e C não acumularam sleeps próprios.
-5. **total de sleeps no fan-out** = `MAX_ATTEMPTS - 1` = 2 (apenas B).
+**Aceita `delivery_ids`** (e simétrico para `dead_letter_ids`):
+- 1 UUID válido → normaliza para `{ delivery_ids: [uuid], dead_letter_ids: undefined }`.
+- 50 UUIDs válidos → ok (limite max).
+- `delivery_id` singular → açúcar normalizado para array de 1.
+
+**Rejeita exclusividade**:
+- Ambos arrays presentes → falha union.
+- Body `{}` / nenhum campo → falha union.
+- `delivery_ids` + `dead_letter_id` singular do outro tipo após preprocess → falha.
+
+**Rejeita limites**:
+- `delivery_ids: []` → falha `min(1)`.
+- 51 UUIDs → falha `max(50)`.
+- 1 string não-UUID → falha `uuid()`.
+- 49 válidos + 1 inválido → falha; `details.fieldErrors.delivery_ids` populado.
+- `delivery_ids: "string"` ou `[123, 456]` → falha por tipo.
+
+**Erro serializável**:
+- Em todas as falhas, `error.flatten()` produz `{ fieldErrors, formErrors }` — garante que o handler consegue mandar `details` no 400.
 
 ### Onde
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~85 linhas, após linha 808).
-- **Não modificar**: `retry.ts`.
+- **Criar**: `supabase/functions/winloss-webhook-replay/schema.ts` (export `BodySchema` + `idArray`).
+- **Modificar**: `supabase/functions/winloss-webhook-replay/index.ts` — substitui definição inline por `import { BodySchema } from "./schema.ts"`.
+- **Criar**: `supabase/functions/winloss-webhook-replay/schema_test.ts` (~18 testes Deno).
 
 ### Verificação
-`supabase--test_edge_functions` com `functions: ["winloss-webhook-dispatcher"]`, `pattern: "fan-out"` — deve listar 8 testes (7 atuais + 1 novo), todos `ok`.
+1. `supabase--test_edge_functions` com `functions: ["winloss-webhook-replay"]` — todos verdes.
+2. Curl autenticado com body inválido continua retornando **400** com `details` Zod e `requestId` (sem regressão).
 
