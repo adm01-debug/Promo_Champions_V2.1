@@ -318,6 +318,33 @@ export default function WinLossIntelligence() {
               <WinLossErrorBoundary section="Script A/B">
                 <ScriptABPanel />
               </WinLossErrorBoundary>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <WinLossErrorBoundary section="Forecast cenários" fallbackHeight={260}>
+                  <ScenarioForecastChart points={monthly} />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="ICP correlação" fallbackHeight={260}>
+                  <ICPCorrelationMatrix rows={rows} />
+                </WinLossErrorBoundary>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <WinLossErrorBoundary section="Sentimento × Win" fallbackHeight={260}>
+                  <SentimentTrendChart />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="Comparativo de safras">
+                  <SeasonComparisonPanel rows={rows} />
+                </WinLossErrorBoundary>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <WinLossErrorBoundary section="Deals em risco">
+                  <AtRiskDealsFromPatterns />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="Webhooks">
+                  <WebhookSubscriptionsPanel />
+                </WinLossErrorBoundary>
+              </div>
             </>
           )}
 
