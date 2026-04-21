@@ -23,12 +23,8 @@ import { NextBestWinLossCard } from "@/components/win-loss/NextBestWinLossCard";
 import { InsightsImpactPanel } from "@/components/win-loss/InsightsImpactPanel";
 import { WinByHourHeatmap } from "@/components/win-loss/WinByHourHeatmap";
 import { ScriptABPanel } from "@/components/win-loss/ScriptABPanel";
-import {
-  KpiBannerSkeleton,
-  ChartSkeleton,
-  TableSkeleton,
-  CompetitorGridSkeleton,
-} from "@/components/win-loss/WinLossSkeletons";
+import { WinLossSectionSkeleton } from "@/components/win-loss/WinLossSectionSkeleton";
+import { WinLossErrorBoundary } from "@/components/win-loss/WinLossErrorBoundary";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
@@ -182,6 +178,14 @@ export default function WinLossIntelligence() {
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
+      {/* Skip-link a11y AAA */}
+      <a
+        href="#wl-insights"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-primary focus:text-primary-foreground focus:px-3 focus:py-1.5 focus:rounded-md focus:text-sm"
+      >
+        Pular para insights
+      </a>
+
       <PageTransition>
         <div className="space-y-4 pb-[env(safe-area-inset-bottom)]" role="main" aria-label="Win/Loss Intelligence">
           <WinLossPageHeader
@@ -220,13 +224,13 @@ export default function WinLossIntelligence() {
 
           {isLoading ? (
             <>
-              <KpiBannerSkeleton />
+              <WinLossSectionSkeleton variant="kpi" />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2"><ChartSkeleton /></div>
-                <div><ChartSkeleton height={220} /></div>
+                <div className="lg:col-span-2"><WinLossSectionSkeleton variant="chart" /></div>
+                <div><WinLossSectionSkeleton variant="chart" height={220} /></div>
               </div>
-              <TableSkeleton rows={5} />
-              <CompetitorGridSkeleton />
+              <WinLossSectionSkeleton variant="table" rows={5} />
+              <WinLossSectionSkeleton variant="chart" height={180} />
             </>
           ) : isEmpty ? (
             <WinLossEmptyState
