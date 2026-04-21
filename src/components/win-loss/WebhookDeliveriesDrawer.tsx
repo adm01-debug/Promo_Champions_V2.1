@@ -7,10 +7,11 @@ import {
 } from "@/components/ui/drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeliveries } from "@/hooks/win-loss/useWebhookDeliveries";
@@ -22,13 +23,56 @@ interface Props {
   url?: string;
 }
 
+const MAX_REPLAY = 50;
+
 export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, url }: Props) {
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  // Reset selection when drawer closes
+  useEffect(() => {
+    if (!open) setSelected(new Set());
+  }, [open]);
+
+  const failedIds = useMemo(
+    () => (data ?? []).filter((d) => !d.succeeded).map((d) => d.id),
+    [data],
+  );
+  const allFailedSelected = failedIds.length > 0 && failedIds.every((id) => selected.has(id));
+  const someFailedSelected = failedIds.some((id) => selected.has(id));
+  const headerCheckState: boolean | "indeterminate" = allFailedSelected
+    ? true
+    : someFailedSelected
+      ? "indeterminate"
+      : false;
+  const atLimit = selected.size >= MAX_REPLAY;
+
+  const toggleOne = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else if (next.size < MAX_REPLAY) next.add(id);
+      return next;
+    });
+
+  const toggleAll = () =>
+    setSelected((prev) => {
+      if (allFailedSelected) return new Set();
+      // Select up to MAX_REPLAY of failed
+      return new Set(failedIds.slice(0, MAX_REPLAY));
+    });
+
+  const clearSelection = () => setSelected(new Set());
 
   const handleReplay = (id: string) => {
     setPendingId(id);
     replay([id], { onSettled: () => setPendingId(null) });
+  };
+
+  const handleReplaySelected = () => {
+    if (selected.size === 0) return;
+    replay(Array.from(selected), { onSettled: clearSelection });
   };
 
   return (
@@ -38,22 +82,98 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
           <DrawerTitle className="text-base">Histórico de entregas</DrawerTitle>
           <DrawerDescription className="truncate text-xs">{url ?? subscriptionId}</DrawerDescription>
         </DrawerHeader>
-        <ScrollArea className="flex-1 px-4 py-3">
-          {isLoading && <p className="text-xs text-muted-foreground py-4 text-center">Carregando…</p>}
-          {!isLoading && (data?.length ?? 0) === 0 && (
-            <p className="text-xs text-muted-foreground py-6 text-center">Nenhuma entrega registrada ainda.</p>
+
+        <TooltipProvider delayDuration={200}>
+          {/* Sticky selection toolbar */}
+          {failedIds.length > 0 && (
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur">
+              <label className="flex items-center gap-2 text-xs cursor-pointer select-none">
+                <Checkbox
+                  checked={headerCheckState}
+                  onCheckedChange={toggleAll}
+                  aria-label="Selecionar todas as entregas falhas"
+                />
+                <span className="text-muted-foreground">
+                  Selecionar todas as falhas ({failedIds.length})
+                </span>
+              </label>
+              <div
+                className="flex items-center gap-2"
+                aria-live="polite"
+              >
+                {selected.size > 0 && (
+                  <>
+                    <span className="text-xs text-muted-foreground">
+                      {selected.size} selecionado{selected.size === 1 ? "" : "s"}
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 px-2 text-xs"
+                      onClick={clearSelection}
+                      disabled={isReplaying}
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      Limpar
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={handleReplaySelected}
+                      disabled={isReplaying}
+                    >
+                      {isReplaying ? (
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      ) : (
+                        <RotateCw className="h-3 w-3 mr-1" />
+                      )}
+                      Reenviar selecionados
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
           )}
-          <ul className="space-y-2 pb-6" role="list" aria-label="Entregas de webhook">
-            <TooltipProvider delayDuration={200}>
+
+          <ScrollArea className="flex-1 px-4 py-3">
+            {isLoading && <p className="text-xs text-muted-foreground py-4 text-center">Carregando…</p>}
+            {!isLoading && (data?.length ?? 0) === 0 && (
+              <p className="text-xs text-muted-foreground py-6 text-center">Nenhuma entrega registrada ainda.</p>
+            )}
+            <ul className="space-y-2 pb-6" role="list" aria-label="Entregas de webhook">
               {(data ?? []).map((d) => {
                 const Icon = d.succeeded ? CheckCircle2 : XCircle;
                 const color = d.succeeded ? "text-emerald-500" : "text-destructive";
                 const isPending = pendingId === d.id && isReplaying;
+                const isChecked = selected.has(d.id);
+                const checkboxDisabled =
+                  d.succeeded || isReplaying || (atLimit && !isChecked);
                 return (
                   <li
                     key={d.id}
                     className="flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2"
                   >
+                    {d.succeeded ? (
+                      <span className="w-4 shrink-0" aria-hidden />
+                    ) : (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="mt-0.5 shrink-0">
+                            <Checkbox
+                              checked={isChecked}
+                              disabled={checkboxDisabled}
+                              onCheckedChange={() => toggleOne(d.id)}
+                              aria-label={`Selecionar entrega de ${d.event}`}
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        {atLimit && !isChecked && (
+                          <TooltipContent side="right" className="text-xs">
+                            Máx {MAX_REPLAY} por reenvio
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    )}
                     <Icon className={`h-4 w-4 mt-0.5 ${color}`} aria-hidden />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-1.5">
@@ -105,9 +225,9 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                   </li>
                 );
               })}
-            </TooltipProvider>
-          </ul>
-        </ScrollArea>
+            </ul>
+          </ScrollArea>
+        </TooltipProvider>
       </DrawerContent>
     </Drawer>
   );
