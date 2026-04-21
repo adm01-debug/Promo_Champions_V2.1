@@ -112,19 +112,27 @@ describe("ScenarioForecastChart — chartKey reage a filtros", () => {
     expect(keyA).not.toBe(keyB);
   });
 
-  it("muda quando os points (filtros externos) mudam", () => {
-    const { rerender } = renderChart({ points: makePoints(8), horizon: 3 });
-    const keyA = getKey();
-    expect(keyA).toContain("-fit");
+  it("muda quando os points (filtros externos) mudam (após debounce)", () => {
+    vi.useFakeTimers();
+    try {
+      const { rerender } = renderChart({ points: makePoints(8), horizon: 3 });
+      const keyA = getKey();
+      expect(keyA).toContain("-fit");
 
-    rerender(
-      <TooltipProvider>
-        <ScenarioForecastChart points={makePoints(12)} horizon={3} />
-      </TooltipProvider>,
-    );
-    const keyB = getKey();
-    expect(keyB).toContain("-fit");
-    expect(keyA).not.toBe(keyB);
+      rerender(
+        <TooltipProvider>
+          <ScenarioForecastChart points={makePoints(12)} horizon={3} />
+        </TooltipProvider>,
+      );
+      // Debounce de 200ms dentro do componente — antes disso a key não muda.
+      expect(getKey()).toBe(keyA);
+      vi.advanceTimersByTime(200);
+      const keyB = getKey();
+      expect(keyB).toContain("-fit");
+      expect(keyA).not.toBe(keyB);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("permanece estável quando nada muda (anti-flicker)", () => {
