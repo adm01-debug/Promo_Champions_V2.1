@@ -6,7 +6,7 @@ const upsertMock = vi.fn().mockResolvedValue({ error: null });
 const deleteMock = vi.fn().mockResolvedValue({ error: null });
 const maybeSingleMock = vi.fn();
 const getUserMock = vi.fn();
-const onAuthStateChangeMock = vi.fn(() => ({
+const onAuthStateChangeMock = vi.fn((..._args: unknown[]) => ({
   data: { subscription: { unsubscribe: vi.fn() } },
 }));
 
