@@ -169,7 +169,7 @@ serve(async (req) => {
     }, requestId);
 
     return new Response(JSON.stringify({ requestId, dispatched: results.length, succeeded: succeededCount, failed: failedCount, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
     });
   } catch (e) {
     structuredLog("error", {
