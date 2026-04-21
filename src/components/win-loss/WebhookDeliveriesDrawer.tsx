@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X, SkipForward } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeliveries } from "@/hooks/win-loss/useWebhookDeliveries";
@@ -29,11 +30,76 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const [lastResults, setLastResults] = useState<Map<string, "ok" | "skipped" | "fail">>(
+    new Map(),
+  );
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   // Reset selection when drawer closes
   useEffect(() => {
-    if (!open) setSelected(new Set());
+    if (!open) {
+      setSelected(new Set());
+      setProcessingIds(new Set());
+    }
   }, [open]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      timers.clear();
+    };
+  }, []);
+
+  const scheduleClearResult = (id: string) => {
+    const existing = timersRef.current.get(id);
+    if (existing) clearTimeout(existing);
+    const t = setTimeout(() => {
+      setLastResults((prev) => {
+        const next = new Map(prev);
+        next.delete(id);
+        return next;
+      });
+      timersRef.current.delete(id);
+    }, 4000);
+    timersRef.current.set(id, t);
+  };
+
+  const recordResults = (
+    ids: string[],
+    payload: { results: Array<{ id: string; succeeded: boolean; skipped?: boolean }> } | undefined,
+  ) => {
+    setLastResults((prev) => {
+      const next = new Map(prev);
+      const returned = new Set<string>();
+      for (const r of payload?.results ?? []) {
+        const status: "ok" | "skipped" | "fail" = r.skipped
+          ? "skipped"
+          : r.succeeded
+            ? "ok"
+            : "fail";
+        next.set(r.id, status);
+        returned.add(r.id);
+        scheduleClearResult(r.id);
+      }
+      for (const id of ids) {
+        if (!returned.has(id)) {
+          next.set(id, "fail");
+          scheduleClearResult(id);
+        }
+      }
+      return next;
+    });
+  };
+
+  const clearProcessing = (ids: string[]) =>
+    setProcessingIds((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) next.delete(id);
+      return next;
+    });
 
   const failedIds = useMemo(
     () => (data ?? []).filter((d) => !d.succeeded).map((d) => d.id),
@@ -67,12 +133,29 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
 
   const handleReplay = (id: string) => {
     setPendingId(id);
-    replay([id], { onSettled: () => setPendingId(null) });
+    setProcessingIds((prev) => new Set(prev).add(id));
+    replay([id], {
+      onSuccess: (payload) => recordResults([id], payload),
+      onSettled: () => {
+        setPendingId(null);
+        clearProcessing([id]);
+      },
+    });
   };
 
   const handleReplaySelected = () => {
     if (selected.size === 0) return;
-    replay(Array.from(selected), { onSettled: clearSelection });
+    const ids = Array.from(selected);
+    setProcessingIds((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) next.add(id);
+      return next;
+    });
+    clearSelection();
+    replay(ids, {
+      onSuccess: (payload) => recordResults(ids, payload),
+      onSettled: () => clearProcessing(ids),
+    });
   };
 
   return (
@@ -144,14 +227,19 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
               {(data ?? []).map((d) => {
                 const Icon = d.succeeded ? CheckCircle2 : XCircle;
                 const color = d.succeeded ? "text-emerald-500" : "text-destructive";
-                const isPending = pendingId === d.id && isReplaying;
+                const isProcessing = processingIds.has(d.id);
+                const isPending = (pendingId === d.id && isReplaying) || isProcessing;
                 const isChecked = selected.has(d.id);
                 const checkboxDisabled =
                   d.succeeded || isReplaying || (atLimit && !isChecked);
+                const result = lastResults.get(d.id);
                 return (
                   <li
                     key={d.id}
-                    className="flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2"
+                    className={cn(
+                      "relative flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2 transition-colors overflow-hidden",
+                      isProcessing && "bg-primary/5 border-primary/30",
+                    )}
                   >
                     {d.succeeded ? (
                       <span className="w-4 shrink-0" aria-hidden />
@@ -198,6 +286,35 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                       <p className="text-[10px] text-muted-foreground mt-1">
                         {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
                       </p>
+                      {(isProcessing || result) && (
+                        <div
+                          className="mt-1.5"
+                          role="status"
+                          aria-live="polite"
+                        >
+                          {isProcessing ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium">
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              Reenviando…
+                            </span>
+                          ) : result === "ok" ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success px-2 py-0.5 text-[10px] font-medium">
+                              <CheckCircle2 className="h-3 w-3" />
+                              Reenviado
+                            </span>
+                          ) : result === "skipped" ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-[10px] font-medium">
+                              <SkipForward className="h-3 w-3" />
+                              Já entregue
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 text-destructive px-2 py-0.5 text-[10px] font-medium">
+                              <XCircle className="h-3 w-3" />
+                              Falhou
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -222,6 +339,12 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                         {d.succeeded ? "Já entregue com sucesso" : "Reenviar este evento"}
                       </TooltipContent>
                     </Tooltip>
+                    {isProcessing && (
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-primary/20 via-primary to-primary/20 animate-pulse"
+                      />
+                    )}
                   </li>
                 );
               })}
