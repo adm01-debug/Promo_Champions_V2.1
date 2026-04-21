@@ -13742,6 +13742,53 @@ export type Database = {
           },
         ]
       }
+      winloss_webhook_deliveries: {
+        Row: {
+          attempt: number
+          created_at: string
+          duration_ms: number
+          error_message: string | null
+          event: string
+          id: string
+          payload: Json
+          status: number
+          subscription_id: string
+          succeeded: boolean
+        }
+        Insert: {
+          attempt: number
+          created_at?: string
+          duration_ms?: number
+          error_message?: string | null
+          event: string
+          id?: string
+          payload?: Json
+          status?: number
+          subscription_id: string
+          succeeded?: boolean
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          duration_ms?: number
+          error_message?: string | null
+          event?: string
+          id?: string
+          payload?: Json
+          status?: number
+          subscription_id?: string
+          succeeded?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "winloss_webhook_deliveries_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "winloss_webhook_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       winloss_webhook_subscriptions: {
         Row: {
           active: boolean

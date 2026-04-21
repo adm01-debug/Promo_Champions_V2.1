@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Webhook, Plus, Trash2 } from "lucide-react";
+import { Webhook, Plus, Trash2, History } from "lucide-react";
 import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
+import { WebhookDeliveriesDrawer } from "./WebhookDeliveriesDrawer";
 
 const ALL_EVENTS = ["critical_pattern", "anomaly", "perf_drop"] as const;
 
@@ -13,6 +14,7 @@ export function WebhookSubscriptionsPanel() {
   const { list, create, toggle, remove, isCreating } = useWebhookSubscriptions();
   const [url, setUrl] = useState("");
   const [events, setEvents] = useState<string[]>([...ALL_EVENTS]);
+  const [deliveriesFor, setDeliveriesFor] = useState<{ id: string; url: string } | null>(null);
 
   const submit = () => {
     if (!url.trim() || !/^https?:\/\//.test(url)) return;
@@ -71,6 +73,16 @@ export function WebhookSubscriptionsPanel() {
                   {w.last_status && <Badge variant={w.last_status >= 200 && w.last_status < 300 ? "secondary" : "destructive"} className="text-[9px] py-0 px-1.5">HTTP {w.last_status}</Badge>}
                 </div>
               </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0"
+                onClick={() => setDeliveriesFor({ id: w.id, url: w.url })}
+                aria-label="Ver entregas"
+                title="Ver histórico de entregas"
+              >
+                <History className="h-3 w-3" />
+              </Button>
               <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => remove(w.id)} aria-label="Remover webhook">
                 <Trash2 className="h-3 w-3" />
               </Button>
@@ -81,6 +93,12 @@ export function WebhookSubscriptionsPanel() {
           )}
         </div>
       </CardContent>
+      <WebhookDeliveriesDrawer
+        subscriptionId={deliveriesFor?.id ?? null}
+        url={deliveriesFor?.url}
+        open={!!deliveriesFor}
+        onOpenChange={(v) => !v && setDeliveriesFor(null)}
+      />
     </Card>
   );
 }
