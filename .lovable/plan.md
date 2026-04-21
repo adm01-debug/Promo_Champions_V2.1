@@ -1,93 +1,111 @@
 
 
-## Teste do modo Personalizar — drag-and-drop, persistência e fallback
+## Validação do `detect-winloss-at-risk` — scores, razões e ações
 
-Objetivo: validar que o `DashboardLayoutEditor` (a) persiste a ordem por usuário em `user_winloss_preferences.layout`, (b) renderiza na ordem salva no próximo carregamento, e (c) lida graciosamente com widgets desativados/ausentes (fallback sem crash, novos widgets aparecendo no final).
-
----
-
-### Estado verificado no código
-
-`src/hooks/win-loss/useUserDashboardLayout.ts`:
-- Lê `layout` da tabela `user_winloss_preferences` por `user_id`.
-- Se vazio/inválido → retorna `DEFAULT_LAYOUT` (17 widgets).
-- Se salvo → faz merge: `[...stored, ...DEFAULT_LAYOUT.filter(w => !stored.includes(w))]` (anexa novos widgets ao fim — bom).
-- `save` faz upsert.
-
-`src/components/win-loss/DashboardLayoutEditor.tsx`:
-- Modo view: `layout.map(id => widgets[id] ? <node /> : null)` — fallback OK quando widget não existe no objeto.
-- Modo edit: `DndContext` + `SortableContext` vertical + `arrayMove` em `onDragEnd`.
-- Sensors: Pointer (4px) + Keyboard (acessível).
-- Botões: Personalizar / Cancelar / Padrão (reset DEFAULT) / Salvar.
-
-Lacunas identificadas:
-1. **Sem cobertura de teste** automatizada do hook nem do editor.
-2. **Persistência não-validada** end-to-end com `user_winloss_preferences` real.
-3. **Não há verificação** de que a página `WinLossIntelligence` consome `layout` na ordem correta.
-4. **Edição mostra apenas linhas no editor** — usuário não vê preview dos widgets reordenados antes de salvar (perda de feedback visual).
+Objetivo: confirmar que a edge function pontua deals abertos cruzando padrões de loss (`win_loss_patterns`) com 0–100 coerente, retorna `matched_pattern` e `suggested_action` legíveis e não-vazios, e que o painel `AtRiskDealsFromPatterns` os exibe corretamente.
 
 ---
 
-### Plano de execução
+### Estado atual (verificado)
 
-#### 1. Testes unitários do hook `useUserDashboardLayout`
-Arquivo novo `src/test/hooks/useUserDashboardLayout.test.ts` cobrindo:
-- Sem usuário autenticado → retorna `DEFAULT_LAYOUT`.
-- Usuário sem registro → retorna `DEFAULT_LAYOUT`.
-- Layout salvo válido → retorna na ordem salva.
-- Layout salvo com widgets faltantes (ex: novos adicionados depois) → anexa ao fim.
-- Layout salvo array vazio/null → fallback `DEFAULT_LAYOUT`.
-- `save` faz upsert com `user_id` + `layout` + `updated_at`.
+**Edge function** (`supabase/functions/detect-winloss-at-risk/index.ts`):
+- Busca até 50 padrões `outcome='lost'` e até 200 deals abertos (`status not in (won,lost)`).
+- Score = `min(100, round((hits/keywords.length) * 80 * sevWeight))`, onde `sevWeight ∈ {1, 1.2, 1.5}`.
+- Match em `notes + stage` (lowercase). Filtra `risk_score >= 40`, ordena desc, top 20.
+- Retorna `{ deals, total }`. Pega o **melhor** padrão (maior score), descarta os demais.
 
-Mock de `supabase.auth.getUser` e `supabase.from('user_winloss_preferences')`.
+**UI** (`AtRiskDealsFromPatterns.tsx`):
+- Renderiza `client_name`, `matched_pattern`, `suggested_action`, `amount`, `risk_score`.
+- Tom visual: ≥75 destrutivo, ≥50 âmbar, <50 muted.
 
-#### 2. Testes unitários do `DashboardLayoutEditor`
-Arquivo novo `src/test/components/winloss/DashboardLayoutEditor.test.tsx`:
-- Renderiza widgets na ordem do `layout`.
-- Botão "Personalizar" entra em modo edição (mostra grips + Salvar/Cancelar/Padrão).
-- Cancelar restaura ordem anterior (sem salvar).
-- Botão "Padrão" reseta o `draft` para `DEFAULT_LAYOUT`.
-- Salvar invoca `save` com a ordem do `draft`.
-- View mode: widget id que não existe em `widgets` é ignorado silenciosamente (fallback).
-- View mode: widget desativado (não passado em `widgets`) não quebra o layout.
+**Riscos identificados:**
+1. `suggested_action` vem de `pattern.description` — pode ser longo/genérico, não acionável.
+2. Score teto 80 × sevWeight 1.5 = 120 → clamp 100; mas critical com 1 hit em 1 keyword já dá 100 (pode inflar).
+3. Sem `pattern_id` retornado — impossível auditar/drill-down.
+4. Sem fallback quando padrão tem 0 keywords (já filtrado, ok) ou quando todos os deals filtram zero (UI já trata).
+5. Não verifica se `notes` é string (deals com `notes=null` viram `""` — ok).
+6. Não há log estruturado para troubleshooting de scoring.
 
-Wrap com `QueryClientProvider`. Para drag, simular reorder via mock direto de `setDraft` (dnd-kit é difícil de testar via JSDOM — testar a função pura `arrayMove` separadamente já cobre a lógica).
+---
 
-#### 3. Teste E2E Playwright (`tests/e2e/win-loss/personalize-layout.spec.ts`)
-- Autenticar como usuário admin (reusar helper).
-- Navegar `/win-loss-intelligence`.
-- Capturar ordem inicial dos data-attributes dos widgets.
-- Click "Personalizar" → arrastar primeiro widget para 3ª posição usando `page.dragAndDrop`.
-- Click "Salvar" → toast "Layout salvo".
-- Recarregar a página → conferir que a nova ordem persiste.
-- Click "Personalizar" → "Padrão" → "Salvar" → conferir que volta ao `DEFAULT_LAYOUT`.
+### Plano de validação + melhorias
 
-Adicionar `data-widget-id={id}` nos wrappers do view mode em `DashboardLayoutEditor` para tornar a asserção robusta.
+**Etapa 1 — Diagnóstico com dados reais (read-only)**
+- `supabase--read_query`: contar padrões `lost` ativos e distribuição de `severity` + tamanho médio de `trigger_keywords`.
+- `supabase--read_query`: amostrar 20 deals abertos com `notes` não-vazia para entender vocabulário real.
+- `supabase--curl_edge_functions` POST `/detect-winloss-at-risk` → capturar payload atual.
+- Comparar manualmente: para cada deal retornado, verificar se `matched_pattern` faz sentido vs `notes`.
 
-#### 4. Validação real com `supabase--read_query`
-Antes/depois de cada cenário E2E, ler `user_winloss_preferences` para o user de teste e logar o array `layout`.
+**Etapa 2 — Refactor da edge function**
 
-#### 5. Pequenas melhorias UX no editor (impacto baixo, ganho alto)
-- Adicionar `data-widget-id` no view mode (para testes + analytics).
-- Mostrar contador "X/Y widgets" no editor.
-- Mensagem visual quando `draft` for igual ao `layout` salvo (Salvar fica `disabled`).
+Melhorias mínimas, sem quebrar contrato:
 
-#### 6. Verificações finais
-- `tsc --noEmit` zero erros.
-- `vitest run src/test/hooks/useUserDashboardLayout.test.ts src/test/components/winloss/DashboardLayoutEditor.test.tsx` passando.
-- Atualizar `mem://features/winloss-webhook-observability` com nota cruzada → criar `mem://features/winloss-personalized-layout`.
+```ts
+// 1. Normalizar score com curva mais justa:
+//    base = (hits / keywords.length) * 70   // teto base 70
+//    bonus = min(20, (hits - 1) * 5)        // bônus por múltiplos hits
+//    score = min(100, round((base + bonus) * sevWeight))
+//    Resultado: 1 hit em 1 kw + critical = 70*1.5=100 (ok),
+//               1 hit em 5 kw + low     = 14 (filtrado, ok),
+//               3 hits em 5 kw + high   = (42+10)*1.2=62 (at risk).
+
+// 2. Action curta e acionável:
+const suggested_action = pat.suggested_action 
+  ?? truncate(pat.description, 90) 
+  ?? "Revisar abordagem com cliente";
+
+// 3. Retornar pattern_id, severity, hits, keywords_matched para auditoria.
+
+// 4. Validação Zod do body (force?: boolean).
+
+// 5. Log estruturado: { fn, total_patterns, total_deals, matched, top_score, duration_ms }.
+
+// 6. Skip seguro quando notes/stage ambos vazios.
+```
+
+**Etapa 3 — Tipo + UI alinhados**
+- `AtRiskDealFromPattern` ganha `pattern_id?: string`, `severity?: string`, `keywords_matched?: string[]`.
+- `AtRiskDealsFromPatterns.tsx`: adicionar `<Tooltip>` no badge de score mostrando keywords casadas (transparência); manter visual atual.
+
+**Etapa 4 — Testes Deno (`index.test.ts`)**
+Unit-testar a função pura de scoring (extraída como `computeRiskScore`):
+- Caso A: 0 keywords → 0.
+- Caso B: hits=0 → 0.
+- Caso C: 1/1 + critical → 100.
+- Caso D: 3/5 + high → ~62.
+- Caso E: 1/5 + low → ~14 (abaixo do limiar).
+- Caso F: notes vazio → 0.
+
+**Etapa 5 — Validação end-to-end**
+- Re-deploy + curl real → comparar antes/depois (top 5 deals): score, pattern, action.
+- `supabase--edge_function_logs detect-winloss-at-risk` → confirmar log estruturado.
+- Abrir `/win-loss-intelligence` → verificar que painel renderiza razão + ação coerentes (screenshot mental via session replay se necessário).
+
+**Etapa 6 — Documentação**
+- Atualizar `mem://features/win-loss-intelligence-module` com a fórmula de scoring final.
+
+---
 
 ### Detalhes técnicos
-- **Sem migrations**, sem novos secrets.
-- Sem novas dependências (dnd-kit já instalado).
-- `arrayMove` testado indiretamente via dnd-kit (suficiente).
-- Para drag E2E em Playwright + dnd-kit, usar `mouse.down/move/up` se `dragAndDrop` falhar (dnd-kit precisa de movimentos intermediários).
+
+**Arquivos alterados:**
+- `supabase/functions/detect-winloss-at-risk/index.ts` — refactor scoring + Zod + logs + retorno enriquecido.
+- `supabase/functions/detect-winloss-at-risk/scoring.ts` (novo) — função pura `computeRiskScore` exportada.
+- `supabase/functions/detect-winloss-at-risk/index.test.ts` (novo) — 6 casos Deno.test.
+- `src/hooks/win-loss/useAtRiskFromPatterns.ts` — ampliar tipo `AtRiskDealFromPattern`.
+- `src/components/win-loss/AtRiskDealsFromPatterns.tsx` — Tooltip com keywords casadas.
+
+**Contrato preservado:** front antigo continua funcionando (campos novos são opcionais).
+
+**Sem migrations.** Apenas leitura de `win_loss_patterns` (já existente). Se a coluna `suggested_action` não existir nesse table, mantemos fallback em `description` — verifico via `read_query` na Etapa 1 antes de codar.
 
 ### Ordem (sequencial, sem pausas)
-1. Adicionar `data-widget-id` no view mode + UX (counter, save disabled).
-2. Testes unitários do hook.
-3. Testes unitários do editor.
-4. E2E spec `personalize-layout.spec.ts`.
-5. Validação no banco (`supabase--read_query` antes/depois).
-6. `tsc --noEmit` + `vitest run` dos novos testes + atualização de memória.
+1. Diagnóstico SQL + curl atual (baseline).
+2. Verificar schema `win_loss_patterns` (coluna `suggested_action`?).
+3. Extrair `scoring.ts` + escrever 6 testes Deno.
+4. Refactor `index.ts` (Zod, logs, retorno enriquecido).
+5. Deploy + curl de validação + comparar antes/depois.
+6. Atualizar tipo do hook + Tooltip na UI.
+7. `tsc --noEmit` + `supabase--test_edge_functions` + log de validação no chat.
+8. Atualizar memória do módulo.
 
