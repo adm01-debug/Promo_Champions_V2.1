@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity } from "lucide-react";
+import { Activity, AlertTriangle } from "lucide-react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -12,6 +12,7 @@ import {
   Cell,
 } from "recharts";
 import { useWebhookDeliveryStats } from "@/hooks/win-loss/useWebhookDeliveryStats";
+import { useWebhookAlerts, activeAlertsBySubscription } from "@/hooks/win-loss/useWebhookAlerts";
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,10 @@ function HealthTooltip({ active, payload }: RechartsTooltipProps) {
 
 export function WebhookHealthPanel() {
   const { data, isLoading } = useWebhookDeliveryStats();
+  const { data: alerts } = useWebhookAlerts();
+  const activeBySub = activeAlertsBySubscription(alerts ?? []);
+  const degradedCount = activeBySub.size;
+
 
   return (
     <Card>
