@@ -13742,6 +13742,38 @@ export type Database = {
           },
         ]
       }
+      winloss_webhook_alerts: {
+        Row: {
+          details: Json
+          fired_at: string
+          id: string
+          kind: string
+          subscription_id: string
+        }
+        Insert: {
+          details?: Json
+          fired_at?: string
+          id?: string
+          kind: string
+          subscription_id: string
+        }
+        Update: {
+          details?: Json
+          fired_at?: string
+          id?: string
+          kind?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "winloss_webhook_alerts_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "winloss_webhook_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       winloss_webhook_dead_letters: {
         Row: {
           attempts: number
