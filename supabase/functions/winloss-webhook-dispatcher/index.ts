@@ -179,7 +179,7 @@ serve(async (req) => {
     }, requestId);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown", requestId }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
     });
   }
 });
