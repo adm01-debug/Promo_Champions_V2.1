@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X, SkipForward } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X, SkipForward, Copy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -47,6 +47,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
   const [lastResults, setLastResults] = useState<Map<string, "ok" | "skipped" | "fail">>(
     new Map(),
   );
+  const [requestIds, setRequestIds] = useState<Map<string, string>>(new Map());
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   // Reset selection when drawer closes
@@ -54,6 +55,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
     if (!open) {
       setSelected(new Set());
       setProcessingIds(new Set());
+      setRequestIds(new Map());
     }
   }, [open]);
 
@@ -82,8 +84,21 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
 
   const recordResults = (
     ids: string[],
-    payload: { results: Array<{ id: string; succeeded: boolean; skipped?: boolean }> } | undefined,
+    payload:
+      | {
+          requestId?: string;
+          results: Array<{ id: string; succeeded: boolean; skipped?: boolean }>;
+        }
+      | undefined,
   ) => {
+    const reqId = payload?.requestId;
+    if (reqId) {
+      setRequestIds((prev) => {
+        const next = new Map(prev);
+        for (const id of ids) next.set(id, reqId);
+        return next;
+      });
+    }
     setLastResults((prev) => {
       const next = new Map(prev);
       const returned = new Set<string>();
@@ -274,6 +289,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                 const checkboxDisabled =
                   d.succeeded || isReplaying || (atLimit && !isChecked);
                 const result = lastResults.get(d.id);
+                const reqId = requestIds.get(d.id);
                 return (
                   <li
                     key={d.id}
@@ -353,6 +369,30 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                               <XCircle className="h-3 w-3" />
                               Falhou
                             </span>
+                          )}
+                          {reqId && !isProcessing && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    void navigator.clipboard?.writeText(reqId).then(
+                                      () => toast.success("requestId copiado"),
+                                      () => toast.error("Falha ao copiar"),
+                                    );
+                                  }}
+                                  className="ml-1 inline-flex items-center gap-1 rounded-full border border-border/50 bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                  aria-label={`Copiar requestId ${reqId}`}
+                                >
+                                  <span className="opacity-70">req</span>
+                                  <span>{reqId.slice(0, 8)}</span>
+                                  <Copy className="h-2.5 w-2.5 opacity-60" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs font-mono">
+                                {reqId}
+                              </TooltipContent>
+                            </Tooltip>
                           )}
                         </div>
                       )}
