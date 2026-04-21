@@ -1,58 +1,38 @@
 
 
-## Testes de timeout via AbortError no `winloss-webhook-dispatcher`
+## Verificação de persistência por tentativa + ausência de sleep na última
 
 ### Objetivo
-Adicionar testes determinísticos em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` que simulem timeout via `AbortError` (e a variante `TimeoutError`) e confirmem que o dispatcher:
-1. Faz **exatamente 3 tentativas** (`MAX_ATTEMPTS`).
-2. Registra o **`error_message` correto em cada uma das 3 entregas** (`winloss_webhook_deliveries`).
-3. Propaga o erro corretamente para o **dead-letter** após esgotar as tentativas.
+Adicionar testes determinísticos em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` que comprovem dois invariantes do `dispatchOne`:
+
+1. **Cada tentativa persiste UMA linha** em `winloss_webhook_deliveries` com `attempt`, `status`, `succeeded` e ordem cronológica corretos — mesmo quando o status varia entre tentativas.
+2. **A última tentativa NUNCA dorme**: `sleeps.length === fetches - 1` em qualquer caminho de saída (sucesso na 1ª/2ª/3ª ou falha persistente).
 
 ### Estado atual
-O arquivo já possui um teste superficial (linhas 139-149) que apenas confere `r.attempts === 3` e `r.error includes "TimeoutError"` — não inspeciona o conteúdo de cada delivery, não testa `AbortError` (só `TimeoutError`), não valida o DLQ nem o cenário misto (timeouts + recovery).
-
-A infraestrutura necessária já existe:
-- `makeHarness()` captura `deliveries[]`, `sleeps[]`, `deadLetters[]`.
-- `fetchImpl(attempt)` permite injetar erro/resposta por tentativa.
-- `rand: () => 0` torna o backoff determinístico (`[250, 500]`).
+`retry_test.ts` (28 testes) cobre contagens agregadas (`deliveries.length`, `sleeps.length`) mas não valida:
+- Ordem de inserção quando o **status muda** por tentativa.
+- Que o `insert` acontece **antes** do `sleep` (delivery durável mesmo se o backoff falhasse depois).
+- O invariante "sem sleep após a última tentativa" como propriedade explícita parametrizada.
 
 ### Mudanças
 
-**Arquivo único modificado**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts`
+**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — nova seção com 6 `Deno.test`:
 
-Inserir, logo após o teste atual de `AbortError` (linha 149), um novo bloco "**timeout via AbortError: 3 tentativas + error_message por entrega**" com 6 testes:
-
-1. **Helper `makeAbortError(msg)`** — fabrica `Error` com `name="AbortError"` (espelha o que `AbortSignal.timeout()` lança).
-
-2. **`AbortError persistente → 3 fetches, 2 sleeps, 3 deliveries`**
-   - `fetches === MAX_ATTEMPTS` (3)
-   - `sleeps === [250, 500]` (backoff determinístico com `rand=0`)
-   - `deliveries.length === 3`, `r.status === 0`, `r.succeeded === false`.
-
-3. **`cada uma das 3 entregas registra error_message="AbortError: ..."`**
-   - Loop sobre `deliveries[i]`: `attempt === i+1`, `status === 0`, `succeeded === false`, `error_message === "AbortError: The signal has been aborted"`, `subscription_id` e `event` corretos.
-
-4. **`dead-letter capturado com last_error e attempts=3`**
-   - Após 3 timeouts, `deadLetters[0]` tem `attempts=3`, `last_status=0`, `last_error="AbortError: aborted by timeout"`, `payload === PAYLOAD`.
-
-5. **`error_message muda por tentativa quando o erro varia`**
-   - Cada attempt lança `AbortError` com mensagem distinta (`try 1/2/3`). Verifica que cada `deliveries[i].error_message` reflete o erro daquela tentativa, e que `r.error` preserva apenas o último.
-
-6. **`recovery após 2 timeouts → 3ª tentativa 200, error_message null só na última`**
-   - Tentativas 1 e 2 lançam `AbortError`; tentativa 3 retorna 200. Confere: `r.succeeded=true`, `r.error=null`, `deliveries[0].error_message="AbortError: timeout #1"` (succeeded=false), `deliveries[1]` análogo, `deliveries[2].error_message=null` e `succeeded=true`.
-
-7. **`TimeoutError variant: todas as 3 entregas registram 'TimeoutError: ...'`**
-   - Cobre o caso real de `AbortSignal.timeout()` em runtimes Deno modernos (DOMException com `name="TimeoutError"`).
+1. **`falha persistente 500 grava 3 linhas com attempt=1,2,3 em ordem`** — verifica `deliveries[i].attempt === i+1` e cronologia.
+2. **`status varia por tentativa (502 → 503 → 200) é refletido linha-a-linha`** — `deliveries === [{1,502,false},{2,503,false},{3,200,true}]`.
+3. **`mistura HTTP + erro de rede preserva status=0 só onde há throw`** — 500 / throw ENETDOWN / 200 → `[{500,error_message:null}, {0,"...ENETDOWN..."}, {200,null}]`.
+4. **`invariante sleeps === fetches-1 em 4 cenários`** — sucesso 1ª/2ª/3ª e falha persistente; em todos `sleeps.length === fetches - 1 === deliveries.length - 1`.
+5. **`insert precede sleep — sequência exata em falha persistente`** — instrumenta `insertDelivery`/`sleep` para gravar marcadores num array `events`. Esperado: `["insert:1","sleep:1","insert:2","sleep:2","insert:3"]` (prova ausência de sleep após a 3ª).
+6. **`sucesso na 2ª tentativa: sequência é exatamente insert:1, sleep:1, insert:2`** — mesmo instrumentador.
 
 ### Detalhes técnicos
-- Asserts estritos com `assertEquals` em `error_message` (string exata `"<name>: <message>"` — bate com o formato `${e.name}: ${e.message}` em `retry.ts:131`).
-- Backoff continua determinístico via `rand: () => 0` herdado do harness — sleeps esperados `[250, 500]`.
-- O teste superficial existente (linhas 139-149) é mantido por compatibilidade.
+- `makeHarness` já registra `deliveries` por `push` em ordem cronológica.
+- Testes #5 e #6 sobrescrevem `deps.insertDelivery` e `deps.sleep` localmente após `makeHarness()` para gravar marcadores ordenados — sem alterar o harness base.
 - Nenhuma mudança no código de produção (`retry.ts`/`index.ts`).
 
 ### Arquivos
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~110 linhas, 6 novos `Deno.test`).
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~100 linhas).
 
 ### Verificação
-Rodar `deno test supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — esperado **todos os existentes + 6 novos = passando**.
+`deno test ...retry_test.ts` — esperado **28 atuais + 6 novos = 34 ✓**.
 
