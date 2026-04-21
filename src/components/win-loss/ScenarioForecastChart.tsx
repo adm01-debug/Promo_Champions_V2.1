@@ -95,6 +95,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
   onHorizonChange,
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
+  const [seeUseOlsInflation, setSeeUseOlsInflation] = useState<boolean>(() => readSeeOlsInflation());
 
   useEffect(() => {
     try {
@@ -104,10 +105,19 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [bandMode]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SEE_OLS_KEY, seeUseOlsInflation ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, [seeUseOlsInflation]);
+
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
     useWinLossScenarios(points, {
       forecastSteps: horizon,
       bandMode,
+      seeUseOlsInflation,
     });
 
   const data = useMemo(
