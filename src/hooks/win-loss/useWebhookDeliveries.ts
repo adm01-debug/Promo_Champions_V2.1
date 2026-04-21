@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { validateReplayIds } from "./validateReplayIds";
 
 export interface WebhookDelivery {
   id: string;
@@ -47,8 +48,10 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
 
   const replay = useMutation({
     mutationFn: async (deliveryIds: string[]) => {
+      const validation = validateReplayIds(deliveryIds);
+      if (!validation.ok) throw new Error(validation.message);
       const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
-        body: { delivery_ids: deliveryIds },
+        body: { delivery_ids: validation.ids },
       });
       if (error) throw error;
       return data as {
