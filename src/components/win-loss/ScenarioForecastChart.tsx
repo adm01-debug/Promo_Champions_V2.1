@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ResponsiveContainer,
@@ -13,11 +13,21 @@ import {
   ReferenceLine,
 } from "recharts";
 import { Sparkles } from "lucide-react";
-import { useWinLossScenarios } from "@/hooks/win-loss/useWinLossScenarios";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
 interface Props {
   points: TrendPoint[];
+}
+
+const BAND_MODE_KEY = "winloss-scenario-bandmode";
+
+function readBandMode(): BandMode {
+  if (typeof window === "undefined") return "see";
+  const v = window.localStorage.getItem(BAND_MODE_KEY);
+  return v === "pi95" ? "pi95" : "see";
 }
 
 interface TooltipPayloadItem {
@@ -32,9 +42,10 @@ interface CustomTooltipProps {
   active?: boolean;
   payload?: TooltipPayloadItem[];
   label?: string;
+  mode?: BandMode;
 }
 
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   const isForecast = payload[0]?.payload?.isForecast;
   return (
@@ -58,12 +69,30 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
             {p.name}: {p.value.toFixed(1)}%
           </p>
         ))}
+      {isForecast && mode && (
+        <p className="mt-1 pt-1 border-t border-border/50 text-[10px] text-muted-foreground">
+          Modo: {mode === "pi95" ? "PI 95%" : "SEE ±σ"}
+        </p>
+      )}
     </div>
   );
 }
 
 export const ScenarioForecastChart = memo(function ScenarioForecastChart({ points }: Props) {
-  const { series, stdDev, fitN } = useWinLossScenarios(points, 3);
+  const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(BAND_MODE_KEY, bandMode);
+    } catch {
+      /* ignore */
+    }
+  }, [bandMode]);
+
+  const { series, stdDev, fitN, tCritical, bandLabel } = useWinLossScenarios(points, {
+    forecastSteps: 3,
+    bandMode,
+  });
 
   const data = useMemo(
     () =>
@@ -93,8 +122,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN]);
+    return `scenario-${bandMode}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode]);
 
   if (!data.length) {
     return (
@@ -139,14 +168,47 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-base flex-wrap">
           <Sparkles className="h-4 w-4 text-primary" aria-hidden />
           Forecast com cenários
+          <TooltipProvider delayDuration={150}>
+            <ToggleGroup
+              type="single"
+              size="sm"
+              value={bandMode}
+              onValueChange={(v) => v && setBandMode(v as BandMode)}
+              className="ml-auto"
+              aria-label="Modo de banda de incerteza"
+            >
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="see" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo SEE (1σ)">
+                    SEE
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs max-w-[220px]">
+                  Banda ±σ residual (Standard Error of Estimate). Mais estreita, ~68% de confiança.
+                </TooltipContent>
+              </UITooltip>
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="pi95" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo PI 95%">
+                    PI 95%
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs max-w-[240px]">
+                  Intervalo de previsão 95% (t·σ·√(1+1/n+(x−x̄)²/Sxx)). Mais conservador, leva em conta a distância do centro dos dados.
+                </TooltipContent>
+              </UITooltip>
+            </ToggleGroup>
+          </TooltipProvider>
           <span
-            className="text-xs text-muted-foreground font-normal ml-auto tabular-nums"
-            title={`Desvio residual sobre a tendência ajustada com ${fitN} períodos`}
+            className="text-xs text-muted-foreground font-normal tabular-nums w-full sm:w-auto"
+            title={`${bandLabel} sobre a tendência ajustada com ${fitN} períodos`}
           >
-            σ ±{stdDev.toFixed(1)}pp · fit em {fitN}
+            {bandMode === "pi95" && tCritical != null
+              ? `PI 95% · t=${tCritical.toFixed(2)} · σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`
+              : `σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`}
           </span>
         </CardTitle>
       </CardHeader>
@@ -156,7 +218,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
             <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" fontSize={11} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} unit="%" domain={[0, 100]} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip mode={bandMode} />} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             {junctionPeriod && (
               <ReferenceLine
