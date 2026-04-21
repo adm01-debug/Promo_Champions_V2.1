@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Webhook, Plus, Trash2, History } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AlertTriangle, Webhook, Plus, Trash2, History } from "lucide-react";
 import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
+import { useWebhookAlerts, activeAlertsBySubscription, type WebhookAlert } from "@/hooks/win-loss/useWebhookAlerts";
 import { WebhookDeliveriesDrawer } from "./WebhookDeliveriesDrawer";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 
 const ALL_EVENTS = ["critical_pattern", "anomaly", "perf_drop"] as const;
 
