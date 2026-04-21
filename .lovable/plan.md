@@ -1,38 +1,48 @@
 
 
-## Verificação de persistência por tentativa + ausência de sleep na última
+## Resiliência: falha em `insertDelivery` não interrompe o loop de retries
 
 ### Objetivo
-Adicionar testes determinísticos em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` que comprovem dois invariantes do `dispatchOne`:
+Adicionar testes determinísticos em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` que provem que, mesmo quando `insertDelivery` falha (rejeita) em **toda** chamada, o `dispatchOne`:
 
-1. **Cada tentativa persiste UMA linha** em `winloss_webhook_deliveries` com `attempt`, `status`, `succeeded` e ordem cronológica corretos — mesmo quando o status varia entre tentativas.
-2. **A última tentativa NUNCA dorme**: `sleeps.length === fetches - 1` em qualquer caminho de saída (sucesso na 1ª/2ª/3ª ou falha persistente).
+1. **Continua o loop completo** — executa as 3 tentativas de fetch (`fetches === MAX_ATTEMPTS`).
+2. **Mantém o backoff intacto** — exatamente 2 sleeps registrados (`[250, 500]` com `rand=0`).
+3. **Conclui com sucesso quando o fetch eventualmente passa** — retorna `succeeded:true` se a 3ª (ou 2ª) tentativa retornar 200, mesmo com inserts falhando antes.
+4. **Aciona dead-letter na falha terminal** — quando todos os fetches falham e os inserts também, o `onDeadLetter` ainda é chamado com `attempts: 3`.
+5. **Captura erros de log sem propagar** — a Promise final resolve normalmente; nenhum throw escapa do `dispatchOne`.
 
 ### Estado atual
-`retry_test.ts` (28 testes) cobre contagens agregadas (`deliveries.length`, `sleeps.length`) mas não valida:
-- Ordem de inserção quando o **status muda** por tentativa.
-- Que o `insert` acontece **antes** do `sleep` (delivery durável mesmo se o backoff falhasse depois).
-- O invariante "sem sleep após a última tentativa" como propriedade explícita parametrizada.
+- `makeHarness` já aceita `insertThrows: true` (linhas 18, 32-36).
+- `dispatchOne` envolve `insertDelivery` em try/catch (retry.ts:159-178), então o invariante existe no código mas **não é coberto por nenhum teste** — qualquer regressão (ex: remover o try/catch) passaria silenciosamente.
 
 ### Mudanças
 
-**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — nova seção com 6 `Deno.test`:
+**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — nova seção com 4 `Deno.test`:
 
-1. **`falha persistente 500 grava 3 linhas com attempt=1,2,3 em ordem`** — verifica `deliveries[i].attempt === i+1` e cronologia.
-2. **`status varia por tentativa (502 → 503 → 200) é refletido linha-a-linha`** — `deliveries === [{1,502,false},{2,503,false},{3,200,true}]`.
-3. **`mistura HTTP + erro de rede preserva status=0 só onde há throw`** — 500 / throw ENETDOWN / 200 → `[{500,error_message:null}, {0,"...ENETDOWN..."}, {200,null}]`.
-4. **`invariante sleeps === fetches-1 em 4 cenários`** — sucesso 1ª/2ª/3ª e falha persistente; em todos `sleeps.length === fetches - 1 === deliveries.length - 1`.
-5. **`insert precede sleep — sequência exata em falha persistente`** — instrumenta `insertDelivery`/`sleep` para gravar marcadores num array `events`. Esperado: `["insert:1","sleep:1","insert:2","sleep:2","insert:3"]` (prova ausência de sleep após a 3ª).
-6. **`sucesso na 2ª tentativa: sequência é exatamente insert:1, sleep:1, insert:2`** — mesmo instrumentador.
+1. **`insertDelivery falha em todas: dispatcher executa as 3 tentativas mesmo assim`**
+   - Cenário: fetch sempre 500, `insertThrows: true`.
+   - Asserts: `h.fetches === 3`, `h.sleeps.length === 2`, `h.sleeps === [250, 500]`, `h.deliveries.length === 0` (nada persistido), resultado `{ succeeded: false, attempts: 3, status: 500 }`.
+
+2. **`insertDelivery falha em todas + sucesso na 3ª: dispatcher retorna succeeded`**
+   - Cenário: fetch 500 → 500 → 200, `insertThrows: true`.
+   - Asserts: `h.fetches === 3`, `h.sleeps.length === 2`, `h.deliveries.length === 0`, resultado `{ succeeded: true, attempts: 3, status: 200, error: null }`.
+
+3. **`insertDelivery falha + falha terminal: dead-letter ainda é chamado`**
+   - Cenário: fetch sempre 500, `insertThrows: true`, `withDeadLetter: true`.
+   - Asserts: `h.deadLetters.length === 1`, `h.deadLetters[0].attempts === 3`, `h.deadLetters[0].last_status === 500`.
+
+4. **`insertDelivery falha em todas: dispatchOne resolve sem lançar`**
+   - Cenário: fetch sempre throws (network error), `insertThrows: true`.
+   - Asserts: a chamada `await dispatchOne(...)` resolve (não rejeita); `h.fetches === 3`, `h.sleeps.length === 2`, resultado `succeeded: false` com `error` preenchido.
 
 ### Detalhes técnicos
-- `makeHarness` já registra `deliveries` por `push` em ordem cronológica.
-- Testes #5 e #6 sobrescrevem `deps.insertDelivery` e `deps.sleep` localmente após `makeHarness()` para gravar marcadores ordenados — sem alterar o harness base.
-- Nenhuma mudança no código de produção (`retry.ts`/`index.ts`).
+- Reutiliza 100% o `makeHarness` existente (já tem `insertThrows`).
+- `rand: () => 0` para sleeps determinísticos `[250, 500]`.
+- Nenhuma mudança em `retry.ts` ou `index.ts`.
 
 ### Arquivos
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~100 linhas).
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~60 linhas).
 
 ### Verificação
-`deno test ...retry_test.ts` — esperado **28 atuais + 6 novos = 34 ✓**.
+`deno test supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — esperado **34 atuais + 4 novos = 38 ✓**.
 
