@@ -12,15 +12,18 @@ import { SlidersHorizontal, RotateCcw, Search, Bug, X } from "lucide-react";
 import type { AtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import {
   AT_RISK_PRESETS,
+  AT_RISK_SEVERITY_PRESETS,
   detectActivePreset,
   getPresetById,
   type AtRiskPresetId,
 } from "@/hooks/win-loss/atRiskPresets";
+import type { RiskSeverity } from "@/lib/winloss/severityFromScore";
 import {
   RISK_REASON_CODES,
   RISK_REASON_LABELS,
   type RiskReasonCode,
 } from "@/lib/winloss/riskReasons";
+import { cn } from "@/lib/utils";
 
 const SELECTABLE_REASON_CODES: RiskReasonCode[] = RISK_REASON_CODES.filter(
   (c) => c !== "CROSSED_SIGNALS",
@@ -34,6 +37,7 @@ interface Props {
   totalAnalyzed: number;
   totalShown: number;
   availableStages: string[];
+  severityCounts: Record<RiskSeverity, number>;
 }
 
 export function AtRiskSettingsPopover({
@@ -44,6 +48,7 @@ export function AtRiskSettingsPopover({
   totalAnalyzed,
   totalShown,
   availableStages,
+  severityCounts,
 }: Props) {
   const [keyword, setKeyword] = useState(settings.keywordFilter);
   const debounced = useDeferredValue(keyword);
@@ -76,10 +81,18 @@ export function AtRiskSettingsPopover({
     onUpdate({ reasonCodes: next });
   };
 
+  const toggleSeverity = (sev: RiskSeverity) => {
+    const next = settings.severityFilter.includes(sev)
+      ? settings.severityFilter.filter((s) => s !== sev)
+      : [...settings.severityFilter, sev];
+    onUpdate({ severityFilter: next });
+  };
+
   const filtersActive =
     settings.stageFilter.length > 0 ||
     settings.keywordFilter.length > 0 ||
-    settings.reasonCodes.length > 0;
+    settings.reasonCodes.length > 0 ||
+    settings.severityFilter.length > 0;
 
   const activePreset = detectActivePreset(settings.threshold, settings.limit);
 
@@ -145,6 +158,48 @@ export function AtRiskSettingsPopover({
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            Acumulativos · ajustam score mínimo + máximo analisado
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="text-xs">
+            Só uma severidade
+            {settings.severityFilter.length > 0 && (
+              <span className="text-muted-foreground"> ({settings.severityFilter.length} sel.)</span>
+            )}
+          </Label>
+          <div className="flex flex-wrap gap-1" role="group" aria-label="Filtrar por severidade exata">
+            {AT_RISK_SEVERITY_PRESETS.map((p) => {
+              const active = settings.severityFilter.includes(p.id);
+              const count = severityCounts[p.id] ?? 0;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => toggleSeverity(p.id)}
+                  aria-pressed={active}
+                  aria-label={`${p.description}${active ? " (ativo)" : ""}`}
+                  title={p.description}
+                  data-severity={p.id}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    active
+                      ? p.activeClass
+                      : "border-border text-muted-foreground hover:bg-muted/50",
+                  )}
+                >
+                  <span>{p.label}</span>
+                  <span className="tabular-nums opacity-70">({count})</span>
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            Filtra exatamente um bucket · combina com score mínimo
+          </p>
         </div>
 
         <Separator />
