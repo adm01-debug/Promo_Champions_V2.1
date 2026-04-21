@@ -1,98 +1,66 @@
 
 
-## Ordenação configurável no painel AtRisk: score ↓ vs recência ↓
+## Bandas via Prediction Interval por padrão + teste com exemplo manual
 
-### Objetivo
-Hoje a lista de deals em risco vem ordenada do backend por `risk_score` desc (implícito, sem opção). Adicionar um seletor de **ordenação** no popover para alternar entre:
-- **Score (alto → baixo)** — comportamento atual, padrão.
-- **Recência (mais recente → mais antigo)** — usa `breakdown.days_stagnant` como proxy invertido (menor = mais recente). Útil para o vendedor que quer **agir primeiro nos deals que ainda têm calor**, antes de virarem casos arquivados.
+### Mudança de comportamento
+Atualmente o modo SEE usa por padrão a aproximação `width = σ · √(1 + step/n)`, que cresce muito devagar com o horizonte. O modo PI 95% já usa o intervalo de previsão OLS correto. **Vamos tornar PI o padrão também no SEE** (1σ ≈ 68% de confiança), mantendo a aproximação antiga apenas como flag de debug:
 
-A escolha persiste no perfil (cross-device via `user_app_settings`, herda free do `useSyncedSetting` já implementado).
-
-### Fonte de "recência"
-
-`breakdown.days_stagnant` (computado pela edge a partir de `sales.updated_at`) é a melhor aproximação disponível no payload atual — **zero mudança no backend**. Quando ausente (deals legacy ou erro), o item cai pro fim da lista de "recência" mas mantém ordem secundária por score.
-
-### Mudanças
-
-#### 1. `useAtRiskSettings` — campo `sortBy: "score" | "recency"`
-
-```ts
-export type AtRiskSortBy = "score" | "recency";
-
-interface AtRiskSettings {
-  // … existentes
-  sortBy: AtRiskSortBy;  // default "score"
-}
+```
+SEE (default):   width = σ · √(1 + 1/n + (x − x̄)² / Sxx)        # 1σ PI
+PI 95%:          width = t · σ · √(1 + 1/n + (x − x̄)² / Sxx)    # inalterado
+SEE legacy:      width = σ · √(1 + step/n)                       # opt-in
 ```
 
-- Sanitização: aceita apenas os 2 valores; fallback para `"score"`.
-- Sem bump de schema (v4 mantido) — campo ausente em payloads antigos cai no default automaticamente via `sanitize()`.
-- Incluído no `clearFilters`? **Não** — sort é uma preferência de visualização, não um filtro. Mantém ao limpar.
-- Incluído em `reset` (já incluso por substituir tudo pelos defaults).
+Resultado: as bandas abrem coerentemente com a distância do ponto previsto ao centro `x̄` dos dados de ajuste, em ambos os modos. A razão `pi95/see` passa a ser exatamente `t` em qualquer step.
 
-#### 2. `AtRiskDealsFromPatterns.tsx` — aplicar sort após filtros
+### Arquivos editados
 
-```ts
-const sorted = useMemo(() => {
-  if (settings.sortBy === "score") return filtered; // já vem do BE em score desc
-  return [...filtered].sort((a, b) => {
-    const da = a.breakdown?.days_stagnant ?? Number.POSITIVE_INFINITY;
-    const db = b.breakdown?.days_stagnant ?? Number.POSITIVE_INFINITY;
-    if (da !== db) return da - db;             // mais recente primeiro
-    return b.risk_score - a.risk_score;        // tiebreak por score desc
-  });
-}, [filtered, settings.sortBy]);
+**`src/hooks/win-loss/useWinLossScenarios.ts`**
+- Trocar default de `seeUseOlsInflation` de `false` → `true` (na sobrecarga do objeto e no atalho numérico legado).
+- Atualizar JSDoc da `ScenarioOptions` e do hook explicando que SEE agora usa PI 1σ; legado fica como opt-in (`seeUseOlsInflation: false`).
+- Atualizar `bandLabel` SEE default para `"SEE 1σ (PI)"` (o caso legacy continua `"SEE ±σ"`).
+- Lógica de cálculo do `width` permanece como está (já suporta os 3 caminhos).
 
-const visible = sorted.slice(0, settings.maxVisible);
-```
+**`src/components/win-loss/ScenarioForecastChart.tsx`**
+- `readSeeOlsInflation()` passa a retornar `true` quando a chave `winloss-scenario-see-ols-inflation` não existir no `localStorage` (default novo). Só retorna `false` se o usuário tiver desligado explicitamente (valor `"0"`).
+- Tooltip do toggle SEE no header atualizado: `"Banda 1σ via PI · √(1+1/n+(x−x̄)²/Sxx)"`.
 
-Substituir `filtered.slice(...)` por `sorted.slice(...)` no `visible` e nos lugares que usam `filtered.length` para "ocultos" — total continua igual (sort não filtra).
+**`src/components/win-loss/ScenarioForecastAuditPanel.tsx`**
+- Texto do toggle renomeado para **"Usar aproximação legada √(1+step/n)"** (invertido), para deixar claro que desligar volta ao comportamento antigo. `checked={!seeUseOlsInflation}`, `onCheckedChange={(v) => onToggleSeeOlsInflation(!v)}`.
+- Linha "Modo de banda" exibe `"SEE 1σ (PI)"` ou `"SEE ±σ · √(1+step/n)"` conforme o estado.
 
-#### 3. `AtRiskSettingsPopover.tsx` — UI do seletor
+### Testes (`src/test/hooks/useWinLossScenarios.test.ts`)
 
-Novo bloco **logo abaixo dos sliders de score/limit/visible** e antes do separador para Estágios:
+Atualizar testes que assumiam SEE legacy:
+- `"forecast bands widen with horizon"` continua válido (PI também alarga, e mais fortemente).
+- `"legacy numeric arg ≡ { forecastSteps, bandMode: 'see' }"` — atualizar para incluir `seeUseOlsInflation: true` no comparador explícito.
+- `"pi95 produces wider bands than see for the same data"` — passa a valer com a razão exata `t`.
 
-```text
-┌─────────────────────────────────────┐
-│ Ordenar por                         │
-│ ┌──────────────┬──────────────────┐ │
-│ │ ↓ Score       │ 🕐 Recência     │ │
-│ └──────────────┴──────────────────┘ │
-│ Recência usa days_stagnant (menor   │
-│ = mais recente)                     │
-└─────────────────────────────────────┘
-```
+Adicionar **2 novos testes**:
 
-`ToggleGroup type="single"` (mesmo componente já usado pelos presets) com 2 itens, cada um com tooltip explicando a métrica.
+1. **Exemplo manual reproduzível** — dados controlados para conferir o cálculo passo a passo:
+   ```ts
+   // y = [10, 14, 19, 22] em x = [0, 1, 2, 3]
+   // OLS: meanX=1.5, meanY=16.25, slope=4.1, intercept=10.1
+   //   ŷ = [10.1, 14.2, 18.3, 22.4]; resíduos = [-0.1, -0.2, 0.7, -0.4]
+   //   SSE = 0.01+0.04+0.49+0.16 = 0.70; dof=2; σ = √(0.35) ≈ 0.5916
+   //   Sxx = 1.5²+0.5²+0.5²+1.5² = 5
+   // Para step=1 → x=4:
+   //   factor = √(1 + 1/4 + (4−1.5)²/5) = √(1 + 0.25 + 1.25) = √2.5 ≈ 1.5811
+   //   width_see  = 0.5916 · 1.5811 ≈ 0.9354
+   //   width_pi95 = 4.303 · 0.9354  ≈ 4.0250
+   //   base_4 = 10.1 + 4.1·4 = 26.5
+   ```
+   Assertions com `toBeCloseTo(..., 3)` em `slope`, `intercept`, `stdDev`, `sxx`, `meanX`, `realistic[+1]`, `optimistic[+1] − pessimistic[+1]` (= `2 · width`) para SEE e PI 95%.
 
-Trigger do popover **inalterado** — sort não merece bolinha de "filtros ativos".
-
-### Arquivos
-
-**Editado**
-- `src/hooks/win-loss/useAtRiskSettings.ts` — `AtRiskSortBy`, default `"score"`, sanitização, expor no settings.
-- `src/components/win-loss/AtRiskDealsFromPatterns.tsx` — `useMemo` `sorted`, troca `filtered.slice` por `sorted.slice` em `visible`.
-- `src/components/win-loss/AtRiskSettingsPopover.tsx` — novo bloco ToggleGroup com 2 itens; recebe `sortBy` e `onSortChange` (ou consome `settings.sortBy` direto, igual aos outros campos).
-
-**Novo (teste)**
-- `src/test/hooks/atRiskSortBy.test.ts`:
-  1. Default `sortBy === "score"`.
-  2. `sanitize({ sortBy: "invalid" })` → `"score"`.
-  3. `sanitize({ sortBy: "recency" })` → `"recency"`.
-  4. Settings antigos (sem `sortBy`) caem em default.
-- `src/test/components/winloss/AtRiskSortOrder.test.tsx`:
-  1. `sortBy="score"` → ordem retorna como recebida (BE já ordena).
-  2. `sortBy="recency"` com `[{days_stagnant:30,score:90},{days_stagnant:5,score:60},{days_stagnant:10,score:80}]` → ordem `[5d, 10d, 30d]`.
-  3. Tiebreak: dois deals com mesmo `days_stagnant` ordenam por score desc.
-  4. `breakdown` ausente → vai para o fim na ordenação por recência.
+2. **Razão pi95/see ≡ tCritical em qualquer step** — varrendo `step ∈ {1..6}`, `width_pi95(step) / width_see(step)` deve ser ≈ `tCritical(dof)` com tolerância 1e-9 (prova analítica da nova fórmula).
 
 ### Critério de aceite
-1. Default `sortBy="score"` → painel idêntico ao de hoje (ordem do BE).
-2. Trocar para "Recência" no popover → lista re-ordena em <100ms; deal com `days_stagnant=5` aparece antes de `days_stagnant=30` mesmo com score menor.
-3. Empate de recência → quem tem score maior fica acima.
-4. Deal sem `breakdown.days_stagnant` aparece por último em modo "Recência" (não some).
-5. Reload preserva escolha (sync via `user_app_settings`); trocar de navegador logado mantém a preferência.
-6. "Limpar filtros" **não** muda o sort. "Restaurar padrões" volta para `"score"`.
-7. Suítes novas verdes; suítes existentes (`useAtRiskSettings`/`atRiskPresets`/`atRiskSeverityFilter`/`useSyncedSetting`) verdes; backend e suite Deno do `detect-winloss-at-risk` permanecem inalterados.
+1. SEE-default abre bandas com a curvatura PI (mais largo no step 6 que no step 1, e mais largo que a fórmula `√(1+step/n)` para o mesmo dataset).
+2. PI 95% inalterado em valores e shape.
+3. Toggle do painel de auditoria continua funcionando — agora controla ligar/desligar a aproximação legada.
+4. Persistência via `localStorage`: usuários novos veem PI; quem tinha `"0"` salvo mantém legacy até regravar.
+5. Exemplo manual bate com tolerância 3 casas decimais; razão `pi95/see` = `t` exata.
+6. Suíte completa de `useWinLossScenarios.test.ts` verde (13 antigos + 2 novos = 15).
+7. Sem regressão em `ScenarioForecastChart`, `ScenarioForecastAuditPanel`, hooks AtRisk, edge functions ou suítes Deno.
 
