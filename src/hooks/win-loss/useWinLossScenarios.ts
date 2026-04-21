@@ -181,7 +181,10 @@ export const useWinLossScenarios = (
     const safePoints = points ?? [];
     const n = safePoints.length;
 
-    const seeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ · √(1+step/n)";
+    const zSuffix = confidenceZ === 1 ? "" : ` z=${confidenceZ.toFixed(2)}`;
+    const seeLabel = seeUseOlsInflation
+      ? `SEE${zSuffix || " 1σ"} (PI)`
+      : `SEE${zSuffix ? ` ${zSuffix.trim()}` : " ±σ"} · √(1+step/n)`;
     const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : seeLabel);
 
     // Need at least 3 points for a meaningful regression + residual σ.
