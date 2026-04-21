@@ -391,6 +391,7 @@ export function computeDealRisk(
       matched_confidence: dominant.confidence,
       reasons,
       matched_keywords: matchedKeywords,
+      competitor_matches: competitorMatches.length ? competitorMatches : undefined,
       days_stagnant: days,
       avg_loss_cycle_days: bestLoss?.avg_cycle_days ?? null,
       avg_loss_amount: bestLoss?.avg_amount ?? null,
