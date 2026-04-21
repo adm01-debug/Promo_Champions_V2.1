@@ -1,48 +1,46 @@
+` tag, not a tool.
 
+<lov-plan>
 
-## Resiliência: falha em `insertDelivery` não interrompe o loop de retries
+## `updateSubscription` chamado exatamente 1× com `last_status` da última tentativa
 
 ### Objetivo
-Adicionar testes determinísticos em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` que provem que, mesmo quando `insertDelivery` falha (rejeita) em **toda** chamada, o `dispatchOne`:
-
-1. **Continua o loop completo** — executa as 3 tentativas de fetch (`fetches === MAX_ATTEMPTS`).
-2. **Mantém o backoff intacto** — exatamente 2 sleeps registrados (`[250, 500]` com `rand=0`).
-3. **Conclui com sucesso quando o fetch eventualmente passa** — retorna `succeeded:true` se a 3ª (ou 2ª) tentativa retornar 200, mesmo com inserts falhando antes.
-4. **Aciona dead-letter na falha terminal** — quando todos os fetches falham e os inserts também, o `onDeadLetter` ainda é chamado com `attempts: 3`.
-5. **Captura erros de log sem propagar** — a Promise final resolve normalmente; nenhum throw escapa do `dispatchOne`.
+Garantir, via testes determinísticos, que `dispatchOne` chama `updateSubscription` **exatamente uma vez** ao final do loop, e que o `status` propagado é o da **última tentativa executada** — independente do caminho (sucesso imediato, recovery, falha persistente, erro de rede no fim).
 
 ### Estado atual
-- `makeHarness` já aceita `insertThrows: true` (linhas 18, 32-36).
-- `dispatchOne` envolve `insertDelivery` em try/catch (retry.ts:159-178), então o invariante existe no código mas **não é coberto por nenhum teste** — qualquer regressão (ex: remover o try/catch) passaria silenciosamente.
+`retry_test.ts` cobre apenas dois pontos isolados:
+- Linha 102: sucesso na 1ª (`updates === [{id, status:200}]`).
+- Linha 446-450: falha persistente 500 (`updates.length === 1`, `status:500`).
+
+Faltam os casos críticos de **recovery** (status muda entre tentativas) e **transição HTTP ↔ erro de rede**, onde uma regressão poderia gravar um status intermediário em vez do último.
 
 ### Mudanças
 
-**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — nova seção com 4 `Deno.test`:
+**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — nova seção `// ───────── updateSubscription: chamada única com último status ─────────` com 5 `Deno.test`:
 
-1. **`insertDelivery falha em todas: dispatcher executa as 3 tentativas mesmo assim`**
-   - Cenário: fetch sempre 500, `insertThrows: true`.
-   - Asserts: `h.fetches === 3`, `h.sleeps.length === 2`, `h.sleeps === [250, 500]`, `h.deliveries.length === 0` (nada persistido), resultado `{ succeeded: false, attempts: 3, status: 500 }`.
+1. **`updateSubscription: 1× com 200 em recovery 500 → 500 → 200`**
+   - Garante que o último status (200) sobrescreve intermediários (500). Asserts: `h.updates.length === 1`, `h.updates[0] === {id:"sub-1", status:200}`.
 
-2. **`insertDelivery falha em todas + sucesso na 3ª: dispatcher retorna succeeded`**
-   - Cenário: fetch 500 → 500 → 200, `insertThrows: true`.
-   - Asserts: `h.fetches === 3`, `h.sleeps.length === 2`, `h.deliveries.length === 0`, resultado `{ succeeded: true, attempts: 3, status: 200, error: null }`.
+2. **`updateSubscription: 1× com 200 em recovery na 2ª (502 → 200)`**
+   - Loop encerra cedo. Asserts: `h.updates.length === 1`, `status === 200`, `h.fetches === 2`.
 
-3. **`insertDelivery falha + falha terminal: dead-letter ainda é chamado`**
-   - Cenário: fetch sempre 500, `insertThrows: true`, `withDeadLetter: true`.
-   - Asserts: `h.deadLetters.length === 1`, `h.deadLetters[0].attempts === 3`, `h.deadLetters[0].last_status === 500`.
+3. **`updateSubscription: 1× com 503 em falha persistente que muda de status (500 → 502 → 503)`**
+   - Asserts: `status === 503` (último, não 500/502).
 
-4. **`insertDelivery falha em todas: dispatchOne resolve sem lançar`**
-   - Cenário: fetch sempre throws (network error), `insertThrows: true`.
-   - Asserts: a chamada `await dispatchOne(...)` resolve (não rejeita); `h.fetches === 3`, `h.sleeps.length === 2`, resultado `succeeded: false` com `error` preenchido.
+4. **`updateSubscription: 1× com status=0 quando última tentativa é erro de rede`**
+   - 500 → 500 → throw ENETDOWN. Asserts: `h.updates.length === 1`, `status === 0` (não 500).
+
+5. **`updateSubscription: 1× com 200 quando última é HTTP após erros de rede`**
+   - throw → throw → 200. Asserts: `h.updates.length === 1`, `status === 200` (não 0).
 
 ### Detalhes técnicos
-- Reutiliza 100% o `makeHarness` existente (já tem `insertThrows`).
-- `rand: () => 0` para sleeps determinísticos `[250, 500]`.
+- Reutiliza `makeHarness` existente (já registra `updates` via push).
 - Nenhuma mudança em `retry.ts` ou `index.ts`.
+- Os 2 testes existentes (linhas 102 e 446) permanecem inalterados — esses já cobrem "sucesso 1ª" e "falha persistente uniforme".
 
 ### Arquivos
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~60 linhas).
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~55 linhas).
 
 ### Verificação
-`deno test supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — esperado **34 atuais + 4 novos = 38 ✓**.
+`deno test supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — esperado **38 atuais + 5 novos = 43 ✓**.
 
