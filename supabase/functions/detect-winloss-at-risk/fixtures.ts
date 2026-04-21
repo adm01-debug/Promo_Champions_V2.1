@@ -450,6 +450,8 @@ const PRICING_GROUP: ScenarioGroup = {
     },
   ],
 };
+
+const NEGOTIATION_GROUP: ScenarioGroup = {
   theme: "Negociação travada",
   // bestLoss é escolhido por amount-proximity → para isolar "Negociação travada"
   // como dominant precisamos: amount fora dos avgs (alinhamento=0) + estagnação
