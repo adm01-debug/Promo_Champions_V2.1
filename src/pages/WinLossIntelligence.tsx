@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState, useCallback, useRef } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
 import { WinLossPageHeader } from "@/components/win-loss/WinLossPageHeader";
@@ -141,11 +141,13 @@ export default function WinLossIntelligence() {
 
   const handleCopyDigest = useCallback(() => {
     track("winloss_digest");
+    track("winloss_digest_copied");
     digest();
   }, [digest, track]);
 
   const handleLoadView = useCallback((v: SavedView) => {
     track("winloss_load_view", { name: v.name });
+    track("winloss_view_saved", { name: v.name });
     setFilters(v.filters);
   }, [setFilters, track]);
 
@@ -154,7 +156,19 @@ export default function WinLossIntelligence() {
     if (patch.outcome !== undefined) setOutcomeFilter(patch.outcome);
     if (patch.competitor !== undefined) setCompetitorFilter(patch.competitor);
     track("winloss_quick_filter", { ...patch });
+    track("winloss_quick_filter_clicked", { ...patch });
   }, [setFilters, track]);
+
+  // Filter-applied telemetry whenever active filters change
+  useEffect(() => {
+    track("winloss_filter_applied", {
+      period: filters.period,
+      hasSalesperson: filters.salespersonIds.length > 0,
+      hasSegment: filters.segments.length > 0,
+      minAmount: filters.minAmount,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   useWinLossShortcuts({
     onExport: handleExport,
