@@ -276,6 +276,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 100,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["120 dias"],
+      // critical severity → "AÇÃO IMEDIATA…24h"
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h"],
     },
   },
   {
