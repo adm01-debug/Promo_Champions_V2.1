@@ -1,68 +1,65 @@
 
 
-## Gatilho de alerta: falhas consecutivas + taxa de retry alta
+## Painel admin de Dead-Letters de Webhooks
 
 ### Objetivo
-Detectar automaticamente assinaturas de webhook com saúde degradada e disparar um alerta (email + entrada no histórico) **antes** que o problema escale, sem precisar abrir o painel.
+Dar aos admins acesso direto, fora do módulo Win/Loss, a uma página de gestão de dead-letters com filtros por status, assinatura e evento, e reprocessamento em lote.
 
-### Quando dispara (por subscription, janela de 30 min)
-Um alerta é emitido se **qualquer** das condições for verdadeira:
+### O que já existe (reutilizar)
+- Hook `useWebhookDeadLetters(status)` com `list`, `replay(ids)`, `archive(ids)`.
+- Componente `WebhookDeadLetterPanel` com tabs pending/replayed/archived, seleção em massa, replay/arquivar e drawer de payload.
+- Edge function `winloss-webhook-replay` já em produção.
 
-1. **Falhas consecutivas**: as últimas **N=5** entregas (ordenadas por `created_at DESC`) têm `succeeded=false` — endpoint provavelmente fora do ar.
-2. **Taxa de retry alta**: na janela, `(tentativas com attempt > 1) / (total de entregas) > 50%` **e** `total ≥ 10` — endpoint instável, recuperando após retries demais.
+### O que será adicionado
 
-Limites configuráveis via env vars (`ALERT_CONSECUTIVE_FAILURES`, `ALERT_RETRY_RATE_THRESHOLD`, `ALERT_WINDOW_MINUTES`, `ALERT_MIN_DELIVERIES`) com defaults seguros.
+**1. Nova página `/admin/webhooks-dead-letters`** (`src/pages/admin/WebhooksDeadLettersAdmin.tsx`)
+- Protegida por `ProtectedRoute requireAdminOrManager` + checagem `isAdmin` (apenas admin pode reprocessar).
+- Header com título, descrição, contadores por status (pending/replayed/archived) e botão "Atualizar".
+- Filtros adicionais acima da lista:
+  - Busca por texto (event, URL da subscription, request_id, mensagem de erro).
+  - Select de subscription (lista subscriptions ativas via `useWebhookSubscriptions`).
+  - Select de evento (derivado das opções distintas presentes).
+  - Faixa de data (últimos 24h / 7d / 30d / tudo).
+- Renderiza `WebhookDeadLetterPanel` (refatorado para aceitar props de filtro) ocupando largura total.
+- Helmet com title/description SEO.
+- `PageTransition` (consistente com `AdminDashboard`).
 
-### Anti-spam
-Tabela nova `winloss_webhook_alerts` com `(subscription_id, kind, fired_at)`. Antes de emitir, checar se já houve alerta do mesmo `kind` para a mesma subscription nos últimos **60 min** — se sim, suprimir (apenas log).
+**2. Refatoração leve de `WebhookDeadLetterPanel`**
+- Aceita props opcionais: `filterText?`, `filterSubscriptionId?`, `filterEvent?`, `dateRange?`, `fullWidth?`.
+- Sem props, mantém comportamento atual (continua funcionando dentro de `WinLossIntelligence`).
+- Aplica filtros client-side sobre `items` antes de renderizar.
+- Quando `fullWidth=true`, usa `max-h` maior (`70vh`) e mostra colunas extras na lista (created_at absoluto, request_id curto).
 
-### Edge function nova: `winloss-webhook-health-monitor`
-- Roda em loop por todas as subscriptions ativas.
-- Para cada uma, executa as duas regras acima.
-- Quando dispara: insere em `winloss_webhook_alerts`, envia email via Resend (se `RESEND_API_KEY` + `ADMIN_NOTIFICATION_EMAIL` configurados — mesmo padrão de `notify-critical-pattern`), e loga estruturado.
-- Resposta JSON: `{ checked, fired, suppressed, alerts: [...] }`.
+**3. Hook auxiliar `useDeadLettersCounts`** (`src/hooks/win-loss/useDeadLettersCounts.ts`)
+- Faz uma única query agregando `count` por status (`pending`, `replayed`, `archived`) para alimentar os badges do header.
+- `staleTime: 30s`.
 
-### Agendamento
-Cron a cada 5 min via `supabase/config.toml` no bloco da função (`schedule = "*/5 * * * *"`), seguindo o padrão de outras funções agendadas do projeto.
+**4. Atualizações de navegação**
+- `src/routes/AppRoutes.tsx`: adicionar rota `/admin/webhooks-dead-letters` (lazy import).
+- `src/components/admin/AdminQuickLinks.tsx`: novo card "Dead-Letters de Webhooks" com ícone `AlertTriangle`, descrição curta e contador de pending (usando `useDeadLettersCounts`).
+- Opcional (mesma sessão): link no menu lateral admin se houver agrupamento dedicado — pular se não existir.
 
-### UI: faixa de status no painel de webhooks
-- Novo hook `useWebhookAlerts(subscriptionId?)` — lê `winloss_webhook_alerts` das últimas 24h.
-- Em `WebhookSubscriptionsPanel`: badge "⚠ Degradado" ao lado da subscription quando há alerta ativo (<60 min). Tooltip mostra: tipo (`consecutive_failures` / `high_retry_rate`), quando disparou, e contadores.
-- Em `WebhookHealthPanel` (KPIs já existentes): banner vermelho dismissível "N assinatura(s) com alerta ativo" quando há alertas <60 min.
+### Fluxo de reprocessamento em lote (já funciona, apenas exposto)
+1. Admin filtra por subscription/evento/data.
+2. Marca itens (ou "Selecionar todos" — opera sobre o subset filtrado).
+3. Clica "Reprocessar" → `replay(ids)` chama `winloss-webhook-replay` → toast com sucessos/falhas → invalida cache.
+4. Itens bem-sucedidos saem de `pending` e aparecem em `replayed`.
 
-### Schema (migração)
-```sql
-create table public.winloss_webhook_alerts (
-  id uuid primary key default gen_random_uuid(),
-  subscription_id uuid not null references winloss_webhook_subscriptions(id) on delete cascade,
-  kind text not null check (kind in ('consecutive_failures','high_retry_rate')),
-  details jsonb not null default '{}',
-  fired_at timestamptz not null default now()
-);
-create index on winloss_webhook_alerts (subscription_id, fired_at desc);
-create index on winloss_webhook_alerts (fired_at desc);
-alter table public.winloss_webhook_alerts enable row level security;
-create policy "admin read webhook alerts" on public.winloss_webhook_alerts
-  for select to authenticated using (has_role(auth.uid(),'admin'::app_role));
--- inserts via service role apenas (sem policy de insert)
-```
-
-### Logs estruturados (mesmo padrão do dispatcher)
-- `monitor_start`, `subscription_evaluated` (com `subscriptionId`, contadores), `alert_fired` (com `kind`, `details`), `alert_suppressed`, `email_skipped`, `email_failed`, `monitor_complete`.
-- Inclui `requestId` (UUID v4) e `error_name`/`error`/`error_stack` em catches (consistente com o padrão recém-implantado).
+### Segurança
+- Nenhuma mudança de RLS necessária — `winloss_webhook_dead_letters` já tem policy admin-only para SELECT, e `winloss-webhook-replay` valida role no servidor.
+- Rota protegida no client + checagem `isAdmin` dentro do componente (defesa em profundidade).
 
 ### Arquivos
-- **Migração**: tabela `winloss_webhook_alerts` + RLS.
-- **Criar**: `supabase/functions/winloss-webhook-health-monitor/index.ts`.
-- **Modificar**: `supabase/config.toml` (bloco schedule da nova função).
-- **Criar**: `src/hooks/win-loss/useWebhookAlerts.ts`.
-- **Modificar**: `src/components/win-loss/WebhookSubscriptionsPanel.tsx` (badge degradado + tooltip).
-- **Modificar**: `src/components/win-loss/WebhookHealthPanel.tsx` (banner de alertas ativos).
+- **Criar**: `src/pages/admin/WebhooksDeadLettersAdmin.tsx`
+- **Criar**: `src/hooks/win-loss/useDeadLettersCounts.ts`
+- **Modificar**: `src/components/win-loss/WebhookDeadLetterPanel.tsx` (props opcionais de filtro, sem quebrar uso atual)
+- **Modificar**: `src/routes/AppRoutes.tsx` (nova rota)
+- **Modificar**: `src/components/admin/AdminQuickLinks.tsx` (novo card)
 
 ### Verificação
-1. Migração aplica e RLS confere admin-only.
-2. `supabase--curl_edge_functions` em `winloss-webhook-health-monitor` retorna `{ checked, fired, suppressed }`.
-3. Forçar 5 falhas consecutivas em uma subscription → próxima execução insere alerta e (se Resend configurado) envia email.
-4. Re-executar imediatamente → alerta suprimido (`alert_suppressed` no log).
-5. UI mostra badge "Degradado" na subscription.
+1. `/admin` → card "Dead-Letters de Webhooks" exibe contagem de pendentes.
+2. Clique abre `/admin/webhooks-dead-letters` com filtros funcionais.
+3. Filtrar por subscription + selecionar todos + Reprocessar dispara `winloss-webhook-replay`; toast mostra resultado.
+4. Tabs pending/replayed/archived navegam corretamente; contadores no header atualizam após replay/arquivar.
+5. Acesso negado para usuário não-admin (rota protegida + componente retorna `null`).
 
