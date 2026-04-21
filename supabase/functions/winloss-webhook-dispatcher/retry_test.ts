@@ -666,3 +666,65 @@ Deno.test("fan-out: retries de uma sub não acoplam às outras (sleeps isolados)
   assertEquals(h.updates.filter((u) => u.id === "sub-B").length, 1);
   assertEquals(h.updates.filter((u) => u.id === "sub-C").length, 1);
 });
+
+// ───────────── resiliência: insertDelivery falhando ─────────────
+
+Deno.test("insertDelivery falha em todas: dispatcher executa as 3 tentativas mesmo assim", async () => {
+  const h = makeHarness(() => new Response("err", { status: 500 }), { insertThrows: true });
+  const result = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  // Loop completo apesar de todos os inserts falharem
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.sleeps.length, MAX_ATTEMPTS - 1);
+  assertEquals(h.sleeps, [250, 500]);
+  // Nada persistido (todos rejeitaram)
+  assertEquals(h.deliveries.length, 0);
+  // Resultado final coerente
+  assertEquals(result.succeeded, false);
+  assertEquals(result.attempts, 3);
+  assertEquals(result.status, 500);
+});
+
+Deno.test("insertDelivery falha em todas + sucesso na 3ª: dispatcher retorna succeeded", async () => {
+  const responses = [
+    () => new Response("err", { status: 500 }),
+    () => new Response("err", { status: 500 }),
+    () => new Response("ok", { status: 200 }),
+  ];
+  const h = makeHarness((attempt) => responses[attempt - 1](), { insertThrows: true });
+  const result = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  // Loop não foi interrompido pela falha de insert → chegou até a 3ª e ganhou
+  assertEquals(h.fetches, 3);
+  assertEquals(h.sleeps.length, 2);
+  assertEquals(h.deliveries.length, 0);
+  assertEquals(result.succeeded, true);
+  assertEquals(result.status, 200);
+  assertEquals(result.error, null);
+});
+
+Deno.test("insertDelivery falha + falha terminal: dead-letter ainda é chamado", async () => {
+  const h = makeHarness(() => new Response("err", { status: 500 }), {
+    insertThrows: true,
+    withDeadLetter: true,
+  });
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.deadLetters.length, 1);
+  assertEquals(h.deadLetters[0].attempts, 3);
+  assertEquals(h.deadLetters[0].last_status, 500);
+});
+
+Deno.test("insertDelivery falha em todas + erro de rede: dispatchOne resolve sem lançar", async () => {
+  const h = makeHarness(() => { throw new Error("ENETDOWN"); }, { insertThrows: true });
+  // Não deve lançar — try/catch interno absorve o erro de log
+  const result = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.sleeps.length, MAX_ATTEMPTS - 1);
+  assertEquals(result.succeeded, false);
+  assertEquals(result.status, 0);
+  assert(result.error !== null);
+  assert(result.error!.includes("ENETDOWN"));
+});
+
