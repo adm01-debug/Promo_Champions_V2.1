@@ -108,6 +108,15 @@ export function AtRiskDealsFromPatterns() {
                 ? `Nenhum deal cruza padrões com score ≥ ${settings.threshold}.`
                 : "Nenhum deal aberto cruza padrões críticos no momento."}
             </p>
+          ) : !filtered.length ? (
+            <div className="py-4 text-center space-y-2">
+              <p className="text-xs text-muted-foreground">
+                Nenhum deal corresponde aos filtros atuais.
+              </p>
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={clearFilters}>
+                Limpar filtros
+              </Button>
+            </div>
           ) : (
             <ul className="space-y-2" aria-label="Deals em risco identificados">
               {visible.map(d => (
