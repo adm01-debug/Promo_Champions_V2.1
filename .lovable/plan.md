@@ -1,46 +1,50 @@
 
 
-## Cobrir validação Zod do `winloss-webhook-replay` com testes Deno isolados
-
-### Estado atual
-A validação **já existe e funciona** em `supabase/functions/winloss-webhook-replay/index.ts` (linhas 36–56):
-- `idArray = z.array(z.string().uuid()).min(1).max(50)`.
-- `z.union` exige exatamente um dos arrays (`dead_letter_ids` XOR `delivery_ids`).
-- `safeParse` retorna **400** com `{ error: "invalid_input", message, details: error.flatten(), requestId }`.
-
-Porém **não há testes Deno** isolando esse schema — só existe `retry_test.ts` do dispatcher.
+## Multi-seleção + replay em lote no `WebhookDeliveriesDrawer`
 
 ### O que será adicionado
 
-1. **Extrair `BodySchema`** de `index.ts` para `supabase/functions/winloss-webhook-replay/schema.ts` (export nomeado). Re-importar em `index.ts` — zero mudança de comportamento em runtime.
-2. **Criar `supabase/functions/winloss-webhook-replay/schema_test.ts`** com ~18 casos Deno:
+1. **Checkbox por linha** de delivery falha (`succeeded === false`). Linhas com sucesso ficam sem checkbox (não são reenviáveis).
+2. **Barra de seleção fixa no topo** do `ScrollArea` aparece quando há ≥1 selecionado:
+   - Texto: `"N selecionado(s)"` + link `"Limpar"`.
+   - Botão **"Reenviar selecionados"** (ícone `RotateCw`, com `Loader2` em loading).
+   - Disabled enquanto `isReplaying` ou `selected.size === 0`.
+3. **Checkbox "Selecionar todas as falhas"** no header da lista (à esquerda, mesma linha do contador). Marca/desmarca todas as `!succeeded`. Estado indeterminado quando alguns selecionados.
+4. **Limite de 50** (espelha o `idArray.max(50)` do schema): se usuário tentar selecionar a 51ª, o checkbox fica disabled com tooltip `"Máx 50 por reenvio"`.
+5. **Reset de seleção**:
+   - Ao fechar/abrir o drawer.
+   - Após `onSettled` do replay em lote (sucesso ou erro).
+6. **Compatibilidade total** com replay individual existente — o botão `RotateCw` por linha continua funcionando exatamente como hoje.
 
-**Aceita `delivery_ids`** (e simétrico para `dead_letter_ids`):
-- 1 UUID válido → normaliza para `{ delivery_ids: [uuid], dead_letter_ids: undefined }`.
-- 50 UUIDs válidos → ok (limite max).
-- `delivery_id` singular → açúcar normalizado para array de 1.
+### Mudanças
 
-**Rejeita exclusividade**:
-- Ambos arrays presentes → falha union.
-- Body `{}` / nenhum campo → falha union.
-- `delivery_ids` + `dead_letter_id` singular do outro tipo após preprocess → falha.
+**`src/components/win-loss/WebhookDeliveriesDrawer.tsx`** (~+70 linhas):
+- Novo state: `const [selected, setSelected] = useState<Set<string>>(new Set())`.
+- Helpers: `toggleOne(id)`, `toggleAll(failedIds)`, `clearSelection()`.
+- `useEffect` reseta `selected` quando `open` muda para `false`.
+- Computa `failedIds = (data ?? []).filter(d => !d.succeeded).map(d => d.id)`.
+- Render:
+  - Header da lista ganha `<Checkbox checked={...} indeterminate={...} />` + label + contador.
+  - Barra flutuante condicional (`selected.size > 0`) com botão `Reenviar selecionados`.
+  - Cada `<li>` falha ganha `<Checkbox>` à esquerda do ícone de status.
+  - Itens com sucesso renderizam um espaçador (`w-4`) no lugar do checkbox para manter alinhamento.
+- Handler `handleReplaySelected()`:
+  - Chama `replay(Array.from(selected), { onSettled: clearSelection })`.
+  - Reaproveita o agregado de toast já presente em `useWebhookDeliveries`.
 
-**Rejeita limites**:
-- `delivery_ids: []` → falha `min(1)`.
-- 51 UUIDs → falha `max(50)`.
-- 1 string não-UUID → falha `uuid()`.
-- 49 válidos + 1 inválido → falha; `details.fieldErrors.delivery_ids` populado.
-- `delivery_ids: "string"` ou `[123, 456]` → falha por tipo.
+**`src/hooks/win-loss/useWebhookDeliveries.ts`**: nenhuma mudança. A `replay` mutation já aceita `string[]` de qualquer tamanho (até 50, validado server-side).
 
-**Erro serializável**:
-- Em todas as falhas, `error.flatten()` produz `{ fieldErrors, formErrors }` — garante que o handler consegue mandar `details` no 400.
+### Detalhes de UX
 
-### Onde
-- **Criar**: `supabase/functions/winloss-webhook-replay/schema.ts` (export `BodySchema` + `idArray`).
-- **Modificar**: `supabase/functions/winloss-webhook-replay/index.ts` — substitui definição inline por `import { BodySchema } from "./schema.ts"`.
-- **Criar**: `supabase/functions/winloss-webhook-replay/schema_test.ts` (~18 testes Deno).
+- Checkbox usa o componente `@/components/ui/checkbox` (já existe no projeto).
+- Estado `indeterminate` aplicado via `data-state="indeterminate"` quando `0 < selected.size < failedIds.length`.
+- Barra flutuante: `sticky top-0 z-10` com `bg-background/95 backdrop-blur` e borda inferior — não rola junto com a lista.
+- A11y: `aria-label` em cada checkbox (`"Selecionar entrega de {event}"`), `aria-live="polite"` no contador.
+- Tooltip de limite usa `TooltipProvider` já presente.
 
 ### Verificação
-1. `supabase--test_edge_functions` com `functions: ["winloss-webhook-replay"]` — todos verdes.
-2. Curl autenticado com body inválido continua retornando **400** com `details` Zod e `requestId` (sem regressão).
+- Selecionar 3 falhas → barra aparece com "3 selecionado(s)" → clicar "Reenviar selecionados" → toast agregado de `useWebhookDeliveries` mostra "3 sucesso · 0 falha" (ou variantes).
+- Selecionar todas (com mix de sucessos/falhas) → só falhas entram na seleção.
+- Tentar marcar a 51ª falha → checkbox disabled + tooltip.
+- Fechar e reabrir drawer → seleção zerada.
 
