@@ -133,12 +133,29 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
 
   const handleReplay = (id: string) => {
     setPendingId(id);
-    replay([id], { onSettled: () => setPendingId(null) });
+    setProcessingIds((prev) => new Set(prev).add(id));
+    replay([id], {
+      onSuccess: (payload) => recordResults([id], payload),
+      onSettled: () => {
+        setPendingId(null);
+        clearProcessing([id]);
+      },
+    });
   };
 
   const handleReplaySelected = () => {
     if (selected.size === 0) return;
-    replay(Array.from(selected), { onSettled: clearSelection });
+    const ids = Array.from(selected);
+    setProcessingIds((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) next.add(id);
+      return next;
+    });
+    clearSelection();
+    replay(ids, {
+      onSuccess: (payload) => recordResults(ids, payload),
+      onSettled: () => clearProcessing(ids),
+    });
   };
 
   return (
