@@ -203,8 +203,9 @@ export function computeDealRisk(
     reasons.push(`Estágio "${deal.status}" historicamente travado`);
   }
   // Competitor signal (proxy: source contém termos competitivos OU presença de padrão).
-  if (competitorPatterns.length && deal.source && /concorr|competitor|leilao|cotac/i.test(deal.source)) {
-    reasons.push("Possível pressão competitiva detectada");
+  const matchedKeywords = extractCompetitorKeywords(deal.source);
+  if (competitorPatterns.length && matchedKeywords.length > 0) {
+    reasons.push(`Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`);
   }
 
   // Pick the dominant pattern for the label.
@@ -232,6 +233,8 @@ export function computeDealRisk(
 
   if (finalScore < threshold) return null;
 
+  const stageEligible = !!deal.status && STUCK_STATUSES.has(deal.status);
+
   return {
     sale_id: deal.id,
     client_name: deal.client_name,
@@ -249,6 +252,14 @@ export function computeDealRisk(
       matched_pattern_type: dominant.type,
       matched_confidence: dominant.confidence,
       reasons,
+      matched_keywords: matchedKeywords,
+      days_stagnant: days,
+      avg_loss_cycle_days: bestLoss?.avg_cycle_days ?? null,
+      avg_loss_amount: bestLoss?.avg_amount ?? null,
+      raw_score: raw,
+      confidence_weight: confWeight,
+      final_score: finalScore,
+      stage_eligible: stageEligible,
     },
   };
 }
