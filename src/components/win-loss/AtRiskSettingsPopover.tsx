@@ -73,6 +73,9 @@ export function AtRiskSettingsPopover({
               aria-label="Filtros ativos"
             />
           )}
+          {settings.debug && (
+            <Bug className="h-3 w-3 text-warning" aria-label="Modo debug ativo" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 space-y-4 max-h-[70vh] overflow-y-auto">
