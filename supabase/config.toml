@@ -1,5 +1,8 @@
 project_id = "saejqkojleeaxzrslzfg"
 
+[functions.winloss-webhook-health-monitor]
+verify_jwt = false
+
 [functions.send-alert-notifications]
 verify_jwt = false
 
