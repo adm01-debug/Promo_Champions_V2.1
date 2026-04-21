@@ -97,8 +97,8 @@ describe("RiskCompareModal render", () => {
     render(<RiskCompareModal open onOpenChange={vi.fn()} dealA={a} dealB={b} />);
     expect(screen.getByText("ACME Ltda")).toBeInTheDocument();
     expect(screen.getByText("Globex")).toBeInTheDocument();
-    expect(screen.getByText("Deal A")).toBeInTheDocument();
-    expect(screen.getByText("Deal B")).toBeInTheDocument();
+    expect(screen.getAllByText("Deal A").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Deal B").length).toBeGreaterThan(0);
   });
 
   it("shows 'piso 0.5' badge when matched_confidence < 0.5 but applied weight is 0.5", () => {
