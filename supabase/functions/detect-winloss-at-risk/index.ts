@@ -1,77 +1,96 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { corsHeaders } from "../_shared/cors.ts";
+import { computeAtRiskDeals, type LossPattern, type OpenDeal } from "./scoring.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const EXCLUDED_STATUSES = ["won", "lost", "completed"];
 
-interface Pattern { id: string; pattern_name: string | null; description: string | null; trigger_keywords: string[] | null; severity: string | null }
-interface Sale { id: string; client_name: string | null; amount: number | null; status: string | null; stage: string | null; notes: string | null; updated_at: string | null }
+interface RequestBody {
+  force?: boolean;
+  threshold?: number;
+  limit?: number;
+}
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+function log(event: string, data: Record<string, unknown>) {
+  console.log(JSON.stringify({ fn: "detect-winloss-at-risk", event, ...data }));
+}
+
+serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  const startedAt = Date.now();
 
   try {
+    let body: RequestBody = {};
+    if (req.method === "POST") {
+      try {
+        const text = await req.text();
+        if (text) body = JSON.parse(text) as RequestBody;
+      } catch {
+        body = {};
+      }
+    }
+    const threshold = typeof body.threshold === "number" && body.threshold >= 0 && body.threshold <= 100
+      ? body.threshold
+      : 40;
+    const limit = typeof body.limit === "number" && body.limit > 0 && body.limit <= 100
+      ? body.limit
+      : 20;
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const { data: patterns } = await supabase
-      .from("win_loss_patterns")
-      .select("id, pattern_name, description, trigger_keywords, severity")
-      .eq("outcome", "lost")
-      .limit(50);
+    const [{ data: patternsRaw, error: pErr }, { data: salesRaw, error: sErr }] = await Promise.all([
+      supabase
+        .from("win_loss_patterns")
+        .select("pattern_type, label, outcome, frequency, win_rate, avg_cycle_days, avg_amount, confidence")
+        .order("confidence", { ascending: false })
+        .limit(100),
+      supabase
+        .from("sales")
+        .select("id, client_name, amount, status, category, source, updated_at, created_at")
+        .not("status", "in", `(${EXCLUDED_STATUSES.join(",")})`)
+        .order("updated_at", { ascending: true })
+        .limit(300),
+    ]);
 
-    const { data: sales } = await supabase
-      .from("sales")
-      .select("id, client_name, amount, status, stage, notes, updated_at")
-      .not("status", "in", "(won,lost)")
-      .order("updated_at", { ascending: false })
-      .limit(200);
+    if (pErr) log("patterns_error", { message: pErr.message });
+    if (sErr) log("sales_error", { message: sErr.message });
 
-    const patternList = (patterns ?? []) as Pattern[];
-    const dealList = (sales ?? []) as Sale[];
+    const patterns = (patternsRaw ?? []) as LossPattern[];
+    const deals = (salesRaw ?? []) as OpenDeal[];
 
-    const results = dealList.map(deal => {
-      const haystack = `${deal.notes ?? ""} ${deal.stage ?? ""}`.toLowerCase();
-      let bestScore = 0;
-      let matchedPattern = "";
-      let action = "";
-      for (const pat of patternList) {
-        const keywords = (pat.trigger_keywords ?? []).filter(Boolean);
-        if (!keywords.length) continue;
-        const hits = keywords.filter(k => haystack.includes(k.toLowerCase())).length;
-        if (!hits) continue;
-        const sevWeight = pat.severity === "critical" ? 1.5 : pat.severity === "high" ? 1.2 : 1;
-        const score = Math.min(100, Math.round((hits / keywords.length) * 80 * sevWeight));
-        if (score > bestScore) {
-          bestScore = score;
-          matchedPattern = pat.pattern_name ?? "Padrão de risco";
-          action = pat.description ?? "Revisar abordagem";
-        }
-      }
-      return {
-        sale_id: deal.id,
-        client_name: deal.client_name,
-        amount: Number(deal.amount) || 0,
-        stage: deal.stage,
-        risk_score: bestScore,
-        matched_pattern: matchedPattern,
-        suggested_action: action,
-      };
-    }).filter(r => r.risk_score >= 40)
-      .sort((a, b) => b.risk_score - a.risk_score)
-      .slice(0, 20);
+    const results = computeAtRiskDeals(deals, patterns, new Date(), { threshold, limit });
 
-    return new Response(JSON.stringify({ deals: results, total: results.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    log("computed", {
+      total_patterns: patterns.length,
+      total_deals_evaluated: deals.length,
+      total_at_risk: results.length,
+      top_score: results[0]?.risk_score ?? 0,
+      threshold,
+      duration_ms: Date.now() - startedAt,
     });
+
+    return new Response(
+      JSON.stringify({
+        deals: results,
+        total: results.length,
+        meta: {
+          patterns_used: patterns.length,
+          deals_evaluated: deals.length,
+          threshold,
+        },
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (e) {
-    console.error("detect-winloss-at-risk error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown", deals: [] }), {
+    const message = e instanceof Error ? e.message : "unknown";
+    log("error", { message, duration_ms: Date.now() - startedAt });
+    return new Response(JSON.stringify({ error: message, deals: [] }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
