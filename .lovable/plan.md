@@ -1,68 +1,93 @@
 
 
-## Simulação e validação do `winloss-webhook-dispatcher`
+## Teste do modo Personalizar — drag-and-drop, persistência e fallback
 
-Objetivo: confirmar que a edge function dispara POST para webhooks ativos com retries (até 3 tentativas, backoff linear de 500ms × tentativa), atualiza `last_dispatch_at` / `last_status` e gera logs úteis para troubleshooting.
+Objetivo: validar que o `DashboardLayoutEditor` (a) persiste a ordem por usuário em `user_winloss_preferences.layout`, (b) renderiza na ordem salva no próximo carregamento, e (c) lida graciosamente com widgets desativados/ausentes (fallback sem crash, novos widgets aparecendo no final).
 
 ---
 
-### Estado atual (verificado no código)
+### Estado verificado no código
 
-`supabase/functions/winloss-webhook-dispatcher/index.ts`:
-- Aceita `POST { event, ...payload }`.
-- Busca `winloss_webhook_subscriptions` com `active=true` e filtra por `events.includes(event)`.
-- Loop `while (attempts < 3)`: tenta `fetch`, sai se `2xx`, espera `500 * attempts` ms entre tentativas.
-- Atualiza `last_dispatch_at` e `last_status` na tabela.
-- `console.error` em falha de tentativa e em erro geral.
+`src/hooks/win-loss/useUserDashboardLayout.ts`:
+- Lê `layout` da tabela `user_winloss_preferences` por `user_id`.
+- Se vazio/inválido → retorna `DEFAULT_LAYOUT` (17 widgets).
+- Se salvo → faz merge: `[...stored, ...DEFAULT_LAYOUT.filter(w => !stored.includes(w))]` (anexa novos widgets ao fim — bom).
+- `save` faz upsert.
+
+`src/components/win-loss/DashboardLayoutEditor.tsx`:
+- Modo view: `layout.map(id => widgets[id] ? <node /> : null)` — fallback OK quando widget não existe no objeto.
+- Modo edit: `DndContext` + `SortableContext` vertical + `arrayMove` em `onDragEnd`.
+- Sensors: Pointer (4px) + Keyboard (acessível).
+- Botões: Personalizar / Cancelar / Padrão (reset DEFAULT) / Salvar.
 
 Lacunas identificadas:
-1. Não há tabela de **delivery logs** — só o último status fica salvo, dificultando auditoria histórica.
-2. Backoff é linear (500/1000/1500ms); padrão melhor seria exponencial com jitter.
-3. Logs não incluem `subscription_id` nem número da tentativa de forma estruturada.
+1. **Sem cobertura de teste** automatizada do hook nem do editor.
+2. **Persistência não-validada** end-to-end com `user_winloss_preferences` real.
+3. **Não há verificação** de que a página `WinLossIntelligence` consome `layout` na ordem correta.
+4. **Edição mostra apenas linhas no editor** — usuário não vê preview dos widgets reordenados antes de salvar (perda de feedback visual).
 
 ---
 
 ### Plano de execução
 
-#### 1. Cenários de simulação (via `supabase--curl_edge_functions`)
-Criar 3 inscrições temporárias via SQL e disparar a função para cada cenário:
+#### 1. Testes unitários do hook `useUserDashboardLayout`
+Arquivo novo `src/test/hooks/useUserDashboardLayout.test.ts` cobrindo:
+- Sem usuário autenticado → retorna `DEFAULT_LAYOUT`.
+- Usuário sem registro → retorna `DEFAULT_LAYOUT`.
+- Layout salvo válido → retorna na ordem salva.
+- Layout salvo com widgets faltantes (ex: novos adicionados depois) → anexa ao fim.
+- Layout salvo array vazio/null → fallback `DEFAULT_LAYOUT`.
+- `save` faz upsert com `user_id` + `layout` + `updated_at`.
 
-| Cenário | URL alvo | Resultado esperado |
-|---|---|---|
-| A — Sucesso 200 | `https://httpbin.org/status/200` | 1 tentativa, `last_status=200` |
-| B — Falha permanente 500 | `https://httpbin.org/status/500` | 3 tentativas, `last_status=500`, ~1.5s total |
-| C — Timeout/DNS inválido | `https://invalid-domain-xyz-test.local` | 3 tentativas com `console.error`, `last_status=0` |
-| D — Evento não inscrito | qualquer | 0 dispatches (`targets` vazio) |
+Mock de `supabase.auth.getUser` e `supabase.from('user_winloss_preferences')`.
 
-Para cada um:
-- `supabase--curl_edge_functions` POST `/winloss-webhook-dispatcher` com `{event:"critical_pattern", deal_id:"sim-1", severity:"high"}`.
-- `supabase--read_query` em `winloss_webhook_subscriptions` para conferir `last_dispatch_at`/`last_status`.
-- `supabase--edge_function_logs` para `winloss-webhook-dispatcher` filtrando pelo cenário.
+#### 2. Testes unitários do `DashboardLayoutEditor`
+Arquivo novo `src/test/components/winloss/DashboardLayoutEditor.test.tsx`:
+- Renderiza widgets na ordem do `layout`.
+- Botão "Personalizar" entra em modo edição (mostra grips + Salvar/Cancelar/Padrão).
+- Cancelar restaura ordem anterior (sem salvar).
+- Botão "Padrão" reseta o `draft` para `DEFAULT_LAYOUT`.
+- Salvar invoca `save` com a ordem do `draft`.
+- View mode: widget id que não existe em `widgets` é ignorado silenciosamente (fallback).
+- View mode: widget desativado (não passado em `widgets`) não quebra o layout.
 
-#### 2. Melhorias na edge function (após simulação)
-- **Tabela `winloss_webhook_deliveries`** (migration): `id`, `subscription_id`, `event`, `payload jsonb`, `attempt`, `status`, `error_message`, `duration_ms`, `created_at`. RLS: leitura só admin.
-- **Backoff exponencial com jitter**: `Math.min(8000, 2 ** attempt * 250) + Math.random()*250`.
-- **Logs estruturados**: `console.log(JSON.stringify({ fn, sub_id, event, attempt, status, duration_ms }))`.
-- **Insert de delivery** após cada tentativa (sucesso ou falha) para histórico completo.
-- **AbortSignal.timeout(8000)** por tentativa para evitar travamento em endpoints lentos.
+Wrap com `QueryClientProvider`. Para drag, simular reorder via mock direto de `setDraft` (dnd-kit é difícil de testar via JSDOM — testar a função pura `arrayMove` separadamente já cobre a lógica).
 
-#### 3. Painel de troubleshooting
-Adicionar em `WebhookSubscriptionsPanel.tsx` um botão "Ver entregas" por webhook → drawer com últimas 20 entregas (`useWebhookDeliveries` hook) mostrando attempt, status, duração, erro.
+#### 3. Teste E2E Playwright (`tests/e2e/win-loss/personalize-layout.spec.ts`)
+- Autenticar como usuário admin (reusar helper).
+- Navegar `/win-loss-intelligence`.
+- Capturar ordem inicial dos data-attributes dos widgets.
+- Click "Personalizar" → arrastar primeiro widget para 3ª posição usando `page.dragAndDrop`.
+- Click "Salvar" → toast "Layout salvo".
+- Recarregar a página → conferir que a nova ordem persiste.
+- Click "Personalizar" → "Padrão" → "Salvar" → conferir que volta ao `DEFAULT_LAYOUT`.
 
-#### 4. Validação final
-- Re-executar cenários A/B/C, conferir registros em `winloss_webhook_deliveries`.
-- `tsc --noEmit`, atualizar `mem://features/win-loss-intelligence-module` com nota de observabilidade de webhooks.
+Adicionar `data-widget-id={id}` nos wrappers do view mode em `DashboardLayoutEditor` para tornar a asserção robusta.
+
+#### 4. Validação real com `supabase--read_query`
+Antes/depois de cada cenário E2E, ler `user_winloss_preferences` para o user de teste e logar o array `layout`.
+
+#### 5. Pequenas melhorias UX no editor (impacto baixo, ganho alto)
+- Adicionar `data-widget-id` no view mode (para testes + analytics).
+- Mostrar contador "X/Y widgets" no editor.
+- Mensagem visual quando `draft` for igual ao `layout` salvo (Salvar fica `disabled`).
+
+#### 6. Verificações finais
+- `tsc --noEmit` zero erros.
+- `vitest run src/test/hooks/useUserDashboardLayout.test.ts src/test/components/winloss/DashboardLayoutEditor.test.tsx` passando.
+- Atualizar `mem://features/winloss-webhook-observability` com nota cruzada → criar `mem://features/winloss-personalized-layout`.
 
 ### Detalhes técnicos
-- Sem novos secrets, sem novas dependências.
-- Migration única: 1 tabela + RLS (`has_role(auth.uid(),'admin')` para SELECT, service_role para INSERT).
-- Cleanup pós-simulação: `DELETE FROM winloss_webhook_subscriptions WHERE url LIKE 'https://httpbin.org/%' OR url LIKE '%invalid-domain-xyz-test%'`.
+- **Sem migrations**, sem novos secrets.
+- Sem novas dependências (dnd-kit já instalado).
+- `arrayMove` testado indiretamente via dnd-kit (suficiente).
+- Para drag E2E em Playwright + dnd-kit, usar `mouse.down/move/up` se `dragAndDrop` falhar (dnd-kit precisa de movimentos intermediários).
 
 ### Ordem (sequencial, sem pausas)
-1. Migration `winloss_webhook_deliveries` + RLS.
-2. Refactor `winloss-webhook-dispatcher` (backoff exp+jitter, timeout, logs estruturados, insert delivery).
-3. Deploy + simulação dos 4 cenários via curl.
-4. Verificação SQL + leitura de logs.
-5. Hook `useWebhookDeliveries` + drawer de entregas no painel admin.
-6. Cleanup de inscrições simuladas + `tsc --noEmit` + atualização de memória + relatório.
+1. Adicionar `data-widget-id` no view mode + UX (counter, save disabled).
+2. Testes unitários do hook.
+3. Testes unitários do editor.
+4. E2E spec `personalize-layout.spec.ts`.
+5. Validação no banco (`supabase--read_query` antes/depois).
+6. `tsc --noEmit` + `vitest run` dos novos testes + atualização de memória.
 
