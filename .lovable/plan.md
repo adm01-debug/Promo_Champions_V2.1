@@ -1,100 +1,124 @@
 
 
-## Presets de risco no `AtRiskSettingsPopover`
+## Sincronizar configurações do AtRisk com o perfil (cross-device)
 
 ### Objetivo
-Adicionar atalhos de 1 clique no popover de configurações para alternar `threshold` + `limit` entre 5 perfis pré-definidos. Hoje o usuário precisa arrastar dois sliders separadamente para mudar de "ver tudo" para "só os críticos".
+Hoje `useAtRiskSettings` persiste apenas no `localStorage` — trocar de navegador/dispositivo perde threshold, limit, maxVisible, filtros (severity/stage/keyword/reasonCodes) e modo debug. Sincronizar no backend para o perfil do usuário, mantendo `localStorage` como cache otimista offline.
 
-### Presets (alinhados às bordas de `severityFromScore`)
+### Estratégia: Local-first + sync server
 
-| Preset      | threshold | limit | Intenção                          |
-|-------------|----------:|------:|-----------------------------------|
-| **Tudo**    |         0 |    50 | Auditoria total                   |
-| **Baixo+**  |        40 |    20 | Default atual do sistema          |
-| **Médio+**  |        50 |    20 | medium / high / critical          |
-| **Alto+**   |        65 |    15 | high / critical                   |
-| **Crítico** |        80 |    10 | só critical (alinha com severity) |
-
-`maxVisible` **não** é alterado por preset (preferência puramente visual).
-"Baixo+" casa com `AT_RISK_DEFAULTS` → ao abrir o sistema pela primeira vez o botão já fica destacado.
-
-### UI
-
-Novo bloco **Presets** no topo do popover, entre o header e o slider "Score mínimo":
+LocalStorage continua sendo a **fonte síncrona** (UI nunca pisca). O backend é a **fonte canônica** quando disponível, com merge baseado em `updated_at`.
 
 ```text
-┌ Filtros de risco ─────────────────────────┐
-│ Threshold 40 · 12 de 47                   │
-├───────────────────────────────────────────┤
-│ PRESETS                                   │
-│ [Tudo][Baixo+][Médio+][Alto+][Crítico]    │  ← ToggleGroup horizontal
-├───────────────────────────────────────────┤
-│ Score mínimo                40            │
-│ ─────●──────────                          │
-│ ...                                       │
+Mount  → lê local (instantâneo) → fetch server em background
+                                  ↓
+                              server.updated_at > local? → adota server, regrava local
+                              server vazio?              → push local para server
+                              local mais novo?           → push local para server
+
+Update → grava local imediato → debounce 800ms → push server
 ```
 
-- `ToggleGroup type="single"`, botões `text-[10px] h-7 px-2` com `variant="outline"`.
-- Ativo destacado via `data-state=on` (já no `toggleVariants`: `bg-accent text-accent-foreground`).
-- Quando o usuário arrasta um slider e a combinação `(threshold, limit)` deixa de casar com qualquer preset, **nenhum** botão fica ativo (`value=""`).
-- `title`/`aria-label` por botão: `"Threshold ≥40 · até 20 deals"`.
+### Backend
 
-### Lógica
+#### Tabela `user_app_settings` (genérica, namespace por chave)
 
-Helper puro novo `src/hooks/win-loss/atRiskPresets.ts`:
+```sql
+create table public.user_app_settings (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  key text not null,                   -- ex: 'winloss-at-risk'
+  value jsonb not null default '{}',
+  updated_at timestamptz not null default now(),
+  primary key (user_id, key)
+);
+
+alter table public.user_app_settings enable row level security;
+
+create policy "users read own settings"   on public.user_app_settings
+  for select using (auth.uid() = user_id);
+create policy "users insert own settings" on public.user_app_settings
+  for insert with check (auth.uid() = user_id);
+create policy "users update own settings" on public.user_app_settings
+  for update using (auth.uid() = user_id);
+create policy "users delete own settings" on public.user_app_settings
+  for delete using (auth.uid() = user_id);
+
+create trigger user_app_settings_touch
+  before update on public.user_app_settings
+  for each row execute function public.update_updated_at_column();
+```
+
+Tabela genérica (não específica de AtRisk) para reaproveitar em outras prefs futuras (ex.: ViewPrefs, layout do dashboard que ainda usa local). Chave = `'winloss-at-risk'`.
+
+### Frontend
+
+#### Novo helper `src/hooks/useSyncedSetting.ts`
+
+Hook genérico reusável:
 
 ```ts
-export type AtRiskPresetId = "all" | "low" | "medium" | "high" | "critical";
-
-export interface AtRiskPreset {
-  id: AtRiskPresetId;
-  label: string;
-  threshold: number;
-  limit: number;
-  description: string;
-}
-
-export const AT_RISK_PRESETS: readonly AtRiskPreset[] = [
-  { id: "all",      label: "Tudo",    threshold: 0,  limit: 50, description: "Threshold ≥0 · até 50 deals" },
-  { id: "low",      label: "Baixo+",  threshold: 40, limit: 20, description: "Threshold ≥40 · até 20 deals" },
-  { id: "medium",   label: "Médio+",  threshold: 50, limit: 20, description: "Threshold ≥50 · até 20 deals" },
-  { id: "high",     label: "Alto+",   threshold: 65, limit: 15, description: "Threshold ≥65 · até 15 deals" },
-  { id: "critical", label: "Crítico", threshold: 80, limit: 10, description: "Threshold ≥80 · até 10 deals" },
-] as const;
-
-export function detectActivePreset(
-  threshold: number,
-  limit: number,
-): AtRiskPresetId | null {
-  return AT_RISK_PRESETS.find(p => p.threshold === threshold && p.limit === limit)?.id ?? null;
-}
+useSyncedSetting<T>({
+  key: string,
+  defaults: T,
+  sanitize: (raw: unknown) => T,
+  storageKey: string,        // localStorage cache key
+  schemaVersion: number,
+}) → { value, update, reset, syncStatus: 'idle'|'syncing'|'synced'|'offline' }
 ```
 
-No `AtRiskSettingsPopover`:
-- `const activePreset = detectActivePreset(settings.threshold, settings.limit);`
-- `<ToggleGroup type="single" value={activePreset ?? ""} onValueChange={(id) => { const p = AT_RISK_PRESETS.find(x => x.id === id); if (p) onUpdate({ threshold: p.threshold, limit: p.limit }); }}>` com 5 `<ToggleGroupItem>`.
+Internals:
+- `useState` inicial = `localStorage` (instantâneo).
+- `useEffect` no mount: `supabase.from('user_app_settings').select().eq('key', key).maybeSingle()`. Sem auth → modo local-only (`syncStatus: 'offline'`).
+- Merge: se `server.updated_at > localUpdatedAt` adota server. Se server vazio ou local mais novo, push local.
+- `update()` grava local imediato + debounce 800ms via `setTimeout` para `upsert` server (cancela pending no próximo update).
+- Visibilidade: ao voltar foco (`visibilitychange`), refetch server (não-bloqueante) para detectar mudança em outro device.
 
-Sem cores hardcoded — usa tokens do design system via `toggleVariants`.
+#### Refatorar `useAtRiskSettings`
+
+Mantém API pública intacta (`{ settings, update, reset, clearFilters }`) — apenas troca a implementação interna por `useSyncedSetting`. Adiciona `syncStatus` ao retorno (opcional consumir).
+
+LocalStorage atual (`winloss-at-risk-settings` v4) continua válido como cache; migração v3→v4 já existe.
+
+#### UI: indicador discreto de sync
+
+No `AtRiskSettingsPopover`, adicionar pequeno texto no rodapé do popover:
+- `🔄 Sincronizando…` enquanto pending
+- `✓ Sincronizado` (subtle, 2s) após sucesso
+- `⚠ Salvo só neste navegador` quando offline/sem auth (com tooltip explicando)
+
+Sem badge no header do card — UI compacta, info só dentro do popover.
+
+### Edge cases
+
+1. **Sem login**: `syncStatus = 'offline'`, tudo funciona local. Ao logar depois, próximo mount sincroniza.
+2. **Conflito de devices**: last-write-wins por `updated_at` (server). Aceitável para prefs (não dados críticos).
+3. **Quota localStorage**: já tratado no `write()` existente (try/catch).
+4. **Migração**: usuários atuais têm settings só em local → primeira execução pós-deploy faz push para server automaticamente (server vazio → adota local).
+5. **Reset**: limpa local + `delete` na tabela.
 
 ### Arquivos
 
-**Novos**
-- `src/hooks/win-loss/atRiskPresets.ts` (~35 linhas).
-- `src/test/hooks/atRiskPresets.test.ts` — cobre:
-  1. `AT_RISK_PRESETS` tem 5 entradas, ids únicos, ordem `all → critical`.
-  2. `detectActivePreset` retorna o id correto para cada uma das 5 combinações exatas.
-  3. `detectActivePreset(45, 20) === null` (entre presets).
-  4. Thresholds dos presets coincidem com bordas de severity (40, 50, 65, 80).
-  5. Defaults do `useAtRiskSettings` resolvem para preset `"low"`.
+**Migration**
+- Tabela `user_app_settings` + RLS + trigger `updated_at`.
+
+**Novo**
+- `src/hooks/useSyncedSetting.ts` — hook genérico local-first + sync.
+- `src/test/hooks/useSyncedSetting.test.ts` — defaults, merge por updated_at, debounce, fallback offline, conflito de versão.
 
 **Editado**
-- `src/components/win-loss/AtRiskSettingsPopover.tsx` — importa presets, novo `<ToggleGroup>` no topo (~20 linhas adicionadas). Sliders existentes intocados.
+- `src/hooks/win-loss/useAtRiskSettings.ts` — usa `useSyncedSetting` por baixo, expõe `syncStatus`.
+- `src/components/win-loss/AtRiskSettingsPopover.tsx` — rodapé com status de sync.
+
+**Inalterados**
+- `AtRiskDealsFromPatterns.tsx` (consome API pública igual).
+- Backend (`detect-winloss-at-risk`) — zero mudança.
 
 ### Critério de aceite
-1. Abrir popover pela primeira vez → "Baixo+" destacado.
-2. Clicar em "Crítico" → threshold=80 e limit=10 simultaneamente; lista re-filtra.
-3. Arrastar slider para 45 → todos os botões neutros; sliders continuam funcionando.
-4. Voltar slider para 40 → "Baixo+" volta a destacar.
-5. `npm test -- atRiskPresets` verde.
-6. Suite Deno do `detect-winloss-at-risk` permanece verde (zero mudança no backend).
+1. Logado, mudar threshold para 60 no Chrome → abrir Firefox logado mesma conta → threshold = 60 após 1s.
+2. Offline (sem internet) → mudanças persistem local; popover mostra "Salvo só neste navegador"; ao voltar online próximo update sincroniza.
+3. Logout → settings continuam funcionando local; login com outra conta → carrega settings da outra conta.
+4. Reset → limpa local e remove linha do server.
+5. Conflito (mudança simultânea em 2 devices) → último update vence; aceitável.
+6. Sem login → comportamento idêntico ao atual (zero regressão), `syncStatus = 'offline'`.
+7. Suíte `useSyncedSetting` verde; suíte existente de `useAtRiskSettings`/`atRiskPresets`/`atRiskSeverityFilter` permanece verde (API pública preservada).
 
