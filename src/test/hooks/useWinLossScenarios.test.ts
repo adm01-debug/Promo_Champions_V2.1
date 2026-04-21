@@ -120,4 +120,75 @@ describe("useWinLossScenarios", () => {
       expect(p.pessimistic).toBe(p.realistic);
     });
   });
+
+  it("pi95 produces wider bands than see for the same data", () => {
+    const points = mkPoints([10, 22, 30, 42, 50]);
+    const see = renderHook(() => useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see" })).result.current;
+    const pi = renderHook(() => useWinLossScenarios(points, { forecastSteps: 3, bandMode: "pi95" })).result.current;
+
+    expect(pi.bandMode).toBe("pi95");
+    expect(pi.tCritical).not.toBeNull();
+    expect(see.tCritical).toBeNull();
+
+    const seeForecasts = see.series.filter((p) => p.isForecast);
+    const piForecasts = pi.series.filter((p) => p.isForecast);
+
+    seeForecasts.forEach((s, i) => {
+      const seeWidth = s.optimistic - s.pessimistic;
+      const piWidth = piForecasts[i].optimistic - piForecasts[i].pessimistic;
+      expect(piWidth).toBeGreaterThan(seeWidth);
+    });
+  });
+
+  it("pi95 bands widen with horizon and stay clamped to [0, 100]", () => {
+    const { result } = renderHook(() =>
+      useWinLossScenarios(mkPoints([45, 55, 50, 60, 55, 65]), { forecastSteps: 3, bandMode: "pi95" }),
+    );
+    const forecasts = result.current.series.filter((p) => p.isForecast);
+    expect(forecasts).toHaveLength(3);
+    const widths = forecasts.map((p) => p.optimistic - p.pessimistic);
+    expect(widths[1]).toBeGreaterThanOrEqual(widths[0]);
+    expect(widths[2]).toBeGreaterThanOrEqual(widths[1]);
+    forecasts.forEach((p) => {
+      expect(p.optimistic).toBeLessThanOrEqual(100);
+      expect(p.optimistic).toBeGreaterThanOrEqual(0);
+      expect(p.pessimistic).toBeLessThanOrEqual(100);
+      expect(p.pessimistic).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  it("pi95 with large n approximates 1.96σ at the center of the fit", () => {
+    // 35 points around y = 50 + 0.5x with mild noise. df=33 → t≈1.96.
+    const ys: number[] = [];
+    for (let i = 0; i < 35; i += 1) {
+      const noise = ((i * 37) % 7) - 3; // deterministic small noise in [-3, 3]
+      ys.push(50 + 0.5 * i + noise);
+    }
+    const { result } = renderHook(() =>
+      useWinLossScenarios(mkPoints(ys), { forecastSteps: 1, bandMode: "pi95" }),
+    );
+    expect(result.current.tCritical).toBeCloseTo(1.96, 2);
+    const forecast = result.current.series.find((p) => p.isForecast)!;
+    const width = forecast.optimistic - forecast.pessimistic;
+    // Lower bound: at least ~2 * 1.96 * σ * sqrt(1 + 1/n) — i.e. ignoring the
+    // (x - meanX)² / Sxx term, which is positive. So actual width > 2*1.96*σ*√(1+1/n).
+    const sigma = result.current.stdDev;
+    const minExpected = 2 * 1.96 * sigma * Math.sqrt(1 + 1 / 35);
+    expect(width).toBeGreaterThanOrEqual(minExpected * 0.99);
+  });
+
+  it("legacy numeric arg ≡ { forecastSteps, bandMode: 'see' }", () => {
+    const points = mkPoints([45, 55, 50, 60, 55, 65]);
+    const legacy = renderHook(() => useWinLossScenarios(points, 3)).result.current;
+    const explicit = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see" }),
+    ).result.current;
+
+    expect(legacy.bandMode).toBe("see");
+    expect(legacy.tCritical).toBeNull();
+    expect(legacy.series).toEqual(explicit.series);
+    expect(legacy.stdDev).toBe(explicit.stdDev);
+    expect(legacy.slope).toBe(explicit.slope);
+    expect(legacy.fitN).toBe(explicit.fitN);
+  });
 });
