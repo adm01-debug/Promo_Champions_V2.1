@@ -45,6 +45,7 @@ export interface RiskBreakdown {
   reasons: string[];
   // Debug fields (optional for backward compatibility on the client).
   matched_keywords?: string[];
+  competitor_matches?: CompetitorMatch[];
   days_stagnant?: number;
   avg_loss_cycle_days?: number | null;
   avg_loss_amount?: number | null;
@@ -57,21 +58,59 @@ export interface RiskBreakdown {
 
 export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
 
-export function extractCompetitorKeywords(source: string | null | undefined): string[] {
+/** Sub-regexes used to attribute each match to a single named pattern. */
+const COMPETITOR_SUB_REGEXES: Array<{ regex: RegExp; source: string }> = [
+  { regex: /concorr\w*/i, source: "/concorr\\w*/i" },
+  { regex: /competitor\w*/i, source: "/competitor\\w*/i" },
+  { regex: /leila\w*/i, source: "/leila\\w*/i" },
+  { regex: /cota[cç]\w*/i, source: "/cota[cç]\\w*/i" },
+];
+
+export interface CompetitorMatch {
+  /** The actual matched substring as it appeared in the source (preserves original case). */
+  keyword: string;
+  /** The full token from the source where the match occurred (e.g. "leilao_publico"). */
+  matched_substring: string;
+  /** Human-readable form of the regex that fired (e.g. "/leila\\w*/i"). */
+  regex: string;
+  /** Confidence drawn from the strongest competitor pattern, or 0.5 fallback. */
+  confidence: number;
+}
+
+/**
+ * Detailed competitor matches with original substring and originating regex.
+ * Dedup by lowercased keyword preserving first occurrence.
+ */
+export function extractCompetitorMatches(
+  source: string | null | undefined,
+  confidence = 0.5,
+): CompetitorMatch[] {
   if (!source) return [];
-  const matches = source.match(COMPETITOR_KEYWORDS_RE);
-  if (!matches) return [];
-  // Dedupe (case-insensitive) preserving order.
+  // Split on commas / whitespace to recover the "token" each match lives in.
+  const tokens = source.split(/[\s,;]+/).filter(Boolean);
   const seen = new Set<string>();
-  const out: string[] = [];
-  for (const m of matches) {
-    const k = m.toLowerCase();
-    if (!seen.has(k)) {
-      seen.add(k);
-      out.push(m);
+  const out: CompetitorMatch[] = [];
+  for (const token of tokens) {
+    const m = token.match(COMPETITOR_KEYWORDS_RE);
+    if (!m) continue;
+    for (const hit of m) {
+      const key = hit.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const sub = COMPETITOR_SUB_REGEXES.find(s => s.regex.test(hit));
+      out.push({
+        keyword: hit,
+        matched_substring: token,
+        regex: sub?.source ?? "/" + COMPETITOR_KEYWORDS_RE.source + "/gi",
+        confidence,
+      });
     }
   }
   return out;
+}
+
+export function extractCompetitorKeywords(source: string | null | undefined): string[] {
+  return extractCompetitorMatches(source).map(m => m.keyword);
 }
 
 export interface RiskResult {
