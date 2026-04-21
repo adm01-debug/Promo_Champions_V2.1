@@ -274,21 +274,23 @@ export function computeDealRisk(
   }
 
   // Pick the dominant pattern for the label.
-  let dominant: { label: string; type: string; confidence: number };
+  let dominant: { label: string; type: string; confidence: number; outcome: string | null };
   if (stageScore >= Math.max(stagnation, amountAlign) && bestStuck) {
     dominant = {
-      label: bestStuck.label ?? "Estágio travado",
+      label: bestStuck.label ?? "",
       type: "stuck_stage",
       confidence: bestStuck.confidence ?? 0.5,
+      outcome: bestStuck.outcome ?? "lost",
     };
   } else if (bestLoss && (stagnation > 0 || amountAlign > 0)) {
     dominant = {
-      label: bestLoss.label ?? "Padrão de loss",
+      label: bestLoss.label ?? "",
       type: "loss_factor",
       confidence: bestLoss.confidence ?? 0.5,
+      outcome: bestLoss.outcome ?? "lost",
     };
   } else {
-    dominant = { label: "Sinal genérico de risco", type: "generic", confidence: 0.5 };
+    dominant = { label: "", type: "generic", confidence: 0.5, outcome: "lost" };
   }
 
   // Final weighted score.
@@ -299,6 +301,32 @@ export function computeDealRisk(
   if (finalScore < threshold) return null;
 
   const stageEligible = !!deal.status && STUCK_STATUSES.has(deal.status);
+  const severity = severityFromScore(finalScore, dominant.confidence);
+
+  // Validations: never empty, never trivially short.
+  const labelFallback = `Sinal de risco (${dominant.type})`;
+  const matchedPattern = ensureNonEmpty(dominant.label, labelFallback);
+
+  let suggestedAction = ensureNonEmpty(
+    suggestedActionFor(dominant.type, deal.status, {
+      outcome: dominant.outcome,
+      severity,
+    }),
+    "Confirmar próximo passo do deal com o cliente",
+  );
+  if (suggestedAction.length < 15) {
+    console.warn(
+      JSON.stringify({
+        fn: "detect-winloss-at-risk",
+        event: "suggested_action_too_short",
+        sale_id: deal.id,
+        action: suggestedAction,
+        type: dominant.type,
+        severity,
+      }),
+    );
+    suggestedAction = "Revisar abordagem com o cliente nas próximas 48h";
+  }
 
   return {
     sale_id: deal.id,
@@ -306,14 +334,14 @@ export function computeDealRisk(
     amount: dealAmount,
     stage: deal.status,
     risk_score: finalScore,
-    matched_pattern: dominant.label,
-    suggested_action: suggestedActionFor(dominant.type, deal.status),
+    matched_pattern: matchedPattern,
+    suggested_action: suggestedAction,
     reasons: reasons.length ? reasons : ["Sinais cruzados de risco"],
     breakdown: {
       stagnation,
       amount_alignment: amountAlign,
       stage_match: stageScore,
-      matched_pattern_label: dominant.label,
+      matched_pattern_label: matchedPattern,
       matched_pattern_type: dominant.type,
       matched_confidence: dominant.confidence,
       reasons,
@@ -325,6 +353,7 @@ export function computeDealRisk(
       confidence_weight: confWeight,
       final_score: finalScore,
       stage_eligible: stageEligible,
+      severity,
     },
   };
 }
