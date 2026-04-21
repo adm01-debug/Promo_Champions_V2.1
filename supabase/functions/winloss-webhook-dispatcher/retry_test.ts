@@ -195,3 +195,55 @@ Deno.test("dispatchOne: jitter applied to sleeps when rand > 0", async () => {
   // 250 + floor(0.5*250)=125 → 375; 500 + 125 → 625
   assertEquals(h.sleeps, [375, 625]);
 });
+
+// ───────────── dead-letter ─────────────
+
+Deno.test("dispatchOne: onDeadLetter chamado após 3 falhas", async () => {
+  const h = makeHarness(() => new Response("err", { status: 503 }), { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+  assertEquals(r.succeeded, false);
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+  assertEquals(e.subscription_id, "sub-1");
+  assertEquals(e.event, "x");
+  assertEquals(e.last_status, 503);
+  assertEquals(e.attempts, 3);
+  assertEquals(e.payload, PAYLOAD);
+});
+
+Deno.test("dispatchOne: onDeadLetter NÃO chamado em sucesso (1ª, 2ª, 3ª)", async () => {
+  for (const succeedAt of [1, 2, 3]) {
+    const h = makeHarness(
+      (n) => n < succeedAt ? new Response("x", { status: 500 }) : new Response("ok", { status: 200 }),
+      { withDeadLetter: true },
+    );
+    const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+    assertEquals(r.succeeded, true);
+    assertEquals(h.deadLetters.length, 0, `succeedAt=${succeedAt} não deveria gerar DLQ`);
+  }
+});
+
+Deno.test("dispatchOne: erro em onDeadLetter é absorvido (não propaga)", async () => {
+  const h = makeHarness(() => new Response("err", { status: 500 }), {
+    withDeadLetter: true,
+    deadLetterThrows: true,
+  });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+  assertEquals(r.succeeded, false);
+  assertEquals(r.attempts, 3);
+  assertEquals(h.deadLetters.length, 0);
+});
+
+Deno.test("dispatchOne: payload com __replay_of/__target_subscription_id NÃO vai no body externo", async () => {
+  let capturedBody = "";
+  const h = makeHarness(() => new Response("ok", { status: 200 }));
+  const origFetch = h.deps.fetchFn;
+  h.deps.fetchFn = (async (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) => {
+    capturedBody = String(init?.body ?? "");
+    return origFetch(input, init);
+  }) as typeof fetch;
+  await dispatchOne(SUB, { event: "x", deal: 1, __replay_of: "abc", __target_subscription_id: "sub-1" }, h.deps);
+  assert(!capturedBody.includes("__replay_of"));
+  assert(!capturedBody.includes("__target_subscription_id"));
+  assert(capturedBody.includes('"deal":1'));
+});
