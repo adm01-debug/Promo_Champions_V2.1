@@ -197,6 +197,8 @@ export const useWinLossScenarios = (
     const xs = safePoints.map((_, i) => i);
     const ys = safePoints.map((p) => p.winRate);
 
+    // ── OLS fit ─────────────────────────────────────────────────────────────
+    // β₁ = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)²    β₀ = ȳ − β₁·x̄
     const meanX = xs.reduce((a, b) => a + b, 0) / n;
     const meanY = ys.reduce((a, b) => a + b, 0) / n;
 
@@ -211,9 +213,12 @@ export const useWinLossScenarios = (
       const yhat = slope * xs[i] + intercept;
       return acc + (y - yhat) ** 2;
     }, 0);
+    // SEE: σ̂ = √(SSE / dof). Mede o desvio típico dos resíduos do ajuste —
+    // base de toda a banda de incerteza (ver doc do topo do arquivo).
     const residualStdDev = Math.sqrt(sse / dof);
     const t = tCritical975(dof);
 
+    // Pontos históricos: banda colapsada — só extrapolamos incerteza no futuro.
     const historical: ScenarioPoint[] = safePoints.map((p) => ({
       period: p.period,
       realistic: p.winRate,
@@ -222,6 +227,9 @@ export const useWinLossScenarios = (
       isForecast: false,
     }));
 
+    // Fator de inflação do prediction interval OLS:
+    //   √(1 + 1/n + (x−x̄)²/Sxx)
+    // Cresce com a distância de x ao centro dos dados → banda abre no futuro.
     const olsFactor = (x: number) => Math.sqrt(1 + 1 / n + ((x - meanX) ** 2) / sxx);
 
     const forecast: ScenarioPoint[] = [];
@@ -229,6 +237,8 @@ export const useWinLossScenarios = (
       const x = n + step - 1;
       const base = slope * x + intercept;
 
+      // width = (multiplicador) · σ̂ · (fator de inflação)
+      //   pi95 → t-Student;  see+OLS → 1;  see legado → √(1+step/n) sem (x−x̄).
       let width: number;
       if (bandMode === "pi95") {
         width = t * residualStdDev * olsFactor(x);
