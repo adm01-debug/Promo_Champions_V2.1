@@ -1,69 +1,100 @@
 
 
-## Validação de escala de urgência e simetria por outcome em `suggested_action`
+## Presets de risco no `AtRiskSettingsPopover`
 
-### Diagnóstico
-A matriz `action_matrix_combinations_test.ts` já cobre as 60 células `(type × severity × outcome)` validando keywords e ausência de urgência em medium/low. Falta verificar duas propriedades **transversais** que assertions célula-a-célula não capturam:
+### Objetivo
+Adicionar atalhos de 1 clique no popover de configurações para alternar `threshold` + `limit` entre 5 perfis pré-definidos. Hoje o usuário precisa arrastar dois sliders separadamente para mudar de "ver tudo" para "só os críticos".
 
-1. **Escala monotônica de urgência**: dentro do mesmo `patternType` com `outcome=lost`, o nível de urgência da frase deve **decrescer** conforme severity desce: `critical > high > medium ≥ low`.
-2. **Simetria por outcome**: para o mesmo `(patternType, severity)`, mudar `outcome` de `lost` → `won` deve sempre alternar para frase positiva sem urgência; e `outcome=lost` ≡ `outcome=null` (default lost).
+### Presets (alinhados às bordas de `severityFromScore`)
 
-### Métrica de urgência
+| Preset      | threshold | limit | Intenção                          |
+|-------------|----------:|------:|-----------------------------------|
+| **Tudo**    |         0 |    50 | Auditoria total                   |
+| **Baixo+**  |        40 |    20 | Default atual do sistema          |
+| **Médio+**  |        50 |    20 | medium / high / critical          |
+| **Alto+**   |        65 |    15 | high / critical                   |
+| **Crítico** |        80 |    10 | só critical (alinha com severity) |
 
-Função pura `urgencyLevel(action: string): 0..3`:
+`maxVisible` **não** é alterado por preset (preferência puramente visual).
+"Baixo+" casa com `AT_RISK_DEFAULTS` → ao abrir o sistema pela primeira vez o botão já fica destacado.
 
-| Nível | Critério                                              | Esperado em |
-|-------|-------------------------------------------------------|-------------|
-| 3     | Contém `IMEDIATA` ou `URGENTE` (caps) ou `24h` ou `\bhoje\b` | critical |
-| 2     | Contém `48h` (sem marcador nível 3)                   | high        |
-| 1     | Contém `semana` ou `72h` (sem 48h/24h)                | medium      |
-| 0     | Nenhum marcador temporal de urgência                  | low         |
+### UI
 
-### Asserções (5 blocos)
+Novo bloco **Presets** no topo do popover, entre o header e o slider "Score mínimo":
 
-**Bloco 1 — escala monotônica `[3, 2, 1, 0]`** para os 4 types não-win com `outcome=lost`:
-```ts
-const lvls = SEVERITIES.map(sev =>
-  urgencyLevel(suggestedActionFor(type, STAGE, { severity: sev, outcome: "lost" }))
-);
-assert(lvls[0] > lvls[1]); // critical > high
-assert(lvls[1] > lvls[2]); // high > medium
-assert(lvls[2] >= lvls[3]); // medium ≥ low
-```
-Esperado por type: `loss_factor`, `stuck_stage`, `competitor`, `generic` → `[3, 2, 1, 0]`.
-
-**Bloco 2 — `outcome=won` zera urgência** para qualquer `(type, severity)` (5 × 4 = 20 cells):
-```ts
-const won = suggestedActionFor(type, STAGE, { severity: sev, outcome: "won" });
-assertEquals(urgencyLevel(won), 0);
-assert(/vencedora|reaplicar/i.test(won));
+```text
+┌ Filtros de risco ─────────────────────────┐
+│ Threshold 40 · 12 de 47                   │
+├───────────────────────────────────────────┤
+│ PRESETS                                   │
+│ [Tudo][Baixo+][Médio+][Alto+][Crítico]    │  ← ToggleGroup horizontal
+├───────────────────────────────────────────┤
+│ Score mínimo                40            │
+│ ─────●──────────                          │
+│ ...                                       │
 ```
 
-**Bloco 3 — `outcome=lost` ≡ `outcome=null`** para 4 types não-win × 4 severidades (16 igualdades):
+- `ToggleGroup type="single"`, botões `text-[10px] h-7 px-2` com `variant="outline"`.
+- Ativo destacado via `data-state=on` (já no `toggleVariants`: `bg-accent text-accent-foreground`).
+- Quando o usuário arrasta um slider e a combinação `(threshold, limit)` deixa de casar com qualquer preset, **nenhum** botão fica ativo (`value=""`).
+- `title`/`aria-label` por botão: `"Threshold ≥40 · até 20 deals"`.
+
+### Lógica
+
+Helper puro novo `src/hooks/win-loss/atRiskPresets.ts`:
+
 ```ts
-assertEquals(
-  suggestedActionFor(type, STAGE, { severity: sev, outcome: "lost" }),
-  suggestedActionFor(type, STAGE, { severity: sev, outcome: null }),
-);
+export type AtRiskPresetId = "all" | "low" | "medium" | "high" | "critical";
+
+export interface AtRiskPreset {
+  id: AtRiskPresetId;
+  label: string;
+  threshold: number;
+  limit: number;
+  description: string;
+}
+
+export const AT_RISK_PRESETS: readonly AtRiskPreset[] = [
+  { id: "all",      label: "Tudo",    threshold: 0,  limit: 50, description: "Threshold ≥0 · até 50 deals" },
+  { id: "low",      label: "Baixo+",  threshold: 40, limit: 20, description: "Threshold ≥40 · até 20 deals" },
+  { id: "medium",   label: "Médio+",  threshold: 50, limit: 20, description: "Threshold ≥50 · até 20 deals" },
+  { id: "high",     label: "Alto+",   threshold: 65, limit: 15, description: "Threshold ≥65 · até 15 deals" },
+  { id: "critical", label: "Crítico", threshold: 80, limit: 10, description: "Threshold ≥80 · até 10 deals" },
+] as const;
+
+export function detectActivePreset(
+  threshold: number,
+  limit: number,
+): AtRiskPresetId | null {
+  return AT_RISK_PRESETS.find(p => p.threshold === threshold && p.limit === limit)?.id ?? null;
+}
 ```
 
-**Bloco 4 — `outcome=won` sempre difere de `outcome=lost`** em types não-win (prova override real, 16 diffs).
+No `AtRiskSettingsPopover`:
+- `const activePreset = detectActivePreset(settings.threshold, settings.limit);`
+- `<ToggleGroup type="single" value={activePreset ?? ""} onValueChange={(id) => { const p = AT_RISK_PRESETS.find(x => x.id === id); if (p) onUpdate({ threshold: p.threshold, limit: p.limit }); }}>` com 5 `<ToggleGroupItem>`.
 
-**Bloco 5 — `win_factor` ignora outcome** (12 combinações: 4 sev × 3 outcomes) — sempre `urgencyLevel=0` + frase vencedora, mesmo com `outcome=lost`.
+Sem cores hardcoded — usa tokens do design system via `toggleVariants`.
 
 ### Arquivos
 
-**Novo**
-- `supabase/functions/detect-winloss-at-risk/urgency_scale_outcome_symmetry_test.ts` (~130 linhas, 5 `Deno.test` correspondentes aos 5 blocos + helper `urgencyLevel`).
+**Novos**
+- `src/hooks/win-loss/atRiskPresets.ts` (~35 linhas).
+- `src/test/hooks/atRiskPresets.test.ts` — cobre:
+  1. `AT_RISK_PRESETS` tem 5 entradas, ids únicos, ordem `all → critical`.
+  2. `detectActivePreset` retorna o id correto para cada uma das 5 combinações exatas.
+  3. `detectActivePreset(45, 20) === null` (entre presets).
+  4. Thresholds dos presets coincidem com bordas de severity (40, 50, 65, 80).
+  5. Defaults do `useAtRiskSettings` resolvem para preset `"low"`.
 
-**Não alterado**
-- `scoring.ts`, demais testes — validação puramente complementar à matriz existente.
+**Editado**
+- `src/components/win-loss/AtRiskSettingsPopover.tsx` — importa presets, novo `<ToggleGroup>` no topo (~20 linhas adicionadas). Sliders existentes intocados.
 
 ### Critério de aceite
-- `supabase--test_edge_functions ["detect-winloss-at-risk"]` 100% verde.
-- Bloco 1 prova escala `[3, 2, 1, 0]` para os 4 types não-win.
-- Bloco 2 prova 20 células de `won` com `urgencyLevel=0` + frase vencedora.
-- Bloco 3 prova 16 igualdades `lost ≡ null`.
-- Bloco 4 prova 16 diferenças `lost ≠ won`.
-- Bloco 5 prova que `win_factor` é absoluto (12 combinações).
+1. Abrir popover pela primeira vez → "Baixo+" destacado.
+2. Clicar em "Crítico" → threshold=80 e limit=10 simultaneamente; lista re-filtra.
+3. Arrastar slider para 45 → todos os botões neutros; sliders continuam funcionando.
+4. Voltar slider para 40 → "Baixo+" volta a destacar.
+5. `npm test -- atRiskPresets` verde.
+6. Suite Deno do `detect-winloss-at-risk` permanece verde (zero mudança no backend).
 
