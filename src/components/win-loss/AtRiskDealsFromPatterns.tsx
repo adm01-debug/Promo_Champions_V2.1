@@ -149,7 +149,43 @@ export function AtRiskDealsFromPatterns() {
               </Button>
             </div>
           ) : (
-            <ul className="space-y-2" aria-label="Deals em risco identificados">
+            <>
+              {debug && compareIds.length > 0 && (
+                <div
+                  className="mb-2 flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 px-2.5 py-1.5"
+                  role="region"
+                  aria-label="Seleção para comparar"
+                >
+                  <GitCompare className="h-3 w-3 text-primary shrink-0" aria-hidden />
+                  <span className="text-[11px] text-muted-foreground">
+                    {compareIds.length === 1
+                      ? "Selecione mais 1 deal para comparar"
+                      : "2 deals selecionados"}
+                  </span>
+                  <div className="ml-auto flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 px-2 text-[11px] gap-1"
+                      disabled={compareIds.length < 2}
+                      onClick={() => setCompareOpen(true)}
+                    >
+                      <GitCompare className="h-3 w-3" aria-hidden />
+                      Comparar ({compareIds.length})
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-1.5 text-[11px]"
+                      onClick={clearCompare}
+                      aria-label="Limpar seleção de comparação"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <ul className="space-y-2" aria-label="Deals em risco identificados">
               {visible.map(d => (
                 <li key={d.sale_id} className={`rounded-md border px-3 py-2 ${tone(d.risk_score)}`}>
                   <div className="flex items-center justify-between gap-2">
