@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown, Bug, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown, Bug, X, GitCompare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -11,6 +12,7 @@ import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
 import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
+import { RiskCompareModal } from "./RiskCompareModal";
 
 const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
