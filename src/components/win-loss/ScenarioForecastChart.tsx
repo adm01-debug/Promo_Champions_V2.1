@@ -463,7 +463,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             </div>
           </TooltipProvider>
           <span
-            className="text-xs text-muted-foreground font-normal tabular-nums w-full sm:w-auto"
+            className="sm:hidden text-xs text-muted-foreground font-normal tabular-nums w-full"
             title={`${bandLabel} sobre a tendência ajustada com ${fitN} períodos`}
           >
             {bandMode === "pi95" && tCritical != null
@@ -473,6 +473,16 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         </CardTitle>
       </CardHeader>
       <CardContent className="h-[260px] p-2">
+        <div className="relative h-full w-full">
+        <ActiveFormulaBadge
+          bandMode={bandMode}
+          confidenceZ={confidenceZ}
+          zPctLabel={zPctLabel}
+          tCritical={tCritical}
+          dof={dof}
+          stdDev={stdDev}
+          fitN={fitN}
+        />
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart key={chartKey} data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
