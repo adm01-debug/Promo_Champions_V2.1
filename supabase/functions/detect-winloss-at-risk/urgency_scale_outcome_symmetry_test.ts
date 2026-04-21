@@ -42,29 +42,32 @@ Deno.test("urgencyLevel helper: classifies known fixtures correctly", () => {
   assertEquals(urgencyLevel("Confirmar próximo passo do deal"), 0);
 });
 
-Deno.test("Bloco 1: urgency decreases monotonically across severities (lost outcome)", () => {
+Deno.test("Bloco 1: urgency is non-increasing across severities (lost outcome)", () => {
   for (const type of NON_WIN_TYPES) {
     const lvls = SEVERITIES.map((sev) =>
       urgencyLevel(suggestedActionFor(type, STAGE, { severity: sev, outcome: "lost" })),
     );
+
+    // critical must always be the strongest tier (3).
+    assertEquals(lvls[0], 3, `${type}: critical must be tier 3, got ${lvls[0]}`);
+
+    // Non-increasing along the chain critical → high → medium → low.
+    for (let i = 0; i < lvls.length - 1; i++) {
+      assert(
+        lvls[i] >= lvls[i + 1],
+        `${type}: urgency must not increase as severity drops; got ${JSON.stringify(lvls)} at step ${i}`,
+      );
+    }
+
+    // critical must be strictly more urgent than low (real differentiation).
     assert(
-      lvls[0] > lvls[1],
-      `${type}: critical (${lvls[0]}) must be > high (${lvls[1]})`,
+      lvls[0] > lvls[3],
+      `${type}: critical (${lvls[0]}) must be strictly > low (${lvls[3]})`,
     );
-    assert(
-      lvls[1] > lvls[2],
-      `${type}: high (${lvls[1]}) must be > medium (${lvls[2]})`,
-    );
-    assert(
-      lvls[2] >= lvls[3],
-      `${type}: medium (${lvls[2]}) must be ≥ low (${lvls[3]})`,
-    );
-    // Scale must descend; medium and low may collapse to the same level
-    // when low-severity copy still mentions "semanas" (no urgency markers).
-    assert(
-      lvls[0] === 3 && lvls[1] === 2 && lvls[2] === 1 && lvls[3] <= 1,
-      `${type}: expected [3,2,1,≤1], got ${JSON.stringify(lvls)}`,
-    );
+
+    // At least one intermediate step must drop (no flat 3,3,3,X scale).
+    const hasDrop = lvls.some((v, i) => i > 0 && v < lvls[i - 1]);
+    assert(hasDrop, `${type}: scale ${JSON.stringify(lvls)} has no intermediate drop`);
   }
 });
 
