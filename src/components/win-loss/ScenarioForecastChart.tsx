@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { Sparkles, HelpCircle } from "lucide-react";
+import { Sparkles, HelpCircle, Sigma } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -126,6 +126,58 @@ function CustomTooltip({ active, payload, label, mode, bandLabel }: CustomToolti
           Modo: {bandLabel ?? (mode === "pi95" ? "PI 95%" : "SEE ±σ")}
         </p>
       )}
+    </div>
+  );
+}
+
+interface ActiveFormulaBadgeProps {
+  bandMode: BandMode;
+  confidenceZ: number;
+  zPctLabel: string;
+  tCritical: number | null;
+  dof: number;
+  stdDev: number;
+  fitN: number;
+}
+
+function ActiveFormulaBadge({
+  bandMode,
+  confidenceZ,
+  zPctLabel,
+  tCritical,
+  dof,
+  stdDev,
+  fitN,
+}: ActiveFormulaBadgeProps) {
+  const isPi = bandMode === "pi95";
+  const formula = isPi
+    ? "PI 95% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)"
+    : "SEE · ±z·σ";
+  const paramLine = isPi
+    ? `t = ${(tCritical ?? 0).toFixed(2)}  (gl=${dof})`
+    : `z = ${confidenceZ.toFixed(2)}  (${zPctLabel})`;
+  const sigmaLine = `σ = ${stdDev.toFixed(1)} pp · fit n=${fitN}`;
+  const a11y = `Fórmula ativa: ${isPi ? "PI 95%" : "SEE"}, ${
+    isPi ? `t crítico ${(tCritical ?? 0).toFixed(2)} com ${dof} graus de liberdade` : `z ${confidenceZ.toFixed(2)} (${zPctLabel})`
+  }, sigma ${stdDev.toFixed(1)} pontos percentuais em ${fitN} períodos`;
+
+  return (
+    <div
+      className="hidden sm:block absolute top-2 right-3 z-10 max-w-[230px] rounded-md border border-border/60 bg-popover/85 backdrop-blur-sm px-2 py-1.5 shadow-sm pointer-events-none"
+      role="status"
+      aria-live="polite"
+      aria-label={a11y}
+    >
+      <div className="flex items-center gap-1 text-[10px] font-medium text-foreground leading-tight">
+        <Sigma className="h-3 w-3 text-primary shrink-0" aria-hidden />
+        <span className="truncate" title={formula}>{formula}</span>
+      </div>
+      <div className="mt-0.5 text-[10px] font-mono tabular-nums text-muted-foreground leading-tight">
+        {paramLine}
+      </div>
+      <div className="text-[10px] font-mono tabular-nums text-muted-foreground leading-tight">
+        {sigmaLine}
+      </div>
     </div>
   );
 }
@@ -411,7 +463,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             </div>
           </TooltipProvider>
           <span
-            className="text-xs text-muted-foreground font-normal tabular-nums w-full sm:w-auto"
+            className="sm:hidden text-xs text-muted-foreground font-normal tabular-nums w-full"
             title={`${bandLabel} sobre a tendência ajustada com ${fitN} períodos`}
           >
             {bandMode === "pi95" && tCritical != null
@@ -421,6 +473,16 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         </CardTitle>
       </CardHeader>
       <CardContent className="h-[260px] p-2">
+        <div className="relative h-full w-full">
+        <ActiveFormulaBadge
+          bandMode={bandMode}
+          confidenceZ={confidenceZ}
+          zPctLabel={zPctLabel}
+          tCritical={tCritical}
+          dof={dof}
+          stdDev={stdDev}
+          fitN={fitN}
+        />
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart key={chartKey} data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
@@ -485,6 +547,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
       <ScenarioForecastAuditPanel
         slope={slope}
