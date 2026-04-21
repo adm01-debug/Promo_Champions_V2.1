@@ -266,6 +266,149 @@ Deno.test("timeout/TimeoutError variant: todas as 3 entregas registram 'TimeoutE
   }
 });
 
+// ───────────── persistência por tentativa + ausência de sleep na última ─────────────
+
+Deno.test("persist: falha persistente 500 grava 3 linhas com attempt=1,2,3 em ordem cronológica", async () => {
+  const h = makeHarness(() => new Response("err", { status: 500 }));
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.deliveries.length, MAX_ATTEMPTS);
+  for (let i = 0; i < MAX_ATTEMPTS; i += 1) {
+    const d = h.deliveries[i];
+    assertEquals(d.attempt, i + 1, `attempt da entrega #${i}`);
+    assertEquals(d.status, 500, `status da entrega #${i}`);
+    assertEquals(d.succeeded, false, `succeeded da entrega #${i}`);
+    assertEquals(d.subscription_id, SUB.id);
+    assertEquals(d.event, "x");
+  }
+});
+
+Deno.test("persist: status varia por tentativa (502 → 503 → 200) é refletido linha-a-linha", async () => {
+  const responses = [
+    new Response("bad gateway", { status: 502 }),
+    new Response("unavailable", { status: 503 }),
+    new Response("ok", { status: 200 }),
+  ];
+  const h = makeHarness((n) => responses[n - 1]);
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, true);
+  assertEquals(h.deliveries.length, 3);
+  assertEquals(h.deliveries[0].attempt, 1);
+  assertEquals(h.deliveries[0].status, 502);
+  assertEquals(h.deliveries[0].succeeded, false);
+  assertEquals(h.deliveries[1].attempt, 2);
+  assertEquals(h.deliveries[1].status, 503);
+  assertEquals(h.deliveries[1].succeeded, false);
+  assertEquals(h.deliveries[2].attempt, 3);
+  assertEquals(h.deliveries[2].status, 200);
+  assertEquals(h.deliveries[2].succeeded, true);
+});
+
+Deno.test("persist: mistura HTTP + erro de rede preserva status=0 só onde há throw", async () => {
+  const h = makeHarness((n) => {
+    if (n === 1) return new Response("err", { status: 500 });
+    if (n === 2) throw new Error("ENETDOWN");
+    return new Response("ok", { status: 200 });
+  });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, true);
+  assertEquals(h.deliveries.length, 3);
+
+  assertEquals(h.deliveries[0].status, 500);
+  assertEquals(h.deliveries[0].error_message, null);
+  assertEquals(h.deliveries[0].succeeded, false);
+
+  assertEquals(h.deliveries[1].status, 0);
+  assert(h.deliveries[1].error_message?.includes("ENETDOWN"));
+  assertEquals(h.deliveries[1].succeeded, false);
+
+  assertEquals(h.deliveries[2].status, 200);
+  assertEquals(h.deliveries[2].error_message, null);
+  assertEquals(h.deliveries[2].succeeded, true);
+});
+
+Deno.test("invariante: sleeps === fetches - 1 === deliveries - 1 em todos os caminhos", async () => {
+  const scenarios: Array<{
+    label: string;
+    fetchImpl: (n: number) => Response;
+    expectedFetches: number;
+  }> = [
+    {
+      label: "sucesso na 1ª",
+      fetchImpl: () => new Response("ok", { status: 200 }),
+      expectedFetches: 1,
+    },
+    {
+      label: "sucesso na 2ª",
+      fetchImpl: (n) => n === 1 ? new Response("x", { status: 500 }) : new Response("ok", { status: 200 }),
+      expectedFetches: 2,
+    },
+    {
+      label: "sucesso na 3ª",
+      fetchImpl: (n) => n < 3 ? new Response("x", { status: 500 }) : new Response("ok", { status: 200 }),
+      expectedFetches: 3,
+    },
+    {
+      label: "falha persistente",
+      fetchImpl: () => new Response("x", { status: 500 }),
+      expectedFetches: 3,
+    },
+  ];
+
+  for (const sc of scenarios) {
+    const h = makeHarness(sc.fetchImpl);
+    await dispatchOne(SUB, PAYLOAD, h.deps);
+    assertEquals(h.fetches, sc.expectedFetches, `[${sc.label}] fetches`);
+    assertEquals(h.deliveries.length, sc.expectedFetches, `[${sc.label}] deliveries == fetches`);
+    assertEquals(h.sleeps.length, sc.expectedFetches - 1, `[${sc.label}] sleeps == fetches-1 (sem sleep após a última)`);
+    assertEquals(h.sleeps.length, h.deliveries.length - 1, `[${sc.label}] sleeps == deliveries-1`);
+  }
+});
+
+Deno.test("ordem: insert precede sleep — sequência exata em falha persistente", async () => {
+  const events: string[] = [];
+  const h = makeHarness(() => new Response("err", { status: 500 }));
+  const origInsert = h.deps.insertDelivery;
+  const origSleep = h.deps.sleep;
+  h.deps.insertDelivery = async (row) => {
+    events.push(`insert:${row.attempt}`);
+    await origInsert(row);
+  };
+  h.deps.sleep = async (ms) => {
+    const idx = events.filter((e) => e.startsWith("sleep:")).length + 1;
+    events.push(`sleep:${idx}`);
+    await origSleep(ms);
+  };
+
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(events, ["insert:1", "sleep:1", "insert:2", "sleep:2", "insert:3"]);
+  assert(!events[events.length - 1].startsWith("sleep:"), "última operação não pode ser um sleep");
+});
+
+Deno.test("ordem: sucesso na 2ª — sequência é exatamente insert:1, sleep:1, insert:2", async () => {
+  const events: string[] = [];
+  const h = makeHarness((n) => n === 1 ? new Response("x", { status: 500 }) : new Response("ok", { status: 200 }));
+  const origInsert = h.deps.insertDelivery;
+  const origSleep = h.deps.sleep;
+  h.deps.insertDelivery = async (row) => {
+    events.push(`insert:${row.attempt}`);
+    await origInsert(row);
+  };
+  h.deps.sleep = async (ms) => {
+    const idx = events.filter((e) => e.startsWith("sleep:")).length + 1;
+    events.push(`sleep:${idx}`);
+    await origSleep(ms);
+  };
+
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(events, ["insert:1", "sleep:1", "insert:2"]);
+  assert(!events[events.length - 1].startsWith("sleep:"), "última operação não pode ser um sleep");
+});
+
 Deno.test("dispatchOne: recovery on 3rd attempt → succeeded, 2 sleeps, 3 deliveries", async () => {
   const h = makeHarness((n) => n < 3 ? new Response("x", { status: 500 }) : new Response("ok", { status: 200 }));
   const r = await dispatchOne(SUB, PAYLOAD, h.deps);
