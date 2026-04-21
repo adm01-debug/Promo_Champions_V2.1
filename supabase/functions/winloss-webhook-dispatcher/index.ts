@@ -5,6 +5,7 @@ import { dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } f
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Expose-Headers": "x-request-id",
 };
 
 function structuredLog(level: LogLevel, data: Record<string, unknown>, requestId?: string) {
@@ -81,7 +82,7 @@ serve(async (req) => {
       structuredLog("warn", { msg: "invalid_payload", reason: "missing_event" }, requestId);
       return new Response(JSON.stringify({ error: "event required", requestId }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
       });
     }
 
@@ -104,7 +105,7 @@ serve(async (req) => {
         structuredLog("error", { msg: "replay_subscription_missing", subscriptionId: targetSubId, error: error?.message }, requestId);
         return new Response(JSON.stringify({ error: "subscription not found", requestId }), {
           status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
         });
       }
       if (!sub.active) {
@@ -169,7 +170,7 @@ serve(async (req) => {
     }, requestId);
 
     return new Response(JSON.stringify({ requestId, dispatched: results.length, succeeded: succeededCount, failed: failedCount, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
     });
   } catch (e) {
     structuredLog("error", {
@@ -179,7 +180,7 @@ serve(async (req) => {
     }, requestId);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown", requestId }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
     });
   }
 });
