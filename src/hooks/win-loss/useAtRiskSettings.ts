@@ -85,6 +85,7 @@ export function sanitize(input: unknown): AtRiskSettings {
     keywordFilter: sanitizeKeyword(obj.keywordFilter),
     reasonCodes: sanitizeReasonCodes(obj.reasonCodes),
     severityFilter: sanitizeSeverities(obj.severityFilter),
+    sortBy: isAtRiskSortBy(obj.sortBy) ? obj.sortBy : AT_RISK_DEFAULTS.sortBy,
   };
 }
 
