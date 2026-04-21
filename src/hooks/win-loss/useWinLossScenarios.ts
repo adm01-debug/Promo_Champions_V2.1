@@ -167,14 +167,15 @@ export const useWinLossScenarios = (
 ): ScenarioForecast => {
   const opts: Required<ScenarioOptions> =
     typeof optionsOrSteps === "number"
-      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: true }
+      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: true, confidenceZ: 1 }
       : {
           forecastSteps: optionsOrSteps.forecastSteps ?? 3,
           bandMode: optionsOrSteps.bandMode ?? "see",
           seeUseOlsInflation: optionsOrSteps.seeUseOlsInflation ?? true,
+          confidenceZ: clampZ(optionsOrSteps.confidenceZ ?? 1),
         };
 
-  const { forecastSteps, bandMode, seeUseOlsInflation } = opts;
+  const { forecastSteps, bandMode, seeUseOlsInflation, confidenceZ } = opts;
 
   return useMemo(() => {
     const safePoints = points ?? [];
