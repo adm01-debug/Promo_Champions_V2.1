@@ -73,7 +73,20 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 }
 
 export const ScenarioForecastChart = memo(function ScenarioForecastChart({ points }: Props) {
-  const { series, stdDev, fitN } = useWinLossScenarios(points, 3);
+  const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(BAND_MODE_KEY, bandMode);
+    } catch {
+      /* ignore */
+    }
+  }, [bandMode]);
+
+  const { series, stdDev, fitN, tCritical, bandLabel } = useWinLossScenarios(points, {
+    forecastSteps: 3,
+    bandMode,
+  });
 
   const data = useMemo(
     () =>
@@ -103,8 +116,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN]);
+    return `scenario-${bandMode}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode]);
 
   if (!data.length) {
     return (
@@ -149,14 +162,47 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-base flex-wrap">
           <Sparkles className="h-4 w-4 text-primary" aria-hidden />
           Forecast com cenários
+          <TooltipProvider delayDuration={150}>
+            <ToggleGroup
+              type="single"
+              size="sm"
+              value={bandMode}
+              onValueChange={(v) => v && setBandMode(v as BandMode)}
+              className="ml-auto"
+              aria-label="Modo de banda de incerteza"
+            >
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="see" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo SEE (1σ)">
+                    SEE
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs max-w-[220px]">
+                  Banda ±σ residual (Standard Error of Estimate). Mais estreita, ~68% de confiança.
+                </TooltipContent>
+              </UITooltip>
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="pi95" className="h-6 px-2 text-[10px] font-medium" aria-label="Modo PI 95%">
+                    PI 95%
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs max-w-[240px]">
+                  Intervalo de previsão 95% (t·σ·√(1+1/n+(x−x̄)²/Sxx)). Mais conservador, leva em conta a distância do centro dos dados.
+                </TooltipContent>
+              </UITooltip>
+            </ToggleGroup>
+          </TooltipProvider>
           <span
-            className="text-xs text-muted-foreground font-normal ml-auto tabular-nums"
-            title={`Desvio residual sobre a tendência ajustada com ${fitN} períodos`}
+            className="text-xs text-muted-foreground font-normal tabular-nums w-full sm:w-auto"
+            title={`${bandLabel} sobre a tendência ajustada com ${fitN} períodos`}
           >
-            σ ±{stdDev.toFixed(1)}pp · fit em {fitN}
+            {bandMode === "pi95" && tCritical != null
+              ? `PI 95% · t=${tCritical.toFixed(2)} · σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`
+              : `σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`}
           </span>
         </CardTitle>
       </CardHeader>
@@ -166,7 +212,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
             <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" fontSize={11} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} unit="%" domain={[0, 100]} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip mode={bandMode} />} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             {junctionPeriod && (
               <ReferenceLine
