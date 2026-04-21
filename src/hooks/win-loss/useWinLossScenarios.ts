@@ -109,7 +109,10 @@ export interface ScenarioOptions {
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
 
-/** Two-tailed t-Student critical values at α=0.05 (i.e. t_{df, 0.975}) for df 1..30. */
+/**
+ * Two-tailed t-Student critical values at α=0.05 (i.e. t_{df, 0.975}) for df 1..30.
+ * Usado apenas no modo PI 95%; para SEE 1σ o multiplicador é implicitamente 1.
+ */
 const T_TABLE_975: Record<number, number> = {
   1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
   6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
