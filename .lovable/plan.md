@@ -1,45 +1,53 @@
 
 
-## Reforçar `chartKey` do `ScenarioForecastChart` para refletir filtros + série
+## Seletor de modo de banda no `ScenarioForecastChart`: SEE vs Prediction Interval 95%
 
-### Estado atual
-`src/components/win-loss/ScenarioForecastChart.tsx` já passa uma `key` ao `<ComposedChart>` (linhas 88-93, 151), mas a chave é fraca:
+### Objetivo
+Permitir alternar, dentro do gráfico de cenário, entre dois modos de incerteza:
+- **SEE** (atual): σ residual da regressão alargado por `σ · √(1 + step/n)`. Bandas estreitas, "1σ".
+- **PI 95%** (novo, conservador): fórmula completa da OLS com t-Student → `t · σ · √(1 + 1/n + (x − meanX)² / Sxx)`. Bandas mais largas, leva em conta a distância do centro dos dados.
 
-```ts
-`scenario-${data.length}-${data[0]?.period ?? ""}-${stdDev.toFixed(2)}-${fitN}`
-```
+### Mudanças
 
-Duas séries diferentes (ex.: troca de filtro de vendedor que mantém o mesmo número de períodos e o mesmo período inicial) podem coincidir em `length`, `period[0]`, `stdDev` arredondado e `fitN` — Recharts então reaproveita escalas internas e renderiza inconsistente (eixos cacheados, tooltip "preso", animações fora de sincronia).
+**1. `src/hooks/win-loss/useWinLossScenarios.ts`**
+- Aceitar `options: { forecastSteps?: number; bandMode?: "see" | "pi95" }`.
+- Manter compat: se receber number, equivale a `{ forecastSteps: n }`.
+- Tabela `tCritical(dof, 0.975)` hardcoded para df 1–30; >30 → 1.96.
+- Largura da banda por step:
+  - `see`: `σ · √(1 + step/n)` (atual).
+  - `pi95`: `t · σ · √(1 + 1/n + (x − meanX)² / Sxx)`.
+- Histórico continua colapsado (fan só abre na junção).
+- Retorno ganha: `bandMode`, `tCritical` (number ou null), `bandLabel`.
 
-### Mudança
-Tornar a key uma **assinatura completa do dataset projetado**, garantindo que qualquer mudança de filtro que altere os pontos resulte em key nova:
+**2. `src/components/win-loss/ScenarioForecastChart.tsx`**
+- `useState<"see"|"pi95">("see")`, persistido em `localStorage` (`winloss-scenario-bandmode`).
+- `<ToggleGroup type="single" size="sm">` no header com itens "SEE" / "PI 95%", `aria-label="Modo de banda"`, tooltips explicando.
+- Badge do header reflete o modo:
+  - `see`: `σ ±X.Xpp · fit em N`
+  - `pi95`: `PI 95% · t=Y.YY · σ ±X.Xpp · fit em N`
+- `chartKey` (signature completa já existente) ganha `bandMode` no prefixo → reset limpo do Recharts ao alternar.
+- Tooltip do gráfico mostra "Modo: SEE" ou "Modo: PI 95%" no rodapé.
 
-```ts
-const chartKey = useMemo(() => {
-  const signature = data
-    .map(d => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
-    .join("|");
-  return `scenario-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-}, [data, stdDev, fitN]);
-```
+**3. Testes — `src/test/hooks/useWinLossScenarios.test.ts`** (estender)
+- `pi95 produces wider bands than see for same data` — `[10,22,30,42,50]`.
+- `pi95 bands widen with horizon and stay clamped to [0,100]`.
+- `pi95 with large n approximates 1.96σ at center` — 35 pts com ruído leve.
+- `legacy numeric arg ≡ { forecastSteps, bandMode: "see" }` (back-compat).
 
-Aplicada em `<ComposedChart key={chartKey} …>` (já está; só o conteúdo da key muda).
-
-### Por que funciona
-- Inclui **todos os valores de cada ponto** (período + 3 cenários + flag forecast). Qualquer troca de filtro que reescreva a série derruba a key.
-- `data` já é memoizado (linha 68-80) → a string da signature só recomputa quando a série muda de fato; sem custo extra em renders idle.
-- Custo da `join` é O(n) sobre no máx ~20 pontos (histórico + 3 forecast) — desprezível vs. o reflow do Recharts.
-- Mantém os campos antigos (`length`, `fitN`, `stdDev`) como prefixo curto, útil em devtools.
+Rodar `npx vitest run src/test/hooks/useWinLossScenarios.test.ts` — esperado **9 + 4 = 13/13**.
 
 ### Detalhes técnicos
-- Sem mudança de API do componente nem do hook `useWinLossScenarios`.
-- Sem mudança em `useMemo` deps (`data` já capturava `series`).
-- Não introduz novos imports.
+- Tabela t two-tailed α=0.05 hardcoded — acuracidade suficiente para df ≤ 30.
+- `bandMode` muda só os steps de previsão; `stdDev`, `slope`, `fitN` continuam idênticos.
+- API do hook segue retrocompatível para qualquer chamada existente.
 
-### Arquivo afetado
-- `src/components/win-loss/ScenarioForecastChart.tsx` — substituir o bloco `chartKey` (linhas 88-93).
+### Arquivos
+- **Modificar**: `src/hooks/win-loss/useWinLossScenarios.ts`
+- **Modificar**: `src/components/win-loss/ScenarioForecastChart.tsx`
+- **Modificar**: `src/test/hooks/useWinLossScenarios.test.ts`
 
 ### Ordem
-1. Substituir o `useMemo` da `chartKey` pela versão com signature completa.
-2. Confirmar visualmente que o gráfico atualiza ao alternar filtros (Recharts faz unmount/remount limpo).
+1. Estender hook (options, tabela t, fórmula PI).
+2. Adicionar testes e rodar suite.
+3. Adicionar toggle no header do chart + persistência + ajustes de badge/tooltip/chartKey.
 
