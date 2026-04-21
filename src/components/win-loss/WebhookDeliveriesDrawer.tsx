@@ -30,11 +30,76 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const [lastResults, setLastResults] = useState<Map<string, "ok" | "skipped" | "fail">>(
+    new Map(),
+  );
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   // Reset selection when drawer closes
   useEffect(() => {
-    if (!open) setSelected(new Set());
+    if (!open) {
+      setSelected(new Set());
+      setProcessingIds(new Set());
+    }
   }, [open]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      timers.clear();
+    };
+  }, []);
+
+  const scheduleClearResult = (id: string) => {
+    const existing = timersRef.current.get(id);
+    if (existing) clearTimeout(existing);
+    const t = setTimeout(() => {
+      setLastResults((prev) => {
+        const next = new Map(prev);
+        next.delete(id);
+        return next;
+      });
+      timersRef.current.delete(id);
+    }, 4000);
+    timersRef.current.set(id, t);
+  };
+
+  const recordResults = (
+    ids: string[],
+    payload: { results: Array<{ id: string; succeeded: boolean; skipped?: boolean }> } | undefined,
+  ) => {
+    setLastResults((prev) => {
+      const next = new Map(prev);
+      const returned = new Set<string>();
+      for (const r of payload?.results ?? []) {
+        const status: "ok" | "skipped" | "fail" = r.skipped
+          ? "skipped"
+          : r.succeeded
+            ? "ok"
+            : "fail";
+        next.set(r.id, status);
+        returned.add(r.id);
+        scheduleClearResult(r.id);
+      }
+      for (const id of ids) {
+        if (!returned.has(id)) {
+          next.set(id, "fail");
+          scheduleClearResult(id);
+        }
+      }
+      return next;
+    });
+  };
+
+  const clearProcessing = (ids: string[]) =>
+    setProcessingIds((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) next.delete(id);
+      return next;
+    });
 
   const failedIds = useMemo(
     () => (data ?? []).filter((d) => !d.succeeded).map((d) => d.id),
