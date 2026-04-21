@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
 import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
+import { inferReasonCode } from "@/lib/winloss/riskReasons";
 import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
 import { RiskCompareModal } from "./RiskCompareModal";
