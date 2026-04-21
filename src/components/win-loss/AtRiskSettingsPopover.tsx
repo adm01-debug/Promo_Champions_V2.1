@@ -50,6 +50,7 @@ export function AtRiskSettingsPopover({
   totalShown,
   availableStages,
   severityCounts,
+  syncStatus,
 }: Props) {
   const [keyword, setKeyword] = useState(settings.keywordFilter);
   const debounced = useDeferredValue(keyword);
