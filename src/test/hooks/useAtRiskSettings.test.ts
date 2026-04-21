@@ -24,7 +24,7 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.limit).toBe(AT_RISK_DEFAULTS.limit);
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
     expect(raw.settings.threshold).toBe(70);
-    expect(raw.version).toBe(2);
+    expect(raw.version).toBe(3);
   });
 
   it("persists debug + filter fields", () => {
