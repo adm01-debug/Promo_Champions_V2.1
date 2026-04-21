@@ -47,20 +47,33 @@ export function DashboardLayoutEditor({ widgets }: Props) {
     setDraft(arrayMove(draft, oldIdx, newIdx));
   };
 
+  const draftIsDirty = JSON.stringify(draft) !== JSON.stringify(layout);
+  const visibleCount = layout.filter(id => !!widgets[id]).length;
+
   return (
     <>
-      <div className="flex justify-end no-print">
+      <div className="flex items-center justify-between gap-3 no-print" data-testid="winloss-layout-editor">
+        {editing ? (
+          <span className="text-xs text-muted-foreground" aria-live="polite">
+            {draft.length} widgets · {visibleCount} ativos
+          </span>
+        ) : <span />}
         {!editing ? (
-          <Button size="sm" variant="outline" onClick={startEditing}>
+          <Button size="sm" variant="outline" onClick={startEditing} data-testid="winloss-layout-personalize">
             <Settings2 className="h-3.5 w-3.5 mr-1.5" /> Personalizar
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" onClick={resetDraft}>
+            <Button size="sm" variant="ghost" onClick={resetDraft} data-testid="winloss-layout-reset">
               <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Padrão
             </Button>
-            <Button size="sm" variant="ghost" onClick={cancelEditing}>Cancelar</Button>
-            <Button size="sm" onClick={persist} disabled={isSaving}>
+            <Button size="sm" variant="ghost" onClick={cancelEditing} data-testid="winloss-layout-cancel">Cancelar</Button>
+            <Button
+              size="sm"
+              onClick={persist}
+              disabled={isSaving || !draftIsDirty}
+              data-testid="winloss-layout-save"
+            >
               <Check className="h-3.5 w-3.5 mr-1.5" /> Salvar
             </Button>
           </div>
@@ -70,7 +83,7 @@ export function DashboardLayoutEditor({ widgets }: Props) {
       {editing ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleEnd}>
           <SortableContext items={draft} strategy={verticalListSortingStrategy}>
-            <div className="space-y-1.5 rounded-lg border bg-muted/30 p-3">
+            <div className="space-y-1.5 rounded-lg border bg-muted/30 p-3" data-testid="winloss-layout-edit-list">
               <p className="text-xs text-muted-foreground mb-2">Arraste para reordenar os widgets do seu dashboard.</p>
               {draft.map(id => (
                 <SortableRow key={id} id={id} label={widgets[id]?.label ?? id} />
@@ -80,7 +93,13 @@ export function DashboardLayoutEditor({ widgets }: Props) {
         </DndContext>
       ) : (
         <>
-          {layout.map(id => widgets[id] ? <div key={id}>{widgets[id].node}</div> : null)}
+          {layout.map(id =>
+            widgets[id] ? (
+              <div key={id} data-widget-id={id}>
+                {widgets[id].node}
+              </div>
+            ) : null,
+          )}
         </>
       )}
     </>
