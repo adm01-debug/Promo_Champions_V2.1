@@ -344,6 +344,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         sxx={sxx}
         bandMode={bandMode}
         tCritical={tCritical}
+        seeUseOlsInflation={seeUseOlsInflation}
+        onToggleSeeOlsInflation={setSeeUseOlsInflation}
       />
     </Card>
   );
