@@ -1,73 +1,58 @@
 
 
-## Backoff jitter determinístico — RNG injetável + testes do intervalo permitido
+## Testes de timeout via AbortError no `winloss-webhook-dispatcher`
 
 ### Objetivo
-Tornar o jitter de `calculateBackoffDelay` testável de forma determinística (sem flakiness), aceitando uma função `rand` injetável, e cobrir com testes que validem o intervalo permitido em cada tentativa.
+Adicionar testes determinísticos em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` que simulem timeout via `AbortError` (e a variante `TimeoutError`) e confirmem que o dispatcher:
+1. Faz **exatamente 3 tentativas** (`MAX_ATTEMPTS`).
+2. Registra o **`error_message` correto em cada uma das 3 entregas** (`winloss_webhook_deliveries`).
+3. Propaga o erro corretamente para o **dead-letter** após esgotar as tentativas.
 
 ### Estado atual
-`src/hooks/useRetryMutation.ts` linhas 29-38 usa `Math.random()` direto:
+O arquivo já possui um teste superficial (linhas 139-149) que apenas confere `r.attempts === 3` e `r.error includes "TimeoutError"` — não inspeciona o conteúdo de cada delivery, não testa `AbortError` (só `TimeoutError`), não valida o DLQ nem o cenário misto (timeouts + recovery).
 
-```ts
-const exponentialDelay = baseDelay * Math.pow(multiplier, attemptNumber - 1);
-const jitter = Math.random() * 0.3 * exponentialDelay; // até 30% jitter
-return Math.min(exponentialDelay + jitter, maxDelay);
-```
-
-Os testes atuais em `src/test/hooks/useCircuitBreaker.test.ts` validam apenas faixas aproximadas (ex.: `≤ base + 30%`), sujeitos a flakiness e sem cobrir os limites com `maxDelay`.
+A infraestrutura necessária já existe:
+- `makeHarness()` captura `deliveries[]`, `sleeps[]`, `deadLetters[]`.
+- `fetchImpl(attempt)` permite injetar erro/resposta por tentativa.
+- `rand: () => 0` torna o backoff determinístico (`[250, 500]`).
 
 ### Mudanças
 
-**1. `src/hooks/useRetryMutation.ts`** — RNG injetável + constante exportada
-- Exportar `JITTER_FACTOR = 0.3`.
-- Adicionar 5º parâmetro opcional `rand: () => number = Math.random`.
-- 100% retrocompatível (o default usa `Math.random`).
+**Arquivo único modificado**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts`
 
-```ts
-export const JITTER_FACTOR = 0.3;
+Inserir, logo após o teste atual de `AbortError` (linha 149), um novo bloco "**timeout via AbortError: 3 tentativas + error_message por entrega**" com 6 testes:
 
-export function calculateBackoffDelay(
-  attemptNumber: number,
-  baseDelay: number,
-  maxDelay: number,
-  multiplier: number,
-  rand: () => number = Math.random,
-): number {
-  const exponentialDelay = baseDelay * Math.pow(multiplier, attemptNumber - 1);
-  const jitter = rand() * JITTER_FACTOR * exponentialDelay;
-  return Math.min(exponentialDelay + jitter, maxDelay);
-}
-```
+1. **Helper `makeAbortError(msg)`** — fabrica `Error` com `name="AbortError"` (espelha o que `AbortSignal.timeout()` lança).
 
-**2. Novo `src/test/hooks/useBackoffJitter.test.ts`** — suíte 100% determinística
+2. **`AbortError persistente → 3 fetches, 2 sleeps, 3 deliveries`**
+   - `fetches === MAX_ATTEMPTS` (3)
+   - `sleeps === [250, 500]` (backoff determinístico com `rand=0`)
+   - `deliveries.length === 3`, `r.status === 0`, `r.succeeded === false`.
 
-Cobre:
-- **Borda inferior (`rand=0`)**: para n=1..6 com `base=1000, mult=2`, espera **exatamente** `base · 2^(n-1)` (sem jitter).
-- **Borda superior (`rand≈1`, usa `0.999999`)**: espera `expDelay · (1 + JITTER_FACTOR)`.
-- **Meio (`rand=0.5`)**: espera `expDelay · 1.15`.
-- **Intervalo permitido**: rand sequencial `[0, 0.25, 0.5, 0.75, 0.999]` — cada delay ∈ `[expDelay, expDelay·1.3]` e bate com `expDelay·(1 + 0.3·r)`.
-- **Cap em `maxDelay`**: n=20 com `rand=0.999` → resultado **===** `maxDelay` mesmo com jitter máximo.
-- **Cap quando jitter empurra acima**: `n=4, base=1000, mult=2, max=8500, rand=0.999` → expDelay=8000, com jitter daria ~10.397 → capado em 8500.
-- **`baseDelay=0`**: sempre 0 independente do rand.
-- **`multiplier=1`**: delay ∈ `[base, base·1.3]` para qualquer n.
-- **Snapshot da progressão (`rand=0.5`)**: `base=100, mult=2`, n=1..5 → `[115, 230, 460, 920, 1840]`.
-- **Monotonicidade com rand fixo**: `delay(n+1) > delay(n)` enquanto não capado.
-- **Auditoria de não-acumulação**: 100 chamadas com `rand=0.5` somam exatamente `100 · 1000 · 1.15 = 115_000` (verifica ausência de drift).
+3. **`cada uma das 3 entregas registra error_message="AbortError: ..."`**
+   - Loop sobre `deliveries[i]`: `attempt === i+1`, `status === 0`, `succeeded === false`, `error_message === "AbortError: The signal has been aborted"`, `subscription_id` e `event` corretos.
 
-Total: ~11 casos determinísticos, sem `Math.random()`.
+4. **`dead-letter capturado com last_error e attempts=3`**
+   - Após 3 timeouts, `deadLetters[0]` tem `attempts=3`, `last_status=0`, `last_error="AbortError: aborted by timeout"`, `payload === PAYLOAD`.
+
+5. **`error_message muda por tentativa quando o erro varia`**
+   - Cada attempt lança `AbortError` com mensagem distinta (`try 1/2/3`). Verifica que cada `deliveries[i].error_message` reflete o erro daquela tentativa, e que `r.error` preserva apenas o último.
+
+6. **`recovery após 2 timeouts → 3ª tentativa 200, error_message null só na última`**
+   - Tentativas 1 e 2 lançam `AbortError`; tentativa 3 retorna 200. Confere: `r.succeeded=true`, `r.error=null`, `deliveries[0].error_message="AbortError: timeout #1"` (succeeded=false), `deliveries[1]` análogo, `deliveries[2].error_message=null` e `succeeded=true`.
+
+7. **`TimeoutError variant: todas as 3 entregas registram 'TimeoutError: ...'`**
+   - Cobre o caso real de `AbortSignal.timeout()` em runtimes Deno modernos (DOMException com `name="TimeoutError"`).
 
 ### Detalhes técnicos
-- Injeção opcional → zero impacto em `withRetry` / `useRetryMutation` / chamadores existentes.
-- Asserts usam igualdade exata onde a matemática permite (rand=0) e `toBeCloseTo(_, 6)` apenas onde envolve floats não inteiros.
-- `JITTER_FACTOR` vira fonte única da verdade — testes referenciam a constante em vez de hardcodar 0.3.
-- A suíte antiga em `useCircuitBreaker.test.ts` continua passando (default inalterado).
+- Asserts estritos com `assertEquals` em `error_message` (string exata `"<name>: <message>"` — bate com o formato `${e.name}: ${e.message}` em `retry.ts:131`).
+- Backoff continua determinístico via `rand: () => 0` herdado do harness — sleeps esperados `[250, 500]`.
+- O teste superficial existente (linhas 139-149) é mantido por compatibilidade.
+- Nenhuma mudança no código de produção (`retry.ts`/`index.ts`).
 
 ### Arquivos
-- **Modificar**: `src/hooks/useRetryMutation.ts` — adicionar param `rand` + exportar `JITTER_FACTOR`.
-- **Criar**: `src/test/hooks/useBackoffJitter.test.ts` — suíte determinística.
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~110 linhas, 6 novos `Deno.test`).
 
-### Ordem
-1. Editar `useRetryMutation.ts` (param opcional + constante).
-2. Criar a nova suíte.
-3. Rodar `npx vitest run src/test/hooks/useBackoffJitter.test.ts src/test/hooks/useCircuitBreaker.test.ts` — esperado os 11 novos + a suíte antiga ✓.
+### Verificação
+Rodar `deno test supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — esperado **todos os existentes + 6 novos = passando**.
 
