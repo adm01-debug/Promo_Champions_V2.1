@@ -33,6 +33,8 @@ export interface OpenDeal {
   created_at: string | null;
 }
 
+export type RiskSeverity = "low" | "medium" | "high" | "critical";
+
 export interface RiskBreakdown {
   stagnation: number;
   amount_alignment: number;
@@ -50,6 +52,7 @@ export interface RiskBreakdown {
   confidence_weight?: number;
   final_score?: number;
   stage_eligible?: boolean;
+  severity?: RiskSeverity;
 }
 
 export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
@@ -136,18 +139,80 @@ export function stageMatchScore(status: string | null, stuckPattern: LossPattern
   return Math.round(25 * conf);
 }
 
-export function suggestedActionFor(patternType: string, status: string | null): string {
+export function severityFromScore(score: number, confidence: number | null | undefined): RiskSeverity {
+  const c = Math.max(0, Math.min(1, confidence ?? 0.5));
+  if (score >= 80 && c >= 0.7) return "critical";
+  if (score >= 65) return "high";
+  if (score >= 50) return "medium";
+  return "low";
+}
+
+export function ensureNonEmpty(value: string | null | undefined, fallback: string): string {
+  const v = (value ?? "").trim();
+  return v.length > 0 ? v : fallback;
+}
+
+interface ActionOpts {
+  outcome?: string | null;
+  severity: RiskSeverity;
+}
+
+/**
+ * Suggested action coherent with pattern type, outcome and severity.
+ * `win_factor` patterns (positive outcome) never produce urgency markers.
+ * Critical/high severity on loss-related patterns get urgency markers
+ * ("URGENTE", "IMEDIATA", "24h"). Medium/low get measured language.
+ */
+export function suggestedActionFor(
+  patternType: string,
+  status: string | null,
+  opts: ActionOpts,
+): string {
+  const sev = opts.severity;
+  const outcome = (opts.outcome ?? "").toLowerCase();
+  const stage = status ?? "atual";
+
+  // Positive patterns — never urgent, regardless of severity.
+  if (patternType === "win_factor" || outcome === "won") {
+    return "Reaplicar abordagem consultiva vencedora deste perfil de cliente";
+  }
+
   switch (patternType) {
     case "loss_factor":
-      return "Revisar proposta com foco em valor percebido e desbloqueio rápido";
+      if (sev === "critical")
+        return "AÇÃO IMEDIATA: agendar call de resgate em 24h e revisar proposta com condição estratégica";
+      if (sev === "high")
+        return "Revisar proposta nas próximas 48h com foco em valor percebido e desbloqueio";
+      if (sev === "medium")
+        return "Reforçar valor percebido e ajustar narrativa de ROI nesta semana";
+      return "Revisar abordagem e confirmar interesse do cliente nas próximas semanas";
+
     case "stuck_stage":
-      return `Acelerar saída do estágio "${status ?? "atual"}" com próxima ação concreta`;
+      if (sev === "critical")
+        return `URGENTE: desbloquear estágio "${stage}" hoje — escalar para gestor se necessário`;
+      if (sev === "high")
+        return `Acelerar saída do estágio "${stage}" com próxima ação concreta em 48h`;
+      if (sev === "medium")
+        return `Definir próxima ação para destravar estágio "${stage}" esta semana`;
+      return `Revisar estágio "${stage}" e confirmar critério de avanço`;
+
     case "competitor":
-      return "Reforçar diferenciação competitiva e adicionar prova social";
-    case "win_factor":
-      return "Reaplicar abordagem consultiva que tem alta taxa de vitória";
+      if (sev === "critical")
+        return "Concorrência ativa detectada — disparar battle card e ligar ao decisor em 24h";
+      if (sev === "high")
+        return "Reforçar diferenciação competitiva e adicionar prova social em 48h";
+      if (sev === "medium")
+        return "Revisar posicionamento competitivo e preparar contra-argumentos";
+      return "Confirmar se há concorrente no deal e mapear objeções";
+
     default:
-      return "Revisar abordagem com o cliente nas próximas 48h";
+      if (sev === "critical")
+        return "Revisar deal urgente com gestor — múltiplos sinais de risco cruzados";
+      if (sev === "high")
+        return "Revisar abordagem com o cliente nas próximas 48h";
+      if (sev === "medium")
+        return "Revisar abordagem com o cliente nas próximas 72h";
+      return "Confirmar próximo passo do deal com o cliente";
   }
 }
 
@@ -209,21 +274,23 @@ export function computeDealRisk(
   }
 
   // Pick the dominant pattern for the label.
-  let dominant: { label: string; type: string; confidence: number };
+  let dominant: { label: string; type: string; confidence: number; outcome: string | null };
   if (stageScore >= Math.max(stagnation, amountAlign) && bestStuck) {
     dominant = {
-      label: bestStuck.label ?? "Estágio travado",
+      label: bestStuck.label ?? "",
       type: "stuck_stage",
       confidence: bestStuck.confidence ?? 0.5,
+      outcome: bestStuck.outcome ?? "lost",
     };
   } else if (bestLoss && (stagnation > 0 || amountAlign > 0)) {
     dominant = {
-      label: bestLoss.label ?? "Padrão de loss",
+      label: bestLoss.label ?? "",
       type: "loss_factor",
       confidence: bestLoss.confidence ?? 0.5,
+      outcome: bestLoss.outcome ?? "lost",
     };
   } else {
-    dominant = { label: "Sinal genérico de risco", type: "generic", confidence: 0.5 };
+    dominant = { label: "", type: "generic", confidence: 0.5, outcome: "lost" };
   }
 
   // Final weighted score.
@@ -234,6 +301,32 @@ export function computeDealRisk(
   if (finalScore < threshold) return null;
 
   const stageEligible = !!deal.status && STUCK_STATUSES.has(deal.status);
+  const severity = severityFromScore(finalScore, dominant.confidence);
+
+  // Validations: never empty, never trivially short.
+  const labelFallback = `Sinal de risco (${dominant.type})`;
+  const matchedPattern = ensureNonEmpty(dominant.label, labelFallback);
+
+  let suggestedAction = ensureNonEmpty(
+    suggestedActionFor(dominant.type, deal.status, {
+      outcome: dominant.outcome,
+      severity,
+    }),
+    "Confirmar próximo passo do deal com o cliente",
+  );
+  if (suggestedAction.length < 15) {
+    console.warn(
+      JSON.stringify({
+        fn: "detect-winloss-at-risk",
+        event: "suggested_action_too_short",
+        sale_id: deal.id,
+        action: suggestedAction,
+        type: dominant.type,
+        severity,
+      }),
+    );
+    suggestedAction = "Revisar abordagem com o cliente nas próximas 48h";
+  }
 
   return {
     sale_id: deal.id,
@@ -241,14 +334,14 @@ export function computeDealRisk(
     amount: dealAmount,
     stage: deal.status,
     risk_score: finalScore,
-    matched_pattern: dominant.label,
-    suggested_action: suggestedActionFor(dominant.type, deal.status),
+    matched_pattern: matchedPattern,
+    suggested_action: suggestedAction,
     reasons: reasons.length ? reasons : ["Sinais cruzados de risco"],
     breakdown: {
       stagnation,
       amount_alignment: amountAlign,
       stage_match: stageScore,
-      matched_pattern_label: dominant.label,
+      matched_pattern_label: matchedPattern,
       matched_pattern_type: dominant.type,
       matched_confidence: dominant.confidence,
       reasons,
@@ -260,6 +353,7 @@ export function computeDealRisk(
       confidence_weight: confWeight,
       final_score: finalScore,
       stage_eligible: stageEligible,
+      severity,
     },
   };
 }

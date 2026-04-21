@@ -95,9 +95,9 @@ Deno.test("stageMatchScore: 0 when no stuck pattern", () => {
 });
 
 Deno.test("suggestedActionFor: returns coherent text per type", () => {
-  assert(suggestedActionFor("loss_factor", "proposal").includes("valor"));
-  assert(suggestedActionFor("stuck_stage", "negotiation").includes("negotiation"));
-  assert(suggestedActionFor("competitor", null).includes("diferencia"));
+  assert(suggestedActionFor("loss_factor", "proposal", { outcome: "lost", severity: "high" }).includes("valor"));
+  assert(suggestedActionFor("stuck_stage", "negotiation", { outcome: "lost", severity: "high" }).includes("negotiation"));
+  assert(suggestedActionFor("competitor", null, { outcome: "lost", severity: "high" }).includes("diferencia"));
 });
 
 Deno.test("computeDealRisk: critical deal — old + aligned amount + stuck", () => {

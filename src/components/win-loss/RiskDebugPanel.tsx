@@ -66,6 +66,18 @@ export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakd
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 tabular-nums">
             conf {Math.round(breakdown.matched_confidence * 100)}%
           </Badge>
+          {breakdown.severity && (
+            <Badge
+              variant={
+                breakdown.severity === "critical" ? "destructive" :
+                breakdown.severity === "high" ? "warning" :
+                breakdown.severity === "medium" ? "secondary" : "outline"
+              }
+              className="text-[10px] px-1.5 py-0 uppercase"
+            >
+              {breakdown.severity}
+            </Badge>
+          )}
         </div>
       </div>
 
