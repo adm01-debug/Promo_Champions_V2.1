@@ -35,6 +35,8 @@ export interface ScenarioForecast {
   tCritical: number | null;
   /** Human-readable label for the active mode (e.g. "SEE ±σ" or "PI 95% (t·σ)"). */
   bandLabel: string;
+  /** Whether SEE mode is using the full OLS inflation factor instead of √(1+step/n). */
+  seeUseOlsInflation: boolean;
 }
 
 export interface ScenarioOptions {
