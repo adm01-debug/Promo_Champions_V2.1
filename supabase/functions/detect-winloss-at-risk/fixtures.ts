@@ -433,10 +433,23 @@ const PRICING_GROUP: ScenarioGroup = {
         actionIncludes: ["IMEDIATA", "URGENTE", "24h"],
       },
     },
+    {
+      name: "pricing.fresh_lead_excluded",
+      story: "Lead novo (2d) com ticket alinhado a Preço alto mas estágio não-stuck — abaixo do threshold.",
+      deal: {
+        id: "h-pricing-4",
+        client_name: "PriceFresh",
+        amount: 28500,
+        status: "lead",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(5),
+      },
+      expect: { included: false },
+    },
   ],
 };
-
-const NEGOTIATION_GROUP: ScenarioGroup = {
   theme: "Negociação travada",
   // bestLoss é escolhido por amount-proximity → para isolar "Negociação travada"
   // como dominant precisamos: amount fora dos avgs (alinhamento=0) + estagnação
