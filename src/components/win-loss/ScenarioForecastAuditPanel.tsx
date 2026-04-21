@@ -41,9 +41,14 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
   sxx,
   bandMode,
   tCritical,
+  seeUseOlsInflation,
+  onToggleSeeOlsInflation,
 }: Props) {
   const sign = slope >= 0 ? "+" : "−";
   const equation = `ŷ = ${intercept.toFixed(2)} ${sign} ${Math.abs(slope).toFixed(3)}·x`;
+  const showOlsRows = bandMode === "pi95" || (bandMode === "see" && seeUseOlsInflation);
+  const seeModeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ · √(1+step/n)";
+  const toggleId = "see-ols-inflation-toggle";
 
   return (
     <details
@@ -69,16 +74,40 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
           <Row label="Graus de liberdade" value={`n − 2 = ${dof}`} />
           <Row
             label="Modo de banda"
-            value={bandMode === "pi95" ? `PI 95% (t=${(tCritical ?? 0).toFixed(2)})` : "SEE ±σ"}
+            value={bandMode === "pi95" ? `PI 95% (t=${(tCritical ?? 0).toFixed(2)})` : seeModeLabel}
           />
-          {bandMode === "pi95" && (
+          {showOlsRows && (
             <>
-              <Row label="x̄" value={meanX.toFixed(2)} hint="Centro do x usado na fórmula PI" />
+              <Row label="x̄" value={meanX.toFixed(2)} hint="Centro do x usado no fator de inflação OLS" />
               <Row label="Sxx" value={sxx.toFixed(2)} hint="Σ(x − x̄)²" />
             </>
           )}
         </div>
       </div>
+
+      {bandMode === "see" && (
+        <div className="mt-3 flex items-start justify-between gap-3 rounded-md border border-border/60 bg-muted/30 px-3 py-2">
+          <div className="min-w-0">
+            <Label
+              htmlFor={toggleId}
+              className="text-[11px] font-medium text-foreground cursor-pointer"
+            >
+              Fator de inflação OLS no SEE
+            </Label>
+            <p className="mt-0.5 text-[10px] text-muted-foreground leading-snug font-mono">
+              {seeUseOlsInflation
+                ? "ativo: width = σ · √(1 + 1/n + (x − x̄)² / Sxx)"
+                : "inativo: width = σ · √(1 + step/n)"}
+            </p>
+          </div>
+          <Switch
+            id={toggleId}
+            checked={seeUseOlsInflation}
+            onCheckedChange={onToggleSeeOlsInflation}
+            aria-label="Alternar fator de inflação OLS no modo SEE"
+          />
+        </div>
+      )}
 
       <p className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
         σ menor = ajuste mais aderente · |slope| baixo = sem tendência clara · SSE cresce com ruído residual.
