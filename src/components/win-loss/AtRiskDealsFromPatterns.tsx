@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown, Bug, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown, Bug, X, GitCompare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -11,6 +12,7 @@ import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
 import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
+import { RiskCompareModal } from "./RiskCompareModal";
 
 const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
@@ -30,6 +32,17 @@ export function AtRiskDealsFromPatterns() {
     limit: settings.limit,
   });
   const [showCatalog, setShowCatalog] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleCompare = useCallback((id: string) => {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= 2) return prev; // cap at 2
+      return [...prev, id];
+    });
+  }, []);
+  const clearCompare = useCallback(() => setCompareIds([]), []);
 
   const availableStages = useMemo(() => {
     const set = new Set<string>();
@@ -136,10 +149,68 @@ export function AtRiskDealsFromPatterns() {
               </Button>
             </div>
           ) : (
-            <ul className="space-y-2" aria-label="Deals em risco identificados">
+            <>
+              {debug && compareIds.length > 0 && (
+                <div
+                  className="mb-2 flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 px-2.5 py-1.5"
+                  role="region"
+                  aria-label="Seleção para comparar"
+                >
+                  <GitCompare className="h-3 w-3 text-primary shrink-0" aria-hidden />
+                  <span className="text-[11px] text-muted-foreground">
+                    {compareIds.length === 1
+                      ? "Selecione mais 1 deal para comparar"
+                      : "2 deals selecionados"}
+                  </span>
+                  <div className="ml-auto flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 px-2 text-[11px] gap-1"
+                      disabled={compareIds.length < 2}
+                      onClick={() => setCompareOpen(true)}
+                    >
+                      <GitCompare className="h-3 w-3" aria-hidden />
+                      Comparar ({compareIds.length})
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-1.5 text-[11px]"
+                      onClick={clearCompare}
+                      aria-label="Limpar seleção de comparação"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <ul className="space-y-2" aria-label="Deals em risco identificados">
               {visible.map(d => (
                 <li key={d.sale_id} className={`rounded-md border px-3 py-2 ${tone(d.risk_score)}`}>
                   <div className="flex items-center justify-between gap-2">
+                    {debug && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>
+                            <Checkbox
+                              checked={compareIds.includes(d.sale_id)}
+                              disabled={!compareIds.includes(d.sale_id) && compareIds.length >= 2}
+                              onCheckedChange={() => toggleCompare(d.sale_id)}
+                              aria-label={`Selecionar ${d.client_name ?? "deal"} para comparar`}
+                              className="shrink-0"
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="text-xs">
+                          {compareIds.includes(d.sale_id)
+                            ? "Remover da comparação"
+                            : compareIds.length >= 2
+                              ? "Máximo 2 deals para comparar"
+                              : "Selecionar para comparar"}
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{d.client_name ?? "Cliente"}</p>
                       <p className="text-[11px] opacity-80 truncate" title={d.matched_pattern}>
@@ -187,6 +258,7 @@ export function AtRiskDealsFromPatterns() {
                 </li>
               ))}
             </ul>
+            </>
           )}
           {filtered.length > visible.length && (
             <p className="mt-2 text-[10px] text-muted-foreground text-center">
@@ -252,6 +324,12 @@ export function AtRiskDealsFromPatterns() {
           </Collapsible>
         </CardContent>
       </Card>
+      <RiskCompareModal
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        dealA={data.find((x) => x.sale_id === compareIds[0]) ?? null}
+        dealB={data.find((x) => x.sale_id === compareIds[1]) ?? null}
+      />
     </TooltipProvider>
   );
 }
