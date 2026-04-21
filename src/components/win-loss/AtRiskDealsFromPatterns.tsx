@@ -107,8 +107,18 @@ export function AtRiskDealsFromPatterns() {
                     </p>
                     <span className="text-[11px] tabular-nums font-medium shrink-0">{fmtBRL(d.amount)}</span>
                   </div>
+                  {debug && d.breakdown && (
+                    <RiskDebugPanel breakdown={d.breakdown} riskScore={d.risk_score} />
+                  )}
                 </li>
               ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </TooltipProvider>
+  );
+}
             </ul>
           )}
         </CardContent>
