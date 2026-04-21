@@ -400,7 +400,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
             <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" fontSize={11} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} unit="%" domain={[0, 100]} />
-            <Tooltip content={<CustomTooltip mode={bandMode} />} />
+            <Tooltip content={<CustomTooltip mode={bandMode} bandLabel={bandLabel} />} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             {junctionPeriod && (
               <ReferenceLine
