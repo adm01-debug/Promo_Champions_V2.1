@@ -61,5 +61,5 @@ export const useSeasonComparison = (rows: WLAnalysisRow[]): SeasonComparison => 
         total: current.total - previous.total,
       },
     };
-  }, [rows, salespersonId]);
+  }, [rows]);
 };
