@@ -82,6 +82,13 @@ export interface ScenarioExpect {
    * - `string[]`: OR semantics — at least one substring must appear.
    */
   actionIncludes?: string | string[];
+  /**
+   * Optional substring (case-insensitive) that must appear in `result.matched_pattern`.
+   * Lets a scenario assert the *family* of dominant pattern (e.g. "Preço alto",
+   * "Negociação travada", "Churn pós-trial"), which is more meaningful than the
+   * coarse `pattern_type` (loss_factor / stuck_stage / competitor) for storytelling.
+   */
+  matchedPatternLabelIncludes?: string;
 }
 
 export interface Scenario {
