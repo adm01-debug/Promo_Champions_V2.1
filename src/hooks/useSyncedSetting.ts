@@ -98,7 +98,7 @@ export function useSyncedSetting<T>(opts: Options<T>) {
               {
                 user_id: userId,
                 key: opts.key,
-                value: next as unknown as Record<string, unknown>,
+                value: next as unknown as import("@/integrations/supabase/types").Json,
                 updated_at: updatedAt,
               },
             ],
