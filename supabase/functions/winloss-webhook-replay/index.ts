@@ -1,7 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
-import { describeError } from "../winloss-webhook-dispatcher/retry.ts";
+
+/** Normalize unknown errors for structured logs. Mirrors dispatcher/retry.ts. */
+function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
+  if (e instanceof Error) {
+    return {
+      error_name: e.name || "Error",
+      error: e.message || String(e),
+      error_stack: e.stack ? e.stack.slice(0, 4000) : null,
+    };
+  }
+  return { error_name: "UnknownError", error: String(e), error_stack: null };
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
