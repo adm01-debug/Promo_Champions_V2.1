@@ -1,7 +1,5 @@
 import { memo } from "react";
 import { ChevronDown, FlaskConical } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import type { BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 
 interface Props {
@@ -15,10 +13,8 @@ interface Props {
   sxx: number;
   bandMode: BandMode;
   tCritical: number | null;
-  seeUseOlsInflation: boolean;
   confidenceZ: number;
   bandLabel: string;
-  onToggleSeeOlsInflation: (value: boolean) => void;
 }
 
 function Row({ label, value, hint }: { label: string; value: string; hint?: string }) {
@@ -43,15 +39,11 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
   sxx,
   bandMode,
   tCritical,
-  seeUseOlsInflation,
   confidenceZ,
   bandLabel,
-  onToggleSeeOlsInflation,
 }: Props) {
   const sign = slope >= 0 ? "+" : "−";
   const equation = `ŷ = ${intercept.toFixed(2)} ${sign} ${Math.abs(slope).toFixed(3)}·x`;
-  const showOlsRows = bandMode === "pi95" || (bandMode === "see" && seeUseOlsInflation);
-  const toggleId = "see-ols-inflation-toggle";
 
   return (
     <details
@@ -86,7 +78,7 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
               hint="1.00=68% · 1.28=80% · 1.645=90% · 1.96=95%"
             />
           )}
-          {showOlsRows && (
+          {(
             <>
               <Row label="x̄" value={meanX.toFixed(2)} hint="Centro do x usado no fator de inflação OLS" />
               <Row label="Sxx" value={sxx.toFixed(2)} hint="Σ(x − x̄)²" />
@@ -95,29 +87,6 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
         </div>
       </div>
 
-      {bandMode === "see" && (
-        <div className="mt-3 flex items-start justify-between gap-3 rounded-md border border-border/60 bg-muted/30 px-3 py-2">
-          <div className="min-w-0">
-            <Label
-              htmlFor={toggleId}
-              className="text-[11px] font-medium text-foreground cursor-pointer"
-            >
-              Usar aproximação legada √(1 + step/n)
-            </Label>
-            <p className="mt-0.5 text-[10px] text-muted-foreground leading-snug font-mono">
-              {seeUseOlsInflation
-                ? "padrão: width = σ · √(1 + 1/n + (x − x̄)² / Sxx)  (PI 1σ)"
-                : "legado: width = σ · √(1 + step/n)  (não usa Sxx)"}
-            </p>
-          </div>
-          <Switch
-            id={toggleId}
-            checked={!seeUseOlsInflation}
-            onCheckedChange={(v) => onToggleSeeOlsInflation(!v)}
-            aria-label="Alternar para a aproximação legada √(1+step/n) no modo SEE"
-          />
-        </div>
-      )}
 
       <p className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
         σ menor = ajuste mais aderente · |slope| baixo = sem tendência clara · SSE cresce com ruído residual.

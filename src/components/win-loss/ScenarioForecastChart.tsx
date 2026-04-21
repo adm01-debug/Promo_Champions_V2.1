@@ -33,7 +33,7 @@ interface Props {
 }
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
-const SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
+const LEGACY_SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
 const CONFIDENCE_Z_KEY = "winloss-scenario-confidence-z";
 
 const Z_PRESETS: ReadonlyArray<{ z: number; label: string; pct: string }> = [
@@ -50,12 +50,6 @@ function readBandMode(): BandMode {
   if (typeof window === "undefined") return "see";
   const v = window.localStorage.getItem(BAND_MODE_KEY);
   return v === "pi95" ? "pi95" : "see";
-}
-
-function readSeeOlsInflation(): boolean {
-  if (typeof window === "undefined") return true;
-  // Default ON (PI 1σ). Only the explicit "0" sentinel disables (legacy approx).
-  return window.localStorage.getItem(SEE_OLS_KEY) !== "0";
 }
 
 function readConfidenceZ(): number {
@@ -139,8 +133,18 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
   onHorizonChange,
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
-  const [seeUseOlsInflation, setSeeUseOlsInflation] = useState<boolean>(() => readSeeOlsInflation());
   const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
+
+  // Silent migration: drop the legacy `seeUseOlsInflation` key so that
+  // users who previously opted into the √(1+step/n) approximation now get
+  // the full OLS prediction-interval formula automatically.
+  useEffect(() => {
+    try {
+      window.localStorage.removeItem(LEGACY_SEE_OLS_KEY);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -149,14 +153,6 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
       /* ignore */
     }
   }, [bandMode]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(SEE_OLS_KEY, seeUseOlsInflation ? "1" : "0");
-    } catch {
-      /* ignore */
-    }
-  }, [seeUseOlsInflation]);
 
   useEffect(() => {
     try {
@@ -170,7 +166,6 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     useWinLossScenarios(points, {
       forecastSteps: horizon,
       bandMode,
-      seeUseOlsInflation,
       confidenceZ,
     });
 
@@ -204,8 +199,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-z${confidenceZ.toFixed(2)}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation, confidenceZ]);
+    return `scenario-${bandMode}-z${confidenceZ.toFixed(2)}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon, confidenceZ]);
 
   if (!data.length) {
     return (
@@ -471,10 +466,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         sxx={sxx}
         bandMode={bandMode}
         tCritical={tCritical}
-        seeUseOlsInflation={seeUseOlsInflation}
         confidenceZ={confidenceZ}
         bandLabel={bandLabel}
-        onToggleSeeOlsInflation={setSeeUseOlsInflation}
       />
     </Card>
   );

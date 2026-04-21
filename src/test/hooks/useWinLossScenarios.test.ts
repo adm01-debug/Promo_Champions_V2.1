@@ -129,8 +129,8 @@ describe("useWinLossScenarios", () => {
     expect(pi.bandMode).toBe("pi95");
     expect(pi.tCritical).not.toBeNull();
     expect(see.tCritical).toBeNull();
-    // SEE now uses the same OLS PI factor as pi95 (just without t multiplier).
-    expect(see.seeUseOlsInflation).toBe(true);
+    // SEE uses the same OLS PI factor as pi95 (just without t multiplier).
+    expect(see).not.toHaveProperty("seeUseOlsInflation");
 
     const seeForecasts = see.series.filter((p) => p.isForecast);
     const piForecasts = pi.series.filter((p) => p.isForecast);
@@ -181,15 +181,15 @@ describe("useWinLossScenarios", () => {
     expect(width).toBeGreaterThanOrEqual(minExpected * 0.99);
   });
 
-  it("legacy numeric arg ≡ { forecastSteps, bandMode: 'see', seeUseOlsInflation: true }", () => {
+  it("legacy numeric arg ≡ { forecastSteps, bandMode: 'see', confidenceZ: 1 }", () => {
     const points = mkPoints([45, 55, 50, 60, 55, 65]);
     const legacy = renderHook(() => useWinLossScenarios(points, 3)).result.current;
     const explicit = renderHook(() =>
-      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", seeUseOlsInflation: true }),
+      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", confidenceZ: 1 }),
     ).result.current;
 
     expect(legacy.bandMode).toBe("see");
-    expect(legacy.seeUseOlsInflation).toBe(true);
+    expect(legacy.confidenceZ).toBe(1);
     expect(legacy.tCritical).toBeNull();
     expect(legacy.series).toEqual(explicit.series);
     expect(legacy.stdDev).toBe(explicit.stdDev);
@@ -197,22 +197,10 @@ describe("useWinLossScenarios", () => {
     expect(legacy.fitN).toBe(explicit.fitN);
   });
 
-  it("opt-in legacy approximation (seeUseOlsInflation=false) reproduces √(1+step/n)", () => {
+  it("does not expose the removed seeUseOlsInflation property", () => {
     const points = mkPoints([45, 55, 50, 60, 55, 65]);
-    const legacy = renderHook(() =>
-      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", seeUseOlsInflation: false }),
-    ).result.current;
-
-    const sigma = legacy.stdDev;
-    const n = legacy.fitN;
-    const forecasts = legacy.series.filter((p) => p.isForecast);
-
-    forecasts.forEach((p, idx) => {
-      const step = idx + 1;
-      const expectedHalfWidth = sigma * Math.sqrt(1 + step / n);
-      const observedHalfWidth = (p.optimistic - p.pessimistic) / 2;
-      expect(observedHalfWidth).toBeCloseTo(expectedHalfWidth, 6);
-    });
+    const { result } = renderHook(() => useWinLossScenarios(points, 3));
+    expect(result.current).not.toHaveProperty("seeUseOlsInflation");
   });
 
   it("manual worked example: SEE 1σ PI and PI 95% match hand-computed values", () => {
@@ -330,37 +318,6 @@ describe("useWinLossScenarios", () => {
     a.series.forEach((p, i) => {
       expect(p.optimistic).toBeCloseTo(b.series[i].optimistic, 12);
       expect(p.pessimistic).toBeCloseTo(b.series[i].pessimistic, 12);
-    });
-  });
-
-  it("confidenceZ also scales the legacy √(1+step/n) approximation", () => {
-    const points = mkPoints([10, 14, 19, 22, 25, 31, 34]);
-    const steps = 4;
-    const z1 = renderHook(() =>
-      useWinLossScenarios(points, {
-        forecastSteps: steps,
-        bandMode: "see",
-        seeUseOlsInflation: false,
-        confidenceZ: 1,
-      }),
-    ).result.current;
-    const zX = renderHook(() =>
-      useWinLossScenarios(points, {
-        forecastSteps: steps,
-        bandMode: "see",
-        seeUseOlsInflation: false,
-        confidenceZ: 1.645,
-      }),
-    ).result.current;
-
-    const f1 = z1.series.filter((p) => p.isForecast);
-    const fX = zX.series.filter((p) => p.isForecast);
-    f1.forEach((p, i) => {
-      const w1 = p.optimistic - p.pessimistic;
-      const wX = fX[i].optimistic - fX[i].pessimistic;
-      const noClamp = (q: { optimistic: number; pessimistic: number }) =>
-        q.optimistic < 100 && q.pessimistic > 0;
-      if (noClamp(p) && noClamp(fX[i])) expect(wX / w1).toBeCloseTo(1.645, 9);
     });
   });
 });

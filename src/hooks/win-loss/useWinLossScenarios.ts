@@ -12,22 +12,15 @@
  * costumo estar?" sem precisar assumir uma distribuição prévia: vem direto
  * dos resíduos observados (y − ŷ).
  *
- * Escolhemos SEE em vez de:
- *   - desvio-padrão simples de y → ignora a tendência (slope), superestima a
- *     incerteza quando há trend claro;
- *   - bootstrap / IC empírico → custoso para n pequeno (séries curtas de
- *     winRate por período), instável e sem forma fechada para auditoria;
- *   - intervalos bayesianos → exigiria prior, fora do escopo de um forecast
- *     leve client-side.
- *
  * Como SEE vira "banda histórica" (fan de cenários)?
  * --------------------------------------------------------------------------
  * Para cada step futuro x, o **valor central** (cenário realista) é a própria
- * predição OLS  ŷ(x). A **largura da banda** é σ̂ multiplicado por um fator
- * de inflação que cresce conforme x se afasta do centro x̄ dos dados:
+ * predição OLS  ŷ(x). A **largura da banda** é σ̂ multiplicado pelo fator
+ * de inflação completo do prediction interval da OLS, que cresce conforme x
+ * se afasta do centro x̄ dos dados:
  *
- *     width(x) = σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )       [PI 1σ, ~68%]
- *     width(x) = t · σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )    [PI 95%, t-Student]
+ *     width(x) = z · σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )       [SEE, z configurável]
+ *     width(x) = t · σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )       [PI 95%, t-Student]
  *
  *   - O termo  1            → variância irredutível de uma observação futura.
  *   - O termo  1/n          → incerteza no intercept (β₀).
@@ -39,10 +32,6 @@
  *
  * Pontos históricos têm banda colapsada (otimista = realista = pessimista =
  * winRate observado): só medimos incerteza onde estamos extrapolando.
- *
- * Modo legado  width = σ̂ · √(1 + step/n)  é mantido como opt-in
- * (`seeUseOlsInflation: false`) para comparação visual; cresce muito devagar
- * e ignora o efeito da distância ao centróide.
  *
  * Limitações conhecidas
  * --------------------------------------------------------------------------
@@ -87,10 +76,8 @@ export interface ScenarioForecast {
   bandMode: BandMode;
   /** t critical value used (only for `pi95`); null in `see` mode. */
   tCritical: number | null;
-  /** Human-readable label for the active mode (e.g. "SEE ±σ" or "PI 95% (t·σ)"). */
+  /** Human-readable label for the active mode (e.g. "SEE z=1.00 (PI)" or "PI 95% (t·σ)"). */
   bandLabel: string;
-  /** Whether SEE mode is using the full OLS inflation factor instead of √(1+step/n). */
-  seeUseOlsInflation: boolean;
   /** Multiplicador `z` aplicado à largura SEE (1.00≈68% · 1.96≈95%). PI 95% ignora. */
   confidenceZ: number;
 }
@@ -99,17 +86,7 @@ export interface ScenarioOptions {
   forecastSteps?: number;
   bandMode?: BandMode;
   /**
-   * Controls the SEE-mode width formula:
-   * - `true` (default): full OLS prediction-interval inflation at 1σ —
-   *   `width = σ · √(1 + 1/n + (x − x̄)² / Sxx)`. Statistically correct PI shape.
-   * - `false`: legacy approximation `width = σ · √(1 + step/n)` (kept for
-   *   backward compatibility / debugging).
-   * Ignored in `pi95` mode (always uses the full PI factor with t multiplier).
-   */
-  seeUseOlsInflation?: boolean;
-  /**
-   * Multiplicador `z` aplicado à largura da banda no modo `see`
-   * (em ambos os caminhos: PI 1σ default e legado √(1+step/n)).
+   * Multiplicador `z` aplicado à largura da banda no modo `see`.
    * Default `1` (≈68% de cobertura). Presets úteis:
    *   1.00=68%  ·  1.28=80%  ·  1.645=90%  ·  1.96=95%
    * Clamp em `[0.1, 5]`. Ignorado em `pi95` (que usa o t-Student).
@@ -145,21 +122,19 @@ export function tCritical975(dof: number): number {
 
 /**
  * Projects 3 scenarios (optimistic / realistic / pessimistic) using OLS linear
- * regression over historical winRate. Two band modes are supported:
+ * regression over historical winRate. Two band modes are supported, both using
+ * the **full OLS prediction-interval inflation factor**:
  *
- * - `see`  (default): 1σ band using the full OLS prediction-interval inflation
- *   factor — `width = σ · √(1 + 1/n + (x − x̄)² / Sxx)`. ~68% confidence,
- *   widens correctly with the distance of the forecasted x to the centroid.
- *   Set `seeUseOlsInflation: false` to fall back to the legacy approximation
- *   `width = σ · √(1 + step/n)` (kept for debugging / backward compat).
- * - `pi95` (wider, conservative): same shape, multiplied by the t-Student
- *   critical value at 95% — `width = t · σ · √(1 + 1/n + (x − x̄)² / Sxx)`.
+ * - `see`  (default): `width = z · σ · √(1 + 1/n + (x − x̄)² / Sxx)`. With z=1
+ *   (default) ≈ 68% confidence; configurable via `confidenceZ` for other coverages.
+ * - `pi95` (conservative): same shape, multiplied by the t-Student critical value
+ *   at 95% — `width = t · σ · √(1 + 1/n + (x − x̄)² / Sxx)`.
  *
  * Historical points always have collapsed bands (= observed winRate), so the
  * uncertainty fan only opens at the forecast junction.
  *
  * Backward-compatible: `useWinLossScenarios(points, 3)` is equivalent to
- * `useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", seeUseOlsInflation: true })`.
+ * `useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", confidenceZ: 1 })`.
  */
 export const useWinLossScenarios = (
   points: TrendPoint[],
@@ -167,24 +142,20 @@ export const useWinLossScenarios = (
 ): ScenarioForecast => {
   const opts: Required<ScenarioOptions> =
     typeof optionsOrSteps === "number"
-      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: true, confidenceZ: 1 }
+      ? { forecastSteps: optionsOrSteps, bandMode: "see", confidenceZ: 1 }
       : {
           forecastSteps: optionsOrSteps.forecastSteps ?? 3,
           bandMode: optionsOrSteps.bandMode ?? "see",
-          seeUseOlsInflation: optionsOrSteps.seeUseOlsInflation ?? true,
           confidenceZ: clampZ(optionsOrSteps.confidenceZ ?? 1),
         };
 
-  const { forecastSteps, bandMode, seeUseOlsInflation, confidenceZ } = opts;
+  const { forecastSteps, bandMode, confidenceZ } = opts;
 
   return useMemo(() => {
     const safePoints = points ?? [];
     const n = safePoints.length;
 
-    const zSuffix = confidenceZ === 1 ? "" : ` z=${confidenceZ.toFixed(2)}`;
-    const seeLabel = seeUseOlsInflation
-      ? `SEE${zSuffix || " 1σ"} (PI)`
-      : `SEE${zSuffix ? ` ${zSuffix.trim()}` : " ±σ"} · √(1+step/n)`;
+    const seeLabel = `SEE z=${confidenceZ.toFixed(2)} (PI)`;
     const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : seeLabel);
 
     // Need at least 3 points for a meaningful regression + residual σ.
@@ -209,7 +180,6 @@ export const useWinLossScenarios = (
         bandMode,
         tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
         bandLabel: labelFor(bandMode),
-        seeUseOlsInflation,
         confidenceZ,
       };
     }
@@ -247,7 +217,7 @@ export const useWinLossScenarios = (
       isForecast: false,
     }));
 
-    // Fator de inflação do prediction interval OLS:
+    // Fator de inflação do prediction interval OLS (fórmula completa):
     //   √(1 + 1/n + (x−x̄)²/Sxx)
     // Cresce com a distância de x ao centro dos dados → banda abre no futuro.
     const olsFactor = (x: number) => Math.sqrt(1 + 1 / n + ((x - meanX) ** 2) / sxx);
@@ -257,18 +227,11 @@ export const useWinLossScenarios = (
       const x = n + step - 1;
       const base = slope * x + intercept;
 
-      // width = (multiplicador) · σ̂ · (fator de inflação)
+      // width = (multiplicador) · σ̂ · √(1 + 1/n + (x−x̄)²/Sxx)
       //   pi95 → t-Student (ignora confidenceZ);
-      //   see+OLS → confidenceZ · √(1+1/n+(x−x̄)²/Sxx);
-      //   see legado → confidenceZ · √(1+step/n) sem (x−x̄).
-      let width: number;
-      if (bandMode === "pi95") {
-        width = t * residualStdDev * olsFactor(x);
-      } else if (seeUseOlsInflation) {
-        width = confidenceZ * residualStdDev * olsFactor(x);
-      } else {
-        width = confidenceZ * residualStdDev * Math.sqrt(1 + step / n);
-      }
+      //   see  → confidenceZ.
+      const multiplier = bandMode === "pi95" ? t : confidenceZ;
+      const width = multiplier * residualStdDev * olsFactor(x);
 
       forecast.push({
         period: `+${step}`,
@@ -292,8 +255,7 @@ export const useWinLossScenarios = (
       bandMode,
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
-      seeUseOlsInflation,
       confidenceZ,
     };
-  }, [points, forecastSteps, bandMode, seeUseOlsInflation, confidenceZ]);
+  }, [points, forecastSteps, bandMode, confidenceZ]);
 };
