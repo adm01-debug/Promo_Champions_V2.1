@@ -167,6 +167,7 @@ export async function dispatchOne(
       outcome: ok ? "success" : (errorName ? "network_error" : "http_error"),
       error_name: errorName,
       error: errorMessage,
+      error_stack: errorStack,
     });
 
     try {
@@ -186,7 +187,7 @@ export async function dispatchOne(
         event,
         subscriptionId: sub.id,
         attempt,
-        error: logErr instanceof Error ? logErr.message : String(logErr),
+        ...describeError(logErr),
       });
     }
 
@@ -212,7 +213,7 @@ export async function dispatchOne(
       msg: "update_subscription_failed",
       event,
       subscriptionId: sub.id,
-      error: e instanceof Error ? e.message : String(e),
+      ...describeError(e),
     });
   }
 
@@ -242,7 +243,7 @@ export async function dispatchOne(
         msg: "dead_letter_insert_failed",
         event,
         subscriptionId: sub.id,
-        error: e instanceof Error ? e.message : String(e),
+        ...describeError(e),
       });
     }
   }
