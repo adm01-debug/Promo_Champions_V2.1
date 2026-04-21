@@ -451,7 +451,7 @@ const NEGOTIATION_GROUP: ScenarioGroup = {
       deal: {
         id: "h-neg-1",
         client_name: "NegBorder",
-        amount: 1000,
+        amount: 2000,
         status: "negotiation",
         category: null,
         source: "outbound",
