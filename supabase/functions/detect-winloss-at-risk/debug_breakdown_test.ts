@@ -107,3 +107,59 @@ Deno.test("stage_eligible=true when status in STUCK set even without stuck patte
   assertEquals(r.breakdown.stage_match, 0);
   assertEquals(r.breakdown.stage_eligible, true);
 });
+
+Deno.test("extractCompetitorMatches returns substring + regex + confidence per match", () => {
+  const matches = extractCompetitorMatches("leilao_publico, COTACAO, inbound_form", 0.7);
+  assertEquals(matches.length, 2);
+  assertEquals(matches[0].matched_substring, "leilao_publico");
+  assert(matches[0].regex.includes("leila"));
+  assertEquals(matches[0].confidence, 0.7);
+  assertEquals(matches[1].matched_substring, "COTACAO");
+  assert(matches[1].regex.includes("cota"));
+  assertEquals(matches[1].confidence, 0.7);
+});
+
+Deno.test("extractCompetitorMatches dedupes case-insensitive, returns [] for empty", () => {
+  const matches = extractCompetitorMatches("cotacao, COTACAO, Cotacao", 0.6);
+  assertEquals(matches.length, 1);
+  assertEquals(matches[0].keyword.toLowerCase(), "cotacao");
+  assertEquals(extractCompetitorMatches(null), []);
+  assertEquals(extractCompetitorMatches(""), []);
+});
+
+Deno.test("breakdown.competitor_matches uses competitor pattern confidence", () => {
+  const deal: OpenDeal = {
+    id: "d3",
+    client_name: "Cliente C",
+    amount: 22000,
+    status: "negotiation",
+    category: null,
+    source: "leilao_publico, cotacao",
+    updated_at: daysAgo(40),
+    created_at: daysAgo(60),
+  };
+  const r = computeDealRisk(deal, PATTERNS, NOW, 0);
+  assert(r);
+  const cm = r.breakdown.competitor_matches;
+  assert(cm && cm.length === 2);
+  // All entries inherit the competitor pattern's confidence (0.7 from "Concorrente X").
+  assert(cm.every(m => m.confidence === 0.7));
+  assertEquals(cm[0].matched_substring, "leilao_publico");
+  assertEquals(cm[1].matched_substring, "cotacao");
+});
+
+Deno.test("breakdown.competitor_matches is undefined when no source matches", () => {
+  const deal: OpenDeal = {
+    id: "d4",
+    client_name: "Cliente D",
+    amount: 25000,
+    status: "negotiation",
+    category: null,
+    source: "inbound_form",
+    updated_at: daysAgo(40),
+    created_at: daysAgo(60),
+  };
+  const r = computeDealRisk(deal, PATTERNS, NOW, 0);
+  assert(r);
+  assertEquals(r.breakdown.competitor_matches, undefined);
+});
