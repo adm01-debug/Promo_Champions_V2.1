@@ -35,6 +35,7 @@ import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterP
 import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
+import { useWinLossViewPrefs } from "@/hooks/win-loss/useWinLossViewPrefs";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
 import {
   aggregateByCompetitor,
@@ -70,6 +71,7 @@ export default function WinLossIntelligence() {
   useWinLossRealtime({ onNewPattern: focusInsights });
 
   const { filters, setFilters, reset } = useWinLossFilters();
+  const { prefs: viewPrefs, update: updateViewPrefs } = useWinLossViewPrefs();
   const { data: allRows = [], isLoading } = useFilteredWinLossAnalyses(filters);
 
   // Quick filter overlay state (client-side, doesn't refetch)
