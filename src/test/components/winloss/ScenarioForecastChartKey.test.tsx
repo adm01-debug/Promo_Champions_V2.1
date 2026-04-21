@@ -106,7 +106,7 @@ describe("ScenarioForecastChart — chartKey reage a filtros", () => {
     expect(keyA).toContain("-z1.00-");
 
     await user.click(screen.getByRole("button", { name: /Nível de confiança/i }));
-    await user.click(screen.getByLabelText(/95%/));
+    await user.click(document.getElementById("z-1.96") as HTMLElement);
     const keyB = getKey();
     expect(keyB).toContain("-z1.96-");
     expect(keyA).not.toBe(keyB);
