@@ -11,38 +11,73 @@ export interface ScenarioPoint {
 
 export interface ScenarioForecast {
   series: ScenarioPoint[];
+  /** Standard error of the regression estimate (residual σ), in winRate percentage points. */
   stdDev: number;
+  /** Slope of the linear trend (pp per period). */
   slope: number;
+  /** Number of historical points actually used for the fit. */
+  fitN: number;
 }
 
+const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
+
 /**
- * Projeta 3 cenários (otimista/realista/pessimista) com base em regressão linear
- * sobre os pontos históricos + bandas de ±1σ.
+ * Projects 3 scenarios (optimistic / realistic / pessimistic) using OLS linear
+ * regression over historical winRate. Confidence bands are derived from the
+ * **residual standard error** (deviation around the fitted line, not around the
+ * mean), which honestly reflects historical volatility AROUND the trend instead
+ * of being inflated by the trend itself.
+ *
+ * Bands widen with horizon following a simplified prediction-interval rule:
+ *   σ_step = σ * sqrt(1 + step / n)
+ *
+ * Historical points return realistic = optimistic = pessimistic = observed
+ * winRate, so the band visually opens only at the forecast junction.
  */
-export const useWinLossScenarios = (points: TrendPoint[], forecastSteps = 3): ScenarioForecast => {
+export const useWinLossScenarios = (
+  points: TrendPoint[],
+  forecastSteps = 3,
+): ScenarioForecast => {
   return useMemo(() => {
-    if (points.length < 2) {
-      return {
-        series: points.map(p => ({ period: p.period, realistic: p.winRate, optimistic: p.winRate, pessimistic: p.winRate, isForecast: false })),
-        stdDev: 0,
-        slope: 0,
-      };
+    const safePoints = points ?? [];
+    const n = safePoints.length;
+
+    // Need at least 3 points for a meaningful regression + residual σ.
+    if (n < 3) {
+      const flat: ScenarioPoint[] = safePoints.map((p) => ({
+        period: p.period,
+        realistic: p.winRate,
+        optimistic: p.winRate,
+        pessimistic: p.winRate,
+        isForecast: false,
+      }));
+      return { series: flat, stdDev: 0, slope: 0, fitN: n };
     }
-    const n = points.length;
-    const xs = points.map((_, i) => i);
-    const ys = points.map(p => p.winRate);
+
+    const xs = safePoints.map((_, i) => i);
+    const ys = safePoints.map((p) => p.winRate);
+
     const meanX = xs.reduce((a, b) => a + b, 0) / n;
     const meanY = ys.reduce((a, b) => a + b, 0) / n;
+
     const num = xs.reduce((acc, x, i) => acc + (x - meanX) * (ys[i] - meanY), 0);
     const den = xs.reduce((acc, x) => acc + (x - meanX) ** 2, 0) || 1;
+
     const slope = num / den;
     const intercept = meanY - slope * meanX;
-    const variance = ys.reduce((acc, y) => acc + (y - meanY) ** 2, 0) / n;
-    const stdDev = Math.sqrt(variance);
 
-    const clamp = (v: number) => Math.max(0, Math.min(100, v));
+    // Residuals around the regression line (not around the mean).
+    // Use n-2 degrees of freedom for an unbiased Standard Error of Estimate.
+    const dof = Math.max(1, n - 2);
+    const sse = ys.reduce((acc, y, i) => {
+      const yhat = slope * xs[i] + intercept;
+      return acc + (y - yhat) ** 2;
+    }, 0);
+    const residualStdDev = Math.sqrt(sse / dof);
 
-    const historical: ScenarioPoint[] = points.map(p => ({
+    // Historical: bands collapsed (observed value), so the chart shows a clean
+    // junction where uncertainty starts.
+    const historical: ScenarioPoint[] = safePoints.map((p) => ({
       period: p.period,
       realistic: p.winRate,
       optimistic: p.winRate,
@@ -50,18 +85,26 @@ export const useWinLossScenarios = (points: TrendPoint[], forecastSteps = 3): Sc
       isForecast: false,
     }));
 
+    // Forecast: bands widen with horizon (prediction-interval style).
     const forecast: ScenarioPoint[] = [];
-    for (let i = 1; i <= forecastSteps; i++) {
-      const x = n + i - 1;
+    for (let step = 1; step <= forecastSteps; step++) {
+      const x = n + step - 1;
       const base = slope * x + intercept;
+      const stepStdDev = residualStdDev * Math.sqrt(1 + step / n);
       forecast.push({
-        period: `+${i}`,
-        realistic: clamp(base),
-        optimistic: clamp(base + stdDev),
-        pessimistic: clamp(base - stdDev),
+        period: `+${step}`,
+        realistic: clamp01(base),
+        optimistic: clamp01(base + stepStdDev),
+        pessimistic: clamp01(base - stepStdDev),
         isForecast: true,
       });
     }
-    return { series: [...historical, ...forecast], stdDev, slope };
+
+    return {
+      series: [...historical, ...forecast],
+      stdDev: residualStdDev,
+      slope,
+      fitN: n,
+    };
   }, [points, forecastSteps]);
 };
