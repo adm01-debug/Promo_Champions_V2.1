@@ -109,3 +109,14 @@ Deno.test("scenarios: computeAtRiskDeals sorts desc, filters <40, respects limit
   const limited = computeAtRiskDeals(allDeals, LOSS_PATTERNS_REALISTIC, NOW, { threshold: 40, limit: 3 });
   assert(limited.length <= 3);
 });
+
+Deno.test("scenarios: every included scenario declares actionIncludes (anti-regression)", () => {
+  const missing = SCENARIOS.filter(
+    (s) => s.expect.included && s.expect.actionIncludes === undefined,
+  ).map((s) => s.name);
+  assertEquals(
+    missing,
+    [],
+    `included scenarios missing actionIncludes (suggested_action coherence not asserted): ${missing.join(", ")}`,
+  );
+});
