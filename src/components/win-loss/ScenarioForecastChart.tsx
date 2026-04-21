@@ -85,12 +85,16 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     return lastHistorical?.period ?? null;
   }, [series]);
 
-  // Stable key: forces Recharts to fully reset internals when filters change
-  // the underlying dataset shape or scale.
-  const chartKey = useMemo(
-    () => `scenario-${data.length}-${data[0]?.period ?? ""}-${stdDev.toFixed(2)}-${fitN}`,
-    [data, stdDev, fitN],
-  );
+  // Stable key: forces Recharts to fully reset internals (axes, scales, tooltip
+  // cache) when filters change the underlying dataset. Includes a compact
+  // signature of every point so two distinct series of equal length cannot
+  // collide on the same key.
+  const chartKey = useMemo(() => {
+    const signature = data
+      .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
+      .join("|");
+    return `scenario-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN]);
 
   if (!data.length) {
     return (
