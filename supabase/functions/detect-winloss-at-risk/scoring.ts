@@ -307,7 +307,13 @@ export function computeDealRisk(
     reasons.push(`Estágio "${deal.status}" historicamente travado`);
   }
   // Competitor signal (proxy: source contém termos competitivos OU presença de padrão).
-  const matchedKeywords = extractCompetitorKeywords(deal.source);
+  const bestCompetitor = competitorPatterns.reduce<LossPattern | null>((best, p) => {
+    if (!best) return p;
+    return (p.confidence ?? 0) > (best.confidence ?? 0) ? p : best;
+  }, null);
+  const competitorConfidence = bestCompetitor?.confidence ?? 0.5;
+  const competitorMatches = extractCompetitorMatches(deal.source, competitorConfidence);
+  const matchedKeywords = competitorMatches.map(m => m.keyword);
   if (competitorPatterns.length && matchedKeywords.length > 0) {
     reasons.push(`Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`);
   }
