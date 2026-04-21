@@ -24,6 +24,7 @@ import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossS
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
+import { buildScenarioChartKey } from "@/lib/winloss/scenarioChartKey";
 
 type ForecastHorizon = 3 | 6 | 12;
 
@@ -193,16 +194,21 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 
   const zPctLabel = useMemo(() => pctFromZ(confidenceZ), [confidenceZ]);
 
-  // Stable key: forces Recharts to fully reset internals (axes, scales, tooltip
-  // cache) when filters change the underlying dataset. Includes a compact
-  // signature of every point so two distinct series of equal length cannot
-  // collide on the same key.
-  const chartKey = useMemo(() => {
-    const signature = data
-      .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
-      .join("|");
-    return `scenario-${bandMode}-z${confidenceZ.toFixed(2)}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode, horizon, confidenceZ]);
+  // Stable key: forces Recharts to fully reset internals only when meaningful
+  // changes occur. Empty/insufficient datasets share constant keys to avoid
+  // remount churn while filters/queries rehydrate. See buildScenarioChartKey.
+  const chartKey = useMemo(
+    () =>
+      buildScenarioChartKey({
+        data,
+        fitN,
+        bandMode,
+        confidenceZ,
+        horizon,
+        stdDev,
+      }),
+    [data, stdDev, fitN, bandMode, horizon, confidenceZ],
+  );
 
   if (!data.length) {
     return (
