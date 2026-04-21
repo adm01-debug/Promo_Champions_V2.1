@@ -495,7 +495,75 @@ Deno.test("dispatchOne: erro em onDeadLetter é absorvido (não propaga)", async
   assertEquals(h.deadLetters.length, 0);
 });
 
-Deno.test("dispatchOne: payload com __replay_of/__target_subscription_id NÃO vai no body externo", async () => {
+Deno.test("dispatchOne: onDeadLetter recebe entry com todos os campos preenchidos corretamente", async () => {
+  const h = makeHarness(() => new Response("boom", { status: 502 }), { withDeadLetter: true });
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+  assertEquals(e.subscription_id, SUB.id);
+  assertEquals(e.event, "x");
+  assertEquals(e.payload, PAYLOAD);
+  assertEquals(e.attempts, MAX_ATTEMPTS);
+  assertEquals(e.last_status, 502);
+  // last_error é null para falhas HTTP puras (não há throw); só o status fala
+  assertEquals(e.last_error, null);
+  // total_latency_ms presente e numérico (com now() mockado para 0 → 0)
+  assertEquals(typeof e.total_latency_ms, "number");
+});
+
+Deno.test("dispatchOne: onDeadLetter chamado EXATAMENTE 1× ao final (não por tentativa)", async () => {
+  let callCount = 0;
+  const h = makeHarness(() => new Response("err", { status: 500 }));
+  h.deps.onDeadLetter = (entry) => {
+    callCount += 1;
+    h.deadLetters.push(entry);
+    return Promise.resolve();
+  };
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+  assertEquals(callCount, 1, "onDeadLetter deve ser chamado uma única vez após esgotar todos os retries");
+  assertEquals(h.deadLetters.length, 1);
+});
+
+Deno.test("dispatchOne: erro em onDeadLetter NÃO impede updateSubscription de ter rodado antes", async () => {
+  // updateSubscription roda ANTES do onDeadLetter no fluxo. Mesmo que o DLQ exploda, o
+  // estado da subscription deve refletir o último status.
+  const h = makeHarness(() => new Response("err", { status: 504 }), {
+    withDeadLetter: true,
+    deadLetterThrows: true,
+  });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(r.status, 504);
+  // updateSubscription DEVE ter sido chamado mesmo com o DLQ falhando depois
+  assertEquals(h.updates.length, 1);
+  assertEquals(h.updates[0], { id: "sub-1", status: 504 });
+  // E nada vazou do erro do DLQ para o resultado
+  assertEquals(h.deadLetters.length, 0);
+});
+
+Deno.test("dispatchOne: erro síncrono (throw) em onDeadLetter também é absorvido", async () => {
+  const h = makeHarness(() => new Response("err", { status: 500 }));
+  h.deps.onDeadLetter = () => {
+    throw new Error("dlq sync explosion");
+  };
+  // Não deve lançar mesmo com throw síncrono dentro do callback
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+  assertEquals(r.succeeded, false);
+  assertEquals(r.attempts, MAX_ATTEMPTS);
+});
+
+Deno.test("dispatchOne: onDeadLetter NÃO chamado quando deps.onDeadLetter é undefined", async () => {
+  // Sem withDeadLetter:true → deps.onDeadLetter === undefined.
+  // dispatchOne deve apenas pular o passo de DLQ silenciosamente.
+  const h = makeHarness(() => new Response("err", { status: 500 }));
+  assertEquals(h.deps.onDeadLetter, undefined);
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+  assertEquals(r.succeeded, false);
+  assertEquals(r.attempts, MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 0);
+});
   let capturedBody = "";
   const h = makeHarness(() => new Response("ok", { status: 200 }));
   const origFetch = h.deps.fetchFn;
