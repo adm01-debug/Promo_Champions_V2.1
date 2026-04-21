@@ -238,8 +238,8 @@ Deno.test("dispatchOne: payload com __replay_of/__target_subscription_id NÃO va
   let capturedBody = "";
   const h = makeHarness(() => new Response("ok", { status: 200 }));
   const origFetch = h.deps.fetchFn;
-  h.deps.fetchFn = (async (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) => {
-    capturedBody = String(init?.body ?? "");
+  h.deps.fetchFn = ((input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    capturedBody = String((init as { body?: unknown })?.body ?? "");
     return origFetch(input, init);
   }) as typeof fetch;
   await dispatchOne(SUB, { event: "x", deal: 1, __replay_of: "abc", __target_subscription_id: "sub-1" }, h.deps);
