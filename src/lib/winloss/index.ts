@@ -5,3 +5,4 @@
  */
 export * from "./atRiskFixtures";
 export * from "./riskReasons";
+export * from "./riskSeverity";
