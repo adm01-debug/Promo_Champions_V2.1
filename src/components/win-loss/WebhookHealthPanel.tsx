@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity } from "lucide-react";
+import { Activity, AlertTriangle } from "lucide-react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -12,6 +12,7 @@ import {
   Cell,
 } from "recharts";
 import { useWebhookDeliveryStats } from "@/hooks/win-loss/useWebhookDeliveryStats";
+import { useWebhookAlerts, activeAlertsBySubscription } from "@/hooks/win-loss/useWebhookAlerts";
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,10 @@ function HealthTooltip({ active, payload }: RechartsTooltipProps) {
 
 export function WebhookHealthPanel() {
   const { data, isLoading } = useWebhookDeliveryStats();
+  const { data: alerts } = useWebhookAlerts();
+  const activeBySub = activeAlertsBySubscription(alerts ?? []);
+  const degradedCount = activeBySub.size;
+
 
   return (
     <Card>
@@ -47,6 +52,18 @@ export function WebhookHealthPanel() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {degradedCount > 0 && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+          >
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" aria-hidden />
+            <p>
+              <strong>{degradedCount}</strong> assinatura{degradedCount === 1 ? "" : "s"} com alerta ativo nos últimos 60 minutos.
+              Verifique a lista abaixo para detalhes.
+            </p>
+          </div>
+        )}
         {isLoading ? (
           <div className="space-y-3">
             <div className="grid grid-cols-3 gap-2">
