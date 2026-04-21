@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { RISK_REASON_CODES, isRiskReasonCode, type RiskReasonCode } from "@/lib/winloss/riskReasons";
 
 export interface AtRiskSettings {
   threshold: number;
@@ -7,6 +8,7 @@ export interface AtRiskSettings {
   debug: boolean;
   stageFilter: string[];
   keywordFilter: string;
+  reasonCodes: RiskReasonCode[];
 }
 
 export const AT_RISK_DEFAULTS: AtRiskSettings = {
@@ -16,10 +18,11 @@ export const AT_RISK_DEFAULTS: AtRiskSettings = {
   debug: false,
   stageFilter: [],
   keywordFilter: "",
+  reasonCodes: [],
 };
 
 const STORAGE_KEY = "winloss-at-risk-settings";
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 const clamp = (n: number, min: number, max: number) =>
   Math.max(min, Math.min(max, Math.round(n)));
@@ -38,6 +41,12 @@ function sanitizeKeyword(input: unknown): string {
   return input.trim().slice(0, 100);
 }
 
+function sanitizeReasonCodes(input: unknown): RiskReasonCode[] {
+  if (!Array.isArray(input)) return [];
+  const cleaned = input.filter(isRiskReasonCode);
+  return Array.from(new Set(cleaned)).slice(0, RISK_REASON_CODES.length);
+}
+
 export function sanitize(input: Partial<AtRiskSettings>): AtRiskSettings {
   return {
     threshold: clamp(Number(input.threshold ?? AT_RISK_DEFAULTS.threshold), 0, 100),
@@ -46,6 +55,7 @@ export function sanitize(input: Partial<AtRiskSettings>): AtRiskSettings {
     debug: Boolean(input.debug ?? AT_RISK_DEFAULTS.debug),
     stageFilter: sanitizeStages(input.stageFilter),
     keywordFilter: sanitizeKeyword(input.keywordFilter),
+    reasonCodes: sanitizeReasonCodes(input.reasonCodes),
   };
 }
 
@@ -56,8 +66,8 @@ function read(): AtRiskSettings {
     if (!raw) return AT_RISK_DEFAULTS;
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return AT_RISK_DEFAULTS;
-    // v1 → v2 migration: keep numeric fields, fill defaults for new ones.
-    if (parsed.version === 1 || parsed.version === SCHEMA_VERSION) {
+    // v1/v2/v3 → v3 migration: keep all known fields, fill defaults for new ones.
+    if (parsed.version === 1 || parsed.version === 2 || parsed.version === SCHEMA_VERSION) {
       return sanitize(parsed.settings ?? {});
     }
     return AT_RISK_DEFAULTS;
@@ -99,7 +109,9 @@ export function useAtRiskSettings() {
   }, []);
 
   const clearFilters = useCallback(() => {
-    setSettings((prev) => sanitize({ ...prev, stageFilter: [], keywordFilter: "" }));
+    setSettings((prev) =>
+      sanitize({ ...prev, stageFilter: [], keywordFilter: "", reasonCodes: [] }),
+    );
   }, []);
 
   return { settings, update, reset, clearFilters };

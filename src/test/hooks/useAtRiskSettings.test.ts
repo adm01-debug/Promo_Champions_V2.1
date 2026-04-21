@@ -24,7 +24,7 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.limit).toBe(AT_RISK_DEFAULTS.limit);
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
     expect(raw.settings.threshold).toBe(70);
-    expect(raw.version).toBe(2);
+    expect(raw.version).toBe(3);
   });
 
   it("persists debug + filter fields", () => {
@@ -118,6 +118,52 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.debug).toBe(false);
     expect(result.current.settings.stageFilter).toEqual([]);
     expect(result.current.settings.keywordFilter).toBe("");
+  });
+
+  it("sanitize whitelists reasonCodes (drops invalid)", () => {
+    const out = sanitize({
+      reasonCodes: ["STAGNATION_HIGH", "INVALID", "AMOUNT_ALIGNED"] as never,
+    });
+    expect(out.reasonCodes).toEqual(["STAGNATION_HIGH", "AMOUNT_ALIGNED"]);
+    expect(sanitize({ reasonCodes: "nope" as never }).reasonCodes).toEqual([]);
+  });
+
+  it("migrates v2 payload preserving fields and adding empty reasonCodes", () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 2,
+        settings: {
+          threshold: 60,
+          limit: 25,
+          maxVisible: 10,
+          debug: true,
+          stageFilter: ["Negociação"],
+          keywordFilter: "preço",
+        },
+      }),
+    );
+    const { result } = renderHook(() => useAtRiskSettings());
+    expect(result.current.settings.threshold).toBe(60);
+    expect(result.current.settings.debug).toBe(true);
+    expect(result.current.settings.stageFilter).toEqual(["Negociação"]);
+    expect(result.current.settings.keywordFilter).toBe("preço");
+    expect(result.current.settings.reasonCodes).toEqual([]);
+  });
+
+  it("clearFilters also clears reasonCodes", () => {
+    const { result } = renderHook(() => useAtRiskSettings());
+    act(() =>
+      result.current.update({
+        threshold: 70,
+        reasonCodes: ["STAGNATION_HIGH"],
+        stageFilter: ["Negociação"],
+      }),
+    );
+    act(() => result.current.clearFilters());
+    expect(result.current.settings.threshold).toBe(70);
+    expect(result.current.settings.reasonCodes).toEqual([]);
+    expect(result.current.settings.stageFilter).toEqual([]);
   });
 
   it("debug flag survives unmount/remount (simulates page reload)", () => {

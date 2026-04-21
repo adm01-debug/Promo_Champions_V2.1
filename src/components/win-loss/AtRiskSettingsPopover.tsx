@@ -9,6 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, RotateCcw, Search, Bug, X } from "lucide-react";
 import type { AtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
+import {
+  RISK_REASON_CODES,
+  RISK_REASON_LABELS,
+  type RiskReasonCode,
+} from "@/lib/winloss/riskReasons";
+
+const SELECTABLE_REASON_CODES: RiskReasonCode[] = RISK_REASON_CODES.filter(
+  (c) => c !== "CROSSED_SIGNALS",
+);
 
 interface Props {
   settings: AtRiskSettings;
@@ -53,7 +62,17 @@ export function AtRiskSettingsPopover({
     onUpdate({ stageFilter: next });
   };
 
-  const filtersActive = settings.stageFilter.length > 0 || settings.keywordFilter.length > 0;
+  const toggleReasonCode = (code: RiskReasonCode) => {
+    const next = settings.reasonCodes.includes(code)
+      ? settings.reasonCodes.filter((c) => c !== code)
+      : [...settings.reasonCodes, code];
+    onUpdate({ reasonCodes: next });
+  };
+
+  const filtersActive =
+    settings.stageFilter.length > 0 ||
+    settings.keywordFilter.length > 0 ||
+    settings.reasonCodes.length > 0;
 
   return (
     <Popover>
@@ -215,6 +234,38 @@ export function AtRiskSettingsPopover({
             </div>
           </div>
 
+          <div className="space-y-1.5">
+            <Label className="text-xs">
+              Sinais{" "}
+              {settings.reasonCodes.length > 0 && (
+                <span className="text-muted-foreground">({settings.reasonCodes.length} sel.)</span>
+              )}
+            </Label>
+            <div className="flex flex-wrap gap-1">
+              {SELECTABLE_REASON_CODES.map((code) => {
+                const active = settings.reasonCodes.includes(code);
+                return (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => toggleReasonCode(code)}
+                    aria-pressed={active}
+                    aria-label={`Filtro de sinal: ${RISK_REASON_LABELS[code]} ${active ? "ativo" : "inativo"}`}
+                    data-reason-code={code}
+                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                  >
+                    <Badge
+                      variant={active ? "default" : "outline"}
+                      className="cursor-pointer text-[10px] px-2 py-0.5"
+                    >
+                      {RISK_REASON_LABELS[code]}
+                    </Badge>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {filtersActive && (
             <Button
               variant="outline"
@@ -223,7 +274,7 @@ export function AtRiskSettingsPopover({
               onClick={onClearFilters}
             >
               <X className="h-3 w-3" />
-              Limpar filtros (estágio + keyword)
+              Limpar filtros (estágio + keyword + sinais)
             </Button>
           )}
         </div>

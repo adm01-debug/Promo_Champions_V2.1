@@ -35,6 +35,38 @@ export interface OpenDeal {
 
 export type RiskSeverity = "low" | "medium" | "high" | "critical";
 
+export type RiskReasonCode =
+  | "STAGNATION_HIGH"
+  | "STAGNATION_LOW"
+  | "AMOUNT_ALIGNED"
+  | "STAGE_STUCK"
+  | "COMPETITOR_PRESSURE"
+  | "CROSSED_SIGNALS";
+
+export const RISK_REASON_CODES: readonly RiskReasonCode[] = [
+  "STAGNATION_HIGH",
+  "STAGNATION_LOW",
+  "AMOUNT_ALIGNED",
+  "STAGE_STUCK",
+  "COMPETITOR_PRESSURE",
+  "CROSSED_SIGNALS",
+] as const;
+
+export type RiskReasonSource =
+  | "stagnation"
+  | "amount"
+  | "stage"
+  | "competitor"
+  | "generic";
+
+export interface RiskReason {
+  code: RiskReasonCode;
+  message: string;
+  params: Record<string, string | number>;
+  source: RiskReasonSource;
+  contribution: number;
+}
+
 export interface CompetitorMatch {
   keyword: string;
   matched_substring: string;
@@ -50,6 +82,7 @@ export interface RiskBreakdown {
   matched_pattern_type: string;
   matched_confidence: number;
   reasons: string[];
+  reasons_v2?: RiskReason[];
   // Debug fields (optional for backward compatibility on the client).
   matched_keywords?: string[];
   competitor_matches?: CompetitorMatch[];
@@ -299,16 +332,52 @@ export function computeDealRisk(
   const stageScore = stageMatchScore(deal.status, bestStuck);
 
   const reasons: string[] = [];
+  const reasonsV2: RiskReason[] = [];
+  const avgCycle = Math.round(bestLoss?.avg_cycle_days ?? 0);
   if (stagnation >= 30) {
-    reasons.push(`${days} dias sem atualização (média de loss: ${Math.round(bestLoss?.avg_cycle_days ?? 0)}d)`);
+    const msg = `${days} dias sem atualização (média de loss: ${avgCycle}d)`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "STAGNATION_HIGH",
+      message: msg,
+      params: { days, avgCycle },
+      source: "stagnation",
+      contribution: stagnation,
+    });
   } else if (stagnation > 0) {
-    reasons.push(`${days} dias sem atualização`);
+    const msg = `${days} dias sem atualização`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "STAGNATION_LOW",
+      message: msg,
+      params: { days },
+      source: "stagnation",
+      contribution: stagnation,
+    });
   }
   if (amountAlign >= 15) {
-    reasons.push(`Ticket alinhado ao perfil típico de loss (${Math.round(bestLoss?.avg_amount ?? 0).toLocaleString("pt-BR")})`);
+    const avgAmount = Math.round(bestLoss?.avg_amount ?? 0);
+    const msg = `Ticket alinhado ao perfil típico de loss (${avgAmount.toLocaleString("pt-BR")})`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "AMOUNT_ALIGNED",
+      message: msg,
+      params: { dealAmount, avgAmount },
+      source: "amount",
+      contribution: amountAlign,
+    });
   }
   if (stageScore > 0) {
-    reasons.push(`Estágio "${deal.status}" historicamente travado`);
+    const stage = deal.status ?? "";
+    const msg = `Estágio "${stage}" historicamente travado`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "STAGE_STUCK",
+      message: msg,
+      params: { stage },
+      source: "stage",
+      contribution: stageScore,
+    });
   }
   // Competitor signal (proxy: source contém termos competitivos OU presença de padrão).
   const bestCompetitor = competitorPatterns.reduce<LossPattern | null>((best, p) => {
@@ -319,7 +388,15 @@ export function computeDealRisk(
   const competitorMatches = extractCompetitorMatches(deal.source, competitorConfidence);
   const matchedKeywords = competitorMatches.map(m => m.keyword);
   if (competitorPatterns.length && matchedKeywords.length > 0) {
-    reasons.push(`Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`);
+    const msg = `Possível pressão competitiva detectada (${matchedKeywords.join(", ")})`;
+    reasons.push(msg);
+    reasonsV2.push({
+      code: "COMPETITOR_PRESSURE",
+      message: msg,
+      params: { keywordCount: matchedKeywords.length, keywords: matchedKeywords.join(",") },
+      source: "competitor",
+      contribution: matchedKeywords.length,
+    });
   }
 
   // Pick the dominant pattern for the label.
@@ -377,6 +454,17 @@ export function computeDealRisk(
     suggestedAction = "Revisar abordagem com o cliente nas próximas 48h";
   }
 
+  const finalReasons = reasons.length ? reasons : ["Sinais cruzados de risco"];
+  const finalReasonsV2: RiskReason[] = reasonsV2.length
+    ? reasonsV2
+    : [{
+        code: "CROSSED_SIGNALS",
+        message: "Sinais cruzados de risco",
+        params: {},
+        source: "generic",
+        contribution: 0,
+      }];
+
   return {
     sale_id: deal.id,
     client_name: deal.client_name,
@@ -385,7 +473,7 @@ export function computeDealRisk(
     risk_score: finalScore,
     matched_pattern: matchedPattern,
     suggested_action: suggestedAction,
-    reasons: reasons.length ? reasons : ["Sinais cruzados de risco"],
+    reasons: finalReasons,
     breakdown: {
       stagnation,
       amount_alignment: amountAlign,
@@ -393,7 +481,8 @@ export function computeDealRisk(
       matched_pattern_label: matchedPattern,
       matched_pattern_type: dominant.type,
       matched_confidence: dominant.confidence,
-      reasons,
+      reasons: finalReasons,
+      reasons_v2: finalReasonsV2,
       matched_keywords: matchedKeywords,
       competitor_matches: competitorMatches.length ? competitorMatches : undefined,
       days_stagnant: days,

@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
 import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
+import { inferReasonCode } from "@/lib/winloss/riskReasons";
 import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
 import { RiskCompareModal } from "./RiskCompareModal";
@@ -55,19 +56,30 @@ export function AtRiskDealsFromPatterns() {
   const filtered = useMemo(() => {
     const kw = settings.keywordFilter.trim().toLowerCase();
     const stages = settings.stageFilter;
-    if (stages.length === 0 && !kw) return data;
+    const codes = settings.reasonCodes;
+    if (stages.length === 0 && !kw && codes.length === 0) return data;
     return data.filter((d) => {
       if (stages.length > 0 && !stages.includes(d.stage ?? "")) return false;
       if (kw) {
         const hay = `${d.client_name ?? ""} ${d.matched_pattern ?? ""} ${d.suggested_action ?? ""}`.toLowerCase();
         if (!hay.includes(kw)) return false;
       }
+      if (codes.length > 0) {
+        const dealCodes = (d.breakdown?.reasons_v2 ?? []).map((r) => r.code);
+        const effective = dealCodes.length
+          ? dealCodes
+          : (d.breakdown?.reasons ?? d.reasons ?? []).map((m) => inferReasonCode(m));
+        if (!codes.some((c) => effective.includes(c))) return false;
+      }
       return true;
     });
-  }, [data, settings.keywordFilter, settings.stageFilter]);
+  }, [data, settings.keywordFilter, settings.stageFilter, settings.reasonCodes]);
 
   const visible = filtered.slice(0, settings.maxVisible);
-  const filtersActive = settings.stageFilter.length > 0 || settings.keywordFilter.length > 0;
+  const filtersActive =
+    settings.stageFilter.length > 0 ||
+    settings.keywordFilter.length > 0 ||
+    settings.reasonCodes.length > 0;
   const debug = settings.debug;
 
   /** Set of dominant-pattern labels matched by at least one currently visible (filtered) deal. */
