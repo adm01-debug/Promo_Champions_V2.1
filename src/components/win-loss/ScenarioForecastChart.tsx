@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { Sparkles } from "lucide-react";
+import { Sparkles, HelpCircle } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
+import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
 type ForecastHorizon = 3 | 6 | 12;
