@@ -1,54 +1,70 @@
 
 
-## Painel de auditoria do forecast (slope, intercept, SSE, σ, fitN)
+## Persistir preferências de visualização Win/Loss (horizonte + granularidade)
 
 ### Objetivo
-Expor as estatísticas internas da regressão OLS usadas no `ScenarioForecastChart` num painel colapsável, para auditoria rápida da projeção sem precisar abrir devtools.
+Salvar as escolhas do usuário de **granularidade** (semanal/mensal) e **horizonte de previsão** (3, 6 ou 12 períodos) entre sessões, e expor um seletor de horizonte no `ScenarioForecastChart` (hoje fixo em 3).
 
 ### Mudanças
 
-**1. `src/hooks/win-loss/useWinLossScenarios.ts`** — expor mais estatísticas
-- Adicionar ao `ScenarioForecast`:
-  - `intercept: number` — coeficiente β₀ da reta.
-  - `sse: number` — soma dos quadrados dos resíduos (Σ(y−ŷ)²).
-  - `meanX: number`, `sxx: number` — úteis para reproduzir a fórmula PI 95%.
-  - `dof: number` — graus de liberdade (n−2, mín. 1).
-- Preencher esses campos no caminho normal (n≥3) e zerar no fallback (n<3).
-- Mantém retrocompatibilidade — só adiciona campos.
+**1. Novo hook `src/hooks/win-loss/useWinLossViewPrefs.ts`**
+Modelo igual ao `useAtRiskSettings` (já existente, padrão consolidado): localStorage versionado + `sanitize()` + `update/reset`.
 
-**2. Novo componente `src/components/win-loss/ScenarioForecastAuditPanel.tsx`**
-- Props: `{ slope, intercept, stdDev, sse, fitN, dof, bandMode, tCritical, meanX, sxx }`.
-- Cartão compacto colapsável (`<details>` nativo, ícone chevron, sem dependência extra) com título "Auditoria do ajuste".
-- Grid 2 colunas com pares label → valor tabular-nums:
-  - **Slope (β₁)**: `X.XXX pp/período`
-  - **Intercept (β₀)**: `X.XX pp`
-  - **Equação**: `ŷ = β₀ + β₁·x` (renderizada com valores)
-  - **SSE**: `X.XX`
-  - **Residual σ (SEE)**: `X.XX pp`
-  - **Graus de liberdade**: `n−2 = X`
-  - **fitN**: `N períodos`
-  - **Modo de banda**: `SEE` ou `PI 95% (t=Y.YY)`
-  - **x̄ / Sxx** (só se `pi95`): para auditar a fórmula PI completa
-- Um parágrafo curto de rodapé explicando: "σ menor = ajuste mais aderente; |slope| baixo = sem tendência clara; SSE cresce com ruído."
-- Acessível: `<summary>` com role/aria padrão do `<details>`, `aria-label` no card.
+```ts
+export interface WinLossViewPrefs {
+  granularity: "week" | "month";
+  forecastHorizon: 3 | 6 | 12;
+}
+export const VIEW_PREFS_DEFAULTS = { granularity: "month", forecastHorizon: 3 };
+```
 
-**3. `src/components/win-loss/ScenarioForecastChart.tsx`**
-- Importar e renderizar `<ScenarioForecastAuditPanel />` logo após o `<CardContent>` do gráfico (dentro do mesmo `<Card>`, em um bloco separado com borda superior leve `border-t`), passando os campos novos do hook.
-- Não renderizar quando `fitN < 3` (já cai no early-return existente).
+- Storage key: `winloss-view-prefs`, schema version `1`.
+- `sanitize` valida enum (fallback para default em valor inválido).
+- API: `{ prefs, update(partial), reset() }`.
+
+**2. `WinLossTrendChart.tsx`**
+- Remover `useState` local de `gran`.
+- Aceitar `granularity` + `onGranularityChange` via props (controlled). Manter `compare` local (não é uma preferência persistente — pertence ao gesto da sessão).
+- Os botões "Semanal/Mensal" passam a usar essas props.
+
+**3. `ScenarioForecastChart.tsx`**
+- Adicionar prop opcional `horizon?: 3 | 6 | 12` (default `3`) e `onHorizonChange?`.
+- No header, ao lado do `ToggleGroup` do bandMode, novo `ToggleGroup` "3 / 6 / 12" com `aria-label="Horizonte de previsão"`.
+- Passar `forecastSteps: horizon` para o hook.
+- Incluir `horizon` no `chartKey` para garantir reset limpo do Recharts.
+
+**4. `pages/WinLossIntelligence.tsx`**
+- Instanciar `useWinLossViewPrefs()` uma vez.
+- Passar `prefs.granularity` + `update({ granularity })` para `WinLossTrendChart`.
+- Passar `prefs.forecastHorizon` + `update({ forecastHorizon })` para `ScenarioForecastChart`.
+- (As preferências persistem automaticamente via efeito do hook — sem tocar em URL/searchParams; horizonte e granularidade são preferências de UI, não filtros compartilháveis.)
+
+**5. Testes — `src/test/hooks/useWinLossViewPrefs.test.ts` (novo)**
+Replicar a estrutura de `useAtRiskSettings.test.ts`:
+- defaults quando storage vazio
+- `update` parcial persiste e mescla
+- `sanitize` rejeita valores inválidos (granularity="dia", horizon=99)
+- `reset` restaura defaults
+- fallback em JSON inválido / version errada
+
+Rodar `npx vitest run src/test/hooks/useWinLossViewPrefs.test.ts` — esperado **6/6**.
 
 ### Detalhes técnicos
-- Sem novas libs; `<details>/<summary>` + classes Tailwind existentes.
-- Tipos novos (`intercept`, `sse`, `dof`, `meanX`, `sxx`) são campos adicionais — não quebram chamadas existentes.
-- Painel é puramente apresentacional, memoizado por props.
+- Padrão segue `useAtRiskSettings` (mesma forma de SSR-safe, versionamento, clamp/whitelist). Sem nova dependência.
+- `forecastHorizon` afeta apenas a quantidade de steps projetados; bandas continuam respeitando o `bandMode` já persistido em `winloss-scenario-bandmode` (preferência separada — não consolidamos os dois storages para preservar retrocompatibilidade).
+- `compare` no trend chart **não** é persistido (decisão consciente: é um toggle de exploração).
+- `granularity` deixa de ser estado local do componente — fica controlled a partir da página.
 
 ### Arquivos
-- **Modificar**: `src/hooks/win-loss/useWinLossScenarios.ts`
-- **Criar**: `src/components/win-loss/ScenarioForecastAuditPanel.tsx`
+- **Criar**: `src/hooks/win-loss/useWinLossViewPrefs.ts`
+- **Criar**: `src/test/hooks/useWinLossViewPrefs.test.ts`
+- **Modificar**: `src/components/win-loss/WinLossTrendChart.tsx`
 - **Modificar**: `src/components/win-loss/ScenarioForecastChart.tsx`
-- **Modificar**: `src/test/hooks/useWinLossScenarios.test.ts` — adicionar 2 testes: (a) `intercept + slope reconstrói meanY no centro`; (b) `sse ≈ 0 para dados perfeitamente lineares`.
+- **Modificar**: `src/pages/WinLossIntelligence.tsx`
 
 ### Ordem
-1. Estender retorno do hook + testes (rodar `vitest run src/test/hooks/useWinLossScenarios.test.ts` — esperado 15/15).
-2. Criar `ScenarioForecastAuditPanel`.
-3. Plugar no `ScenarioForecastChart`.
+1. Criar hook + testes (rodar suite).
+2. Tornar `WinLossTrendChart` controlled na granularidade.
+3. Adicionar seletor de horizonte ao `ScenarioForecastChart`.
+4. Plugar prefs na página.
 
