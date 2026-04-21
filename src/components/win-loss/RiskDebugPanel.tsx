@@ -1,5 +1,95 @@
-import { Badge } from "@/components/ui/badge";
+import { Clock, DollarSign, Layers, Swords, Info, type LucideIcon } from "lucide-react";
+import { Badge, type BadgeProps } from "@/components/ui/badge";
 import type { RiskBreakdown } from "@/hooks/win-loss/useAtRiskFromPatterns";
+
+type ReasonKind = "stagnation" | "amount" | "stage" | "competitor" | "generic";
+
+interface KindMeta {
+  icon: LucideIcon;
+  label: string;
+  variant: BadgeProps["variant"];
+  color: string;
+}
+
+const KIND_META: Record<ReasonKind, KindMeta> = {
+  stagnation: { icon: Clock, label: "Estagnação", variant: "warning", color: "text-warning" },
+  amount: { icon: DollarSign, label: "Ticket", variant: "qualified", color: "text-primary" },
+  stage: { icon: Layers, label: "Estágio", variant: "secondary", color: "text-secondary-foreground" },
+  competitor: { icon: Swords, label: "Concorrência", variant: "destructive", color: "text-destructive" },
+  generic: { icon: Info, label: "Sinal", variant: "outline", color: "text-muted-foreground" },
+};
+
+interface ClassifiedReason {
+  kind: ReasonKind;
+  contribValue: number | null;
+  contribMax: number | null;
+}
+
+function classifyReason(reason: string, b: RiskBreakdown): ClassifiedReason {
+  if (/dias sem atualização/i.test(reason)) {
+    return { kind: "stagnation", contribValue: b.stagnation, contribMax: 50 };
+  }
+  if (/^ticket alinhado/i.test(reason)) {
+    return { kind: "amount", contribValue: b.amount_alignment, contribMax: 25 };
+  }
+  if (/estágio .* travado/i.test(reason)) {
+    return { kind: "stage", contribValue: b.stage_match, contribMax: 25 };
+  }
+  if (/pressão competitiva/i.test(reason)) {
+    const len = b.matched_keywords?.length ?? 0;
+    return { kind: "competitor", contribValue: len, contribMax: Math.max(1, len) };
+  }
+  return { kind: "generic", contribValue: null, contribMax: null };
+}
+
+/**
+ * Wrap numeric tokens (e.g. "23", "18d", "45.000") in <mark> for visual emphasis.
+ * Skips already-rendered keyword pills (handled separately for "competitor" kind).
+ */
+function highlightNumbers(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const re = /(\d[\d.,]*d?)/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let i = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push(
+      <mark
+        key={`n-${i++}`}
+        className="bg-primary/10 text-primary px-0.5 rounded font-medium tabular-nums"
+      >
+        {m[0]}
+      </mark>,
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
+
+/**
+ * For competitor reasons, replace the parenthetical "(kw1, kw2)" with inline warning pills.
+ */
+function renderCompetitorReason(reason: string, keywords: string[]): React.ReactNode {
+  const parenIdx = reason.lastIndexOf("(");
+  const head = parenIdx > -1 ? reason.slice(0, parenIdx).trimEnd() : reason;
+  return (
+    <>
+      <span>{head}</span>
+      {keywords.length > 0 && (
+        <span className="ml-1 inline-flex flex-wrap gap-1 align-middle">
+          {keywords.map((kw) => (
+            <Badge key={kw} variant="warning" className="text-[10px] px-1.5 py-0">
+              {kw}
+            </Badge>
+          ))}
+        </span>
+      )}
+    </>
+  );
+}
+
 
 const fmtBRL = (n: number | null | undefined) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
