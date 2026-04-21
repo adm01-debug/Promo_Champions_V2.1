@@ -149,6 +149,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 90,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["60 dias"],
+      // OR: medium → "valor"/"ROI"/"semana"; high → "48h"; critical → "IMEDIATA"/"24h"
+      actionIncludes: ["valor", "48h", "IMEDIATA", "URGENTE", "semana"],
     },
   },
   {
@@ -170,6 +172,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 100,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["90 dias", "competitiva"],
+      // critical severity → "AÇÃO IMEDIATA…24h"
+      actionIncludes: ["IMEDIATA", "24h", "URGENTE"],
     },
   },
   {
