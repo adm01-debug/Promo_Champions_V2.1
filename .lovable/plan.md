@@ -1,41 +1,42 @@
 
 
-## Indicador inline de progresso por delivery durante replay
-
-### Estado atual
-- Replay individual: linha mostra `Loader2` no botão (via `pendingId === d.id`).
-- Replay em lote: enquanto roda, **nenhum** indicador inline aparece nas linhas selecionadas — só o botão "Reenviar selecionados" mostra spinner. Não dá para distinguir quais entregas estão no lote.
+## Modal de confirmação antes de reenviar
 
 ### O que será adicionado
+Um `AlertDialog` (já usado no projeto) que intercepta tanto o reenvio individual quanto o em lote. Mostra resumo da operação e exige confirmação explícita.
 
-1. **Novo state** em `WebhookDeliveriesDrawer`:
-   - `processingIds: Set<string>` — IDs do lote em execução.
-   - `lastResults: Map<string, "ok" | "skipped" | "fail">` — resultado transitório por ID (4s).
-2. **Marcar `processingIds`**:
-   - Individual: ao clicar `RotateCw`, `new Set([id])`.
-   - Lote: ao clicar "Reenviar selecionados", snapshot `new Set(selected)` antes de limpar a seleção.
-   - Limpa em `onSettled` de cada chamada `replay(...)`.
-3. **Capturar resultado por ID** via `onSuccess` (segundo arg de `replay(ids, { onSuccess, onSettled })`):
-   - Para cada `r` em `data.results`: `"skipped"` se `r.skipped`, senão `"ok"`/`"fail"` por `r.succeeded`.
-   - `setTimeout` 4s remove cada entrada; refs de timers limpos no unmount.
-4. **Componente local `<DeliveryReplayStatus />`** (~30 linhas no mesmo arquivo), renderizado dentro da `<li>` quando `processingIds.has(id) || lastResults.has(id)`:
-   - **Reenviando**: `Loader2` 3×3 + `"Reenviando…"` em `text-primary` + barra inferior `h-[2px]` com gradient animado (`animate-pulse`).
-   - **Sucesso**: `CheckCircle2` verde + `"Reenviado"`.
-   - **Falha**: `XCircle` destrutivo + `"Falhou"` (+ msg truncada se houver).
-   - **Skipped**: badge muted + `"Já entregue"`.
-5. **Destaque visual da linha** em processamento: `bg-primary/5` sutil.
-6. **A11y**: container do status com `aria-live="polite"`, `role="status"` no spinner.
+### Comportamento
 
-### Por que não mostrar progresso percentual real
-O endpoint `winloss-webhook-replay` responde tudo de uma vez (não é streaming). Qualquer "3/7" seria UX falsa. O indicador binário "em andamento → resultado" por linha é honesto e cobre o pedido.
+1. **Reenvio individual** (botão `RotateCw` por linha):
+   - Em vez de disparar `replay([id])`, abre o modal com:
+     - Título: `"Confirmar reenvio"`.
+     - Resumo: `"1 entrega será reenviada."` + chip mostrando o evento (ex: `quote.created`) e os primeiros 8 chars do ID.
+2. **Reenvio em lote** (`"Reenviar selecionados"`):
+   - Abre o modal com:
+     - Título: `"Confirmar reenvio em lote"`.
+     - Resumo: `"N entregas serão reenviadas."` (com `N` em destaque).
+     - Detalhe: agrupamento por evento — ex: `quote.created · 3`, `quote.updated · 2`. Renderiza como badges.
+     - Aviso suave em `text-muted-foreground`: `"Cada entrega criará uma nova tentativa no histórico."`.
+3. **Botões do modal**:
+   - **Cancelar** (`AlertDialogCancel`) — fecha sem ação.
+   - **Reenviar N** (`AlertDialogAction`, variante destrutiva neutra) — dispara `replay(...)` e mantém toda a lógica atual de `processingIds` / `lastResults` / inline progress / toast agregado.
+4. **A11y**: `AlertDialog` já é modal nativo, com foco gerenciado e `aria-describedby` automático.
 
 ### Mudanças
-- **Modificar**: `src/components/win-loss/WebhookDeliveriesDrawer.tsx` (~+60 linhas).
-- Sem mudança em `useWebhookDeliveries.ts` nem no edge function.
+
+**`src/components/win-loss/WebhookDeliveriesDrawer.tsx`** (~+50 linhas):
+- Importa `AlertDialog*` de `@/components/ui/alert-dialog`.
+- Novo state `confirm: { ids: string[] } | null` substitui a chamada direta a `replay`.
+- `handleReplay(id)` e `handleReplaySelected()` apenas setam `confirm = { ids: [...] }`.
+- Novo `handleConfirm()` executa a lógica que hoje vive nos handlers (popular `processingIds`, chamar `replay`, limpar seleção se for lote).
+- Render do `<AlertDialog open={!!confirm}>` no fim do componente, dentro do `<Drawer>` (após `</TooltipProvider>` e antes de `</DrawerContent>`).
+- Helper `summarizeByEvent(ids)` que mapeia IDs → contagem por `event` consultando `data`.
+
+**Sem mudanças** em `useWebhookDeliveries`, edge function ou demais arquivos.
 
 ### Verificação
-1. Selecionar 3 falhas → "Reenviar selecionados" → as 3 linhas mostram simultaneamente "Reenviando…" + barra animada.
-2. Resultado chega → cada uma mostra ✓ / ✗ / "Já entregue" por 4s, depois some.
-3. Reenvio individual: mesma UX em 1 linha.
-4. Cleanup: nenhum timer vazado ao fechar drawer.
+1. Clicar `RotateCw` em uma linha → modal abre com `"1 entrega"` e o evento → confirmar dispara o reenvio com toda UX inline existente.
+2. Selecionar 5 falhas → "Reenviar selecionados" → modal mostra `"5 entregas"` + breakdown por evento → confirmar dispara replay em lote.
+3. Cancelar não dispara `replay` nem afeta `processingIds`.
+4. Fechar drawer com modal aberto → ambos fecham; nenhuma chamada vazada.
 
