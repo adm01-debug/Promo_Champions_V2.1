@@ -13,11 +13,11 @@ const onAuthStateChangeMock = vi.fn(() => ({
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     auth: {
-      getUser: (...args: unknown[]) => getUserMock(...args),
-      onAuthStateChange: (...args: unknown[]) => onAuthStateChangeMock(...args),
+      getUser: () => getUserMock(),
+      onAuthStateChange: (cb: unknown) => onAuthStateChangeMock(cb),
     },
     from: (_table: string) => ({
-      upsert: (...args: unknown[]) => upsertMock(...args),
+      upsert: (rows: unknown, o?: unknown) => upsertMock(rows, o),
       select: () => ({
         eq: () => ({
           eq: () => ({
@@ -27,7 +27,7 @@ vi.mock("@/integrations/supabase/client", () => ({
       }),
       delete: () => ({
         eq: () => ({
-          eq: (...args: unknown[]) => deleteMock(...args),
+          eq: () => deleteMock(),
         }),
       }),
     }),
