@@ -8,6 +8,7 @@ import {
 import {
   SEVERITY_RULES,
   deriveSeverity,
+  explainSeverity,
   summarizeActionMatrix,
   type RiskSeverity,
 } from "@/lib/winloss/riskSeverity";
