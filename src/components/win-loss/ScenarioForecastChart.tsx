@@ -28,11 +28,17 @@ interface Props {
 }
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
+const SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
 
 function readBandMode(): BandMode {
   if (typeof window === "undefined") return "see";
   const v = window.localStorage.getItem(BAND_MODE_KEY);
   return v === "pi95" ? "pi95" : "see";
+}
+
+function readSeeOlsInflation(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(SEE_OLS_KEY) === "1";
 }
 
 interface TooltipPayloadItem {
