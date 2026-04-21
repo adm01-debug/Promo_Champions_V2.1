@@ -9,7 +9,10 @@ export {
   SEVERITY_RULES,
   deriveSeverity,
   summarizeActionMatrix,
+  explainSeverity,
   type SeverityRule,
   type ActionMatrixKind,
   type ActionMatrixSummary,
+  type SeverityDistance,
+  type SeverityExplanation,
 } from "./riskSeverity";
