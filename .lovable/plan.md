@@ -1,66 +1,105 @@
 
+## Documentação inline no `useWinLossScenarios`: por que SEE e como vira banda
 
-## Bandas via Prediction Interval por padrão + teste com exemplo manual
+### Objetivo
+Adicionar uma **seção de documentação no topo do arquivo** (bloco JSDoc grande) explicando o racional estatístico do uso do **Standard Error of the Estimate (SEE / σ residual)**, e **comentários inline** nos pontos-chave do cálculo. Sem mudar nenhum comportamento, sem renomear nada, sem novos exports.
 
-### Mudança de comportamento
-Atualmente o modo SEE usa por padrão a aproximação `width = σ · √(1 + step/n)`, que cresce muito devagar com o horizonte. O modo PI 95% já usa o intervalo de previsão OLS correto. **Vamos tornar PI o padrão também no SEE** (1σ ≈ 68% de confiança), mantendo a aproximação antiga apenas como flag de debug:
+### Mudança única: `src/hooks/win-loss/useWinLossScenarios.ts`
+
+**1. Cabeçalho do arquivo (antes dos imports)** — bloco `/** ... */` com a seção de documentação:
 
 ```
-SEE (default):   width = σ · √(1 + 1/n + (x − x̄)² / Sxx)        # 1σ PI
-PI 95%:          width = t · σ · √(1 + 1/n + (x − x̄)² / Sxx)    # inalterado
-SEE legacy:      width = σ · √(1 + step/n)                       # opt-in
+================================================================================
+WIN/LOSS SCENARIO FORECAST — Background estatístico
+================================================================================
+
+Por que Standard Error of the Estimate (SEE) dos resíduos?
+----------------------------------------------------------
+Ajustamos uma reta OLS  ŷ = β₀ + β₁·x  sobre a série histórica de winRate.
+O SEE  σ̂ = √(SSE / (n−2))  mede o "ruído típico" em torno dessa reta — ou
+seja, o quanto a realidade costuma se desviar do modelo nos próprios dados
+de treino. É a métrica natural para responder "quão errado eu costumo estar?"
+sem precisar assumir uma distribuição prévia: vem direto dos resíduos
+observados (y − ŷ).
+
+Escolhemos SEE em vez de:
+  - desvio-padrão simples de y → ignora a tendência (slope), superestima
+    incerteza quando há trend claro;
+  - bootstrap / IC empírico → custoso para n pequeno (séries curtas de
+    winRate por período), instável e sem forma fechada para auditoria;
+  - intervalos bayesianos → exigiria prior, fora do escopo de um forecast
+    leve client-side.
+
+Como SEE vira "banda histórica" (fan de cenários)?
+--------------------------------------------------
+Para cada step futuro x, o **valor central** (cenário realista) é a própria
+predição OLS  ŷ(x). A **largura da banda** é σ̂ multiplicado por um fator
+de inflação que cresce conforme x se afasta do centro x̄ dos dados:
+
+    width(x) = σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )       [PI 1σ, ~68%]
+    width(x) = t · σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )    [PI 95%, t-Student]
+
+  - O termo  1            → variância irredutível de uma observação futura.
+  - O termo  1/n          → incerteza no intercept (β₀).
+  - O termo  (x−x̄)²/Sxx  → incerteza no slope, que se amplifica longe do
+    centro do treino. É **isso** que faz a banda se abrir no horizonte.
+
+Cenários otimista/pessimista são  ŷ(x) ± width(x), depois clamp em [0, 100]
+porque winRate é percentual.
+
+Pontos históricos têm banda colapsada (otimista = realista = pessimista =
+winRate observado): só medimos incerteza onde estamos extrapolando.
+
+Modo legado  width = σ̂ · √(1 + step/n)  é mantido como opt-in
+(`seeUseOlsInflation: false`) para comparação visual; cresce muito devagar
+e ignora o efeito da distância ao centróide.
+
+Limitações conhecidas
+---------------------
+  - Assume ruído homocedástico e aproximadamente normal (válido para n ≥ ~6).
+  - n < 3 → bandas colapsam (sem regressão); o caller deve tratar como
+    "dados insuficientes".
+  - dof ≥ 30 → t convergência para 1.96 (fallback normal).
+================================================================================
 ```
 
-Resultado: as bandas abrem coerentemente com a distância do ponto previsto ao centro `x̄` dos dados de ajuste, em ambos os modos. A razão `pi95/see` passa a ser exatamente `t` em qualquer step.
+**2. Comentários inline curtos** ancorando a teoria ao código:
 
-### Arquivos editados
+- Acima de `T_TABLE_975` (linha 58): manter o comentário existente, adicionar 1 linha:
+  `// Usado apenas no modo PI 95%; para SEE 1σ o multiplicador é implicitamente 1.`
 
-**`src/hooks/win-loss/useWinLossScenarios.ts`**
-- Trocar default de `seeUseOlsInflation` de `false` → `true` (na sobrecarga do objeto e no atalho numérico legado).
-- Atualizar JSDoc da `ScenarioOptions` e do hook explicando que SEE agora usa PI 1σ; legado fica como opt-in (`seeUseOlsInflation: false`).
-- Atualizar `bandLabel` SEE default para `"SEE 1σ (PI)"` (o caso legacy continua `"SEE ±σ"`).
-- Lógica de cálculo do `width` permanece como está (já suporta os 3 caminhos).
+- Antes do bloco do cálculo OLS (linha 143, antes de `const meanX`): bloco curto:
+  ```
+  // ── OLS fit ────────────────────────────────────────────────────────────
+  // β₁ = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)²    β₀ = ȳ − β₁·x̄
+  ```
 
-**`src/components/win-loss/ScenarioForecastChart.tsx`**
-- `readSeeOlsInflation()` passa a retornar `true` quando a chave `winloss-scenario-see-ols-inflation` não existir no `localStorage` (default novo). Só retorna `false` se o usuário tiver desligado explicitamente (valor `"0"`).
-- Tooltip do toggle SEE no header atualizado: `"Banda 1σ via PI · √(1+1/n+(x−x̄)²/Sxx)"`.
+- Acima de `const residualStdDev` (linha 157):
+  ```
+  // SEE: σ̂ = √(SSE / dof). Mede o desvio típico dos resíduos do ajuste —
+  // base de toda a banda de incerteza (ver doc do topo do arquivo).
+  ```
 
-**`src/components/win-loss/ScenarioForecastAuditPanel.tsx`**
-- Texto do toggle renomeado para **"Usar aproximação legada √(1+step/n)"** (invertido), para deixar claro que desligar volta ao comportamento antigo. `checked={!seeUseOlsInflation}`, `onCheckedChange={(v) => onToggleSeeOlsInflation(!v)}`.
-- Linha "Modo de banda" exibe `"SEE 1σ (PI)"` ou `"SEE ±σ · √(1+step/n)"` conforme o estado.
+- Acima de `const olsFactor` (linha 168):
+  ```
+  // Fator de inflação do prediction interval OLS:
+  //   √(1 + 1/n + (x−x̄)²/Sxx)
+  // Cresce com a distância de x ao centro dos dados → banda abre no futuro.
+  ```
 
-### Testes (`src/test/hooks/useWinLossScenarios.test.ts`)
+- Dentro do `for` de forecast (linha 175, acima do `let width`):
+  ```
+  // width = (multiplicador) · σ̂ · (fator de inflação)
+  //   pi95 → t-Student;  see+OLS → 1;  see legado → √(1+step/n) sem (x−x̄).
+  ```
 
-Atualizar testes que assumiam SEE legacy:
-- `"forecast bands widen with horizon"` continua válido (PI também alarga, e mais fortemente).
-- `"legacy numeric arg ≡ { forecastSteps, bandMode: 'see' }"` — atualizar para incluir `seeUseOlsInflation: true` no comparador explícito.
-- `"pi95 produces wider bands than see for the same data"` — passa a valer com a razão exata `t`.
-
-Adicionar **2 novos testes**:
-
-1. **Exemplo manual reproduzível** — dados controlados para conferir o cálculo passo a passo:
-   ```ts
-   // y = [10, 14, 19, 22] em x = [0, 1, 2, 3]
-   // OLS: meanX=1.5, meanY=16.25, slope=4.1, intercept=10.1
-   //   ŷ = [10.1, 14.2, 18.3, 22.4]; resíduos = [-0.1, -0.2, 0.7, -0.4]
-   //   SSE = 0.01+0.04+0.49+0.16 = 0.70; dof=2; σ = √(0.35) ≈ 0.5916
-   //   Sxx = 1.5²+0.5²+0.5²+1.5² = 5
-   // Para step=1 → x=4:
-   //   factor = √(1 + 1/4 + (4−1.5)²/5) = √(1 + 0.25 + 1.25) = √2.5 ≈ 1.5811
-   //   width_see  = 0.5916 · 1.5811 ≈ 0.9354
-   //   width_pi95 = 4.303 · 0.9354  ≈ 4.0250
-   //   base_4 = 10.1 + 4.1·4 = 26.5
-   ```
-   Assertions com `toBeCloseTo(..., 3)` em `slope`, `intercept`, `stdDev`, `sxx`, `meanX`, `realistic[+1]`, `optimistic[+1] − pessimistic[+1]` (= `2 · width`) para SEE e PI 95%.
-
-2. **Razão pi95/see ≡ tCritical em qualquer step** — varrendo `step ∈ {1..6}`, `width_pi95(step) / width_see(step)` deve ser ≈ `tCritical(dof)` com tolerância 1e-9 (prova analítica da nova fórmula).
+- Acima do `historical: ScenarioPoint[]` (linha 160):
+  ```
+  // Pontos históricos: banda colapsada — só extrapolamos incerteza no futuro.
+  ```
 
 ### Critério de aceite
-1. SEE-default abre bandas com a curvatura PI (mais largo no step 6 que no step 1, e mais largo que a fórmula `√(1+step/n)` para o mesmo dataset).
-2. PI 95% inalterado em valores e shape.
-3. Toggle do painel de auditoria continua funcionando — agora controla ligar/desligar a aproximação legada.
-4. Persistência via `localStorage`: usuários novos veem PI; quem tinha `"0"` salvo mantém legacy até regravar.
-5. Exemplo manual bate com tolerância 3 casas decimais; razão `pi95/see` = `t` exata.
-6. Suíte completa de `useWinLossScenarios.test.ts` verde (13 antigos + 2 novos = 15).
-7. Sem regressão em `ScenarioForecastChart`, `ScenarioForecastAuditPanel`, hooks AtRisk, edge functions ou suítes Deno.
-
+1. `useWinLossScenarios.ts` ganha o bloco JSDoc de documentação no topo (~50 linhas) + 6 comentários inline curtos.
+2. Zero mudança de runtime: nenhum identificador renomeado, nenhuma assinatura alterada, nenhuma constante movida.
+3. Suítes existentes (`useWinLossScenarios.test.ts`, etc.) continuam verdes sem ajuste.
+4. Lint/Prettier passam (comentários `//` e `/** */` padrão do projeto, sem caracteres de largura > 100 em runs de código).
