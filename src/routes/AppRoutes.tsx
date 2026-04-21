@@ -228,6 +228,7 @@ export function AppRoutes() {
                     <Route path="/feature-flags" element={<Admin><FeatureFlagsAdmin /></Admin>} />
                     <Route path="/seguranca" element={<Admin><SecurityDashboard /></Admin>} />
                     <Route path="/admin/tarefas" element={<Admin><AdminTasksPage /></Admin>} />
+                    <Route path="/admin/webhooks-dead-letters" element={<Admin><WebhooksDeadLettersAdmin /></Admin>} />
 
                     {/* ─── System ────────────────────────────────── */}
                     <Route path="/acesso-negado" element={<AccessDenied />} />
