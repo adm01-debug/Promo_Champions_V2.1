@@ -41,6 +41,34 @@ export interface RiskBreakdown {
   matched_pattern_type: string;
   matched_confidence: number;
   reasons: string[];
+  // Debug fields (optional for backward compatibility on the client).
+  matched_keywords?: string[];
+  days_stagnant?: number;
+  avg_loss_cycle_days?: number | null;
+  avg_loss_amount?: number | null;
+  raw_score?: number;
+  confidence_weight?: number;
+  final_score?: number;
+  stage_eligible?: boolean;
+}
+
+export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
+
+export function extractCompetitorKeywords(source: string | null | undefined): string[] {
+  if (!source) return [];
+  const matches = source.match(COMPETITOR_KEYWORDS_RE);
+  if (!matches) return [];
+  // Dedupe (case-insensitive) preserving order.
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const m of matches) {
+    const k = m.toLowerCase();
+    if (!seen.has(k)) {
+      seen.add(k);
+      out.push(m);
+    }
+  }
+  return out;
 }
 
 export interface RiskResult {
