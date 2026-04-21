@@ -24,6 +24,7 @@ import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossS
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
+import { buildScenarioChartKey } from "@/lib/winloss/scenarioChartKey";
 
 type ForecastHorizon = 3 | 6 | 12;
 
