@@ -76,25 +76,27 @@ export function AtRiskDealsFromPatterns() {
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden />
             Deals em risco — padrões de loss
-            <AtRiskSettingsPopover
-              settings={settings}
-              onUpdate={update}
-              onReset={reset}
-              onClearFilters={clearFilters}
-              totalAnalyzed={data.length}
-              totalShown={visible.length}
-              availableStages={availableStages}
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              className="ml-auto h-7 px-2"
-              onClick={() => refresh()}
-              disabled={isRefreshing}
-              aria-label="Atualizar análise de risco"
-            >
-              <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
-            </Button>
+            <div className="ml-auto flex items-center gap-1">
+              <AtRiskSettingsPopover
+                settings={settings}
+                onUpdate={update}
+                onReset={reset}
+                onClearFilters={clearFilters}
+                totalAnalyzed={data.length}
+                totalShown={visible.length}
+                availableStages={availableStages}
+              />
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 px-2"
+                onClick={() => refresh()}
+                disabled={isRefreshing}
+                aria-label="Atualizar análise de risco"
+              >
+                <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
