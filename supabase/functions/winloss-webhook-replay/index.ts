@@ -1,5 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+/** Normalize unknown errors for structured logs. Mirrors dispatcher/retry.ts. */
+function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
+  if (e instanceof Error) {
+    return {
+      error_name: e.name || "Error",
+      error: e.message || String(e),
+      error_stack: e.stack ? e.stack.slice(0, 4000) : null,
+    };
+  }
+  return { error_name: "UnknownError", error: String(e), error_stack: null };
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,17 +26,98 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   else console.log(line);
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+// --- Zod schema (accepts dead_letter_ids OR delivery_ids; also singular forms) ---
+const idArray = z.array(z.string().uuid()).min(1).max(50);
+
+const RawBodySchema = z.object({
+  dead_letter_ids: z.array(z.string()).optional(),
+  dead_letter_id: z.string().optional(),
+  delivery_ids: z.array(z.string()).optional(),
+  delivery_id: z.string().optional(),
+});
+
+const BodySchema = z.preprocess((raw) => {
+  const parsed = RawBodySchema.safeParse(raw ?? {});
+  if (!parsed.success) return raw;
+  const v = parsed.data;
+  const dlq = v.dead_letter_ids ?? (v.dead_letter_id ? [v.dead_letter_id] : undefined);
+  const del = v.delivery_ids ?? (v.delivery_id ? [v.delivery_id] : undefined);
+  return { dead_letter_ids: dlq, delivery_ids: del };
+}, z.union([
+  z.object({ dead_letter_ids: idArray, delivery_ids: z.undefined() }),
+  z.object({ dead_letter_ids: z.undefined(), delivery_ids: idArray }),
+]));
 
 interface SourceRow {
   id: string;
   subscription_id: string;
   event: string;
   payload: Record<string, unknown>;
-  // for DLQ rows only
+  replay_count: number;
   dlq?: boolean;
-  // for delivery rows only
   succeeded?: boolean;
+}
+
+type StatusLabel = "succeeded" | "failed" | "skipped";
+
+interface ReplayResult {
+  id: string;
+  succeeded: boolean;
+  status: number;
+  status_label: StatusLabel;
+  error: string | null;
+  attempts?: number;
+  skipped?: boolean;
+}
+
+async function assertAdmin(
+  supabase: SupabaseClient,
+  userId: string,
+  requestId: string,
+): Promise<Response | null> {
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (error) {
+    jlog("error", { msg: "auth_role_lookup_failed", requestId, userId, ...describeError(error) });
+    return jsonResponse({ error: "Forbidden", requestId }, 403);
+  }
+  if (!data) {
+    jlog("warn", { msg: "auth_forbidden", requestId, userId });
+    return jsonResponse({ error: "Forbidden", requestId }, 403);
+  }
+  return null;
+}
+
+async function persistDlqOutcome(
+  supabase: SupabaseClient,
+  row: SourceRow,
+  result: { succeeded: boolean; status: number; error: string | null },
+): Promise<void> {
+  const update: Record<string, unknown> = {
+    status: result.succeeded ? "replayed" : "pending",
+    replay_count: row.replay_count + 1,
+    last_replay_at: new Date().toISOString(),
+    last_replay_status: result.status,
+    last_replay_error: result.succeeded ? null : result.error,
+  };
+  const { error } = await supabase
+    .from("winloss_webhook_dead_letters")
+    .update(update)
+    .eq("id", row.id);
+  if (error) {
+    jlog("error", { msg: "dlq_outcome_persist_failed", id: row.id, ...describeError(error) });
+  }
 }
 
 serve(async (req) => {
@@ -31,9 +125,10 @@ serve(async (req) => {
   const requestId = crypto.randomUUID();
 
   try {
+    // --- Auth ---
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return jsonResponse({ error: "Unauthorized", requestId }, 401);
     }
     const token = authHeader.replace("Bearer ", "");
 
@@ -44,7 +139,8 @@ serve(async (req) => {
     );
     const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
     if (claimsErr || !claimsData?.claims?.sub) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      jlog("warn", { msg: "auth_invalid_token", requestId, ...(claimsErr ? describeError(claimsErr) : {}) });
+      return jsonResponse({ error: "Unauthorized", requestId }, 401);
     }
     const userId = claimsData.claims.sub as string;
 
@@ -53,44 +149,33 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // role check
-    const { data: roleRow } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (!roleRow) {
-      jlog("warn", { msg: "forbidden", requestId, userId });
-      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    // --- Admin check ---
+    const denied = await assertAdmin(supabase, userId, requestId);
+    if (denied) return denied;
+
+    // --- Zod input validation ---
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      jlog("warn", { msg: "invalid_input", requestId, details: parsed.error.flatten() });
+      return jsonResponse({
+        error: "invalid_input",
+        message: "Provide exactly one of dead_letter_ids or delivery_ids (1–50 valid UUIDs).",
+        details: parsed.error.flatten(),
+        requestId,
+      }, 400);
     }
 
-    const body = await req.json().catch(() => ({}));
-    const dlqRaw: unknown = body?.dead_letter_ids ?? (body?.dead_letter_id ? [body.dead_letter_id] : null);
-    const delRaw: unknown = body?.delivery_ids ?? (body?.delivery_id ? [body.delivery_id] : null);
+    const source: "dlq" | "delivery" = parsed.data.dead_letter_ids ? "dlq" : "delivery";
+    const ids: string[] = (parsed.data.dead_letter_ids ?? parsed.data.delivery_ids) as string[];
 
-    if ((dlqRaw && delRaw) || (!dlqRaw && !delRaw)) {
-      return new Response(JSON.stringify({ error: "Provide exactly one of dead_letter_ids or delivery_ids" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const source: "dlq" | "delivery" = dlqRaw ? "dlq" : "delivery";
-    const rawList = (dlqRaw ?? delRaw) as unknown;
-    const ids: string[] = Array.isArray(rawList)
-      ? rawList.filter((x): x is string => typeof x === "string" && UUID_RE.test(x))
-      : [];
-    if (!ids.length || ids.length > 50) {
-      return new Response(JSON.stringify({ error: `${source === "dlq" ? "dead_letter_ids" : "delivery_ids"} must be 1–50 valid uuids` }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
+    // --- Load source rows ---
     let rows: SourceRow[] = [];
+
     if (source === "dlq") {
       const { data, error } = await supabase
         .from("winloss_webhook_dead_letters")
-        .select("id, subscription_id, event, payload, status")
+        .select("id, subscription_id, event, payload, replay_count")
         .in("id", ids);
       if (error) throw error;
       rows = (data ?? []).map((r) => ({
@@ -98,14 +183,18 @@ serve(async (req) => {
         subscription_id: r.subscription_id as string,
         event: r.event as string,
         payload: (r.payload ?? {}) as Record<string, unknown>,
+        replay_count: (r.replay_count ?? 0) as number,
         dlq: true,
       }));
 
-      // mark replaying
-      await supabase
-        .from("winloss_webhook_dead_letters")
-        .update({ status: "replaying" })
-        .in("id", rows.map((r) => r.id));
+      // Mark replaying (best-effort)
+      if (rows.length) {
+        const { error: markErr } = await supabase
+          .from("winloss_webhook_dead_letters")
+          .update({ status: "replaying" })
+          .in("id", rows.map((r) => r.id));
+        if (markErr) jlog("warn", { msg: "dlq_mark_replaying_failed", requestId, ...describeError(markErr) });
+      }
     } else {
       const { data, error } = await supabase
         .from("winloss_webhook_deliveries")
@@ -118,17 +207,26 @@ serve(async (req) => {
         event: r.event as string,
         payload: (r.payload ?? {}) as Record<string, unknown>,
         succeeded: r.succeeded as boolean,
+        replay_count: 0,
       }));
     }
 
     jlog("info", { msg: "replay_start", requestId, source, count: rows.length, ids });
 
-    const results: Array<{ id: string; succeeded: boolean; status: number; error: string | null; skipped?: boolean }> = [];
+    const results: ReplayResult[] = [];
 
+    // --- Process each id ---
     for (const row of rows) {
-      // Skip already-succeeded deliveries
+      // Skip already-succeeded deliveries (no-op for DLQ source)
       if (source === "delivery" && row.succeeded) {
-        results.push({ id: row.id, succeeded: false, status: 0, error: "already_succeeded", skipped: true });
+        results.push({
+          id: row.id,
+          succeeded: false,
+          status: 0,
+          status_label: "skipped",
+          error: "already_succeeded",
+          skipped: true,
+        });
         continue;
       }
 
@@ -144,30 +242,69 @@ serve(async (req) => {
           body: dispatchBody,
         });
         if (error) throw error;
-        const r = (data?.results?.[0] ?? {}) as { succeeded?: boolean; status?: number; error?: string | null };
-        results.push({ id: row.id, succeeded: !!r.succeeded, status: r.status ?? 0, error: r.error ?? null });
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
+
+        const r = (data?.results?.[0] ?? {}) as {
+          succeeded?: boolean;
+          status?: number;
+          error?: string | null;
+          attempts?: number;
+        };
+        const succeeded = !!r.succeeded;
+        const outcome: ReplayResult = {
+          id: row.id,
+          succeeded,
+          status: r.status ?? 0,
+          status_label: succeeded ? "succeeded" : "failed",
+          error: r.error ?? null,
+          attempts: typeof r.attempts === "number" ? r.attempts : undefined,
+        };
+        results.push(outcome);
+
         if (source === "dlq") {
-          // restore so user can try again
-          await supabase
-            .from("winloss_webhook_dead_letters")
-            .update({ status: "pending", last_replay_at: new Date().toISOString(), last_replay_error: msg })
-            .eq("id", row.id);
+          await persistDlqOutcome(supabase, row, {
+            succeeded,
+            status: outcome.status,
+            error: outcome.error,
+          });
         }
-        results.push({ id: row.id, succeeded: false, status: 0, error: msg });
+      } catch (e) {
+        const d = describeError(e);
+        const errMsg = `${d.error_name}: ${d.error}`;
+        jlog("error", { msg: "replay_item_failed", requestId, id: row.id, source, ...d });
+
+        if (source === "dlq") {
+          await persistDlqOutcome(supabase, row, {
+            succeeded: false,
+            status: 0,
+            error: errMsg,
+          });
+        }
+
+        results.push({
+          id: row.id,
+          succeeded: false,
+          status: 0,
+          status_label: "failed",
+          error: errMsg,
+        });
       }
     }
 
-    jlog("info", { msg: "replay_complete", requestId, source, results });
+    const summary = {
+      total: results.length,
+      succeeded: results.filter((r) => r.status_label === "succeeded").length,
+      failed: results.filter((r) => r.status_label === "failed").length,
+      skipped: results.filter((r) => r.status_label === "skipped").length,
+    };
 
-    return new Response(JSON.stringify({ requestId, source, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    jlog("info", { msg: "replay_complete", requestId, source, summary });
+
+    return jsonResponse({ requestId, source, summary, results });
   } catch (e) {
-    jlog("error", { msg: "replay_fatal", requestId, error: e instanceof Error ? e.message : String(e) });
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown", requestId }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    jlog("error", { msg: "replay_fatal", requestId, ...describeError(e) });
+    return jsonResponse({
+      error: e instanceof Error ? e.message : "unknown",
+      requestId,
+    }, 500);
   }
 });
