@@ -12,6 +12,9 @@ describe("useAtRiskSettings", () => {
   it("returns defaults when storage is empty", () => {
     const { result } = renderHook(() => useAtRiskSettings());
     expect(result.current.settings).toEqual(AT_RISK_DEFAULTS);
+    expect(result.current.settings.debug).toBe(false);
+    expect(result.current.settings.stageFilter).toEqual([]);
+    expect(result.current.settings.keywordFilter).toBe("");
   });
 
   it("merges partial updates and persists to localStorage", () => {
@@ -21,30 +24,71 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.limit).toBe(AT_RISK_DEFAULTS.limit);
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
     expect(raw.settings.threshold).toBe(70);
-    expect(raw.version).toBe(1);
+    expect(raw.version).toBe(2);
   });
 
-  it("clamps out-of-range values", () => {
-    expect(sanitize({ threshold: 150, limit: 999, maxVisible: 50 })).toEqual({
+  it("persists debug + filter fields", () => {
+    const { result } = renderHook(() => useAtRiskSettings());
+    act(() =>
+      result.current.update({
+        debug: true,
+        stageFilter: ["Negociação", "Proposta"],
+        keywordFilter: "preço",
+      }),
+    );
+    expect(result.current.settings.debug).toBe(true);
+    expect(result.current.settings.stageFilter).toEqual(["Negociação", "Proposta"]);
+    expect(result.current.settings.keywordFilter).toBe("preço");
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+    expect(raw.settings.stageFilter).toEqual(["Negociação", "Proposta"]);
+  });
+
+  it("clamps out-of-range values and sanitizes new fields", () => {
+    expect(sanitize({ threshold: 150, limit: 999, maxVisible: 50 })).toMatchObject({
       threshold: 100,
       limit: 50,
       maxVisible: 20,
     });
-    expect(sanitize({ threshold: -10, limit: 0, maxVisible: 0 })).toEqual({
+    expect(sanitize({ threshold: -10, limit: 0, maxVisible: 0 })).toMatchObject({
       threshold: 0,
       limit: 5,
       maxVisible: 3,
     });
+    // dedup + drop non-strings + trim
+    expect(
+      sanitize({ stageFilter: ["A", "A", " B ", "", 42 as unknown as string] }).stageFilter,
+    ).toEqual(["A", "B"]);
+    // keyword trimmed and capped
+    const long = "x".repeat(500);
+    expect(sanitize({ keywordFilter: "  hello  " }).keywordFilter).toBe("hello");
+    expect(sanitize({ keywordFilter: long }).keywordFilter.length).toBe(100);
+    // invalid types
+    expect(sanitize({ stageFilter: "nope" as unknown as string[] }).stageFilter).toEqual([]);
+    expect(sanitize({ keywordFilter: 123 as unknown as string }).keywordFilter).toBe("");
   });
 
   it("reset restores defaults", () => {
     const { result } = renderHook(() => useAtRiskSettings());
-    act(() => result.current.update({ threshold: 80 }));
+    act(() => result.current.update({ threshold: 80, debug: true, keywordFilter: "x" }));
     act(() => result.current.reset());
     expect(result.current.settings).toEqual(AT_RISK_DEFAULTS);
-    const raw = localStorage.getItem(STORAGE_KEY);
-    expect(raw === null || JSON.parse(raw).settings).toBeTruthy();
-    if (raw) expect(JSON.parse(raw).settings).toEqual(AT_RISK_DEFAULTS);
+  });
+
+  it("clearFilters preserves threshold/limit/debug but resets stage+keyword", () => {
+    const { result } = renderHook(() => useAtRiskSettings());
+    act(() =>
+      result.current.update({
+        threshold: 75,
+        debug: true,
+        stageFilter: ["Negociação"],
+        keywordFilter: "preço",
+      }),
+    );
+    act(() => result.current.clearFilters());
+    expect(result.current.settings.threshold).toBe(75);
+    expect(result.current.settings.debug).toBe(true);
+    expect(result.current.settings.stageFilter).toEqual([]);
+    expect(result.current.settings.keywordFilter).toBe("");
   });
 
   it("falls back to defaults on invalid JSON", () => {
@@ -60,5 +104,19 @@ describe("useAtRiskSettings", () => {
     );
     const { result } = renderHook(() => useAtRiskSettings());
     expect(result.current.settings).toEqual(AT_RISK_DEFAULTS);
+  });
+
+  it("migrates v1 payload preserving numeric fields and filling new defaults", () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ version: 1, settings: { threshold: 65, limit: 25, maxVisible: 12 } }),
+    );
+    const { result } = renderHook(() => useAtRiskSettings());
+    expect(result.current.settings.threshold).toBe(65);
+    expect(result.current.settings.limit).toBe(25);
+    expect(result.current.settings.maxVisible).toBe(12);
+    expect(result.current.settings.debug).toBe(false);
+    expect(result.current.settings.stageFilter).toEqual([]);
+    expect(result.current.settings.keywordFilter).toBe("");
   });
 });
