@@ -265,7 +265,11 @@ export function AtRiskDealsFromPatterns() {
                     <span className="text-[11px] tabular-nums font-medium shrink-0">{fmtBRL(d.amount)}</span>
                   </div>
                   {debug && d.breakdown && (
-                    <RiskDebugPanel breakdown={d.breakdown} riskScore={d.risk_score} />
+                    <RiskDebugPanel
+                      breakdown={d.breakdown}
+                      riskScore={d.risk_score}
+                      suggestedAction={d.suggested_action}
+                    />
                   )}
                 </li>
               ))}
