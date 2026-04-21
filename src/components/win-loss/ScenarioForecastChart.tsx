@@ -279,6 +279,18 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
+      <ScenarioForecastAuditPanel
+        slope={slope}
+        intercept={intercept}
+        stdDev={stdDev}
+        sse={sse}
+        dof={dof}
+        fitN={fitN}
+        meanX={meanX}
+        sxx={sxx}
+        bandMode={bandMode}
+        tCritical={tCritical}
+      />
     </Card>
   );
 });
