@@ -215,6 +215,83 @@ export function RiskDebugPanel({ breakdown, riskScore, suggestedAction, outcome 
         </ol>
       </div>
 
+      {/* Severidade — qual regra acionou e qual matriz produziu a action */}
+      <div className="space-y-1.5">
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Severidade</p>
+          <p className="text-[10px] text-muted-foreground/80">
+            primeira regra que casa com (final, conf) define o nível
+          </p>
+        </div>
+        <ul className="space-y-1 font-mono text-[11px] tabular-nums">
+          {SEVERITY_RULES.map((rule) => {
+            const isMatch = rule.severity === derived;
+            const Icon = isMatch ? CheckCircle2 : XCircle;
+            return (
+              <li
+                key={rule.severity}
+                data-severity-rule={rule.severity}
+                data-severity-active={isMatch ? "true" : "false"}
+                aria-current={isMatch ? "true" : undefined}
+                className={`flex items-center justify-between gap-2 rounded px-2 py-1 ${
+                  isMatch
+                    ? "bg-primary/10 border border-primary/30 text-foreground"
+                    : "bg-muted/30 text-muted-foreground/70"
+                }`}
+              >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Icon
+                    className={`h-3 w-3 shrink-0 ${isMatch ? "text-primary" : "text-muted-foreground/50"}`}
+                    aria-hidden
+                  />
+                  <span className="uppercase font-semibold">{rule.severity}</span>
+                  <span className="text-muted-foreground">·</span>
+                  <span className="truncate">{rule.expression}</span>
+                </div>
+                {isMatch && (
+                  <span className="text-muted-foreground shrink-0">
+                    final={final} conf={conf.toFixed(2)}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Matriz de ação acionada */}
+        <div
+          className="rounded border border-primary/30 bg-primary/5 px-2 py-1.5 space-y-1"
+          data-action-matrix-kind={matrix.kind}
+          aria-label={`Matriz de ação: ${matrix.label}`}
+        >
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              Matriz de ação
+            </span>
+            <Badge
+              variant={
+                matrix.kind === "win-override" ? "success" :
+                matrix.kind === "default-fallback" ? "outline" : "secondary"
+              }
+              className="text-[10px] px-1.5 py-0"
+            >
+              {matrix.kind === "win-override"
+                ? "override"
+                : matrix.kind === "default-fallback"
+                ? "fallback"
+                : "matriz"}
+            </Badge>
+            <code className="text-[11px] font-mono">{matrix.label}</code>
+          </div>
+          {suggestedAction && (
+            <p className="text-xs text-foreground leading-snug">
+              <span className="text-muted-foreground">→ </span>
+              {suggestedAction}
+            </p>
+          )}
+        </div>
+      </div>
+
       {/* Padrão casado */}
       <div className="space-y-1">
         <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Padrão dominante</p>
