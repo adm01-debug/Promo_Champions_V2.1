@@ -18,7 +18,7 @@ export function useAtRiskFromPatterns() {
   const query = useQuery({
     queryKey: ["winloss-at-risk-from-patterns"],
     queryFn: async (): Promise<AtRiskDealFromPattern[]> => {
-      const { data, error } = await supabase.functions.invoke("detect-at-risk-deals", { body: {} });
+      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", { body: {} });
       if (error) throw error;
       return ((data as { deals?: AtRiskDealFromPattern[] })?.deals ?? []) as AtRiskDealFromPattern[];
     },
@@ -27,7 +27,7 @@ export function useAtRiskFromPatterns() {
 
   const refresh = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("detect-at-risk-deals", { body: { force: true } });
+      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", { body: { force: true } });
       if (error) throw error;
       return data;
     },
