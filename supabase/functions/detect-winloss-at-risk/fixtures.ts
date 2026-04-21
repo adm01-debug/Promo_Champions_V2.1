@@ -76,8 +76,12 @@ export interface ScenarioExpect {
   patternTypeOneOf?: string[];
   /** Each substring must appear in at least one of `result.reasons` (case-insensitive). */
   reasonsInclude?: string[];
-  /** Substring that must appear in `result.suggested_action` (case-insensitive). */
-  actionIncludes?: string;
+  /**
+   * Substring(s) that must appear in `result.suggested_action` (case-insensitive).
+   * - `string`: substring must appear.
+   * - `string[]`: OR semantics — at least one substring must appear.
+   */
+  actionIncludes?: string | string[];
 }
 
 export interface Scenario {
@@ -122,6 +126,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 90,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["21 dias", "Ticket alinhado"],
+      // medium severity loss_factor → "Reforçar valor percebido…ROI nesta semana"
+      actionIncludes: ["valor", "ROI"],
     },
   },
   {
@@ -143,6 +149,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 90,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["60 dias"],
+      // OR: medium → "valor"/"ROI"/"semana"; high → "48h"; critical → "IMEDIATA"/"24h"
+      actionIncludes: ["valor", "48h", "IMEDIATA", "URGENTE", "semana"],
     },
   },
   {
@@ -164,6 +172,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 100,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["90 dias", "competitiva"],
+      // critical severity → "AÇÃO IMEDIATA…24h"
+      actionIncludes: ["IMEDIATA", "24h", "URGENTE"],
     },
   },
   {
@@ -204,6 +214,8 @@ export const SCENARIOS: Scenario[] = [
       // 45d satura stagnation (50) → ultrapassa stage_match (20), então loss_factor pode dominar.
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["45 dias"],
+      // medium severity → "valor"/"ROI"/"semana"
+      actionIncludes: ["valor", "ROI", "semana"],
     },
   },
   {
@@ -225,6 +237,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 65,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["Ticket alinhado"],
+      // low severity → "Revisar abordagem…próximas semanas"
+      actionIncludes: ["Revisar", "abordagem", "semanas"],
     },
   },
   {
@@ -262,6 +276,8 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 100,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["120 dias"],
+      // critical severity → "AÇÃO IMEDIATA…24h"
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h"],
     },
   },
   {
@@ -283,6 +299,31 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 90,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["30 dias", "competitiva"],
+      // high severity (score ~65) → "…48h…valor percebido…"
+      actionIncludes: ["48h", "valor", "IMEDIATA"],
+    },
+  },
+  {
+    name: "critical_severity_imperative_action",
+    story: "Negotiation há 180d, ticket alinhado, estágio travado — força severity=critical.",
+    deal: {
+      id: "s11",
+      client_name: "Critical Whale",
+      amount: 28500,
+      status: "negotiation",
+      category: "enterprise",
+      source: "outbound",
+      updated_at: daysAgo(180),
+      created_at: daysAgo(300),
+    },
+    expect: {
+      included: true,
+      minScore: 80,
+      maxScore: 100,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      reasonsInclude: ["180 dias"],
+      // Tom imperativo obrigatório quando severity=critical, independente da branch
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
     },
   },
 ];
