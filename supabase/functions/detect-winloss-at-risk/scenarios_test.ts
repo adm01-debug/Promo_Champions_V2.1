@@ -6,7 +6,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeAtRiskDeals, computeDealRisk } from "./scoring.ts";
 import { LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS } from "./fixtures.ts";
-import { actionNeedles as _actionNeedles, includesCI } from "./_testHelpers.ts";
+import { includesCI } from "./_testHelpers.ts";
 
 for (const scenario of SCENARIOS) {
   Deno.test(`scenario: ${scenario.name} — ${scenario.story}`, () => {
