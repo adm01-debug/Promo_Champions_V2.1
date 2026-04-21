@@ -30,7 +30,20 @@ export function AtRiskDealsFromPatterns() {
     limit: settings.limit,
   });
   const [debug, setDebug] = useState(false);
+  const [showCatalog, setShowCatalog] = useState(false);
   const visible = data.slice(0, settings.maxVisible);
+
+  /** Set of dominant-pattern labels matched by at least one current deal. */
+  const matchedFamilyLabels = useMemo(() => {
+    const set = new Set<string>();
+    for (const d of data) {
+      const haystack = (d.matched_pattern ?? "").toLowerCase();
+      for (const entry of DOMINANT_PATTERNS_LIST) {
+        if (haystack.includes(entry.label.toLowerCase())) set.add(entry.label);
+      }
+    }
+    return set;
+  }, [data]);
 
   return (
     <TooltipProvider delayDuration={150}>
