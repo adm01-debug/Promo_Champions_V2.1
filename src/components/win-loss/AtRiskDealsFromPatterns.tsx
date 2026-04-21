@@ -324,6 +324,12 @@ export function AtRiskDealsFromPatterns() {
           </Collapsible>
         </CardContent>
       </Card>
+      <RiskCompareModal
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        dealA={data.find((x) => x.sale_id === compareIds[0]) ?? null}
+        dealB={data.find((x) => x.sale_id === compareIds[1]) ?? null}
+      />
     </TooltipProvider>
   );
 }
