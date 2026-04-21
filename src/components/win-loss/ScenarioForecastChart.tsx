@@ -42,9 +42,10 @@ interface CustomTooltipProps {
   active?: boolean;
   payload?: TooltipPayloadItem[];
   label?: string;
+  mode?: BandMode;
 }
 
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   const isForecast = payload[0]?.payload?.isForecast;
   return (
@@ -68,6 +69,11 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
             {p.name}: {p.value.toFixed(1)}%
           </p>
         ))}
+      {isForecast && mode && (
+        <p className="mt-1 pt-1 border-t border-border/50 text-[10px] text-muted-foreground">
+          Modo: {mode === "pi95" ? "PI 95%" : "SEE ±σ"}
+        </p>
+      )}
     </div>
   );
 }
