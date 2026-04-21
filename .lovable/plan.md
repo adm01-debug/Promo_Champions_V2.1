@@ -1,92 +1,141 @@
 
 
-## Win/Loss Intelligence — Fase 6: Polimento final, performance e a11y AAA (10 melhorias)
+## Win/Loss Intelligence — Fase 7: Inteligência preditiva avançada e personalização (10 melhorias)
 
-Módulo completo em features. Esta fase eleva qualidade técnica e percepção sensorial ao máximo: performance, acessibilidade AAA, mobile-first, observabilidade e testes.
+Módulo já em 10/10 técnico (performance, a11y AAA, mobile, E2E, colaboração). Esta fase adiciona **personalização por usuário, IA preditiva profunda e integração com o ecossistema CRM**.
 
 ---
 
-### #1 — Virtualização do `WinLossDealsDrawer`
-Listas de 100+ deals lagam. Trocar `map` por `react-window` (`FixedSizeList`) com altura dinâmica para itens expandidos. Mantém scroll suave em qualquer volume.
+### #1 — Dashboard personalizado por usuário
+Cada usuário escolhe quais widgets vê e em qual ordem (drag-and-drop). Persistência em `user_winloss_preferences` (jsonb `layout`). Botão "Personalizar" abre modo de edição com `dnd-kit`.
 
-### #2 — Lazy load do módulo inteiro
-`WinLossIntelligence.tsx` é grande (~25 componentes). Garantir `React.lazy` + `Suspense` com skeleton dedicado em `AppRoutes.tsx`. Reduz bundle inicial em ~80kb.
+### #2 — Forecast IA com cenários (otimista/realista/pessimista)
+Hook `useWinLossScenarios.ts` projeta 3 curvas baseadas em desvio padrão histórico. Chart com bandas sombreadas (Recharts `Area` com gradiente). Toggle entre cenários.
 
-### #3 — Memoização agressiva dos charts
-`WinLossTrendChart`, `CycleTimeHistogram`, `LossReasonFlow`, `WinLossCohortHeatmap`, `WinByHourHeatmap` recebem `React.memo` + `useMemo` profundo nos datasets derivados. Evita re-render em cada filtro.
+### #3 — Detecção automática de "deal em risco" cruzando padrões
+Edge `detect-at-risk-deals` cruza deals abertos com padrões de loss (`win_loss_patterns`). Score 0-100 por similaridade. Painel `AtRiskDealsFromPatterns.tsx` lista os 10 mais críticos com razão e ação sugerida.
 
-### #4 — Debounce nos filtros
-`useWinLossFilters` aplica debounce de 250ms nas mudanças de input/select para evitar re-fetch em cada keystroke. UX mantém feedback instantâneo via estado local.
+### #4 — Correlação ICP × Win Rate
+Novo `ICPCorrelationMatrix.tsx`: matriz de atributos do ICP (segmento, tamanho, ramo) × win rate. Identifica perfil ideal real vs. perfil declarado. Heatmap interativo.
 
-### #5 — A11y AAA: navegação por teclado completa
-- Todos os heatmaps (cohort, win-by-hour) ganham `role="grid"` + setas para navegar células.
-- Drawer e modais com `focus-trap` e `Escape` consistente.
-- Skip-link "Pular para insights" no topo da página.
-- Contrast check: ajustar tons amber/rose se < 4.5:1.
+### #5 — Análise de sentimento agregada por trimestre
+Hook `useSentimentTrend.ts` agrega `sentiment_score` das `call_recordings` por trimestre, cruzado com win rate. Chart dual-axis mostra correlação direta entre tom da conversa e fechamento.
 
-### #6 — Mobile responsivo refinado
-- KPI banner: 2 colunas no mobile (atualmente quebra).
-- Charts com `ResponsiveContainer` + altura adaptativa.
-- Drawer ocupa 100vw em telas <640px.
-- Quick filter chips com scroll horizontal `snap-x` no mobile.
+### #6 — Recomendação de upsell baseada em wins similares
+Quando deal é marcado como Won, sistema busca deals Won similares (mesmo segmento/produto) e sugere produtos comprados em sequência. Card `UpsellSuggestionCard.tsx` no drawer do deal.
 
-### #7 — Error boundaries por seção
-Cada bloco maior (Insights, Charts, Tables) ganha `<ErrorBoundary>` próprio com fallback elegante. Falha em um chart não derruba a página inteira.
+### #7 — Coaching automático ao marcar Lost
+Trigger DB: ao inserir win_loss_analysis com outcome=lost, chama edge `generate-loss-coaching` que gera 3 lições personalizadas via Lovable AI (gemini-2.5-flash). Salva em `coaching_sessions` linkada ao vendedor.
 
-### #8 — Loading states unificados
-Substituir skeletons soltos por componente `<WinLossSectionSkeleton variant="kpi|chart|table|insight">` reutilizável. Animação `shimmer` consistente em todo o módulo.
+### #8 — Comparativo entre temporadas/safras de vendedores
+`SeasonComparisonPanel.tsx`: compara performance Q-atual vs. Q-anterior do mesmo vendedor. Identifica regressão e progressão. Útil para 1:1s e feedback formal.
 
-### #9 — Telemetria ampliada
-`useWinLossTelemetry` ganha eventos: `filter_applied`, `quick_filter_clicked`, `digest_copied`, `view_saved`, `compare_opened`, `script_ab_viewed`, `next_best_clicked`. Permite medir adoção real de cada feature.
+### #9 — Export executivo em PDF (não só impressão)
+Edge `export-winloss-pdf` usa `pdf-lib` para gerar PDF profissional com gráficos renderizados server-side (via `chart-svg`). Inclui logo, branding, capa, sumário executivo, gráficos e tabelas. Download direto.
 
-### #10 — Testes E2E críticos (Playwright)
-3 specs novos em `tests/e2e/win-loss/`:
-- `filters.spec.ts` — aplicar filtro, ver KPI mudar, drill-down funciona.
-- `insights-flow.spec.ts` — comentar, atribuir, criar tarefa.
-- `keyboard.spec.ts` — Ctrl+E exporta, Ctrl+R roda análise, Esc fecha drawer.
+### #10 — Webhook de eventos críticos para integração externa
+Tabela `winloss_webhook_subscriptions` (URL + events). Edge `winloss-webhook-dispatcher` envia POST quando: novo padrão crítico detectado, anomalia de win rate, vendedor cai 30% vs. mês anterior. Retries com backoff.
 
 ---
 
 ### Detalhes técnicos
 
-**Arquivos novos**
+**Migrations**
+```sql
+create table public.user_winloss_preferences (
+  user_id uuid primary key,
+  layout jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+alter table public.user_winloss_preferences enable row level security;
+create policy "own prefs read" on public.user_winloss_preferences for select to authenticated using (user_id = auth.uid());
+create policy "own prefs upsert" on public.user_winloss_preferences for insert to authenticated with check (user_id = auth.uid());
+create policy "own prefs update" on public.user_winloss_preferences for update to authenticated using (user_id = auth.uid());
+
+create table public.winloss_webhook_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  url text not null,
+  events text[] not null default array['critical_pattern','anomaly','perf_drop'],
+  active boolean not null default true,
+  created_by uuid not null,
+  created_at timestamptz not null default now()
+);
+alter table public.winloss_webhook_subscriptions enable row level security;
+create policy "admin manage" on public.winloss_webhook_subscriptions for all to authenticated
+  using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
+
+-- Trigger coaching automático
+create or replace function public.generate_loss_coaching_trigger()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if NEW.outcome = 'lost' then
+    perform net.http_post(
+      url := current_setting('app.functions_url', true) || '/generate-loss-coaching',
+      headers := jsonb_build_object('content-type','application/json'),
+      body := jsonb_build_object('analysis_id', NEW.id, 'salesperson_id', NEW.salesperson_id)
+    );
+  end if;
+  return NEW;
+end; $$;
+create trigger trg_loss_coaching after insert on public.win_loss_analyses
+for each row execute function public.generate_loss_coaching_trigger();
 ```
-src/components/win-loss/WinLossSectionSkeleton.tsx
-src/components/win-loss/WinLossErrorBoundary.tsx
-src/components/win-loss/VirtualDealsList.tsx
-tests/e2e/win-loss/filters.spec.ts
-tests/e2e/win-loss/insights-flow.spec.ts
-tests/e2e/win-loss/keyboard.spec.ts
+
+**Hooks novos**
+```
+src/hooks/win-loss/useUserDashboardLayout.ts
+src/hooks/win-loss/useWinLossScenarios.ts
+src/hooks/win-loss/useAtRiskFromPatterns.ts
+src/hooks/win-loss/useICPCorrelation.ts
+src/hooks/win-loss/useSentimentTrend.ts
+src/hooks/win-loss/useUpsellSuggestions.ts
+src/hooks/win-loss/useSeasonComparison.ts
+src/hooks/win-loss/useWebhookSubscriptions.ts
+```
+
+**Componentes novos**
+```
+src/components/win-loss/DashboardLayoutEditor.tsx
+src/components/win-loss/ScenarioForecastChart.tsx
+src/components/win-loss/AtRiskDealsFromPatterns.tsx
+src/components/win-loss/ICPCorrelationMatrix.tsx
+src/components/win-loss/SentimentTrendChart.tsx
+src/components/win-loss/UpsellSuggestionCard.tsx
+src/components/win-loss/SeasonComparisonPanel.tsx
+src/components/win-loss/WebhookSubscriptionsPanel.tsx
+src/components/win-loss/ExportPdfButton.tsx
+```
+
+**Edge functions novas**
+```
+supabase/functions/detect-at-risk-deals/index.ts
+supabase/functions/generate-loss-coaching/index.ts
+supabase/functions/export-winloss-pdf/index.ts
+supabase/functions/winloss-webhook-dispatcher/index.ts
 ```
 
 **Arquivos modificados**
-- `src/routes/AppRoutes.tsx` — confirma `React.lazy` para `/win-loss-intelligence`.
-- `src/pages/WinLossIntelligence.tsx` — error boundaries por seção, skip-link, skeleton unificado.
-- `src/components/win-loss/WinLossDealsDrawer.tsx` — virtualização via `VirtualDealsList`.
-- `src/components/win-loss/WinLossKpiBanner.tsx` — grid responsivo 2 cols mobile.
-- `src/components/win-loss/WinLossQuickFilterChips.tsx` — `snap-x` mobile.
-- `src/components/win-loss/WinByHourHeatmap.tsx` + `WinLossCohortHeatmap.tsx` — `role="grid"` + arrow keys.
-- `src/components/win-loss/WinLossTrendChart.tsx`, `CycleTimeHistogram.tsx`, `LossReasonFlow.tsx` — `React.memo` + `useMemo`.
-- `src/hooks/win-loss/useWinLossFilters.ts` — debounce 250ms.
-- `src/hooks/win-loss/useWinLossTelemetry.ts` — 7 eventos novos.
+- `WinLossIntelligence.tsx` — orquestra novos painéis (Scenario, AtRisk, ICP, Sentiment, Season, Webhooks).
+- `WinLossDealsDrawer.tsx` — integra `UpsellSuggestionCard` em deals Won.
+- `WinLossPageHeader.tsx` — botão "Personalizar" + "Export PDF".
 
-**Dependência nova**
-`react-window` (≈ 6kb) — única adição.
+**Dependências novas**
+- `@dnd-kit/core` + `@dnd-kit/sortable` (~12kb) — drag-and-drop do dashboard.
+- `pdf-lib` (server-side, edge function) — geração de PDF.
 
-**Sem migrations · sem novas edge functions · sem secrets adicionais.**
-
-**Padrões mantidos**: tokens semânticos, Sora/Inter, ≤400 linhas, TS strict, Framer Motion + `useReducedMotion`, zero warnings, RLS preservada, react-helmet-async.
+**Padrões mantidos**: tokens semânticos · Sora/Inter · ≤400 linhas · TS strict · Framer Motion + `useReducedMotion` · zero warnings · RLS preservada · Lovable AI (gemini-2.5-flash) sem chave externa.
 
 ### Ordem de execução (sequencial, sem pausas)
-1. Lazy load + bundle check
-2. Virtualização do drawer
-3. Memoização de charts
-4. Debounce nos filtros
-5. A11y AAA (grid + focus-trap + skip-link)
-6. Mobile responsivo refinado
-7. Error boundaries por seção
-8. Loading skeleton unificado
-9. Telemetria ampliada
-10. 3 specs E2E Playwright
-11. Build check (`tsc --noEmit`) + atualização de memória + relatório 10/10
+1. Migrations (preferences + webhooks + trigger coaching)
+2. #1 Dashboard personalizado (dnd-kit)
+3. #2 Forecast cenários
+4. #3 At-risk deals (edge + painel)
+5. #4 ICP correlation matrix
+6. #5 Sentiment trend
+7. #6 Upsell suggestions
+8. #7 Coaching automático (edge + trigger)
+9. #8 Season comparison
+10. #9 Export PDF (edge + button)
+11. #10 Webhooks (edge + admin panel)
+12. Build check (`tsc --noEmit`) + atualização de memória + relatório 10/10
 
