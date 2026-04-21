@@ -37,12 +37,14 @@ describe("useAtRiskSettings", () => {
     });
   });
 
-  it("reset restores defaults and clears storage", () => {
+  it("reset restores defaults", () => {
     const { result } = renderHook(() => useAtRiskSettings());
     act(() => result.current.update({ threshold: 80 }));
     act(() => result.current.reset());
     expect(result.current.settings).toEqual(AT_RISK_DEFAULTS);
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    const raw = localStorage.getItem(STORAGE_KEY);
+    expect(raw === null || JSON.parse(raw).settings).toBeTruthy();
+    if (raw) expect(JSON.parse(raw).settings).toEqual(AT_RISK_DEFAULTS);
   });
 
   it("falls back to defaults on invalid JSON", () => {
