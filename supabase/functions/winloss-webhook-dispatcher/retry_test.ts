@@ -148,6 +148,124 @@ Deno.test("dispatchOne: AbortError (timeout) treated as failure with retries", a
   assert(r.error?.includes("TimeoutError"));
 });
 
+// ───────────── timeout via AbortError: 3 tentativas + error_message por entrega ─────────────
+
+/** Build an AbortError that mirrors what `AbortSignal.timeout(...)` throws in some runtimes. */
+function makeAbortError(message = "The signal has been aborted"): Error {
+  const e = new Error(message);
+  e.name = "AbortError";
+  return e;
+}
+
+Deno.test("timeout/AbortError: persistente → exatamente 3 fetches, 2 sleeps, 3 deliveries", async () => {
+  const h = makeHarness(() => { throw makeAbortError(); }, { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.sleeps.length, MAX_ATTEMPTS - 1);
+  assertEquals(h.sleeps, [250, 500]); // backoff determinístico com rand=0
+  assertEquals(h.deliveries.length, MAX_ATTEMPTS);
+  assertEquals(r.attempts, MAX_ATTEMPTS);
+  assertEquals(r.succeeded, false);
+  assertEquals(r.status, 0);
+});
+
+Deno.test("timeout/AbortError: cada uma das 3 entregas registra error_message='AbortError: ...'", async () => {
+  const h = makeHarness(() => { throw makeAbortError("The signal has been aborted"); });
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.deliveries.length, 3);
+  for (let i = 0; i < h.deliveries.length; i += 1) {
+    const d = h.deliveries[i];
+    assertEquals(d.attempt, i + 1, `attempt # da entrega ${i}`);
+    assertEquals(d.status, 0, `status da entrega ${i}`);
+    assertEquals(d.succeeded, false, `succeeded da entrega ${i}`);
+    assertEquals(
+      d.error_message,
+      "AbortError: The signal has been aborted",
+      `error_message exato da entrega ${i}`,
+    );
+    assertEquals(d.subscription_id, SUB.id);
+    assertEquals(d.event, "x");
+  }
+});
+
+Deno.test("timeout/AbortError: dead-letter capturado com last_error e attempts=3", async () => {
+  const h = makeHarness(() => { throw makeAbortError("aborted by timeout"); }, { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(h.deadLetters.length, 1);
+  const dlq = h.deadLetters[0];
+  assertEquals(dlq.attempts, MAX_ATTEMPTS);
+  assertEquals(dlq.last_status, 0);
+  assertEquals(dlq.last_error, "AbortError: aborted by timeout");
+  assertEquals(dlq.subscription_id, SUB.id);
+  assertEquals(dlq.event, "x");
+  assertEquals(dlq.payload, PAYLOAD);
+});
+
+Deno.test("timeout/AbortError: error_message muda por tentativa quando o erro varia", async () => {
+  // Cada attempt lança AbortError com mensagem distinta. Cada delivery deve refletir o seu próprio
+  // erro, e r.error preserva apenas o ÚLTIMO.
+  const expected = [
+    "AbortError: timeout after 8000ms (try 1)",
+    "AbortError: timeout after 8000ms (try 2)",
+    "AbortError: timeout after 8000ms (try 3)",
+  ];
+  const h = makeHarness((attempt) => {
+    const e = new Error(`timeout after 8000ms (try ${attempt})`);
+    e.name = "AbortError";
+    throw e;
+  });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.attempts, 3);
+  assertEquals(h.deliveries.length, 3);
+  assertEquals(h.deliveries[0].error_message, expected[0]);
+  assertEquals(h.deliveries[1].error_message, expected[1]);
+  assertEquals(h.deliveries[2].error_message, expected[2]);
+  assertEquals(r.error, expected[2]);
+});
+
+Deno.test("timeout/AbortError: recovery após 2 timeouts → 3ª tentativa 200, error_message null só na última", async () => {
+  const h = makeHarness((n) => {
+    if (n < 3) throw makeAbortError(`timeout #${n}`);
+    return new Response("ok", { status: 200 });
+  });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, true);
+  assertEquals(r.attempts, 3);
+  assertEquals(r.status, 200);
+  assertEquals(r.error, null);
+
+  assertEquals(h.deliveries.length, 3);
+  assertEquals(h.deliveries[0].error_message, "AbortError: timeout #1");
+  assertEquals(h.deliveries[0].succeeded, false);
+  assertEquals(h.deliveries[1].error_message, "AbortError: timeout #2");
+  assertEquals(h.deliveries[1].succeeded, false);
+  assertEquals(h.deliveries[2].error_message, null);
+  assertEquals(h.deliveries[2].succeeded, true);
+  assertEquals(h.deliveries[2].status, 200);
+});
+
+Deno.test("timeout/TimeoutError variant: todas as 3 entregas registram 'TimeoutError: ...'", async () => {
+  // Em runtimes recentes, AbortSignal.timeout() lança DOMException com name='TimeoutError'.
+  const h = makeHarness(() => {
+    const e = new Error("signal timed out after 8000ms");
+    e.name = "TimeoutError";
+    throw e;
+  });
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+  assertEquals(h.deliveries.length, 3);
+  for (const d of h.deliveries) {
+    assertEquals(d.status, 0);
+    assertEquals(d.succeeded, false);
+    assertEquals(d.error_message, "TimeoutError: signal timed out after 8000ms");
+  }
+});
+
 Deno.test("dispatchOne: recovery on 3rd attempt → succeeded, 2 sleeps, 3 deliveries", async () => {
   const h = makeHarness((n) => n < 3 ? new Response("x", { status: 500 }) : new Response("ok", { status: 200 }));
   const r = await dispatchOne(SUB, PAYLOAD, h.deps);
