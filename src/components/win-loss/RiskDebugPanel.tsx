@@ -50,9 +50,65 @@ export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakd
         ))}
       </div>
 
-      {/* Fórmula */}
-      <div className="rounded bg-muted/50 px-2 py-1.5 font-mono text-[11px] tabular-nums">
-        raw {raw} × conf {conf.toFixed(2)} = <span className="font-bold text-foreground">{final}</span>
+      {/* Fórmula passo a passo */}
+      <div className="space-y-1.5">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          Fórmula passo a passo
+        </p>
+        <ol className="space-y-1 font-mono text-[11px] tabular-nums">
+          <li className="rounded bg-muted/40 px-2 py-1">
+            <span className="text-muted-foreground mr-1">1.</span>
+            <span className="text-muted-foreground">raw =</span>{" "}
+            <span>{breakdown.stagnation}</span>
+            <span className="text-muted-foreground"> (estag)</span>
+            {" + "}
+            <span>{breakdown.amount_alignment}</span>
+            <span className="text-muted-foreground"> (ticket)</span>
+            {" + "}
+            <span>{breakdown.stage_match}</span>
+            <span className="text-muted-foreground"> (estágio)</span>
+            {" = "}
+            <span className="font-bold text-foreground">{raw}</span>
+            <span className="text-muted-foreground">/100</span>
+          </li>
+
+          <li className="rounded bg-muted/40 px-2 py-1">
+            <span className="text-muted-foreground mr-1">2.</span>
+            <span className="text-muted-foreground">conf_weight = max(0.5, min(1,</span>{" "}
+            <span>{breakdown.matched_confidence.toFixed(2)}</span>
+            <span className="text-muted-foreground">)) =</span>{" "}
+            <span className="font-bold text-foreground">{conf.toFixed(2)}</span>
+            {breakdown.matched_confidence < 0.5 && (
+              <span className="text-muted-foreground ml-1">(piso aplicado)</span>
+            )}
+            {breakdown.matched_confidence > 1 && (
+              <span className="text-muted-foreground ml-1">(teto aplicado)</span>
+            )}
+          </li>
+
+          <li className="rounded bg-muted/40 px-2 py-1">
+            <span className="text-muted-foreground mr-1">3.</span>
+            <span className="text-muted-foreground">round(</span>
+            <span>{raw}</span>
+            <span className="text-muted-foreground"> × </span>
+            <span>{conf.toFixed(2)}</span>
+            <span className="text-muted-foreground">) =</span>{" "}
+            <span className="font-bold text-foreground">{Math.round(raw * conf)}</span>
+          </li>
+
+          <li className="rounded bg-primary/10 border border-primary/20 px-2 py-1">
+            <span className="text-muted-foreground mr-1">4.</span>
+            <span className="text-muted-foreground">clamp(0, 100) → final =</span>{" "}
+            <span className="font-bold text-foreground">{final}</span>
+            <span className="text-muted-foreground">/100</span>
+            {Math.round(raw * conf) > 100 && (
+              <span className="text-muted-foreground ml-1">(teto 100 aplicado)</span>
+            )}
+            {Math.round(raw * conf) < 0 && (
+              <span className="text-muted-foreground ml-1">(piso 0 aplicado)</span>
+            )}
+          </li>
+        </ol>
       </div>
 
       {/* Padrão casado */}
