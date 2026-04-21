@@ -1,46 +1,42 @@
-` tag, not a tool.
 
-<lov-plan>
 
-## `updateSubscription` chamado exatamente 1× com `last_status` da última tentativa
+## Incluir `requestId` na resposta HTTP do `winloss-webhook-dispatcher`
 
 ### Objetivo
-Garantir, via testes determinísticos, que `dispatchOne` chama `updateSubscription` **exatamente uma vez** ao final do loop, e que o `status` propagado é o da **última tentativa executada** — independente do caminho (sucesso imediato, recovery, falha persistente, erro de rede no fim).
+Expor o `requestId` (já gerado e usado nos logs estruturados) também no corpo JSON da resposta HTTP do dispatcher, para correlacionar a chamada cliente ↔ logs do edge function durante troubleshooting.
 
-### Estado atual
-`retry_test.ts` cobre apenas dois pontos isolados:
-- Linha 102: sucesso na 1ª (`updates === [{id, status:200}]`).
-- Linha 446-450: falha persistente 500 (`updates.length === 1`, `status:500`).
+### Estado atual (a confirmar via leitura)
+`supabase/functions/winloss-webhook-dispatcher/index.ts` — gera um `requestId` (UUID/correlation id) e emite logs estruturados com ele, mas a resposta HTTP retorna apenas `{ dispatched, results }` (ou similar), sem o `requestId`. O cliente recebe o resultado mas não tem o ID para buscar nos logs.
 
-Faltam os casos críticos de **recovery** (status muda entre tentativas) e **transição HTTP ↔ erro de rede**, onde uma regressão poderia gravar um status intermediário em vez do último.
+Já existe precedente: `winloss-webhook-replay` retorna `{ requestId, source, results }` (visto em `useWebhookDeliveries.ts`), e o frontend sabe consumir esse formato.
 
 ### Mudanças
 
-**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — nova seção `// ───────── updateSubscription: chamada única com último status ─────────` com 5 `Deno.test`:
+**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/index.ts`
 
-1. **`updateSubscription: 1× com 200 em recovery 500 → 500 → 200`**
-   - Garante que o último status (200) sobrescreve intermediários (500). Asserts: `h.updates.length === 1`, `h.updates[0] === {id:"sub-1", status:200}`.
+1. **Garantir que `requestId` existe** no escopo do handler (criar com `crypto.randomUUID()` no topo do `Deno.serve` se ainda não houver).
+2. **Incluí-lo em TODAS as respostas JSON**:
+   - Sucesso: `{ requestId, dispatched, results }`
+   - Erro tratado (4xx/5xx no try/catch): `{ requestId, error: "..." }`
+3. **Adicionar header HTTP `X-Request-Id: <requestId>`** em todas as responses (sucesso e erro) — facilita correlação mesmo sem parsear o body, e segue convenção HTTP comum.
+4. **Logs já existentes** continuam emitindo o mesmo `requestId` — nenhuma mudança neles, garantindo a correlação 1:1 (resposta ↔ logs).
 
-2. **`updateSubscription: 1× com 200 em recovery na 2ª (502 → 200)`**
-   - Loop encerra cedo. Asserts: `h.updates.length === 1`, `status === 200`, `h.fetches === 2`.
+### Compatibilidade
+- Adição **não-breaking**: clientes existentes que ignoram campos extras continuam funcionando.
+- O frontend (`useWebhookSubscriptions`/`WebhookSubscriptionsPanel`) hoje não consome o retorno do dispatcher diretamente (a inserção é via `supabase.from(...).insert(...)`). Não há mudança de UI necessária neste card.
 
-3. **`updateSubscription: 1× com 503 em falha persistente que muda de status (500 → 502 → 503)`**
-   - Asserts: `status === 503` (último, não 500/502).
-
-4. **`updateSubscription: 1× com status=0 quando última tentativa é erro de rede`**
-   - 500 → 500 → throw ENETDOWN. Asserts: `h.updates.length === 1`, `status === 0` (não 500).
-
-5. **`updateSubscription: 1× com 200 quando última é HTTP após erros de rede`**
-   - throw → throw → 200. Asserts: `h.updates.length === 1`, `status === 200` (não 0).
-
-### Detalhes técnicos
-- Reutiliza `makeHarness` existente (já registra `updates` via push).
-- Nenhuma mudança em `retry.ts` ou `index.ts`.
-- Os 2 testes existentes (linhas 102 e 446) permanecem inalterados — esses já cobrem "sucesso 1ª" e "falha persistente uniforme".
+### Observabilidade
+Após o deploy, o usuário poderá:
+1. Capturar `requestId` do header `X-Request-Id` ou do body da resposta.
+2. Buscar nos logs com `supabase--edge_function_logs` filtrando por esse ID — todos os logs de uma única invocação aparecem agrupados.
 
 ### Arquivos
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~55 linhas).
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/index.ts` (~5–10 linhas alteradas).
 
 ### Verificação
-`deno test supabase/functions/winloss-webhook-dispatcher/retry_test.ts` — esperado **38 atuais + 5 novos = 43 ✓**.
+1. Deploy de `winloss-webhook-dispatcher`.
+2. Chamada via `supabase--curl_edge_functions` confirma:
+   - Header `X-Request-Id` presente.
+   - Body contém `requestId` (UUID v4).
+3. `supabase--edge_function_logs` com `search=<requestId>` retorna a sequência completa de logs daquela invocação.
 
