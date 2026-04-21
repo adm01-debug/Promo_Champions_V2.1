@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, RefreshCw, Info } from "lucide-react";
+import { AlertTriangle, RefreshCw, Info, Bug } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
+import { RiskDebugPanel } from "./RiskDebugPanel";
 
 const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
@@ -19,6 +21,7 @@ const scoreLabel = (score: number) =>
 
 export function AtRiskDealsFromPatterns() {
   const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns();
+  const [debug, setDebug] = useState(false);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -29,8 +32,20 @@ export function AtRiskDealsFromPatterns() {
             Deals em risco — padrões de loss
             <Button
               size="sm"
+              variant={debug ? "secondary" : "ghost"}
+              className="ml-auto h-7 px-2 gap-1"
+              onClick={() => setDebug(v => !v)}
+              aria-pressed={debug}
+              aria-label="Alternar modo debug"
+              title="Modo debug: mostra contribuição de cada sinal"
+            >
+              <Bug className="h-3 w-3" />
+              <span className="text-[10px] font-medium">Debug</span>
+            </Button>
+            <Button
+              size="sm"
               variant="ghost"
-              className="ml-auto h-7 px-2"
+              className="h-7 px-2"
               onClick={() => refresh()}
               disabled={isRefreshing}
               aria-label="Atualizar análise de risco"
@@ -92,6 +107,9 @@ export function AtRiskDealsFromPatterns() {
                     </p>
                     <span className="text-[11px] tabular-nums font-medium shrink-0">{fmtBRL(d.amount)}</span>
                   </div>
+                  {debug && d.breakdown && (
+                    <RiskDebugPanel breakdown={d.breakdown} riskScore={d.risk_score} />
+                  )}
                 </li>
               ))}
             </ul>
