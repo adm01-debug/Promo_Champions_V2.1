@@ -1,50 +1,49 @@
 
 
-## Endpoint para reprocessar eventos a partir do histórico de falhas
+## Fixtures de cenários reais para validar score + razão + ação sugerida
 
-### Status atual
-Já existe `winloss-webhook-replay` que reprocessa a partir da DLQ (`winloss_webhook_dead_letters`). **Falta** suportar reprocessamento a partir de qualquer entrega falha registrada em `winloss_webhook_deliveries` — útil para casos onde a falha não chegou a 3 tentativas (ex.: você corrigiu o endpoint e quer reenviar mesmo um 500 isolado) ou quando você quer reenviar uma tentativa específica do log bruto.
+### Objetivo
+Criar uma suite de cenários nomeados (deal real + patterns realistas + expectativas) que provam que o pipeline `computeAtRiskDeals` retorna score na faixa esperada, **razão coerente** com a história e **ação sugerida** alinhada ao tipo de padrão dominante. Hoje há testes unitários por função; falta cobertura por "story".
 
-### O que será adicionado
+### Estrutura
 
-**1. Extensão do endpoint `winloss-webhook-replay`** (mesma função, novo modo)
+**Novo arquivo** `supabase/functions/detect-winloss-at-risk/fixtures.ts`
+Exporta:
+- `LOSS_PATTERNS_REALISTIC: LossPattern[]` — conjunto único (preço alto, negociação travada, competidor X, churn pós-trial, win factor consultivo).
+- `interface Scenario { name; deal: OpenDeal; expect: { included: boolean; minScore?: number; maxScore?: number; patternTypeContains?: string; reasonsInclude?: string[]; actionIncludes?: string } }`
+- `SCENARIOS: Scenario[]` — 10 casos cobrindo o espectro:
 
-Aceita 2 fontes mutuamente exclusivas no body:
-```json
-// modo DLQ (já existe)
-{ "dead_letter_ids": ["uuid", ...] }
+| # | Cenário | Score esperado | Padrão dominante | Razão chave |
+|---|---|---|---|---|
+| 1 | Deal novo (3d), ticket baixo, status `lead` | excluído (<40) | — | — |
+| 2 | Negociação parada há 21d, ticket alinhado a loss típico | 60–85 | `stuck_stage` ou `loss_factor` | "21 dias", "ticket alinhado" |
+| 3 | Proposta há 60d, ticket muito acima do perfil de loss | 50–80 | `loss_factor` | "60 dias" |
+| 4 | Qualified há 90d, ticket no centro do perfil de loss, source "concorrencia" | 75–100 | `stuck_stage` | "travado", "competitiva" |
+| 5 | Pending há 10d, ticket bem abaixo do perfil | excluído ou 40–55 | `loss_factor` ou `stuck_stage` | "10 dias" |
+| 6 | Negotiation há 45d, sem amount (0) | 50–80 | `stuck_stage` | "estágio travado" |
+| 7 | Proposal há 7d, ticket exato do perfil de loss | 40–60 | `loss_factor` | "ticket alinhado" |
+| 8 | Deal sem `updated_at` nem `created_at` | excluído | — | — |
+| 9 | Negotiation há 120d (super-stagnant), ticket alinhado | 90–100 (cap) | `stuck_stage` | "120 dias", "travado" |
+| 10 | Proposal há 30d, source "leilao_publico" | 55–85 | inclui "competitiva" nas razões | "competitiva" |
 
-// modo histórico (novo)
-{ "delivery_ids": ["uuid", ...] }
-```
-- Validações: 1–50 UUIDs, admin obrigatório (já em vigor), exatamente uma das duas chaves.
-- Modo `delivery_ids`:
-  - Lê `winloss_webhook_deliveries` (id, subscription_id, event, payload, succeeded).
-  - Bloqueia entregas com `succeeded=true` (retorna `{succeeded:false, error:"already_succeeded"}` para esse id).
-  - Invoca `winloss-webhook-dispatcher` com `{ ...payload, event, __target_subscription_id }` (sem `__replay_of` — não há linha DLQ para atualizar).
-  - Resultado é só do dispatcher; nenhuma persistência adicional além do log natural de delivery (uma nova linha em `winloss_webhook_deliveries` será criada pelo próprio dispatcher).
-- Logs estruturados ganham `source: "dlq" | "delivery"` para troubleshooting.
-- Resposta inclui `requestId` + `source` + `results[]` com `{ id, succeeded, status, error }`.
-
-**2. Hook React `useWebhookDeliveries`** ganha mutation `replay`
-- `replay({ deliveryIds })` chama o endpoint com `delivery_ids`.
-- Toast com sucesso/falha agregado, invalida cache de `winloss-webhook-deliveries`.
-
-**3. UI no `WebhookDeliveriesDrawer`**
-- Linhas de delivery com `succeeded=false` ganham botão **Reenviar** (ícone `RotateCw`).
-- Botão dispara `replay` e mostra resultado inline (badge verde/vermelha temporária).
-- Se a entrega foi bem sucedida, botão fica desabilitado com tooltip "Já entregue com sucesso".
+**Novo arquivo** `supabase/functions/detect-winloss-at-risk/scenarios_test.ts`
+- `Deno.test` parametrizado iterando `SCENARIOS`:
+  - Roda `computeDealRisk(scenario.deal, LOSS_PATTERNS_REALISTIC, NOW, 40)`.
+  - Asserts:
+    - `expect.included === false` → resultado é `null`.
+    - Caso contrário: `risk_score` ∈ `[minScore, maxScore]`, `breakdown.matched_pattern_type` contém `patternTypeContains`, cada string em `reasonsInclude` aparece em `result.reasons` (case-insensitive substring), `result.suggested_action` contém `actionIncludes`.
+- 1 teste extra: `computeAtRiskDeals` com **todos os 10 deals** retorna ordenado por `risk_score desc`, sem nenhum incluído abaixo de 40, e respeita `limit`.
 
 ### Detalhes técnicos
-- Reuso total do `dispatcher` — sem duplicação de retry/backoff/fan-out.
-- `__target_subscription_id` garante que só a subscription original recebe (não vira broadcast).
-- Sem novas tabelas, sem migration. RLS de `winloss_webhook_deliveries` já permite admin SELECT; a função usa service role.
-- Edge function continua com role check explícito (`has_role(uid, 'admin')`) — defesa em profundidade.
-- Não duplica linha DLQ: replay de delivery só atinge DLQ se as 3 novas tentativas falharem (caminho normal do dispatcher).
+- Sem mudanças em `scoring.ts` ou `index.ts` — fixtures são puramente declarativas.
+- `NOW` fixo (`2026-04-21T12:00:00Z`) → `created_at`/`updated_at` calculados via `NOW - Nd` para determinismo.
+- Faixas (`min/maxScore`) ao invés de valores exatos — isolam de pequenos ajustes no peso sem perder o sentido (uma mudança que mude faixa = bug semântico).
+- Razões assertadas por substring em pt-BR (já é a saída do scoring).
+- Validação final: `supabase--test_edge_functions detect-winloss-at-risk` → esperado **todos os testes prévios + scenarios passando**.
 
 ### Ordem
-1. Estender `winloss-webhook-replay/index.ts` (modo `delivery_ids` + validação mutuamente exclusiva).
-2. Adicionar mutation `replay` em `useWebhookDeliveries.ts`.
-3. Atualizar `WebhookDeliveriesDrawer.tsx` com botão reenviar por linha falha.
-4. Atualizar `mem://features/winloss-webhook-observability` registrando o novo modo.
+1. Criar `fixtures.ts` com `LOSS_PATTERNS_REALISTIC` + `SCENARIOS`.
+2. Criar `scenarios_test.ts` parametrizado.
+3. Rodar `supabase--test_edge_functions` na função.
+4. Atualizar `mem://features/winloss-at-risk-scoring.md` mencionando fixtures + scenarios.
 
