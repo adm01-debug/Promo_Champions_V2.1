@@ -97,11 +97,10 @@ export function extractCompetitorMatches(
       const key = hit.toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
-      const sub = COMPETITOR_SUB_REGEXES.find(s => s.regex.test(hit));
       out.push({
         keyword: hit,
         matched_substring: token,
-        regex: sub?.source ?? "/" + COMPETITOR_KEYWORDS_RE.source + "/gi",
+        regex: attributeRegexSource(hit),
         confidence,
       });
     }
