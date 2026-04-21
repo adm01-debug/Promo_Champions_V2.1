@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { Sparkles } from "lucide-react";
+import { Sparkles, HelpCircle } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
+import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
 type ForecastHorizon = 3 | 6 | 12;
@@ -134,6 +135,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
   const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
+  const [explainerOpen, setExplainerOpen] = useState(false);
 
   // Silent migration: drop the legacy `seeUseOlsInflation` key so that
   // users who previously opted into the √(1+step/n) approximation now get
@@ -377,6 +379,23 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                   </PopoverContent>
                 </Popover>
               )}
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                    onClick={() => setExplainerOpen(true)}
+                    aria-label="Abrir explicação das bandas de incerteza"
+                  >
+                    <HelpCircle className="h-3.5 w-3.5" aria-hidden />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">
+                  Como as bandas são calculadas?
+                </TooltipContent>
+              </UITooltip>
             </div>
           </TooltipProvider>
           <span
@@ -468,6 +487,11 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         tCritical={tCritical}
         confidenceZ={confidenceZ}
         bandLabel={bandLabel}
+      />
+      <ScenarioFormulaExplainerDialog
+        open={explainerOpen}
+        onOpenChange={setExplainerOpen}
+        stats={{ stdDev, fitN, dof, meanX, confidenceZ, bandMode, tCritical }}
       />
     </Card>
   );
