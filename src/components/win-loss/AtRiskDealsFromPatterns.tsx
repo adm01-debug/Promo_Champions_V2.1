@@ -24,26 +24,50 @@ const scoreLabel = (score: number) =>
   score >= 75 ? "Crítico" : score >= 50 ? "Alto risco" : "Atenção";
 
 export function AtRiskDealsFromPatterns() {
-  const { settings, update, reset } = useAtRiskSettings();
+  const { settings, update, reset, clearFilters } = useAtRiskSettings();
   const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns({
     threshold: settings.threshold,
     limit: settings.limit,
   });
-  const [debug, setDebug] = useState(false);
   const [showCatalog, setShowCatalog] = useState(false);
-  const visible = data.slice(0, settings.maxVisible);
 
-  /** Set of dominant-pattern labels matched by at least one current deal. */
-  const matchedFamilyLabels = useMemo(() => {
+  const availableStages = useMemo(() => {
     const set = new Set<string>();
     for (const d of data) {
+      if (d.stage && d.stage.trim()) set.add(d.stage);
+    }
+    return Array.from(set).sort();
+  }, [data]);
+
+  const filtered = useMemo(() => {
+    const kw = settings.keywordFilter.trim().toLowerCase();
+    const stages = settings.stageFilter;
+    if (stages.length === 0 && !kw) return data;
+    return data.filter((d) => {
+      if (stages.length > 0 && !stages.includes(d.stage ?? "")) return false;
+      if (kw) {
+        const hay = `${d.client_name ?? ""} ${d.matched_pattern ?? ""} ${d.suggested_action ?? ""}`.toLowerCase();
+        if (!hay.includes(kw)) return false;
+      }
+      return true;
+    });
+  }, [data, settings.keywordFilter, settings.stageFilter]);
+
+  const visible = filtered.slice(0, settings.maxVisible);
+  const filtersActive = settings.stageFilter.length > 0 || settings.keywordFilter.length > 0;
+  const debug = settings.debug;
+
+  /** Set of dominant-pattern labels matched by at least one currently visible (filtered) deal. */
+  const matchedFamilyLabels = useMemo(() => {
+    const set = new Set<string>();
+    for (const d of filtered) {
       const haystack = (d.matched_pattern ?? "").toLowerCase();
       for (const entry of DOMINANT_PATTERNS_LIST) {
         if (haystack.includes(entry.label.toLowerCase())) set.add(entry.label);
       }
     }
     return set;
-  }, [data]);
+  }, [filtered]);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -52,29 +76,19 @@ export function AtRiskDealsFromPatterns() {
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden />
             Deals em risco — padrões de loss
-            <Button
-              size="sm"
-              variant={debug ? "secondary" : "ghost"}
-              className="ml-auto h-7 px-2 gap-1"
-              onClick={() => setDebug(v => !v)}
-              aria-pressed={debug}
-              aria-label="Alternar modo debug"
-              title="Modo debug: mostra contribuição de cada sinal"
-            >
-              <Bug className="h-3 w-3" />
-              <span className="text-[10px] font-medium">Debug</span>
-            </Button>
             <AtRiskSettingsPopover
               settings={settings}
               onUpdate={update}
               onReset={reset}
+              onClearFilters={clearFilters}
               totalAnalyzed={data.length}
               totalShown={visible.length}
+              availableStages={availableStages}
             />
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 px-2"
+              className="ml-auto h-7 px-2"
               onClick={() => refresh()}
               disabled={isRefreshing}
               aria-label="Atualizar análise de risco"
