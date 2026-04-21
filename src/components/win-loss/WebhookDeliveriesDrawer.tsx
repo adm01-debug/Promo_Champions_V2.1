@@ -383,6 +383,43 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
           </ScrollArea>
         </TooltipProvider>
       </DrawerContent>
+
+      <AlertDialog open={!!confirm} onOpenChange={(o) => !o && setConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmSummary.count > 1 ? "Confirmar reenvio em lote" : "Confirmar reenvio"}
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  <span className="font-semibold text-foreground">{confirmSummary.count}</span>{" "}
+                  {confirmSummary.count === 1 ? "entrega será reenviada." : "entregas serão reenviadas."}
+                </p>
+                {confirmSummary.byEvent.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {confirmSummary.byEvent.map((b) => (
+                      <Badge key={b.event} variant="outline" className="text-[10px] py-0 px-1.5">
+                        {b.event} · {b.count}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Cada entrega criará uma nova tentativa no histórico.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={executeReplay}>
+              <RotateCw className="h-3.5 w-3.5 mr-1.5" />
+              Reenviar {confirmSummary.count}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Drawer>
   );
 }
