@@ -33,6 +33,8 @@ export interface OpenDeal {
   created_at: string | null;
 }
 
+export type RiskSeverity = "low" | "medium" | "high" | "critical";
+
 export interface RiskBreakdown {
   stagnation: number;
   amount_alignment: number;
@@ -50,6 +52,7 @@ export interface RiskBreakdown {
   confidence_weight?: number;
   final_score?: number;
   stage_eligible?: boolean;
+  severity?: RiskSeverity;
 }
 
 export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
