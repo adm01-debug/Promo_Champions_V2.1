@@ -242,7 +242,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                     </ToggleGroupItem>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="text-xs max-w-[220px]">
-                    Banda ±σ residual (Standard Error of Estimate). Mais estreita, ~68% de confiança.
+                    Banda 1σ via prediction interval · σ · √(1 + 1/n + (x − x̄)² / Sxx). ~68% de confiança, abre com horizonte.
                   </TooltipContent>
                 </UITooltip>
                 <UITooltip>
