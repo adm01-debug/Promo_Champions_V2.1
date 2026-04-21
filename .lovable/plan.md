@@ -1,53 +1,45 @@
 
 
-## Threshold configurável de risco no painel AtRisk
-
-### Objetivo
-Permitir ajustar em runtime o **score mínimo** (e quantos deals mostrar) que filtram o painel "Deals em risco — padrões de loss", sem alterar código nem republicar a edge function. Persistido por usuário (localStorage).
+## Reforçar `chartKey` do `ScenarioForecastChart` para refletir filtros + série
 
 ### Estado atual
-- Backend `detect-winloss-at-risk` já aceita `threshold` (0–100) e `limit` (1–100) no body, defaults 40 e 20.
-- Frontend chama `body: {}` — usa só os defaults.
-- Render usa `data.slice(0, 8)` — limite hardcoded.
+`src/components/win-loss/ScenarioForecastChart.tsx` já passa uma `key` ao `<ComposedChart>` (linhas 88-93, 151), mas a chave é fraca:
 
-### Mudanças
+```ts
+`scenario-${data.length}-${data[0]?.period ?? ""}-${stdDev.toFixed(2)}-${fitN}`
+```
 
-**1. Hook `src/hooks/win-loss/useAtRiskFromPatterns.ts`**
-- Aceitar `params: { threshold?: number; limit?: number }` e enviar no body.
-- `queryKey` inclui params (refetch automático ao mudar).
-- `refresh` propaga os mesmos params.
+Duas séries diferentes (ex.: troca de filtro de vendedor que mantém o mesmo número de períodos e o mesmo período inicial) podem coincidir em `length`, `period[0]`, `stdDev` arredondado e `fitN` — Recharts então reaproveita escalas internas e renderiza inconsistente (eixos cacheados, tooltip "preso", animações fora de sincronia).
 
-**2. Novo `src/hooks/win-loss/useAtRiskSettings.ts`**
-- Persistência em `localStorage` (`winloss-at-risk-settings`, com `version: 1`).
-- Schema: `{ threshold: number 0–100, limit: number 5–50, maxVisible: number 3–20 }`.
-- Defaults: `{ threshold: 40, limit: 20, maxVisible: 8 }`.
-- API: `{ settings, update(partial), reset() }` + clamp ao gravar.
-- Resiliente a JSON inválido — volta a defaults.
+### Mudança
+Tornar a key uma **assinatura completa do dataset projetado**, garantindo que qualquer mudança de filtro que altere os pontos resulte em key nova:
 
-**3. Novo `src/components/win-loss/AtRiskSettingsPopover.tsx`**
-- Botão `SlidersHorizontal` no header do card.
-- Popover com 3 sliders (Score mínimo / Máximo analisado / Mostrar no painel) + mini-stats ("Threshold X · mostrando Y de Z") + "Restaurar padrões".
-- Acessível: `<Label>` por slider, `aria-valuetext`.
+```ts
+const chartKey = useMemo(() => {
+  const signature = data
+    .map(d => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
+    .join("|");
+  return `scenario-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+}, [data, stdDev, fitN]);
+```
 
-**4. `AtRiskDealsFromPatterns.tsx`**
-- Consome `useAtRiskSettings()` → passa `threshold`/`limit` para o hook de dados.
-- `data.slice(0, settings.maxVisible)`.
-- Empty state contextual: "Nenhum deal com score ≥ {threshold}".
-- Footer "Exibindo X de Y deals — ajuste no ⚙" quando ocultando itens.
+Aplicada em `<ComposedChart key={chartKey} …>` (já está; só o conteúdo da key muda).
 
-**5. Teste vitest `src/test/hooks/useAtRiskSettings.test.ts`**
-- Defaults com storage vazio · merge parcial · clamp dos 3 ranges · `reset` limpa chave · JSON inválido não quebra.
+### Por que funciona
+- Inclui **todos os valores de cada ponto** (período + 3 cenários + flag forecast). Qualquer troca de filtro que reescreva a série derruba a key.
+- `data` já é memoizado (linha 68-80) → a string da signature só recomputa quando a série muda de fato; sem custo extra em renders idle.
+- Custo da `join` é O(n) sobre no máx ~20 pontos (histórico + 3 forecast) — desprezível vs. o reflow do Recharts.
+- Mantém os campos antigos (`length`, `fitN`, `stdDev`) como prefixo curto, útil em devtools.
 
 ### Detalhes técnicos
-- Backend já valida ranges; frontend faz clamp espelhado para evitar requests inválidas.
-- `queryKey: ["winloss-at-risk-from-patterns", threshold, limit]` — cada combinação tem cache próprio.
-- `maxVisible` puramente client-side (sem refetch).
-- Sem mudança em `scoring.ts` nem `index.ts` da edge.
+- Sem mudança de API do componente nem do hook `useWinLossScenarios`.
+- Sem mudança em `useMemo` deps (`data` já capturava `series`).
+- Não introduz novos imports.
+
+### Arquivo afetado
+- `src/components/win-loss/ScenarioForecastChart.tsx` — substituir o bloco `chartKey` (linhas 88-93).
 
 ### Ordem
-1. Estender `useAtRiskFromPatterns` para aceitar params.
-2. Criar `useAtRiskSettings.ts` + teste vitest.
-3. Criar `AtRiskSettingsPopover.tsx`.
-4. Integrar no `AtRiskDealsFromPatterns.tsx`.
-5. Atualizar `mem://features/winloss-at-risk-scoring.md`.
+1. Substituir o `useMemo` da `chartKey` pela versão com signature completa.
+2. Confirmar visualmente que o gráfico atualiza ao alternar filtros (Recharts faz unmount/remount limpo).
 
