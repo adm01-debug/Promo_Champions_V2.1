@@ -1,65 +1,32 @@
 
 
-## Upgrade da edge function `winloss-webhook-replay`
+## Testes complementares para `onDeadLetter` em `retry_test.ts`
 
-### Estado atual (já implementado em sessões anteriores)
-A função já existe com:
-- Auth via `getClaims` + checagem `user_roles.role = 'admin'` → 403 se não admin.
-- Validação manual de `dead_letter_ids` / `delivery_ids` (regex UUID, 1–50, exclusividade).
-- Marca DLQ como `replaying` antes de chamar dispatcher; restaura para `pending` em caso de erro.
-- Skip de delivery já bem-sucedida.
-- Retorno: `{ requestId, source, results: [{ id, succeeded, status, error, skipped? }] }`.
-- Logs estruturados `replay_start` / `replay_complete` / `replay_fatal`.
+### Estado atual
+A suíte `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` já cobre o essencial pedido:
+- `onDeadLetter chamado após 3 falhas` (DLQ é gravado quando todas falham).
+- `onDeadLetter NÃO chamado em sucesso (1ª, 2ª, 3ª)` (varre os 3 pontos de sucesso).
+- `erro em onDeadLetter é absorvido (não propaga)` (com `deadLetterThrows: true`).
+- `insertDelivery falha + falha terminal: dead-letter ainda é chamado` (resiliência cruzada).
 
-### O que será adicionado/modificado
-Refinos pedidos pelo usuário:
+### O que será adicionado
+Cinco testes complementares para fechar buracos finos:
 
-**1. Validação com Zod**
-- Substituir validação manual por schema Zod (`https://esm.sh/zod@3.23.8`).
-- Schema: union discriminado garantindo "exatamente um de `dead_letter_ids` OU `delivery_ids`":
-  ```
-  z.union([
-    z.object({ dead_letter_ids: z.array(z.string().uuid()).min(1).max(50) }).strict(),
-    z.object({ delivery_ids:    z.array(z.string().uuid()).min(1).max(50) }).strict(),
-  ])
-  ```
-- Aceitar também forma singular (`dead_letter_id` / `delivery_id`) via `.preprocess` que normaliza para array antes do parse.
-- 400 com `{ error: "invalid_input", details: zodError.flatten() }`.
+1. **`onDeadLetter recebe entry com todos os campos preenchidos corretamente`** — assertiva de schema do `DeadLetterEntry`: `subscription_id`, `event`, `payload` (referência preservada), `attempts === MAX_ATTEMPTS`, `last_status === 502`, `last_error === null` (falha HTTP pura), `total_latency_ms` numérico.
 
-**2. Status por ID enriquecido**
-- Atualizar o tipo de retorno para incluir `status_label` derivado, sem quebrar consumidores atuais:
-  ```
-  { id, succeeded, status, status_label: "succeeded"|"failed"|"skipped", error, attempts? }
-  ```
-- `attempts` populado a partir de `data.results[0].attempts` quando o dispatcher devolver.
-- Mantém os campos antigos (`succeeded`, `status`, `error`, `skipped`) para compatibilidade com `useWebhookDeadLetters`.
+2. **`onDeadLetter chamado EXATAMENTE 1× ao final (não por tentativa)`** — contador local garante que o callback dispara uma única vez, não a cada attempt fracassado.
 
-**3. Checagem de admin via helper**
-- Manter a checagem existente, mas extrair em função local `assertAdmin(supabase, userId, requestId)` que retorna `Response | null` para reduzir aninhamento.
-- Log padronizado `auth_forbidden` quando falhar.
+3. **`erro em onDeadLetter NÃO impede updateSubscription de ter rodado antes`** — combina `deadLetterThrows: true` com `withDeadLetter: true` e verifica que `updates.length === 1` e `updates[0].status === 504` mesmo com o DLQ explodindo. Confirma a ordem do fluxo no `retry.ts` (subscription update → DLQ → return).
 
-**4. Logs com `describeError`**
-- Importar `describeError` de `../winloss-webhook-dispatcher/retry.ts` (já compartilhado entre funções).
-- Aplicar nos catches: dispatcher invoke, restauração de DLQ, fatal.
-- Padroniza `error_name` / `error` / `error_stack` (consistente com a iniciativa anterior).
+4. **`erro síncrono (throw) em onDeadLetter também é absorvido`** — substitui o callback por um que faz `throw` síncrono (não Promise.reject) e verifica que `dispatchOne` ainda resolve normalmente. Garante que o try/catch do dispatcher cobre ambas as formas de erro.
 
-**5. Persistência do resultado de replay (DLQ)**
-- Após cada item DLQ processado, gravar:
-  - sucesso → `status='replayed'`, `replay_count = replay_count + 1`, `last_replay_at`, `last_replay_status`, `last_replay_error=null`.
-  - falha → `status='pending'`, `replay_count = replay_count + 1`, `last_replay_at`, `last_replay_status`, `last_replay_error`.
-- Usar RPC inline (update simples; não precisa de migração — os campos já existem na tabela `winloss_webhook_dead_letters` conforme o hook).
+5. **`onDeadLetter NÃO chamado quando deps.onDeadLetter é undefined`** — caminho explícito sem callback configurado: `dispatchOne` deve pular silenciosamente, sem null-pointer e sem lançar.
 
-### Arquivos
-- **Modificar**: `supabase/functions/winloss-webhook-replay/index.ts` (~80 linhas refatoradas, mesmo arquivo único).
-- **Não modificar**: `supabase/config.toml` — função permanece com `verify_jwt` no default (validamos JWT em código via `getClaims`).
-- **Não modificar**: `src/hooks/win-loss/useWebhookDeadLetters.ts` — contrato de resposta é retrocompatível (`status_label` é additive).
+### Onde
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~70 linhas, inseridas após o teste `"erro em onDeadLetter é absorvido"`, linha 496).
+- **Não modificar**: `retry.ts` (testes apenas validam comportamento já implementado).
 
 ### Verificação
-1. `supabase--deploy_edge_functions` em `winloss-webhook-replay`.
-2. `supabase--curl_edge_functions` POST sem auth → 401.
-3. POST como não-admin → 403, log `auth_forbidden`.
-4. POST com body inválido (ex: `{}`, `{ dead_letter_ids: ["x"] }`, ambos arrays presentes) → 400 com `details` do Zod.
-5. POST com 1 DLQ válido (admin) → 200 com `results: [{ id, succeeded, status, status_label, error }]`; tabela `winloss_webhook_dead_letters` reflete `replay_count` e `last_replay_*`.
-6. Re-replay do mesmo ID se sucesso → registro continua em `replayed` (regravando `last_replay_*`).
-7. UI `/admin/webhooks-dead-letters` continua funcional sem mudanças (campos antigos preservados).
+1. `supabase--test_edge_functions` com `functions: ["winloss-webhook-dispatcher"]` — todos os testes existentes continuam passando + 5 novos verdes.
+2. Filtro `pattern: "onDeadLetter"` deve listar agora 8 testes (3 originais + 5 novos), todos `ok`.
 
