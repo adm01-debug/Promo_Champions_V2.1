@@ -454,6 +454,17 @@ export function computeDealRisk(
     suggestedAction = "Revisar abordagem com o cliente nas próximas 48h";
   }
 
+  const finalReasons = reasons.length ? reasons : ["Sinais cruzados de risco"];
+  const finalReasonsV2: RiskReason[] = reasonsV2.length
+    ? reasonsV2
+    : [{
+        code: "CROSSED_SIGNALS",
+        message: "Sinais cruzados de risco",
+        params: {},
+        source: "generic",
+        contribution: 0,
+      }];
+
   return {
     sale_id: deal.id,
     client_name: deal.client_name,
@@ -462,7 +473,7 @@ export function computeDealRisk(
     risk_score: finalScore,
     matched_pattern: matchedPattern,
     suggested_action: suggestedAction,
-    reasons: reasons.length ? reasons : ["Sinais cruzados de risco"],
+    reasons: finalReasons,
     breakdown: {
       stagnation,
       amount_alignment: amountAlign,
@@ -470,7 +481,8 @@ export function computeDealRisk(
       matched_pattern_label: matchedPattern,
       matched_pattern_type: dominant.type,
       matched_confidence: dominant.confidence,
-      reasons,
+      reasons: finalReasons,
+      reasons_v2: finalReasonsV2,
       matched_keywords: matchedKeywords,
       competitor_matches: competitorMatches.length ? competitorMatches : undefined,
       days_stagnant: days,
