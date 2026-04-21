@@ -1,111 +1,77 @@
 
 
-## Validação do `detect-winloss-at-risk` — scores, razões e ações
+## Forecast de cenários: bandas ±σ baseadas em desvio histórico real e reatividade aos filtros
 
-Objetivo: confirmar que a edge function pontua deals abertos cruzando padrões de loss (`win_loss_patterns`) com 0–100 coerente, retorna `matched_pattern` e `suggested_action` legíveis e não-vazios, e que o painel `AtRiskDealsFromPatterns` os exibe corretamente.
+### Diagnóstico
 
----
+**Hook `useWinLossScenarios`**:
+- Bandas usam **σ populacional vs média** dos winRates históricos. Isso **infla a banda** quando há tendência (pois desvio do mean já contém o trend). O correto é σ dos **resíduos da regressão** (Standard Error of the Estimate) — só o ruído ao redor da linha ajustada.
+- Bandas têm **largura fixa** ao longo do horizonte. Padrão estatístico: incerteza cresce com o passo de previsão (`σ_step = σ * √(1 + step/n)`).
+- Mínimo de 2 pontos para regressão é **frágil** (resíduos = 0 com apenas 2 pontos). Subir para 3.
+- Pontos históricos hoje têm `optimistic = pessimistic = realistic = winRate` — bom — mas o salto do ponto histórico para o forecast é abrupto. Isso é desejado visualmente (junção limpa) e será mantido.
 
-### Estado atual (verificado)
+**Reatividade a filtros**:
+- `monthly = useWLTrend(rows, "month")` em `WinLossIntelligence.tsx` é `useMemo([rows, granularity])` ✅
+- `rows = useMemo([allRows, outcomeFilter, competitorFilter])` ✅
+- `useWinLossScenarios` é `useMemo([points, forecastSteps])` ✅
+- `ScenarioForecastChart` é `memo()`, mas seu `useMemo` interno depende de `series` (referência nova a cada execução do hook). Reatividade está **funcional** quando filtros disparam refetch/re-render — o que é esperado.
 
-**Edge function** (`supabase/functions/detect-winloss-at-risk/index.ts`):
-- Busca até 50 padrões `outcome='lost'` e até 200 deals abertos (`status not in (won,lost)`).
-- Score = `min(100, round((hits/keywords.length) * 80 * sevWeight))`, onde `sevWeight ∈ {1, 1.2, 1.5}`.
-- Match em `notes + stage` (lowercase). Filtra `risk_score >= 40`, ordena desc, top 20.
-- Retorna `{ deals, total }`. Pega o **melhor** padrão (maior score), descarta os demais.
-
-**UI** (`AtRiskDealsFromPatterns.tsx`):
-- Renderiza `client_name`, `matched_pattern`, `suggested_action`, `amount`, `risk_score`.
-- Tom visual: ≥75 destrutivo, ≥50 âmbar, <50 muted.
-
-**Riscos identificados:**
-1. `suggested_action` vem de `pattern.description` — pode ser longo/genérico, não acionável.
-2. Score teto 80 × sevWeight 1.5 = 120 → clamp 100; mas critical com 1 hit em 1 keyword já dá 100 (pode inflar).
-3. Sem `pattern_id` retornado — impossível auditar/drill-down.
-4. Sem fallback quando padrão tem 0 keywords (já filtrado, ok) ou quando todos os deals filtram zero (UI já trata).
-5. Não verifica se `notes` é string (deals com `notes=null` viram `""` — ok).
-6. Não há log estruturado para troubleshooting de scoring.
+**Contudo**, há uma melhoria importante: hoje `WinLossTrendChart` e `ScenarioForecastChart` recebem `points` em prop separada, e Recharts às vezes não re-renderiza o `<ComposedChart>` quando os dados mudam mantendo o mesmo número de elementos (problema conhecido). Vou adicionar uma `key` derivada do hash dos filtros aplicados para forçar reset do chart em troca de filtro/granularidade.
 
 ---
 
-### Plano de validação + melhorias
+### Mudanças
 
-**Etapa 1 — Diagnóstico com dados reais (read-only)**
-- `supabase--read_query`: contar padrões `lost` ativos e distribuição de `severity` + tamanho médio de `trigger_keywords`.
-- `supabase--read_query`: amostrar 20 deals abertos com `notes` não-vazia para entender vocabulário real.
-- `supabase--curl_edge_functions` POST `/detect-winloss-at-risk` → capturar payload atual.
-- Comparar manualmente: para cada deal retornado, verificar se `matched_pattern` faz sentido vs `notes`.
+#### 1. `src/hooks/win-loss/useWinLossScenarios.ts` — refactor estatístico
+- Calcular slope/intercept (mantém OLS).
+- σ = `sqrt(SSE / (n - 2))` — **Standard Error of Estimate** sobre os resíduos.
+- Forecast points: `σ_step = residualσ * sqrt(1 + step/n)` → bandas se abrem no horizonte.
+- Mínimo de **3 pontos** para regressão (em vez de 2). Abaixo disso, retorna série flat sem fan-out.
+- Expor novo campo `fitN` (quantos pontos foram usados) para transparência.
 
-**Etapa 2 — Refactor da edge function**
+#### 2. `src/components/win-loss/ScenarioForecastChart.tsx` — UX e reatividade
+- Mostrar `fitN` no header (`σ ±X.Xpp · fit em N períodos`) — transparência sobre robustez.
+- Adicionar `key={\`scenario-${data.length}-${data[0]?.period ?? ""}-${stdDev.toFixed(2)}\`}` no `<ComposedChart>` para garantir reset do internals do Recharts ao trocar filtros/granularidade.
+- Tooltip enriquecido com badge "Histórico" / "Previsão" baseado em `isForecast` — usuário entende imediatamente onde a incerteza começa.
+- Indicador visual: linha vertical tracejada (`<ReferenceLine>`) na junção histórico→forecast.
+- Empty state explícito quando `fitN < 3`: "Necessários ao menos 3 períodos com dados para projeção confiável".
 
-Melhorias mínimas, sem quebrar contrato:
+#### 3. Testes unitários
+Arquivo novo `src/test/hooks/useWinLossScenarios.test.ts` (Vitest):
+- Caso: <3 pontos → série flat, stdDev=0, fitN=n.
+- Caso: 3 pontos sem ruído (linha perfeita) → residualσ ≈ 0, bandas colapsadas.
+- Caso: 4 pontos com ruído conhecido → residualσ ≈ valor esperado matematicamente.
+- Caso: forecast bands se abrem (`σ_step+1 > σ_step`).
+- Caso: bandas clamped em [0, 100].
+- Caso: slope correto (tendência ascendente vs descendente).
+- Caso: troca de `points` retorna nova série (referencial).
 
-```ts
-// 1. Normalizar score com curva mais justa:
-//    base = (hits / keywords.length) * 70   // teto base 70
-//    bonus = min(20, (hits - 1) * 5)        // bônus por múltiplos hits
-//    score = min(100, round((base + bonus) * sevWeight))
-//    Resultado: 1 hit em 1 kw + critical = 70*1.5=100 (ok),
-//               1 hit em 5 kw + low     = 14 (filtrado, ok),
-//               3 hits em 5 kw + high   = (42+10)*1.2=62 (at risk).
-
-// 2. Action curta e acionável:
-const suggested_action = pat.suggested_action 
-  ?? truncate(pat.description, 90) 
-  ?? "Revisar abordagem com cliente";
-
-// 3. Retornar pattern_id, severity, hits, keywords_matched para auditoria.
-
-// 4. Validação Zod do body (force?: boolean).
-
-// 5. Log estruturado: { fn, total_patterns, total_deals, matched, top_score, duration_ms }.
-
-// 6. Skip seguro quando notes/stage ambos vazios.
-```
-
-**Etapa 3 — Tipo + UI alinhados**
-- `AtRiskDealFromPattern` ganha `pattern_id?: string`, `severity?: string`, `keywords_matched?: string[]`.
-- `AtRiskDealsFromPatterns.tsx`: adicionar `<Tooltip>` no badge de score mostrando keywords casadas (transparência); manter visual atual.
-
-**Etapa 4 — Testes Deno (`index.test.ts`)**
-Unit-testar a função pura de scoring (extraída como `computeRiskScore`):
-- Caso A: 0 keywords → 0.
-- Caso B: hits=0 → 0.
-- Caso C: 1/1 + critical → 100.
-- Caso D: 3/5 + high → ~62.
-- Caso E: 1/5 + low → ~14 (abaixo do limiar).
-- Caso F: notes vazio → 0.
-
-**Etapa 5 — Validação end-to-end**
-- Re-deploy + curl real → comparar antes/depois (top 5 deals): score, pattern, action.
-- `supabase--edge_function_logs detect-winloss-at-risk` → confirmar log estruturado.
-- Abrir `/win-loss-intelligence` → verificar que painel renderiza razão + ação coerentes (screenshot mental via session replay se necessário).
-
-**Etapa 6 — Documentação**
-- Atualizar `mem://features/win-loss-intelligence-module` com a fórmula de scoring final.
+#### 4. Validação visual
+- `tsc --noEmit` zero erros.
+- `vitest run src/test/hooks/useWinLossScenarios.test.ts`.
+- Verificar no preview: trocar filtro de período / outcome / competitor → confirmar que o chart re-renderiza com bandas atualizadas e que `fitN` muda coerentemente.
 
 ---
 
 ### Detalhes técnicos
 
-**Arquivos alterados:**
-- `supabase/functions/detect-winloss-at-risk/index.ts` — refactor scoring + Zod + logs + retorno enriquecido.
-- `supabase/functions/detect-winloss-at-risk/scoring.ts` (novo) — função pura `computeRiskScore` exportada.
-- `supabase/functions/detect-winloss-at-risk/index.test.ts` (novo) — 6 casos Deno.test.
-- `src/hooks/win-loss/useAtRiskFromPatterns.ts` — ampliar tipo `AtRiskDealFromPattern`.
-- `src/components/win-loss/AtRiskDealsFromPatterns.tsx` — Tooltip com keywords casadas.
+**Fórmula final do hook:**
+```
+slope, intercept ← OLS(xs, ys)
+σ = √( Σ(yᵢ - ŷᵢ)² / (n - 2) )       // residual standard error
+para step = 1..H:
+  ŷ_step = slope*(n+step-1) + intercept
+  σ_step = σ * √(1 + step/n)
+  optimistic = clamp(ŷ_step + σ_step, 0, 100)
+  pessimistic = clamp(ŷ_step - σ_step, 0, 100)
+```
 
-**Contrato preservado:** front antigo continua funcionando (campos novos são opcionais).
-
-**Sem migrations.** Apenas leitura de `win_loss_patterns` (já existente). Se a coluna `suggested_action` não existir nesse table, mantemos fallback em `description` — verifico via `read_query` na Etapa 1 antes de codar.
+**Sem migrations, sem novas dependências.** Mantém contrato externo (`series`, `stdDev`, `slope` continuam expostos; `fitN` adicionado como opcional).
 
 ### Ordem (sequencial, sem pausas)
-1. Diagnóstico SQL + curl atual (baseline).
-2. Verificar schema `win_loss_patterns` (coluna `suggested_action`?).
-3. Extrair `scoring.ts` + escrever 6 testes Deno.
-4. Refactor `index.ts` (Zod, logs, retorno enriquecido).
-5. Deploy + curl de validação + comparar antes/depois.
-6. Atualizar tipo do hook + Tooltip na UI.
-7. `tsc --noEmit` + `supabase--test_edge_functions` + log de validação no chat.
-8. Atualizar memória do módulo.
+1. Refactor `useWinLossScenarios.ts` (residual σ, prediction interval, fitN, mínimo 3).
+2. Atualizar `ScenarioForecastChart.tsx` (key reset, ReferenceLine na junção, fitN no header, tooltip Histórico/Previsão, empty state).
+3. Criar `src/test/hooks/useWinLossScenarios.test.ts` com 7 casos.
+4. `tsc --noEmit` + `vitest run` dos novos testes.
+5. Atualizar memória (`mem://features/winloss-at-risk-scoring` ou criar `mem://features/winloss-scenario-forecast`).
 
