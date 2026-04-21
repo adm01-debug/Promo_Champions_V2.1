@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+export type RiskSeverity = "low" | "medium" | "high" | "critical";
+
 export interface RiskBreakdown {
   stagnation: number;
   amount_alignment: number;
@@ -18,6 +20,7 @@ export interface RiskBreakdown {
   confidence_weight?: number;
   final_score?: number;
   stage_eligible?: boolean;
+  severity?: RiskSeverity;
 }
 
 export interface AtRiskDealFromPattern {
