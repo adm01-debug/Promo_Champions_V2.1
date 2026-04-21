@@ -389,6 +389,50 @@ export function AtRiskSettingsPopover({
           <RotateCcw className="h-3 w-3" />
           Restaurar padrões
         </Button>
+
+        {syncStatus && (
+          <div
+            className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground"
+            role="status"
+            aria-live="polite"
+            title={
+              syncStatus === "offline"
+                ? "Salvo apenas neste navegador. Faça login para sincronizar entre dispositivos."
+                : syncStatus === "syncing" || syncStatus === "loading"
+                  ? "Sincronizando preferências com o servidor…"
+                  : syncStatus === "synced"
+                    ? "Preferências sincronizadas com seu perfil."
+                    : syncStatus === "error"
+                      ? "Falha ao sincronizar. Mudanças permanecem salvas localmente."
+                      : ""
+            }
+          >
+            {(syncStatus === "syncing" || syncStatus === "loading") && (
+              <>
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+                Sincronizando…
+              </>
+            )}
+            {syncStatus === "synced" && (
+              <>
+                <CheckCircle2 className="h-3 w-3 text-status-success" aria-hidden />
+                Sincronizado com seu perfil
+              </>
+            )}
+            {syncStatus === "offline" && (
+              <>
+                <CloudOff className="h-3 w-3" aria-hidden />
+                Salvo só neste navegador
+              </>
+            )}
+            {syncStatus === "error" && (
+              <>
+                <AlertCircle className="h-3 w-3 text-warning" aria-hidden />
+                Falha de sync · salvo local
+              </>
+            )}
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
