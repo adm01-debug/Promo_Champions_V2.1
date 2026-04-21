@@ -35,6 +35,13 @@ export interface OpenDeal {
 
 export type RiskSeverity = "low" | "medium" | "high" | "critical";
 
+export interface CompetitorMatch {
+  keyword: string;
+  matched_substring: string;
+  regex: string;
+  confidence: number;
+}
+
 export interface RiskBreakdown {
   stagnation: number;
   amount_alignment: number;
@@ -73,16 +80,7 @@ function attributeRegexSource(hit: string): string {
   return "/" + COMPETITOR_KEYWORDS_RE.source + "/gi";
 }
 
-export interface CompetitorMatch {
-  /** The actual matched substring as it appeared in the source (preserves original case). */
-  keyword: string;
-  /** The full token from the source where the match occurred (e.g. "leilao_publico"). */
-  matched_substring: string;
-  /** Human-readable form of the regex that fired (e.g. "/leila\\w*/i"). */
-  regex: string;
-  /** Confidence drawn from the strongest competitor pattern, or 0.5 fallback. */
-  confidence: number;
-}
+// CompetitorMatch interface declared at the top of this file (near RiskBreakdown).
 
 /**
  * Detailed competitor matches with original substring and originating regex.
