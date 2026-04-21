@@ -2,6 +2,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+export interface RiskBreakdown {
+  stagnation: number;
+  amount_alignment: number;
+  stage_match: number;
+  matched_pattern_label: string;
+  matched_pattern_type: string;
+  matched_confidence: number;
+  reasons: string[];
+}
+
 export interface AtRiskDealFromPattern {
   sale_id: string;
   client_name: string | null;
@@ -10,6 +20,8 @@ export interface AtRiskDealFromPattern {
   risk_score: number;
   matched_pattern: string;
   suggested_action: string;
+  reasons?: string[];
+  breakdown?: RiskBreakdown;
 }
 
 export function useAtRiskFromPatterns() {
