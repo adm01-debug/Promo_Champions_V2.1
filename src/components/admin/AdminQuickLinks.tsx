@@ -1,7 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 
 const QUICK_LINKS = [
   { to: "/configuracoes", icon: Settings, label: "Configurações", color: "text-muted-foreground" },
@@ -19,6 +21,9 @@ const QUICK_LINKS = [
 ];
 
 export function AdminQuickLinks() {
+  const { data: counts } = useDeadLettersCounts();
+  const pending = counts?.pending ?? 0;
+
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
@@ -40,6 +45,24 @@ export function AdminQuickLinks() {
               </Link>
             </Button>
           ))}
+          <Button
+            asChild
+            variant="outline"
+            className="h-auto flex-col gap-2 py-4 hover:bg-muted/50 relative"
+          >
+            <Link to="/admin/webhooks-dead-letters" aria-label={`Dead-Letters de Webhooks${pending > 0 ? ` (${pending} pendentes)` : ""}`}>
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <span className="text-xs">Dead-Letters</span>
+              {pending > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 text-[10px] h-5 min-w-[20px] px-1 flex items-center justify-center"
+                >
+                  {pending > 99 ? "99+" : pending}
+                </Badge>
+              )}
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

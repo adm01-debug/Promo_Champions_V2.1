@@ -14,14 +14,54 @@ import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 
-export function WebhookDeadLetterPanel() {
+type DateRange = "all" | "24h" | "7d" | "30d";
+
+interface WebhookDeadLetterPanelProps {
+  fullWidth?: boolean;
+  filterText?: string;
+  filterSubscriptionId?: string;
+  filterEvent?: string;
+  dateRange?: DateRange;
+}
+
+function withinRange(createdAt: string, range: DateRange): boolean {
+  if (range === "all") return true;
+  const ms = { "24h": 24 * 3600e3, "7d": 7 * 86400e3, "30d": 30 * 86400e3 }[range];
+  return Date.now() - new Date(createdAt).getTime() <= ms;
+}
+
+export function WebhookDeadLetterPanel({
+  fullWidth = false,
+  filterText,
+  filterSubscriptionId,
+  filterEvent,
+  dateRange = "all",
+}: WebhookDeadLetterPanelProps = {}) {
   const { isAdmin, isLoadingCurrentRole } = useUserRoles();
   const [tab, setTab] = useState<DeadLetterStatus>("pending");
   const { list, replay, archive, isReplaying, isArchiving } = useWebhookDeadLetters(tab);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewOf, setPreviewOf] = useState<DeadLetter | null>(null);
 
-  const items = list.data ?? [];
+  const rawItems = list.data ?? [];
+  const items = useMemo(() => {
+    const needle = filterText?.trim().toLowerCase();
+    return rawItems.filter((d) => {
+      if (filterSubscriptionId && d.subscription_id !== filterSubscriptionId) return false;
+      if (filterEvent && d.event !== filterEvent) return false;
+      if (!withinRange(d.created_at, dateRange)) return false;
+      if (needle) {
+        const hay = [
+          d.event,
+          d.subscription_url ?? "",
+          d.request_id ?? "",
+          d.last_error ?? "",
+        ].join(" ").toLowerCase();
+        if (!hay.includes(needle)) return false;
+      }
+      return true;
+    });
+  }, [rawItems, filterText, filterSubscriptionId, filterEvent, dateRange]);
   const allSelected = items.length > 0 && items.every((i) => selected.has(i.id));
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
 
@@ -92,7 +132,7 @@ export function WebhookDeadLetterPanel() {
           </div>
         )}
 
-        <ScrollArea className="max-h-[420px] pr-2">
+        <ScrollArea className={fullWidth ? "max-h-[70vh] pr-2" : "max-h-[420px] pr-2"}>
           <ul className="space-y-1.5" role="list" aria-label="Dead letters">
             {list.isLoading && <li className="text-xs text-muted-foreground py-3 text-center">Carregando…</li>}
             {!list.isLoading && items.length === 0 && (
