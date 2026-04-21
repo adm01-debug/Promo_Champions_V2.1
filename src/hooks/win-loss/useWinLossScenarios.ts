@@ -40,6 +40,13 @@ export interface ScenarioForecast {
 export interface ScenarioOptions {
   forecastSteps?: number;
   bandMode?: BandMode;
+  /**
+   * When true and `bandMode === "see"`, replaces the simplified
+   * `√(1 + step/n)` width with the full OLS prediction-interval inflation
+   * factor `√(1 + 1/n + (x − x̄)² / Sxx)`. Default false (legacy SEE).
+   * Ignored in `pi95` mode (always uses the full factor).
+   */
+  seeUseOlsInflation?: boolean;
 }
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
