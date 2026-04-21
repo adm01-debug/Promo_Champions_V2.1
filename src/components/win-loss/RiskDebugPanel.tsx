@@ -132,6 +132,7 @@ export function RiskDebugPanel({ breakdown, riskScore, suggestedAction, outcome 
   const conf = breakdown.confidence_weight ?? Math.max(0.5, Math.min(1, breakdown.matched_confidence));
   const final = breakdown.final_score ?? riskScore;
   const derived: RiskSeverity = deriveSeverity(final, breakdown.matched_confidence);
+  const explain = explainSeverity(final, breakdown.matched_confidence);
   const matrix = summarizeActionMatrix(breakdown.matched_pattern_type, derived, outcome);
 
   return (
