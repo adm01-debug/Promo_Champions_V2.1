@@ -13,12 +13,17 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   else console.log(line);
 }
 
-interface DLQRow {
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+interface SourceRow {
   id: string;
   subscription_id: string;
   event: string;
   payload: Record<string, unknown>;
-  status: string;
+  // for DLQ rows only
+  dlq?: boolean;
+  // for delivery rows only
+  succeeded?: boolean;
 }
 
 serve(async (req) => {
@@ -61,60 +66,102 @@ serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const idsRaw: unknown = body?.dead_letter_ids ?? (body?.dead_letter_id ? [body.dead_letter_id] : []);
-    const ids: string[] = Array.isArray(idsRaw)
-      ? idsRaw.filter((x): x is string => typeof x === "string" && /^[0-9a-f-]{36}$/i.test(x))
-      : [];
-    if (!ids.length || ids.length > 50) {
-      return new Response(JSON.stringify({ error: "dead_letter_ids must be 1–50 valid uuids" }), {
+    const dlqRaw: unknown = body?.dead_letter_ids ?? (body?.dead_letter_id ? [body.dead_letter_id] : null);
+    const delRaw: unknown = body?.delivery_ids ?? (body?.delivery_id ? [body.delivery_id] : null);
+
+    if ((dlqRaw && delRaw) || (!dlqRaw && !delRaw)) {
+      return new Response(JSON.stringify({ error: "Provide exactly one of dead_letter_ids or delivery_ids" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: rows, error: fetchErr } = await supabase
-      .from("winloss_webhook_dead_letters")
-      .select("id, subscription_id, event, payload, status")
-      .in("id", ids);
-    if (fetchErr) throw fetchErr;
-    const dlqRows = (rows ?? []) as DLQRow[];
+    const source: "dlq" | "delivery" = dlqRaw ? "dlq" : "delivery";
+    const rawList = (dlqRaw ?? delRaw) as unknown;
+    const ids: string[] = Array.isArray(rawList)
+      ? rawList.filter((x): x is string => typeof x === "string" && UUID_RE.test(x))
+      : [];
+    if (!ids.length || ids.length > 50) {
+      return new Response(JSON.stringify({ error: `${source === "dlq" ? "dead_letter_ids" : "delivery_ids"} must be 1–50 valid uuids` }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    jlog("info", { msg: "replay_start", requestId, count: dlqRows.length, ids });
+    let rows: SourceRow[] = [];
+    if (source === "dlq") {
+      const { data, error } = await supabase
+        .from("winloss_webhook_dead_letters")
+        .select("id, subscription_id, event, payload, status")
+        .in("id", ids);
+      if (error) throw error;
+      rows = (data ?? []).map((r) => ({
+        id: r.id as string,
+        subscription_id: r.subscription_id as string,
+        event: r.event as string,
+        payload: (r.payload ?? {}) as Record<string, unknown>,
+        dlq: true,
+      }));
 
-    // mark replaying
-    await supabase
-      .from("winloss_webhook_dead_letters")
-      .update({ status: "replaying" })
-      .in("id", dlqRows.map((r) => r.id));
+      // mark replaying
+      await supabase
+        .from("winloss_webhook_dead_letters")
+        .update({ status: "replaying" })
+        .in("id", rows.map((r) => r.id));
+    } else {
+      const { data, error } = await supabase
+        .from("winloss_webhook_deliveries")
+        .select("id, subscription_id, event, payload, succeeded")
+        .in("id", ids);
+      if (error) throw error;
+      rows = (data ?? []).map((r) => ({
+        id: r.id as string,
+        subscription_id: r.subscription_id as string,
+        event: r.event as string,
+        payload: (r.payload ?? {}) as Record<string, unknown>,
+        succeeded: r.succeeded as boolean,
+      }));
+    }
 
-    const results: Array<{ id: string; succeeded: boolean; status: number; error: string | null }> = [];
+    jlog("info", { msg: "replay_start", requestId, source, count: rows.length, ids });
 
-    for (const row of dlqRows) {
+    const results: Array<{ id: string; succeeded: boolean; status: number; error: string | null; skipped?: boolean }> = [];
+
+    for (const row of rows) {
+      // Skip already-succeeded deliveries
+      if (source === "delivery" && row.succeeded) {
+        results.push({ id: row.id, succeeded: false, status: 0, error: "already_succeeded", skipped: true });
+        continue;
+      }
+
       try {
+        const dispatchBody: Record<string, unknown> = {
+          ...row.payload,
+          event: row.event,
+          __target_subscription_id: row.subscription_id,
+        };
+        if (source === "dlq") dispatchBody.__replay_of = row.id;
+
         const { data, error } = await supabase.functions.invoke("winloss-webhook-dispatcher", {
-          body: {
-            ...row.payload,
-            event: row.event,
-            __replay_of: row.id,
-            __target_subscription_id: row.subscription_id,
-          },
+          body: dispatchBody,
         });
         if (error) throw error;
         const r = (data?.results?.[0] ?? {}) as { succeeded?: boolean; status?: number; error?: string | null };
         results.push({ id: row.id, succeeded: !!r.succeeded, status: r.status ?? 0, error: r.error ?? null });
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        // restore to pending so user can try again
-        await supabase
-          .from("winloss_webhook_dead_letters")
-          .update({ status: "pending", last_replay_at: new Date().toISOString(), last_replay_error: msg })
-          .eq("id", row.id);
+        if (source === "dlq") {
+          // restore so user can try again
+          await supabase
+            .from("winloss_webhook_dead_letters")
+            .update({ status: "pending", last_replay_at: new Date().toISOString(), last_replay_error: msg })
+            .eq("id", row.id);
+        }
         results.push({ id: row.id, succeeded: false, status: 0, error: msg });
       }
     }
 
-    jlog("info", { msg: "replay_complete", requestId, results });
+    jlog("info", { msg: "replay_complete", requestId, source, results });
 
-    return new Response(JSON.stringify({ requestId, results }), {
+    return new Response(JSON.stringify({ requestId, source, results }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
