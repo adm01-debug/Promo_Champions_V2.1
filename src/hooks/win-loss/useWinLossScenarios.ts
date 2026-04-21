@@ -91,6 +91,8 @@ export interface ScenarioForecast {
   bandLabel: string;
   /** Whether SEE mode is using the full OLS inflation factor instead of √(1+step/n). */
   seeUseOlsInflation: boolean;
+  /** Multiplicador `z` aplicado à largura SEE (1.00≈68% · 1.96≈95%). PI 95% ignora. */
+  confidenceZ: number;
 }
 
 export interface ScenarioOptions {
