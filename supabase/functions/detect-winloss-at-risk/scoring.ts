@@ -58,11 +58,18 @@ export interface RiskBreakdown {
 
 export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
 
+const COMPETITOR_REGEX_LABEL: Array<[string, string]> = [
+  ["concorr", "/concorr\\w*/i"],
+  ["competitor", "/competitor\\w*/i"],
+  ["leila", "/leila\\w*/i"],
+  ["cota", "/cota[c\u00e7]\\w*/i"],
+];
+
 function attributeRegexSource(hit: string): string {
-  if (/concorr/i.test(hit)) return "/concorr\\w*/i";
-  if (/competitor/i.test(hit)) return "/competitor\\w*/i";
-  if (/leila/i.test(hit)) return "/leila\\w*/i";
-  if (/cota[c\u00e7]/i.test(hit)) return "/cota[c\u00e7]\\w*/i";
+  const lower = hit.toLowerCase();
+  for (const [needle, label] of COMPETITOR_REGEX_LABEL) {
+    if (lower.includes(needle)) return label;
+  }
   return "/" + COMPETITOR_KEYWORDS_RE.source + "/gi";
 }
 
