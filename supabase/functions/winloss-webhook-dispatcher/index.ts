@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
+import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -200,7 +200,7 @@ serve(async (req) => {
   } catch (e) {
     structuredLog("error", {
       msg: "dispatcher_fatal",
-      error: e instanceof Error ? `${e.name}: ${e.message}` : String(e),
+      ...describeError(e),
       latency_ms: Date.now() - requestStart,
     }, requestId);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown", requestId }), {

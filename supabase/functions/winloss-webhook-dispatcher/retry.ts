@@ -4,6 +4,21 @@
 export const MAX_ATTEMPTS = 3;
 export const TIMEOUT_MS = 8000;
 
+/**
+ * Normalize unknown errors into a consistent shape for structured logs.
+ * Stack is truncated to 4000 chars to keep log lines manageable.
+ */
+export function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
+  if (e instanceof Error) {
+    return {
+      error_name: e.name || "Error",
+      error: e.message || String(e),
+      error_stack: e.stack ? e.stack.slice(0, 4000) : null,
+    };
+  }
+  return { error_name: "UnknownError", error: String(e), error_stack: null };
+}
+
 export interface Subscription {
   id: string;
   url: string;
@@ -111,6 +126,7 @@ export async function dispatchOne(
     let status = 0;
     let errorMessage: string | null = null;
     let errorName: string | null = null;
+    let errorStack: string | null = null;
 
     try {
       const res = await fetchFn(sub.url, {
@@ -126,13 +142,10 @@ export async function dispatchOne(
       status = res.status;
       try { await res.text(); } catch { /* noop */ }
     } catch (e) {
-      if (e instanceof Error) {
-        errorName = e.name;
-        errorMessage = `${e.name}: ${e.message}`;
-      } else {
-        errorName = "UnknownError";
-        errorMessage = String(e);
-      }
+      const d = describeError(e);
+      errorName = d.error_name;
+      errorMessage = `${d.error_name}: ${d.error}`;
+      errorStack = d.error_stack;
       lastError = errorMessage;
     }
 
@@ -154,6 +167,7 @@ export async function dispatchOne(
       outcome: ok ? "success" : (errorName ? "network_error" : "http_error"),
       error_name: errorName,
       error: errorMessage,
+      error_stack: errorStack,
     });
 
     try {
@@ -173,7 +187,7 @@ export async function dispatchOne(
         event,
         subscriptionId: sub.id,
         attempt,
-        error: logErr instanceof Error ? logErr.message : String(logErr),
+        ...describeError(logErr),
       });
     }
 
@@ -199,7 +213,7 @@ export async function dispatchOne(
       msg: "update_subscription_failed",
       event,
       subscriptionId: sub.id,
-      error: e instanceof Error ? e.message : String(e),
+      ...describeError(e),
     });
   }
 
@@ -229,7 +243,7 @@ export async function dispatchOne(
         msg: "dead_letter_insert_failed",
         event,
         subscriptionId: sub.id,
-        error: e instanceof Error ? e.message : String(e),
+        ...describeError(e),
       });
     }
   }
