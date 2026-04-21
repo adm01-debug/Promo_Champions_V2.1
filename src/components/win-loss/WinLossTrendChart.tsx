@@ -4,17 +4,25 @@ import { Button } from "@/components/ui/button";
 import { ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { TrendingUp } from "lucide-react";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
+import type { WLGranularity } from "@/hooks/win-loss/useWinLossViewPrefs";
 
 interface Props {
   monthly: TrendPoint[];
   weekly: TrendPoint[];
+  granularity: WLGranularity;
+  onGranularityChange: (g: WLGranularity) => void;
   onPointClick?: (period: string) => void;
 }
 
-export const WinLossTrendChart = memo(function WinLossTrendChart({ monthly, weekly, onPointClick }: Props) {
-  const [gran, setGran] = useState<"week" | "month">("month");
+export const WinLossTrendChart = memo(function WinLossTrendChart({
+  monthly,
+  weekly,
+  granularity,
+  onGranularityChange,
+  onPointClick,
+}: Props) {
   const [compare, setCompare] = useState(false);
-  const data = gran === "week" ? weekly : monthly;
+  const data = granularity === "week" ? weekly : monthly;
 
   // Build the comparison series by aligning the previous half with current periods.
   const merged = useMemo(() => {
@@ -47,9 +55,10 @@ export const WinLossTrendChart = memo(function WinLossTrendChart({ monthly, week
               <Button
                 key={g}
                 size="sm"
-                variant={gran === g ? "default" : "ghost"}
+                variant={granularity === g ? "default" : "ghost"}
                 className="h-6 px-2 text-[11px]"
-                onClick={() => setGran(g)}
+                onClick={() => onGranularityChange(g)}
+                aria-pressed={granularity === g}
               >
                 {g === "week" ? "Semanal" : "Mensal"}
               </Button>
