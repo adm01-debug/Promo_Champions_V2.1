@@ -92,19 +92,19 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
               htmlFor={toggleId}
               className="text-[11px] font-medium text-foreground cursor-pointer"
             >
-              Fator de inflação OLS no SEE
+              Usar aproximação legada √(1 + step/n)
             </Label>
             <p className="mt-0.5 text-[10px] text-muted-foreground leading-snug font-mono">
               {seeUseOlsInflation
-                ? "ativo: width = σ · √(1 + 1/n + (x − x̄)² / Sxx)"
-                : "inativo: width = σ · √(1 + step/n)"}
+                ? "padrão: width = σ · √(1 + 1/n + (x − x̄)² / Sxx)  (PI 1σ)"
+                : "legado: width = σ · √(1 + step/n)  (não usa Sxx)"}
             </p>
           </div>
           <Switch
             id={toggleId}
-            checked={seeUseOlsInflation}
-            onCheckedChange={onToggleSeeOlsInflation}
-            aria-label="Alternar fator de inflação OLS no modo SEE"
+            checked={!seeUseOlsInflation}
+            onCheckedChange={(v) => onToggleSeeOlsInflation(!v)}
+            aria-label="Alternar para a aproximação legada √(1+step/n) no modo SEE"
           />
         </div>
       )}
