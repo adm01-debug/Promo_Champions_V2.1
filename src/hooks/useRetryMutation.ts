@@ -25,15 +25,22 @@ const DEFAULT_RETRY_CONFIG: Required<Omit<RetryConfig, 'onRetry' | 'retryConditi
   backoffMultiplier: 2,
 };
 
-// Calculate delay with exponential backoff and jitter
+// Maximum jitter as a fraction of the exponential delay (0.3 = up to +30%).
+// Exported so tests and callers can reference the single source of truth.
+export const JITTER_FACTOR = 0.3;
+
+// Calculate delay with exponential backoff and jitter.
+// `rand` is injectable to allow deterministic testing of the jitter range.
+// Default uses Math.random for production behavior (fully backwards compatible).
 export function calculateBackoffDelay(
   attemptNumber: number,
   baseDelay: number,
   maxDelay: number,
-  multiplier: number
+  multiplier: number,
+  rand: () => number = Math.random,
 ): number {
   const exponentialDelay = baseDelay * Math.pow(multiplier, attemptNumber - 1);
-  const jitter = Math.random() * 0.3 * exponentialDelay; // Add up to 30% jitter
+  const jitter = rand() * JITTER_FACTOR * exponentialDelay;
   return Math.min(exponentialDelay + jitter, maxDelay);
 }
 
