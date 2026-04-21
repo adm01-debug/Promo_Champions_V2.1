@@ -13085,6 +13085,24 @@ export type Database = {
         }
         Relationships: []
       }
+      user_winloss_preferences: {
+        Row: {
+          layout: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          layout?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          layout?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       victory_feed: {
         Row: {
           created_at: string
@@ -13723,6 +13741,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      winloss_webhook_subscriptions: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string
+          events: string[]
+          id: string
+          last_dispatch_at: string | null
+          last_status: number | null
+          secret: string | null
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by: string
+          events?: string[]
+          id?: string
+          last_dispatch_at?: string | null
+          last_status?: number | null
+          secret?: string | null
+          url: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          events?: string[]
+          id?: string
+          last_dispatch_at?: string | null
+          last_status?: number | null
+          secret?: string | null
+          url?: string
+        }
+        Relationships: []
       }
       workflow_executions: {
         Row: {

@@ -25,6 +25,13 @@ import { WinByHourHeatmap } from "@/components/win-loss/WinByHourHeatmap";
 import { ScriptABPanel } from "@/components/win-loss/ScriptABPanel";
 import { WinLossSectionSkeleton } from "@/components/win-loss/WinLossSectionSkeleton";
 import { WinLossErrorBoundary } from "@/components/win-loss/WinLossErrorBoundary";
+import { ScenarioForecastChart } from "@/components/win-loss/ScenarioForecastChart";
+import { ICPCorrelationMatrix } from "@/components/win-loss/ICPCorrelationMatrix";
+import { SentimentTrendChart } from "@/components/win-loss/SentimentTrendChart";
+import { SeasonComparisonPanel } from "@/components/win-loss/SeasonComparisonPanel";
+import { AtRiskDealsFromPatterns } from "@/components/win-loss/AtRiskDealsFromPatterns";
+import { WebhookSubscriptionsPanel } from "@/components/win-loss/WebhookSubscriptionsPanel";
+import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
@@ -212,6 +219,10 @@ export default function WinLossIntelligence() {
             onLoadView={handleLoadView}
           />
 
+          <div className="flex justify-end no-print">
+            <ExportPdfButton filters={filters} />
+          </div>
+
           <div className="no-print">
             <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
           </div>
@@ -311,6 +322,33 @@ export default function WinLossIntelligence() {
               <WinLossErrorBoundary section="Script A/B">
                 <ScriptABPanel />
               </WinLossErrorBoundary>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <WinLossErrorBoundary section="Forecast cenários" fallbackHeight={260}>
+                  <ScenarioForecastChart points={monthly} />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="ICP correlação" fallbackHeight={260}>
+                  <ICPCorrelationMatrix rows={rows} />
+                </WinLossErrorBoundary>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <WinLossErrorBoundary section="Sentimento × Win" fallbackHeight={260}>
+                  <SentimentTrendChart />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="Comparativo de safras">
+                  <SeasonComparisonPanel rows={rows} />
+                </WinLossErrorBoundary>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <WinLossErrorBoundary section="Deals em risco">
+                  <AtRiskDealsFromPatterns />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="Webhooks">
+                  <WebhookSubscriptionsPanel />
+                </WinLossErrorBoundary>
+              </div>
             </>
           )}
 
