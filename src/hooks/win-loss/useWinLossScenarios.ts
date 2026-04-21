@@ -43,10 +43,12 @@ export interface ScenarioOptions {
   forecastSteps?: number;
   bandMode?: BandMode;
   /**
-   * When true and `bandMode === "see"`, replaces the simplified
-   * `√(1 + step/n)` width with the full OLS prediction-interval inflation
-   * factor `√(1 + 1/n + (x − x̄)² / Sxx)`. Default false (legacy SEE).
-   * Ignored in `pi95` mode (always uses the full factor).
+   * Controls the SEE-mode width formula:
+   * - `true` (default): full OLS prediction-interval inflation at 1σ —
+   *   `width = σ · √(1 + 1/n + (x − x̄)² / Sxx)`. Statistically correct PI shape.
+   * - `false`: legacy approximation `width = σ · √(1 + step/n)` (kept for
+   *   backward compatibility / debugging).
+   * Ignored in `pi95` mode (always uses the full PI factor with t multiplier).
    */
   seeUseOlsInflation?: boolean;
 }
