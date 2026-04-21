@@ -35,13 +35,23 @@ export interface AtRiskDealFromPattern {
   breakdown?: RiskBreakdown;
 }
 
-export function useAtRiskFromPatterns() {
+export interface UseAtRiskParams {
+  threshold?: number;
+  limit?: number;
+}
+
+export function useAtRiskFromPatterns(params: UseAtRiskParams = {}) {
   const qc = useQueryClient();
+  const { threshold, limit } = params;
+
+  const body: Record<string, number> = {};
+  if (typeof threshold === "number") body.threshold = threshold;
+  if (typeof limit === "number") body.limit = limit;
 
   const query = useQuery({
-    queryKey: ["winloss-at-risk-from-patterns"],
+    queryKey: ["winloss-at-risk-from-patterns", threshold ?? null, limit ?? null],
     queryFn: async (): Promise<AtRiskDealFromPattern[]> => {
-      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", { body: {} });
+      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", { body });
       if (error) throw error;
       return ((data as { deals?: AtRiskDealFromPattern[] })?.deals ?? []) as AtRiskDealFromPattern[];
     },
@@ -50,7 +60,9 @@ export function useAtRiskFromPatterns() {
 
   const refresh = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", { body: { force: true } });
+      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", {
+        body: { ...body, force: true },
+      });
       if (error) throw error;
       return data;
     },

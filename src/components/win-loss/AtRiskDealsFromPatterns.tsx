@@ -6,7 +6,9 @@ import { AlertTriangle, RefreshCw, Info, Bug } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
+import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import { RiskDebugPanel } from "./RiskDebugPanel";
+import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
 
 const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
@@ -20,8 +22,13 @@ const scoreLabel = (score: number) =>
   score >= 75 ? "Crítico" : score >= 50 ? "Alto risco" : "Atenção";
 
 export function AtRiskDealsFromPatterns() {
-  const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns();
+  const { settings, update, reset } = useAtRiskSettings();
+  const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns({
+    threshold: settings.threshold,
+    limit: settings.limit,
+  });
   const [debug, setDebug] = useState(false);
+  const visible = data.slice(0, settings.maxVisible);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -42,6 +49,13 @@ export function AtRiskDealsFromPatterns() {
               <Bug className="h-3 w-3" />
               <span className="text-[10px] font-medium">Debug</span>
             </Button>
+            <AtRiskSettingsPopover
+              settings={settings}
+              onUpdate={update}
+              onReset={reset}
+              totalAnalyzed={data.length}
+              totalShown={visible.length}
+            />
             <Button
               size="sm"
               variant="ghost"
@@ -59,11 +73,13 @@ export function AtRiskDealsFromPatterns() {
             <div className="space-y-2">{[0, 1, 2].map(i => <Skeleton key={i} className="h-14 w-full" />)}</div>
           ) : !data.length ? (
             <p className="text-xs text-muted-foreground py-4 text-center">
-              Nenhum deal aberto cruza padrões críticos no momento.
+              {settings.threshold > 40
+                ? `Nenhum deal cruza padrões com score ≥ ${settings.threshold}.`
+                : "Nenhum deal aberto cruza padrões críticos no momento."}
             </p>
           ) : (
             <ul className="space-y-2" aria-label="Deals em risco identificados">
-              {data.slice(0, 8).map(d => (
+              {visible.map(d => (
                 <li key={d.sale_id} className={`rounded-md border px-3 py-2 ${tone(d.risk_score)}`}>
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0 flex-1">
