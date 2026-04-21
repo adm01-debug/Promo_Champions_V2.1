@@ -225,6 +225,38 @@ export function RiskDebugPanel({ breakdown, riskScore, suggestedAction, outcome 
             primeira regra que casa com (final, conf) define o nível
           </p>
         </div>
+
+        {/* Narrativa: por que esse nível? */}
+        <div
+          className={`rounded px-2 py-1.5 space-y-1 ${
+            explain.demoted
+              ? "bg-warning/10 border border-warning/30"
+              : "bg-muted/30 border border-border/50"
+          }`}
+          data-severity-explain={explain.applied}
+          data-severity-demoted={explain.demoted ? "true" : "false"}
+          aria-label={`Explicação de severity: ${explain.reason}`}
+        >
+          <p className="font-mono text-[11px] tabular-nums leading-snug">{explain.reason}</p>
+          {(explain.distanceToNext || explain.distanceToPrev) && (
+            <p className="text-[10px] text-muted-foreground tabular-nums flex flex-wrap gap-x-3 gap-y-0.5">
+              {explain.distanceToNext && (
+                <span>
+                  ↑ +{explain.distanceToNext.kind === "confidence"
+                    ? `${explain.distanceToNext.delta.toFixed(2)} conf`
+                    : `${explain.distanceToNext.delta}pts`}{" "}
+                  → {explain.distanceToNext.target}
+                </span>
+              )}
+              {explain.distanceToPrev && (
+                <span>
+                  ↓ -{explain.distanceToPrev.delta}pts → {explain.distanceToPrev.target}
+                </span>
+              )}
+            </p>
+          )}
+        </div>
+
         <ul className="space-y-1 font-mono text-[11px] tabular-nums">
           {SEVERITY_RULES.map((rule) => {
             const isMatch = rule.severity === derived;
