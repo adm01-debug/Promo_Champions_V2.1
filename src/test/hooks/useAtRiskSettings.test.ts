@@ -119,4 +119,22 @@ describe("useAtRiskSettings", () => {
     expect(result.current.settings.stageFilter).toEqual([]);
     expect(result.current.settings.keywordFilter).toBe("");
   });
+
+  it("debug flag survives unmount/remount (simulates page reload)", () => {
+    const first = renderHook(() => useAtRiskSettings());
+    act(() => first.result.current.update({ debug: true, threshold: 55 }));
+    expect(first.result.current.settings.debug).toBe(true);
+    first.unmount();
+
+    // New hook instance reads fresh from localStorage — simulates F5.
+    const second = renderHook(() => useAtRiskSettings());
+    expect(second.result.current.settings.debug).toBe(true);
+    expect(second.result.current.settings.threshold).toBe(55);
+
+    // Toggling off also persists across remount.
+    act(() => second.result.current.update({ debug: false }));
+    second.unmount();
+    const third = renderHook(() => useAtRiskSettings());
+    expect(third.result.current.settings.debug).toBe(false);
+  });
 });

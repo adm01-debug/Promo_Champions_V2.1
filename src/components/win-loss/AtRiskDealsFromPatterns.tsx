@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown } from "lucide-react";
+import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown, Bug, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -76,6 +76,24 @@ export function AtRiskDealsFromPatterns() {
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden />
             Deals em risco — padrões de loss
+            {settings.debug && (
+              <button
+                type="button"
+                onClick={() => update({ debug: false })}
+                aria-label="Modo debug ativo — clique para desligar"
+                title="Modo debug ativo (persistido). Clique para desligar."
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+              >
+                <Badge
+                  variant="warning"
+                  className="gap-1 text-[10px] px-2 py-0.5 cursor-pointer"
+                >
+                  <Bug className="h-3 w-3" aria-hidden />
+                  Debug
+                  <X className="h-3 w-3 opacity-70" aria-hidden />
+                </Badge>
+              </button>
+            )}
             <div className="ml-auto flex items-center gap-1">
               <AtRiskSettingsPopover
                 settings={settings}
