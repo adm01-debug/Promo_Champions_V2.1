@@ -298,51 +298,60 @@ export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakd
       )}
 
       {/* Razões completas — cada item liga a um campo do cálculo acima */}
-      {breakdown.reasons.length > 0 && (
-        <div className="space-y-1">
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Razões</p>
-            <p className="text-[10px] text-muted-foreground/80">
-              cada item liga a um campo do cálculo acima
-            </p>
-          </div>
-          <ul className="space-y-1">
-            {breakdown.reasons.map((reason, i) => {
-              const { kind, contribValue, contribMax } = classifyReason(reason, breakdown);
-              const meta = KIND_META[kind];
-              const Icon = meta.icon;
-              const ariaLabel =
-                contribValue != null && contribMax != null
-                  ? `Razão de risco: ${meta.label}, contribui ${contribValue}/${contribMax}`
-                  : `Razão de risco: ${meta.label}`;
-              return (
-                <li
-                  key={i}
-                  aria-label={ariaLabel}
-                  className="flex items-start gap-1.5 rounded border border-border/50 bg-background/40 px-2 py-1.5"
-                >
-                  <Icon className={`h-3 w-3 mt-0.5 shrink-0 ${meta.color}`} aria-hidden />
-                  <div className="min-w-0 flex-1 space-y-0.5">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <Badge variant={meta.variant} className="text-[10px] px-1.5 py-0 tabular-nums">
-                        {meta.label}
-                        {contribValue != null && contribMax != null && (
-                          <span className="ml-1 opacity-80">{contribValue}/{contribMax}</span>
-                        )}
-                      </Badge>
+      {(() => {
+        const resolved = resolveReasons(breakdown);
+        if (resolved.length === 0) return null;
+        return (
+          <div className="space-y-1">
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Razões</p>
+              <p className="text-[10px] text-muted-foreground/80">
+                cada item liga a um campo do cálculo acima
+              </p>
+            </div>
+            <ul className="space-y-1">
+              {resolved.map((reason, i) => {
+                const meta = getReasonKindMeta(reason.code);
+                const Icon = meta.icon;
+                const contribValue = reason.contribution;
+                const contribMax = meta.contribMax;
+                const showContrib = contribMax != null;
+                const ariaLabel = showContrib
+                  ? `Razão de risco: ${meta.label} (${reason.code}), contribui ${contribValue}/${contribMax}`
+                  : `Razão de risco: ${meta.label} (${reason.code})`;
+                return (
+                  <li
+                    key={`${reason.code}-${i}`}
+                    data-reason-code={reason.code}
+                    aria-label={ariaLabel}
+                    className="flex items-start gap-1.5 rounded border border-border/50 bg-background/40 px-2 py-1.5"
+                  >
+                    <Icon className={`h-3 w-3 mt-0.5 shrink-0 ${meta.color}`} aria-hidden />
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <Badge variant={meta.variant} className="text-[10px] px-1.5 py-0 tabular-nums">
+                          {meta.label}
+                          {showContrib && (
+                            <span className="ml-1 opacity-80">{contribValue}/{contribMax}</span>
+                          )}
+                        </Badge>
+                        <span className="text-[9px] font-mono text-muted-foreground/70">
+                          {reason.code}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-snug">
+                        {reason.source === "competitor"
+                          ? renderCompetitorReason(reason.message, breakdown.matched_keywords ?? [])
+                          : highlightNumbers(reason.message)}
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground leading-snug">
-                      {kind === "competitor"
-                        ? renderCompetitorReason(reason, breakdown.matched_keywords ?? [])
-                        : highlightNumbers(reason)}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })()}
     </div>
   );
 }
