@@ -76,6 +76,24 @@ export function AtRiskDealsFromPatterns() {
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden />
             Deals em risco — padrões de loss
+            {settings.debug && (
+              <button
+                type="button"
+                onClick={() => update({ debug: false })}
+                aria-label="Modo debug ativo — clique para desligar"
+                title="Modo debug ativo (persistido). Clique para desligar."
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+              >
+                <Badge
+                  variant="warning"
+                  className="gap-1 text-[10px] px-2 py-0.5 cursor-pointer"
+                >
+                  <Bug className="h-3 w-3" aria-hidden />
+                  Debug
+                  <X className="h-3 w-3 opacity-70" aria-hidden />
+                </Badge>
+              </button>
+            )}
             <div className="ml-auto flex items-center gap-1">
               <AtRiskSettingsPopover
                 settings={settings}
