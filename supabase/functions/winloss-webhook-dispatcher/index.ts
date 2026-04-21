@@ -133,8 +133,33 @@ serve(async (req) => {
       target_ids: targets.map((t) => t.id),
     }, requestId);
 
+    // Per-subscription "planned" log → enables filtering the full lifecycle by subscriptionId
+    for (const t of targets) {
+      structuredLog("info", {
+        msg: "subscription_planned",
+        event,
+        mode: replayOf ? "replay" : "broadcast",
+        subscriptionId: t.id,
+        url: t.url,
+      }, requestId);
+    }
+
     const deps = buildDeps(supabase, requestId, replayOf);
     const results = await Promise.all(targets.map((s) => dispatchOne(s, payload, deps)));
+
+    // Per-subscription outcome log → end-of-flow marker per subscriptionId
+    for (const r of results) {
+      structuredLog(r.succeeded ? "info" : "warn", {
+        msg: "subscription_outcome",
+        event,
+        subscriptionId: r.id,
+        succeeded: r.succeeded,
+        final_status: r.status,
+        attempts: r.attempts,
+        total_latency_ms: r.total_latency_ms,
+        error: r.error,
+      }, requestId);
+    }
 
     // On replay success, mark the original DLQ row as replayed.
     if (replayOf && results.length === 1 && results[0].succeeded) {
