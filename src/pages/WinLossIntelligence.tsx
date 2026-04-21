@@ -240,51 +240,78 @@ export default function WinLossIntelligence() {
             />
           ) : (
             <>
-              <WinLossKpiBanner
-                kpis={kpis}
-                onWinsClick={onWins}
-                onLossesClick={onLosses}
-                delta={delta}
-                forecast={forecast}
-              />
+              <WinLossErrorBoundary section="KPIs">
+                <WinLossKpiBanner
+                  kpis={kpis}
+                  onWinsClick={onWins}
+                  onLossesClick={onLosses}
+                  delta={delta}
+                  forecast={forecast}
+                />
+              </WinLossErrorBoundary>
 
               <div className="no-print">
-                <NextBestWinLossCard />
+                <WinLossErrorBoundary section="Next Best Action">
+                  <NextBestWinLossCard />
+                </WinLossErrorBoundary>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
-                  <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
+                  <WinLossErrorBoundary section="Tendência" fallbackHeight={260}>
+                    <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
+                  </WinLossErrorBoundary>
                 </div>
                 <div>
-                  <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
+                  <WinLossErrorBoundary section="Matriz de motivos" fallbackHeight={260}>
+                    <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
+                  </WinLossErrorBoundary>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
-                <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
+                <WinLossErrorBoundary section="Histograma de ciclo" fallbackHeight={220}>
+                  <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="Funil de perdas" fallbackHeight={220}>
+                  <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
+                </WinLossErrorBoundary>
               </div>
 
-              <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
+              <WinLossErrorBoundary section="Cohort">
+                <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
+              </WinLossErrorBoundary>
 
-              <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+              <WinLossErrorBoundary section="Heatmap horário">
+                <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+              </WinLossErrorBoundary>
 
-              <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
+              <WinLossErrorBoundary section="Vendedores">
+                <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
+              </WinLossErrorBoundary>
 
-              <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+              <WinLossErrorBoundary section="Concorrentes">
+                <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+              </WinLossErrorBoundary>
 
-              <ScriptABPanel />
+              <WinLossErrorBoundary section="Script A/B">
+                <ScriptABPanel />
+              </WinLossErrorBoundary>
             </>
           )}
 
           <div
+            id="wl-insights"
             ref={insightsRef}
             className={pulse ? "rounded-xl ring-2 ring-primary/60 ring-offset-2 ring-offset-background animate-pulse transition-all" : ""}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ActionableInsightsPanel />
-              <InsightsImpactPanel />
+              <WinLossErrorBoundary section="Insights acionáveis">
+                <ActionableInsightsPanel />
+              </WinLossErrorBoundary>
+              <WinLossErrorBoundary section="Impacto dos insights">
+                <InsightsImpactPanel />
+              </WinLossErrorBoundary>
             </div>
           </div>
 
