@@ -1,50 +1,41 @@
 
 
-## Multi-seleção + replay em lote no `WebhookDeliveriesDrawer`
+## Indicador inline de progresso por delivery durante replay
+
+### Estado atual
+- Replay individual: linha mostra `Loader2` no botão (via `pendingId === d.id`).
+- Replay em lote: enquanto roda, **nenhum** indicador inline aparece nas linhas selecionadas — só o botão "Reenviar selecionados" mostra spinner. Não dá para distinguir quais entregas estão no lote.
 
 ### O que será adicionado
 
-1. **Checkbox por linha** de delivery falha (`succeeded === false`). Linhas com sucesso ficam sem checkbox (não são reenviáveis).
-2. **Barra de seleção fixa no topo** do `ScrollArea` aparece quando há ≥1 selecionado:
-   - Texto: `"N selecionado(s)"` + link `"Limpar"`.
-   - Botão **"Reenviar selecionados"** (ícone `RotateCw`, com `Loader2` em loading).
-   - Disabled enquanto `isReplaying` ou `selected.size === 0`.
-3. **Checkbox "Selecionar todas as falhas"** no header da lista (à esquerda, mesma linha do contador). Marca/desmarca todas as `!succeeded`. Estado indeterminado quando alguns selecionados.
-4. **Limite de 50** (espelha o `idArray.max(50)` do schema): se usuário tentar selecionar a 51ª, o checkbox fica disabled com tooltip `"Máx 50 por reenvio"`.
-5. **Reset de seleção**:
-   - Ao fechar/abrir o drawer.
-   - Após `onSettled` do replay em lote (sucesso ou erro).
-6. **Compatibilidade total** com replay individual existente — o botão `RotateCw` por linha continua funcionando exatamente como hoje.
+1. **Novo state** em `WebhookDeliveriesDrawer`:
+   - `processingIds: Set<string>` — IDs do lote em execução.
+   - `lastResults: Map<string, "ok" | "skipped" | "fail">` — resultado transitório por ID (4s).
+2. **Marcar `processingIds`**:
+   - Individual: ao clicar `RotateCw`, `new Set([id])`.
+   - Lote: ao clicar "Reenviar selecionados", snapshot `new Set(selected)` antes de limpar a seleção.
+   - Limpa em `onSettled` de cada chamada `replay(...)`.
+3. **Capturar resultado por ID** via `onSuccess` (segundo arg de `replay(ids, { onSuccess, onSettled })`):
+   - Para cada `r` em `data.results`: `"skipped"` se `r.skipped`, senão `"ok"`/`"fail"` por `r.succeeded`.
+   - `setTimeout` 4s remove cada entrada; refs de timers limpos no unmount.
+4. **Componente local `<DeliveryReplayStatus />`** (~30 linhas no mesmo arquivo), renderizado dentro da `<li>` quando `processingIds.has(id) || lastResults.has(id)`:
+   - **Reenviando**: `Loader2` 3×3 + `"Reenviando…"` em `text-primary` + barra inferior `h-[2px]` com gradient animado (`animate-pulse`).
+   - **Sucesso**: `CheckCircle2` verde + `"Reenviado"`.
+   - **Falha**: `XCircle` destrutivo + `"Falhou"` (+ msg truncada se houver).
+   - **Skipped**: badge muted + `"Já entregue"`.
+5. **Destaque visual da linha** em processamento: `bg-primary/5` sutil.
+6. **A11y**: container do status com `aria-live="polite"`, `role="status"` no spinner.
+
+### Por que não mostrar progresso percentual real
+O endpoint `winloss-webhook-replay` responde tudo de uma vez (não é streaming). Qualquer "3/7" seria UX falsa. O indicador binário "em andamento → resultado" por linha é honesto e cobre o pedido.
 
 ### Mudanças
-
-**`src/components/win-loss/WebhookDeliveriesDrawer.tsx`** (~+70 linhas):
-- Novo state: `const [selected, setSelected] = useState<Set<string>>(new Set())`.
-- Helpers: `toggleOne(id)`, `toggleAll(failedIds)`, `clearSelection()`.
-- `useEffect` reseta `selected` quando `open` muda para `false`.
-- Computa `failedIds = (data ?? []).filter(d => !d.succeeded).map(d => d.id)`.
-- Render:
-  - Header da lista ganha `<Checkbox checked={...} indeterminate={...} />` + label + contador.
-  - Barra flutuante condicional (`selected.size > 0`) com botão `Reenviar selecionados`.
-  - Cada `<li>` falha ganha `<Checkbox>` à esquerda do ícone de status.
-  - Itens com sucesso renderizam um espaçador (`w-4`) no lugar do checkbox para manter alinhamento.
-- Handler `handleReplaySelected()`:
-  - Chama `replay(Array.from(selected), { onSettled: clearSelection })`.
-  - Reaproveita o agregado de toast já presente em `useWebhookDeliveries`.
-
-**`src/hooks/win-loss/useWebhookDeliveries.ts`**: nenhuma mudança. A `replay` mutation já aceita `string[]` de qualquer tamanho (até 50, validado server-side).
-
-### Detalhes de UX
-
-- Checkbox usa o componente `@/components/ui/checkbox` (já existe no projeto).
-- Estado `indeterminate` aplicado via `data-state="indeterminate"` quando `0 < selected.size < failedIds.length`.
-- Barra flutuante: `sticky top-0 z-10` com `bg-background/95 backdrop-blur` e borda inferior — não rola junto com a lista.
-- A11y: `aria-label` em cada checkbox (`"Selecionar entrega de {event}"`), `aria-live="polite"` no contador.
-- Tooltip de limite usa `TooltipProvider` já presente.
+- **Modificar**: `src/components/win-loss/WebhookDeliveriesDrawer.tsx` (~+60 linhas).
+- Sem mudança em `useWebhookDeliveries.ts` nem no edge function.
 
 ### Verificação
-- Selecionar 3 falhas → barra aparece com "3 selecionado(s)" → clicar "Reenviar selecionados" → toast agregado de `useWebhookDeliveries` mostra "3 sucesso · 0 falha" (ou variantes).
-- Selecionar todas (com mix de sucessos/falhas) → só falhas entram na seleção.
-- Tentar marcar a 51ª falha → checkbox disabled + tooltip.
-- Fechar e reabrir drawer → seleção zerada.
+1. Selecionar 3 falhas → "Reenviar selecionados" → as 3 linhas mostram simultaneamente "Reenviando…" + barra animada.
+2. Resultado chega → cada uma mostra ✓ / ✗ / "Já entregue" por 4s, depois some.
+3. Reenvio individual: mesma UX em 1 linha.
+4. Cleanup: nenhum timer vazado ao fechar drawer.
 
