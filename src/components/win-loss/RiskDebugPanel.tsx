@@ -255,12 +255,49 @@ export function RiskDebugPanel({ breakdown, riskScore }: { breakdown: RiskBreakd
         </div>
       </div>
 
-      {/* Razões completas */}
+      {/* Razões completas — cada item liga a um campo do cálculo acima */}
       {breakdown.reasons.length > 0 && (
         <div className="space-y-1">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Razões</p>
-          <ul className="list-disc pl-4 space-y-0.5 text-muted-foreground">
-            {breakdown.reasons.map((r, i) => <li key={i}>{r}</li>)}
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Razões</p>
+            <p className="text-[10px] text-muted-foreground/80">
+              cada item liga a um campo do cálculo acima
+            </p>
+          </div>
+          <ul className="space-y-1">
+            {breakdown.reasons.map((reason, i) => {
+              const { kind, contribValue, contribMax } = classifyReason(reason, breakdown);
+              const meta = KIND_META[kind];
+              const Icon = meta.icon;
+              const ariaLabel =
+                contribValue != null && contribMax != null
+                  ? `Razão de risco: ${meta.label}, contribui ${contribValue}/${contribMax}`
+                  : `Razão de risco: ${meta.label}`;
+              return (
+                <li
+                  key={i}
+                  aria-label={ariaLabel}
+                  className="flex items-start gap-1.5 rounded border border-border/50 bg-background/40 px-2 py-1.5"
+                >
+                  <Icon className={`h-3 w-3 mt-0.5 shrink-0 ${meta.color}`} aria-hidden />
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Badge variant={meta.variant} className="text-[10px] px-1.5 py-0 tabular-nums">
+                        {meta.label}
+                        {contribValue != null && contribMax != null && (
+                          <span className="ml-1 opacity-80">{contribValue}/{contribMax}</span>
+                        )}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-snug">
+                      {kind === "competitor"
+                        ? renderCompetitorReason(reason, breakdown.matched_keywords ?? [])
+                        : highlightNumbers(reason)}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
