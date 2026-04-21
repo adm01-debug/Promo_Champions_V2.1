@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { dispatchOne, type LogLevel, type Subscription } from "./retry.ts";
+import { dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,27 +20,52 @@ function structuredLog(level: LogLevel, data: Record<string, unknown>, requestId
   else console.log(line);
 }
 
-function dispatchOneWithSupabase(
-  sub: Subscription,
-  payload: Record<string, unknown>,
+function buildDeps(
   supabase: ReturnType<typeof createClient>,
   requestId: string,
+  replayOf: string | null,
 ) {
-  return dispatchOne(sub, payload, {
+  return {
     fetchFn: fetch,
     sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
-    insertDelivery: async (row) => {
+    insertDelivery: async (row: Parameters<typeof dispatchOne>[2]["insertDelivery"] extends (r: infer R) => unknown ? R : never) => {
       const { error } = await supabase.from("winloss_webhook_deliveries").insert(row);
       if (error) throw error;
     },
-    updateSubscription: async (id, status) => {
+    updateSubscription: async (id: string, status: number) => {
       await supabase
         .from("winloss_webhook_subscriptions")
         .update({ last_dispatch_at: new Date().toISOString(), last_status: status })
         .eq("id", id);
     },
-    log: (level, data) => structuredLog(level, data, requestId),
-  });
+    onDeadLetter: async (entry: DeadLetterEntry) => {
+      if (replayOf) {
+        // Replay failed → update existing DLQ row instead of creating a new one.
+        await supabase
+          .from("winloss_webhook_dead_letters")
+          .update({
+            status: "pending",
+            replay_count: ((await supabase.from("winloss_webhook_dead_letters").select("replay_count").eq("id", replayOf).single()).data?.replay_count ?? 0) + 1,
+            last_replay_at: new Date().toISOString(),
+            last_replay_status: entry.last_status,
+            last_replay_error: entry.last_error,
+          })
+          .eq("id", replayOf);
+      } else {
+        await supabase.from("winloss_webhook_dead_letters").insert({
+          subscription_id: entry.subscription_id,
+          event: entry.event,
+          payload: entry.payload,
+          last_status: entry.last_status,
+          last_error: entry.last_error,
+          attempts: entry.attempts,
+          total_latency_ms: entry.total_latency_ms,
+          request_id: requestId,
+        });
+      }
+    },
+    log: (level: LogLevel, data: Record<string, unknown>) => structuredLog(level, data, requestId),
+  };
 }
 
 serve(async (req) => {
@@ -60,31 +85,75 @@ serve(async (req) => {
       });
     }
 
+    const targetSubId = typeof payload.__target_subscription_id === "string" ? payload.__target_subscription_id : null;
+    const replayOf = typeof payload.__replay_of === "string" ? payload.__replay_of : null;
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const { data: subs, error: subsError } = await supabase
-      .from("winloss_webhook_subscriptions")
-      .select("id, url, events, secret")
-      .eq("active", true);
-
-    if (subsError) {
-      structuredLog("error", { msg: "fetch_subscriptions_failed", event, error: subsError.message }, requestId);
-      throw subsError;
+    let targets: Subscription[];
+    if (targetSubId) {
+      const { data: sub, error } = await supabase
+        .from("winloss_webhook_subscriptions")
+        .select("id, url, events, secret, active")
+        .eq("id", targetSubId)
+        .maybeSingle();
+      if (error || !sub) {
+        structuredLog("error", { msg: "replay_subscription_missing", subscriptionId: targetSubId, error: error?.message }, requestId);
+        return new Response(JSON.stringify({ error: "subscription not found", requestId }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!sub.active) {
+        structuredLog("warn", { msg: "replay_subscription_inactive", subscriptionId: targetSubId }, requestId);
+      }
+      targets = [{ id: sub.id as string, url: sub.url as string, events: sub.events as string[], secret: (sub.secret as string | null) ?? null }];
+    } else {
+      const { data: subs, error: subsError } = await supabase
+        .from("winloss_webhook_subscriptions")
+        .select("id, url, events, secret")
+        .eq("active", true);
+      if (subsError) {
+        structuredLog("error", { msg: "fetch_subscriptions_failed", event, error: subsError.message }, requestId);
+        throw subsError;
+      }
+      targets = ((subs as Subscription[] | null) ?? []).filter((s) => s.events.includes(event));
     }
 
-    const targets = ((subs as Subscription[] | null) ?? []).filter((s) => s.events.includes(event));
     structuredLog("info", {
       msg: "dispatch_start",
       event,
-      candidates: subs?.length ?? 0,
+      mode: replayOf ? "replay" : "broadcast",
+      replay_of: replayOf,
       targets: targets.length,
       target_ids: targets.map((t) => t.id),
     }, requestId);
 
-    const results = await Promise.all(targets.map((s) => dispatchOneWithSupabase(s, payload, supabase, requestId)));
+    const deps = buildDeps(supabase, requestId, replayOf);
+    const results = await Promise.all(targets.map((s) => dispatchOne(s, payload, deps)));
+
+    // On replay success, mark the original DLQ row as replayed.
+    if (replayOf && results.length === 1 && results[0].succeeded) {
+      const { data: existing } = await supabase
+        .from("winloss_webhook_dead_letters")
+        .select("replay_count")
+        .eq("id", replayOf)
+        .single();
+      await supabase
+        .from("winloss_webhook_dead_letters")
+        .update({
+          status: "replayed",
+          replay_count: (existing?.replay_count ?? 0) + 1,
+          last_replay_at: new Date().toISOString(),
+          last_replay_status: results[0].status,
+          last_replay_error: null,
+        })
+        .eq("id", replayOf);
+    }
+
     const succeededCount = results.filter((r) => r.succeeded).length;
     const failedCount = results.length - succeededCount;
     const totalLatency = Date.now() - requestStart;
