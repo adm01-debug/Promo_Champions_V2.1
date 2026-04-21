@@ -170,9 +170,11 @@ export function AtRiskDealsFromPatterns() {
               ))}
             </ul>
           )}
-          {data.length > visible.length && (
+          {filtered.length > visible.length && (
             <p className="mt-2 text-[10px] text-muted-foreground text-center">
-              Exibindo {visible.length} de {data.length} deals — ajuste em ⚙
+              Exibindo {visible.length} de {filtered.length}
+              {filtersActive && data.length !== filtered.length ? ` (de ${data.length} analisados)` : ""}
+              {" — ajuste em ⚙"}
             </p>
           )}
 
