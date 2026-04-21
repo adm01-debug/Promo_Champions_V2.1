@@ -1,5 +1,7 @@
 import { memo } from "react";
 import { ChevronDown, FlaskConical } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import type { BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 
 interface Props {
@@ -13,6 +15,8 @@ interface Props {
   sxx: number;
   bandMode: BandMode;
   tCritical: number | null;
+  seeUseOlsInflation: boolean;
+  onToggleSeeOlsInflation: (value: boolean) => void;
 }
 
 function Row({ label, value, hint }: { label: string; value: string; hint?: string }) {
