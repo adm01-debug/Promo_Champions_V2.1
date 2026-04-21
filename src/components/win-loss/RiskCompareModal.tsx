@@ -293,7 +293,6 @@ export function RiskCompareModal({ open, onOpenChange, dealA, dealB }: Props) {
                       />
                     </td>
                   </tr>
-                  {(["A", "B"] as const).map((side) => null)}
                   <tr className="border-b border-border/30">
                     <td className="p-2 font-medium">raw × conf</td>
                     {([dealA, dealB] as const).map((deal, i) => {
