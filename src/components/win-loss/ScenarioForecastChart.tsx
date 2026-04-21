@@ -34,6 +34,17 @@ interface Props {
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
 const SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
+const CONFIDENCE_Z_KEY = "winloss-scenario-confidence-z";
+
+const Z_PRESETS: ReadonlyArray<{ z: number; label: string; pct: string }> = [
+  { z: 1.0, label: "68%", pct: "1 desvio-padrão" },
+  { z: 1.28, label: "80%", pct: "z = 1.28" },
+  { z: 1.645, label: "90%", pct: "z = 1.645" },
+  { z: 1.96, label: "95%", pct: "z = 1.96" },
+];
+
+const Z_MIN = 0.5;
+const Z_MAX = 3.0;
 
 function readBandMode(): BandMode {
   if (typeof window === "undefined") return "see";
@@ -45,6 +56,32 @@ function readSeeOlsInflation(): boolean {
   if (typeof window === "undefined") return true;
   // Default ON (PI 1σ). Only the explicit "0" sentinel disables (legacy approx).
   return window.localStorage.getItem(SEE_OLS_KEY) !== "0";
+}
+
+function readConfidenceZ(): number {
+  if (typeof window === "undefined") return 1;
+  const raw = window.localStorage.getItem(CONFIDENCE_Z_KEY);
+  if (!raw) return 1;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < Z_MIN || n > Z_MAX) return 1;
+  return n;
+}
+
+function pctFromZ(z: number): string {
+  // Approximation of the two-tailed normal CDF coverage for the chip label.
+  const preset = Z_PRESETS.find((p) => Math.abs(p.z - z) < 0.01);
+  if (preset) return preset.label;
+  // Abramowitz & Stegun cheap approximation
+  const erf = (x: number) => {
+    const sign = x < 0 ? -1 : 1;
+    const ax = Math.abs(x);
+    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+    const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+    const t = 1 / (1 + p * ax);
+    const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax);
+    return sign * y;
+  };
+  return `${Math.round(erf(z / Math.SQRT2) * 100)}%`;
 }
 
 interface TooltipPayloadItem {
