@@ -21,6 +21,7 @@ const scoreLabel = (score: number) =>
 
 export function AtRiskDealsFromPatterns() {
   const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns();
+  const [debug, setDebug] = useState(false);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -31,8 +32,20 @@ export function AtRiskDealsFromPatterns() {
             Deals em risco — padrões de loss
             <Button
               size="sm"
+              variant={debug ? "secondary" : "ghost"}
+              className="ml-auto h-7 px-2 gap-1"
+              onClick={() => setDebug(v => !v)}
+              aria-pressed={debug}
+              aria-label="Alternar modo debug"
+              title="Modo debug: mostra contribuição de cada sinal"
+            >
+              <Bug className="h-3 w-3" />
+              <span className="text-[10px] font-medium">Debug</span>
+            </Button>
+            <Button
+              size="sm"
               variant="ghost"
-              className="ml-auto h-7 px-2"
+              className="h-7 px-2"
               onClick={() => refresh()}
               disabled={isRefreshing}
               aria-label="Atualizar análise de risco"
