@@ -1,58 +1,54 @@
 
 
-## Tornar fixtures e padrões dominantes reutilizáveis em testes e na UI
+## Filtros persistentes de stage/keyword no painel "Deals em risco"
 
 ### Estado atual
-`supabase/functions/detect-winloss-at-risk/fixtures.ts` já exporta tudo o que importa: `LOSS_PATTERNS_REALISTIC`, `SCENARIOS`, `DEAL_HISTORY_FIXTURES`, `ScenarioGroup`, `ScenarioExpect`, `Scenario`, `DealHistoryFamily` e `NOW`. Os testes Deno (`scenarios_test.ts`, `history_catalog_test.ts`, `action_validation_test.ts`) já consomem direto.
-
-**Bloqueios para reuso fora dos testes:**
-1. O front-end (`src/`) não pode importar de `supabase/functions/...` — `tsconfig.app.json` só inclui `src` e o módulo usa imports estilo Deno (`./scoring.ts`, URLs `https://deno.land/...`), que o Vite/TS do app rejeita.
-2. Não há índice plano `família → padrão dominante` — quem quiser exibir "esse deal cai na família 'Preço alto'" precisa abrir o objeto `DEAL_HISTORY_FIXTURES` e iterar.
-3. `daysAgo` é privado, então cenários novos (em testes ad-hoc ou demos visuais) precisam reimplementar.
+`AtRiskDealsFromPatterns` já consome `useAtRiskSettings` (`threshold`, `limit`, `maxVisible`) com persistência em `localStorage` (key `winloss-at-risk-settings`, schema v1) e tem um toggle local `debug` — mas o toggle não persiste e não há filtros por estágio nem por keyword. Hoje, ajustar threshold mexe na chamada da edge, mas não permite "ver só deals em Negociação com 'preço' no padrão".
 
 ### O que será feito
 
-**1. Criar fonte canônica neutra de tipos e dados em `src/`**
-Novo módulo `src/lib/winloss/atRiskFixtures.ts` (ESM puro, importável tanto pelo Vite quanto por Deno via path relativo) contendo:
-- Re-declaração explícita dos tipos `LossPattern`, `OpenDeal`, `RiskSeverity` (espelham `scoring.ts` — esses tipos já são duplicados de fato no front via `useAtRiskFromPatterns.ts`, então centralizamos).
-- `LOSS_PATTERNS_REALISTIC`, `SCENARIOS`, `DEAL_HISTORY_FIXTURES`, `ScenarioGroup`, `Scenario`, `ScenarioExpect`, `DealHistoryFamily`, `NOW`, `daysAgo`.
-- Novo índice plano `DOMINANT_PATTERNS_BY_FAMILY: Record<DealHistoryFamily, { theme: string; label: string; pattern: LossPattern | null }>` — resolve o `LossPattern` correspondente em `LOSS_PATTERNS_REALISTIC` por substring de label, de modo que a UI mostre `avg_amount`, `avg_cycle_days`, `confidence` reais.
-- Helper `getDominantPatternForFamily(family)` para a UI.
+**1. Estender `useAtRiskSettings`** (sem quebrar o storage existente)
+- Adicionar 3 campos opcionais ao tipo `AtRiskSettings`:
+  - `debug: boolean` (default `false`) — substitui o `useState` local.
+  - `stageFilter: string[]` (default `[]`, vazio = todos) — filtra por `deal.stage`.
+  - `keywordFilter: string` (default `""`) — substring case-insensitive aplicada a `client_name`, `matched_pattern` e `suggested_action`.
+- `sanitize` valida tipos (array de strings dedup, string trimada ≤100 chars, boolean coerced).
+- Bump `SCHEMA_VERSION` de `1` → `2`. Loader v1 migra preservando `threshold/limit/maxVisible` e preenchendo defaults dos novos campos (não descarta config do usuário).
+- Atualizar `useAtRiskSettings.test.ts` para cobrir migração v1→v2, sanitize dos novos campos e default dos novos campos.
 
-**2. Reescrever `supabase/functions/detect-winloss-at-risk/fixtures.ts` como re-export fino**
-O arquivo passa a conter apenas:
-```ts
-export * from "../../../src/lib/winloss/atRiskFixtures.ts";
-```
-Imports relativos atravessando `src/` funcionam no Deno — sem mudanças de tipo, mantendo todos os 5 arquivos de teste verdes sem editá-los.
+**2. Estender `AtRiskSettingsPopover`**
+Logo abaixo dos sliders, adicionar uma seção "Debug & filtros":
+- Switch "Modo debug" → `settings.debug`.
+- Multi-select compacto de estágios (chips toggle) — opções vindas dos `stage` distintos do `data` recebido, mais um conjunto-base (`Lead, Prospecção, Qualificação, Proposta, Negociação`). Clique alterna inclusão.
+- Input de busca (`Input` + ícone Search) → `settings.keywordFilter`, com debounce de 200ms via `useDeferredValue`.
+- Botão "Limpar filtros" zera apenas stage+keyword (mantém threshold/limit).
+- Props novas: `availableStages: string[]`.
 
-**3. Adicionar barrel `src/lib/winloss/index.ts`**
-Re-exporta `atRiskFixtures` e os tipos do `useAtRiskFromPatterns` para que componentes consumam um único caminho:
-```ts
-import { DOMINANT_PATTERNS_BY_FAMILY, LOSS_PATTERNS_REALISTIC } from "@/lib/winloss";
-```
+**3. Aplicar filtros em `AtRiskDealsFromPatterns`**
+- Remover `useState(debug)` local; ler de `settings.debug`.
+- Calcular `availableStages` via `useMemo` sobre `data` (stages não-nulos, ordenados).
+- Calcular `filtered` via `useMemo`:
+  - Se `stageFilter.length > 0` → `stageFilter.includes(d.stage ?? "")`.
+  - Se `keywordFilter` não vazio → match em qualquer um dos 3 campos (lowercased).
+- `visible = filtered.slice(0, settings.maxVisible)`.
+- Atualizar a linha "Exibindo X de Y" para mostrar a contagem pós-filtro: `Exibindo {visible.length} de {filtered.length} (de {data.length} analisados)`.
+- Quando filtros ativos zeram a lista mas `data.length > 0`, renderizar empty state específico: "Nenhum deal corresponde aos filtros atuais — limpe stage/keyword no ⚙".
+- `matchedFamilyLabels` passa a usar `filtered` (catálogo destaca só as famílias dos deals visíveis no recorte).
 
-**4. Tornar o catálogo visível no dashboard de explicações**
-No `AtRiskDealsPanel` (ou componente equivalente já consumido por `useAtRiskFromPatterns`), adicionar uma seção colapsável "Padrões dominantes considerados" que mapeia os 5 itens de `DOMINANT_PATTERNS_BY_FAMILY` em cards mostrando:
-- `theme` (título)
-- `label` do padrão
-- `avg_amount` formatado em BRL (via `fmtBRL` de `winLossHelpers`)
-- `avg_cycle_days` (via `fmtDays`)
-- `confidence` (via `fmtPct`)
-- Texto curto "Este deal não cai aqui" / "Esta família corresponde ao padrão dominante deste deal" — comparando o `matched_pattern` retornado com cada `label`.
+**4. Telemetria leve (opcional, sem novo arquivo)**
+Sem novo tracking — apenas `aria-label` descritivos (`"Filtro de estágio: Negociação ativo"`) para acessibilidade.
 
-Sem novo fetch — o dado é estático, vem do bundle.
-
-### Mudanças
-- **Criar** `src/lib/winloss/atRiskFixtures.ts` — fonte canônica (move o conteúdo de `fixtures.ts` para cá, adiciona `DOMINANT_PATTERNS_BY_FAMILY` + `getDominantPatternForFamily`).
-- **Criar** `src/lib/winloss/index.ts` — barrel re-exportando fixtures e tipos.
-- **Reescrever** `supabase/functions/detect-winloss-at-risk/fixtures.ts` para um único `export * from` apontando para o novo módulo.
-- **Editar** o card do painel "Deals em risco" (componente `AtRiskDealsPanel` ou `AtRiskDealCard` — vou confirmar o nome exato ao implementar) para renderizar a seção de padrões dominantes.
-- **Não tocar** em `scoring.ts`, `index.ts` da edge function, hooks de query ou nenhum dos arquivos `*_test.ts`.
+### Mudanças técnicas
+- **Editar** `src/hooks/win-loss/useAtRiskSettings.ts`: adicionar campos, bump versão, migração v1→v2, sanitize estendido.
+- **Editar** `src/test/hooks/useAtRiskSettings.test.ts`: 3 novos casos (defaults dos novos campos, migração v1, sanitize de array/string inválidos).
+- **Editar** `src/components/win-loss/AtRiskSettingsPopover.tsx`: nova seção, prop `availableStages`, botão "Limpar filtros".
+- **Editar** `src/components/win-loss/AtRiskDealsFromPatterns.tsx`: remover state local de debug, derivar `availableStages` e `filtered`, novo empty state filtrado, atualizar contador.
+- **Não tocar** em `useAtRiskFromPatterns`, edge function, fixtures, scoring nem testes Deno — filtros são puramente client-side sobre o resultado já retornado.
 
 ### Verificação
-1. `supabase--test_edge_functions` em `["detect-winloss-at-risk"]` → todos os ~50 testes verdes (re-export transparente).
-2. Abrir o painel "Deals em risco" no preview → seção "Padrões dominantes" lista 5 famílias com BRL/cycle/confidence corretos; a família correspondente ao deal selecionado fica destacada.
-3. `npm run build` (vite) → sem erro de import (confirma que o front consegue carregar `atRiskFixtures.ts`).
-4. Renomear temporariamente `LOSS_PATTERNS_REALISTIC` no novo módulo → tanto os testes Deno quanto o componente do painel quebram → prova fonte única.
+1. `vitest run src/test/hooks/useAtRiskSettings.test.ts` → todos verdes (incluindo migração v1→v2).
+2. Abrir o painel, marcar 1–2 estágios + digitar uma keyword → lista encolhe, contador "X de Y (de Z)" reflete; recarregar a página → filtros persistidos.
+3. Toggle debug no popover → painéis `RiskDebugPanel` aparecem; recarregar → debug continua ativo.
+4. Limpar filtros → stage/keyword voltam a vazio mas threshold/limit/maxVisible permanecem.
+5. Preencher keyword sem match → empty state filtrado aparece com instrução clara.
 
