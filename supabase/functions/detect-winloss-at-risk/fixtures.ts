@@ -334,3 +334,380 @@ export const SCENARIOS: Scenario[] = [
     },
   },
 ];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// History-driven fixture catalog.
+// Each group represents a real-world *deal history* (preço, negociação, churn,
+// concorrência, won-style). Within a group, cases vary intensity (light / strong
+// / extreme / borderline / excluded) but share a coherent expected dominant
+// pattern (`dominantPatternLabel`), so an analyst can answer "how does the
+// pipeline react to a deal-of-type X?" by reading just one block.
+//
+// The amounts in each group are anchored to the `avg_amount` of the matching
+// `LOSS_PATTERNS_REALISTIC` entry so `bestLoss` (chosen by amount-proximity)
+// reliably resolves to the family's pattern.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ScenarioGroup {
+  /** Short human label for the family (e.g. "Preço alto vs concorrência"). */
+  theme: string;
+  /**
+   * Substring expected to appear in `result.matched_pattern` for every
+   * *included* case of this group. Cases may opt out individually by setting
+   * `matchedPatternLabelIncludes` to a different value or omitting it.
+   */
+  dominantPatternLabel: string;
+  cases: Scenario[];
+}
+
+const PRICING_GROUP: ScenarioGroup = {
+  theme: "Preço alto vs concorrência",
+  dominantPatternLabel: "Preço alto",
+  cases: [
+    {
+      name: "pricing.light_misalignment",
+      story: "Proposta há 15d, ticket exato (28.5k) — entra como medium pelo perfil de loss de preço.",
+      deal: {
+        id: "h-pricing-1",
+        client_name: "PriceLight",
+        amount: 28500,
+        status: "proposal",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(15),
+        created_at: daysAgo(40),
+      },
+      expect: {
+        included: true,
+        minScore: 50,
+        maxScore: 70,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Preço alto",
+        reasonsInclude: ["15 dias", "Ticket alinhado"],
+        actionIncludes: ["valor", "ROI", "semana"],
+      },
+    },
+    {
+      name: "pricing.strong_misalignment",
+      story: "Proposta há 40d, ticket exato (28.5k) — satura para crítico.",
+      deal: {
+        id: "h-pricing-2",
+        client_name: "PriceStrong",
+        amount: 28500,
+        status: "proposal",
+        category: "enterprise",
+        source: "outbound",
+        updated_at: daysAgo(40),
+        created_at: daysAgo(80),
+      },
+      expect: {
+        included: true,
+        minScore: 75,
+        maxScore: 100,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Preço alto",
+        reasonsInclude: ["40 dias", "Ticket alinhado"],
+        actionIncludes: ["IMEDIATA", "URGENTE", "24h"],
+      },
+    },
+    {
+      name: "pricing.extreme_oversize",
+      story: "Negociação há 120d, ticket exato — cenário extremo de preço travado.",
+      deal: {
+        id: "h-pricing-3",
+        client_name: "PriceExtreme",
+        amount: 28500,
+        status: "negotiation",
+        category: "enterprise",
+        source: "outbound",
+        updated_at: daysAgo(120),
+        created_at: daysAgo(220),
+      },
+      expect: {
+        included: true,
+        minScore: 80,
+        maxScore: 100,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Preço alto",
+        reasonsInclude: ["120 dias", "Ticket alinhado"],
+        actionIncludes: ["IMEDIATA", "URGENTE", "24h"],
+      },
+    },
+  ],
+};
+
+const NEGOTIATION_GROUP: ScenarioGroup = {
+  theme: "Negociação travada",
+  // bestLoss é escolhido por amount-proximity → para isolar "Negociação travada"
+  // como dominant precisamos: amount fora dos avgs (alinhamento=0) + estagnação
+  // baixa o suficiente para stage_score (20) liderar. Casos border-line incluídos
+  // ficam na faixa 40–55. Caso "extreme" usa estágio na razão como evidência
+  // (matched_pattern vai variar).
+  dominantPatternLabel: "Negociação travada",
+  cases: [
+    {
+      name: "negotiation.borderline_stuck",
+      story: "Negotiation há 7d, ticket bem fora dos avgs (1k) — stuck_stage domina.",
+      deal: {
+        id: "h-neg-1",
+        client_name: "NegBorder",
+        amount: 1000,
+        status: "negotiation",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(7),
+        created_at: daysAgo(14),
+      },
+      expect: {
+        included: true,
+        minScore: 38,
+        maxScore: 55,
+        patternTypeOneOf: ["loss_factor", "stuck_stage"],
+        matchedPatternLabelIncludes: "Negociação travada",
+        reasonsInclude: ["negotiation"],
+        // low/medium severity sem urgência — frase varia, ancoragem flexível
+        actionIncludes: ["estágio", "Revisar", "valor"],
+      },
+    },
+    {
+      name: "negotiation.medium_stuck",
+      story: "Negotiation há 8d, mesmo ticket fora — sobe pra ~41 ainda dominante stuck_stage.",
+      deal: {
+        id: "h-neg-2",
+        client_name: "NegMedium",
+        amount: 2000,
+        status: "negotiation",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(8),
+        created_at: daysAgo(20),
+      },
+      expect: {
+        included: true,
+        minScore: 38,
+        maxScore: 55,
+        patternTypeOneOf: ["loss_factor", "stuck_stage"],
+        matchedPatternLabelIncludes: "Negociação travada",
+        reasonsInclude: ["negotiation"],
+        actionIncludes: ["estágio", "Revisar", "valor"],
+      },
+    },
+    {
+      name: "negotiation.fresh_lead_excluded",
+      story: "Lead novo (não-stuck) ticket baixo — nada dispara, abaixo do threshold.",
+      deal: {
+        id: "h-neg-3",
+        client_name: "NegFreshLead",
+        amount: 2000,
+        status: "lead",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(5),
+      },
+      expect: { included: false },
+    },
+  ],
+};
+
+const CHURN_GROUP: ScenarioGroup = {
+  theme: "Churn pós-trial",
+  dominantPatternLabel: "Churn pós-trial",
+  cases: [
+    {
+      name: "churn.post_trial_light",
+      story: "Pending há 12d, ticket no perfil de churn (4.8k) — medium.",
+      deal: {
+        id: "h-churn-1",
+        client_name: "ChurnLight",
+        amount: 4800,
+        status: "pending",
+        category: "trial",
+        source: "trial_signup",
+        updated_at: daysAgo(12),
+        created_at: daysAgo(25),
+      },
+      expect: {
+        included: true,
+        minScore: 45,
+        maxScore: 65,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Churn pós-trial",
+        reasonsInclude: ["12 dias", "Ticket alinhado"],
+        actionIncludes: ["valor", "ROI", "semana"],
+      },
+    },
+    {
+      name: "churn.post_trial_strong",
+      story: "Pending há 30d (ciclo de loss=22d) — high severity.",
+      deal: {
+        id: "h-churn-2",
+        client_name: "ChurnStrong",
+        amount: 4800,
+        status: "pending",
+        category: "trial",
+        source: "trial_signup",
+        updated_at: daysAgo(30),
+        created_at: daysAgo(60),
+      },
+      expect: {
+        included: true,
+        minScore: 60,
+        maxScore: 80,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Churn pós-trial",
+        reasonsInclude: ["30 dias", "Ticket alinhado"],
+        actionIncludes: ["48h", "valor", "IMEDIATA"],
+      },
+    },
+    {
+      name: "churn.recovered_engagement",
+      story: "Mesmo perfil de churn mas updated_at recente (2d) — abaixo do threshold.",
+      deal: {
+        id: "h-churn-3",
+        client_name: "ChurnRecovered",
+        amount: 4800,
+        status: "pending",
+        category: "trial",
+        source: "trial_signup",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(20),
+      },
+      expect: { included: false },
+    },
+  ],
+};
+
+const COMPETITIVE_GROUP: ScenarioGroup = {
+  theme: "Pressão competitiva",
+  dominantPatternLabel: "Pressão competitiva",
+  cases: [
+    {
+      name: "competitive.light_signal",
+      story: "Qualified há 20d, source 'concorrencia', ticket alinhado (31k) — medium.",
+      deal: {
+        id: "h-comp-1",
+        client_name: "CompLight",
+        amount: 31000,
+        status: "qualified",
+        category: null,
+        source: "concorrencia",
+        updated_at: daysAgo(20),
+        created_at: daysAgo(50),
+      },
+      expect: {
+        included: true,
+        minScore: 45,
+        maxScore: 65,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Pressão competitiva",
+        reasonsInclude: ["competitiva", "20 dias"],
+        actionIncludes: ["valor", "ROI", "semana"],
+      },
+    },
+    {
+      name: "competitive.strong_leilao",
+      story: "Proposta há 50d em leilão público — high severity, sinal competitivo claro.",
+      deal: {
+        id: "h-comp-2",
+        client_name: "CompLeilao",
+        amount: 31000,
+        status: "proposal",
+        category: "government",
+        source: "leilao_publico",
+        updated_at: daysAgo(50),
+        created_at: daysAgo(100),
+      },
+      expect: {
+        included: true,
+        minScore: 60,
+        maxScore: 90,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Pressão competitiva",
+        reasonsInclude: ["competitiva", "50 dias"],
+        actionIncludes: ["48h", "valor", "IMEDIATA"],
+      },
+    },
+    {
+      name: "competitive.fresh_lead_excluded",
+      story: "Lead com sinal competitivo mas fresco (2d, não-stuck) — abaixo do threshold.",
+      deal: {
+        id: "h-comp-3",
+        client_name: "CompFresh",
+        amount: 31000,
+        status: "lead",
+        category: null,
+        source: "concorrencia",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(5),
+      },
+      expect: { included: false },
+    },
+  ],
+};
+
+const WINNING_GROUP: ScenarioGroup = {
+  theme: "Padrão vencedor (não-risco)",
+  // Cases here should ALL be excluded — pipeline não pode marcar deals saudáveis
+  // alinhados a `win_factor` como risco. dominantPatternLabel não é asserted nos
+  // excluídos (sem matched_pattern).
+  dominantPatternLabel: "Abordagem consultiva",
+  cases: [
+    {
+      name: "winning.consultative_fresh_lead",
+      story: "Lead novo (2d), source consultive, ticket sem alinhamento de loss — silencioso.",
+      deal: {
+        id: "h-win-1",
+        client_name: "WinFresh",
+        amount: 100,
+        status: "lead",
+        category: null,
+        source: "consultative_intro",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(5),
+      },
+      expect: { included: false },
+    },
+    {
+      name: "winning.recent_qualified_active",
+      story: "Qualified há 3d, ticket fora dos avgs — sinal fraco, abaixo do threshold.",
+      deal: {
+        id: "h-win-2",
+        client_name: "WinQual",
+        amount: 100,
+        status: "qualified",
+        category: null,
+        source: "consultative_intro",
+        updated_at: daysAgo(3),
+        created_at: daysAgo(10),
+      },
+      expect: { included: false },
+    },
+    {
+      name: "winning.high_value_active_referral",
+      story: "Ticket grande mas atividade ontem em estágio não-stuck — silencioso.",
+      deal: {
+        id: "h-win-3",
+        client_name: "WinReferral",
+        amount: 50000,
+        status: "lead",
+        category: null,
+        source: "referral",
+        updated_at: daysAgo(1),
+        created_at: daysAgo(3),
+      },
+      expect: { included: false },
+    },
+  ],
+};
+
+export const DEAL_HISTORY_FIXTURES = {
+  pricing: PRICING_GROUP,
+  negotiation: NEGOTIATION_GROUP,
+  churn: CHURN_GROUP,
+  competitive: COMPETITIVE_GROUP,
+  winning: WINNING_GROUP,
+} as const;
+
+export type DealHistoryFamily = keyof typeof DEAL_HISTORY_FIXTURES;
+
