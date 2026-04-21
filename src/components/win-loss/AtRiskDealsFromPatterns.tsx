@@ -258,6 +258,7 @@ export function AtRiskDealsFromPatterns() {
                 </li>
               ))}
             </ul>
+            </>
           )}
           {filtered.length > visible.length && (
             <p className="mt-2 text-[10px] text-muted-foreground text-center">
