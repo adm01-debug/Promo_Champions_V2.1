@@ -145,6 +145,7 @@ export function AtRiskDealsFromPatterns() {
                 totalShown={visible.length}
                 availableStages={availableStages}
                 severityCounts={severityCounts}
+                syncStatus={syncStatus}
               />
               <Button
                 size="sm"
