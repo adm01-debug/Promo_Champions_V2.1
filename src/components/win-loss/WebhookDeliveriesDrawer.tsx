@@ -286,6 +286,35 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                       <p className="text-[10px] text-muted-foreground mt-1">
                         {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
                       </p>
+                      {(isProcessing || result) && (
+                        <div
+                          className="mt-1.5"
+                          role="status"
+                          aria-live="polite"
+                        >
+                          {isProcessing ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium">
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              Reenviando…
+                            </span>
+                          ) : result === "ok" ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success px-2 py-0.5 text-[10px] font-medium">
+                              <CheckCircle2 className="h-3 w-3" />
+                              Reenviado
+                            </span>
+                          ) : result === "skipped" ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-[10px] font-medium">
+                              <SkipForward className="h-3 w-3" />
+                              Já entregue
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 text-destructive px-2 py-0.5 text-[10px] font-medium">
+                              <XCircle className="h-3 w-3" />
+                              Falhou
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
