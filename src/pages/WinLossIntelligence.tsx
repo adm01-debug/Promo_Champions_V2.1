@@ -359,7 +359,10 @@ export default function WinLossIntelligence() {
                   <AtRiskDealsFromPatterns />
                 </WinLossErrorBoundary>
                 <WinLossErrorBoundary section="Webhooks">
-                  <WebhookSubscriptionsPanel />
+                  <div className="space-y-4">
+                    <WebhookHealthPanel />
+                    <WebhookSubscriptionsPanel />
+                  </div>
                 </WinLossErrorBoundary>
                 <WinLossErrorBoundary section="Webhooks Dead Letter">
                   <WebhookDeadLetterPanel />
