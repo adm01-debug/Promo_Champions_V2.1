@@ -1,49 +1,45 @@
 
 
-## Suíte de fixtures ponta-a-ponta com asserts de score, razão e ação por cenário
+## Testes carregando fixtures reais e validando included, score band, razões e ações
 
 ### Estado atual
-A infraestrutura **já existe** em `supabase/functions/detect-winloss-at-risk/`:
-- `fixtures.ts`: 10 cenários (`SCENARIOS`) + `LOSS_PATTERNS_REALISTIC` + tipo `ScenarioExpect` com `minScore/maxScore`, `patternTypeOneOf`, `reasonsInclude`, `actionIncludes`.
-- `scenarios_test.ts`: roda `computeDealRisk` por cenário e valida score (0–100, banda min/max), pattern dominante e razões.
+A suíte `supabase/functions/detect-winloss-at-risk/scenarios_test.ts` já carrega `SCENARIOS` + `LOSS_PATTERNS_REALISTIC` e valida tudo isso por cenário:
+- `included` (filtro com threshold 40 → `null` quando excluído).
+- `minScore`/`maxScore` + range global 0–100.
+- `patternTypeOneOf` (pattern dominante).
+- `reasonsInclude` (substrings em `result.reasons`).
+- `actionIncludes` (string OU `string[]` OR-semântico em `result.suggested_action`).
+- Meta-teste anti-regressão garantindo que todo cenário incluído declare `actionIncludes`.
 
-### Gap real
-1. O campo `actionIncludes` está **declarado mas nunca preenchido** em nenhum dos 10 cenários — a coerência da `suggested_action` com a história nunca é validada ponta-a-ponta. Hoje só há um teste genérico de comprimento mínimo em `action_validation_test.ts`.
-2. Falta cenário cobrindo `pattern_type: "competitor"` puro (a branch "battle card" / "concorrência ativa" do `suggestedActionFor` nunca é exercitada como dominante).
-3. Não há cenário com `severity = critical` validando o tom imperativo esperado ("URGENTE", "AÇÃO IMEDIATA").
+Resultado atual: **43 testes verdes**, 11 cenários cobertos.
+
+### O que falta para fechar o pedido
+A cobertura hoje é cenário-a-cenário. Falta um **conjunto de asserções tabulares de alto nível** que prove, num único bloco legível, que toda a tabela de fixtures é honrada — útil como "documentação executável" e porta de entrada para revisão. Também falta validar explicitamente que cenários **excluídos com score > 0** mantêm o score abaixo do threshold (não apenas que retornam `null`).
 
 ### O que será implementado
 
-**1. Preencher `actionIncludes` nos 8 cenários incluídos atuais** (`fixtures.ts`), ancorando em tokens estáveis de `suggestedActionFor`:
-- `stuck_negotiation_aligned_ticket` → `"negotiation"` (status aparece literal nas branches `stuck_stage`).
-- `long_proposal_oversized_ticket` → `"proposal"`.
-- `qualified_90d_competitor_pressure` → `["qualified", "48h"]` (OR — aceita stuck_stage OU loss_factor dominando).
-- `negotiation_45d_zero_amount` → `"negotiation"`.
-- `fresh_proposal_perfect_ticket` → `"valor"` (loss_factor low/medium menciona "valor percebido"/"narrativa de ROI").
-- `super_stagnant_negotiation` (saturação) → `["URGENTE", "IMEDIATA"]`.
-- `proposal_30d_competitive_source` → `"proposal"`.
+Adicionar ao final de `scenarios_test.ts` três testes agregados que carregam os fixtures de uma vez e percorrem a tabela inteira:
 
-Antes de fixar as substrings, vou rodar `supabase--test_edge_functions` para imprimir o `suggested_action` real produzido por cada cenário e ancorar no token mais seguro — evita falso negativo se a severidade flutuar.
+**1. `"fixtures table: included flag matches threshold filter"`**
+Para cada cenário roda `computeDealRisk(deal, LOSS_PATTERNS_REALISTIC, NOW, 40)` e monta `{name, expectedIncluded, gotIncluded}`. Assert único compara as duas listas e imprime divergências (se houver) num diff legível.
 
-**2. Adicionar 2 novos cenários** ao `SCENARIOS`:
-- `competitor_dominant_active_threat`: estagnação leve + amount alinhado ao perfil "Pressão competitiva", forçando `pattern_type = "competitor"` como dominante. Espera `patternTypeOneOf: ["competitor"]`, `reasonsInclude: ["competitiva"]`, `actionIncludes: ["battle card", "concorr"]`.
-- `critical_severity_imperative_action`: deal extremo (estagnação 180d + ticket alinhado + `negotiation`) garantindo `severity = critical`. Espera `actionIncludes: ["URGENTE", "IMEDIATA"]`.
+**2. `"fixtures table: every included scenario respects minScore/maxScore + 0–100"`**
+Itera só os incluídos, coleta violações (`score < min`, `score > max`, `score fora de [0,100]`) num array, falha com mensagem agregada listando todas de uma vez (em vez de parar no primeiro como o teste por-cenário).
 
-**3. Evoluir `actionIncludes` para `string | string[]`** (array = OR — pelo menos um match precisa bater). Atualizar a checagem em `scenarios_test.ts` para iterar quando array.
+**3. `"fixtures table: reasons & action substrings present per scenario"`**
+Itera os incluídos, verifica `reasonsInclude` (todas) e `actionIncludes` (string = AND single, array = OR), agrega falhas e reporta em uma só mensagem multi-linha.
 
-**4. Meta-teste anti-regressão** `"scenarios: every included scenario declares actionIncludes"`: falha se algum cenário com `expect.included === true` não definir `actionIncludes`. Previne o gap voltar a abrir silenciosamente no futuro.
+**4. `"fixtures table: excluded scenarios with non-null computation stay below threshold"`**
+Para os cenários `included: false`, roda com `threshold: 0` para forçar resultado e assertar `score < 40`. Garante que a exclusão é por score real, não por bug de retorno cedo.
+
+Todos os 4 testes reusam helpers locais (`includesCI`, normalização de `actionIncludes`) já presentes no arquivo — sem código novo de produção, só asserções.
 
 ### Mudanças
-- **Modificar** `supabase/functions/detect-winloss-at-risk/fixtures.ts`
-  - Tipo `ScenarioExpect.actionIncludes: string | string[]`.
-  - Preencher `actionIncludes` nos 8 cenários incluídos.
-  - Adicionar 2 novos cenários (`competitor_dominant_active_threat`, `critical_severity_imperative_action`).
-- **Modificar** `supabase/functions/detect-winloss-at-risk/scenarios_test.ts`
-  - Aceitar `actionIncludes` como `string | string[]` (OR semântico).
-  - Adicionar meta-teste de cobertura.
+- **Modificar**: `supabase/functions/detect-winloss-at-risk/scenarios_test.ts` — adicionar 4 `Deno.test` agregados ao final do arquivo (~80 linhas). Sem mudança em `fixtures.ts`, `scoring.ts` ou no edge function.
 
 ### Verificação
-1. `supabase--test_edge_functions` em `["detect-winloss-at-risk"]` — todos verdes (~12 cenários + asserts de ação + meta-teste).
-2. Remover `actionIncludes` de um cenário incluído → meta-teste falha com mensagem clara.
-3. Alterar `suggestedActionFor` para texto sem a keyword → cenário correspondente falha apontando substring esperada vs ação real.
+1. `supabase--test_edge_functions` em `["detect-winloss-at-risk"]` → **47 testes verdes** (43 atuais + 4 novos agregados).
+2. Mexer em `minScore` de qualquer cenário para forçar violação → teste #2 reporta o cenário e os números num único erro consolidado.
+3. Trocar `included: true` → `false` num cenário que entra → teste #1 imprime o diff `expected vs got`.
+4. Encurtar uma string em `suggestedActionFor` quebrando uma substring esperada → teste #3 lista cenário + needle + ação real.
 
