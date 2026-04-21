@@ -11,6 +11,7 @@ import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
 import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
 import { inferReasonCode } from "@/lib/winloss/riskReasons";
+import { severityFromScore, type RiskSeverity } from "@/lib/winloss/severityFromScore";
 import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
 import { RiskCompareModal } from "./RiskCompareModal";
@@ -53,11 +54,21 @@ export function AtRiskDealsFromPatterns() {
     return Array.from(set).sort();
   }, [data]);
 
+  const severityCounts = useMemo(() => {
+    const counts: Record<RiskSeverity, number> = { low: 0, medium: 0, high: 0, critical: 0 };
+    for (const d of data) {
+      const sev = d.breakdown?.severity ?? severityFromScore(d.risk_score);
+      counts[sev] += 1;
+    }
+    return counts;
+  }, [data]);
+
   const filtered = useMemo(() => {
     const kw = settings.keywordFilter.trim().toLowerCase();
     const stages = settings.stageFilter;
     const codes = settings.reasonCodes;
-    if (stages.length === 0 && !kw && codes.length === 0) return data;
+    const sevs = settings.severityFilter;
+    if (stages.length === 0 && !kw && codes.length === 0 && sevs.length === 0) return data;
     return data.filter((d) => {
       if (stages.length > 0 && !stages.includes(d.stage ?? "")) return false;
       if (kw) {
@@ -71,15 +82,20 @@ export function AtRiskDealsFromPatterns() {
           : (d.breakdown?.reasons ?? d.reasons ?? []).map((m) => inferReasonCode(m));
         if (!codes.some((c) => effective.includes(c))) return false;
       }
+      if (sevs.length > 0) {
+        const sev = d.breakdown?.severity ?? severityFromScore(d.risk_score);
+        if (!sevs.includes(sev)) return false;
+      }
       return true;
     });
-  }, [data, settings.keywordFilter, settings.stageFilter, settings.reasonCodes]);
+  }, [data, settings.keywordFilter, settings.stageFilter, settings.reasonCodes, settings.severityFilter]);
 
   const visible = filtered.slice(0, settings.maxVisible);
   const filtersActive =
     settings.stageFilter.length > 0 ||
     settings.keywordFilter.length > 0 ||
-    settings.reasonCodes.length > 0;
+    settings.reasonCodes.length > 0 ||
+    settings.severityFilter.length > 0;
   const debug = settings.debug;
 
   /** Set of dominant-pattern labels matched by at least one currently visible (filtered) deal. */
@@ -128,6 +144,7 @@ export function AtRiskDealsFromPatterns() {
                 totalAnalyzed={data.length}
                 totalShown={visible.length}
                 availableStages={availableStages}
+                severityCounts={severityCounts}
               />
               <Button
                 size="sm"
