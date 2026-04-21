@@ -370,6 +370,30 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                               Falhou
                             </span>
                           )}
+                          {reqId && !isProcessing && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    void navigator.clipboard?.writeText(reqId).then(
+                                      () => toast.success("requestId copiado"),
+                                      () => toast.error("Falha ao copiar"),
+                                    );
+                                  }}
+                                  className="ml-1 inline-flex items-center gap-1 rounded-full border border-border/50 bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                  aria-label={`Copiar requestId ${reqId}`}
+                                >
+                                  <span className="opacity-70">req</span>
+                                  <span>{reqId.slice(0, 8)}</span>
+                                  <Copy className="h-2.5 w-2.5 opacity-60" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs font-mono">
+                                {reqId}
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
                         </div>
                       )}
                     </div>
