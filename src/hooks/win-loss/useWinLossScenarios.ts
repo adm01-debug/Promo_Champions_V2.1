@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import type { TrendPoint } from "./useWinLossAggregations";
 
+export type BandMode = "see" | "pi95";
+
 export interface ScenarioPoint {
   period: string;
   realistic: number;
@@ -17,30 +19,68 @@ export interface ScenarioForecast {
   slope: number;
   /** Number of historical points actually used for the fit. */
   fitN: number;
+  /** Active band mode used to compute uncertainty widths. */
+  bandMode: BandMode;
+  /** t critical value used (only for `pi95`); null in `see` mode. */
+  tCritical: number | null;
+  /** Human-readable label for the active mode (e.g. "SEE ±σ" or "PI 95% (t·σ)"). */
+  bandLabel: string;
+}
+
+export interface ScenarioOptions {
+  forecastSteps?: number;
+  bandMode?: BandMode;
 }
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
 
+/** Two-tailed t-Student critical values at α=0.05 (i.e. t_{df, 0.975}) for df 1..30. */
+const T_TABLE_975: Record<number, number> = {
+  1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
+  6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+  11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131,
+  16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
+  21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060,
+  26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042,
+};
+
+export function tCritical975(dof: number): number {
+  if (dof <= 0) return T_TABLE_975[1];
+  if (dof >= 30) return 1.96;
+  return T_TABLE_975[dof] ?? 1.96;
+}
+
 /**
  * Projects 3 scenarios (optimistic / realistic / pessimistic) using OLS linear
- * regression over historical winRate. Confidence bands are derived from the
- * **residual standard error** (deviation around the fitted line, not around the
- * mean), which honestly reflects historical volatility AROUND the trend instead
- * of being inflated by the trend itself.
+ * regression over historical winRate. Two band modes are supported:
  *
- * Bands widen with horizon following a simplified prediction-interval rule:
- *   σ_step = σ * sqrt(1 + step / n)
+ * - `see`  (default, narrower): `width = σ · √(1 + step/n)` — simplified SEE band.
+ * - `pi95` (wider, conservative): `width = t · σ · √(1 + 1/n + (x − meanX)² / Sxx)` —
+ *   full OLS prediction interval at 95%, accounts for the distance of the
+ *   forecasted x to the centroid of the fit.
  *
- * Historical points return realistic = optimistic = pessimistic = observed
- * winRate, so the band visually opens only at the forecast junction.
+ * Historical points always have collapsed bands (= observed winRate), so the
+ * uncertainty fan only opens at the forecast junction.
+ *
+ * Backward-compatible: `useWinLossScenarios(points, 3)` is equivalent to
+ * `useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see" })`.
  */
 export const useWinLossScenarios = (
   points: TrendPoint[],
-  forecastSteps = 3,
+  optionsOrSteps: ScenarioOptions | number = 3,
 ): ScenarioForecast => {
+  const opts: Required<ScenarioOptions> =
+    typeof optionsOrSteps === "number"
+      ? { forecastSteps: optionsOrSteps, bandMode: "see" }
+      : { forecastSteps: optionsOrSteps.forecastSteps ?? 3, bandMode: optionsOrSteps.bandMode ?? "see" };
+
+  const { forecastSteps, bandMode } = opts;
+
   return useMemo(() => {
     const safePoints = points ?? [];
     const n = safePoints.length;
+
+    const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : "SEE ±σ");
 
     // Need at least 3 points for a meaningful regression + residual σ.
     if (n < 3) {
@@ -51,7 +91,15 @@ export const useWinLossScenarios = (
         pessimistic: p.winRate,
         isForecast: false,
       }));
-      return { series: flat, stdDev: 0, slope: 0, fitN: n };
+      return {
+        series: flat,
+        stdDev: 0,
+        slope: 0,
+        fitN: n,
+        bandMode,
+        tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
+        bandLabel: labelFor(bandMode),
+      };
     }
 
     const xs = safePoints.map((_, i) => i);
@@ -61,22 +109,19 @@ export const useWinLossScenarios = (
     const meanY = ys.reduce((a, b) => a + b, 0) / n;
 
     const num = xs.reduce((acc, x, i) => acc + (x - meanX) * (ys[i] - meanY), 0);
-    const den = xs.reduce((acc, x) => acc + (x - meanX) ** 2, 0) || 1;
+    const sxx = xs.reduce((acc, x) => acc + (x - meanX) ** 2, 0) || 1;
 
-    const slope = num / den;
+    const slope = num / sxx;
     const intercept = meanY - slope * meanX;
 
-    // Residuals around the regression line (not around the mean).
-    // Use n-2 degrees of freedom for an unbiased Standard Error of Estimate.
     const dof = Math.max(1, n - 2);
     const sse = ys.reduce((acc, y, i) => {
       const yhat = slope * xs[i] + intercept;
       return acc + (y - yhat) ** 2;
     }, 0);
     const residualStdDev = Math.sqrt(sse / dof);
+    const t = tCritical975(dof);
 
-    // Historical: bands collapsed (observed value), so the chart shows a clean
-    // junction where uncertainty starts.
     const historical: ScenarioPoint[] = safePoints.map((p) => ({
       period: p.period,
       realistic: p.winRate,
@@ -85,17 +130,21 @@ export const useWinLossScenarios = (
       isForecast: false,
     }));
 
-    // Forecast: bands widen with horizon (prediction-interval style).
     const forecast: ScenarioPoint[] = [];
     for (let step = 1; step <= forecastSteps; step++) {
       const x = n + step - 1;
       const base = slope * x + intercept;
-      const stepStdDev = residualStdDev * Math.sqrt(1 + step / n);
+
+      const width =
+        bandMode === "pi95"
+          ? t * residualStdDev * Math.sqrt(1 + 1 / n + ((x - meanX) ** 2) / sxx)
+          : residualStdDev * Math.sqrt(1 + step / n);
+
       forecast.push({
         period: `+${step}`,
         realistic: clamp01(base),
-        optimistic: clamp01(base + stepStdDev),
-        pessimistic: clamp01(base - stepStdDev),
+        optimistic: clamp01(base + width),
+        pessimistic: clamp01(base - width),
         isForecast: true,
       });
     }
@@ -105,6 +154,9 @@ export const useWinLossScenarios = (
       stdDev: residualStdDev,
       slope,
       fitN: n,
+      bandMode,
+      tCritical: bandMode === "pi95" ? t : null,
+      bandLabel: labelFor(bandMode),
     };
-  }, [points, forecastSteps]);
+  }, [points, forecastSteps, bandMode]);
 };
