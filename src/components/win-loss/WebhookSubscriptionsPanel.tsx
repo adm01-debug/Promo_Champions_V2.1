@@ -17,9 +17,12 @@ const ALL_EVENTS = ["critical_pattern", "anomaly", "perf_drop"] as const;
 
 export function WebhookSubscriptionsPanel() {
   const { list, create, toggle, remove, isCreating } = useWebhookSubscriptions();
+  const { data: alerts } = useWebhookAlerts();
   const [url, setUrl] = useState("");
   const [events, setEvents] = useState<string[]>([...ALL_EVENTS]);
   const [deliveriesFor, setDeliveriesFor] = useState<{ id: string; url: string } | null>(null);
+
+  const alertsBySub = useMemo(() => activeAlertsBySubscription(alerts ?? []), [alerts]);
 
   const submit = () => {
     if (!url.trim() || !/^https?:\/\//.test(url)) return;
