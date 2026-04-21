@@ -37,8 +37,9 @@ function readBandMode(): BandMode {
 }
 
 function readSeeOlsInflation(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(SEE_OLS_KEY) === "1";
+  if (typeof window === "undefined") return true;
+  // Default ON (PI 1σ). Only the explicit "0" sentinel disables (legacy approx).
+  return window.localStorage.getItem(SEE_OLS_KEY) !== "0";
 }
 
 interface TooltipPayloadItem {
@@ -241,7 +242,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                     </ToggleGroupItem>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="text-xs max-w-[220px]">
-                    Banda ±σ residual (Standard Error of Estimate). Mais estreita, ~68% de confiança.
+                    Banda 1σ via prediction interval · σ · √(1 + 1/n + (x − x̄)² / Sxx). ~68% de confiança, abre com horizonte.
                   </TooltipContent>
                 </UITooltip>
                 <UITooltip>

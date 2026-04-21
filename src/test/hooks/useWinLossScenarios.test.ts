@@ -121,7 +121,7 @@ describe("useWinLossScenarios", () => {
     });
   });
 
-  it("pi95 produces wider bands than see for the same data", () => {
+  it("pi95 produces wider bands than see for the same data (ratio = t)", () => {
     const points = mkPoints([10, 22, 30, 42, 50]);
     const see = renderHook(() => useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see" })).result.current;
     const pi = renderHook(() => useWinLossScenarios(points, { forecastSteps: 3, bandMode: "pi95" })).result.current;
@@ -129,6 +129,8 @@ describe("useWinLossScenarios", () => {
     expect(pi.bandMode).toBe("pi95");
     expect(pi.tCritical).not.toBeNull();
     expect(see.tCritical).toBeNull();
+    // SEE now uses the same OLS PI factor as pi95 (just without t multiplier).
+    expect(see.seeUseOlsInflation).toBe(true);
 
     const seeForecasts = see.series.filter((p) => p.isForecast);
     const piForecasts = pi.series.filter((p) => p.isForecast);
@@ -137,6 +139,8 @@ describe("useWinLossScenarios", () => {
       const seeWidth = s.optimistic - s.pessimistic;
       const piWidth = piForecasts[i].optimistic - piForecasts[i].pessimistic;
       expect(piWidth).toBeGreaterThan(seeWidth);
+      // Ratio must equal tCritical exactly (same shape, t multiplier only).
+      expect(piWidth / seeWidth).toBeCloseTo(pi.tCritical!, 9);
     });
   });
 
@@ -177,18 +181,112 @@ describe("useWinLossScenarios", () => {
     expect(width).toBeGreaterThanOrEqual(minExpected * 0.99);
   });
 
-  it("legacy numeric arg ≡ { forecastSteps, bandMode: 'see' }", () => {
+  it("legacy numeric arg ≡ { forecastSteps, bandMode: 'see', seeUseOlsInflation: true }", () => {
     const points = mkPoints([45, 55, 50, 60, 55, 65]);
     const legacy = renderHook(() => useWinLossScenarios(points, 3)).result.current;
     const explicit = renderHook(() =>
-      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see" }),
+      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", seeUseOlsInflation: true }),
     ).result.current;
 
     expect(legacy.bandMode).toBe("see");
+    expect(legacy.seeUseOlsInflation).toBe(true);
     expect(legacy.tCritical).toBeNull();
     expect(legacy.series).toEqual(explicit.series);
     expect(legacy.stdDev).toBe(explicit.stdDev);
     expect(legacy.slope).toBe(explicit.slope);
     expect(legacy.fitN).toBe(explicit.fitN);
+  });
+
+  it("opt-in legacy approximation (seeUseOlsInflation=false) reproduces √(1+step/n)", () => {
+    const points = mkPoints([45, 55, 50, 60, 55, 65]);
+    const legacy = renderHook(() =>
+      useWinLossScenarios(points, { forecastSteps: 3, bandMode: "see", seeUseOlsInflation: false }),
+    ).result.current;
+
+    const sigma = legacy.stdDev;
+    const n = legacy.fitN;
+    const forecasts = legacy.series.filter((p) => p.isForecast);
+
+    forecasts.forEach((p, idx) => {
+      const step = idx + 1;
+      const expectedHalfWidth = sigma * Math.sqrt(1 + step / n);
+      const observedHalfWidth = (p.optimistic - p.pessimistic) / 2;
+      expect(observedHalfWidth).toBeCloseTo(expectedHalfWidth, 6);
+    });
+  });
+
+  it("manual worked example: SEE 1σ PI and PI 95% match hand-computed values", () => {
+    // y = [10, 14, 19, 22] at x = [0, 1, 2, 3].
+    // OLS:
+    //   meanX = 1.5, meanY = 16.25
+    //   Sxy   = (-1.5)(-6.25)+(-0.5)(-2.25)+(0.5)(2.75)+(1.5)(5.75)
+    //         =  9.375     + 1.125      + 1.375     + 8.625      = 20.5
+    //   Sxx   = 2.25 + 0.25 + 0.25 + 2.25 = 5
+    //   slope = 20.5 / 5 = 4.1
+    //   intercept = 16.25 - 4.1*1.5 = 10.1
+    //   ŷ     = [10.1, 14.2, 18.3, 22.4]
+    //   resid = [-0.1, -0.2, 0.7, -0.4]
+    //   SSE   = 0.01 + 0.04 + 0.49 + 0.16 = 0.70
+    //   dof   = 2, σ = √(0.70/2) = √0.35 ≈ 0.5916079783
+    //   t(2)  = 4.303
+    // For step = 1 → x = 4:
+    //   factor = √(1 + 1/4 + (4-1.5)²/5) = √(1 + 0.25 + 1.25) = √2.5 ≈ 1.5811388301
+    //   width_see  = σ · factor                ≈ 0.9354143467
+    //   width_pi95 = t · width_see             ≈ 4.025087774
+    //   base       = 10.1 + 4.1*4 = 26.5
+    const points = mkPoints([10, 14, 19, 22]);
+
+    const see = renderHook(() => useWinLossScenarios(points, { forecastSteps: 1, bandMode: "see" })).result.current;
+    const pi = renderHook(() => useWinLossScenarios(points, { forecastSteps: 1, bandMode: "pi95" })).result.current;
+
+    // Fit parameters
+    expect(see.slope).toBeCloseTo(4.1, 6);
+    expect(see.intercept).toBeCloseTo(10.1, 6);
+    expect(see.meanX).toBeCloseTo(1.5, 6);
+    expect(see.sxx).toBeCloseTo(5, 6);
+    expect(see.sse).toBeCloseTo(0.7, 6);
+    expect(see.dof).toBe(2);
+    expect(see.stdDev).toBeCloseTo(Math.sqrt(0.35), 6);
+    expect(pi.tCritical).toBeCloseTo(4.303, 3);
+
+    // Forecast step=1 (x=4)
+    const seeFcst = see.series.find((p) => p.isForecast)!;
+    const piFcst = pi.series.find((p) => p.isForecast)!;
+
+    expect(seeFcst.realistic).toBeCloseTo(26.5, 6);
+    expect(piFcst.realistic).toBeCloseTo(26.5, 6);
+
+    const expectedHalfSee = Math.sqrt(0.35) * Math.sqrt(2.5); // ≈ 0.9354143467
+    const expectedHalfPi = 4.303 * expectedHalfSee;           // ≈ 4.025087774
+
+    expect((seeFcst.optimistic - seeFcst.pessimistic) / 2).toBeCloseTo(expectedHalfSee, 6);
+    expect((piFcst.optimistic - piFcst.pessimistic) / 2).toBeCloseTo(expectedHalfPi, 3);
+
+    // Optimistic / pessimistic absolute values vs hand calc.
+    expect(seeFcst.optimistic).toBeCloseTo(26.5 + expectedHalfSee, 6);
+    expect(seeFcst.pessimistic).toBeCloseTo(26.5 - expectedHalfSee, 6);
+  });
+
+  it("ratio pi95/see ≡ tCritical at every step (analytic property of new formula)", () => {
+    const points = mkPoints([10, 14, 19, 22, 25, 31, 34]);
+    const steps = 6;
+    const see = renderHook(() => useWinLossScenarios(points, { forecastSteps: steps, bandMode: "see" })).result.current;
+    const pi = renderHook(() => useWinLossScenarios(points, { forecastSteps: steps, bandMode: "pi95" })).result.current;
+
+    const seeFcst = see.series.filter((p) => p.isForecast);
+    const piFcst = pi.series.filter((p) => p.isForecast);
+    expect(seeFcst.length).toBe(steps);
+    expect(piFcst.length).toBe(steps);
+
+    seeFcst.forEach((s, i) => {
+      const seeW = s.optimistic - s.pessimistic;
+      const piW = piFcst[i].optimistic - piFcst[i].pessimistic;
+      // Skip points where clamping at [0, 100] would distort the ratio.
+      const seeNoClamp = s.optimistic < 100 && s.pessimistic > 0;
+      const piNoClamp = piFcst[i].optimistic < 100 && piFcst[i].pessimistic > 0;
+      if (seeNoClamp && piNoClamp) {
+        expect(piW / seeW).toBeCloseTo(pi.tCritical!, 9);
+      }
+    });
   });
 });
