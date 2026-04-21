@@ -1,126 +1,80 @@
 
 
-## Matriz exaustiva `patternType × severity × outcome` para `suggested_action`
+## Explicação narrativa de severity no `RiskDebugPanel`
 
-### Objetivo
-Criar **um único teste tabular** que percorre todas as combinações de `patternType` × `severity` × `outcome` e valida, para cada célula:
-1. `suggested_action` contém as **keywords esperadas** daquela célula.
-2. `suggested_action` **não contém marcadores de urgência** (`URGENTE`, `IMEDIATA`, `24h`, `hoje`) quando severity é `medium`/`low` ou quando é override `won`/`win_factor`.
-3. A frase tem ≥ 15 chars e é determinística (mesma entrada → mesma saída).
+### Estado atual
+O painel já tem a seção **Severidade** com tabela das 4 regras destacando a aplicada e `final=X conf=Y` na linha ativa. Falta uma **frase humana explícita** explicando *por que* o deal caiu naquele nível — qual threshold passou, qual quase-passou, e o que demoveria/promoveria.
 
-### Espaço da matriz
+### O que será adicionado
 
-- `patternType`: `loss_factor`, `stuck_stage`, `competitor`, `win_factor`, `generic` (5)
-- `severity`: `critical`, `high`, `medium`, `low` (4)
-- `outcome`: `lost`, `won`, `null` (3)
+Logo abaixo do título "Severidade" (antes da tabela das 4 regras), um **bloco narrativo** com 3 elementos:
 
-Total: **5 × 4 × 3 = 60 células**, todas geradas e asseridas via `t.step` dinâmico.
+1. **Frase principal** explicando o caminho de decisão:
+   - `critical`: `"final=85 ≥ 80 ∧ conf=0.82 ≥ 0.70 → critical"`
+   - `high (demoted)`: `"final=85 ≥ 80, mas conf=0.60 < 0.70 → demovido para high"` (caso especial, destacado com borda warning)
+   - `high`: `"final=72 ∈ [65, 80) → high (conf irrelevante neste nível)"`
+   - `medium`: `"final=55 ∈ [50, 65) → medium"`
+   - `low`: `"final=42 < 50 → low"`
 
-### Tabela de keywords esperadas (espelho de `scoring.ts:256-292`)
+2. **Distância para o próximo nível** (próximo acima):
+   - `"+8 pontos para virar critical"` ou `"+conf 0.10 para virar critical"` (quando o gap é só de confiança)
+   - Omitido quando já é `critical`.
 
-| patternType   | critical                                  | high                          | medium                         | low                            |
-|---------------|-------------------------------------------|-------------------------------|--------------------------------|--------------------------------|
-| `loss_factor` | `IMEDIATA`, `24h`, `resgate`              | `48h`, `valor`                | `valor`, `semana`              | `confirmar`, `interesse`       |
-| `stuck_stage` | `URGENTE`, `hoje`, `desbloquear`, `<stage>` | `48h`, `<stage>`            | `semana`, `<stage>`            | `<stage>`, `critério`          |
-| `competitor`  | `24h`, `battle card`, `decisor`           | `48h`, `diferenciação`        | `competitivo`, `contra-argumentos` | `concorrente`, `objeções`  |
-| `generic`     | `urgente`, `gestor`                       | `48h`                         | `72h`                          | `próximo passo`                |
-| `win_factor`  | (override) sempre `vencedora` + `consultiva`, sem urgência (todas as severidades) |
+3. **Distância para o nível anterior** (próximo abaixo, opcional):
+   - `"-7 pontos para cair para medium"` — mostra a margem de segurança.
 
-**Override**: para qualquer `patternType`, se `outcome === "won"`, célula esperada = `vencedora`/`reaplicar`, **sem** urgência.
+### Detalhes técnicos
 
-### Regras de "não contém urgência"
+Helper novo em `src/lib/winloss/riskSeverity.ts`:
 
-`mustNotInclude` aplicado quando:
-- `severity ∈ {medium, low}` (qualquer type não-win) → bloqueia `/URGENTE|IMEDIATA|24h|^hoje\b/i`
-- `patternType === "win_factor"` ou `outcome === "won"` (qualquer severity) → bloqueia urgência **integral**
-
-### Implementação
-
-**Novo arquivo**: `supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts` (~160 linhas)
-
-Estrutura:
 ```ts
-import { assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { suggestedActionFor, type RiskSeverity } from "./scoring.ts";
+export interface SeverityExplanation {
+  applied: RiskSeverity;
+  /** Human-readable reason: "final=85 ≥ 80 ∧ conf=0.82 ≥ 0.70 → critical" */
+  reason: string;
+  /** True when score qualified for critical but conf < 0.7 demoted to high. */
+  demoted: boolean;
+  /** Pts (or conf delta) needed to reach the next level up; null if already critical. */
+  distanceToNext: { kind: "score" | "confidence"; delta: number; target: RiskSeverity } | null;
+  /** Pts of margin above the level below; null if already low. */
+  distanceToPrev: { delta: number; target: RiskSeverity } | null;
+}
 
-const TYPES = ["loss_factor","stuck_stage","competitor","win_factor","generic"] as const;
-const SEVERITIES: RiskSeverity[] = ["critical","high","medium","low"];
-const OUTCOMES = ["lost","won",null] as const;
-const STAGE = "negotiation";
-const URGENCY_RE = /urgente|imediata|24h|\bhoje\b/i;
-
-const KEYWORDS: Record<string, Record<RiskSeverity, RegExp[]>> = {
-  loss_factor: {
-    critical: [/IMEDIATA/, /24h/, /resgate/i],
-    high:     [/48h/, /valor/i],
-    medium:   [/valor/i, /semana/i],
-    low:      [/confirmar/i, /interesse/i],
-  },
-  stuck_stage: {
-    critical: [/URGENTE/, /hoje/i, /desbloquear/i, new RegExp(STAGE)],
-    high:     [/48h/, new RegExp(STAGE)],
-    medium:   [/semana/i, new RegExp(STAGE)],
-    low:      [new RegExp(STAGE), /critério/i],
-  },
-  competitor: { /* ...idem tabela */ },
-  generic:    { /* ...idem tabela */ },
-};
-
-const WIN_KEYWORDS = [/vencedora|reaplicar/i, /consultiva/i];
-
-Deno.test("matrix: patternType × severity × outcome covers all 60 cells", async (t) => {
-  for (const type of TYPES) {
-    for (const sev of SEVERITIES) {
-      for (const outcome of OUTCOMES) {
-        await t.step(`${type} × ${sev} × ${outcome ?? "null"}`, () => {
-          const action = suggestedActionFor(type, STAGE, { severity: sev, outcome });
-
-          assert(action.trim().length >= 15);
-
-          const isWinOverride = type === "win_factor" || outcome === "won";
-
-          // Determinismo
-          for (let i = 0; i < 5; i++) {
-            const a2 = suggestedActionFor(type, STAGE, { severity: sev, outcome });
-            assert(a2 === action, `non-deterministic for ${type}/${sev}/${outcome}`);
-          }
-
-          if (isWinOverride) {
-            for (const re of WIN_KEYWORDS) assert(re.test(action), `win missing ${re}: "${action}"`);
-            assert(!URGENCY_RE.test(action), `win override leaked urgency: "${action}"`);
-            return;
-          }
-
-          // Matrix branch
-          const keys = type === "generic" ? KEYWORDS_GENERIC[sev] : KEYWORDS[type][sev];
-          for (const re of keys) {
-            assert(re.test(action), `${type}/${sev}: missing ${re} in "${action}"`);
-          }
-
-          if (sev === "medium" || sev === "low") {
-            assert(!URGENCY_RE.test(action), `${type}/${sev} leaked urgency: "${action}"`);
-          }
-        });
-      }
-    }
-  }
-});
+export function explainSeverity(final: number, confidence: number): SeverityExplanation;
 ```
 
-Plus 1 teste extra de **interpolação de stage** para `stuck_stage` em 4 stages distintos (`qualified|proposal|negotiation|null`) garantindo que o stage (ou `"atual"`) aparece literalmente.
+Lógica:
+- Espelha exatamente `severityFromScore` do backend.
+- `demoted = final >= 80 && conf < 0.7`.
+- `distanceToNext`:
+  - `low → medium`: `50 - final` pts
+  - `medium → high`: `65 - final` pts
+  - `high → critical`: se `final >= 80` mas `conf < 0.7`, retorna `{ kind: "confidence", delta: 0.7 - conf }`; senão `{ kind: "score", delta: 80 - final }`.
+
+UI no `RiskDebugPanel`:
+- Bloco com `bg-muted/30` (ou `bg-warning/10 border-warning/30` quando `demoted=true`).
+- Frase principal em `font-mono text-[11px]`.
+- Linha secundária `text-[10px] text-muted-foreground` com `↑ +Xpts → critical · ↓ -Ypts → medium`.
+
+Tudo via design tokens. Sem cores hardcoded.
 
 ### Arquivos
 
-**Novo**
-- `supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts`
+**Editado**
+- `src/lib/winloss/riskSeverity.ts` — adiciona `explainSeverity` + tipo `SeverityExplanation` (~30 linhas).
+- `src/lib/winloss/index.ts` — re-export.
+- `src/components/win-loss/RiskDebugPanel.tsx` — bloco narrativo entre cabeçalho "Severidade" e a tabela de regras (~25 linhas).
 
-**Não alterado**
-- `scoring.ts`, demais testes — esta matriz é puramente complementar (60 células × asserções).
+**Novo**
+- `src/test/lib/riskSeverityExplain.test.ts` — cobre 6 casos: critical normal, critical demoted, high puro, medium, low, distâncias corretas em cada bordas (49→50, 64→65, 79→80, conf 0.69→0.70).
 
 ### Critério de aceite
-- `supabase--test_edge_functions ["detect-winloss-at-risk"]` 100% verde, incluindo as 60 `t.step` + stage-interpolation.
-- Cobertura explícita das 60 células `(5 types × 4 severities × 3 outcomes)`.
-- Toda célula `medium`/`low` (não-win) prova ausência de urgência.
-- Todo override `win` (qualquer severidade) prova ausência de urgência + presença de `vencedora`/`reaplicar`/`consultiva`.
-- Determinismo verificado 5× por célula.
+
+1. Card severity `critical` (final=85, conf=0.82) → frase `"final=85 ≥ 80 ∧ conf=0.82 ≥ 0.70 → critical"`, sem `distanceToNext`, mostra `↓ -5pts → high`.
+2. Card severity `high` por demoção (final=85, conf=0.60) → bloco com borda warning, frase `"final=85 ≥ 80, mas conf=0.60 < 0.70 → demovido para high"`, `↑ +0.10 conf → critical`.
+3. Card severity `high` puro (final=72, conf=0.9) → `"final=72 ∈ [65, 80) → high"`, `↑ +8pts → critical`.
+4. Card severity `medium` (final=55) → `"final=55 ∈ [50, 65) → medium"`, `↑ +10pts → high`, `↓ -5pts → low`.
+5. Card severity `low` (final=42) → `"final=42 < 50 → low"`, `↑ +8pts → medium`, sem `distanceToPrev`.
+6. `npm test -- riskSeverityExplain` verde.
+7. Suite Deno `detect-winloss-at-risk` continua verde (zero mudança no backend).
 
