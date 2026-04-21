@@ -130,6 +130,11 @@ export function AtRiskDealsFromPatterns() {
               ))}
             </ul>
           )}
+          {data.length > visible.length && (
+            <p className="mt-2 text-[10px] text-muted-foreground text-center">
+              Exibindo {visible.length} de {data.length} deals — ajuste em ⚙
+            </p>
+          )}
         </CardContent>
       </Card>
     </TooltipProvider>
