@@ -62,7 +62,7 @@ function attributeRegexSource(hit: string): string {
   if (/concorr/i.test(hit)) return "/concorr\\w*/i";
   if (/competitor/i.test(hit)) return "/competitor\\w*/i";
   if (/leila/i.test(hit)) return "/leila\\w*/i";
-  if (/cota[cç]/i.test(hit)) return "/cota[cç]\\w*/i";
+  if (/cota[c\u00e7]/i.test(hit)) return "/cota[c\u00e7]\\w*/i";
   return "/" + COMPETITOR_KEYWORDS_RE.source + "/gi";
 }
 
