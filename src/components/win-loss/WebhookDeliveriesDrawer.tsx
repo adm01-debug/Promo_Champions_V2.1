@@ -227,14 +227,19 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
               {(data ?? []).map((d) => {
                 const Icon = d.succeeded ? CheckCircle2 : XCircle;
                 const color = d.succeeded ? "text-emerald-500" : "text-destructive";
-                const isPending = pendingId === d.id && isReplaying;
+                const isProcessing = processingIds.has(d.id);
+                const isPending = (pendingId === d.id && isReplaying) || isProcessing;
                 const isChecked = selected.has(d.id);
                 const checkboxDisabled =
                   d.succeeded || isReplaying || (atLimit && !isChecked);
+                const result = lastResults.get(d.id);
                 return (
                   <li
                     key={d.id}
-                    className="flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2"
+                    className={cn(
+                      "relative flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2 transition-colors overflow-hidden",
+                      isProcessing && "bg-primary/5 border-primary/30",
+                    )}
                   >
                     {d.succeeded ? (
                       <span className="w-4 shrink-0" aria-hidden />
