@@ -135,6 +135,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
   const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
+  const [explainerOpen, setExplainerOpen] = useState(false);
 
   // Silent migration: drop the legacy `seeUseOlsInflation` key so that
   // users who previously opted into the √(1+step/n) approximation now get
@@ -378,6 +379,23 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                   </PopoverContent>
                 </Popover>
               )}
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                    onClick={() => setExplainerOpen(true)}
+                    aria-label="Abrir explicação das bandas de incerteza"
+                  >
+                    <HelpCircle className="h-3.5 w-3.5" aria-hidden />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">
+                  Como as bandas são calculadas?
+                </TooltipContent>
+              </UITooltip>
             </div>
           </TooltipProvider>
           <span
@@ -469,6 +487,11 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         tCritical={tCritical}
         confidenceZ={confidenceZ}
         bandLabel={bandLabel}
+      />
+      <ScenarioFormulaExplainerDialog
+        open={explainerOpen}
+        onOpenChange={setExplainerOpen}
+        stats={{ stdDev, fitN, dof, meanX, confidenceZ, bandMode, tCritical }}
       />
     </Card>
   );
