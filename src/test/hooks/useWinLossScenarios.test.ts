@@ -219,51 +219,52 @@ describe("useWinLossScenarios", () => {
     // y = [10, 14, 19, 22] at x = [0, 1, 2, 3].
     // OLS:
     //   meanX = 1.5, meanY = 16.25
-    //   Sxy   = (-1.5)(-6.25)+(-0.5)(-2.25)+(0.5)(2.75)+(1.5)(5.75) = 21
+    //   Sxy   = (-1.5)(-6.25)+(-0.5)(-2.25)+(0.5)(2.75)+(1.5)(5.75)
+    //         =  9.375     + 1.125      + 1.375     + 8.625      = 20.5
     //   Sxx   = 2.25 + 0.25 + 0.25 + 2.25 = 5
-    //   slope = 21/5 = 4.2
-    //   intercept = 16.25 - 4.2*1.5 = 9.95
-    //   ŷ = [9.95, 14.15, 18.35, 22.55]
-    //   resid = [0.05, -0.15, 0.65, -0.55]
-    //   SSE   = 0.0025 + 0.0225 + 0.4225 + 0.3025 = 0.75
-    //   dof   = 2, σ = √(0.75/2) = √0.375 ≈ 0.6123724357
+    //   slope = 20.5 / 5 = 4.1
+    //   intercept = 16.25 - 4.1*1.5 = 10.1
+    //   ŷ     = [10.1, 14.2, 18.3, 22.4]
+    //   resid = [-0.1, -0.2, 0.7, -0.4]
+    //   SSE   = 0.01 + 0.04 + 0.49 + 0.16 = 0.70
+    //   dof   = 2, σ = √(0.70/2) = √0.35 ≈ 0.5916079783
     //   t(2)  = 4.303
     // For step = 1 → x = 4:
     //   factor = √(1 + 1/4 + (4-1.5)²/5) = √(1 + 0.25 + 1.25) = √2.5 ≈ 1.5811388301
-    //   width_see  = σ · factor                ≈ 0.9682458366
-    //   width_pi95 = t · width_see             ≈ 4.166362034
-    //   base       = 9.95 + 4.2*4 = 26.75
+    //   width_see  = σ · factor                ≈ 0.9354143467
+    //   width_pi95 = t · width_see             ≈ 4.025087774
+    //   base       = 10.1 + 4.1*4 = 26.5
     const points = mkPoints([10, 14, 19, 22]);
 
     const see = renderHook(() => useWinLossScenarios(points, { forecastSteps: 1, bandMode: "see" })).result.current;
     const pi = renderHook(() => useWinLossScenarios(points, { forecastSteps: 1, bandMode: "pi95" })).result.current;
 
     // Fit parameters
-    expect(see.slope).toBeCloseTo(4.2, 6);
-    expect(see.intercept).toBeCloseTo(9.95, 6);
+    expect(see.slope).toBeCloseTo(4.1, 6);
+    expect(see.intercept).toBeCloseTo(10.1, 6);
     expect(see.meanX).toBeCloseTo(1.5, 6);
     expect(see.sxx).toBeCloseTo(5, 6);
-    expect(see.sse).toBeCloseTo(0.75, 6);
+    expect(see.sse).toBeCloseTo(0.7, 6);
     expect(see.dof).toBe(2);
-    expect(see.stdDev).toBeCloseTo(Math.sqrt(0.375), 6);
+    expect(see.stdDev).toBeCloseTo(Math.sqrt(0.35), 6);
     expect(pi.tCritical).toBeCloseTo(4.303, 3);
 
     // Forecast step=1 (x=4)
     const seeFcst = see.series.find((p) => p.isForecast)!;
     const piFcst = pi.series.find((p) => p.isForecast)!;
 
-    expect(seeFcst.realistic).toBeCloseTo(26.75, 6);
-    expect(piFcst.realistic).toBeCloseTo(26.75, 6);
+    expect(seeFcst.realistic).toBeCloseTo(26.5, 6);
+    expect(piFcst.realistic).toBeCloseTo(26.5, 6);
 
-    const expectedHalfSee = Math.sqrt(0.375) * Math.sqrt(2.5); // ≈ 0.9682458366
-    const expectedHalfPi = 4.303 * expectedHalfSee;            // ≈ 4.166362
+    const expectedHalfSee = Math.sqrt(0.35) * Math.sqrt(2.5); // ≈ 0.9354143467
+    const expectedHalfPi = 4.303 * expectedHalfSee;           // ≈ 4.025087774
 
     expect((seeFcst.optimistic - seeFcst.pessimistic) / 2).toBeCloseTo(expectedHalfSee, 6);
     expect((piFcst.optimistic - piFcst.pessimistic) / 2).toBeCloseTo(expectedHalfPi, 3);
 
     // Optimistic / pessimistic absolute values vs hand calc.
-    expect(seeFcst.optimistic).toBeCloseTo(26.75 + expectedHalfSee, 6);
-    expect(seeFcst.pessimistic).toBeCloseTo(26.75 - expectedHalfSee, 6);
+    expect(seeFcst.optimistic).toBeCloseTo(26.5 + expectedHalfSee, 6);
+    expect(seeFcst.pessimistic).toBeCloseTo(26.5 - expectedHalfSee, 6);
   });
 
   it("ratio pi95/see ≡ tCritical at every step (analytic property of new formula)", () => {
