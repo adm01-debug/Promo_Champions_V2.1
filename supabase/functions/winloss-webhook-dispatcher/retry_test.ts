@@ -807,6 +807,83 @@ Deno.test("fan-out: asserções consolidadas — fetch count por URL + X-Winloss
   assert(seenUrls.has(SUB_A.url) && seenUrls.has(SUB_B.url) && seenUrls.has(SUB_C.url));
 });
 
+Deno.test("fan-out: backoff de uma sub falhando NÃO atrasa updateSubscription das demais (medido por id)", async () => {
+  // Harness próprio: cada dispatchOne tem deps EXCLUSIVO via closure.
+  // sleeps/fetches/updates são amarrados ao subId, não a estado global racy.
+  const fetchesById: Record<string, number> = {};
+  const sleepsById: Record<string, number[]> = {};
+  const updates: Array<{ id: string; status: number; at: number }> = [];
+
+  const urlToId: Record<string, string> = {
+    [SUB_A.url]: "sub-A",
+    [SUB_B.url]: "sub-B",
+    [SUB_C.url]: "sub-C",
+  };
+  const responseFor: Record<string, () => Response> = {
+    "sub-A": () => new Response("ok", { status: 200 }),
+    "sub-B": () => new Response("err", { status: 500 }),
+    "sub-C": () => new Response("ok", { status: 200 }),
+  };
+
+  const makeDeps = (subId: string): DispatchDeps => {
+    let virtualNow = 0; // relógio virtual POR thread → independência real
+    return {
+      fetchFn: ((input: Parameters<typeof fetch>[0]) => {
+        const url = typeof input === "string" ? input : (input as URL | Request).toString();
+        const id = urlToId[url];
+        fetchesById[id] = (fetchesById[id] ?? 0) + 1;
+        return Promise.resolve(responseFor[id]());
+      }) as typeof fetch,
+      sleep: (ms: number) => {
+        sleepsById[subId] = sleepsById[subId] ?? [];
+        sleepsById[subId].push(ms);
+        virtualNow += ms;
+        return Promise.resolve();
+      },
+      insertDelivery: () => Promise.resolve(),
+      updateSubscription: (id, status) => {
+        updates.push({ id, status, at: virtualNow });
+        return Promise.resolve();
+      },
+      rand: () => 0, // jitter zero → backoff determinístico [250, 500]
+      now: () => virtualNow,
+      log: () => {},
+    };
+  };
+
+  const subs = [SUB_A, SUB_B, SUB_C];
+  await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, makeDeps(s.id))));
+
+  // Fetches por id
+  assertEquals(fetchesById["sub-A"], 1);
+  assertEquals(fetchesById["sub-B"], MAX_ATTEMPTS);
+  assertEquals(fetchesById["sub-C"], 1);
+
+  // Sleeps por id: A e C zero; B exatamente [250, 500]
+  assertEquals(sleepsById["sub-A"] ?? [], []);
+  assertEquals(sleepsById["sub-C"] ?? [], []);
+  assertEquals(sleepsById["sub-B"], [250, 500]);
+
+  // updateSubscription: 1× por sub, status final correto
+  assertEquals(updates.filter((u) => u.id === "sub-A").length, 1);
+  assertEquals(updates.filter((u) => u.id === "sub-B").length, 1);
+  assertEquals(updates.filter((u) => u.id === "sub-C").length, 1);
+  const byId = Object.fromEntries(updates.map((u) => [u.id, u]));
+  assertEquals(byId["sub-A"].status, 200);
+  assertEquals(byId["sub-B"].status, 500);
+  assertEquals(byId["sub-C"].status, 200);
+
+  // Prova temporal: A e C atualizam em virtualNow=0 (não esperaram nada);
+  // B atualiza após acumular 750ms (250+500) dos seus próprios backoffs.
+  assertEquals(byId["sub-A"].at, 0, "sub-A não deveria ter esperado nada");
+  assertEquals(byId["sub-C"].at, 0, "sub-C não deveria ter esperado nada");
+  assertEquals(byId["sub-B"].at, 750, "sub-B deveria ter esperado 250+500=750ms");
+
+  // Total de sleeps no fan-out
+  const totalSleeps = Object.values(sleepsById).reduce((a, arr) => a + arr.length, 0);
+  assertEquals(totalSleeps, MAX_ATTEMPTS - 1);
+});
+
 Deno.test("fan-out N=20: contagem por URL, header X-Winloss-Event e deal_id chegam em todas as subs", async () => {
   const N = 20;
   const subs: Subscription[] = Array.from({ length: N }, (_, i) => ({
