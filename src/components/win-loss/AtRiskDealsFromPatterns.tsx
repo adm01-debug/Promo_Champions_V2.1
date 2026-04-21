@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, RefreshCw, Info, Bug } from "lucide-react";
+import { AlertTriangle, RefreshCw, Info, Bug, Layers, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
 import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
+import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
 import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
 
@@ -28,7 +30,20 @@ export function AtRiskDealsFromPatterns() {
     limit: settings.limit,
   });
   const [debug, setDebug] = useState(false);
+  const [showCatalog, setShowCatalog] = useState(false);
   const visible = data.slice(0, settings.maxVisible);
+
+  /** Set of dominant-pattern labels matched by at least one current deal. */
+  const matchedFamilyLabels = useMemo(() => {
+    const set = new Set<string>();
+    for (const d of data) {
+      const haystack = (d.matched_pattern ?? "").toLowerCase();
+      for (const entry of DOMINANT_PATTERNS_LIST) {
+        if (haystack.includes(entry.label.toLowerCase())) set.add(entry.label);
+      }
+    }
+    return set;
+  }, [data]);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -135,6 +150,61 @@ export function AtRiskDealsFromPatterns() {
               Exibindo {visible.length} de {data.length} deals — ajuste em ⚙
             </p>
           )}
+
+          <Collapsible open={showCatalog} onOpenChange={setShowCatalog} className="mt-3 pt-3 border-t border-border/50">
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between h-8 px-2 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+                aria-expanded={showCatalog}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Layers className="h-3 w-3" aria-hidden />
+                  Padrões dominantes considerados ({DOMINANT_PATTERNS_LIST.length})
+                </span>
+                <ChevronDown className={`h-3 w-3 transition-transform ${showCatalog ? "rotate-180" : ""}`} aria-hidden />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2">
+              <ul className="grid gap-1.5" aria-label="Catálogo de padrões dominantes">
+                {DOMINANT_PATTERNS_LIST.map(entry => {
+                  const matched = matchedFamilyLabels.has(entry.label);
+                  const p = entry.pattern;
+                  return (
+                    <li
+                      key={entry.family}
+                      className={`rounded border px-2.5 py-1.5 text-[11px] ${
+                        matched
+                          ? "border-primary/40 bg-primary/5"
+                          : "border-border/50 bg-muted/30"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium truncate">{entry.theme}</span>
+                        {matched && (
+                          <Badge variant="outline" className="h-4 px-1 text-[9px] border-primary/40 text-primary shrink-0">
+                            ativo
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="opacity-70 truncate" title={entry.label}>
+                        {entry.label}
+                      </p>
+                      {p && (
+                        <p className="mt-0.5 opacity-60 tabular-nums text-[10px]">
+                          ticket-alvo {fmtBRL(p.avg_amount ?? 0)} · ciclo {(p.avg_cycle_days ?? 0)}d · conf {Math.round((p.confidence ?? 0) * 100)}%
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-2 text-[10px] text-muted-foreground">
+                Famílias destacadas correspondem ao padrão dominante de pelo menos um deal acima.
+              </p>
+            </CollapsibleContent>
+          </Collapsible>
         </CardContent>
       </Card>
     </TooltipProvider>
