@@ -9,6 +9,14 @@ function isRiskSeverity(v: unknown): v is RiskSeverity {
   return typeof v === "string" && (VALID_SEVERITIES as readonly string[]).includes(v);
 }
 
+export type AtRiskSortBy = "score" | "recency";
+
+const VALID_SORTS: readonly AtRiskSortBy[] = ["score", "recency"] as const;
+
+function isAtRiskSortBy(v: unknown): v is AtRiskSortBy {
+  return typeof v === "string" && (VALID_SORTS as readonly string[]).includes(v);
+}
+
 export interface AtRiskSettings {
   threshold: number;
   limit: number;
@@ -18,6 +26,7 @@ export interface AtRiskSettings {
   keywordFilter: string;
   reasonCodes: RiskReasonCode[];
   severityFilter: RiskSeverity[];
+  sortBy: AtRiskSortBy;
 }
 
 export const AT_RISK_DEFAULTS: AtRiskSettings = {
@@ -29,6 +38,7 @@ export const AT_RISK_DEFAULTS: AtRiskSettings = {
   keywordFilter: "",
   reasonCodes: [],
   severityFilter: [],
+  sortBy: "score",
 };
 
 const STORAGE_KEY = "winloss-at-risk-settings";
@@ -75,6 +85,7 @@ export function sanitize(input: unknown): AtRiskSettings {
     keywordFilter: sanitizeKeyword(obj.keywordFilter),
     reasonCodes: sanitizeReasonCodes(obj.reasonCodes),
     severityFilter: sanitizeSeverities(obj.severityFilter),
+    sortBy: isAtRiskSortBy(obj.sortBy) ? obj.sortBy : AT_RISK_DEFAULTS.sortBy,
   };
 }
 

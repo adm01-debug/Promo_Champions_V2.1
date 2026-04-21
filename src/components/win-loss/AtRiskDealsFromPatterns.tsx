@@ -90,7 +90,17 @@ export function AtRiskDealsFromPatterns() {
     });
   }, [data, settings.keywordFilter, settings.stageFilter, settings.reasonCodes, settings.severityFilter]);
 
-  const visible = filtered.slice(0, settings.maxVisible);
+  const sorted = useMemo(() => {
+    if (settings.sortBy === "score") return filtered;
+    return [...filtered].sort((a, b) => {
+      const da = a.breakdown?.days_stagnant ?? Number.POSITIVE_INFINITY;
+      const db = b.breakdown?.days_stagnant ?? Number.POSITIVE_INFINITY;
+      if (da !== db) return da - db;
+      return b.risk_score - a.risk_score;
+    });
+  }, [filtered, settings.sortBy]);
+
+  const visible = sorted.slice(0, settings.maxVisible);
   const filtersActive =
     settings.stageFilter.length > 0 ||
     settings.keywordFilter.length > 0 ||

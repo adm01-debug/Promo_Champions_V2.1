@@ -254,6 +254,43 @@ export function AtRiskSettingsPopover({
           />
         </div>
 
+        <div className="space-y-1.5">
+          <Label className="text-xs">Ordenar por</Label>
+          <ToggleGroup
+            type="single"
+            value={settings.sortBy}
+            onValueChange={(v) => {
+              if (v === "score" || v === "recency") onUpdate({ sortBy: v });
+            }}
+            className="grid grid-cols-2 gap-1"
+            aria-label="Critério de ordenação dos deals em risco"
+          >
+            <ToggleGroupItem
+              value="score"
+              variant="outline"
+              size="sm"
+              className="h-7 text-[11px]"
+              title="Maior risco primeiro (ordem padrão do servidor)"
+              aria-label="Ordenar por score (maior risco primeiro)"
+            >
+              ↓ Score
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="recency"
+              variant="outline"
+              size="sm"
+              className="h-7 text-[11px]"
+              title="Menos dias parado primeiro — age nos deals que ainda têm calor"
+              aria-label="Ordenar por recência (menos dias parados primeiro)"
+            >
+              🕐 Recência
+            </ToggleGroupItem>
+          </ToggleGroup>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            Recência usa dias parados (menor = mais recente)
+          </p>
+        </div>
+
         <Separator />
 
         <div className="space-y-3">
