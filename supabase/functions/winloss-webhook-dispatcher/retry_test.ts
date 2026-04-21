@@ -728,3 +728,55 @@ Deno.test("insertDelivery falha em todas + erro de rede: dispatchOne resolve sem
   assert(result.error!.includes("ENETDOWN"));
 });
 
+// ───────── updateSubscription: chamada única com último status ─────────
+
+Deno.test("updateSubscription: 1× com 200 em recovery 500 → 500 → 200", async () => {
+  const responses = [500, 500, 200];
+  const h = makeHarness((n) => new Response("", { status: responses[n - 1] }));
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.updates.length, 1);
+  assertEquals(h.updates[0], { id: "sub-1", status: 200 });
+});
+
+Deno.test("updateSubscription: 1× com 200 em recovery na 2ª (502 → 200) — loop encerra cedo", async () => {
+  const responses = [502, 200];
+  const h = makeHarness((n) => new Response("", { status: responses[n - 1] }));
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.fetches, 2);
+  assertEquals(h.updates.length, 1);
+  assertEquals(h.updates[0], { id: "sub-1", status: 200 });
+});
+
+Deno.test("updateSubscription: 1× com 503 em falha persistente que muda de status (500 → 502 → 503)", async () => {
+  const responses = [500, 502, 503];
+  const h = makeHarness((n) => new Response("", { status: responses[n - 1] }));
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.updates.length, 1);
+  assertEquals(h.updates[0], { id: "sub-1", status: 503 });
+});
+
+Deno.test("updateSubscription: 1× com status=0 quando última tentativa é erro de rede", async () => {
+  const h = makeHarness((n) => {
+    if (n < 3) return new Response("", { status: 500 });
+    throw new Error("ENETDOWN");
+  });
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.updates.length, 1);
+  assertEquals(h.updates[0], { id: "sub-1", status: 0 });
+});
+
+Deno.test("updateSubscription: 1× com 200 quando última é HTTP após erros de rede", async () => {
+  const h = makeHarness((n) => {
+    if (n < 3) throw new Error("ENETDOWN");
+    return new Response("", { status: 200 });
+  });
+  await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(h.updates.length, 1);
+  assertEquals(h.updates[0], { id: "sub-1", status: 200 });
+});
+
