@@ -89,10 +89,11 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({ point
     }
   }, [bandMode]);
 
-  const { series, stdDev, fitN, tCritical, bandLabel } = useWinLossScenarios(points, {
-    forecastSteps: 3,
-    bandMode,
-  });
+  const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
+    useWinLossScenarios(points, {
+      forecastSteps: 3,
+      bandMode,
+    });
 
   const data = useMemo(
     () =>
