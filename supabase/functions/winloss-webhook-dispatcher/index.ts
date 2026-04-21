@@ -81,7 +81,7 @@ serve(async (req) => {
       structuredLog("warn", { msg: "invalid_payload", reason: "missing_event" }, requestId);
       return new Response(JSON.stringify({ error: "event required", requestId }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
       });
     }
 
