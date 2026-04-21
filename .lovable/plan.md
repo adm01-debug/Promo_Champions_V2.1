@@ -1,42 +1,69 @@
 
 
-## Incluir `requestId` na resposta HTTP do `winloss-webhook-dispatcher`
+## Painel "Saúde de entregas de webhooks" — falhas por tentativa + taxa de sucesso
 
 ### Objetivo
-Expor o `requestId` (já gerado e usado nos logs estruturados) também no corpo JSON da resposta HTTP do dispatcher, para correlacionar a chamada cliente ↔ logs do edge function durante troubleshooting.
+Visualização compacta dentro do hub Win/Loss que, para a janela recente de entregas (`winloss_webhook_deliveries`), mostra:
 
-### Estado atual (a confirmar via leitura)
-`supabase/functions/winloss-webhook-dispatcher/index.ts` — gera um `requestId` (UUID/correlation id) e emite logs estruturados com ele, mas a resposta HTTP retorna apenas `{ dispatched, results }` (ou similar), sem o `requestId`. O cliente recebe o resultado mas não tem o ID para buscar nos logs.
+1. **Taxa de sucesso global** (KPI) — `succeeded=true / total`.
+2. **Falhas por tentativa** (gráfico de barras com 3 colunas: 1, 2, 3) — quantas entregas falharam em cada tentativa.
 
-Já existe precedente: `winloss-webhook-replay` retorna `{ requestId, source, results }` (visto em `useWebhookDeliveries.ts`), e o frontend sabe consumir esse formato.
+Permite identificar gargalos: se a maioria das falhas se concentra na tentativa 3 → endpoint instável; se concentra na 1 e raramente chega na 3 → recovery está funcionando bem.
+
+### Estado atual
+- `winloss_webhook_deliveries` já registra `attempt` (1..3), `succeeded`, `created_at`.
+- `WebhookSubscriptionsPanel` lista subscriptions; o drawer mostra histórico individual — **não há visão agregada** de saúde.
+- Stack de gráficos: Recharts (já em uso, ex. `WinLossTrendChart`).
 
 ### Mudanças
 
-**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/index.ts`
+**1. Novo hook** — `src/hooks/win-loss/useWebhookDeliveryStats.ts`
+- Query `winloss_webhook_deliveries` filtrando últimos 7 dias (`created_at >= now() - 7d`), `limit(2000)` por segurança.
+- Agregação client-side:
+  ```ts
+  {
+    total: number,
+    succeeded: number,
+    failed: number,
+    successRate: number,            // 0..100
+    failuresByAttempt: [
+      { attempt: 1, failures, total },
+      { attempt: 2, failures, total },
+      { attempt: 3, failures, total },
+    ]
+  }
+  ```
+- `staleTime: 30s`.
 
-1. **Garantir que `requestId` existe** no escopo do handler (criar com `crypto.randomUUID()` no topo do `Deno.serve` se ainda não houver).
-2. **Incluí-lo em TODAS as respostas JSON**:
-   - Sucesso: `{ requestId, dispatched, results }`
-   - Erro tratado (4xx/5xx no try/catch): `{ requestId, error: "..." }`
-3. **Adicionar header HTTP `X-Request-Id: <requestId>`** em todas as responses (sucesso e erro) — facilita correlação mesmo sem parsear o body, e segue convenção HTTP comum.
-4. **Logs já existentes** continuam emitindo o mesmo `requestId` — nenhuma mudança neles, garantindo a correlação 1:1 (resposta ↔ logs).
+**2. Novo componente** — `src/components/win-loss/WebhookHealthPanel.tsx`
+- `<Card>` com header "Saúde de entregas (últimos 7 dias)" + ícone `Activity`.
+- **Linha de KPIs** (3 stats compactos):
+  - Taxa de sucesso (% grande; verde se ≥95, âmbar 80-94, destrutivo <80 — via tokens semânticos).
+  - Total de entregas.
+  - Total de falhas.
+- **Mini gráfico de barras** (Recharts `BarChart`, height 160px):
+  - X = `tentativa 1/2/3`; Y = nº de falhas.
+  - Tooltip: `N falhas de M tentativas`.
+  - Cor da barra: `hsl(var(--destructive))`.
+- Empty state: "Nenhuma entrega registrada nos últimos 7 dias."
+- Loading: skeleton compacto.
+- Sem cores hardcoded; tokens semânticos.
 
-### Compatibilidade
-- Adição **não-breaking**: clientes existentes que ignoram campos extras continuam funcionando.
-- O frontend (`useWebhookSubscriptions`/`WebhookSubscriptionsPanel`) hoje não consome o retorno do dispatcher diretamente (a inserção é via `supabase.from(...).insert(...)`). Não há mudança de UI necessária neste card.
+**3. Integração** — `src/pages/WinLossIntelligence.tsx`
+- Inserir `<WebhookHealthPanel />` dentro do `WinLossErrorBoundary section="Webhooks"`, **acima** do `<WebhookSubscriptionsPanel />` (linha ~362).
 
-### Observabilidade
-Após o deploy, o usuário poderá:
-1. Capturar `requestId` do header `X-Request-Id` ou do body da resposta.
-2. Buscar nos logs com `supabase--edge_function_logs` filtrando por esse ID — todos os logs de uma única invocação aparecem agrupados.
+### Notas técnicas
+- Sem mudanças no edge function nem em tabelas.
+- Agregação client-side (volume baixo — janela 7d, max alguns milhares de linhas).
+- Acessibilidade: `aria-label` no card e summary textual ("85% de sucesso, 12 falhas no total").
 
 ### Arquivos
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/index.ts` (~5–10 linhas alteradas).
+- **Criar**: `src/hooks/win-loss/useWebhookDeliveryStats.ts`
+- **Criar**: `src/components/win-loss/WebhookHealthPanel.tsx`
+- **Modificar**: `src/pages/WinLossIntelligence.tsx` (1 import + 1 linha de uso)
 
 ### Verificação
-1. Deploy de `winloss-webhook-dispatcher`.
-2. Chamada via `supabase--curl_edge_functions` confirma:
-   - Header `X-Request-Id` presente.
-   - Body contém `requestId` (UUID v4).
-3. `supabase--edge_function_logs` com `search=<requestId>` retorna a sequência completa de logs daquela invocação.
+1. `/win-loss-intelligence` renderiza o novo painel sem erros.
+2. KPIs e barras refletem dados reais.
+3. Empty state aparece quando não há entregas no período.
 
