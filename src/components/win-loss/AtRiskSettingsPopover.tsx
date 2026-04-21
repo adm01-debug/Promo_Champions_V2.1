@@ -12,15 +12,18 @@ import { SlidersHorizontal, RotateCcw, Search, Bug, X } from "lucide-react";
 import type { AtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
 import {
   AT_RISK_PRESETS,
+  AT_RISK_SEVERITY_PRESETS,
   detectActivePreset,
   getPresetById,
   type AtRiskPresetId,
 } from "@/hooks/win-loss/atRiskPresets";
+import type { RiskSeverity } from "@/lib/winloss/severityFromScore";
 import {
   RISK_REASON_CODES,
   RISK_REASON_LABELS,
   type RiskReasonCode,
 } from "@/lib/winloss/riskReasons";
+import { cn } from "@/lib/utils";
 
 const SELECTABLE_REASON_CODES: RiskReasonCode[] = RISK_REASON_CODES.filter(
   (c) => c !== "CROSSED_SIGNALS",
@@ -34,7 +37,19 @@ interface Props {
   totalAnalyzed: number;
   totalShown: number;
   availableStages: string[];
+  severityCounts: Record<RiskSeverity, number>;
 }
+
+export function AtRiskSettingsPopover({
+  settings,
+  onUpdate,
+  onReset,
+  onClearFilters,
+  totalAnalyzed,
+  totalShown,
+  availableStages,
+  severityCounts,
+}: Props) {
 
 export function AtRiskSettingsPopover({
   settings,
