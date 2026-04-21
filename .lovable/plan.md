@@ -1,69 +1,79 @@
 
 
-## Painel "Saúde de entregas de webhooks" — falhas por tentativa + taxa de sucesso
+## Correlação consistente por `subscriptionId` em todos os logs
 
 ### Objetivo
-Visualização compacta dentro do hub Win/Loss que, para a janela recente de entregas (`winloss_webhook_deliveries`), mostra:
-
-1. **Taxa de sucesso global** (KPI) — `succeeded=true / total`.
-2. **Falhas por tentativa** (gráfico de barras com 3 colunas: 1, 2, 3) — quantas entregas falharam em cada tentativa.
-
-Permite identificar gargalos: se a maioria das falhas se concentra na tentativa 3 → endpoint instável; se concentra na 1 e raramente chega na 3 → recovery está funcionando bem.
+Padronizar o campo `subscriptionId` (camelCase) em **todas** as etapas dos logs estruturados do `winloss-webhook-dispatcher`, e adicionar um log de "fan-out plan" individualizado **por subscription** no início do dispatcher, permitindo filtrar logs por `subscriptionId=<id>` e seguir o fluxo completo de uma assinatura específica do começo ao fim.
 
 ### Estado atual
-- `winloss_webhook_deliveries` já registra `attempt` (1..3), `succeeded`, `created_at`.
-- `WebhookSubscriptionsPanel` lista subscriptions; o drawer mostra histórico individual — **não há visão agregada** de saúde.
-- Stack de gráficos: Recharts (já em uso, ex. `WinLossTrendChart`).
+Análise dos logs no edge function:
+
+**`retry.ts`** (já consistente — 8/8 logs com `subscriptionId`):
+- `subscription_dispatch_start`, `delivery_attempt`, `delivery_log_insert_failed`, `backoff_scheduled`, `update_subscription_failed`, `dead_letter_recorded`, `dead_letter_insert_failed`, `subscription_dispatch_complete`.
+
+**`index.ts`** (parcial — gaps):
+- ✅ `replay_subscription_missing`, `replay_subscription_inactive`: já têm.
+- ❌ `invalid_payload`: sem (não há sub envolvida — OK).
+- ❌ `fetch_subscriptions_failed`: sem (etapa pré-fan-out — OK).
+- ❌ `dispatch_start` (linha 127): tem `target_ids` (array) mas **não emite uma linha por sub** — difícil filtrar.
+- ❌ `dispatch_complete` (linha 162): mesmo problema — agrega tudo em `results`.
+- ❌ `dispatcher_fatal` (linha 176): sem (erro genérico — OK).
 
 ### Mudanças
 
-**1. Novo hook** — `src/hooks/win-loss/useWebhookDeliveryStats.ts`
-- Query `winloss_webhook_deliveries` filtrando últimos 7 dias (`created_at >= now() - 7d`), `limit(2000)` por segurança.
-- Agregação client-side:
-  ```ts
-  {
-    total: number,
-    succeeded: number,
-    failed: number,
-    successRate: number,            // 0..100
-    failuresByAttempt: [
-      { attempt: 1, failures, total },
-      { attempt: 2, failures, total },
-      { attempt: 3, failures, total },
-    ]
-  }
-  ```
-- `staleTime: 30s`.
+**Arquivo único**: `supabase/functions/winloss-webhook-dispatcher/index.ts`
 
-**2. Novo componente** — `src/components/win-loss/WebhookHealthPanel.tsx`
-- `<Card>` com header "Saúde de entregas (últimos 7 dias)" + ícone `Activity`.
-- **Linha de KPIs** (3 stats compactos):
-  - Taxa de sucesso (% grande; verde se ≥95, âmbar 80-94, destrutivo <80 — via tokens semânticos).
-  - Total de entregas.
-  - Total de falhas.
-- **Mini gráfico de barras** (Recharts `BarChart`, height 160px):
-  - X = `tentativa 1/2/3`; Y = nº de falhas.
-  - Tooltip: `N falhas de M tentativas`.
-  - Cor da barra: `hsl(var(--destructive))`.
-- Empty state: "Nenhuma entrega registrada nos últimos 7 dias."
-- Loading: skeleton compacto.
-- Sem cores hardcoded; tokens semânticos.
+1. **Após `dispatch_start` (broadcast plan), emitir 1 log por subscription**:
+   ```ts
+   for (const t of targets) {
+     structuredLog("info", {
+       msg: "subscription_planned",
+       event,
+       mode: replayOf ? "replay" : "broadcast",
+       subscriptionId: t.id,
+       url: t.url,
+     }, requestId);
+   }
+   ```
+   → Garante que mesmo antes da execução, cada `subscriptionId` tem uma entrada rastreável.
 
-**3. Integração** — `src/pages/WinLossIntelligence.tsx`
-- Inserir `<WebhookHealthPanel />` dentro do `WinLossErrorBoundary section="Webhooks"`, **acima** do `<WebhookSubscriptionsPanel />` (linha ~362).
+2. **Após `Promise.all(...dispatchOne)`, emitir 1 log de outcome por subscription**:
+   ```ts
+   for (const r of results) {
+     structuredLog(r.succeeded ? "info" : "warn", {
+       msg: "subscription_outcome",
+       event,
+       subscriptionId: r.id,
+       succeeded: r.succeeded,
+       final_status: r.status,
+       attempts: r.attempts,
+       total_latency_ms: r.total_latency_ms,
+       error: r.error,
+     }, requestId);
+   }
+   ```
+   → Permite ao operador filtrar logs por `subscriptionId=<id>` e ver: planned → start → attempts (1..3) → backoff → outcome → complete, em ordem cronológica.
+
+3. **Manter o `dispatch_complete` agregado** (visão geral da invocação) — não substituir.
+
+4. **Garantir camelCase consistente**: o resto já usa `subscriptionId` (não `subscription_id`); confirmado em todas as chamadas. Nenhum rename necessário.
+
+### Como rastrear o fluxo (após o deploy)
+1. Capturar `X-Request-Id` ou `requestId` da resposta HTTP.
+2. Filtrar logs com `requestId=<id>` AND `subscriptionId=<id>` → sequência completa de uma assinatura.
+3. Ou apenas `subscriptionId=<id>` → histórico da subscription através de múltiplas invocações.
 
 ### Notas técnicas
-- Sem mudanças no edge function nem em tabelas.
-- Agregação client-side (volume baixo — janela 7d, max alguns milhares de linhas).
-- Acessibilidade: `aria-label` no card e summary textual ("85% de sucesso, 12 falhas no total").
+- Sem mudanças em `retry.ts` (já está correto).
+- Sem mudança em tabelas, RLS ou frontend.
+- 2 novos `msg`: `subscription_planned`, `subscription_outcome`.
+- Volume: + (2 × N targets) linhas por invocação. Aceitável (N tipicamente < 10).
 
 ### Arquivos
-- **Criar**: `src/hooks/win-loss/useWebhookDeliveryStats.ts`
-- **Criar**: `src/components/win-loss/WebhookHealthPanel.tsx`
-- **Modificar**: `src/pages/WinLossIntelligence.tsx` (1 import + 1 linha de uso)
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/index.ts` (~12 linhas adicionadas).
 
 ### Verificação
-1. `/win-loss-intelligence` renderiza o novo painel sem erros.
-2. KPIs e barras refletem dados reais.
-3. Empty state aparece quando não há entregas no período.
+1. Deploy de `winloss-webhook-dispatcher`.
+2. `supabase--curl_edge_functions` dispara um evento.
+3. `supabase--edge_function_logs` com `search=<subscriptionId>` retorna a sequência completa: `subscription_planned` → `subscription_dispatch_start` → `delivery_attempt`×N → `backoff_scheduled`×(N−1) → `subscription_dispatch_complete` → `subscription_outcome`.
 
