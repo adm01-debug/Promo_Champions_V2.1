@@ -763,3 +763,59 @@ export const DEAL_HISTORY_FIXTURES = {
 
 export type DealHistoryFamily = keyof typeof DEAL_HISTORY_FIXTURES;
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Flat dominant-pattern index — answers "for family X, which loss/win pattern
+// would the pipeline pick as dominant?" without iterating the catalog.
+//
+// Resolution: substring match (case-insensitive) of `dominantPatternLabel`
+// against `LOSS_PATTERNS_REALISTIC[i].label`. Returns the first hit so the UI
+// can render the pattern's avg_amount / avg_cycle_days / confidence directly.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface DominantPatternEntry {
+  /** Family key from DEAL_HISTORY_FIXTURES (pricing, churn, …). */
+  family: DealHistoryFamily;
+  /** Human-readable theme (group.theme). */
+  theme: string;
+  /** The label substring expected in `result.matched_pattern`. */
+  label: string;
+  /** Resolved pattern from LOSS_PATTERNS_REALISTIC, or null if no match. */
+  pattern: LossPattern | null;
+}
+
+function resolvePattern(label: string): LossPattern | null {
+  const needle = label.toLowerCase();
+  return (
+    LOSS_PATTERNS_REALISTIC.find(p =>
+      (p.label ?? "").toLowerCase().includes(needle),
+    ) ?? null
+  );
+}
+
+export const DOMINANT_PATTERNS_BY_FAMILY: Record<DealHistoryFamily, DominantPatternEntry> =
+  (Object.keys(DEAL_HISTORY_FIXTURES) as DealHistoryFamily[]).reduce(
+    (acc, family) => {
+      const group = DEAL_HISTORY_FIXTURES[family];
+      acc[family] = {
+        family,
+        theme: group.theme,
+        label: group.dominantPatternLabel,
+        pattern: resolvePattern(group.dominantPatternLabel),
+      };
+      return acc;
+    },
+    {} as Record<DealHistoryFamily, DominantPatternEntry>,
+  );
+
+/** Convenience accessor for components. */
+export function getDominantPatternForFamily(
+  family: DealHistoryFamily,
+): DominantPatternEntry {
+  return DOMINANT_PATTERNS_BY_FAMILY[family];
+}
+
+/** Ordered list (stable insertion order) — handy for `.map()` in JSX. */
+export const DOMINANT_PATTERNS_LIST: DominantPatternEntry[] = Object.values(
+  DOMINANT_PATTERNS_BY_FAMILY,
+);
