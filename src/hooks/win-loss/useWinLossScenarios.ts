@@ -258,14 +258,16 @@ export const useWinLossScenarios = (
       const base = slope * x + intercept;
 
       // width = (multiplicador) · σ̂ · (fator de inflação)
-      //   pi95 → t-Student;  see+OLS → 1;  see legado → √(1+step/n) sem (x−x̄).
+      //   pi95 → t-Student (ignora confidenceZ);
+      //   see+OLS → confidenceZ · √(1+1/n+(x−x̄)²/Sxx);
+      //   see legado → confidenceZ · √(1+step/n) sem (x−x̄).
       let width: number;
       if (bandMode === "pi95") {
         width = t * residualStdDev * olsFactor(x);
       } else if (seeUseOlsInflation) {
-        width = residualStdDev * olsFactor(x);
+        width = confidenceZ * residualStdDev * olsFactor(x);
       } else {
-        width = residualStdDev * Math.sqrt(1 + step / n);
+        width = confidenceZ * residualStdDev * Math.sqrt(1 + step / n);
       }
 
       forecast.push({
@@ -291,6 +293,7 @@ export const useWinLossScenarios = (
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
       seeUseOlsInflation,
+      confidenceZ,
     };
-  }, [points, forecastSteps, bandMode, seeUseOlsInflation]);
+  }, [points, forecastSteps, bandMode, seeUseOlsInflation, confidenceZ]);
 };
