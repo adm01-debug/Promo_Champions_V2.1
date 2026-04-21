@@ -308,7 +308,7 @@ Deno.test("fan-out: 3 subs todas 2xx → 1 POST por sub e last_status=200 indivi
   const h = makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
     [SUB_B.url]: () => new Response("ok", { status: 201 }),
-    [SUB_C.url]: () => new Response("ok", { status: 204 }),
+    [SUB_C.url]: () => new Response(null, { status: 204 }),
   });
   const subs = [SUB_A, SUB_B, SUB_C];
   const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
@@ -391,14 +391,14 @@ Deno.test("fan-out: retries de uma sub não acoplam às outras (sleeps isolados)
   });
   await Promise.all([SUB_A, SUB_B, SUB_C].map((s) => dispatchOne(s, PAYLOAD, h.deps)));
 
-  // Total de fetches = 1 (A) + 3 (B) + 1 (C) = 5
-  const total = Object.values(h.fetchesByUrl).reduce((a, b) => a + b, 0);
-  assertEquals(total, 1 + MAX_ATTEMPTS + 1);
+  // Total de fetches = 1 (A) + 3 (B) + 1 (C) = 5 → prova que B fez seus retries sem A/C "esperarem"
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1);
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS);
+  assertEquals(h.fetchesByUrl[SUB_C.url], 1);
 
-  // Sleeps só ocorrem para B (entre tentativa 1→2 e 2→3 = 2 sleeps)
-  assertEquals((h.sleepsByUrl[SUB_A.url] ?? []).length, 0);
-  assertEquals((h.sleepsByUrl[SUB_C.url] ?? []).length, 0);
-  assertEquals((h.sleepsByUrl[SUB_B.url] ?? []).length, MAX_ATTEMPTS - 1);
+  // Total de sleeps no fan-out inteiro = MAX_ATTEMPTS - 1 (apenas os backoffs entre tentativas de B)
+  const totalSleeps = Object.values(h.sleepsByUrl).reduce((a, arr) => a + arr.length, 0);
+  assertEquals(totalSleeps, MAX_ATTEMPTS - 1);
 
   // Cada sub atualiza last_status exatamente uma vez
   assertEquals(h.updates.filter((u) => u.id === "sub-A").length, 1);
