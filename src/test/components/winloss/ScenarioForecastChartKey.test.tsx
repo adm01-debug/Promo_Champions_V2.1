@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Children, isValidElement, type ReactNode } from "react";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
@@ -126,7 +126,7 @@ describe("ScenarioForecastChart — chartKey reage a filtros", () => {
       );
       // Debounce de 200ms dentro do componente — antes disso a key não muda.
       expect(getKey()).toBe(keyA);
-      vi.advanceTimersByTime(200);
+      act(() => { vi.advanceTimersByTime(200); });
       const keyB = getKey();
       expect(keyB).toContain("-fit");
       expect(keyA).not.toBe(keyB);
