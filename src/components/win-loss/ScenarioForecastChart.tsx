@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ResponsiveContainer,
@@ -13,11 +13,21 @@ import {
   ReferenceLine,
 } from "recharts";
 import { Sparkles } from "lucide-react";
-import { useWinLossScenarios } from "@/hooks/win-loss/useWinLossScenarios";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
 interface Props {
   points: TrendPoint[];
+}
+
+const BAND_MODE_KEY = "winloss-scenario-bandmode";
+
+function readBandMode(): BandMode {
+  if (typeof window === "undefined") return "see";
+  const v = window.localStorage.getItem(BAND_MODE_KEY);
+  return v === "pi95" ? "pi95" : "see";
 }
 
 interface TooltipPayloadItem {
