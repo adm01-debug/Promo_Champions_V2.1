@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export interface WebhookDelivery {
   id: string;
@@ -15,7 +16,9 @@ export interface WebhookDelivery {
 }
 
 export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) {
-  return useQuery({
+  const qc = useQueryClient();
+
+  const query = useQuery({
     queryKey: ["winloss-webhook-deliveries", subscriptionId, limit],
     enabled: !!subscriptionId,
     staleTime: 15_000,
@@ -40,5 +43,35 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
       if (error) throw error;
       return data ?? [];
     },
+  });
+
+  const replay = useMutation({
+    mutationFn: async (deliveryIds: string[]) => {
+      const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
+        body: { delivery_ids: deliveryIds },
+      });
+      if (error) throw error;
+      return data as {
+        requestId: string;
+        source: "delivery";
+        results: Array<{ id: string; succeeded: boolean; status: number; error: string | null; skipped?: boolean }>;
+      };
+    },
+    onSuccess: (data) => {
+      const ok = data.results.filter((r) => r.succeeded).length;
+      const skipped = data.results.filter((r) => r.skipped).length;
+      const fail = data.results.length - ok - skipped;
+      const parts = [`${ok} sucesso`, `${fail} falha${fail === 1 ? "" : "s"}`];
+      if (skipped) parts.push(`${skipped} já entregue${skipped === 1 ? "" : "s"}`);
+      if (ok > 0) toast.success(`Reenvio: ${parts.join(" · ")}`);
+      else toast.error(`Reenvio: ${parts.join(" · ")}`);
+      qc.invalidateQueries({ queryKey: ["winloss-webhook-deliveries"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao reenviar"),
+  });
+
+  return Object.assign(query, {
+    replay: replay.mutate,
+    isReplaying: replay.isPending,
   });
 }
