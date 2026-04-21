@@ -119,10 +119,3 @@ export function AtRiskDealsFromPatterns() {
     </TooltipProvider>
   );
 }
-            </ul>
-          )}
-        </CardContent>
-      </Card>
-    </TooltipProvider>
-  );
-}
