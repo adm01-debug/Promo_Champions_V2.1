@@ -32,7 +32,6 @@ import { SeasonComparisonPanel } from "@/components/win-loss/SeasonComparisonPan
 import { AtRiskDealsFromPatterns } from "@/components/win-loss/AtRiskDealsFromPatterns";
 import { WebhookSubscriptionsPanel } from "@/components/win-loss/WebhookSubscriptionsPanel";
 import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
-import { useAuth } from "@/contexts/AuthContext";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
