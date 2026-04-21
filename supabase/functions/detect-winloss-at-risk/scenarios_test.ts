@@ -61,11 +61,15 @@ for (const scenario of SCENARIOS) {
       );
     }
 
-    // Suggested action coherent
-    if (scenario.expect.actionIncludes) {
+    // Suggested action coherent (string = AND single needle; string[] = OR — any match)
+    if (scenario.expect.actionIncludes !== undefined) {
+      const needles = Array.isArray(scenario.expect.actionIncludes)
+        ? scenario.expect.actionIncludes
+        : [scenario.expect.actionIncludes];
+      const hit = needles.some((n) => includesCI(r.suggested_action, n));
       assert(
-        includesCI(r.suggested_action, scenario.expect.actionIncludes),
-        `${scenario.name}: suggested_action "${r.suggested_action}" missing "${scenario.expect.actionIncludes}"`,
+        hit,
+        `${scenario.name}: suggested_action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`,
       );
     }
 
