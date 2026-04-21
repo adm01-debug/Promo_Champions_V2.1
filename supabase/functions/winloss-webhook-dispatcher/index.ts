@@ -104,7 +104,7 @@ serve(async (req) => {
         structuredLog("error", { msg: "replay_subscription_missing", subscriptionId: targetSubId, error: error?.message }, requestId);
         return new Response(JSON.stringify({ error: "subscription not found", requestId }), {
           status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
         });
       }
       if (!sub.active) {
