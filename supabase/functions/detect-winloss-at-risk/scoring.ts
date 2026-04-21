@@ -35,6 +35,38 @@ export interface OpenDeal {
 
 export type RiskSeverity = "low" | "medium" | "high" | "critical";
 
+export type RiskReasonCode =
+  | "STAGNATION_HIGH"
+  | "STAGNATION_LOW"
+  | "AMOUNT_ALIGNED"
+  | "STAGE_STUCK"
+  | "COMPETITOR_PRESSURE"
+  | "CROSSED_SIGNALS";
+
+export const RISK_REASON_CODES: readonly RiskReasonCode[] = [
+  "STAGNATION_HIGH",
+  "STAGNATION_LOW",
+  "AMOUNT_ALIGNED",
+  "STAGE_STUCK",
+  "COMPETITOR_PRESSURE",
+  "CROSSED_SIGNALS",
+] as const;
+
+export type RiskReasonSource =
+  | "stagnation"
+  | "amount"
+  | "stage"
+  | "competitor"
+  | "generic";
+
+export interface RiskReason {
+  code: RiskReasonCode;
+  message: string;
+  params: Record<string, string | number>;
+  source: RiskReasonSource;
+  contribution: number;
+}
+
 export interface CompetitorMatch {
   keyword: string;
   matched_substring: string;
