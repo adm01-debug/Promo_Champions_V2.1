@@ -10,16 +10,18 @@ interface Harness {
   sleeps: number[];
   deliveries: DeliveryRow[];
   updates: Array<{ id: string; status: number }>;
+  deadLetters: DeadLetterEntry[];
 }
 
 function makeHarness(
   fetchImpl: (attempt: number) => Promise<Response> | Response,
-  opts: { rand?: () => number; insertThrows?: boolean } = {},
+  opts: { rand?: () => number; insertThrows?: boolean; deadLetterThrows?: boolean; withDeadLetter?: boolean } = {},
 ): Harness {
   let attempt = 0;
   const sleeps: number[] = [];
   const deliveries: DeliveryRow[] = [];
   const updates: Array<{ id: string; status: number }> = [];
+  const deadLetters: DeadLetterEntry[] = [];
 
   const deps: DispatchDeps = {
     fetchFn: ((..._args: Parameters<typeof fetch>) => {
@@ -33,6 +35,13 @@ function makeHarness(
       return Promise.resolve();
     },
     updateSubscription: (id, status) => { updates.push({ id, status }); return Promise.resolve(); },
+    onDeadLetter: opts.withDeadLetter
+      ? (entry) => {
+          if (opts.deadLetterThrows) return Promise.reject(new Error("dlq insert failed"));
+          deadLetters.push(entry);
+          return Promise.resolve();
+        }
+      : undefined,
     rand: opts.rand ?? (() => 0),
     now: () => 0,
     log: () => {},
@@ -44,6 +53,7 @@ function makeHarness(
     sleeps,
     deliveries,
     updates,
+    deadLetters,
   } as Harness;
 }
 
