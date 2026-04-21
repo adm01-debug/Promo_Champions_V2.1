@@ -82,6 +82,7 @@ export interface RiskBreakdown {
   matched_pattern_type: string;
   matched_confidence: number;
   reasons: string[];
+  reasons_v2?: RiskReason[];
   // Debug fields (optional for backward compatibility on the client).
   matched_keywords?: string[];
   competitor_matches?: CompetitorMatch[];
