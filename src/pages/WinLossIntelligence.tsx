@@ -25,6 +25,14 @@ import { WinByHourHeatmap } from "@/components/win-loss/WinByHourHeatmap";
 import { ScriptABPanel } from "@/components/win-loss/ScriptABPanel";
 import { WinLossSectionSkeleton } from "@/components/win-loss/WinLossSectionSkeleton";
 import { WinLossErrorBoundary } from "@/components/win-loss/WinLossErrorBoundary";
+import { ScenarioForecastChart } from "@/components/win-loss/ScenarioForecastChart";
+import { ICPCorrelationMatrix } from "@/components/win-loss/ICPCorrelationMatrix";
+import { SentimentTrendChart } from "@/components/win-loss/SentimentTrendChart";
+import { SeasonComparisonPanel } from "@/components/win-loss/SeasonComparisonPanel";
+import { AtRiskDealsFromPatterns } from "@/components/win-loss/AtRiskDealsFromPatterns";
+import { WebhookSubscriptionsPanel } from "@/components/win-loss/WebhookSubscriptionsPanel";
+import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
