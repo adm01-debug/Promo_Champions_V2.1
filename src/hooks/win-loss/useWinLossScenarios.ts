@@ -1,3 +1,57 @@
+/**
+ * ============================================================================
+ * WIN/LOSS SCENARIO FORECAST — Background estatístico
+ * ============================================================================
+ *
+ * Por que Standard Error of the Estimate (SEE) dos resíduos?
+ * --------------------------------------------------------------------------
+ * Ajustamos uma reta OLS  ŷ = β₀ + β₁·x  sobre a série histórica de winRate.
+ * O SEE  σ̂ = √(SSE / (n−2))  mede o "ruído típico" em torno dessa reta —
+ * isto é, o quanto a realidade costuma se desviar do modelo nos próprios
+ * dados de treino. É a métrica natural para responder "quão errado eu
+ * costumo estar?" sem precisar assumir uma distribuição prévia: vem direto
+ * dos resíduos observados (y − ŷ).
+ *
+ * Escolhemos SEE em vez de:
+ *   - desvio-padrão simples de y → ignora a tendência (slope), superestima a
+ *     incerteza quando há trend claro;
+ *   - bootstrap / IC empírico → custoso para n pequeno (séries curtas de
+ *     winRate por período), instável e sem forma fechada para auditoria;
+ *   - intervalos bayesianos → exigiria prior, fora do escopo de um forecast
+ *     leve client-side.
+ *
+ * Como SEE vira "banda histórica" (fan de cenários)?
+ * --------------------------------------------------------------------------
+ * Para cada step futuro x, o **valor central** (cenário realista) é a própria
+ * predição OLS  ŷ(x). A **largura da banda** é σ̂ multiplicado por um fator
+ * de inflação que cresce conforme x se afasta do centro x̄ dos dados:
+ *
+ *     width(x) = σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )       [PI 1σ, ~68%]
+ *     width(x) = t · σ̂ · √( 1 + 1/n + (x − x̄)² / Sxx )    [PI 95%, t-Student]
+ *
+ *   - O termo  1            → variância irredutível de uma observação futura.
+ *   - O termo  1/n          → incerteza no intercept (β₀).
+ *   - O termo  (x−x̄)²/Sxx  → incerteza no slope, que se amplifica longe do
+ *     centro do treino. É **isso** que faz a banda se abrir no horizonte.
+ *
+ * Cenários otimista/pessimista são  ŷ(x) ± width(x), depois clamp em [0, 100]
+ * porque winRate é percentual.
+ *
+ * Pontos históricos têm banda colapsada (otimista = realista = pessimista =
+ * winRate observado): só medimos incerteza onde estamos extrapolando.
+ *
+ * Modo legado  width = σ̂ · √(1 + step/n)  é mantido como opt-in
+ * (`seeUseOlsInflation: false`) para comparação visual; cresce muito devagar
+ * e ignora o efeito da distância ao centróide.
+ *
+ * Limitações conhecidas
+ * --------------------------------------------------------------------------
+ *   - Assume ruído homocedástico e aproximadamente normal (válido para n ≥ ~6).
+ *   - n < 3 → bandas colapsam (sem regressão); o caller deve tratar como
+ *     "dados insuficientes".
+ *   - dof ≥ 30 → t converge para 1.96 (fallback normal).
+ * ============================================================================
+ */
 import { useMemo } from "react";
 import type { TrendPoint } from "./useWinLossAggregations";
 
@@ -55,7 +109,10 @@ export interface ScenarioOptions {
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
 
-/** Two-tailed t-Student critical values at α=0.05 (i.e. t_{df, 0.975}) for df 1..30. */
+/**
+ * Two-tailed t-Student critical values at α=0.05 (i.e. t_{df, 0.975}) for df 1..30.
+ * Usado apenas no modo PI 95%; para SEE 1σ o multiplicador é implicitamente 1.
+ */
 const T_TABLE_975: Record<number, number> = {
   1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
   6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
@@ -140,6 +197,8 @@ export const useWinLossScenarios = (
     const xs = safePoints.map((_, i) => i);
     const ys = safePoints.map((p) => p.winRate);
 
+    // ── OLS fit ─────────────────────────────────────────────────────────────
+    // β₁ = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)²    β₀ = ȳ − β₁·x̄
     const meanX = xs.reduce((a, b) => a + b, 0) / n;
     const meanY = ys.reduce((a, b) => a + b, 0) / n;
 
@@ -154,9 +213,12 @@ export const useWinLossScenarios = (
       const yhat = slope * xs[i] + intercept;
       return acc + (y - yhat) ** 2;
     }, 0);
+    // SEE: σ̂ = √(SSE / dof). Mede o desvio típico dos resíduos do ajuste —
+    // base de toda a banda de incerteza (ver doc do topo do arquivo).
     const residualStdDev = Math.sqrt(sse / dof);
     const t = tCritical975(dof);
 
+    // Pontos históricos: banda colapsada — só extrapolamos incerteza no futuro.
     const historical: ScenarioPoint[] = safePoints.map((p) => ({
       period: p.period,
       realistic: p.winRate,
@@ -165,6 +227,9 @@ export const useWinLossScenarios = (
       isForecast: false,
     }));
 
+    // Fator de inflação do prediction interval OLS:
+    //   √(1 + 1/n + (x−x̄)²/Sxx)
+    // Cresce com a distância de x ao centro dos dados → banda abre no futuro.
     const olsFactor = (x: number) => Math.sqrt(1 + 1 / n + ((x - meanX) ** 2) / sxx);
 
     const forecast: ScenarioPoint[] = [];
@@ -172,6 +237,8 @@ export const useWinLossScenarios = (
       const x = n + step - 1;
       const base = slope * x + intercept;
 
+      // width = (multiplicador) · σ̂ · (fator de inflação)
+      //   pi95 → t-Student;  see+OLS → 1;  see legado → √(1+step/n) sem (x−x̄).
       let width: number;
       if (bandMode === "pi95") {
         width = t * residualStdDev * olsFactor(x);
