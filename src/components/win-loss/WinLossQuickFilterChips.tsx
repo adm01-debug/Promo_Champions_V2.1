@@ -70,7 +70,7 @@ export function WinLossQuickFilterChips({ filters, topCompetitor, outcomeFilter,
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 no-print" role="toolbar" aria-label="Filtros rápidos">
+    <div className="flex sm:flex-wrap items-center gap-2 no-print overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none -mx-1 px-1 pb-1" role="toolbar" aria-label="Filtros rápidos">
       <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
         <Filter className="h-3 w-3" /> Rápido:
       </span>
@@ -79,7 +79,7 @@ export function WinLossQuickFilterChips({ filters, topCompetitor, outcomeFilter,
           key={chip.id}
           type="button"
           onClick={() => handleClick(chip)}
-          className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full snap-start shrink-0"
         >
           <Badge
             variant={chip.active ? "default" : "outline"}

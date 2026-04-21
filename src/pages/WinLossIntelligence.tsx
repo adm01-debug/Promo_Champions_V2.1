@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState, useCallback, useRef } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
 import { WinLossPageHeader } from "@/components/win-loss/WinLossPageHeader";
@@ -23,12 +23,8 @@ import { NextBestWinLossCard } from "@/components/win-loss/NextBestWinLossCard";
 import { InsightsImpactPanel } from "@/components/win-loss/InsightsImpactPanel";
 import { WinByHourHeatmap } from "@/components/win-loss/WinByHourHeatmap";
 import { ScriptABPanel } from "@/components/win-loss/ScriptABPanel";
-import {
-  KpiBannerSkeleton,
-  ChartSkeleton,
-  TableSkeleton,
-  CompetitorGridSkeleton,
-} from "@/components/win-loss/WinLossSkeletons";
+import { WinLossSectionSkeleton } from "@/components/win-loss/WinLossSectionSkeleton";
+import { WinLossErrorBoundary } from "@/components/win-loss/WinLossErrorBoundary";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
@@ -145,11 +141,13 @@ export default function WinLossIntelligence() {
 
   const handleCopyDigest = useCallback(() => {
     track("winloss_digest");
+    track("winloss_digest_copied");
     digest();
   }, [digest, track]);
 
   const handleLoadView = useCallback((v: SavedView) => {
     track("winloss_load_view", { name: v.name });
+    track("winloss_view_saved", { name: v.name });
     setFilters(v.filters);
   }, [setFilters, track]);
 
@@ -158,7 +156,19 @@ export default function WinLossIntelligence() {
     if (patch.outcome !== undefined) setOutcomeFilter(patch.outcome);
     if (patch.competitor !== undefined) setCompetitorFilter(patch.competitor);
     track("winloss_quick_filter", { ...patch });
+    track("winloss_quick_filter_clicked", { ...patch });
   }, [setFilters, track]);
+
+  // Filter-applied telemetry whenever active filters change
+  useEffect(() => {
+    track("winloss_filter_applied", {
+      period: filters.period,
+      hasSalesperson: filters.salespersonIds.length > 0,
+      hasSegment: filters.segments.length > 0,
+      minAmount: filters.minAmount,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   useWinLossShortcuts({
     onExport: handleExport,
@@ -181,6 +191,14 @@ export default function WinLossIntelligence() {
         <meta property="og:url" content={url} />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
+
+      {/* Skip-link a11y AAA */}
+      <a
+        href="#wl-insights"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-primary focus:text-primary-foreground focus:px-3 focus:py-1.5 focus:rounded-md focus:text-sm"
+      >
+        Pular para insights
+      </a>
 
       <PageTransition>
         <div className="space-y-4 pb-[env(safe-area-inset-bottom)]" role="main" aria-label="Win/Loss Intelligence">
@@ -220,13 +238,13 @@ export default function WinLossIntelligence() {
 
           {isLoading ? (
             <>
-              <KpiBannerSkeleton />
+              <WinLossSectionSkeleton variant="kpi" />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2"><ChartSkeleton /></div>
-                <div><ChartSkeleton height={220} /></div>
+                <div className="lg:col-span-2"><WinLossSectionSkeleton variant="chart" /></div>
+                <div><WinLossSectionSkeleton variant="chart" height={220} /></div>
               </div>
-              <TableSkeleton rows={5} />
-              <CompetitorGridSkeleton />
+              <WinLossSectionSkeleton variant="table" rows={5} />
+              <WinLossSectionSkeleton variant="chart" height={180} />
             </>
           ) : isEmpty ? (
             <WinLossEmptyState
@@ -236,51 +254,78 @@ export default function WinLossIntelligence() {
             />
           ) : (
             <>
-              <WinLossKpiBanner
-                kpis={kpis}
-                onWinsClick={onWins}
-                onLossesClick={onLosses}
-                delta={delta}
-                forecast={forecast}
-              />
+              <WinLossErrorBoundary section="KPIs">
+                <WinLossKpiBanner
+                  kpis={kpis}
+                  onWinsClick={onWins}
+                  onLossesClick={onLosses}
+                  delta={delta}
+                  forecast={forecast}
+                />
+              </WinLossErrorBoundary>
 
               <div className="no-print">
-                <NextBestWinLossCard />
+                <WinLossErrorBoundary section="Next Best Action">
+                  <NextBestWinLossCard />
+                </WinLossErrorBoundary>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
-                  <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
+                  <WinLossErrorBoundary section="Tendência" fallbackHeight={260}>
+                    <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
+                  </WinLossErrorBoundary>
                 </div>
                 <div>
-                  <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
+                  <WinLossErrorBoundary section="Matriz de motivos" fallbackHeight={260}>
+                    <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
+                  </WinLossErrorBoundary>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
-                <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
+                <WinLossErrorBoundary section="Histograma de ciclo" fallbackHeight={220}>
+                  <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
+                </WinLossErrorBoundary>
+                <WinLossErrorBoundary section="Funil de perdas" fallbackHeight={220}>
+                  <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
+                </WinLossErrorBoundary>
               </div>
 
-              <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
+              <WinLossErrorBoundary section="Cohort">
+                <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
+              </WinLossErrorBoundary>
 
-              <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+              <WinLossErrorBoundary section="Heatmap horário">
+                <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+              </WinLossErrorBoundary>
 
-              <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
+              <WinLossErrorBoundary section="Vendedores">
+                <SalespersonWinLossTable stats={spStats} isLoading={spLoading} onRowClick={onSalesperson} />
+              </WinLossErrorBoundary>
 
-              <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+              <WinLossErrorBoundary section="Concorrentes">
+                <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+              </WinLossErrorBoundary>
 
-              <ScriptABPanel />
+              <WinLossErrorBoundary section="Script A/B">
+                <ScriptABPanel />
+              </WinLossErrorBoundary>
             </>
           )}
 
           <div
+            id="wl-insights"
             ref={insightsRef}
             className={pulse ? "rounded-xl ring-2 ring-primary/60 ring-offset-2 ring-offset-background animate-pulse transition-all" : ""}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ActionableInsightsPanel />
-              <InsightsImpactPanel />
+              <WinLossErrorBoundary section="Insights acionáveis">
+                <ActionableInsightsPanel />
+              </WinLossErrorBoundary>
+              <WinLossErrorBoundary section="Impacto dos insights">
+                <InsightsImpactPanel />
+              </WinLossErrorBoundary>
             </div>
           </div>
 

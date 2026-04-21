@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Clock } from "lucide-react";
@@ -20,7 +20,7 @@ const cellColor = (cell: HourCell): string => {
   return "bg-rose-500/40";
 };
 
-export function WinByHourHeatmap({ onCellClick }: Props) {
+export const WinByHourHeatmap = memo(function WinByHourHeatmap({ onCellClick }: Props) {
   const { data = [], isLoading } = useWinByHourMatrix();
 
   const grid = useMemo(() => {
@@ -42,30 +42,36 @@ export function WinByHourHeatmap({ onCellClick }: Props) {
           <Skeleton className="h-[180px]" />
         ) : (
           <div className="overflow-x-auto">
-            <div className="inline-grid gap-[2px]" style={{ gridTemplateColumns: `auto repeat(24, minmax(14px, 1fr))` }}>
-              <div />
+            <div
+              className="inline-grid gap-[2px]"
+              style={{ gridTemplateColumns: `auto repeat(24, minmax(14px, 1fr))` }}
+              role="grid"
+              aria-label="Heatmap de win rate por dia da semana e hora do dia"
+            >
+              <div role="presentation" />
               {HOURS.map((h) => (
-                <div key={`h-${h}`} className="text-[8px] text-muted-foreground text-center">
+                <div key={`h-${h}`} className="text-[8px] text-muted-foreground text-center" role="columnheader">
                   {h % 3 === 0 ? h : ""}
                 </div>
               ))}
               {DOW.map((label, d) => (
-                <>
-                  <div key={`d-${d}`} className="text-[10px] text-muted-foreground pr-1 self-center">{label}</div>
+                <div key={`row-${d}`} role="row" className="contents">
+                  <div className="text-[10px] text-muted-foreground pr-1 self-center" role="rowheader">{label}</div>
                   {HOURS.map((h) => {
                     const cell = grid.get(`${d}-${h}`) ?? { dow: d, hour: h, wins: 0, losses: 0, winRate: 0, total: 0 };
                     return (
                       <button
                         key={`c-${d}-${h}`}
                         type="button"
+                        role="gridcell"
                         onClick={() => cell.total && onCellClick?.(d, h)}
-                        className={`h-4 rounded-sm transition-all hover:scale-125 hover:z-10 ${cellColor(cell)} ${cell.total ? "cursor-pointer" : "cursor-default"}`}
+                        className={`h-4 rounded-sm transition-all hover:scale-125 hover:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${cellColor(cell)} ${cell.total ? "cursor-pointer" : "cursor-default"}`}
                         title={cell.total ? `${DOW[d]} ${h}h · ${cell.winRate.toFixed(0)}% (${cell.total})` : `${DOW[d]} ${h}h · sem deals`}
                         aria-label={`${DOW[d]} ${h}h: ${cell.winRate.toFixed(0)}% win rate em ${cell.total} deals`}
                       />
                     );
                   })}
-                </>
+                </div>
               ))}
             </div>
             <div className="flex items-center gap-2 mt-3 text-[10px] text-muted-foreground">
@@ -83,4 +89,4 @@ export function WinByHourHeatmap({ onCellClick }: Props) {
       </CardContent>
     </Card>
   );
-}
+});

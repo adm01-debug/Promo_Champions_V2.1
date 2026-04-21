@@ -48,7 +48,7 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" role="region" aria-label="KPIs Win/Loss">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3" role="region" aria-label="KPIs Win/Loss">
       {items.map((it, idx) => (
         <motion.div
           key={it.label}
@@ -86,7 +86,7 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
         </motion.div>
       ))}
       {/* Wins/Losses inline visual */}
-      <div className="col-span-2 md:col-span-3 lg:col-span-6">
+      <div className="col-span-2 sm:col-span-3 lg:col-span-6">
         <Card className="border-border/50">
           <CardContent className="p-3 flex items-center gap-3">
             <TrendingDown className="h-4 w-4 text-muted-foreground rotate-180" />
