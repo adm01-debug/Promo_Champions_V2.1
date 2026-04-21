@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Webhook, Plus, Trash2 } from "lucide-react";
+import { Webhook, Plus, Trash2, History } from "lucide-react";
 import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
+import { WebhookDeliveriesDrawer } from "./WebhookDeliveriesDrawer";
 
 const ALL_EVENTS = ["critical_pattern", "anomaly", "perf_drop"] as const;
 
