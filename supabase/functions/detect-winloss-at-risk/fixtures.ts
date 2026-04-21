@@ -299,6 +299,31 @@ export const SCENARIOS: Scenario[] = [
       maxScore: 90,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["30 dias", "competitiva"],
+      // high severity (score ~65) → "…48h…valor percebido…"
+      actionIncludes: ["48h", "valor", "IMEDIATA"],
+    },
+  },
+  {
+    name: "critical_severity_imperative_action",
+    story: "Negotiation há 180d, ticket alinhado, estágio travado — força severity=critical.",
+    deal: {
+      id: "s11",
+      client_name: "Critical Whale",
+      amount: 28500,
+      status: "negotiation",
+      category: "enterprise",
+      source: "outbound",
+      updated_at: daysAgo(180),
+      created_at: daysAgo(300),
+    },
+    expect: {
+      included: true,
+      minScore: 80,
+      maxScore: 100,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      reasonsInclude: ["180 dias"],
+      // Tom imperativo obrigatório quando severity=critical, independente da branch
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
     },
   },
 ];
