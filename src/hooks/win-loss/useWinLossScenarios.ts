@@ -35,11 +35,20 @@ export interface ScenarioForecast {
   tCritical: number | null;
   /** Human-readable label for the active mode (e.g. "SEE ±σ" or "PI 95% (t·σ)"). */
   bandLabel: string;
+  /** Whether SEE mode is using the full OLS inflation factor instead of √(1+step/n). */
+  seeUseOlsInflation: boolean;
 }
 
 export interface ScenarioOptions {
   forecastSteps?: number;
   bandMode?: BandMode;
+  /**
+   * When true and `bandMode === "see"`, replaces the simplified
+   * `√(1 + step/n)` width with the full OLS prediction-interval inflation
+   * factor `√(1 + 1/n + (x − x̄)² / Sxx)`. Default false (legacy SEE).
+   * Ignored in `pi95` mode (always uses the full factor).
+   */
+  seeUseOlsInflation?: boolean;
 }
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
@@ -81,16 +90,21 @@ export const useWinLossScenarios = (
 ): ScenarioForecast => {
   const opts: Required<ScenarioOptions> =
     typeof optionsOrSteps === "number"
-      ? { forecastSteps: optionsOrSteps, bandMode: "see" }
-      : { forecastSteps: optionsOrSteps.forecastSteps ?? 3, bandMode: optionsOrSteps.bandMode ?? "see" };
+      ? { forecastSteps: optionsOrSteps, bandMode: "see", seeUseOlsInflation: false }
+      : {
+          forecastSteps: optionsOrSteps.forecastSteps ?? 3,
+          bandMode: optionsOrSteps.bandMode ?? "see",
+          seeUseOlsInflation: optionsOrSteps.seeUseOlsInflation ?? false,
+        };
 
-  const { forecastSteps, bandMode } = opts;
+  const { forecastSteps, bandMode, seeUseOlsInflation } = opts;
 
   return useMemo(() => {
     const safePoints = points ?? [];
     const n = safePoints.length;
 
-    const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : "SEE ±σ");
+    const seeLabel = seeUseOlsInflation ? "SEE 1σ (PI)" : "SEE ±σ";
+    const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : seeLabel);
 
     // Need at least 3 points for a meaningful regression + residual σ.
     if (n < 3) {
@@ -114,6 +128,7 @@ export const useWinLossScenarios = (
         bandMode,
         tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
         bandLabel: labelFor(bandMode),
+        seeUseOlsInflation,
       };
     }
 
@@ -145,15 +160,21 @@ export const useWinLossScenarios = (
       isForecast: false,
     }));
 
+    const olsFactor = (x: number) => Math.sqrt(1 + 1 / n + ((x - meanX) ** 2) / sxx);
+
     const forecast: ScenarioPoint[] = [];
     for (let step = 1; step <= forecastSteps; step++) {
       const x = n + step - 1;
       const base = slope * x + intercept;
 
-      const width =
-        bandMode === "pi95"
-          ? t * residualStdDev * Math.sqrt(1 + 1 / n + ((x - meanX) ** 2) / sxx)
-          : residualStdDev * Math.sqrt(1 + step / n);
+      let width: number;
+      if (bandMode === "pi95") {
+        width = t * residualStdDev * olsFactor(x);
+      } else if (seeUseOlsInflation) {
+        width = residualStdDev * olsFactor(x);
+      } else {
+        width = residualStdDev * Math.sqrt(1 + step / n);
+      }
 
       forecast.push({
         period: `+${step}`,
@@ -177,6 +198,7 @@ export const useWinLossScenarios = (
       bandMode,
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
+      seeUseOlsInflation,
     };
-  }, [points, forecastSteps, bandMode]);
+  }, [points, forecastSteps, bandMode, seeUseOlsInflation]);
 };

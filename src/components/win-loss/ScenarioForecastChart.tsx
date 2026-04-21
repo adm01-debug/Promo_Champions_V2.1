@@ -28,11 +28,17 @@ interface Props {
 }
 
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
+const SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
 
 function readBandMode(): BandMode {
   if (typeof window === "undefined") return "see";
   const v = window.localStorage.getItem(BAND_MODE_KEY);
   return v === "pi95" ? "pi95" : "see";
+}
+
+function readSeeOlsInflation(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(SEE_OLS_KEY) === "1";
 }
 
 interface TooltipPayloadItem {
@@ -89,6 +95,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
   onHorizonChange,
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
+  const [seeUseOlsInflation, setSeeUseOlsInflation] = useState<boolean>(() => readSeeOlsInflation());
 
   useEffect(() => {
     try {
@@ -98,10 +105,19 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [bandMode]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SEE_OLS_KEY, seeUseOlsInflation ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, [seeUseOlsInflation]);
+
   const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
     useWinLossScenarios(points, {
       forecastSteps: horizon,
       bandMode,
+      seeUseOlsInflation,
     });
 
   const data = useMemo(
@@ -132,8 +148,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     const signature = data
       .map((d) => `${d.period}:${d.realistic}:${d.pessimistic}:${d.optimistic}:${d.isForecast ? 1 : 0}`)
       .join("|");
-    return `scenario-${bandMode}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
-  }, [data, stdDev, fitN, bandMode, horizon]);
+    return `scenario-${bandMode}-${seeUseOlsInflation ? "ols" : "step"}-h${horizon}-${data.length}-${fitN}-${stdDev.toFixed(2)}-${signature}`;
+  }, [data, stdDev, fitN, bandMode, horizon, seeUseOlsInflation]);
 
   if (!data.length) {
     return (
@@ -328,6 +344,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         sxx={sxx}
         bandMode={bandMode}
         tCritical={tCritical}
+        seeUseOlsInflation={seeUseOlsInflation}
+        onToggleSeeOlsInflation={setSeeUseOlsInflation}
       />
     </Card>
   );
