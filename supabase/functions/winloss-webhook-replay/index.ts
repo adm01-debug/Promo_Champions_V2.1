@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { BodySchema } from "./schema.ts";
 
 /** Normalize unknown errors for structured logs. Mirrors dispatcher/retry.ts. */
 function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
@@ -33,27 +34,7 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-// --- Zod schema (accepts dead_letter_ids OR delivery_ids; also singular forms) ---
-const idArray = z.array(z.string().uuid()).min(1).max(50);
-
-const RawBodySchema = z.object({
-  dead_letter_ids: z.array(z.string()).optional(),
-  dead_letter_id: z.string().optional(),
-  delivery_ids: z.array(z.string()).optional(),
-  delivery_id: z.string().optional(),
-});
-
-const BodySchema = z.preprocess((raw) => {
-  const parsed = RawBodySchema.safeParse(raw ?? {});
-  if (!parsed.success) return raw;
-  const v = parsed.data;
-  const dlq = v.dead_letter_ids ?? (v.dead_letter_id ? [v.dead_letter_id] : undefined);
-  const del = v.delivery_ids ?? (v.delivery_id ? [v.delivery_id] : undefined);
-  return { dead_letter_ids: dlq, delivery_ids: del };
-}, z.union([
-  z.object({ dead_letter_ids: idArray, delivery_ids: z.undefined() }),
-  z.object({ dead_letter_ids: z.undefined(), delivery_ids: idArray }),
-]));
+// BodySchema imported from ./schema.ts (single source of truth, also covered by schema_test.ts)
 
 interface SourceRow {
   id: string;
