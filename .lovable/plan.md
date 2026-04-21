@@ -1,32 +1,37 @@
 
 
-## Testes complementares para `onDeadLetter` em `retry_test.ts`
+## Reforçar asserções de fan-out: contagem por URL + headers + body com deal_id
 
 ### Estado atual
-A suíte `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` já cobre o essencial pedido:
-- `onDeadLetter chamado após 3 falhas` (DLQ é gravado quando todas falham).
-- `onDeadLetter NÃO chamado em sucesso (1ª, 2ª, 3ª)` (varre os 3 pontos de sucesso).
-- `erro em onDeadLetter é absorvido (não propaga)` (com `deadLetterThrows: true`).
-- `insertDelivery falha + falha terminal: dead-letter ainda é chamado` (resiliência cruzada).
+`retry_test.ts` já cobre parcialmente o pedido:
+- **Contagem por URL**: validada nos testes das linhas 647-649, 670-672 e 726-728 (`fetchesByUrl[url] === 1` / `=== MAX_ATTEMPTS`).
+- **Header `X-Winloss-Event`**: validado no teste da linha 691 (`headers["X-Winloss-Event"] === "x"`).
+- **Body com `deal_id`**: validado no mesmo teste (linha 707: `body.includes('"deal_id":"d-99"')`).
+
+Porém, essas asserções estão **espalhadas em 3 testes diferentes** e o body usa o mesmo `deal_id` para todas as subs (não prova isolamento de payload por subscription).
 
 ### O que será adicionado
-Cinco testes complementares para fechar buracos finos:
 
-1. **`onDeadLetter recebe entry com todos os campos preenchidos corretamente`** — assertiva de schema do `DeadLetterEntry`: `subscription_id`, `event`, `payload` (referência preservada), `attempts === MAX_ATTEMPTS`, `last_status === 502`, `last_error === null` (falha HTTP pura), `total_latency_ms` numérico.
+Um único teste consolidado em `supabase/functions/winloss-webhook-dispatcher/retry_test.ts`, inserido após o teste da linha 715, com asserções **explícitas e agrupadas** para fan-out de N=3 subs:
 
-2. **`onDeadLetter chamado EXATAMENTE 1× ao final (não por tentativa)`** — contador local garante que o callback dispara uma única vez, não a cada attempt fracassado.
+1. **Contagem de fetch por URL**: `fetchesByUrl[SUB_A.url] === 1`, idem B e C — exatamente 1 POST por subscription (sem cross-fire).
+2. **Header `X-Winloss-Event` em cada init capturado**: itera `capturedInits` e assertEquals === valor do `event` do payload usado naquela chamada.
+3. **Header `Content-Type: application/json`** em cada POST.
+4. **Body parseável + contém `deal_id`**: para cada `capturedInit`, faz `JSON.parse(init.body)` e assert `parsed.deal_id === "deal-fan-123"` e `parsed.event === "x"`. Garante body íntegro (não só substring) e que o deal_id chega a TODAS as subscriptions sem perda.
+5. **Métodos**: `init.method === "POST"` para cada um.
+6. **Total de fetches** = 3 (1×N) — defesa extra contra duplicação.
 
-3. **`erro em onDeadLetter NÃO impede updateSubscription de ter rodado antes`** — combina `deadLetterThrows: true` com `withDeadLetter: true` e verifica que `updates.length === 1` e `updates[0].status === 504` mesmo com o DLQ explodindo. Confirma a ordem do fluxo no `retry.ts` (subscription update → DLQ → return).
-
-4. **`erro síncrono (throw) em onDeadLetter também é absorvido`** — substitui o callback por um que faz `throw` síncrono (não Promise.reject) e verifica que `dispatchOne` ainda resolve normalmente. Garante que o try/catch do dispatcher cobre ambas as formas de erro.
-
-5. **`onDeadLetter NÃO chamado quando deps.onDeadLetter é undefined`** — caminho explícito sem callback configurado: `dispatchOne` deve pular silenciosamente, sem null-pointer e sem lançar.
+Também será adicionado um segundo teste **N=20** (escala) com mesmo `deal_id` no payload, validando:
+- `Object.keys(fetchesByUrl).length === 20`.
+- Soma de fetches === 20.
+- Todos os 20 bodies contêm o mesmo `deal_id` após `JSON.parse`.
+- Todos os 20 headers carregam `X-Winloss-Event`.
 
 ### Onde
-- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~70 linhas, inseridas após o teste `"erro em onDeadLetter é absorvido"`, linha 496).
-- **Não modificar**: `retry.ts` (testes apenas validam comportamento já implementado).
+- **Modificar**: `supabase/functions/winloss-webhook-dispatcher/retry_test.ts` (+~60 linhas, após linha 715).
+- **Não modificar**: `retry.ts` (apenas testes).
 
 ### Verificação
-1. `supabase--test_edge_functions` com `functions: ["winloss-webhook-dispatcher"]` — todos os testes existentes continuam passando + 5 novos verdes.
-2. Filtro `pattern: "onDeadLetter"` deve listar agora 8 testes (3 originais + 5 novos), todos `ok`.
+1. `supabase--test_edge_functions` com `functions: ["winloss-webhook-dispatcher"]` — toda a suíte continua verde + 2 novos testes verdes.
+2. Filtro `pattern: "fan-out"` deve listar agora 5 testes (3 existentes + 2 novos), todos `ok`.
 
