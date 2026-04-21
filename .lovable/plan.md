@@ -1,63 +1,48 @@
 
 
-## Teste de integração: troca de filtros gera `chartKey` diferente
+## Debounce de `points` no `ScenarioForecastChart`
 
 ### Objetivo
-Garantir, no nível do componente `ScenarioForecastChart`, que ao trocar filtros (horizonte, modo de banda, z, ou os próprios `points`) o `chartKey` propagado para o `ComposedChart` muda — protegendo contra futuras regressões na construção da key ou na propagação das deps do `useMemo`.
-
-O teste unitário existente em `ScenarioChartKey.test.ts` cobre a função pura. Falta cobrir o caminho integrado: hook → memo → prop `key` do Recharts.
+Evitar que cada troca de filtro (que muda `points` instantaneamente) dispare em cascata: hook OLS pesado → `useMemo` do `data` → `chartKey` → remount do Recharts. Atrasar a reação a `points` em ~200ms acumula múltiplas mudanças rápidas (ex: trocar período + alternar canal) num único recálculo.
 
 ### Estratégia
 
-Em vez de inspecionar o DOM do Recharts (frágil — `key` não vira atributo), mockar `recharts.ComposedChart` para capturar a prop `key` recebida em cada render e comparar entre cenários.
+Debounce **interno** ao componente, sobre a prop `points`. O componente já é `memo` e centraliza todo o pipeline pesado (hook + memos + key). Não tocar no `useWinLossFilters` — ele já tem debounce de 250ms para URL, mas isso é um nível diferente (URL → `localFilters` → `monthly` → `points`).
 
 ### Mudanças
 
-**1. `src/test/components/winloss/ScenarioForecastChartKey.test.tsx`** (novo, ~120 linhas)
+**1. `src/hooks/useDebouncedValue.ts`** (novo, ~25 linhas, se ainda não existir)
+- Hook genérico `useDebouncedValue<T>(value: T, delayMs = 200): T`.
+- `useState` inicializado com `value`; `useEffect` com `setTimeout` que atualiza após `delayMs`; cleanup em mudança/unmount.
+- Verificar antes se já existe `useDebounce`/`useDebouncedValue` no projeto e reaproveitar.
 
-Setup:
-- `vi.mock("recharts", ...)` — substituir `ComposedChart` por um stub que renderiza `<div data-testid="chart" data-chart-key={props.key}>`. Como React não expõe `key` via props, o stub real precisa receber a key indiretamente. Solução: o componente passa `chartKey` como prop normal num wrapper de teste **OU** usar `React.Children.map` num mock de `ResponsiveContainer` que captura o `key` do filho via `child.key`.
-- Approach mais limpo: mockar `ResponsiveContainer` para que ele exponha o `key` do único filho (`React.Children.only(children).key`) num atributo `data-chart-key`. `ComposedChart` recebe a key via JSX `<ComposedChart key={chartKey} …/>`, e `React.Children.only(children).key` retorna exatamente essa string.
-- Stub demais primitives do Recharts (`XAxis`, `YAxis`, `CartesianGrid`, `Tooltip`, `Legend`, `ReferenceLine`, `Area`, `Line`) como componentes vazios — evita warnings de SSR e aria.
+**2. `src/components/win-loss/ScenarioForecastChart.tsx`**
+- Adicionar `const debouncedPoints = useDebouncedValue(points, 200);` no topo do componente.
+- Trocar `useWinLossScenarios(points, …)` → `useWinLossScenarios(debouncedPoints, …)`.
+- **Não** debouncear `horizon`, `bandMode`, `confidenceZ` — são interações diretas no próprio card; resposta deve ser instantânea.
+- Empty-state (`!data.length`) e estado `fitN < 3` continuam reagindo do mesmo hook (que já lê o input debounced) — não bloqueia skeleton inicial porque o `useState` do debounce é inicializado com o valor atual no primeiro render.
 
-Helpers:
-- `makePoints(n)` → gera `TrendPoint[]` com `period: "p{i}"`, `winRate: 50 + i`, `wins: i`, `losses: i` para preencher `useWinLossScenarios` com `fitN ≥ 3`.
-- `renderChart(props)` → `render(<ScenarioForecastChart {...props} />)` retornando `() => screen.getByTestId("scenario-chart-host").dataset.chartKey`.
+**3. `src/test/hooks/useDebouncedValue.test.ts`** (novo, 3 testes)
+- `vi.useFakeTimers()`.
+- Caso 1: valor inicial retornado imediatamente (sem esperar delay).
+- Caso 2: múltiplos `rerender` em <delay → valor permanece o anterior; após `vi.advanceTimersByTime(delay)` → atualiza para o último.
+- Caso 3: trocar `delay` em runtime aplica o novo timeout.
 
-Casos de teste (5):
-
-1. **Troca de horizonte muda a key**
-   - Render com `points = makePoints(8)`, `horizon = 3` → captura `keyA`.
-   - Rerender com `horizon = 6` → `keyB`.
-   - `expect(keyA).not.toBe(keyB)` e ambas começam com `scenario-see-`.
-
-2. **Troca de modo de banda (SEE → PI 95%) muda a key**
-   - Render inicial (default `see`), captura `keyA`.
-   - Click no toggle `PI 95%` (`getByRole("radio", { name: /PI 95%/i })` ou `userEvent.click(getByText("PI 95%"))`).
-   - Captura `keyB` → `expect(keyA).not.toBe(keyB)` e `keyB` contém `-pi95-`.
-
-3. **Troca de z (95%) no popover muda a key**
-   - Render default (z=1.00), `keyA`.
-   - Click no botão `z=1.00 (68%)` para abrir popover; click no radio `95%`.
-   - `keyB` deve conter `-z1.96-` e ser diferente de `keyA`.
-
-4. **Troca de `points` (filtros externos) muda a key**
-   - Render com `makePoints(8)`, `keyA`.
-   - Rerender com `makePoints(12)`, `keyB`.
-   - `expect(keyA).not.toBe(keyB)` e ambos contêm `-fit` (estado ready).
-
-5. **Mesmos inputs mantêm a key estável (anti-flicker)**
-   - Render duas vezes consecutivas com `points`, `horizon`, `bandMode`, `z` idênticos (rerender sem mudança).
-   - `expect(keyA).toBe(keyB)` — garante que o `useMemo` não está recriando a key sem motivo (regressão de deps array).
+**4. `src/test/components/winloss/ScenarioForecastChartKey.test.tsx`** — ajuste mínimo
+- O teste "muda quando os points (filtros externos) mudam" hoje espera atualização síncrona. Com debounce de 200ms, precisará usar `vi.useFakeTimers()` + `vi.advanceTimersByTime(200)` antes do segundo `getKey()`. Setup/teardown de fake timers só nesse caso (`describe.each` ou bloco isolado).
+- Os outros 4 testes não trocam `points` durante o teste — permanecem síncronos.
 
 ### Não-mudanças
-- Nenhuma alteração de produção: o componente, o hook e a função pura permanecem iguais.
-- `ScenarioChartKey.test.ts` (testes unitários) continua intacto.
-- Nenhum mock de localStorage — o setup global do vitest já provê `window.localStorage`.
+- Hook `useWinLossScenarios`: assinatura, lógica e bandas idênticos.
+- `buildScenarioChartKey`: idêntico.
+- `WinLossIntelligence.tsx`: continua passando `monthly` direto — debounce é encapsulado no filho.
+- Painel de auditoria, modal de explicação, strip de diagnósticos: idênticos (mesmo hook, input debounced).
 
 ### Critério de aceite
-1. Arquivo novo `src/test/components/winloss/ScenarioForecastChartKey.test.tsx` com 5 testes verdes.
-2. Stubs do Recharts isolam o teste de detalhes internos do gráfico (sem warnings de canvas/SVG).
-3. Suíte completa do projeto continua verde — nenhum efeito colateral em outros testes que importam Recharts (mock é local ao arquivo via `vi.mock` com escopo do módulo).
-4. Se a função `buildScenarioChartKey` voltar a colidir entre filtros (regressão), os 4 primeiros testes falham; se o `useMemo` for invalidado a cada render (regressão de performance), o teste 5 falha.
+1. Trocar 3+ filtros em sequência rápida (<200ms entre eles) dispara **uma** recomputação do hook OLS, não três.
+2. Toggles internos do card (horizonte, modo, z) reagem instantaneamente.
+3. Primeiro render mostra dados imediatamente (sem aguardar 200ms inicial).
+4. `useDebouncedValue.test.ts`: 3 testes verdes.
+5. `ScenarioForecastChartKey.test.tsx`: 5 testes verdes (1 ajustado para fake timers).
+6. Sem regressão em outras suítes.
 
