@@ -22,6 +22,16 @@ export interface DeliveryRow {
   succeeded: boolean;
 }
 
+export interface DeadLetterEntry {
+  subscription_id: string;
+  event: string;
+  payload: Record<string, unknown>;
+  last_status: number;
+  last_error: string | null;
+  attempts: number;
+  total_latency_ms: number;
+}
+
 export interface DispatchResult {
   id: string;
   status: number;
@@ -39,6 +49,8 @@ export interface DispatchDeps {
   sleep: (ms: number) => Promise<void>;
   insertDelivery: (row: DeliveryRow) => Promise<void>;
   updateSubscription: (id: string, status: number) => Promise<void>;
+  /** Called once after all retries are exhausted without success. Best-effort. */
+  onDeadLetter?: (entry: DeadLetterEntry) => Promise<void>;
   now?: () => number;
   rand?: () => number;
   log?: LogFn;
@@ -55,13 +67,27 @@ export function backoffDelay(attempt: number, rand: () => number = Math.random):
   return base + jitter;
 }
 
+/**
+ * Strip internal control fields before serializing payload to external endpoint.
+ * These are used for replay routing and should never leak to webhook receivers.
+ */
+function sanitizeOutboundPayload(payload: Record<string, unknown>): Record<string, unknown> {
+  const clone: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(payload)) {
+    if (k.startsWith("__")) continue;
+    clone[k] = v;
+  }
+  return clone;
+}
+
 export async function dispatchOne(
   sub: Subscription,
   payload: Record<string, unknown>,
   deps: DispatchDeps,
 ): Promise<DispatchResult> {
-  const { fetchFn, sleep, insertDelivery, updateSubscription, now = Date.now, rand = Math.random, log } = deps;
-  const body = JSON.stringify({ ...payload, dispatched_at: new Date().toISOString() });
+  const { fetchFn, sleep, insertDelivery, updateSubscription, onDeadLetter, now = Date.now, rand = Math.random, log } = deps;
+  const outbound = sanitizeOutboundPayload(payload);
+  const body = JSON.stringify({ ...outbound, dispatched_at: new Date().toISOString() });
   const event = String(payload.event ?? "unknown");
   const dispatchStart = now();
 
@@ -130,7 +156,6 @@ export async function dispatchOne(
       error: errorMessage,
     });
 
-    // Best-effort delivery log — must not break retry loop.
     try {
       await insertDelivery({
         subscription_id: sub.id,
@@ -179,6 +204,35 @@ export async function dispatchOne(
   }
 
   const totalLatency = now() - dispatchStart;
+
+  // Dead-letter on terminal failure
+  if (!succeeded && onDeadLetter) {
+    try {
+      await onDeadLetter({
+        subscription_id: sub.id,
+        event,
+        payload,
+        last_status: finalStatus,
+        last_error: lastError,
+        attempts: finalAttempt,
+        total_latency_ms: totalLatency,
+      });
+      log?.("warn", {
+        msg: "dead_letter_recorded",
+        event,
+        subscriptionId: sub.id,
+        last_status: finalStatus,
+        attempts: finalAttempt,
+      });
+    } catch (e) {
+      log?.("error", {
+        msg: "dead_letter_insert_failed",
+        event,
+        subscriptionId: sub.id,
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
 
   log?.(succeeded ? "info" : "warn", {
     msg: "subscription_dispatch_complete",

@@ -13742,6 +13742,71 @@ export type Database = {
           },
         ]
       }
+      winloss_webhook_dead_letters: {
+        Row: {
+          attempts: number
+          created_at: string
+          event: string
+          id: string
+          last_error: string | null
+          last_replay_at: string | null
+          last_replay_error: string | null
+          last_replay_status: number | null
+          last_status: number
+          payload: Json
+          replay_count: number
+          request_id: string | null
+          status: string
+          subscription_id: string
+          total_latency_ms: number
+          updated_at: string
+        }
+        Insert: {
+          attempts: number
+          created_at?: string
+          event: string
+          id?: string
+          last_error?: string | null
+          last_replay_at?: string | null
+          last_replay_error?: string | null
+          last_replay_status?: number | null
+          last_status: number
+          payload: Json
+          replay_count?: number
+          request_id?: string | null
+          status?: string
+          subscription_id: string
+          total_latency_ms: number
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          event?: string
+          id?: string
+          last_error?: string | null
+          last_replay_at?: string | null
+          last_replay_error?: string | null
+          last_replay_status?: number | null
+          last_status?: number
+          payload?: Json
+          replay_count?: number
+          request_id?: string | null
+          status?: string
+          subscription_id?: string
+          total_latency_ms?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "winloss_webhook_dead_letters_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "winloss_webhook_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       winloss_webhook_deliveries: {
         Row: {
           attempt: number
