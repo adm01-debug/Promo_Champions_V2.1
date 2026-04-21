@@ -285,7 +285,13 @@ export default function WinLossIntelligence() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
                   <WinLossErrorBoundary section="Tendência" fallbackHeight={260}>
-                    <WinLossTrendChart monthly={monthly} weekly={weekly} onPointClick={onPeriod} />
+                    <WinLossTrendChart
+                      monthly={monthly}
+                      weekly={weekly}
+                      granularity={viewPrefs.granularity}
+                      onGranularityChange={(g) => updateViewPrefs({ granularity: g })}
+                      onPointClick={onPeriod}
+                    />
                   </WinLossErrorBoundary>
                 </div>
                 <div>
@@ -326,7 +332,11 @@ export default function WinLossIntelligence() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <WinLossErrorBoundary section="Forecast cenários" fallbackHeight={260}>
-                  <ScenarioForecastChart points={monthly} />
+                  <ScenarioForecastChart
+                    points={monthly}
+                    horizon={viewPrefs.forecastHorizon}
+                    onHorizonChange={(h) => updateViewPrefs({ forecastHorizon: h })}
+                  />
                 </WinLossErrorBoundary>
                 <WinLossErrorBoundary section="ICP correlação" fallbackHeight={260}>
                   <ICPCorrelationMatrix rows={rows} />
