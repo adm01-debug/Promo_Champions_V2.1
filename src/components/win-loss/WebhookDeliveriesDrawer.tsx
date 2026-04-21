@@ -342,10 +342,8 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                     {isProcessing && (
                       <span
                         aria-hidden
-                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] overflow-hidden"
-                      >
-                        <span className="block h-full w-1/3 animate-[shimmer_1.2s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-primary to-transparent" />
-                      </span>
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-primary/20 via-primary to-primary/20 animate-pulse"
+                      />
                     )}
                   </li>
                 );
