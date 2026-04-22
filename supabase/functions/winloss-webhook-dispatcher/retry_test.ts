@@ -1343,6 +1343,65 @@ Deno.test("fan-out: body por subscription corresponde EXATAMENTE ao payload daqu
   }
 });
 
+Deno.test("fan-out [last_status + DLQ]: cada sub grava last_status; DLQ só para a sub que esgotou tentativas", async () => {
+  // Cenário misto cobrindo todas as combinações relevantes:
+  //   SUB_A → 200 na 1ª tentativa     → last_status=200, sem DLQ
+  //   SUB_B → 500 em todas as 3       → last_status=500, COM DLQ (esgotou MAX_ATTEMPTS)
+  //   SUB_C → 503 → 502 → 200         → last_status=200 (final), sem DLQ (recuperou no retry)
+  const h = makeFanoutHarness(
+    {
+      [SUB_A.url]: () => new Response("ok", { status: 200 }),
+      [SUB_B.url]: () => new Response("err", { status: 500 }),
+      [SUB_C.url]: (attempt) => {
+        if (attempt === 1) return new Response("e1", { status: 503 });
+        if (attempt === 2) return new Response("e2", { status: 502 });
+        return new Response("ok", { status: 200 });
+      },
+    },
+    { withDeadLetter: true },
+  );
+
+  const subs = [SUB_A, SUB_B, SUB_C];
+  const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
+
+  // (1) last_status — exatamente 1 update por sub, com o status final correto
+  const lastStatusById: Record<string, number[]> = {};
+  for (const u of h.updates) {
+    lastStatusById[u.id] = lastStatusById[u.id] ?? [];
+    lastStatusById[u.id].push(u.status);
+  }
+  assertEquals(lastStatusById[SUB_A.id]?.length, 1, "SUB_A deve ter 1 updateSubscription");
+  assertEquals(lastStatusById[SUB_B.id]?.length, 1, "SUB_B deve ter 1 updateSubscription");
+  assertEquals(lastStatusById[SUB_C.id]?.length, 1, "SUB_C deve ter 1 updateSubscription");
+  assertEquals(lastStatusById[SUB_A.id][0], 200, "SUB_A last_status");
+  assertEquals(lastStatusById[SUB_B.id][0], 500, "SUB_B last_status (último erro)");
+  assertEquals(lastStatusById[SUB_C.id][0], 200, "SUB_C last_status (recuperou no retry)");
+
+  // (2) DLQ — APENAS para SUB_B; nem SUB_A nem SUB_C podem aparecer
+  assertEquals(h.deadLetters.length, 1, "DLQ deve ter exatamente 1 entrada");
+  const dlqIds = h.deadLetters.map((d) => d.subscription_id);
+  assertEquals(dlqIds, [SUB_B.id], "apenas SUB_B deve estar no DLQ");
+  assert(!dlqIds.includes(SUB_A.id), "SUB_A não pode estar no DLQ (sucedeu na 1ª)");
+  assert(!dlqIds.includes(SUB_C.id), "SUB_C não pode estar no DLQ (recuperou no retry)");
+
+  // (3) DLQ entry de SUB_B coerente com o esgotamento de tentativas
+  const dlq = h.deadLetters[0];
+  assertEquals(dlq.attempts, MAX_ATTEMPTS, "DLQ.attempts deve ser MAX_ATTEMPTS");
+  assertEquals(dlq.last_status, 500, "DLQ.last_status deve refletir o último erro");
+
+  // (4) Resultados por sub coerentes com o estado persistido
+  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
+  assertEquals(resById[SUB_A.id].succeeded, true);
+  assertEquals(resById[SUB_A.id].status, 200);
+  assertEquals(resById[SUB_A.id].attempts, 1);
+  assertEquals(resById[SUB_B.id].succeeded, false);
+  assertEquals(resById[SUB_B.id].status, 500);
+  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
+  assertEquals(resById[SUB_C.id].succeeded, true);
+  assertEquals(resById[SUB_C.id].status, 200);
+  assertEquals(resById[SUB_C.id].attempts, 3);
+});
+
 Deno.test("fan-out: retries de uma sub não acoplam às outras (sleeps isolados)", async () => {
   const h = makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
