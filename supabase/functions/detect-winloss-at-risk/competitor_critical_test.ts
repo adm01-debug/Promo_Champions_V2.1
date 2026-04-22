@@ -111,7 +111,7 @@ Deno.test("computeDealRisk: deal estagnado com competitor pressure produz severi
   );
 
   // Reason de pressão competitiva precisa estar presente (proxy do signal).
-  const codes = r.breakdown.reasons_v2.map((x) => x.code);
+  const codes = (r.breakdown.reasons_v2 ?? []).map((x) => x.code);
   assert(
     codes.includes("COMPETITOR_PRESSURE"),
     `esperava COMPETITOR_PRESSURE em reasons_v2, recebi: ${codes.join(", ")}`,
