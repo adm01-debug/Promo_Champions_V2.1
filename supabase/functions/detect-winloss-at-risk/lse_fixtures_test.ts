@@ -79,3 +79,48 @@ Deno.test("LSE: catalog shape — pricing/negotiation/churn each expose light/st
     assertEquals(group.cases.strong.expect.included, true, `${family}.strong must be included`);
   }
 });
+
+Deno.test("LSE meta-coverage: every group has ≥1 included AND ≥1 excluded/edge case", () => {
+  const gaps: Array<{
+    family: DealHistoryLSEFamily;
+    included: number;
+    excluded: number;
+    intensities: { light: boolean; strong: boolean; edge: boolean };
+    missing: string[];
+  }> = [];
+
+  for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFamily[]) {
+    const group = DEAL_HISTORY_LSE_FIXTURES[family];
+    const cases = LSE_INTENSITIES.map((i) => group.cases[i]);
+    const included = cases.filter((c) => c.expect.included).length;
+    const excluded = cases.filter((c) => !c.expect.included).length;
+    const intensities = {
+      light: group.cases.light.expect.included === true,
+      strong: group.cases.strong.expect.included === true,
+      edge: group.cases.edge.expect.included === false,
+    };
+    const missing: string[] = [];
+    if (included < 1) missing.push("needs ≥1 included case");
+    if (excluded < 1) missing.push("needs ≥1 excluded/edge case");
+    if (!intensities.light) missing.push("light must be included=true");
+    if (!intensities.strong) missing.push("strong must be included=true");
+    if (!intensities.edge) missing.push("edge must be included=false");
+
+    if (missing.length > 0) {
+      gaps.push({ family, included, excluded, intensities, missing });
+    }
+  }
+
+  if (gaps.length > 0) {
+    const diff = gaps
+      .map(
+        (g) =>
+          `  ✗ [${g.family}] included=${g.included} excluded=${g.excluded} ` +
+          `intensities=${JSON.stringify(g.intensities)}\n` +
+          g.missing.map((m) => `      - ${m}`).join("\n"),
+      )
+      .join("\n");
+    throw new Error(`LSE meta-coverage gaps:\n${diff}`);
+  }
+  assertEquals(gaps, []);
+});
