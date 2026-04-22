@@ -441,6 +441,7 @@ export function WebhookDeliveriesDrawer({
     replay(ids, {
       onSuccess: (payload) => {
         recordResults(ids, payload);
+        recordHistory(ids, payload);
         if (batchId) {
           setActiveBatch((prev) => {
             if (!prev || prev.id !== batchId) return prev;
