@@ -16,9 +16,11 @@ interface Props {
   filters: WinLossFilterState;
   onChange: (patch: Partial<WinLossFilterState>) => void;
   onReset: () => void;
+  onResetViewPrefs?: () => void;
+  viewPrefsAreDefault?: boolean;
 }
 
-export function WinLossFilters({ filters, onChange, onReset }: Props) {
+export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, viewPrefsAreDefault }: Props) {
   const { data: salespeople = [] } = useActiveSalespeople();
   const { data: segments = [] } = useWinLossSegments();
   const activeCount =
