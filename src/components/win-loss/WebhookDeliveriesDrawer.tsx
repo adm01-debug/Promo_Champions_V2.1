@@ -213,6 +213,12 @@ export function WebhookDeliveriesDrawer({
         return next;
       });
     }
+    const now = Date.now();
+    setResultTimestamps((prev) => {
+      const next = new Map(prev);
+      for (const id of ids) next.set(id, now);
+      return next;
+    });
     setLastResults((prev) => {
       const next = new Map(prev);
       const returned = new Set<string>();
