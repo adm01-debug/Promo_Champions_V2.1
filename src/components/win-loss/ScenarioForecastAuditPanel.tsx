@@ -1,6 +1,8 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { ChevronDown, FlaskConical } from "lucide-react";
 import type { BandMode, ConfidenceLevel } from "@/hooks/win-loss/useWinLossScenarios";
+
+const AUDIT_OPEN_KEY = "winloss-scenario-audit-open";
 
 interface Props {
   slope: number;
