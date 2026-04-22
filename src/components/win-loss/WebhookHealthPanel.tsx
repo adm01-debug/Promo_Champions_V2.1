@@ -330,6 +330,12 @@ export function WebhookHealthPanel() {
           </>
         )}
       </CardContent>
+      <WebhookAttemptSliceDrawer
+        attempt={drillAttempt}
+        windowKey={windowKey}
+        open={drillAttempt !== null}
+        onOpenChange={(o) => !o && setDrillAttempt(null)}
+      />
     </Card>
   );
 }
