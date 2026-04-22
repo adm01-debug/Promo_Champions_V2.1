@@ -218,7 +218,13 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
 
   const handleReplaySelected = () => {
     if (selected.size === 0) return;
-    requestReplay(Array.from(selected));
+    // Bloqueio por linha: filtra IDs já em processamento para não duplicar
+    const ids = Array.from(selected).filter((id) => !processingIds.has(id));
+    if (ids.length === 0) {
+      toast.info("As entregas selecionadas já estão sendo reenviadas.");
+      return;
+    }
+    requestReplay(ids);
   };
 
   return (
