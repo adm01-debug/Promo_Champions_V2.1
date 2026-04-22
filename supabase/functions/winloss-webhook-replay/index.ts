@@ -125,6 +125,7 @@ export const handler = async (req: Request): Promise<Response> => {
       return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
     }
     const userId = claimsData.claims.sub as string;
+    const userEmail = (claimsData.claims.email ?? null) as string | null;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
