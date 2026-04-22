@@ -105,7 +105,9 @@ function assertDeliveryBeforeSleepInvariant(events: Event[], expectedAttempts: n
 
   // Último delivery
   const last = idx.get(expectedAttempts);
-  assertEquals(last?.delivery?.succeeded, opts.lastSucceeded);
+  const lastDelivery = last?.delivery;
+  assert(lastDelivery && lastDelivery.kind === "delivery", "última delivery presente");
+  assertEquals(lastDelivery.succeeded, opts.lastSucceeded);
 }
 
 /** Invariante adicional: a sequência global de seq é estritamente monotônica e contígua a partir de 1. */
