@@ -270,3 +270,6 @@ verify_jwt = true
 
 [functions.notify-ranking-position]
 verify_jwt = true
+
+[functions.run-retry-tests]
+verify_jwt = false
