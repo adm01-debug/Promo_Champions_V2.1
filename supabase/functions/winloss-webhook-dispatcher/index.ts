@@ -53,6 +53,7 @@ function buildDeps(
             last_replay_at: new Date().toISOString(),
             last_replay_status: entry.last_status,
             last_replay_error: entry.last_error,
+            last_replay_request_id: requestId,
           })
           .eq("id", replayOf);
       } else {
