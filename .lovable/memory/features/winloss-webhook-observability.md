@@ -19,6 +19,7 @@ Frontend admin:
 - `/admin/webhooks-alert-history` — `WebhookAlertHistoryPage` com filtros (assinatura, tipo, status fired/suppressed, janela 24h/7d/30d), badges Disparado/Suprimido, link rápido para timeline filtrada por requestId. Hook `useWebhookAlertHistory` faz join com `winloss_webhook_subscriptions(url)`.
 - `/admin/webhooks-alert-settings` — `WebhookAlertSettingsPage` (admin-only) edita os 6 limites do monitor (consecutive_failures, retry_rate_threshold, window_minutes, min_deliveries, suppress_minutes, max_attempts) sem mexer em env vars. Hook `useWebhookAlertSettings`.
 - `WebhookSubscriptionLatestList` no painel de saúde — link rápido para timeline filtrada.
+- `WebhookDeadLetterPanel` — toggle "Modo fila assíncrona" (`Switch`) ativa `AsyncReplayQueueDialog` em vez do `BulkReplayConfirmDialog`. Fila roda no client via `useAsyncReplayQueue` (chunks de 25, sequencial), expõe progress bar, stats agregados (sucesso/falhas/lotes/tempo), status por lote (pending/running/succeeded/failed/cancelled) com `requestId` e duração, suporta cancelamento mid-flight (`cancelRef`), invalida `winloss-dead-letters` + `winloss-replay-audit` ao final. Hard cap 200 itens permanece.
 
 Schema correlacional:
 - `winloss_webhook_deliveries.request_id uuid` (indexado)
