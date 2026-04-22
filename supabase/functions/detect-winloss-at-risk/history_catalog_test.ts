@@ -91,11 +91,12 @@ function buildCaseReport(family: DealHistoryFamily, group: ScenarioGroup, c: Sce
     }
   }
 
-  const needles = actionNeedles(c.expect.actionIncludes);
-  if (needles.length > 0) {
-    const hit = needles.some((n) => includesCI(r.suggested_action, n));
-    if (!hit) {
-      failures.push(`action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`);
+  if (c.expect.actionIncludes !== undefined) {
+    const ev = evaluateActionIncludes(r.suggested_action, c.expect.actionIncludes);
+    if (!ev.ok) {
+      failures.push(
+        `action "${r.suggested_action}" fails actionIncludes (${ev.reason}; missing=${JSON.stringify(ev.missing)})`,
+      );
     }
   }
 
