@@ -283,45 +283,67 @@ export function WebhookDeliveriesDrawer({
   const [confirm, setConfirm] = useState<{ ids: string[] } | null>(null);
 
   const confirmSummary = useMemo(() => {
-    if (!confirm || !data)
-      return {
-        count: 0,
-        byEvent: [] as { event: string; count: number }[],
-        single: null as null | {
-          id: string;
-          event: string;
-          attempt: number;
-          status: number;
-          error: string | null;
-        },
-      };
+    const empty = {
+      count: 0,
+      byEvent: [] as { event: string; label: string; count: number; unknown: boolean }[],
+      items: [] as { id: string; event: string; label: string; unknown: boolean }[],
+      missingCount: 0,
+      unknownCount: 0,
+      single: null as null | {
+        id: string;
+        event: string;
+        label: string;
+        unknown: boolean;
+        attempt: number;
+        status: number;
+        error: string | null;
+      },
+    };
+    if (!confirm || !data) return empty;
     const idSet = new Set(confirm.ids);
+    const byId = new Map(data.map((d) => [d.id, d] as const));
     const map = new Map<string, number>();
-    let single: {
-      id: string;
-      event: string;
-      attempt: number;
-      status: number;
-      error: string | null;
-    } | null = null;
-    for (const d of data) {
-      if (idSet.has(d.id)) map.set(d.event, (map.get(d.event) ?? 0) + 1);
+    const items: { id: string; event: string; label: string; unknown: boolean }[] = [];
+    let missingCount = 0;
+    let unknownCount = 0;
+    for (const id of confirm.ids) {
+      const d = byId.get(id);
+      const rawEvent = d?.event;
+      const event = rawEvent && rawEvent.trim().length > 0 ? rawEvent : "unknown";
+      const unknown = !d || !rawEvent || rawEvent.trim().length === 0;
+      if (!d) missingCount++;
+      if (unknown) unknownCount++;
+      map.set(event, (map.get(event) ?? 0) + 1);
+      items.push({ id, event, label: getEventLabel(event), unknown });
     }
+    let single: typeof empty.single = null;
     if (confirm.ids.length === 1) {
-      const d = data.find((x) => x.id === confirm.ids[0]);
-      if (d) {
-        single = {
-          id: d.id,
-          event: d.event,
-          attempt: d.attempt,
-          status: d.status,
-          error: d.error_message,
-        };
-      }
+      const id = confirm.ids[0];
+      const d = byId.get(id);
+      const rawEvent = d?.event;
+      const event = rawEvent && rawEvent.trim().length > 0 ? rawEvent : "unknown";
+      const unknown = !d || !rawEvent || rawEvent.trim().length === 0;
+      single = {
+        id,
+        event,
+        label: getEventLabel(event),
+        unknown,
+        attempt: d?.attempt ?? 0,
+        status: d?.status ?? 0,
+        error: d?.error_message ?? (unknown ? "Detalhes da entrega indisponíveis (pode ter sido removida)." : null),
+      };
     }
     return {
       count: confirm.ids.length,
-      byEvent: Array.from(map, ([event, count]) => ({ event, count })).sort((a, b) => b.count - a.count),
+      byEvent: Array.from(map, ([event, count]) => ({
+        event,
+        label: getEventLabel(event),
+        count,
+        unknown: event === "unknown",
+      })).sort((a, b) => b.count - a.count),
+      items,
+      missingCount,
+      unknownCount,
       single,
     };
   }, [confirm, data]);
