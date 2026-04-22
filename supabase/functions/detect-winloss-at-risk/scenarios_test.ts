@@ -209,7 +209,7 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
         failures.push(
           [
             `${s.name}: action does not contain any expected substring (OR).`,
-            `    score=${r.risk_score} severity=${r.severity} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
+            `    score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
             `    expected (any of): ${JSON.stringify(needles)}`,
             `    actual action    : "${r.suggested_action}"`,
             `    reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
