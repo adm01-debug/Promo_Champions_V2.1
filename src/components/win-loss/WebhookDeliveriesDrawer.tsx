@@ -304,6 +304,15 @@ export function WebhookDeliveriesDrawer({
     setConfirm({ ids: validation.ids });
   };
 
+  // --- Batch tracking (para resumo "X/Y reenviando, Z falhou") ---
+  interface BatchState {
+    id: string;
+    ids: string[];
+    startedAt: number;
+    results: Map<string, "ok" | "skipped" | "fail">;
+  }
+  const [activeBatch, setActiveBatch] = useState<BatchState | null>(null);
+
   const executeReplay = () => {
     if (!confirm) return;
     const ids = confirm.ids;
@@ -318,11 +327,54 @@ export function WebhookDeliveriesDrawer({
       return next;
     });
     if (ids.length > 1) clearSelection();
+
+    // Só rastreamos lotes (>1) — uma única linha já tem feedback inline
+    const batchId =
+      ids.length > 1
+        ? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+        : null;
+    if (batchId) {
+      setActiveBatch({
+        id: batchId,
+        ids,
+        startedAt: Date.now(),
+        results: new Map(),
+      });
+    }
+
     replay(ids, {
-      onSuccess: (payload) => recordResults(ids, payload),
+      onSuccess: (payload) => {
+        recordResults(ids, payload);
+        if (batchId) {
+          setActiveBatch((prev) => {
+            if (!prev || prev.id !== batchId) return prev;
+            const next = new Map(prev.results);
+            const returned = new Set<string>();
+            for (const r of payload?.results ?? []) {
+              const status: "ok" | "skipped" | "fail" = r.skipped
+                ? "skipped"
+                : r.succeeded
+                  ? "ok"
+                  : "fail";
+              next.set(r.id, status);
+              returned.add(r.id);
+            }
+            for (const id of ids) {
+              if (!returned.has(id) && !next.has(id)) next.set(id, "fail");
+            }
+            return { ...prev, results: next };
+          });
+        }
+      },
       onSettled: () => {
         if (ids.length === 1) setPendingId(null);
         clearProcessing(ids);
+        // Auto-clear do resumo após pequeno delay para o usuário ler
+        if (batchId) {
+          window.setTimeout(() => {
+            setActiveBatch((prev) => (prev && prev.id === batchId ? null : prev));
+          }, 6000);
+        }
       },
     });
   };
@@ -384,6 +436,92 @@ export function WebhookDeliveriesDrawer({
         </DrawerHeader>
 
         <TooltipProvider delayDuration={200}>
+          {/* Batch progress summary (lote >1) */}
+          {activeBatch && (() => {
+            const total = activeBatch.ids.length;
+            let ok = 0;
+            let skipped = 0;
+            let fail = 0;
+            for (const s of activeBatch.results.values()) {
+              if (s === "ok") ok++;
+              else if (s === "skipped") skipped++;
+              else fail++;
+            }
+            const done = ok + skipped + fail;
+            const pending = total - done;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const allDone = pending === 0;
+            return (
+              <div
+                className="sticky top-0 z-20 border-b bg-background/95 px-4 py-2 backdrop-blur"
+                role="status"
+                aria-live="polite"
+                aria-label={`Resumo do reenvio em lote: ${pending} reenviando, ${ok} sucesso, ${skipped} já entregues, ${fail} falhou de ${total}`}
+              >
+                <div className="flex items-center justify-between gap-3 text-[11px]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {allDone ? (
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" aria-hidden />
+                    ) : (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" aria-hidden />
+                    )}
+                    <span className="font-medium text-foreground">
+                      {allDone ? "Reenvio concluído" : `Reenviando ${done}/${total}`}
+                    </span>
+                    <span className="text-muted-foreground tabular-nums">·</span>
+                    {pending > 0 && (
+                      <span className="text-muted-foreground tabular-nums">
+                        {pending} pendente{pending === 1 ? "" : "s"}
+                      </span>
+                    )}
+                    {ok > 0 && (
+                      <Badge variant="secondary" className="text-[10px] py-0 px-1.5 bg-success/15 text-success">
+                        {ok} sucesso
+                      </Badge>
+                    )}
+                    {skipped > 0 && (
+                      <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-muted-foreground">
+                        {skipped} já entregue{skipped === 1 ? "" : "s"}
+                      </Badge>
+                    )}
+                    {fail > 0 && (
+                      <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
+                        {fail} falhou
+                      </Badge>
+                    )}
+                  </div>
+                  {allDone && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-[10px]"
+                      onClick={() => setActiveBatch(null)}
+                      aria-label="Dispensar resumo"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+                <div
+                  className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-muted"
+                  aria-hidden
+                >
+                  <div
+                    className={cn(
+                      "h-full transition-all duration-500",
+                      allDone
+                        ? fail > 0
+                          ? "bg-destructive"
+                          : "bg-success"
+                        : "bg-primary",
+                    )}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Sticky selection toolbar */}
           {failedIds.length > 0 && (
             <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur">
