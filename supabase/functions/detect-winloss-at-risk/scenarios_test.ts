@@ -4,7 +4,7 @@
  * reasons and suggested action all make sense as a coherent story.
  */
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { computeAtRiskDeals, computeDealRisk } from "./scoring.ts";
+import { computeAtRiskDeals, computeDealRisk, severityFromScore } from "./scoring.ts";
 import { LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS } from "./fixtures.ts";
 import { actionNeedles, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
 
@@ -63,10 +63,18 @@ for (const scenario of SCENARIOS) {
       const needles = Array.isArray(scenario.expect.actionIncludes)
         ? scenario.expect.actionIncludes
         : [scenario.expect.actionIncludes];
-      const hit = needles.some((n) => includesCI(r.suggested_action, n));
+      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
+      const hit = matched.length > 0;
       assert(
         hit,
-        `${scenario.name}: suggested_action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`,
+        [
+          `${scenario.name}: suggested_action does not contain any expected substring (OR semantics).`,
+          `  score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
+          `  expected (any of): ${JSON.stringify(needles)}`,
+          `  matched          : ${JSON.stringify(matched)}`,
+          `  actual action    : "${r.suggested_action}"`,
+          `  reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
+        ].join("\n"),
       );
     }
 
@@ -196,9 +204,17 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
     // actionIncludes → string=AND single, array=OR (any match).
     const needles = actionNeedles(s.expect.actionIncludes);
     if (needles.length > 0) {
-      const hit = needles.some((n) => includesCI(r.suggested_action, n));
-      if (!hit) {
-        failures.push(`${s.name}: action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`);
+      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
+      if (matched.length === 0) {
+        failures.push(
+          [
+            `${s.name}: action does not contain any expected substring (OR).`,
+            `    score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
+            `    expected (any of): ${JSON.stringify(needles)}`,
+            `    actual action    : "${r.suggested_action}"`,
+            `    reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
+          ].join("\n"),
+        );
       }
     }
   }
