@@ -304,11 +304,11 @@ export function AtRiskDealsFromPatterns() {
             </ul>
             </>
           )}
-          {filtered.length > visible.length && (
+          {(filtered.length > visible.length || (filtersActive && data.length > 0)) && (
             <p className="mt-2 text-[10px] text-muted-foreground text-center">
               Exibindo {visible.length} de {filtered.length}
               {filtersActive && data.length !== filtered.length ? ` (de ${data.length} analisados)` : ""}
-              {" — ajuste em ⚙"}
+              {filtered.length > visible.length ? " — ajuste em ⚙" : ""}
             </p>
           )}
 
