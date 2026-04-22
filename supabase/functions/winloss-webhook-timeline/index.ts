@@ -181,16 +181,17 @@ export const handler = async (req: Request): Promise<Response> => {
     if (filterRequestId) dlqQ = dlqQ.eq("request_id", filterRequestId);
     if (subscriptionId) dlqQ = dlqQ.eq("subscription_id", subscriptionId);
 
-    // --- Alerts (no request_id column → only meaningful when subscriptionId is set) ---
-    const alertsPromise = subscriptionId
-      ? supabase
-          .from("winloss_webhook_alerts")
-          .select("id, subscription_id, kind, details, fired_at")
-          .eq("subscription_id", subscriptionId)
-          .gte("fired_at", sinceIso)
-          .order("fired_at", { ascending: false })
-          .limit(cap)
-      : Promise.resolve({ data: [], error: null });
+    // --- Alerts ---
+    // Now correlates by request_id (top-level column) and/or subscription_id.
+    let alertsQ = supabase
+      .from("winloss_webhook_alerts")
+      .select("id, subscription_id, request_id, kind, details, fired_at")
+      .gte("fired_at", sinceIso)
+      .order("fired_at", { ascending: false })
+      .limit(cap);
+    if (filterRequestId) alertsQ = alertsQ.eq("request_id", filterRequestId);
+    if (subscriptionId) alertsQ = alertsQ.eq("subscription_id", subscriptionId);
+    const alertsPromise = alertsQ;
 
     const [deliveriesRes, dlqRes, alertsRes] = await Promise.all([deliveriesQ, dlqQ, alertsPromise]);
     if (deliveriesRes.error) throw deliveriesRes.error;
