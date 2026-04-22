@@ -200,6 +200,10 @@ function WebhooksDeadLettersAdminContent() {
           <TabsContent value="by-id" className="mt-0">
             <ReplayStatusByIdPanel />
           </TabsContent>
+
+          <TabsContent value="audit" className="mt-0">
+            <ReplayInvocationsPanel />
+          </TabsContent>
         </Tabs>
       </div>
     </>
