@@ -1897,3 +1897,85 @@ Deno.test("fan-out [limites]: sleeps por subscription respeitam backoff (sem atr
   assertLessOrEqual(sumB, sumBmax, `SUB_B soma de sleeps ${sumB} > teórico ${sumBmax}`);
 });
 
+// ───────────── fan-out [headers consolidados]: assinatura + identidade + timestamp ─────────────
+// Valida POR SUBSCRIPTION, em um único teste consolidado, que cada POST inclui:
+//   • headers fixos: method=POST, Content-Type=application/json, X-Winloss-Event=<event>;
+//   • X-Winloss-Subscription-Id = sub.id (identidade correta — sem cross-talk);
+//   • X-Winloss-Signature presente ⇔ sub.secret existe (e com o valor exato do secret);
+//   • X-Request-Id presente ⇔ deps.requestId injetado (e com o mesmo valor);
+//   • body.dispatched_at é ISO-8601 e cai dentro da janela [t0, t1] do teste.
+
+Deno.test("fan-out [headers consolidados]: signature + subscription-id + request-id + dispatched_at por subscription", async () => {
+  const REQUEST_ID = "req-fanout-headers-001";
+  const h = makeFanoutHarness({
+    [SUB_A.url]: () => new Response("ok", { status: 200 }), // sem secret
+    [SUB_B.url]: () => new Response("ok", { status: 200 }), // sem secret
+    [SUB_C.url]: () => new Response("ok", { status: 200 }), // COM secret="shh"
+  });
+  // Injeta requestId nas deps para validar a propagação do header X-Request-Id.
+  const depsWithReqId: DispatchDeps = { ...h.deps, requestId: REQUEST_ID };
+
+  const subs = [SUB_A, SUB_B, SUB_C];
+  const t0 = Date.now();
+  await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, depsWithReqId)));
+  const t1 = Date.now();
+
+  // Indexa as requisições capturadas por URL (1 POST por sub neste cenário).
+  assertEquals(h.capturedInits.length, subs.length);
+  const initByUrl: Record<string, RequestInit> = {};
+  for (const { url, init } of h.capturedInits) initByUrl[url] = init;
+
+  for (const sub of subs) {
+    const init = initByUrl[sub.url];
+    assert(init, `${sub.id}: requisição capturada ausente`);
+
+    // ── Method + headers fixos ────────────────────────────────────
+    assertEquals(init.method, "POST", `${sub.id}: method`);
+    const headers = init.headers as Record<string, string>;
+    assertEquals(headers["Content-Type"], "application/json", `${sub.id}: Content-Type`);
+    assertEquals(headers["X-Winloss-Event"], PAYLOAD.event, `${sub.id}: X-Winloss-Event`);
+
+    // ── Identidade da subscription (sem cross-talk) ───────────────
+    assertEquals(headers["X-Winloss-Subscription-Id"], sub.id, `${sub.id}: X-Winloss-Subscription-Id`);
+
+    // ── Request-Id propagado de deps.requestId ────────────────────
+    assertEquals(headers["X-Request-Id"], REQUEST_ID, `${sub.id}: X-Request-Id`);
+
+    // ── Assinatura: presente ⇔ sub.secret ─────────────────────────
+    if (sub.secret) {
+      assertEquals(headers["X-Winloss-Signature"], sub.secret, `${sub.id}: X-Winloss-Signature == secret`);
+    } else {
+      assertEquals(headers["X-Winloss-Signature"], undefined, `${sub.id}: sem secret → sem X-Winloss-Signature`);
+    }
+
+    // ── Timestamp do envio: dispatched_at ISO dentro de [t0, t1] ──
+    assert(typeof init.body === "string", `${sub.id}: body deve ser string serializada`);
+    const parsed = JSON.parse(init.body as string) as Record<string, unknown>;
+    const dispatchedAt = parsed.dispatched_at;
+    assert(typeof dispatchedAt === "string", `${sub.id}: dispatched_at deve ser string ISO`);
+    // Formato ISO-8601 com 'T' e timezone Z (toISOString).
+    assert(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(dispatchedAt as string),
+      `${sub.id}: dispatched_at fora do formato ISO-8601 → "${dispatchedAt}"`,
+    );
+    const ts = Date.parse(dispatchedAt as string);
+    assert(!Number.isNaN(ts), `${sub.id}: dispatched_at não parseável`);
+    assertGreaterOrEqual(ts, t0, `${sub.id}: dispatched_at < início do teste`);
+    assertLessOrEqual(ts, t1, `${sub.id}: dispatched_at > fim do teste`);
+  }
+
+  // ── Cross-talk de identidade: cada Subscription-Id aparece em exatamente 1 POST ──
+  const seenIds = h.capturedInits.map((c) => (c.init.headers as Record<string, string>)["X-Winloss-Subscription-Id"]);
+  assertEquals(new Set(seenIds).size, subs.length, "X-Winloss-Subscription-Id duplicado entre POSTs");
+  assertEquals(new Set(seenIds), new Set(subs.map((s) => s.id)), "cobertura de Subscription-Id divergente");
+
+  // ── Signature isolada: secret de SUB_C não pode vazar para A/B ─
+  const sigByUrl: Record<string, string | undefined> = {};
+  for (const { url, init } of h.capturedInits) {
+    sigByUrl[url] = (init.headers as Record<string, string>)["X-Winloss-Signature"];
+  }
+  assertEquals(sigByUrl[SUB_A.url], undefined);
+  assertEquals(sigByUrl[SUB_B.url], undefined);
+  assertEquals(sigByUrl[SUB_C.url], "shh");
+});
+
