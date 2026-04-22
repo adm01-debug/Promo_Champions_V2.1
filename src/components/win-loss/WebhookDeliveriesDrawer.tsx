@@ -207,7 +207,14 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
     });
   };
 
-  const handleReplay = (id: string) => requestReplay([id]);
+  const handleReplay = (id: string) => {
+    // Bloqueio por linha: ignora cliques repetidos enquanto este ID já está em voo
+    if (processingIds.has(id)) {
+      toast.info("Esta entrega já está sendo reenviada…");
+      return;
+    }
+    requestReplay([id]);
+  };
 
   const handleReplaySelected = () => {
     if (selected.size === 0) return;
