@@ -2198,3 +2198,81 @@ Deno.test("fan-out [DLQ isolado]: DLQ contém só a sub falha com last_status, s
   assert(dlq.last_error === null || typeof dlq.last_error === "string", "DLQ.last_error deve ser string|null");
 });
 
+// ───────────── fan-out [DLQ isolado — ordem invertida]: invariância à ordem ─────────────
+// Mesmo cenário do teste anterior, mas disparando as subscriptions em ordem
+// INVERTIDA no `Promise.all` (SUB_C, SUB_B, SUB_A). Garante que fetches por URL,
+// last_status por sub e o conteúdo do DLQ não dependem da ordem do array de input.
+
+Deno.test("fan-out [DLQ isolado — ordem invertida]: fetches, last_status e DLQ permanecem corretos", async () => {
+  let clock = 0;
+  const tick = () => {
+    clock += 100;
+    return clock;
+  };
+
+  const h = makeFanoutHarness(
+    {
+      [SUB_A.url]: () => new Response("ok", { status: 200 }),
+      [SUB_B.url]: () => new Response("boom", { status: 500 }),
+      [SUB_C.url]: (attempt) => attempt === 1
+        ? new Response("e", { status: 503 })
+        : new Response("ok", { status: 200 }),
+    },
+    { withDeadLetter: true },
+  );
+  h.deps.now = tick;
+
+  // Ordem INVERTIDA: C, B, A.
+  const subsReversed = [SUB_C, SUB_B, SUB_A];
+  const results = await Promise.all(subsReversed.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
+  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
+
+  // ── (1) Fetches por URL: invariantes à ordem de disparo ─────────
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1, "SUB_A: 1 POST (sucesso na 1ª)");
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS, "SUB_B: MAX_ATTEMPTS POSTs (falha persistente)");
+  assertEquals(h.fetchesByUrl[SUB_C.url], 2, "SUB_C: 2 POSTs (recovery na 2ª)");
+
+  // Sem cross-fire: somente as 3 URLs declaradas aparecem.
+  const seenUrls = new Set(h.capturedInits.map((c) => c.url));
+  assertEquals(seenUrls.size, 3);
+  assert([...seenUrls].every((u) => u === SUB_A.url || u === SUB_B.url || u === SUB_C.url));
+
+  // ── (2) last_status por sub via updateSubscription: 1× cada ─────
+  const lastStatusById: Record<string, number[]> = {};
+  for (const u of h.updates) {
+    lastStatusById[u.id] = lastStatusById[u.id] ?? [];
+    lastStatusById[u.id].push(u.status);
+  }
+  assertEquals(lastStatusById[SUB_A.id], [200], "SUB_A last_status");
+  assertEquals(lastStatusById[SUB_B.id], [500], "SUB_B last_status");
+  assertEquals(lastStatusById[SUB_C.id], [200], "SUB_C last_status (recuperou)");
+
+  // ── (3) DLQ: continua tendo APENAS SUB_B com last_status/attempts corretos ─
+  assertEquals(h.deadLetters.length, 1, "DLQ deve conter exatamente 1 entrada (ordem não importa)");
+  const dlq = h.deadLetters[0];
+  assertEquals(dlq.subscription_id, SUB_B.id);
+  assertEquals(dlq.last_status, 500);
+  assertEquals(dlq.attempts, MAX_ATTEMPTS);
+  assertEquals(dlq.event, "x");
+  assertEquals(dlq.payload, PAYLOAD);
+
+  // ── (4) Resultado da SUB_B coerente com o DLQ ───────────────────
+  assertEquals(resById[SUB_B.id].status, 500);
+  assertEquals(resById[SUB_B.id].succeeded, false);
+  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
+  assertEquals(
+    dlq.total_latency_ms,
+    resById[SUB_B.id].total_latency_ms,
+    "DLQ.total_latency_ms deve bater com result.total_latency_ms da SUB_B mesmo invertendo a ordem",
+  );
+  assertGreaterOrEqual(dlq.total_latency_ms, 0);
+
+  // ── (5) Resultados de A e C também coerentes (invariância) ──────
+  assertEquals(resById[SUB_A.id].status, 200);
+  assertEquals(resById[SUB_A.id].succeeded, true);
+  assertEquals(resById[SUB_A.id].attempts, 1);
+  assertEquals(resById[SUB_C.id].status, 200);
+  assertEquals(resById[SUB_C.id].succeeded, true);
+  assertEquals(resById[SUB_C.id].attempts, 2);
+});
+
