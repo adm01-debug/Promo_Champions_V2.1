@@ -8,13 +8,14 @@ const corsHeaders = {
 };
 
 type LogLevel = "info" | "warn" | "error";
-type AlertKind = "consecutive_failures" | "high_retry_rate";
+type AlertKind = "consecutive_failures" | "high_retry_rate" | "attempts_exhausted";
 
 const CONSECUTIVE_FAILURES = Number(Deno.env.get("ALERT_CONSECUTIVE_FAILURES") ?? 5);
 const RETRY_RATE_THRESHOLD = Number(Deno.env.get("ALERT_RETRY_RATE_THRESHOLD") ?? 0.5);
 const WINDOW_MINUTES = Number(Deno.env.get("ALERT_WINDOW_MINUTES") ?? 30);
 const MIN_DELIVERIES = Number(Deno.env.get("ALERT_MIN_DELIVERIES") ?? 10);
 const SUPPRESS_MINUTES = Number(Deno.env.get("ALERT_SUPPRESS_MINUTES") ?? 60);
+const MAX_ATTEMPTS = Number(Deno.env.get("ALERT_MAX_ATTEMPTS") ?? 3);
 
 function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
   if (e instanceof Error) {
@@ -46,6 +47,8 @@ interface DeliveryRow {
   status: number;
   error_message: string | null;
   created_at: string;
+  request_id: string | null;
+  event: string | null;
 }
 
 interface SubscriptionRow {
@@ -108,6 +111,36 @@ function evaluate(rows: DeliveryRow[]): {
         threshold: RETRY_RATE_THRESHOLD,
         retries,
         total,
+        window_minutes: WINDOW_MINUTES,
+      },
+    });
+  }
+
+  // Attempts exhausted: any request_id where all MAX_ATTEMPTS attempts failed.
+  // Emits one trigger per offending request_id so the alert carries enough
+  // context (request_id + last_status + last_error) to investigate directly
+  // without correlating manually in the timeline.
+  const byRequest = new Map<string, DeliveryRow[]>();
+  for (const r of rows) {
+    if (!r.request_id) continue;
+    const arr = byRequest.get(r.request_id) ?? [];
+    arr.push(r);
+    byRequest.set(r.request_id, arr);
+  }
+  for (const [reqId, attempts] of byRequest) {
+    if (attempts.length < MAX_ATTEMPTS) continue;
+    if (attempts.some((a) => a.succeeded)) continue;
+    // sorted DESC by created_at (input order); the head is the latest attempt
+    const last = attempts[0];
+    triggers.push({
+      kind: "attempts_exhausted",
+      details: {
+        request_id: reqId,
+        attempts: attempts.length,
+        max_attempts: MAX_ATTEMPTS,
+        event: last?.event ?? null,
+        last_status: last?.status ?? null,
+        last_error: last?.error_message ?? null,
         window_minutes: WINDOW_MINUTES,
       },
     });
@@ -204,7 +237,7 @@ serve(async (req) => {
     for (const sub of subscriptions) {
       const { data: rows, error: rowsError } = await supabase
         .from("winloss_webhook_deliveries")
-        .select("attempt, succeeded, status, error_message, created_at")
+        .select("attempt, succeeded, status, error_message, created_at, request_id, event")
         .eq("subscription_id", sub.id)
         .gte("created_at", sinceIso)
         .order("created_at", { ascending: false })
@@ -246,10 +279,13 @@ serve(async (req) => {
         continue;
       }
 
-      // Anti-spam: check recent alerts of the same kind
+      // Anti-spam: check recent alerts of the same kind. For
+      // `attempts_exhausted` we suppress per-request_id (each failed request
+      // is a distinct incident); other kinds are suppressed per-kind globally
+      // for this subscription.
       const { data: recent, error: recentError } = await supabase
         .from("winloss_webhook_alerts")
-        .select("kind, fired_at")
+        .select("kind, details, fired_at")
         .eq("subscription_id", sub.id)
         .gte("fired_at", suppressIso);
 
@@ -257,14 +293,30 @@ serve(async (req) => {
         structuredLog("warn", { msg: "fetch_recent_alerts_failed", subscriptionId: sub.id, error: recentError.message }, requestId);
       }
 
-      const recentKinds = new Set((recent ?? []).map((r) => (r as { kind: string }).kind));
+      const recentRows = (recent ?? []) as Array<{ kind: string; details: Record<string, unknown> | null }>;
+      const recentKinds = new Set(recentRows.map((r) => r.kind));
+      const recentExhaustedRequestIds = new Set(
+        recentRows
+          .filter((r) => r.kind === "attempts_exhausted")
+          .map((r) => (r.details && typeof r.details === "object" ? (r.details as Record<string, unknown>).request_id : null))
+          .filter((v): v is string => typeof v === "string"),
+      );
 
       for (const trigger of result.triggers) {
-        if (recentKinds.has(trigger.kind)) {
+        const triggerRequestId = trigger.kind === "attempts_exhausted"
+          ? (trigger.details.request_id as string | undefined)
+          : undefined;
+
+        const isSuppressed = trigger.kind === "attempts_exhausted"
+          ? !!triggerRequestId && recentExhaustedRequestIds.has(triggerRequestId)
+          : recentKinds.has(trigger.kind);
+
+        if (isSuppressed) {
           structuredLog("info", {
             msg: "alert_suppressed",
             subscriptionId: sub.id,
             kind: trigger.kind,
+            triggerRequestId,
             suppress_minutes: SUPPRESS_MINUTES,
           }, requestId);
           evalEntry.suppressed.push(trigger.kind);
@@ -272,11 +324,23 @@ serve(async (req) => {
           continue;
         }
 
+        // For attempts_exhausted, persist the offending request_id at the
+        // top level so timeline filtering by request_id surfaces this alert
+        // alongside the failed delivery rows for the same request.
+        const persistRequestId = trigger.kind === "attempts_exhausted" && triggerRequestId
+          ? triggerRequestId
+          : requestId;
+
         const { error: insertError } = await supabase.from("winloss_webhook_alerts").insert({
           subscription_id: sub.id,
           kind: trigger.kind,
-          request_id: requestId,
-          details: { ...trigger.details, request_id: requestId },
+          request_id: persistRequestId,
+          details: {
+            ...trigger.details,
+            subscription_id: sub.id,
+            request_id: persistRequestId,
+            monitor_request_id: requestId,
+          },
         });
 
         if (insertError) {
@@ -293,6 +357,7 @@ serve(async (req) => {
           msg: "alert_fired",
           subscriptionId: sub.id,
           kind: trigger.kind,
+          alert_request_id: persistRequestId,
           details: trigger.details,
         }, requestId);
 
