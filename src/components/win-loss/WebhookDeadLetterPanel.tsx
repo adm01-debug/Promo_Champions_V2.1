@@ -8,13 +8,15 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription,
 } from "@/components/ui/drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers } from "lucide-react";
+import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
 import { classifyDeadLetterError } from "@/hooks/win-loss/classifyDeadLetterError";
+import { useLatestReplayAuditByDeadLetters } from "@/hooks/win-loss/useReplayAudit";
+import { ReplayAuditTrail } from "./ReplayAuditTrail";
 import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
@@ -89,6 +91,9 @@ export function WebhookDeadLetterPanel({
       .map(([key, v]) => ({ key, label: v.label, ids: v.ids, count: v.ids.length }))
       .sort((a, b) => b.count - a.count);
   }, [items]);
+
+  const itemIds = useMemo(() => items.map((i) => i.id), [items]);
+  const { data: latestAuditByDl } = useLatestReplayAuditByDeadLetters(itemIds);
 
   if (isLoadingCurrentRole) return null;
   if (!isAdmin) return null;
@@ -253,6 +258,35 @@ export function WebhookDeadLetterPanel({
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
                   </p>
+                  {(() => {
+                    const last = latestAuditByDl?.get(d.id);
+                    if (!last) return null;
+                    const Icon =
+                      last.status_label === "succeeded"
+                        ? CheckCircle2
+                        : last.status_label === "skipped"
+                        ? MinusCircle
+                        : XCircle;
+                    const tone =
+                      last.status_label === "succeeded"
+                        ? "text-status-success"
+                        : last.status_label === "skipped"
+                        ? "text-muted-foreground"
+                        : "text-destructive";
+                    return (
+                      <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 truncate">
+                        <Icon className={`h-3 w-3 ${tone} shrink-0`} aria-hidden />
+                        <span className="truncate">
+                          Último replay por{" "}
+                          <span className="font-medium text-foreground">
+                            {last.actor_email ?? last.actor_user_id.slice(0, 8) + "…"}
+                          </span>{" "}
+                          · {formatDistanceToNow(new Date(last.created_at), { addSuffix: true, locale: ptBR })}
+                          {last.http_status > 0 ? ` · HTTP ${last.http_status}` : ""}
+                        </span>
+                      </p>
+                    );
+                  })()}
                 </div>
                 <div className="flex flex-col gap-1">
                   <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setPreviewOf(d)} aria-label="Ver payload" title="Ver payload">
@@ -312,6 +346,10 @@ export function WebhookDeadLetterPanel({
                       {previewOf.last_replay_error && <p className="text-destructive">{previewOf.last_replay_error}</p>}
                     </>
                   )}
+                </div>
+                <div className="mb-3 space-y-1.5">
+                  <p className="text-[11px] font-medium text-foreground">Trilha de auditoria de replays</p>
+                  <ReplayAuditTrail deadLetterId={previewOf.id} />
                 </div>
                 <pre className="text-[11px] bg-muted/40 rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-words">
 {JSON.stringify(previewOf.payload, null, 2)}

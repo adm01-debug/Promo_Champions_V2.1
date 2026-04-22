@@ -93,6 +93,7 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = "pending") {
           : undefined,
       });
       qc.invalidateQueries({ queryKey: ["winloss-dead-letters"] });
+      qc.invalidateQueries({ queryKey: ["winloss-replay-audit"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao reprocessar"),
   });

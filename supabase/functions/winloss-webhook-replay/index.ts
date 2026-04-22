@@ -102,6 +102,36 @@ async function persistDlqOutcome(
   }
 }
 
+async function persistAuditEntry(
+  supabase: SupabaseClient,
+  params: {
+    source: "dlq" | "delivery";
+    row: SourceRow;
+    outcome: ReplayResult;
+    requestId: string;
+    userId: string;
+    userEmail: string | null;
+  },
+): Promise<void> {
+  const { source, row, outcome, requestId, userId, userEmail } = params;
+  const { error } = await supabase.from("winloss_webhook_replay_audit").insert({
+    dead_letter_id: source === "dlq" ? row.id : null,
+    delivery_id: source === "delivery" ? row.id : null,
+    source,
+    request_id: requestId,
+    actor_user_id: userId,
+    actor_email: userEmail,
+    succeeded: outcome.succeeded,
+    status_label: outcome.status_label,
+    http_status: outcome.status,
+    error: outcome.error,
+    attempts: outcome.attempts ?? null,
+  });
+  if (error) {
+    jlog("error", { msg: "audit_persist_failed", id: row.id, requestId, ...describeError(error) });
+  }
+}
+
 export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const requestId = crypto.randomUUID();
@@ -125,6 +155,7 @@ export const handler = async (req: Request): Promise<Response> => {
       return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
     }
     const userId = claimsData.claims.sub as string;
+    const userEmail = (claimsData.claims.email ?? null) as string | null;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -201,13 +232,17 @@ export const handler = async (req: Request): Promise<Response> => {
     for (const row of rows) {
       // Skip already-succeeded deliveries (no-op for DLQ source)
       if (source === "delivery" && row.succeeded) {
-        results.push({
+        const skipped: ReplayResult = {
           id: row.id,
           succeeded: false,
           status: 0,
           status_label: "skipped",
           error: "already_succeeded",
           skipped: true,
+        };
+        results.push(skipped);
+        await persistAuditEntry(supabase, {
+          source, row, outcome: skipped, requestId, userId, userEmail,
         });
         continue;
       }
@@ -254,6 +289,9 @@ export const handler = async (req: Request): Promise<Response> => {
             error: outcome.error,
           }, requestId);
         }
+        await persistAuditEntry(supabase, {
+          source, row, outcome, requestId, userId, userEmail,
+        });
       } catch (e) {
         const d = describeError(e);
         const errMsg = `${d.error_name}: ${d.error}`;
@@ -267,12 +305,16 @@ export const handler = async (req: Request): Promise<Response> => {
           }, requestId);
         }
 
-        results.push({
+        const failed: ReplayResult = {
           id: row.id,
           succeeded: false,
           status: 0,
           status_label: "failed",
           error: errMsg,
+        };
+        results.push(failed);
+        await persistAuditEntry(supabase, {
+          source, row, outcome: failed, requestId, userId, userEmail,
         });
       }
     }
