@@ -15,6 +15,7 @@ const RETRY_RATE_THRESHOLD = Number(Deno.env.get("ALERT_RETRY_RATE_THRESHOLD") ?
 const WINDOW_MINUTES = Number(Deno.env.get("ALERT_WINDOW_MINUTES") ?? 30);
 const MIN_DELIVERIES = Number(Deno.env.get("ALERT_MIN_DELIVERIES") ?? 10);
 const SUPPRESS_MINUTES = Number(Deno.env.get("ALERT_SUPPRESS_MINUTES") ?? 60);
+const MAX_ATTEMPTS = Number(Deno.env.get("ALERT_MAX_ATTEMPTS") ?? 3);
 
 function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
   if (e instanceof Error) {
