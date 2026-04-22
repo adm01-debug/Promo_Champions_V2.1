@@ -422,6 +422,54 @@ export const SCENARIOS: Scenario[] = [
       actionIncludes: ["IMEDIATA", "URGENTE"],
     },
   },
+  {
+    name: "competitor_critical_leilao",
+    story:
+      "Negotiation há 200d em leilão público, ticket=31k (centro do perfil 'Pressão competitiva'). Estagnação satura (50) + amount_alignment alto + stage=20. Apesar do bestLoss escolher loss_factor/stuck_stage como dominant_type, o sinal COMPETITOR_PRESSURE entra em reasons via source 'leilao_publico' e o label 'Pressão competitiva' deve aparecer em matched_pattern. Score saturado força severity=critical → tom imperativo (IMEDIATA ou URGENTE).",
+    deal: {
+      id: "s14",
+      client_name: "AuctionMax",
+      amount: 31000,
+      status: "negotiation",
+      category: "government",
+      source: "leilao_publico",
+      updated_at: daysAgo(200),
+      created_at: daysAgo(360),
+    },
+    expect: {
+      included: true,
+      minScore: 80,
+      maxScore: 100,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      matchedPatternLabelIncludes: "Pressão competitiva",
+      reasonsInclude: ["200 dias", "competitiva"],
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
+    },
+  },
+  {
+    name: "competitor_critical_concorrencia_ativa",
+    story:
+      "Proposal há 180d com source 'concorrencia_ativa' e ticket alinhado ao perfil competitor (31k). Stagnation satura, source força COMPETITOR_PRESSURE em reasons. Stage 'proposal' contribui com stage_match=20. Cobre o caminho competitor crítico via outro source string para garantir robustez do detector de keywords.",
+    deal: {
+      id: "s15",
+      client_name: "RivalCorp Brasil",
+      amount: 31000,
+      status: "proposal",
+      category: "enterprise",
+      source: "concorrencia_ativa",
+      updated_at: daysAgo(180),
+      created_at: daysAgo(300),
+    },
+    expect: {
+      included: true,
+      minScore: 80,
+      maxScore: 100,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      matchedPatternLabelIncludes: "Pressão competitiva",
+      reasonsInclude: ["180 dias", "competitiva"],
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
+    },
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
