@@ -148,89 +148,223 @@ Deno.test("scenarios: every included scenario declares a meaningful actionInclud
 // `actionNeedles` is imported from `_testHelpers.ts` (single source of truth).
 
 Deno.test("fixtures table: included flag matches threshold filter (40)", () => {
-  const diff: Array<{ name: string; expected: boolean; got: boolean; score: number | null }> = [];
+  const diff: Array<{
+    name: string;
+    expected: boolean;
+    got: boolean;
+    score: number | null;
+    severity: string | null;
+    dominant: string | null;
+  }> = [];
   for (const s of SCENARIOS) {
     const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
     const gotIncluded = r !== null;
     if (gotIncluded !== s.expect.included) {
-      diff.push({ name: s.name, expected: s.expect.included, got: gotIncluded, score: r?.risk_score ?? null });
+      diff.push({
+        name: s.name,
+        expected: s.expect.included,
+        got: gotIncluded,
+        score: r?.risk_score ?? null,
+        severity: r
+          ? (r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence))
+          : null,
+        dominant: r?.breakdown.matched_pattern_type ?? null,
+      });
     }
   }
   assertEquals(
     diff,
     [],
-    `included-flag mismatches:\n${diff.map((d) => `  - ${d.name}: expected included=${d.expected}, got=${d.got} (score=${d.score})`).join("\n")}`,
+    `included-flag mismatches (${diff.length}):\n${diff
+      .map(
+        (d) =>
+          `  - ${d.name}\n      expected included = ${d.expected}\n      got included      = ${d.got}\n      score             = ${d.score}\n      severity          = ${d.severity}\n      dominant          = ${d.dominant}`,
+      )
+      .join("\n")}`,
   );
 });
 
 Deno.test("fixtures table: every included scenario respects minScore/maxScore + 0–100", () => {
-  const violations: string[] = [];
+  type ScoreFailure = {
+    name: string;
+    score: number | null;
+    minScore: number | null;
+    maxScore: number | null;
+    severity: string | null;
+    dominant: string | null;
+    note: string;
+  };
+  const violations: ScoreFailure[] = [];
   for (const s of SCENARIOS) {
     if (!s.expect.included) continue;
     const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+    const minScore = s.expect.minScore ?? null;
+    const maxScore = s.expect.maxScore ?? null;
     if (!r) {
-      violations.push(`${s.name}: expected included but got null`);
+      violations.push({
+        name: s.name,
+        score: null,
+        minScore,
+        maxScore,
+        severity: null,
+        dominant: null,
+        note: "expected included but got null",
+      });
       continue;
     }
+    const ctx = {
+      score: r.risk_score,
+      severity: (r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)),
+      dominant: r.breakdown.matched_pattern_type,
+    };
     if (r.risk_score < 0 || r.risk_score > 100) {
-      violations.push(`${s.name}: score ${r.risk_score} out of [0,100]`);
+      violations.push({ name: s.name, ...ctx, minScore, maxScore, note: "out of [0,100]" });
     }
-    if (typeof s.expect.minScore === "number" && r.risk_score < s.expect.minScore) {
-      violations.push(`${s.name}: score ${r.risk_score} < minScore ${s.expect.minScore}`);
+    if (typeof minScore === "number" && r.risk_score < minScore) {
+      violations.push({
+        name: s.name,
+        ...ctx,
+        minScore,
+        maxScore,
+        note: `score ${r.risk_score} < minScore ${minScore} (gap=${minScore - r.risk_score})`,
+      });
     }
-    if (typeof s.expect.maxScore === "number" && r.risk_score > s.expect.maxScore) {
-      violations.push(`${s.name}: score ${r.risk_score} > maxScore ${s.expect.maxScore}`);
+    if (typeof maxScore === "number" && r.risk_score > maxScore) {
+      violations.push({
+        name: s.name,
+        ...ctx,
+        minScore,
+        maxScore,
+        note: `score ${r.risk_score} > maxScore ${maxScore} (overshoot=${r.risk_score - maxScore})`,
+      });
     }
   }
-  assertEquals(violations, [], `score-band violations:\n  - ${violations.join("\n  - ")}`);
+  assertEquals(
+    violations,
+    [],
+    `score-band violations (${violations.length}):\n${violations
+      .map(
+        (v) =>
+          `  - ${v.name}\n      band              = [${v.minScore ?? "—"}, ${v.maxScore ?? "—"}]\n      actual score      = ${v.score}\n      severity          = ${v.severity}\n      dominant          = ${v.dominant}\n      issue             = ${v.note}`,
+      )
+      .join("\n")}`,
+  );
 });
 
 Deno.test("fixtures table: reasons & action substrings present per scenario", () => {
-  const failures: string[] = [];
+  type SubstringFailure = {
+    name: string;
+    kind: "reasons" | "action" | "null-result";
+    score: number | null;
+    severity: string | null;
+    dominant: string | null;
+    expected: string[];
+    matched: string[];
+    actual: string;
+    sample: string[];
+  };
+  const failures: SubstringFailure[] = [];
   for (const s of SCENARIOS) {
     if (!s.expect.included) continue;
     const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
     if (!r) {
-      failures.push(`${s.name}: expected included but got null`);
+      failures.push({
+        name: s.name,
+        kind: "null-result",
+        score: null,
+        severity: null,
+        dominant: null,
+        expected: [],
+        matched: [],
+        actual: "(null)",
+        sample: [],
+      });
       continue;
     }
+    const ctx = {
+      score: r.risk_score,
+      severity: (r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)),
+      dominant: r.breakdown.matched_pattern_type,
+    };
     // reasonsInclude → all needles must hit some reason (AND).
-    for (const needle of s.expect.reasonsInclude ?? []) {
-      const hit = r.reasons.some((reason) => includesCI(reason, needle));
-      if (!hit) {
-        failures.push(`${s.name}: reason needle "${needle}" not found in ${JSON.stringify(r.reasons)}`);
-      }
+    const reasonNeedles = s.expect.reasonsInclude ?? [];
+    const reasonMissing = reasonNeedles.filter(
+      (needle) => !r.reasons.some((reason) => includesCI(reason, needle)),
+    );
+    if (reasonMissing.length > 0) {
+      failures.push({
+        name: s.name,
+        kind: "reasons",
+        ...ctx,
+        expected: reasonNeedles,
+        matched: reasonNeedles.filter((n) => !reasonMissing.includes(n)),
+        actual: `[${r.reasons.length} reasons]`,
+        sample: r.reasons.slice(0, 5),
+      });
     }
     // actionIncludes → string=AND single, array=OR (any match).
     const needles = actionNeedles(s.expect.actionIncludes);
     if (needles.length > 0) {
       const matched = needles.filter((n) => includesCI(r.suggested_action, n));
       if (matched.length === 0) {
-        failures.push(
-          [
-            `${s.name}: action does not contain any expected substring (OR).`,
-            `    score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
-            `    expected (any of): ${JSON.stringify(needles)}`,
-            `    actual action    : "${r.suggested_action}"`,
-            `    reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
-          ].join("\n"),
-        );
+        failures.push({
+          name: s.name,
+          kind: "action",
+          ...ctx,
+          expected: needles,
+          matched,
+          actual: r.suggested_action,
+          sample: r.reasons.slice(0, 3),
+        });
       }
     }
   }
-  assertEquals(failures, [], `reasons/action substring failures:\n  - ${failures.join("\n  - ")}`);
+  assertEquals(
+    failures,
+    [],
+    `reasons/action substring failures (${failures.length}):\n${failures
+      .map(
+        (f) =>
+          `  - ${f.name} [${f.kind}]\n      score=${f.score} severity=${f.severity} dominant=${f.dominant}\n      expected (${f.kind === "reasons" ? "ALL of" : "ANY of"}): ${JSON.stringify(f.expected)}\n      matched          : ${JSON.stringify(f.matched)}\n      missing          : ${JSON.stringify(f.expected.filter((e) => !f.matched.includes(e)))}\n      actual           : ${f.kind === "action" ? `"${f.actual}"` : f.actual}\n      sample           : ${JSON.stringify(f.sample)}`,
+      )
+      .join("\n")}`,
+  );
 });
 
 Deno.test("fixtures table: excluded scenarios stay below threshold even at threshold=0", () => {
-  const violations: string[] = [];
+  type LeakFailure = {
+    name: string;
+    score: number;
+    severity: string;
+    dominant: string;
+    actionPreview: string;
+  };
+  const violations: LeakFailure[] = [];
   for (const s of SCENARIOS) {
     if (s.expect.included) continue;
     // threshold=0 → never returns null due to filter; only null if no signals at all.
     const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 0);
     const score = r?.risk_score ?? 0;
     if (score >= 40) {
-      violations.push(`${s.name}: excluded but score ${score} >= 40 at threshold=0 (would leak in)`);
+      violations.push({
+        name: s.name,
+        score,
+        severity: r
+          ? (r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence))
+          : "—",
+        dominant: r?.breakdown.matched_pattern_type ?? "—",
+        actionPreview: r?.suggested_action.slice(0, 80) ?? "—",
+      });
     }
   }
-  assertEquals(violations, [], `excluded-but-leaky scenarios:\n  - ${violations.join("\n  - ")}`);
+  assertEquals(
+    violations,
+    [],
+    `excluded-but-leaky scenarios (${violations.length}):\n${violations
+      .map(
+        (v) =>
+          `  - ${v.name}\n      score             = ${v.score} (>= 40 → leaks past filter)\n      severity          = ${v.severity}\n      dominant          = ${v.dominant}\n      action preview    = "${v.actionPreview}"`,
+      )
+      .join("\n")}`,
+  );
 });
