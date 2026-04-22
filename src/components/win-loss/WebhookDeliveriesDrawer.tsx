@@ -344,6 +344,71 @@ export function WebhookDeliveriesDrawer({
   }
   const [activeBatch, setActiveBatch] = useState<BatchState | null>(null);
 
+  // --- Histórico local de replays (últimos N) ---
+  interface ReplayHistoryEntry {
+    id: string;
+    at: number;
+    total: number;
+    ok: number;
+    skipped: number;
+    fail: number;
+    byEvent: Array<{ event: string; ok: number; skipped: number; fail: number }>;
+  }
+  const MAX_HISTORY = 8;
+  const [replayHistory, setReplayHistory] = useState<ReplayHistoryEntry[]>([]);
+
+  const recordHistory = (
+    ids: string[],
+    payload:
+      | {
+          results: Array<{ id: string; succeeded: boolean; skipped?: boolean }>;
+        }
+      | undefined,
+  ) => {
+    if (!data) return;
+    const idToEvent = new Map<string, string>();
+    for (const d of data) idToEvent.set(d.id, d.event);
+    const statusById = new Map<string, "ok" | "skipped" | "fail">();
+    const returned = new Set<string>();
+    for (const r of payload?.results ?? []) {
+      const status: "ok" | "skipped" | "fail" = r.skipped
+        ? "skipped"
+        : r.succeeded
+          ? "ok"
+          : "fail";
+      statusById.set(r.id, status);
+      returned.add(r.id);
+    }
+    for (const id of ids) if (!returned.has(id)) statusById.set(id, "fail");
+
+    const eventMap = new Map<string, { ok: number; skipped: number; fail: number }>();
+    let ok = 0;
+    let skipped = 0;
+    let fail = 0;
+    for (const id of ids) {
+      const s = statusById.get(id) ?? "fail";
+      const ev = idToEvent.get(id) ?? "unknown";
+      const cur = eventMap.get(ev) ?? { ok: 0, skipped: 0, fail: 0 };
+      cur[s]++;
+      eventMap.set(ev, cur);
+      if (s === "ok") ok++;
+      else if (s === "skipped") skipped++;
+      else fail++;
+    }
+    const entry: ReplayHistoryEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      at: Date.now(),
+      total: ids.length,
+      ok,
+      skipped,
+      fail,
+      byEvent: Array.from(eventMap, ([event, v]) => ({ event, ...v })).sort(
+        (a, b) => b.ok + b.skipped + b.fail - (a.ok + a.skipped + a.fail),
+      ),
+    };
+    setReplayHistory((prev) => [entry, ...prev].slice(0, MAX_HISTORY));
+  };
+
   const executeReplay = () => {
     if (!confirm) return;
     const ids = confirm.ids;
