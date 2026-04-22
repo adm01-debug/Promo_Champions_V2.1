@@ -253,7 +253,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
   // are coalesced into a single OLS recomputation + chart remount.
   const debouncedPoints = useDebouncedValue(points, 200);
 
-  const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel } =
+  const { series, stdDev, slope, intercept, sse, dof, meanX, sxx, fitN, tCritical, bandLabel, rSquared, residuals } =
     useWinLossScenarios(debouncedPoints, {
       forecastSteps: horizon,
       bandMode,
@@ -658,6 +658,8 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         confidenceZ={confidenceZ}
         bandLabel={bandLabel}
         confidenceLevel={confidenceLevel}
+        rSquared={rSquared}
+        residuals={residuals}
       />
       <ScenarioFormulaExplainerDialog
         open={explainerOpen}

@@ -75,6 +75,10 @@ export interface ScenarioForecast {
   sxx: number;
   /** Number of historical points actually used for the fit. */
   fitN: number;
+  /** Coeficiente de determinação R² ∈ [0,1]. 1 = ajuste perfeito; 0 = reta não explica nada. */
+  rSquared: number;
+  /** Resíduos (y − ŷ) dos pontos históricos, em ordem cronológica. */
+  residuals: number[];
   /** Active band mode used to compute uncertainty widths. */
   bandMode: BandMode;
   /** t critical value used (only for `pi95`); null in `see` mode. */
@@ -227,6 +231,8 @@ export const useWinLossScenarios = (
         meanX: 0,
         sxx: 0,
         fitN: n,
+        rSquared: 0,
+        residuals: [],
         bandMode,
         tCritical: bandMode === "pi95" ? tCritical(Math.max(1, n - 2), confidenceLevel) : null,
         bandLabel: labelFor(bandMode),
@@ -250,10 +256,11 @@ export const useWinLossScenarios = (
     const intercept = meanY - slope * meanX;
 
     const dof = Math.max(1, n - 2);
-    const sse = ys.reduce((acc, y, i) => {
-      const yhat = slope * xs[i] + intercept;
-      return acc + (y - yhat) ** 2;
-    }, 0);
+    const residuals = ys.map((y, i) => y - (slope * xs[i] + intercept));
+    const sse = residuals.reduce((acc, r) => acc + r * r, 0);
+    const sst = ys.reduce((acc, y) => acc + (y - meanY) ** 2, 0);
+    // R² = 1 − SSE/SST (clamp em [0,1] para variância nula).
+    const rSquared = sst > 0 ? Math.max(0, Math.min(1, 1 - sse / sst)) : 0;
     // SEE: σ̂ = √(SSE / dof). Mede o desvio típico dos resíduos do ajuste —
     // base de toda a banda de incerteza (ver doc do topo do arquivo).
     const residualStdDev = Math.sqrt(sse / dof);
@@ -303,6 +310,8 @@ export const useWinLossScenarios = (
       meanX,
       sxx,
       fitN: n,
+      rSquared,
+      residuals,
       bandMode,
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
