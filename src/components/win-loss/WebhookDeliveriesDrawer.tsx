@@ -378,7 +378,7 @@ export function WebhookDeliveriesDrawer({
   const clearSelection = () => setSelected(new Set());
 
   // --- Confirmation state ---
-  const [confirm, setConfirm] = useState<{ ids: string[] } | null>(null);
+  const [confirm, setConfirm] = useState<{ ids: string[]; requestedCount: number } | null>(null);
 
   const confirmSummary = useMemo(() => {
     const empty = {
@@ -476,7 +476,7 @@ export function WebhookDeliveriesDrawer({
         : `${n} entregas prontas para reenvio — confirme no diálogo.`,
       { description: descriptionParts.join(" ") },
     );
-    setConfirm({ ids: validation.ids });
+    setConfirm({ ids: validation.ids, requestedCount: ids.length });
   };
 
   // --- Batch tracking (para resumo "X/Y reenviando, Z falhou") ---
