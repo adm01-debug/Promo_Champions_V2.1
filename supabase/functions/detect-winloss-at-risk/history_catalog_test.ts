@@ -10,7 +10,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeDealRisk } from "./scoring.ts";
 import { DEAL_HISTORY_FIXTURES, LOSS_PATTERNS_REALISTIC, NOW, type DealHistoryFamily, type ScenarioGroup } from "./fixtures.ts";
-import { actionNeedles, hasMeaningfulActionIncludes, includesCI, matchesPatternFamily } from "./_testHelpers.ts";
+import { actionNeedles, evaluateActionIncludes, hasMeaningfulActionIncludes, includesCI, matchesPatternFamily } from "./_testHelpers.ts";
 
 const FAMILIES = Object.keys(DEAL_HISTORY_FIXTURES) as DealHistoryFamily[];
 
@@ -91,11 +91,12 @@ function buildCaseReport(family: DealHistoryFamily, group: ScenarioGroup, c: Sce
     }
   }
 
-  const needles = actionNeedles(c.expect.actionIncludes);
-  if (needles.length > 0) {
-    const hit = needles.some((n) => includesCI(r.suggested_action, n));
-    if (!hit) {
-      failures.push(`action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`);
+  if (c.expect.actionIncludes !== undefined) {
+    const ev = evaluateActionIncludes(r.suggested_action, c.expect.actionIncludes);
+    if (!ev.ok) {
+      failures.push(
+        `action "${r.suggested_action}" fails actionIncludes (${ev.reason}; missing=${JSON.stringify(ev.missing)})`,
+      );
     }
   }
 

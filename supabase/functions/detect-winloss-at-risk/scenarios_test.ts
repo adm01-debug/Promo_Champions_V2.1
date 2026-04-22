@@ -6,7 +6,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeAtRiskDeals, computeDealRisk, severityFromScore } from "./scoring.ts";
 import { LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS } from "./fixtures.ts";
-import { actionNeedles, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
+import { actionNeedles, evaluateActionIncludes, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
 
 for (const scenario of SCENARIOS) {
   Deno.test(`scenario: ${scenario.name} — ${scenario.story}`, () => {
@@ -58,20 +58,17 @@ for (const scenario of SCENARIOS) {
       );
     }
 
-    // Suggested action coherent (string = AND single needle; string[] = OR — any match)
+    // Suggested action coherent — supports string (AND), string[] (OR) and { all, anyOf? } (AND+OR).
     if (scenario.expect.actionIncludes !== undefined) {
-      const needles = Array.isArray(scenario.expect.actionIncludes)
-        ? scenario.expect.actionIncludes
-        : [scenario.expect.actionIncludes];
-      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
-      const hit = matched.length > 0;
+      const evalRes = evaluateActionIncludes(r.suggested_action, scenario.expect.actionIncludes);
       assert(
-        hit,
+        evalRes.ok,
         [
-          `${scenario.name}: suggested_action does not contain any expected substring (OR semantics).`,
+          `${scenario.name}: suggested_action does not satisfy actionIncludes (${evalRes.reason}).`,
           `  score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
-          `  expected (any of): ${JSON.stringify(needles)}`,
-          `  matched          : ${JSON.stringify(matched)}`,
+          `  expected         : ${JSON.stringify(scenario.expect.actionIncludes)}`,
+          `  matched          : ${JSON.stringify(evalRes.matched)}`,
+          `  missing          : ${JSON.stringify(evalRes.missing)}`,
           `  actual action    : "${r.suggested_action}"`,
           `  reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
         ].join("\n"),
@@ -302,18 +299,17 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
         sample: r.reasons.slice(0, 5),
       });
     }
-    // actionIncludes → string=AND single, array=OR (any match).
-    const needles = actionNeedles(s.expect.actionIncludes);
-    if (needles.length > 0) {
-      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
-      if (matched.length === 0) {
+    // actionIncludes → string (AND), string[] (OR), or { all, anyOf? } (AND+OR).
+    if (s.expect.actionIncludes !== undefined) {
+      const evalRes = evaluateActionIncludes(r.suggested_action, s.expect.actionIncludes);
+      if (!evalRes.ok) {
         failures.push({
           name: s.name,
           kind: "action",
           ...ctx,
-          expected: needles,
-          matched,
-          actual: r.suggested_action,
+          expected: actionNeedles(s.expect.actionIncludes),
+          matched: evalRes.matched,
+          actual: `${r.suggested_action} | ${evalRes.reason}`,
           sample: r.reasons.slice(0, 3),
         });
       }
@@ -419,9 +415,11 @@ Deno.test("fixtures table: SUMMARY — included/failed counts by assert category
       if (reasonMissing.length > 0) {
         failures.reasons.push(`${s.name} (missing: ${JSON.stringify(reasonMissing)})`);
       }
-      const aNeedles = actionNeedles(s.expect.actionIncludes);
-      if (aNeedles.length > 0 && !aNeedles.some((n) => includesCI(r.suggested_action, n))) {
-        failures.action.push(`${s.name} (none of ${JSON.stringify(aNeedles)})`);
+      if (s.expect.actionIncludes !== undefined) {
+        const ev = evaluateActionIncludes(r.suggested_action, s.expect.actionIncludes);
+        if (!ev.ok) {
+          failures.action.push(`${s.name} (${ev.reason}; missing=${JSON.stringify(ev.missing)})`);
+        }
       }
     }
 

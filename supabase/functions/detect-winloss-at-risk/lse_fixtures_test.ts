@@ -7,7 +7,7 @@ import {
   NOW,
   type DealHistoryLSEFamily,
 } from "./fixtures.ts";
-import { actionNeedles, includesCI, matchesPatternFamily } from "./_testHelpers.ts";
+import { evaluateActionIncludes, includesCI, matchesPatternFamily } from "./_testHelpers.ts";
 
 const RISK_THRESHOLD = 40;
 
@@ -57,10 +57,12 @@ for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFam
         assert(hit, `reason missing "${needle}" — got: ${reasons.join(" | ")}`);
       }
 
-      const needles = actionNeedles(c.expect.actionIncludes);
-      if (needles.length > 0) {
-        const hit = needles.some((n) => includesCI(suggested_action ?? "", n));
-        assert(hit, `action missing any of [${needles.join(", ")}] — got: ${suggested_action}`);
+      if (c.expect.actionIncludes !== undefined) {
+        const ev = evaluateActionIncludes(suggested_action, c.expect.actionIncludes);
+        assert(
+          ev.ok,
+          `action fails actionIncludes (${ev.reason}; missing=${JSON.stringify(ev.missing)}) — got: ${suggested_action}`,
+        );
       }
     });
   }
