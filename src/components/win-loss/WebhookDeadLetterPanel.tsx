@@ -13,6 +13,8 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
+import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
 
