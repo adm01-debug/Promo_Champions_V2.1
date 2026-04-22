@@ -27,11 +27,10 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   else console.log(line);
 }
 
-function jsonResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
+  const headers: Record<string, string> = { ...corsHeaders, "Content-Type": "application/json" };
+  if (requestId) headers["X-Request-Id"] = requestId;
+  return new Response(JSON.stringify(body), { status, headers });
 }
 
 // BodySchema imported from ./schema.ts (single source of truth, also covered by schema_test.ts)
@@ -71,11 +70,11 @@ async function assertAdmin(
     .maybeSingle();
   if (error) {
     jlog("error", { msg: "auth_role_lookup_failed", requestId, userId, ...describeError(error) });
-    return jsonResponse({ error: "Forbidden", requestId }, 403);
+    return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
   }
   if (!data) {
     jlog("warn", { msg: "auth_forbidden", requestId, userId });
-    return jsonResponse({ error: "Forbidden", requestId }, 403);
+    return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
   }
   return null;
 }
@@ -101,7 +100,7 @@ async function persistDlqOutcome(
   }
 }
 
-serve(async (req) => {
+export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const requestId = crypto.randomUUID();
 
@@ -109,7 +108,7 @@ serve(async (req) => {
     // --- Auth ---
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return jsonResponse({ error: "Unauthorized", requestId }, 401);
+      return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
     }
     const token = authHeader.replace("Bearer ", "");
 
@@ -121,7 +120,7 @@ serve(async (req) => {
     const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
     if (claimsErr || !claimsData?.claims?.sub) {
       jlog("warn", { msg: "auth_invalid_token", requestId, ...(claimsErr ? describeError(claimsErr) : {}) });
-      return jsonResponse({ error: "Unauthorized", requestId }, 401);
+      return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
     }
     const userId = claimsData.claims.sub as string;
 
@@ -144,7 +143,7 @@ serve(async (req) => {
         message: "Provide exactly one of dead_letter_ids or delivery_ids (1–50 valid UUIDs).",
         details: parsed.error.flatten(),
         requestId,
-      }, 400);
+      }, 400, requestId);
     }
 
     const source: "dlq" | "delivery" = parsed.data.dead_letter_ids ? "dlq" : "delivery";
@@ -280,12 +279,14 @@ serve(async (req) => {
 
     jlog("info", { msg: "replay_complete", requestId, source, summary });
 
-    return jsonResponse({ requestId, source, summary, results });
+    return jsonResponse({ requestId, source, summary, results }, 200, requestId);
   } catch (e) {
     jlog("error", { msg: "replay_fatal", requestId, ...describeError(e) });
     return jsonResponse({
       error: e instanceof Error ? e.message : "unknown",
       requestId,
-    }, 500);
+    }, 500, requestId);
   }
-});
+};
+
+serve(handler);
