@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
+import { useWinLossScenarios, type BandMode, type ConfidenceLevel, CONFIDENCE_LEVELS } from "@/hooks/win-loss/useWinLossScenarios";
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
@@ -38,12 +38,19 @@ interface Props {
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
 const LEGACY_SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
 const CONFIDENCE_Z_KEY = "winloss-scenario-confidence-z";
+const PI_LEVEL_KEY = "winloss-scenario-pi-level";
 
 const Z_PRESETS: ReadonlyArray<{ z: number; label: string; pct: string }> = [
   { z: 1.0, label: "68%", pct: "1 desvio-padrão" },
   { z: 1.28, label: "80%", pct: "z = 1.28" },
   { z: 1.645, label: "90%", pct: "z = 1.645" },
   { z: 1.96, label: "95%", pct: "z = 1.96" },
+];
+
+const PI_LEVEL_OPTIONS: ReadonlyArray<{ level: ConfidenceLevel; label: string; hint: string }> = [
+  { level: 0.90, label: "90%", hint: "Banda mais estreita · maior risco de cobertura" },
+  { level: 0.95, label: "95%", hint: "Padrão estatístico · recomendado" },
+  { level: 0.99, label: "99%", hint: "Banda mais ampla · maior segurança" },
 ];
 
 const Z_MIN = 0.5;
@@ -62,6 +69,15 @@ function readConfidenceZ(): number {
   const n = Number(raw);
   if (!Number.isFinite(n) || n < Z_MIN || n > Z_MAX) return 1;
   return n;
+}
+
+function readConfidenceLevel(): ConfidenceLevel {
+  if (typeof window === "undefined") return 0.95;
+  const raw = window.localStorage.getItem(PI_LEVEL_KEY);
+  if (!raw) return 0.95;
+  const n = Number(raw);
+  if (n === 0.90 || n === 0.95 || n === 0.99) return n;
+  return 0.95;
 }
 
 function pctFromZ(z: number): string {
@@ -138,6 +154,7 @@ interface ActiveFormulaBadgeProps {
   dof: number;
   stdDev: number;
   fitN: number;
+  confidenceLevel: ConfidenceLevel;
 }
 
 function ActiveFormulaBadge({
@@ -148,17 +165,21 @@ function ActiveFormulaBadge({
   dof,
   stdDev,
   fitN,
+  confidenceLevel,
 }: ActiveFormulaBadgeProps) {
   const isPi = bandMode === "pi95";
+  const levelPct = Math.round(confidenceLevel * 100);
   const formula = isPi
-    ? "PI 95% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)"
+    ? `PI ${levelPct}% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)`
     : "SEE · ±z·σ";
   const paramLine = isPi
-    ? `t = ${(tCritical ?? 0).toFixed(2)}  (gl=${dof})`
+    ? `t = ${(tCritical ?? 0).toFixed(2)}  (gl=${dof}, ${levelPct}%)`
     : `z = ${confidenceZ.toFixed(2)}  (${zPctLabel})`;
   const sigmaLine = `σ = ${stdDev.toFixed(1)} pp · fit n=${fitN}`;
-  const a11y = `Fórmula ativa: ${isPi ? "PI 95%" : "SEE"}, ${
-    isPi ? `t crítico ${(tCritical ?? 0).toFixed(2)} com ${dof} graus de liberdade` : `z ${confidenceZ.toFixed(2)} (${zPctLabel})`
+  const a11y = `Fórmula ativa: ${isPi ? `PI ${levelPct}%` : "SEE"}, ${
+    isPi
+      ? `t crítico ${(tCritical ?? 0).toFixed(2)} com ${dof} graus de liberdade no nível ${levelPct} por cento`
+      : `z ${confidenceZ.toFixed(2)} (${zPctLabel})`
   }, sigma ${stdDev.toFixed(1)} pontos percentuais em ${fitN} períodos`;
 
   return (
