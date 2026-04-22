@@ -286,7 +286,7 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
     // reasonsInclude → all needles must hit some reason (AND).
     const reasonNeedles = s.expect.reasonsInclude ?? [];
     const reasonMissing = reasonNeedles.filter(
-      (needle) => !r.reasons.some((reason) => includesCI(reason, needle)),
+      (needle) => !r.reasons.some((reason) => includesNormalized(reason, needle)),
     );
     if (reasonMissing.length > 0) {
       failures.push({
