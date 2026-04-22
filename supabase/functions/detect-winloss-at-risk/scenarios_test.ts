@@ -63,10 +63,18 @@ for (const scenario of SCENARIOS) {
       const needles = Array.isArray(scenario.expect.actionIncludes)
         ? scenario.expect.actionIncludes
         : [scenario.expect.actionIncludes];
-      const hit = needles.some((n) => includesCI(r.suggested_action, n));
+      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
+      const hit = matched.length > 0;
       assert(
         hit,
-        `${scenario.name}: suggested_action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`,
+        [
+          `${scenario.name}: suggested_action does not contain any expected substring (OR semantics).`,
+          `  score=${r.risk_score} severity=${r.severity} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
+          `  expected (any of): ${JSON.stringify(needles)}`,
+          `  matched          : ${JSON.stringify(matched)}`,
+          `  actual action    : "${r.suggested_action}"`,
+          `  reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
+        ].join("\n"),
       );
     }
 
