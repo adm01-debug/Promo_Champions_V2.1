@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Activity, AlertTriangle } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -11,10 +13,25 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
-import { useWebhookDeliveryStats } from "@/hooks/win-loss/useWebhookDeliveryStats";
+import {
+  useWebhookDeliveryStats,
+  type WebhookStatsWindow,
+} from "@/hooks/win-loss/useWebhookDeliveryStats";
 import { useWebhookAlerts, activeAlertsBySubscription } from "@/hooks/win-loss/useWebhookAlerts";
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { cn } from "@/lib/utils";
+
+const WINDOW_OPTIONS: ReadonlyArray<{ value: WebhookStatsWindow; label: string; aria: string }> = [
+  { value: "24h", label: "24h", aria: "Últimas 24 horas" },
+  { value: "7d", label: "7d", aria: "Últimos 7 dias" },
+  { value: "30d", label: "30d", aria: "Últimos 30 dias" },
+];
+
+const WINDOW_LABEL: Record<WebhookStatsWindow, string> = {
+  "24h": "últimas 24 horas",
+  "7d": "últimos 7 dias",
+  "30d": "últimos 30 dias",
+};
 
 function rateClasses(rate: number, total: number) {
   if (total === 0) return "text-muted-foreground";
