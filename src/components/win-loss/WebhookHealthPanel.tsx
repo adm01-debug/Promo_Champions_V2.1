@@ -180,7 +180,12 @@ export function WebhookHealthPanel() {
             </div>
 
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Falhas por tentativa</p>
+              <div className="flex items-baseline justify-between mb-1">
+                <p className="text-xs text-muted-foreground">Falhas por tentativa</p>
+                <p className="text-[10px] text-muted-foreground/70">
+                  Clique numa barra para detalhar
+                </p>
+              </div>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart data={data.failuresByAttempt} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
@@ -194,13 +199,65 @@ export function WebhookHealthPanel() {
                     cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }}
                     content={<HealthTooltip />}
                   />
-                  <Bar dataKey="failures" radius={[4, 4, 0, 0]}>
+                  <Bar
+                    dataKey="failures"
+                    radius={[4, 4, 0, 0]}
+                    onClick={(payload: unknown) => {
+                      const p = payload as { attempt?: number; failures?: number } | undefined;
+                      if (p?.attempt !== undefined && p?.failures !== undefined) {
+                        openDrill(p.attempt, p.failures);
+                      }
+                    }}
+                  >
                     {data.failuresByAttempt.map((b) => (
-                      <Cell key={b.attempt} fill="hsl(var(--destructive))" />
+                      <Cell
+                        key={b.attempt}
+                        fill="hsl(var(--destructive))"
+                        cursor={b.failures > 0 ? "pointer" : "default"}
+                      />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+
+              <ul className="mt-2 grid grid-cols-3 gap-1.5">
+                {data.failuresByAttempt.map((b) => {
+                  const interactive = b.failures > 0;
+                  return (
+                    <li key={b.attempt}>
+                      <button
+                        type="button"
+                        onClick={() => openDrill(b.attempt, b.failures)}
+                        disabled={!interactive}
+                        className={cn(
+                          "w-full rounded-md border bg-muted/10 px-2 py-1.5 text-left text-[11px] transition-colors",
+                          interactive
+                            ? "hover:bg-muted/40 hover:border-destructive/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                            : "opacity-60 cursor-not-allowed",
+                        )}
+                        aria-label={
+                          interactive
+                            ? `Ver ${b.failures} falha${b.failures === 1 ? "" : "s"} da tentativa ${b.attempt}`
+                            : `Sem falhas na tentativa ${b.attempt}`
+                        }
+                      >
+                        <p className="text-muted-foreground">Tentativa {b.attempt}</p>
+                        <p
+                          className={cn(
+                            "tabular-nums font-semibold",
+                            b.failures > 0 ? "text-destructive" : "text-muted-foreground",
+                          )}
+                        >
+                          {b.failures}
+                          <span className="ml-1 text-[10px] font-normal text-muted-foreground/70">
+                            / {b.total}
+                          </span>
+                        </p>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
 
             <div>
