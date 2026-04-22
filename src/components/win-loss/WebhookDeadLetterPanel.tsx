@@ -407,6 +407,15 @@ export function WebhookDeadLetterPanel({
           onReplay(ids);
         }}
       />
+
+      <AsyncReplayQueueDialog
+        open={asyncQueueOpen}
+        onOpenChange={(v) => {
+          setAsyncQueueOpen(v);
+          if (!v) setAsyncQueueIds([]);
+        }}
+        ids={asyncQueueIds}
+      />
     </Card>
   );
 }
