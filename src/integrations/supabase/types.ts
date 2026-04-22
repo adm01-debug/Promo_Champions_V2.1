@@ -13880,6 +13880,8 @@ export type Database = {
           kind: string
           request_id: string | null
           subscription_id: string
+          suppress_reason: string | null
+          suppressed: boolean
         }
         Insert: {
           details?: Json
@@ -13888,6 +13890,8 @@ export type Database = {
           kind: string
           request_id?: string | null
           subscription_id: string
+          suppress_reason?: string | null
+          suppressed?: boolean
         }
         Update: {
           details?: Json
@@ -13896,6 +13900,8 @@ export type Database = {
           kind?: string
           request_id?: string | null
           subscription_id?: string
+          suppress_reason?: string | null
+          suppressed?: boolean
         }
         Relationships: [
           {
