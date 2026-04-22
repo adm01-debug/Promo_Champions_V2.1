@@ -8,15 +8,18 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription,
 } from "@/components/ui/drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
+import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers, CheckCircle2, XCircle, MinusCircle, ListOrdered } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
+import { AsyncReplayQueueDialog } from "./AsyncReplayQueueDialog";
 import { classifyDeadLetterError } from "@/hooks/win-loss/classifyDeadLetterError";
 import { useLatestReplayAuditByDeadLetters } from "@/hooks/win-loss/useReplayAudit";
 import { ReplayAuditTrail } from "./ReplayAuditTrail";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
@@ -51,6 +54,9 @@ export function WebhookDeadLetterPanel({
   const [previewOf, setPreviewOf] = useState<DeadLetter | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingReplayIds, setPendingReplayIds] = useState<string[]>([]);
+  const [asyncMode, setAsyncMode] = useState(false);
+  const [asyncQueueOpen, setAsyncQueueOpen] = useState(false);
+  const [asyncQueueIds, setAsyncQueueIds] = useState<string[]>([]);
 
 
   const rawItems = list.data ?? [];
@@ -120,6 +126,12 @@ export function WebhookDeadLetterPanel({
       toast.error(
         `Limite de ${BULK_REPLAY_HARD_CAP} itens por reenvio (selecionado: ${ids.length}).`,
       );
+      return;
+    }
+    if (asyncMode) {
+      setAsyncQueueIds(ids);
+      setAsyncQueueOpen(true);
+      setSelected(new Set());
       return;
     }
     setPendingReplayIds(ids);
