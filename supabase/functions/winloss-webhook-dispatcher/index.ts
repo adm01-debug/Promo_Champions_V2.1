@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
+import { DispatcherPayloadSchema } from "./schema.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -117,18 +118,31 @@ export const handler = async (req: Request): Promise<Response> => {
   const requestStart = Date.now();
 
   try {
-    const payload = await req.json();
-    const inboundPayloadId = typeof payload.__request_id === "string" ? payload.__request_id : null;
-    if (inboundPayloadId && UUID_RE.test(inboundPayloadId)) requestId = inboundPayloadId;
-
-    const event = String(payload.event ?? "");
-    if (!event) {
-      structuredLog("warn", { msg: "invalid_payload", reason: "missing_event" }, requestId);
-      return envelope(requestId, 400, { error: "event required" });
+    const rawPayload = await req.json().catch(() => null);
+    if (!rawPayload || typeof rawPayload !== "object" || Array.isArray(rawPayload)) {
+      structuredLog("warn", { msg: "invalid_payload", reason: "not_an_object" }, requestId);
+      return envelope(requestId, 400, { error: "invalid payload (object required)" });
     }
 
-    const targetSubId = typeof payload.__target_subscription_id === "string" ? payload.__target_subscription_id : null;
-    const replayOf = typeof payload.__replay_of === "string" ? payload.__replay_of : null;
+    // Zod-validate the dispatcher contract BEFORE any DB lookup or fan-out.
+    const parsed = DispatcherPayloadSchema.safeParse(rawPayload);
+    if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      structuredLog("warn", { msg: "invalid_payload", reason: "schema", details: flat }, requestId);
+      const firstFieldErr = Object.values(flat.fieldErrors).flat()[0];
+      return envelope(requestId, 400, {
+        error: firstFieldErr ?? flat.formErrors[0] ?? "invalid payload",
+        extra: { details: flat },
+      });
+    }
+    const payload = parsed.data;
+
+    // Adopt the validated correlation id from the payload if present.
+    if (payload.__request_id) requestId = payload.__request_id;
+
+    const event = payload.event;
+    const targetSubId = payload.__target_subscription_id ?? null;
+    const replayOf = payload.__replay_of ?? null;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
