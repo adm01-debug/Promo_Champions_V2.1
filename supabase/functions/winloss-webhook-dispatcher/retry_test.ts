@@ -565,6 +565,61 @@ Deno.test("dispatchOne: onDeadLetter NÃO chamado quando deps.onDeadLetter é un
   assertEquals(h.deadLetters.length, 0);
 });
 
+Deno.test("dispatchOne: onDeadLetter recebe payload original deep-equal e SEM mutações entre tentativas", async () => {
+  // Payload aninhado e variado para detectar mutações em qualquer nível.
+  const ORIGINAL = {
+    event: "x",
+    deal_id: "d-deep-1",
+    nested: { a: 1, b: [1, 2, { c: "leaf" }], d: null as null | string },
+    list: ["one", "two", "three"],
+    flag: true,
+    count: 0,
+  };
+  const SNAPSHOT_JSON = JSON.stringify(ORIGINAL);
+
+  // Captura o body de cada POST para garantir paridade entre tentativas.
+  const sentBodies: string[] = [];
+  const h = makeHarness(() => new Response("err", { status: 500 }), { withDeadLetter: true });
+  const origFetch = h.deps.fetchFn;
+  h.deps.fetchFn = ((input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    sentBodies.push(String((init as { body?: unknown })?.body ?? ""));
+    return origFetch(input, init);
+  }) as typeof fetch;
+
+  const r = await dispatchOne(SUB, ORIGINAL, h.deps);
+  assertEquals(r.succeeded, false);
+  assertEquals(r.attempts, MAX_ATTEMPTS);
+
+  // 1) O objeto original NÃO foi mutado por dispatchOne durante o fluxo.
+  assertEquals(JSON.stringify(ORIGINAL), SNAPSHOT_JSON, "payload original sofreu mutação durante dispatch");
+
+  // 2) Os 3 bodies enviados são byte-a-byte idênticos entre tentativas
+  //    (nenhum campo foi injetado/removido/reordenado entre attempts).
+  assertEquals(sentBodies.length, MAX_ATTEMPTS);
+  assertEquals(sentBodies[0], sentBodies[1], "body da tentativa 2 difere da 1");
+  assertEquals(sentBodies[1], sentBodies[2], "body da tentativa 3 difere da 2");
+
+  // 3) DLQ recebe deep-equality com o original — mesma estrutura e valores.
+  assertEquals(h.deadLetters.length, 1);
+  const dlqPayload = h.deadLetters[0].payload;
+  assertEquals(dlqPayload, ORIGINAL, "DLQ payload deve ser deep-equal ao original");
+  assertEquals(JSON.stringify(dlqPayload), SNAPSHOT_JSON, "DLQ payload diverge do snapshot serializado");
+
+  // 4) Estruturas aninhadas preservadas em todos os níveis.
+  const dp = dlqPayload as typeof ORIGINAL;
+  assertEquals(dp.nested.a, 1);
+  assertEquals(dp.nested.b, [1, 2, { c: "leaf" }]);
+  assertEquals(dp.nested.d, null);
+  assertEquals(dp.list, ["one", "two", "three"]);
+  assertEquals(dp.flag, true);
+  assertEquals(dp.count, 0);
+
+  // 5) Os bodies enviados ao webhook devem refletir exatamente o payload original
+  //    (sem perda nem injeção de campos).
+  const decoded = JSON.parse(sentBodies[0]);
+  assertEquals(decoded, ORIGINAL, "body enviado ao webhook diverge do payload original");
+});
+
 Deno.test("dispatchOne: payload com __replay_of/__target_subscription_id NÃO vai no body externo", async () => {
   let capturedBody = "";
   const h = makeHarness(() => new Response("ok", { status: 200 }));
