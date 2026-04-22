@@ -69,6 +69,8 @@ export interface DispatchDeps {
   now?: () => number;
   rand?: () => number;
   log?: LogFn;
+  /** Correlation id propagated to receivers via X-Request-Id header. */
+  requestId?: string;
 }
 
 /**
