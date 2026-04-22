@@ -216,8 +216,10 @@ export const handler = async (req: Request): Promise<Response> => {
       results,
     }, requestId);
 
-    return new Response(JSON.stringify({ requestId, dispatched: results.length, succeeded: succeededCount, failed: failedCount, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
+    return envelope(requestId, 200, {
+      dispatched: results.length,
+      results,
+      extra: { succeeded: succeededCount, failed: failedCount },
     });
   } catch (e) {
     structuredLog("error", {
@@ -225,10 +227,7 @@ export const handler = async (req: Request): Promise<Response> => {
       ...describeError(e),
       latency_ms: Date.now() - requestStart,
     }, requestId);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown", requestId }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
-    });
+    return envelope(requestId, 500, { error: e instanceof Error ? e.message : "unknown" });
   }
 };
 
