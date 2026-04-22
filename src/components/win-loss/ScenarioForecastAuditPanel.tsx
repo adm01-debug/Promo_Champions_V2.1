@@ -120,8 +120,26 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
         : " (fraco)";
   const maxAbsResidual = residuals.reduce((m, r) => Math.max(m, Math.abs(r)), 0);
 
+  const [open, setOpen] = useState<boolean>(() => {
+    try {
+      return window.localStorage.getItem(AUDIT_OPEN_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(AUDIT_OPEN_KEY, open ? "1" : "0");
+    } catch {
+      /* noop — storage indisponível */
+    }
+  }, [open]);
+
   return (
     <details
+      open={open}
+      onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
       className="group border-t border-border/60 px-4 py-2"
       aria-label="Painel de auditoria do ajuste de regressão"
     >
