@@ -701,7 +701,7 @@ interface FanoutHarness {
 
 function makeFanoutHarness(
   routes: Record<string, (attemptForThisUrl: number) => Response>,
-  opts: { withDeadLetter?: boolean } = {},
+  opts: { withDeadLetter?: boolean; rand?: () => number } = {},
 ): FanoutHarness {
   const fetchesByUrl: Record<string, number> = {};
   const capturedInits: Array<{ url: string; init: RequestInit }> = [];
@@ -731,7 +731,7 @@ function makeFanoutHarness(
     insertDelivery: (row) => { deliveries.push(row); return Promise.resolve(); },
     updateSubscription: (id, status) => { updates.push({ id, status }); return Promise.resolve(); },
     onDeadLetter: opts.withDeadLetter ? (entry) => { deadLetters.push(entry); return Promise.resolve(); } : undefined,
-    rand: () => 0,
+    rand: opts.rand ?? (() => 0),
     now: () => 0,
     log: () => {},
   };
@@ -1809,5 +1809,91 @@ Deno.test("fan-out [mutação]: mutar payload entre envios não contamina bodies
   assertEquals((byUrl[SUB_A.url].meta as Record<string, unknown>).tag, "A");
   assertEquals((byUrl[SUB_B.url].meta as Record<string, unknown>).tag, "B");
   assertEquals((byUrl[SUB_C.url].meta as Record<string, unknown>).tag, "C");
+});
+
+// ───────────── fan-out: limites de sleeps/retries por subscription ─────────────
+// Garante que NENHUMA subscription dorme além do máximo previsto pela fórmula
+// backoffDelay (base exponencial + jitter ≤ 250ms, cap em 8000ms base) e que a
+// quantidade de sleeps == fetches - 1 por sub. Cobre 3 perfis: sucesso na 1ª
+// (zero sleeps), falha persistente (MAX_ATTEMPTS-1 sleeps) e recovery na 2ª
+// (1 sleep). Usa rand=0.999 para empurrar o jitter ao limite superior.
+
+Deno.test("fan-out [limites]: sleeps por subscription respeitam backoff (sem atrasos excessivos)", async () => {
+  const h = makeFanoutHarness(
+    {
+      // SUB_A: sucesso imediato → 0 sleeps
+      [SUB_A.url]: () => new Response("ok", { status: 200 }),
+      // SUB_B: falha persistente → MAX_ATTEMPTS fetches, MAX_ATTEMPTS-1 sleeps
+      [SUB_B.url]: () => new Response("err", { status: 500 }),
+      // SUB_C: 503 na 1ª, 200 na 2ª → 2 fetches, 1 sleep
+      [SUB_C.url]: (attempt) => attempt === 1
+        ? new Response("e", { status: 503 })
+        : new Response("ok", { status: 200 }),
+    },
+    { withDeadLetter: true, rand: () => 0.999 }, // jitter no limite superior
+  );
+
+  // Execução sequencial: o harness atribui sleeps por `currentUrl`, então
+  // rodamos uma sub por vez para garantir contabilização determinística por
+  // subscription (o paralelismo é coberto por outros testes do fan-out).
+  const subs = [SUB_A, SUB_B, SUB_C];
+  for (const s of subs) {
+    await dispatchOne(s, PAYLOAD, h.deps);
+  }
+
+  // ── Invariante por sub: sleeps == fetches - 1 ─────────────────────
+  for (const s of subs) {
+    const fetches = h.fetchesByUrl[s.url] ?? 0;
+    const sleeps = h.sleepsByUrl[s.url] ?? [];
+    assertEquals(sleeps.length, Math.max(0, fetches - 1), `${s.id}: sleeps == fetches - 1`);
+  }
+
+  // ── SUB_A: zero sleeps (sucesso na 1ª) ────────────────────────────
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1);
+  assertEquals((h.sleepsByUrl[SUB_A.url] ?? []).length, 0, "SUB_A: nenhum sleep em sucesso");
+
+  // ── SUB_C: exatamente 1 sleep no range [250, 499] ─────────────────
+  assertEquals(h.fetchesByUrl[SUB_C.url], 2);
+  const sleepsC = h.sleepsByUrl[SUB_C.url];
+  assertEquals(sleepsC.length, 1);
+  assertEquals(sleepsC[0], backoffDelay(1, () => 0.999));
+  assertGreaterOrEqual(sleepsC[0], 250);
+  assertLessOrEqual(sleepsC[0], 250 + 249);
+
+  // ── SUB_B: MAX_ATTEMPTS-1 sleeps, cada um dentro do range ─────────
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS);
+  const sleepsB = h.sleepsByUrl[SUB_B.url];
+  assertEquals(sleepsB.length, MAX_ATTEMPTS - 1);
+
+  // Limites por tentativa: base = min(250 * 2^(attempt-1), 8000); jitter ∈ [0, 249].
+  for (let i = 0; i < sleepsB.length; i += 1) {
+    const attempt = i + 1; // sleep[i] corresponde à espera APÓS a tentativa i
+    const base = Math.min(250 * 2 ** (attempt - 1), 8000);
+    assertEquals(sleepsB[i], backoffDelay(attempt, () => 0.999), `SUB_B sleep#${attempt}`);
+    assertGreaterOrEqual(sleepsB[i], base, `SUB_B sleep#${attempt} >= base`);
+    assertLessOrEqual(sleepsB[i], base + 249, `SUB_B sleep#${attempt} <= base + jitter máx`);
+  }
+
+  // ── Cap absoluto: nenhum sleep em qualquer sub pode exceder 8000+249 ──
+  const HARD_CAP_MS = 8000 + 249;
+  for (const s of subs) {
+    for (const ms of h.sleepsByUrl[s.url] ?? []) {
+      assertLessOrEqual(ms, HARD_CAP_MS, `${s.id}: sleep ${ms}ms acima do hard cap`);
+      assertGreaterOrEqual(ms, 0, `${s.id}: sleep negativo`);
+    }
+  }
+
+  // ── Soma total por sub: limite superior teórico (sanidade) ────────
+  // SUB_A: 0; SUB_C: ≤ 499; SUB_B: soma das bases + jitter máximo por tentativa.
+  let sumBmax = 0;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS - 1; attempt += 1) {
+    sumBmax += Math.min(250 * 2 ** (attempt - 1), 8000) + 249;
+  }
+  const sumA = (h.sleepsByUrl[SUB_A.url] ?? []).reduce((a, b) => a + b, 0);
+  const sumB = (h.sleepsByUrl[SUB_B.url] ?? []).reduce((a, b) => a + b, 0);
+  const sumC = (h.sleepsByUrl[SUB_C.url] ?? []).reduce((a, b) => a + b, 0);
+  assertEquals(sumA, 0);
+  assertLessOrEqual(sumC, 499);
+  assertLessOrEqual(sumB, sumBmax, `SUB_B soma de sleeps ${sumB} > teórico ${sumBmax}`);
 });
 
