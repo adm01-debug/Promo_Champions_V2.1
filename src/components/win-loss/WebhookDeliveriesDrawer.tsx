@@ -447,6 +447,15 @@ export function WebhookDeliveriesDrawer({
   }, [confirm, data]);
 
   const requestReplay = (ids: string[]) => {
+    // Bloqueio global: já existe um lote em voo ou diálogo aberto aguardando confirmação.
+    if (isReplaying) {
+      toast.info("Aguarde o reenvio em andamento concluir antes de iniciar outro.");
+      return;
+    }
+    if (confirm) {
+      toast.info("Há um reenvio aguardando confirmação — finalize ou cancele primeiro.");
+      return;
+    }
     const validation = validateReplayIds(ids);
     if (!validation.ok) {
       toast.error(validation.message);
@@ -796,14 +805,19 @@ export function WebhookDeliveriesDrawer({
                       size="sm"
                       className="h-7 text-xs"
                       onClick={handleReplaySelected}
-                      disabled={isReplaying}
+                      disabled={isReplaying || processingIds.size > 0}
+                      aria-label={
+                        isReplaying || processingIds.size > 0
+                          ? "Aguardando reenvio em andamento concluir"
+                          : "Reenviar entregas selecionadas"
+                      }
                     >
                       {isReplaying ? (
                         <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                       ) : (
                         <RotateCw className="h-3 w-3 mr-1" />
                       )}
-                      Reenviar selecionados
+                      {isReplaying ? "Reenviando…" : "Reenviar selecionados"}
                     </Button>
                   </>
                 )}
@@ -1033,14 +1047,16 @@ export function WebhookDeliveriesDrawer({
                             size="sm"
                             variant="ghost"
                             className="h-7 w-7 p-0 shrink-0"
-                            // Bloqueio por linha: só desabilita se ESTA delivery está em voo
-                            // (não bloqueia mais quando outra linha está sendo reenviada)
-                            disabled={d.succeeded || isProcessing}
+                            // Bloqueio: desabilita se ESTA delivery está em voo OU se há
+                            // qualquer reenvio global em andamento (evita disparar nova mutation).
+                            disabled={d.succeeded || isProcessing || isReplaying}
                             onClick={() => handleReplay(d.id)}
                             aria-label={
                               isProcessing
                                 ? "Reenvio em andamento para esta entrega"
-                                : "Reenviar entrega"
+                                : isReplaying
+                                  ? "Aguardando reenvio em andamento concluir"
+                                  : "Reenviar entrega"
                             }
                           >
                             {isProcessing ? (
