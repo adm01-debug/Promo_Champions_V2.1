@@ -246,13 +246,16 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    const settings = await loadSettings(supabase, requestId);
+
     structuredLog("info", {
       msg: "monitor_start",
-      consecutive_threshold: CONSECUTIVE_FAILURES,
-      retry_rate_threshold: RETRY_RATE_THRESHOLD,
-      window_minutes: WINDOW_MINUTES,
-      min_deliveries: MIN_DELIVERIES,
-      suppress_minutes: SUPPRESS_MINUTES,
+      consecutive_threshold: settings.consecutive_failures,
+      retry_rate_threshold: settings.retry_rate_threshold,
+      window_minutes: settings.window_minutes,
+      min_deliveries: settings.min_deliveries,
+      suppress_minutes: settings.suppress_minutes,
+      max_attempts: settings.max_attempts,
     }, requestId);
 
     const { data: subs, error: subsError } = await supabase
@@ -266,8 +269,8 @@ serve(async (req) => {
     }
 
     const subscriptions = (subs as SubscriptionRow[] | null) ?? [];
-    const sinceIso = new Date(Date.now() - WINDOW_MINUTES * 60_000).toISOString();
-    const suppressIso = new Date(Date.now() - SUPPRESS_MINUTES * 60_000).toISOString();
+    const sinceIso = new Date(Date.now() - settings.window_minutes * 60_000).toISOString();
+    const suppressIso = new Date(Date.now() - settings.suppress_minutes * 60_000).toISOString();
 
     const evaluations: EvaluationResult[] = [];
     let firedCount = 0;
@@ -288,7 +291,7 @@ serve(async (req) => {
       }
 
       const deliveries = (rows as DeliveryRow[] | null) ?? [];
-      const result = evaluate(deliveries);
+      const result = evaluate(deliveries, settings);
 
       const evalEntry: EvaluationResult = {
         subscriptionId: sub.id,
