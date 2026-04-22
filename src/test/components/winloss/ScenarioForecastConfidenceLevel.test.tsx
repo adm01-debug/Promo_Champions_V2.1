@@ -92,10 +92,13 @@ const openLevelPopover = async (user: ReturnType<typeof userEvent.setup>) => {
 
 const pickLevel = async (user: ReturnType<typeof userEvent.setup>, label: "90%" | "95%" | "99%") => {
   await openLevelPopover(user);
-  // RadioGroupItem renders as role="radio" with the visible Label as its name
-  // via htmlFor association.
-  const radio = await screen.findByRole("radio", { name: new RegExp(`^${label}\\s`) });
-  await user.click(radio);
+  // Click via id — Radix Popover às vezes fecha o trigger anterior antes do
+  // próximo open completar, fazendo o findByRole oscilar. O id é estável.
+  const id = `pi-level-${label}`;
+  const radio = await screen.findByRole("radio", { name: new RegExp(`^${label.replace("%", "%")}\\s`) }).catch(() => null);
+  const el = radio ?? document.getElementById(id);
+  if (!el) throw new Error(`Radio for level ${label} not found`);
+  await user.click(el as HTMLElement);
 };
 
 describe("ScenarioForecastChart — seletor de nível de confiança PI (90/95/99)", () => {
