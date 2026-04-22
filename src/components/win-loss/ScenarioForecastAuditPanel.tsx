@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { ChevronDown, FlaskConical } from "lucide-react";
-import type { BandMode } from "@/hooks/win-loss/useWinLossScenarios";
+import type { BandMode, ConfidenceLevel } from "@/hooks/win-loss/useWinLossScenarios";
 
 interface Props {
   slope: number;
@@ -15,6 +15,7 @@ interface Props {
   tCritical: number | null;
   confidenceZ: number;
   bandLabel: string;
+  confidenceLevel?: ConfidenceLevel;
 }
 
 function Row({ label, value, hint }: { label: string; value: string; hint?: string }) {
@@ -41,9 +42,11 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
   tCritical,
   confidenceZ,
   bandLabel,
+  confidenceLevel = 0.95,
 }: Props) {
   const sign = slope >= 0 ? "+" : "−";
   const equation = `ŷ = ${intercept.toFixed(2)} ${sign} ${Math.abs(slope).toFixed(3)}·x`;
+  const levelPct = Math.round(confidenceLevel * 100);
 
   return (
     <details
