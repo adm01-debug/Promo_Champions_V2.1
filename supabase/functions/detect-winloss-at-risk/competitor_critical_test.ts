@@ -52,20 +52,29 @@ Deno.test("suggestedActionFor: competitor + high NÃO usa marcador 'IMEDIATA' (a
 // -----------------------------------------------------------------------------
 
 const COMPETITOR_HEAVY_PATTERNS: LossPattern[] = [
-  // Loss factor pequeno, só para o engine não cair no branch "generic" sem score:
-  // mantemos uma referência de avg_amount/avg_cycle_days para alimentar
-  // stagnation/amount-alignment.
+  // Loss factor com avg_amount casando com o deal (alimenta amount_alignment).
   {
     pattern_type: "loss_factor",
     label: "Preço alto",
     outcome: "lost",
     frequency: 6,
     win_rate: 12,
-    avg_cycle_days: 30,
+    avg_cycle_days: 28,
     avg_amount: 30000,
-    confidence: 0.8,
+    confidence: 0.95, // alta para preservar critical via confWeight
   },
-  // Competitor dominante: alta confiança e label claro.
+  // Stuck stage com alta confiança para alimentar stage_match (status STUCK).
+  {
+    pattern_type: "stuck_stage",
+    label: "Negociação travada",
+    outcome: null,
+    frequency: 10,
+    win_rate: 18,
+    avg_cycle_days: 30,
+    avg_amount: 28000,
+    confidence: 0.9,
+  },
+  // Competitor dominante: alta confiança e label claro (gera COMPETITOR_PRESSURE).
   {
     pattern_type: "competitor",
     label: "Pressão competitiva — concorrente dominante",
@@ -95,10 +104,14 @@ Deno.test("computeDealRisk: deal estagnado com competitor pressure produz severi
   assert(r, "esperava resultado de risco não-nulo");
 
   // Engine deve calcular severity critical (score alto + confidence alta).
-  assertEquals(r.severity, "critical", `severity inesperada: ${r.severity} (score=${r.risk_score})`);
+  assertEquals(
+    r.breakdown.severity,
+    "critical",
+    `severity inesperada: ${r.breakdown.severity} (score=${r.risk_score})`,
+  );
 
   // Reason de pressão competitiva precisa estar presente (proxy do signal).
-  const codes = r.reasons_v2.map((x) => x.code);
+  const codes = r.breakdown.reasons_v2.map((x) => x.code);
   assert(
     codes.includes("COMPETITOR_PRESSURE"),
     `esperava COMPETITOR_PRESSURE em reasons_v2, recebi: ${codes.join(", ")}`,
@@ -125,13 +138,13 @@ Deno.test("end-to-end: severity=critical do engine + competitor → ação imper
 
   const r = computeDealRisk(deal, COMPETITOR_HEAVY_PATTERNS, NOW, 40);
   assert(r);
-  assertEquals(r.severity, "critical");
+  assertEquals(r.breakdown.severity, "critical");
 
   // Alimenta o suggestedAction com a severity calculada pelo engine,
   // simulando a UI que prioriza competitor quando matches estão presentes.
   const action = suggestedActionFor("competitor", deal.status, {
     outcome: "lost",
-    severity: r.severity,
+    severity: r.breakdown.severity,
   });
   assertMatch(action, COMPETITOR_CRITICAL_RE);
   assertMatch(action, URGENCY_RE);
