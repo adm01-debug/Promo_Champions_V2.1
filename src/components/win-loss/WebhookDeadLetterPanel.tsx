@@ -89,6 +89,17 @@ export function WebhookDeadLetterPanel({
     replay(ids);
     setSelected(new Set());
   };
+  const requestBulkReplay = (ids: string[]) => {
+    if (ids.length === 0) return;
+    if (ids.length > BULK_REPLAY_HARD_CAP) {
+      toast.error(
+        `Limite de ${BULK_REPLAY_HARD_CAP} itens por reenvio (selecionado: ${ids.length}).`,
+      );
+      return;
+    }
+    setPendingReplayIds(ids);
+    setConfirmOpen(true);
+  };
   const onArchive = (ids: string[]) => {
     archive(ids);
     setSelected(new Set());
