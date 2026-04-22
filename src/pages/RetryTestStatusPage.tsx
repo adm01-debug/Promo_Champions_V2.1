@@ -21,7 +21,7 @@ const formatMs = (ms: number) => {
 function StatusBadge({ status }: { status: RetryTestResult["status"] }) {
   if (status === "passed") {
     return (
-      <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-500 gap-1">
+      <Badge variant="outline" className="border-success/40 bg-success/10 text-success gap-1">
         <CheckCircle2 className="h-3 w-3" /> passou
       </Badge>
     );
@@ -52,9 +52,9 @@ function KpiCard({
   tone?: "default" | "success" | "danger" | "warning";
 }) {
   const toneClass =
-    tone === "success" ? "text-emerald-500"
+    tone === "success" ? "text-success"
       : tone === "danger" ? "text-destructive"
-      : tone === "warning" ? "text-amber-500"
+      : tone === "warning" ? "text-warning"
       : "text-primary";
   return (
     <Card className="border-border/60 bg-card/60 backdrop-blur">
