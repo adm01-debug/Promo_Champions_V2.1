@@ -66,8 +66,24 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
       const fail = data.results.length - ok - skipped;
       const parts = [`${ok} sucesso`, `${fail} falha${fail === 1 ? "" : "s"}`];
       if (skipped) parts.push(`${skipped} já entregue${skipped === 1 ? "" : "s"}`);
-      if (ok > 0) toast.success(`Reenvio: ${parts.join(" · ")}`);
-      else toast.error(`Reenvio: ${parts.join(" · ")}`);
+      const reqId = data.requestId;
+      const summary = `Reenvio: ${parts.join(" · ")}`;
+      const opts = reqId
+        ? {
+            description: `requestId: ${reqId}`,
+            action: {
+              label: "Copiar requestId",
+              onClick: () => {
+                void navigator.clipboard?.writeText(reqId).then(
+                  () => toast.success("requestId copiado"),
+                  () => toast.error("Falha ao copiar"),
+                );
+              },
+            },
+          }
+        : undefined;
+      if (ok > 0) toast.success(summary, opts);
+      else toast.error(summary, opts);
       qc.invalidateQueries({ queryKey: ["winloss-webhook-deliveries"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao reenviar"),
