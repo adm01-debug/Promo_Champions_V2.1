@@ -14,22 +14,47 @@ import { actionNeedles, hasMeaningfulActionIncludes, includesCI, matchesPatternF
 
 const FAMILIES = Object.keys(DEAL_HISTORY_FIXTURES) as DealHistoryFamily[];
 
-function validateGroup(family: DealHistoryFamily, group: ScenarioGroup): string[] {
+interface CaseReport {
+  family: DealHistoryFamily;
+  name: string;
+  expected: { included: boolean; minScore?: number; maxScore?: number };
+  got: {
+    included: boolean;
+    score: number | null;
+    matched_pattern: string | null;
+    matched_pattern_type: string | null;
+    reasons: string[];
+    suggested_action: string | null;
+  };
+  failures: string[];
+}
+
+function buildCaseReport(family: DealHistoryFamily, group: ScenarioGroup, c: ScenarioGroup["cases"][number]): CaseReport {
+  const r = computeDealRisk(c.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+  const gotIncluded = r !== null;
   const failures: string[] = [];
-  for (const c of group.cases) {
-    // Use threshold=40 so the included flag mirrors the prod default.
-    const r = computeDealRisk(c.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
-    const gotIncluded = r !== null;
+  const report: CaseReport = {
+    family,
+    name: c.name,
+    expected: { included: c.expect.included, minScore: c.expect.minScore, maxScore: c.expect.maxScore },
+    got: {
+      included: gotIncluded,
+      score: r?.risk_score ?? null,
+      matched_pattern: r?.matched_pattern ?? null,
+      matched_pattern_type: r?.breakdown.matched_pattern_type ?? null,
+      reasons: r?.reasons ?? [],
+      suggested_action: r?.suggested_action ?? null,
+    },
+    failures,
+  };
 
-    if (gotIncluded !== c.expect.included) {
-      failures.push(
-        `[${family}/${c.name}] included flag mismatch: expected=${c.expect.included}, got=${gotIncluded} (score=${r?.risk_score ?? "n/a"})`,
-      );
-      continue;
-    }
-    if (!c.expect.included) continue; // excluded case checked separately below
-
-    if (!r) continue;
+  if (gotIncluded !== c.expect.included) {
+    failures.push(
+      `included flag mismatch: expected=${c.expect.included}, got=${gotIncluded} (score=${r?.risk_score ?? "n/a"})`,
+    );
+    return report;
+  }
+  if (!c.expect.included || !r) return report;
 
     // Score band + global [0,100]
     if (r.risk_score < 0 || r.risk_score > 100) {
