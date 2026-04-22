@@ -8,12 +8,9 @@ import {
 
 // Re-export everything from utils for backward compatibility
 export { CircuitBreakerError, withCircuitBreaker, getAllCircuitStates, resetCircuit, resetAllCircuits } from './circuitBreakerUtils';
+export { DEFAULT_CONFIG as CIRCUIT_BREAKER_DEFAULTS } from './circuitBreakerUtils';
 
-const DEFAULT_CONFIG = {
-  failureThreshold: 5,
-  resetTimeout: 30000,
-  halfOpenMaxAttempts: 3,
-};
+import { DEFAULT_CONFIG } from './circuitBreakerUtils';
 
 export function useCircuitBreaker(name: string, config: CircuitBreakerConfig = {}) {
   const {
