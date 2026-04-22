@@ -51,7 +51,7 @@ for (const scenario of SCENARIOS) {
 
     // Reasons include all required substrings
     for (const needle of scenario.expect.reasonsInclude ?? []) {
-      const hit = r.reasons.some((reason) => includesCI(reason, needle));
+      const hit = r.reasons.some((reason) => includesNormalized(reason, needle));
       assert(
         hit,
         `${scenario.name}: no reason includes "${needle}". Reasons: ${JSON.stringify(r.reasons)}`,
