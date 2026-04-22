@@ -111,6 +111,7 @@ function WebhooksDeadLettersAdminContent() {
           <TabsList>
             <TabsTrigger value="list">Lista & filtros</TabsTrigger>
             <TabsTrigger value="by-id">Status por ID</TabsTrigger>
+            <TabsTrigger value="audit">Auditoria</TabsTrigger>
           </TabsList>
 
           <TabsContent value="list" className="space-y-6 mt-0">
