@@ -14126,6 +14126,51 @@ export type Database = {
           },
         ]
       }
+      winloss_webhook_replay_invocations: {
+        Row: {
+          actor_email: string | null
+          actor_user_id: string
+          created_at: string
+          duration_ms: number | null
+          failed_count: number
+          id: string
+          ids: string[]
+          item_count: number
+          request_id: string
+          skipped_count: number
+          source: string
+          succeeded_count: number
+        }
+        Insert: {
+          actor_email?: string | null
+          actor_user_id: string
+          created_at?: string
+          duration_ms?: number | null
+          failed_count?: number
+          id?: string
+          ids?: string[]
+          item_count?: number
+          request_id: string
+          skipped_count?: number
+          source: string
+          succeeded_count?: number
+        }
+        Update: {
+          actor_email?: string | null
+          actor_user_id?: string
+          created_at?: string
+          duration_ms?: number | null
+          failed_count?: number
+          id?: string
+          ids?: string[]
+          item_count?: number
+          request_id?: string
+          skipped_count?: number
+          source?: string
+          succeeded_count?: number
+        }
+        Relationships: []
+      }
       winloss_webhook_subscriptions: {
         Row: {
           active: boolean

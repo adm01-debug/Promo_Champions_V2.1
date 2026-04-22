@@ -18,6 +18,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterPanel";
 import { ReplayStatusByIdPanel } from "@/components/win-loss/ReplayStatusByIdPanel";
+import { ReplayInvocationsPanel } from "@/components/win-loss/ReplayInvocationsPanel";
 import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 import { useDeadLetterErrorGroups } from "@/hooks/win-loss/useDeadLetterErrorGroups";
@@ -110,6 +111,7 @@ function WebhooksDeadLettersAdminContent() {
           <TabsList>
             <TabsTrigger value="list">Lista & filtros</TabsTrigger>
             <TabsTrigger value="by-id">Status por ID</TabsTrigger>
+            <TabsTrigger value="audit">Auditoria</TabsTrigger>
           </TabsList>
 
           <TabsContent value="list" className="space-y-6 mt-0">
@@ -197,6 +199,10 @@ function WebhooksDeadLettersAdminContent() {
 
           <TabsContent value="by-id" className="mt-0">
             <ReplayStatusByIdPanel />
+          </TabsContent>
+
+          <TabsContent value="audit" className="mt-0">
+            <ReplayInvocationsPanel />
           </TabsContent>
         </Tabs>
       </div>
