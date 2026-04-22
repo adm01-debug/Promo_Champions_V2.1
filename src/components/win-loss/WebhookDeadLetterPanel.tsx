@@ -147,6 +147,52 @@ export function WebhookDeadLetterPanel({
           </TabsList>
         </Tabs>
 
+        {tab === "pending" && errorGroups.length > 0 && (
+          <div className="rounded-md border bg-muted/20 p-2.5 space-y-2">
+            <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Layers className="h-3 w-3" />
+              Agrupado por tipo de erro
+            </div>
+            <ul className="space-y-1" role="list" aria-label="Grupos de erro">
+              {errorGroups.map((g) => (
+                <li
+                  key={g.key}
+                  className="flex items-center justify-between gap-2 rounded-md bg-background/60 px-2 py-1.5"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Badge variant="outline" className="text-[10px] py-0 px-1.5 shrink-0">
+                      {g.count}
+                    </Badge>
+                    <span className="text-xs truncate">{g.label}</span>
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 px-2 text-[11px]"
+                      onClick={() => setSelected(new Set(g.ids))}
+                      title="Selecionar todos deste grupo"
+                    >
+                      Selecionar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="default"
+                      className="h-7 px-2 text-[11px]"
+                      disabled={isReplaying}
+                      onClick={() => requestBulkReplay(g.ids)}
+                      title={`Reprocessar todos do grupo ${g.label}`}
+                    >
+                      <RotateCcw className="h-3 w-3 mr-1" />
+                      Reprocessar
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {selectedIds.length > 0 && tab === "pending" && (
           <div className="flex items-center justify-between rounded-md border bg-primary/5 px-2.5 py-1.5">
             <span className="text-xs text-muted-foreground">{selectedIds.length} selecionado(s)</span>
