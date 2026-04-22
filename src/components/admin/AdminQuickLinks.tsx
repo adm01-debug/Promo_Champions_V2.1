@@ -18,6 +18,7 @@ const QUICK_LINKS = [
   { to: "/fonte-leads", icon: TrendingUp, label: "Fonte Leads", color: "text-chart-2" },
   { to: "/relatorio-atividades", icon: BarChart3, label: "Rel. Atividades", color: "text-chart-3" },
   { to: "/icp", icon: TrendingUp, label: "ICP", color: "text-chart-4" },
+  { to: "/admin/webhooks-timeline", icon: Activity, label: "Timeline Webhooks", color: "text-chart-5" },
 ];
 
 export function AdminQuickLinks() {
