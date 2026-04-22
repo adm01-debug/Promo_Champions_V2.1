@@ -219,6 +219,119 @@ Deno.test("instrumentação: mistura HTTP+network (500 → throw → 200) preser
   );
 });
 
+Deno.test("invariante GLOBAL: última tentativa NUNCA chama sleep e sleeps.length === fetches.length - 1 em TODOS os caminhos", async () => {
+  // Matriz exaustiva: cobre sucesso imediato, recovery em N=2, recovery em N=3,
+  // exaustão por HTTP, exaustão por network throw, exaustão por AbortError,
+  // e cenário misto HTTP+throw+abort.
+  type Scenario = {
+    name: string;
+    fetchImpl: (n: number) => Response | Promise<Response>;
+    expectedFetches: number;
+    expectedLastSucceeded: boolean;
+  };
+
+  const mkAbort = () => { const e = new Error("aborted"); e.name = "AbortError"; throw e; };
+
+  const scenarios: Scenario[] = [
+    {
+      name: "sucesso imediato (200) — fetches=1, sleeps=0",
+      fetchImpl: () => new Response("ok", { status: 200 }),
+      expectedFetches: 1,
+      expectedLastSucceeded: true,
+    },
+    {
+      name: "recovery 502→200 — fetches=2, sleeps=1",
+      fetchImpl: (n) => new Response("x", { status: n === 1 ? 502 : 200 }),
+      expectedFetches: 2,
+      expectedLastSucceeded: true,
+    },
+    {
+      name: "recovery 500→503→200 — fetches=3, sleeps=2",
+      fetchImpl: (n) => new Response("x", { status: [500, 503, 200][n - 1] }),
+      expectedFetches: 3,
+      expectedLastSucceeded: true,
+    },
+    {
+      name: "exaustão HTTP 500×3 — fetches=3, sleeps=2",
+      fetchImpl: () => new Response("e", { status: 500 }),
+      expectedFetches: MAX_ATTEMPTS,
+      expectedLastSucceeded: false,
+    },
+    {
+      name: "exaustão network throw×3 — fetches=3, sleeps=2",
+      fetchImpl: () => { throw new Error("ENETDOWN"); },
+      expectedFetches: MAX_ATTEMPTS,
+      expectedLastSucceeded: false,
+    },
+    {
+      name: "exaustão AbortError×3 — fetches=3, sleeps=2",
+      fetchImpl: () => mkAbort(),
+      expectedFetches: MAX_ATTEMPTS,
+      expectedLastSucceeded: false,
+    },
+    {
+      name: "misto throw→abort→500 — fetches=3, sleeps=2",
+      fetchImpl: (n) => {
+        if (n === 1) throw new Error("ENETDOWN");
+        if (n === 2) return mkAbort();
+        return new Response("e", { status: 500 });
+      },
+      expectedFetches: MAX_ATTEMPTS,
+      expectedLastSucceeded: false,
+    },
+  ];
+
+  for (const sc of scenarios) {
+    const h = makeHarness(sc.fetchImpl);
+    await dispatchOne(SUB, PAYLOAD, h.deps);
+
+    const fetches = h.events.filter((e) => e.kind === "fetch");
+    const sleeps = h.events.filter((e) => e.kind === "sleep");
+    const deliveries = h.events.filter((e) => e.kind === "delivery");
+
+    // (1) Conta de fetches bate com o esperado para o cenário
+    assertEquals(fetches.length, sc.expectedFetches, `[${sc.name}] fetches.length`);
+
+    // (2) INVARIANTE PRINCIPAL: sleeps.length === fetches.length - 1, SEMPRE
+    assertEquals(
+      sleeps.length,
+      fetches.length - 1,
+      `[${sc.name}] sleeps.length (${sleeps.length}) deve ser fetches.length - 1 (${fetches.length - 1})`,
+    );
+
+    // (3) deliveries acompanham fetches 1:1
+    assertEquals(deliveries.length, fetches.length, `[${sc.name}] deliveries.length === fetches.length`);
+
+    // (4) ÚLTIMA TENTATIVA NUNCA CHAMA SLEEP: nenhum sleep tem attempt === última
+    const lastAttempt = sc.expectedFetches;
+    const sleepOnLast = sleeps.find((e) => e.attempt === lastAttempt);
+    assert(
+      !sleepOnLast,
+      `[${sc.name}] última tentativa (N=${lastAttempt}) NÃO pode chamar sleep, achei seq=${sleepOnLast?.seq}`,
+    );
+
+    // (5) Nenhum evento ocorre APÓS o delivery da última tentativa
+    const lastDeliveryIdx = h.events.findLastIndex(
+      (e) => e.kind === "delivery" && e.attempt === lastAttempt,
+    );
+    assertEquals(
+      lastDeliveryIdx,
+      h.events.length - 1,
+      `[${sc.name}] delivery#${lastAttempt} deve ser o ÚLTIMO evento (nenhum sleep depois)`,
+    );
+
+    // (6) Sleeps cobrem exatamente os attempts [1 .. lastAttempt-1] — sem buracos, sem extras
+    const sleepAttempts = sleeps.map((e) => e.attempt).sort((a, b) => a - b);
+    const expectedSleepAttempts = Array.from({ length: lastAttempt - 1 }, (_, i) => i + 1);
+    assertEquals(sleepAttempts, expectedSleepAttempts, `[${sc.name}] sleep attempts esperados`);
+
+    // (7) Sucesso/falha do último delivery confere
+    const lastDelivery = h.events[lastDeliveryIdx];
+    assert(lastDelivery.kind === "delivery");
+    assertEquals(lastDelivery.succeeded, sc.expectedLastSucceeded, `[${sc.name}] lastSucceeded`);
+  }
+});
+
 Deno.test("instrumentação: invariante numérica — para CADA N<MAX, idxOf(delivery,N) < idxOf(sleep,N) < idxOf(fetch,N+1)", async () => {
   // Cenário: HTTP error persistente — força MAX_ATTEMPTS exatas
   const h = makeHarness(() => new Response("e", { status: 503 }));
