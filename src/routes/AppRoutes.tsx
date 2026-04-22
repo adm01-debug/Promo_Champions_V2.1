@@ -10,6 +10,7 @@ const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
 const RaceSpectator = lazy(() => import("@/pages/RaceSpectator"));
 const RetryTestStatusPage = lazy(() => import("@/pages/RetryTestStatusPage"));
 const OrderDetailPage = lazy(() => import("@/pages/OrderDetailPage"));
+const SalesReportPage = lazy(() => import("@/pages/SalesReportPage"));
 import {
   // Auth & System
   Auth, ResetPassword, NotFound, AccessDenied,
@@ -172,6 +173,7 @@ export function AppRoutes() {
                     <Route path="/win-loss-intelligence" element={<WinLossIntelligence />} />
                     <Route path="/revops" element={<Manager><RevOpsHub /></Manager>} />
                     <Route path="/funil" element={<FunnelAnalysis />} />
+                    <Route path="/relatorios/vendas" element={<ProtectedRoute><SalesReportPage /></ProtectedRoute>} />
                     <Route path="/relatorios/funil" element={<Manager><FunnelReport /></Manager>} />
                     <Route path="/relatorios/cohort" element={<Manager><CohortReport /></Manager>} />
                     <Route path="/top-produtos" element={<TopProductsRanking />} />

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Sparkles, Sun, Moon, Coffee } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 const motivationalTips = [
   "Cada ligação te aproxima do topo! 🎯",
@@ -16,6 +17,7 @@ const motivationalTips = [
 
 export const DashboardHeader = () => {
   const { salesperson } = useAuth();
+  const navigate = useNavigate();
   const today = format(new Date(), "EEEE, d 'De' MMMM", { locale: ptBR });
   const [exporting, setExporting] = useState(false);
 
@@ -69,16 +71,27 @@ export const DashboardHeader = () => {
             </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportPDF}
-          disabled={exporting}
-          className="gap-1.5 text-xs self-start sm:self-auto"
-        >
-          <FileDown className="h-3.5 w-3.5" />
-          {exporting ? "Gerando..." : "Exportar PDF"}
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => navigate("/relatorios/vendas")}
+            className="gap-1.5 text-xs"
+          >
+            <FileDown className="h-3.5 w-3.5" />
+            Relatório de Vendas
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPDF}
+            disabled={exporting}
+            className="gap-1.5 text-xs"
+          >
+            <FileDown className="h-3.5 w-3.5" />
+            {exporting ? "Gerando..." : "PDF rápido"}
+          </Button>
+        </div>
       </div>
     </div>
   );
