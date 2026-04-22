@@ -83,11 +83,16 @@ function reasonColor(status: number | null, key: string): string {
 
 export function WebhookHealthPanel() {
   const [windowKey, setWindowKey] = useState<WebhookStatsWindow>("7d");
+  const [drillAttempt, setDrillAttempt] = useState<number | null>(null);
   const { data, isLoading } = useWebhookDeliveryStats(null, windowKey);
   const { data: alerts } = useWebhookAlerts();
   const activeBySub = activeAlertsBySubscription(alerts ?? []);
   const degradedCount = activeBySub.size;
 
+  const openDrill = (attempt: number, failures: number) => {
+    if (failures <= 0) return;
+    setDrillAttempt(attempt);
+  };
 
   return (
     <Card>
