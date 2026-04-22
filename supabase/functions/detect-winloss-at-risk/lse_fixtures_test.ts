@@ -7,7 +7,7 @@ import {
   NOW,
   type DealHistoryLSEFamily,
 } from "./fixtures.ts";
-import { actionNeedles, includesCI } from "./_testHelpers.ts";
+import { actionNeedles, includesCI, matchesPatternFamily } from "./_testHelpers.ts";
 
 const RISK_THRESHOLD = 40;
 
