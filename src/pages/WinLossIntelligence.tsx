@@ -238,7 +238,13 @@ export default function WinLossIntelligence() {
           </div>
 
           <div className="no-print">
-            <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
+            <WinLossFilters
+              filters={filters}
+              onChange={setFilters}
+              onReset={reset}
+              onResetViewPrefs={handleResetViewPrefs}
+              viewPrefsAreDefault={viewPrefsAreDefault}
+            />
           </div>
 
           {!isEmpty && !isLoading && (
