@@ -368,7 +368,7 @@ export const SCENARIOS: Scenario[] = [
       reasonsInclude: ["180 dias"],
       // Tom imperativo obrigatório quando severity=critical, independente da branch
       actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
-    },
+  },
   {
     name: "competitor_dominant_critical",
     story:
