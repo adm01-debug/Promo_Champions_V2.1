@@ -2194,3 +2194,74 @@ Deno.test("fan-out [body estável]: SUB_B falha persistente — body (deal_id e 
   assertEquals(h.deadLetters[0].subscription_id, SUB_B.id);
 });
 
+// ───────────── fan-out [backoff por sub]: SUB_B usa delays crescentes até MAX_ATTEMPTS ─────────────
+// Quando SUB_B falha em todas as tentativas, o dispatcher deve aplicar a fórmula
+// `backoffDelay(attempt)` ENTRE retries (e não após a última). Este teste valida:
+//   • nº de sleeps de SUB_B == MAX_ATTEMPTS - 1
+//   • cada sleep[i] == backoffDelay(i+1) com o mesmo `rand` injetado
+//   • progressão estritamente crescente (250 → 500 → 1000 → ... cap 8000) até o cap
+//   • nenhum sleep "vaza" para SUB_A/SUB_C que sucederam na 1ª tentativa
+
+Deno.test("fan-out [backoff por sub]: SUB_B falha persistente — sleeps crescentes seguindo backoffDelay até MAX_ATTEMPTS", async () => {
+  const RAND = 0; // jitter=0 → backoff puramente exponencial, determinístico
+  const h = makeFanoutHarness(
+    {
+      [SUB_A.url]: () => new Response("ok", { status: 200 }),
+      [SUB_B.url]: () => new Response("err", { status: 500 }),
+      [SUB_C.url]: () => new Response(null, { status: 204 }),
+    },
+    { withDeadLetter: true, rand: () => RAND },
+  );
+
+  // Execução sequencial garante atribuição determinística de sleeps por `currentUrl`
+  // no harness (o paralelismo é coberto por outros testes do fan-out).
+  const subs = [SUB_A, SUB_B, SUB_C];
+  for (const s of subs) {
+    await dispatchOne(s, PAYLOAD, h.deps);
+  }
+
+  const sleepsB = h.sleepsByUrl[SUB_B.url] ?? [];
+
+  // (1) Quantidade de sleeps == MAX_ATTEMPTS - 1 (sem sleep após a última tentativa).
+  assertEquals(sleepsB.length, MAX_ATTEMPTS - 1, "SUB_B deve ter MAX_ATTEMPTS-1 sleeps");
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS, "SUB_B deve ter MAX_ATTEMPTS fetches");
+
+  // (2) Cada sleep[i] bate exatamente com backoffDelay(i+1, rand).
+  for (let i = 0; i < sleepsB.length; i += 1) {
+    const attempt = i + 1; // sleep[i] é o backoff APÓS a tentativa i
+    const expected = backoffDelay(attempt, () => RAND);
+    assertEquals(
+      sleepsB[i],
+      expected,
+      `SUB_B sleep#${attempt} deve ser backoffDelay(${attempt})=${expected}`,
+    );
+  }
+
+  // (3) Progressão estritamente crescente até o cap (8000ms base com rand=0).
+  // Para MAX_ATTEMPTS típico (3): 250 → 500 (crescente). Verificamos genericamente.
+  for (let i = 1; i < sleepsB.length; i += 1) {
+    const prev = sleepsB[i - 1];
+    const curr = sleepsB[i];
+    // Cresce até o cap; após o cap, mantém-se igual (≥).
+    assertGreaterOrEqual(curr, prev, `SUB_B sleep#${i + 1} (${curr}) deve ser >= sleep#${i} (${prev})`);
+  }
+
+  // (4) Primeiro sleep == 250ms (base inicial sem jitter) — sanidade da fórmula.
+  assertEquals(sleepsB[0], 250, "SUB_B primeiro sleep deve ser 250ms (base inicial, rand=0)");
+
+  // (5) Nenhum sleep para subs que sucederam na 1ª tentativa.
+  assertEquals((h.sleepsByUrl[SUB_A.url] ?? []).length, 0, "SUB_A não pode dormir (sucesso na 1ª)");
+  assertEquals((h.sleepsByUrl[SUB_C.url] ?? []).length, 0, "SUB_C não pode dormir (sucesso na 1ª)");
+
+  // (6) Cap absoluto: nenhum sleep excede 8000ms (com rand=0, sem jitter).
+  for (const ms of sleepsB) {
+    assertLessOrEqual(ms, 8000, `SUB_B sleep ${ms}ms acima do cap base de 8000ms`);
+    assertGreaterOrEqual(ms, 0, `SUB_B sleep negativo: ${ms}`);
+  }
+
+  // (7) DLQ confirma que SUB_B esgotou de fato as tentativas (não falsa-positiva).
+  assertEquals(h.deadLetters.length, 1);
+  assertEquals(h.deadLetters[0].subscription_id, SUB_B.id);
+  assertEquals(h.deadLetters[0].attempts, MAX_ATTEMPTS);
+});
+
