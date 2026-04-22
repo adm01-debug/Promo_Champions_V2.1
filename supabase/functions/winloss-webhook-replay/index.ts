@@ -132,9 +132,39 @@ async function persistAuditEntry(
   }
 }
 
+async function persistInvocationAudit(
+  supabase: SupabaseClient,
+  params: {
+    requestId: string;
+    userId: string;
+    userEmail: string | null;
+    source: "dlq" | "delivery";
+    ids: string[];
+    summary: { total: number; succeeded: number; failed: number; skipped: number };
+    durationMs: number;
+  },
+): Promise<void> {
+  const { error } = await supabase.from("winloss_webhook_replay_invocations").insert({
+    request_id: params.requestId,
+    actor_user_id: params.userId,
+    actor_email: params.userEmail,
+    source: params.source,
+    item_count: params.summary.total,
+    succeeded_count: params.summary.succeeded,
+    failed_count: params.summary.failed,
+    skipped_count: params.summary.skipped,
+    duration_ms: params.durationMs,
+    ids: params.ids,
+  });
+  if (error) {
+    jlog("error", { msg: "invocation_audit_persist_failed", requestId: params.requestId, ...describeError(error) });
+  }
+}
+
 export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const requestId = crypto.randomUUID();
+  const startedAt = Date.now();
 
   try {
     // --- Auth ---
