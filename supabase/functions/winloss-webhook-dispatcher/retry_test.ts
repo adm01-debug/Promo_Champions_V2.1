@@ -1051,3 +1051,85 @@ Deno.test("updateSubscription: 1× com 200 quando última é HTTP após erros de
   assertEquals(h.updates[0], { id: "sub-1", status: 200 });
 });
 
+// ───────────── ordem das chamadas: updateSubscription antes de onDeadLetter ─────────────
+
+Deno.test("ordem: updateSubscription é chamado ANTES de onDeadLetter quando todas as tentativas falham", async () => {
+  // Instrumenta um log compartilhado para registrar a ordem real de invocação dos
+  // side-effects do dispatcher (insertDelivery, updateSubscription, onDeadLetter).
+  const events: string[] = [];
+
+  const deps: DispatchDeps = {
+    fetchFn: (() => Promise.resolve(new Response("err", { status: 500 }))) as typeof fetch,
+    sleep: () => Promise.resolve(),
+    insertDelivery: (_row) => { events.push("insertDelivery"); return Promise.resolve(); },
+    updateSubscription: (_id, _status) => { events.push("updateSubscription"); return Promise.resolve(); },
+    onDeadLetter: (_entry) => { events.push("onDeadLetter"); return Promise.resolve(); },
+    rand: () => 0,
+    now: () => 0,
+    log: () => {},
+  };
+
+  const r = await dispatchOne(SUB, PAYLOAD, deps);
+
+  // Sanity: realmente houve falha total e o DLQ foi acionado.
+  assertEquals(r.succeeded, false);
+  assertEquals(r.attempts, MAX_ATTEMPTS);
+
+  const updateIdx = events.indexOf("updateSubscription");
+  const dlqIdx = events.indexOf("onDeadLetter");
+  assert(updateIdx !== -1, "updateSubscription deve ter sido chamado");
+  assert(dlqIdx !== -1, "onDeadLetter deve ter sido chamado");
+  assertEquals(events.filter((e) => e === "updateSubscription").length, 1);
+  assertEquals(events.filter((e) => e === "onDeadLetter").length, 1);
+
+  // ⇒ Asserção principal: updateSubscription PRECEDE onDeadLetter.
+  assert(
+    updateIdx < dlqIdx,
+    `updateSubscription (idx=${updateIdx}) deve preceder onDeadLetter (idx=${dlqIdx}); ordem real: [${events.join(", ")}]`,
+  );
+
+  // onDeadLetter é o ÚLTIMO side-effect do fluxo.
+  assertEquals(
+    events[events.length - 1],
+    "onDeadLetter",
+    `onDeadLetter deve ser o último side-effect; ordem real: [${events.join(", ")}]`,
+  );
+
+  // E todas as 3 insertDelivery acontecem ANTES de updateSubscription/onDeadLetter.
+  const lastDeliveryIdx = events.lastIndexOf("insertDelivery");
+  assert(
+    lastDeliveryIdx < updateIdx,
+    `todas as insertDelivery devem preceder updateSubscription; ordem real: [${events.join(", ")}]`,
+  );
+});
+
+Deno.test("ordem: updateSubscription PRECEDE onDeadLetter mesmo quando onDeadLetter throws", async () => {
+  // Mesmo no caminho de exceção do DLQ, o estado da subscription já deve estar persistido.
+  const events: string[] = [];
+
+  const deps: DispatchDeps = {
+    fetchFn: (() => Promise.resolve(new Response("boom", { status: 504 }))) as typeof fetch,
+    sleep: () => Promise.resolve(),
+    insertDelivery: () => { events.push("insertDelivery"); return Promise.resolve(); },
+    updateSubscription: () => { events.push("updateSubscription"); return Promise.resolve(); },
+    onDeadLetter: () => {
+      events.push("onDeadLetter");
+      return Promise.reject(new Error("dlq exploded"));
+    },
+    rand: () => 0,
+    now: () => 0,
+    log: () => {},
+  };
+
+  const r = await dispatchOne(SUB, PAYLOAD, deps);
+  assertEquals(r.succeeded, false);
+
+  const updateIdx = events.indexOf("updateSubscription");
+  const dlqIdx = events.indexOf("onDeadLetter");
+  assert(updateIdx !== -1 && dlqIdx !== -1);
+  assert(
+    updateIdx < dlqIdx,
+    `updateSubscription deve preceder onDeadLetter mesmo quando o DLQ falha; ordem real: [${events.join(", ")}]`,
+  );
+});
+
