@@ -368,3 +368,134 @@ Deno.test("fixtures table: excluded scenarios stay below threshold even at thres
       .join("\n")}`,
   );
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Aggregate diagnostics summary — runs last and prints a per-category report.
+// Always passes (informational); turns the suite output into a scoreboard so
+// reviewers can spot at-a-glance which assertion category is regressing.
+// ─────────────────────────────────────────────────────────────────────────────
+
+Deno.test("fixtures table: SUMMARY — included/failed counts by assert category", () => {
+  const totals = {
+    total: SCENARIOS.length,
+    expectedIncluded: 0,
+    expectedExcluded: 0,
+    actuallyIncluded: 0,
+    actuallyExcluded: 0,
+  };
+  const failures = {
+    includedFlag: [] as string[],
+    scoreBand: [] as string[],
+    reasons: [] as string[],
+    action: [] as string[],
+    leakyExcluded: [] as string[],
+  };
+
+  for (const s of SCENARIOS) {
+    if (s.expect.included) totals.expectedIncluded += 1;
+    else totals.expectedExcluded += 1;
+
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+    const gotIncluded = r !== null;
+    if (gotIncluded) totals.actuallyIncluded += 1;
+    else totals.actuallyExcluded += 1;
+
+    if (gotIncluded !== s.expect.included) {
+      failures.includedFlag.push(`${s.name} (expected=${s.expect.included}, got=${gotIncluded})`);
+    }
+
+    if (s.expect.included && r) {
+      const min = s.expect.minScore;
+      const max = s.expect.maxScore;
+      if ((typeof min === "number" && r.risk_score < min) ||
+          (typeof max === "number" && r.risk_score > max) ||
+          r.risk_score < 0 || r.risk_score > 100) {
+        failures.scoreBand.push(`${s.name} (score=${r.risk_score}, band=[${min ?? "—"},${max ?? "—"}])`);
+      }
+      const reasonNeedles = s.expect.reasonsInclude ?? [];
+      const reasonMissing = reasonNeedles.filter(
+        (n) => !r.reasons.some((reason) => includesCI(reason, n)),
+      );
+      if (reasonMissing.length > 0) {
+        failures.reasons.push(`${s.name} (missing: ${JSON.stringify(reasonMissing)})`);
+      }
+      const aNeedles = actionNeedles(s.expect.actionIncludes);
+      if (aNeedles.length > 0 && !aNeedles.some((n) => includesCI(r.suggested_action, n))) {
+        failures.action.push(`${s.name} (none of ${JSON.stringify(aNeedles)})`);
+      }
+    }
+
+    if (!s.expect.included) {
+      const r0 = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 0);
+      const score = r0?.risk_score ?? 0;
+      if (score >= 40) {
+        failures.leakyExcluded.push(`${s.name} (score=${score} at threshold=0)`);
+      }
+    }
+  }
+
+  const categoryCounts = {
+    includedFlag: failures.includedFlag.length,
+    scoreBand: failures.scoreBand.length,
+    reasons: failures.reasons.length,
+    action: failures.action.length,
+    leakyExcluded: failures.leakyExcluded.length,
+  };
+  const totalFailures = Object.values(categoryCounts).reduce((a, b) => a + b, 0);
+
+  // deno-lint-ignore no-console
+  console.log(
+    [
+      "",
+      "╔════════════════════════════════════════════════════════════╗",
+      "║          FIXTURES TABLE — DIAGNOSTICS SUMMARY              ║",
+      "╠════════════════════════════════════════════════════════════╣",
+      `║  Scenarios total           : ${String(totals.total).padEnd(28)} ║`,
+      `║  Expected included         : ${String(totals.expectedIncluded).padEnd(28)} ║`,
+      `║  Expected excluded         : ${String(totals.expectedExcluded).padEnd(28)} ║`,
+      `║  Actually included @t=40   : ${String(totals.actuallyIncluded).padEnd(28)} ║`,
+      `║  Actually excluded @t=40   : ${String(totals.actuallyExcluded).padEnd(28)} ║`,
+      "╠════════════════════════════════════════════════════════════╣",
+      `║  Total failures            : ${String(totalFailures).padEnd(28)} ║`,
+      `║   • included-flag          : ${String(categoryCounts.includedFlag).padEnd(28)} ║`,
+      `║   • score band             : ${String(categoryCounts.scoreBand).padEnd(28)} ║`,
+      `║   • reasons substrings     : ${String(categoryCounts.reasons).padEnd(28)} ║`,
+      `║   • action substrings      : ${String(categoryCounts.action).padEnd(28)} ║`,
+      `║   • leaky excluded         : ${String(categoryCounts.leakyExcluded).padEnd(28)} ║`,
+      "╚════════════════════════════════════════════════════════════╝",
+      ...(totalFailures > 0
+        ? [
+            "Failure details:",
+            ...(failures.includedFlag.length
+              ? ["  [included-flag]", ...failures.includedFlag.map((x) => `    - ${x}`)]
+              : []),
+            ...(failures.scoreBand.length
+              ? ["  [score band]", ...failures.scoreBand.map((x) => `    - ${x}`)]
+              : []),
+            ...(failures.reasons.length
+              ? ["  [reasons]", ...failures.reasons.map((x) => `    - ${x}`)]
+              : []),
+            ...(failures.action.length
+              ? ["  [action]", ...failures.action.map((x) => `    - ${x}`)]
+              : []),
+            ...(failures.leakyExcluded.length
+              ? ["  [leaky excluded]", ...failures.leakyExcluded.map((x) => `    - ${x}`)]
+              : []),
+          ]
+        : ["  ✓ All assertion categories clean."]),
+      "",
+    ].join("\n"),
+  );
+
+  // Sanity invariants — must always hold.
+  assertEquals(
+    totals.expectedIncluded + totals.expectedExcluded,
+    totals.total,
+    "summary: expected included+excluded must equal total",
+  );
+  assertEquals(
+    totals.actuallyIncluded + totals.actuallyExcluded,
+    totals.total,
+    "summary: actually included+excluded must equal total",
+  );
+});
