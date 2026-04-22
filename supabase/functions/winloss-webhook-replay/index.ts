@@ -102,6 +102,36 @@ async function persistDlqOutcome(
   }
 }
 
+async function persistAuditEntry(
+  supabase: SupabaseClient,
+  params: {
+    source: "dlq" | "delivery";
+    row: SourceRow;
+    outcome: ReplayResult;
+    requestId: string;
+    userId: string;
+    userEmail: string | null;
+  },
+): Promise<void> {
+  const { source, row, outcome, requestId, userId, userEmail } = params;
+  const { error } = await supabase.from("winloss_webhook_replay_audit").insert({
+    dead_letter_id: source === "dlq" ? row.id : null,
+    delivery_id: source === "delivery" ? row.id : null,
+    source,
+    request_id: requestId,
+    actor_user_id: userId,
+    actor_email: userEmail,
+    succeeded: outcome.succeeded,
+    status_label: outcome.status_label,
+    http_status: outcome.status,
+    error: outcome.error,
+    attempts: outcome.attempts ?? null,
+  });
+  if (error) {
+    jlog("error", { msg: "audit_persist_failed", id: row.id, requestId, ...describeError(error) });
+  }
+}
+
 export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const requestId = crypto.randomUUID();
