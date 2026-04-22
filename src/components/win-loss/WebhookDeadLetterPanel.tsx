@@ -164,6 +164,26 @@ export function WebhookDeadLetterPanel({
           </TabsList>
         </Tabs>
 
+        {tab === "pending" && (
+          <div className="flex items-center justify-between rounded-md border bg-muted/10 px-2.5 py-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <ListOrdered className="h-3 w-3" />
+              <span>Modo fila assíncrona</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="async-mode-toggle" className="text-[11px] text-muted-foreground cursor-pointer">
+                {asyncMode ? "Ativo · com progresso" : "Inativo · síncrono"}
+              </Label>
+              <Switch
+                id="async-mode-toggle"
+                checked={asyncMode}
+                onCheckedChange={setAsyncMode}
+                aria-label="Alternar modo fila assíncrona"
+              />
+            </div>
+          </div>
+        )}
+
         {tab === "pending" && errorGroups.length > 0 && (
           <div className="rounded-md border bg-muted/20 p-2.5 space-y-2">
             <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
