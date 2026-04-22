@@ -1,58 +1,60 @@
 
 
-## Asserts de DLQ após 3 AbortError: `last_error`, `attempts=3` e `payload` esperado
+## Página de Detalhe do Pedido `/meus-pedidos/:id`
 
-### Contexto
-`retry.ts` chama `onDeadLetter` exatamente uma vez após esgotar `MAX_ATTEMPTS=3` sem sucesso, com `DeadLetterEntry { subscription_id, event, payload, last_status, last_error, attempts, total_latency_ms }`. O `payload` repassado é o **mesmo objeto recebido por `dispatchOne`** (não o `outbound` sanitizado nem o body serializado com `dispatched_at`).
+Criar a página de detalhe de um pedido individual, com timeline das etapas, itens e resumo financeiro. **Pré-requisito**: depende das tabelas `orders`, `order_items`, `order_status_events` (planejadas anteriormente). Esta etapa cria a migração caso ainda não exista e a página de detalhe.
 
-Cobertura existente em `retry_test.ts`:
-- `:193` valida DLQ após AbortError com `attempts` e `last_status=0`, mas **não** valida o `payload` nem o `last_error` exato.
-- `:498` valida todos os campos da entry — mas com falha HTTP 502, não AbortError.
+### Escopo funcional
 
-Falta um teste único que combine, **no cenário AbortError persistente**, asserts simultâneos sobre `last_error` (string exata `"AbortError: <msg>"`), `attempts === 3`, e `payload` (igualdade profunda + identidade referencial + preservação de chaves internas `__*`).
+1. **Rota `/meus-pedidos/:id`** (lazy-loaded em `AppRoutes.tsx`, protegida por auth).
+2. **Header do pedido**: número do pedido, data de criação, badge de status atual (semantic tokens), botão "Voltar para Meus Pedidos".
+3. **Timeline vertical** (`OrderStatusTimeline`):
+   - 5 etapas fixas: Criado → Confirmado → Em preparação → Enviado → Entregue.
+   - Etapas concluídas: ícone preenchido + linha conectora em `success`; etapa atual: pulse animado em `primary`; futuras: muted.
+   - Cada etapa concluída exibe data/hora real vinda de `order_status_events`.
+   - Caso `cancelled`: exibe etapa final em `destructive` com motivo.
+4. **Card "Itens do pedido"**: tabela/lista com produto, quantidade, preço unitário e subtotal por linha.
+5. **Card "Resumo financeiro"**: subtotal, frete, total (formatado em BRL).
+6. **Loading**: Skeletons. **Empty/Erro**: pedido não encontrado → mensagem + link para listagem. **404** se o pedido não pertencer ao usuário (RLS bloqueia naturalmente).
 
-### Arquivo
-Adicionar 1 teste ao final de `supabase/functions/winloss-webhook-dispatcher/retry_error_naming_test.ts` (suíte temática mais próxima — naming/error_message). Reaproveita o harness local já existente, estendendo `makeHarness` para opcionalmente capturar entradas de DLQ.
+### Backend (caso ainda não exista)
 
-### Mudanças no harness local
-- Adicionar campo `deadLetters: DeadLetterEntry[]` ao `Harness`.
-- Adicionar opção `opts: { withDeadLetter?: boolean }` em `makeHarness`; quando `true`, popular `onDeadLetter` que faz `push` da entry recebida.
-- Importar `DeadLetterEntry` de `./retry.ts`.
+Migração idempotente:
 
-Isso não afeta os 6 testes existentes (não passam `opts`).
+- **`orders`**, **`order_items`**, **`order_status_events`** com RLS (`auth.uid() = user_id`, admin via `has_role`).
+- Trigger `AFTER UPDATE OF status ON orders` insere registro em `order_status_events`.
+- Seed de 2-3 pedidos mock para o usuário atual (apenas se nenhum existir).
 
-### Novo teste
+### Detalhes técnicos
+
+**Arquivos novos**:
+- `src/pages/OrderDetailPage.tsx` (≤200 linhas) — orquestra hook + componentes.
+- `src/components/orders/OrderStatusTimeline.tsx` — timeline com Framer Motion (stagger).
+- `src/components/orders/OrderItemsCard.tsx`.
+- `src/components/orders/OrderSummaryCard.tsx`.
+- `src/components/orders/orderHelpers.ts` — `STATUS_STEPS`, `statusLabel`, `statusTone`, `formatBRL`.
+- `src/hooks/orders/useOrder.ts` — React Query: busca `orders` + `order_items` + `order_status_events` por id.
+
+**Arquivos editados**:
+- `src/routes/AppRoutes.tsx` — rota lazy `/meus-pedidos/:id` dentro do bloco autenticado.
+
+**Padrões aplicados**: React Query, Framer Motion (timeline com stagger), Skeleton loading, Helmet (SEO), semantic tokens (`success`/`primary`/`destructive`/`muted`), Sora em títulos / Inter em corpo, formato BRL via `Intl.NumberFormat('pt-BR')`. Sem hardcoded colors.
+
+### Diagrama da página
+
+```text
+┌─────────────────────────────────────────────┐
+│ ← Voltar     Pedido #1024     [Em preparação]│
+├──────────────────────────┬──────────────────┤
+│  Timeline                │  Itens do pedido │
+│  ● Criado     12/04 09:00│  • Caneca x2  R$ │
+│  ● Confirmado 12/04 09:05│  • Camisa x1  R$ │
+│  ◉ Preparação 12/04 10:30│  ...             │
+│  ○ Enviado    —          ├──────────────────┤
+│  ○ Entregue   —          │  Resumo          │
+│                          │  Subtotal  R$ X  │
+│                          │  Frete     R$ Y  │
+│                          │  Total     R$ Z  │
+└──────────────────────────┴──────────────────┘
 ```
-"DLQ após 3 AbortError: last_error exato, attempts=3 e payload preservado (deep-eq + identity + chaves __*)"
-```
-
-**Setup**:
-- `payload = { event: "x", data: { foo: 1, nested: [1, 2] }, __dispatch_id: "trace-abc", __replay: true }`.
-- `fetchImpl = () => { throw makeNamedError("AbortError", "aborted by deadline"); }`.
-- `withDeadLetter: true`.
-
-**Asserts**:
-1. `r.succeeded === false`, `r.attempts === MAX_ATTEMPTS` (3), `r.error === "AbortError: aborted by deadline"`.
-2. `h.deadLetters.length === 1` (chamado exatamente 1×).
-3. Entry da DLQ:
-   - `entry.subscription_id === SUB.id`
-   - `entry.event === "x"`
-   - `entry.attempts === MAX_ATTEMPTS` (3)
-   - `entry.last_status === 0`
-   - `entry.last_error === "AbortError: aborted by deadline"` (igualdade exata, mesmo formato `Name: message` das deliveries)
-   - `entry.total_latency_ms` é número ≥ 0
-4. **Payload preservado**:
-   - `assertEquals(entry.payload, payload)` (deep-eq, inclui `data.nested`).
-   - `entry.payload === payload` (identidade referencial — confirma que `retry.ts` repassa o objeto original sem clonar).
-   - Chaves internas mantidas: `entry.payload.__dispatch_id === "trace-abc"`, `entry.payload.__replay === true` (DLQ recebe o payload **não-sanitizado**, ao contrário do body do fetch).
-5. **Coerência com deliveries**: `h.deliveries[2].error_message === entry.last_error` (DLQ reflete o erro da última tentativa).
-
-### Não-mudanças
-- `retry.ts`, `index.ts`, demais arquivos de teste permanecem intactos.
-
-### Critério de aceite
-1. 1 novo teste verde via `supabase--test_edge_functions`.
-2. `retry_error_naming_test.ts` passa de 6 → 7 testes, todos verdes.
-3. Suítes `retry_test.ts` (52) e `retry_backoff_sleep_test.ts` (9) seguem 100% verdes.
-4. Asserts cobrem simultaneamente: AbortError, `last_error` exato, `attempts=3` e payload (deep-eq + identidade + chaves `__*`).
 
