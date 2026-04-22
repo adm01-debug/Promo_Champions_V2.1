@@ -1,45 +1,58 @@
 
 
-## Suíte: nome+mensagem corretos em `error_message` para AbortError vs TimeoutError
+## Asserts de DLQ após 3 AbortError: `last_error`, `attempts=3` e `payload` esperado
 
 ### Contexto
-`describeError` em `retry.ts` produz `error_message = "${e.name}: ${e.message}"` para qualquer `Error` lançado pelo `fetchFn`. Hoje há cobertura espalhada em `retry_test.ts`, mas o pareamento **nome ↔ mensagem ↔ delivery** não está isolado em uma suíte dedicada nem é validado de forma paramétrica para os dois `name`s (`AbortError`, `TimeoutError`) lado a lado.
+`retry.ts` chama `onDeadLetter` exatamente uma vez após esgotar `MAX_ATTEMPTS=3` sem sucesso, com `DeadLetterEntry { subscription_id, event, payload, last_status, last_error, attempts, total_latency_ms }`. O `payload` repassado é o **mesmo objeto recebido por `dispatchOne`** (não o `outbound` sanitizado nem o body serializado com `dispatched_at`).
 
-### Arquivo novo
-`supabase/functions/winloss-webhook-dispatcher/retry_error_naming_test.ts`
+Cobertura existente em `retry_test.ts`:
+- `:193` valida DLQ após AbortError com `attempts` e `last_status=0`, mas **não** valida o `payload` nem o `last_error` exato.
+- `:498` valida todos os campos da entry — mas com falha HTTP 502, não AbortError.
 
-Harness mínimo local (não importa de outros testes) — registra apenas `deliveries` e `r.error`. `rand=()=>0` e `sleep` resolve imediato. Usa `MAX_ATTEMPTS` importado de `./retry.ts`.
+Falta um teste único que combine, **no cenário AbortError persistente**, asserts simultâneos sobre `last_error` (string exata `"AbortError: <msg>"`), `attempts === 3`, e `payload` (igualdade profunda + identidade referencial + preservação de chaves internas `__*`).
 
-### Casos (6 testes — 3 por nome, em paralelo)
+### Arquivo
+Adicionar 1 teste ao final de `supabase/functions/winloss-webhook-dispatcher/retry_error_naming_test.ts` (suíte temática mais próxima — naming/error_message). Reaproveita o harness local já existente, estendendo `makeHarness` para opcionalmente capturar entradas de DLQ.
 
-**Bloco AbortError (`name="AbortError"`)**
-1. **Mensagem fixa, persistente** — todas as 3 entregas têm `error_message === "AbortError: The signal has been aborted"`; `r.error` igual; `status=0`, `succeeded=false`.
-2. **Mensagem variando por tentativa** — `["aborted #1", "aborted #2", "aborted #3"]`; cada delivery reflete sua própria mensagem; `r.error === "AbortError: aborted #3"` (último).
-3. **Mensagem vazia** (`new Error("")` com `name="AbortError"`) — fallback do `describeError` usa `String(e)`; assert: `error_message` começa com `"AbortError: "` e todas as 3 entregas têm o mesmo valor.
+### Mudanças no harness local
+- Adicionar campo `deadLetters: DeadLetterEntry[]` ao `Harness`.
+- Adicionar opção `opts: { withDeadLetter?: boolean }` em `makeHarness`; quando `true`, popular `onDeadLetter` que faz `push` da entry recebida.
+- Importar `DeadLetterEntry` de `./retry.ts`.
 
-**Bloco TimeoutError (`name="TimeoutError"`)**
-4. **Mensagem fixa, persistente** — análogo ao #1 com `"TimeoutError: signal timed out after 8000ms"` em todas as 3 entregas.
-5. **Mensagem variando por tentativa** — `["deadline #1", "deadline #2", "deadline #3"]`; cada delivery reflete sua própria; `r.error` é o último.
-6. **Recovery na 3ª** após 2 TimeoutError → deliveries `[#1, #2]` têm `error_message` com prefixo `"TimeoutError: "` e mensagens corretas; `#3` tem `error_message=null`, `succeeded=true`, `status=200`; `r.error===null`.
+Isso não afeta os 6 testes existentes (não passam `opts`).
 
-### Asserts por teste
-- `error_message` exato (igualdade) por delivery, **separando `name` e `message`** via parsing local `(name, msg) = error_message.split(": ", 2)` para asserts independentes:
-  ```ts
-  const [name, ...rest] = d.error_message!.split(": ");
-  const msg = rest.join(": ");
-  assertEquals(name, "AbortError"); // ou "TimeoutError"
-  assertEquals(msg, expectedMsgForAttempt);
-  ```
-- `h.deliveries.length === MAX_ATTEMPTS` (ou 3 com sucesso na última).
-- Nenhum cross-talk: nenhum AbortError deve aparecer em testes de TimeoutError e vice-versa.
+### Novo teste
+```
+"DLQ após 3 AbortError: last_error exato, attempts=3 e payload preservado (deep-eq + identity + chaves __*)"
+```
+
+**Setup**:
+- `payload = { event: "x", data: { foo: 1, nested: [1, 2] }, __dispatch_id: "trace-abc", __replay: true }`.
+- `fetchImpl = () => { throw makeNamedError("AbortError", "aborted by deadline"); }`.
+- `withDeadLetter: true`.
+
+**Asserts**:
+1. `r.succeeded === false`, `r.attempts === MAX_ATTEMPTS` (3), `r.error === "AbortError: aborted by deadline"`.
+2. `h.deadLetters.length === 1` (chamado exatamente 1×).
+3. Entry da DLQ:
+   - `entry.subscription_id === SUB.id`
+   - `entry.event === "x"`
+   - `entry.attempts === MAX_ATTEMPTS` (3)
+   - `entry.last_status === 0`
+   - `entry.last_error === "AbortError: aborted by deadline"` (igualdade exata, mesmo formato `Name: message` das deliveries)
+   - `entry.total_latency_ms` é número ≥ 0
+4. **Payload preservado**:
+   - `assertEquals(entry.payload, payload)` (deep-eq, inclui `data.nested`).
+   - `entry.payload === payload` (identidade referencial — confirma que `retry.ts` repassa o objeto original sem clonar).
+   - Chaves internas mantidas: `entry.payload.__dispatch_id === "trace-abc"`, `entry.payload.__replay === true` (DLQ recebe o payload **não-sanitizado**, ao contrário do body do fetch).
+5. **Coerência com deliveries**: `h.deliveries[2].error_message === entry.last_error` (DLQ reflete o erro da última tentativa).
 
 ### Não-mudanças
-- `retry.ts`, `index.ts`, `retry_test.ts`, `retry_backoff_sleep_test.ts` permanecem intactos.
+- `retry.ts`, `index.ts`, demais arquivos de teste permanecem intactos.
 
 ### Critério de aceite
-1. 6 novos testes em `retry_error_naming_test.ts`, todos verdes via `supabase--test_edge_functions`.
-2. Cada delivery valida **independentemente** o `name` e a `message` (split do `error_message`).
-3. Cobre AbortError e TimeoutError em 3 padrões cada: mensagem fixa, mensagem variando por tentativa, e (Timeout) recovery.
-4. Suítes existentes (`retry_test.ts`, `retry_backoff_sleep_test.ts`) seguem 100% verdes.
-5. Zero `Math.random` direto.
+1. 1 novo teste verde via `supabase--test_edge_functions`.
+2. `retry_error_naming_test.ts` passa de 6 → 7 testes, todos verdes.
+3. Suítes `retry_test.ts` (52) e `retry_backoff_sleep_test.ts` (9) seguem 100% verdes.
+4. Asserts cobrem simultaneamente: AbortError, `last_error` exato, `attempts=3` e payload (deep-eq + identidade + chaves `__*`).
 
