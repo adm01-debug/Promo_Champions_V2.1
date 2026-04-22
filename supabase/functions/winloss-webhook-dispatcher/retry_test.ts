@@ -701,7 +701,7 @@ interface FanoutHarness {
 
 function makeFanoutHarness(
   routes: Record<string, (attemptForThisUrl: number) => Response>,
-  opts: { withDeadLetter?: boolean } = {},
+  opts: { withDeadLetter?: boolean; rand?: () => number } = {},
 ): FanoutHarness {
   const fetchesByUrl: Record<string, number> = {};
   const capturedInits: Array<{ url: string; init: RequestInit }> = [];
