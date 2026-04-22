@@ -46,7 +46,9 @@ function WebhooksDeadLettersAdminContent() {
   const [filterText, setFilterText] = useState("");
   const [filterSubscriptionId, setFilterSubscriptionId] = useState<string>("all");
   const [filterEvent, setFilterEvent] = useState<string>("all");
+  const [filterErrorGroup, setFilterErrorGroup] = useState<string>("all");
   const [dateRange, setDateRange] = useState<DateRange>("all");
+  const { data: errorGroups } = useDeadLetterErrorGroups();
 
   const subscriptions = subsList.data ?? [];
   const eventOptions = useMemo(() => {
