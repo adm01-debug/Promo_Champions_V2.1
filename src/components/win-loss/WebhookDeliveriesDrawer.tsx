@@ -207,11 +207,24 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
     });
   };
 
-  const handleReplay = (id: string) => requestReplay([id]);
+  const handleReplay = (id: string) => {
+    // Bloqueio por linha: ignora cliques repetidos enquanto este ID já está em voo
+    if (processingIds.has(id)) {
+      toast.info("Esta entrega já está sendo reenviada…");
+      return;
+    }
+    requestReplay([id]);
+  };
 
   const handleReplaySelected = () => {
     if (selected.size === 0) return;
-    requestReplay(Array.from(selected));
+    // Bloqueio por linha: filtra IDs já em processamento para não duplicar
+    const ids = Array.from(selected).filter((id) => !processingIds.has(id));
+    if (ids.length === 0) {
+      toast.info("As entregas selecionadas já estão sendo reenviadas.");
+      return;
+    }
+    requestReplay(ids);
   };
 
   return (
@@ -287,12 +300,13 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                 const isPending = (pendingId === d.id && isReplaying) || isProcessing;
                 const isChecked = selected.has(d.id);
                 const checkboxDisabled =
-                  d.succeeded || isReplaying || (atLimit && !isChecked);
+                  d.succeeded || isProcessing || (atLimit && !isChecked);
                 const result = lastResults.get(d.id);
                 const reqId = requestIds.get(d.id);
                 return (
                   <li
                     key={d.id}
+                    aria-busy={isProcessing}
                     className={cn(
                       "relative flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2 transition-colors overflow-hidden",
                       isProcessing && "bg-primary/5 border-primary/30",
@@ -399,16 +413,22 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span>
+                        <span aria-busy={isProcessing}>
                           <Button
                             size="sm"
                             variant="ghost"
                             className="h-7 w-7 p-0 shrink-0"
-                            disabled={d.succeeded || isPending || isReplaying}
+                            // Bloqueio por linha: só desabilita se ESTA delivery está em voo
+                            // (não bloqueia mais quando outra linha está sendo reenviada)
+                            disabled={d.succeeded || isProcessing}
                             onClick={() => handleReplay(d.id)}
-                            aria-label="Reenviar entrega"
+                            aria-label={
+                              isProcessing
+                                ? "Reenvio em andamento para esta entrega"
+                                : "Reenviar entrega"
+                            }
                           >
-                            {isPending ? (
+                            {isProcessing ? (
                               <Loader2 className="h-3 w-3 animate-spin" />
                             ) : (
                               <RotateCw className="h-3 w-3" />
@@ -417,7 +437,11 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                         </span>
                       </TooltipTrigger>
                       <TooltipContent side="left" className="text-xs">
-                        {d.succeeded ? "Já entregue com sucesso" : "Reenviar este evento"}
+                        {d.succeeded
+                          ? "Já entregue com sucesso"
+                          : isProcessing
+                            ? "Reenvio em andamento — aguarde…"
+                            : "Reenviar este evento"}
                       </TooltipContent>
                     </Tooltip>
                     {isProcessing && (
