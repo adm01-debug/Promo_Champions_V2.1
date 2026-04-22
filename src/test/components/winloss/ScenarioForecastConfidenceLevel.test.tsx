@@ -177,33 +177,45 @@ describe("ScenarioForecastChart — seletor de nível de confiança PI (90/95/99
   });
 
   it("a predição central (realistic) NÃO muda ao trocar de nível", async () => {
-    const user = userEvent.setup();
+    // Mount fresco para cada nível evita o ciclo abrir/fechar do Popover Radix
+    // (que dificulta múltiplos cliques sequenciais em testes).
     window.localStorage.setItem(BAND_MODE_KEY, "pi95");
+    window.localStorage.setItem(PI_LEVEL_KEY, "0.95");
     renderChart();
     const r95 = forecastRealistic();
+    cleanup();
+    lastChartData = [];
 
-    await pickLevel(user, "99%");
+    window.localStorage.setItem(PI_LEVEL_KEY, "0.99");
+    renderChart();
     const r99 = forecastRealistic();
     expect(r99).toEqual(r95);
+    cleanup();
+    lastChartData = [];
 
-    await pickLevel(user, "90%");
+    window.localStorage.setItem(PI_LEVEL_KEY, "0.90");
+    renderChart();
     const r90 = forecastRealistic();
     expect(r90).toEqual(r95);
   });
 
   it("chartKey muda ao trocar nível e é idempotente ao restaurar 95%", async () => {
-    const user = userEvent.setup();
     window.localStorage.setItem(BAND_MODE_KEY, "pi95");
+    window.localStorage.setItem(PI_LEVEL_KEY, "0.95");
     renderChart();
     const k95 = getKey();
     expect(k95).toContain("-l0.95-");
+    cleanup();
 
-    await pickLevel(user, "99%");
+    window.localStorage.setItem(PI_LEVEL_KEY, "0.99");
+    renderChart();
     const k99 = getKey();
     expect(k99).toContain("-l0.99-");
     expect(k99).not.toBe(k95);
+    cleanup();
 
-    await pickLevel(user, "95%");
+    window.localStorage.setItem(PI_LEVEL_KEY, "0.95");
+    renderChart();
     expect(getKey()).toBe(k95);
   });
 });
