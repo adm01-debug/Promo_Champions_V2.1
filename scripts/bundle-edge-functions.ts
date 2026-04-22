@@ -1,0 +1,166 @@
+/**
+ * CI bundler check for every Supabase Edge Function.
+ *
+ * Walks `supabase/functions/*` and runs `deno check` on each `index.ts`,
+ * which performs full module resolution + type-check (the same work the
+ * supabase edge runtime does at deploy time). When a function fails, the
+ * script extracts the *failing import URL* from stderr (e.g. an `esm.sh`
+ * 502, an unresolved `npm:` specifier, or a typo in a relative path) and
+ * reports it in a single human-readable summary at the end.
+ *
+ * Exit code 0 → all functions resolve. Exit code 1 → at least one failed
+ * (CI fails). The summary lists every offender with:
+ *   - function name
+ *   - failing import URL (when extractable)
+ *   - first 3 lines of stderr (for context the regex didn't capture)
+ *
+ * Usage:
+ *   deno run --allow-read --allow-run --allow-env --allow-net \
+ *     scripts/bundle-edge-functions.ts
+ *
+ * Env:
+ *   FUNCTIONS_DIR   override the scan root (default: supabase/functions)
+ *   ONLY            comma-separated list of function names to check
+ *                   (e.g. ONLY=lead-scoring,dispatch-webhook)
+ */
+
+const FUNCTIONS_DIR = Deno.env.get("FUNCTIONS_DIR") ?? "supabase/functions";
+const ONLY = (Deno.env.get("ONLY") ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+interface CheckResult {
+  fn: string;
+  ok: boolean;
+  failingImport: string | null;
+  stderrHead: string;
+}
+
+/** Best-effort extraction of the offending import URL from `deno check` stderr.
+ *  Covers the formats Deno 1.x and 2.x emit for: network failures, unresolved
+ *  npm: specifiers, missing relative imports, and integrity drift. */
+function extractFailingImport(stderr: string): string | null {
+  const patterns: RegExp[] = [
+    // "error: Module not found "https://esm.sh/..."
+    /Module not found\s+"([^"]+)"/,
+    // "error: Import 'npm:foo' failed: ..."
+    /Import\s+'([^']+)'\s+failed/,
+    // "Caused by: error sending request for url (https://...)"
+    /error sending request for url\s+\(([^)]+)\)/,
+    // "Specifier "..." was not found"
+    /Specifier\s+"([^"]+)"\s+was not found/i,
+    // "Relative import path "..." not prefixed with..."
+    /Relative import path\s+"([^"]+)"/,
+    // Generic fallback: first quoted URL-looking token after "error"
+    /error[^\n]*?["'`](https?:\/\/[^"'`\s]+|npm:[^"'`\s]+)["'`]/i,
+  ];
+  for (const re of patterns) {
+    const m = stderr.match(re);
+    if (m?.[1]) return m[1];
+  }
+  return null;
+}
+
+async function checkFunction(fn: string, indexPath: string): Promise<CheckResult> {
+  const cmd = new Deno.Command("deno", {
+    args: ["check", "--quiet", indexPath],
+    stdout: "piped",
+    stderr: "piped",
+  });
+  const { code, stderr } = await cmd.output();
+  const stderrText = new TextDecoder().decode(stderr);
+  if (code === 0) {
+    return { fn, ok: true, failingImport: null, stderrHead: "" };
+  }
+  return {
+    fn,
+    ok: false,
+    failingImport: extractFailingImport(stderrText),
+    stderrHead: stderrText.split("\n").slice(0, 3).join("\n").trim(),
+  };
+}
+
+async function listFunctions(): Promise<Array<{ fn: string; indexPath: string }>> {
+  const out: Array<{ fn: string; indexPath: string }> = [];
+  for await (const entry of Deno.readDir(FUNCTIONS_DIR)) {
+    if (!entry.isDirectory) continue;
+    if (entry.name.startsWith("_")) continue; // skip _shared/
+    if (ONLY.length > 0 && !ONLY.includes(entry.name)) continue;
+    const indexPath = `${FUNCTIONS_DIR}/${entry.name}/index.ts`;
+    try {
+      const stat = await Deno.stat(indexPath);
+      if (stat.isFile) out.push({ fn: entry.name, indexPath });
+    } catch {
+      // No index.ts — skip silently (e.g. test-only directories).
+    }
+  }
+  return out.sort((a, b) => a.fn.localeCompare(b.fn));
+}
+
+const targets = await listFunctions();
+console.log(`▶ Bundling ${targets.length} edge function(s) from ${FUNCTIONS_DIR}\n`);
+
+const start = Date.now();
+const results: CheckResult[] = [];
+// Bounded concurrency: 6 parallel checks keeps CPU/network sane on CI.
+const CONCURRENCY = 6;
+let cursor = 0;
+async function worker() {
+  while (cursor < targets.length) {
+    const i = cursor++;
+    const { fn, indexPath } = targets[i];
+    const r = await checkFunction(fn, indexPath);
+    results.push(r);
+    process.stdout.write(r.ok ? "." : "F");
+  }
+}
+// deno-lint-ignore no-explicit-any
+const process: any = { stdout: { write: (s: string) => Deno.stdout.writeSync(new TextEncoder().encode(s)) } };
+await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+console.log(`\n\n⏱  Completed in ${((Date.now() - start) / 1000).toFixed(1)}s`);
+
+const failed = results.filter((r) => !r.ok).sort((a, b) => a.fn.localeCompare(b.fn));
+const passed = results.length - failed.length;
+
+console.log(`\n✅ ${passed} passed   ❌ ${failed.length} failed   (total ${results.length})`);
+
+if (failed.length > 0) {
+  console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("Failed functions (with offending import URL where detected):");
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  for (const f of failed) {
+    console.log(`  ✗ ${f.fn}`);
+    console.log(`     import : ${f.failingImport ?? "(unable to extract — see stderr below)"}`);
+    if (f.stderrHead) {
+      const indented = f.stderrHead.split("\n").map((l) => `         ${l}`).join("\n");
+      console.log(`     stderr :\n${indented}`);
+    }
+    console.log("");
+  }
+
+  // Group by failing import to spot systemic outages (e.g. "esm.sh is down").
+  const byImport = new Map<string, string[]>();
+  for (const f of failed) {
+    const key = f.failingImport ?? "(unknown)";
+    if (!byImport.has(key)) byImport.set(key, []);
+    byImport.get(key)!.push(f.fn);
+  }
+  if (byImport.size > 0) {
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("Grouped by failing import (systemic vs. one-off):");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    const sorted = [...byImport.entries()].sort((a, b) => b[1].length - a[1].length);
+    for (const [imp, fns] of sorted) {
+      console.log(`  ${fns.length}× ${imp}`);
+      for (const fn of fns.slice(0, 5)) console.log(`       - ${fn}`);
+      if (fns.length > 5) console.log(`       … and ${fns.length - 5} more`);
+      console.log("");
+    }
+  }
+
+  Deno.exit(1);
+}
+
+console.log("\n🎉 All edge functions resolve cleanly.");
+Deno.exit(0);
