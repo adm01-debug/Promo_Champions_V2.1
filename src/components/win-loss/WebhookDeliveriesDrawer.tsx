@@ -294,7 +294,7 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                 const isPending = (pendingId === d.id && isReplaying) || isProcessing;
                 const isChecked = selected.has(d.id);
                 const checkboxDisabled =
-                  d.succeeded || isReplaying || (atLimit && !isChecked);
+                  d.succeeded || isProcessing || (atLimit && !isChecked);
                 const result = lastResults.get(d.id);
                 const reqId = requestIds.get(d.id);
                 return (
