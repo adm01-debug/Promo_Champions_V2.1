@@ -69,6 +69,34 @@ function buildDeps(
   };
 }
 
+/**
+ * Standard response envelope. Every non-OPTIONS response — success or error —
+ * includes the same four canonical fields so clients can rely on a stable
+ * troubleshooting payload:
+ *   { requestId, error, dispatched, results }
+ *
+ * On success, `error` is null. On error, `dispatched` is 0 and `results` is [].
+ * Extra fields (succeeded, failed, etc.) may be appended for richer telemetry
+ * but the four canonical keys are always present.
+ */
+function envelope(
+  requestId: string,
+  status: number,
+  fields: { error?: string | null; dispatched?: number; results?: unknown[]; extra?: Record<string, unknown> } = {},
+): Response {
+  const body = {
+    requestId,
+    error: fields.error ?? null,
+    dispatched: fields.dispatched ?? 0,
+    results: fields.results ?? [],
+    ...(fields.extra ?? {}),
+  };
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
+  });
+}
+
 export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -80,10 +108,7 @@ export const handler = async (req: Request): Promise<Response> => {
     const event = String(payload.event ?? "");
     if (!event) {
       structuredLog("warn", { msg: "invalid_payload", reason: "missing_event" }, requestId);
-      return new Response(JSON.stringify({ error: "event required", requestId }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
-      });
+      return envelope(requestId, 400, { error: "event required" });
     }
 
     const targetSubId = typeof payload.__target_subscription_id === "string" ? payload.__target_subscription_id : null;
