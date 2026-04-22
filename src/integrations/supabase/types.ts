@@ -13878,6 +13878,7 @@ export type Database = {
           fired_at: string
           id: string
           kind: string
+          request_id: string | null
           subscription_id: string
         }
         Insert: {
@@ -13885,6 +13886,7 @@ export type Database = {
           fired_at?: string
           id?: string
           kind: string
+          request_id?: string | null
           subscription_id: string
         }
         Update: {
@@ -13892,6 +13894,7 @@ export type Database = {
           fired_at?: string
           id?: string
           kind?: string
+          request_id?: string | null
           subscription_id?: string
         }
         Relationships: [
@@ -13913,6 +13916,7 @@ export type Database = {
           last_error: string | null
           last_replay_at: string | null
           last_replay_error: string | null
+          last_replay_request_id: string | null
           last_replay_status: number | null
           last_status: number
           payload: Json
@@ -13931,6 +13935,7 @@ export type Database = {
           last_error?: string | null
           last_replay_at?: string | null
           last_replay_error?: string | null
+          last_replay_request_id?: string | null
           last_replay_status?: number | null
           last_status: number
           payload: Json
@@ -13949,6 +13954,7 @@ export type Database = {
           last_error?: string | null
           last_replay_at?: string | null
           last_replay_error?: string | null
+          last_replay_request_id?: string | null
           last_replay_status?: number | null
           last_status?: number
           payload?: Json

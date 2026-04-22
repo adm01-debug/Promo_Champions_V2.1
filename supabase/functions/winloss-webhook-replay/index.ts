@@ -83,6 +83,7 @@ async function persistDlqOutcome(
   supabase: SupabaseClient,
   row: SourceRow,
   result: { succeeded: boolean; status: number; error: string | null },
+  requestId: string,
 ): Promise<void> {
   const update: Record<string, unknown> = {
     status: result.succeeded ? "replayed" : "pending",
@@ -90,13 +91,14 @@ async function persistDlqOutcome(
     last_replay_at: new Date().toISOString(),
     last_replay_status: result.status,
     last_replay_error: result.succeeded ? null : result.error,
+    last_replay_request_id: requestId,
   };
   const { error } = await supabase
     .from("winloss_webhook_dead_letters")
     .update(update)
     .eq("id", row.id);
   if (error) {
-    jlog("error", { msg: "dlq_outcome_persist_failed", id: row.id, ...describeError(error) });
+    jlog("error", { msg: "dlq_outcome_persist_failed", id: row.id, requestId, ...describeError(error) });
   }
 }
 
@@ -215,11 +217,16 @@ export const handler = async (req: Request): Promise<Response> => {
           ...row.payload,
           event: row.event,
           __target_subscription_id: row.subscription_id,
+          // Propagate the replay's correlation id into the dispatcher so the
+          // entire flow (replay → dispatch → delivery rows → DLQ updates) is
+          // grouped under one requestId end-to-end.
+          __request_id: requestId,
         };
         if (source === "dlq") dispatchBody.__replay_of = row.id;
 
         const { data, error } = await supabase.functions.invoke("winloss-webhook-dispatcher", {
           body: dispatchBody,
+          headers: { "X-Request-Id": requestId },
         });
         if (error) throw error;
 
@@ -245,7 +252,7 @@ export const handler = async (req: Request): Promise<Response> => {
             succeeded,
             status: outcome.status,
             error: outcome.error,
-          });
+          }, requestId);
         }
       } catch (e) {
         const d = describeError(e);
@@ -257,7 +264,7 @@ export const handler = async (req: Request): Promise<Response> => {
             succeeded: false,
             status: 0,
             error: errMsg,
-          });
+          }, requestId);
         }
 
         results.push({

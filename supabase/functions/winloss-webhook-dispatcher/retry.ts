@@ -69,6 +69,8 @@ export interface DispatchDeps {
   now?: () => number;
   rand?: () => number;
   log?: LogFn;
+  /** Correlation id propagated to receivers via X-Request-Id header. */
+  requestId?: string;
 }
 
 /**
@@ -100,7 +102,7 @@ export async function dispatchOne(
   payload: Record<string, unknown>,
   deps: DispatchDeps,
 ): Promise<DispatchResult> {
-  const { fetchFn, sleep, insertDelivery, updateSubscription, onDeadLetter, now = Date.now, rand = Math.random, log } = deps;
+  const { fetchFn, sleep, insertDelivery, updateSubscription, onDeadLetter, now = Date.now, rand = Math.random, log, requestId } = deps;
   const outbound = sanitizeOutboundPayload(payload);
   const body = JSON.stringify({ ...outbound, dispatched_at: new Date().toISOString() });
   const event = String(payload.event ?? "unknown");
@@ -134,6 +136,8 @@ export async function dispatchOne(
         headers: {
           "Content-Type": "application/json",
           "X-Winloss-Event": event,
+          "X-Winloss-Subscription-Id": sub.id,
+          ...(requestId ? { "X-Request-Id": requestId } : {}),
           ...(sub.secret ? { "X-Winloss-Signature": sub.secret } : {}),
         },
         body,

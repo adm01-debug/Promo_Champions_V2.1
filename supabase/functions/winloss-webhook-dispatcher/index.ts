@@ -53,6 +53,7 @@ function buildDeps(
             last_replay_at: new Date().toISOString(),
             last_replay_status: entry.last_status,
             last_replay_error: entry.last_error,
+            last_replay_request_id: requestId,
           })
           .eq("id", replayOf);
       } else {
@@ -69,6 +70,7 @@ function buildDeps(
       }
     },
     log: (level: LogLevel, data: Record<string, unknown>) => structuredLog(level, data, requestId),
+    requestId,
   };
 }
 
@@ -100,14 +102,25 @@ function envelope(
   });
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const requestId = crypto.randomUUID();
+  // Honor an inbound X-Request-Id header (or payload.__request_id) so internal
+  // callers — like winloss-webhook-replay — can stitch the entire flow under
+  // one correlation id end-to-end. Falls back to a freshly generated UUID.
+  const inboundHeaderId = req.headers.get("x-request-id") ?? req.headers.get("X-Request-Id");
+  let requestId = inboundHeaderId && UUID_RE.test(inboundHeaderId)
+    ? inboundHeaderId
+    : crypto.randomUUID();
   const requestStart = Date.now();
 
   try {
     const payload = await req.json();
+    const inboundPayloadId = typeof payload.__request_id === "string" ? payload.__request_id : null;
+    if (inboundPayloadId && UUID_RE.test(inboundPayloadId)) requestId = inboundPayloadId;
+
     const event = String(payload.event ?? "");
     if (!event) {
       structuredLog("warn", { msg: "invalid_payload", reason: "missing_event" }, requestId);
@@ -201,6 +214,7 @@ export const handler = async (req: Request): Promise<Response> => {
           last_replay_at: new Date().toISOString(),
           last_replay_status: results[0].status,
           last_replay_error: null,
+          last_replay_request_id: requestId,
         })
         .eq("id", replayOf);
     }
