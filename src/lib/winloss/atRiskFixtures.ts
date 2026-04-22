@@ -370,6 +370,34 @@ export const SCENARIOS: Scenario[] = [
       actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
     },
   },
+  {
+    name: "competitor_dominant_high",
+    story:
+      "Negotiation há 75d em leilão público com ticket=31k (centro do perfil 'Pressão competitiva'). Pattern competitor é selecionado como bestLoss por proximidade de avg_amount=31k, e o sinal COMPETITOR_PRESSURE entra em reasons via source 'leilao_publico'. Confidence 0.74 do pattern demote a severity para 'high' (não critical), então a ação esperada é a de tom 'high'.",
+    deal: {
+      id: "s12",
+      client_name: "BidWar Telecom",
+      amount: 31000,
+      status: "negotiation",
+      category: "enterprise",
+      source: "leilao_publico",
+      updated_at: daysAgo(75),
+      created_at: daysAgo(140),
+    },
+    expect: {
+      included: true,
+      // raw≈95 × conf 0.74 ≈ 70 → high.
+      minScore: 60,
+      maxScore: 80,
+      // O dominant_type é loss_factor/stuck_stage (engine não usa "competitor" como dominant);
+      // mas o matched_pattern.label deve carregar a família "Pressão competitiva".
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      matchedPatternLabelIncludes: "Pressão competitiva",
+      reasonsInclude: ["75 dias", "competitiva"],
+      // high severity (loss_factor/stuck_stage) → "48h…valor percebido" (sem urgência critical).
+      actionIncludes: ["48h", "valor", "percebido"],
+    },
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
