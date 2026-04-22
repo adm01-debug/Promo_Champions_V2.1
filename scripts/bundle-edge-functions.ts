@@ -105,6 +105,7 @@ const start = Date.now();
 const results: CheckResult[] = [];
 // Bounded concurrency: 6 parallel checks keeps CPU/network sane on CI.
 const CONCURRENCY = 6;
+const encoder = new TextEncoder();
 let cursor = 0;
 async function worker() {
   while (cursor < targets.length) {
@@ -112,11 +113,9 @@ async function worker() {
     const { fn, indexPath } = targets[i];
     const r = await checkFunction(fn, indexPath);
     results.push(r);
-    process.stdout.write(r.ok ? "." : "F");
+    Deno.stdout.writeSync(encoder.encode(r.ok ? "." : "F"));
   }
 }
-// deno-lint-ignore no-explicit-any
-const process: any = { stdout: { write: (s: string) => Deno.stdout.writeSync(new TextEncoder().encode(s)) } };
 await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 console.log(`\n\n⏱  Completed in ${((Date.now() - start) / 1000).toFixed(1)}s`);
 
