@@ -1,53 +1,40 @@
 
 
-## Legenda dinâmica sobreposta ao gráfico (fórmula + parâmetros ativos)
+## Testes: alternância SEE ↔ PI 95% remonta o gráfico e altera bandas
 
 ### Objetivo
-Hoje a fórmula ativa só aparece como texto fino no header e detalhada no painel de auditoria colapsado. Quando o usuário olha direto pro gráfico (print, screenshot, apresentação), não há indicação visual de qual modo está ativo. Adicionar uma **legenda compacta sobreposta ao canto do plot** com a fórmula resumida e os parâmetros principais — sempre visível, sem precisar abrir nada.
+Garantir, no nível de componente, que ao trocar o modo de banda no `ScenarioForecastChart`:
+1. O gráfico **remonta** (chartKey muda — Recharts reseta escalas/cache).
+2. As **larguras das bandas** dos pontos de previsão mudam de fato (não é só rótulo cosmético).
+3. A **predição central** (`realistic`) permanece idêntica — só a incerteza muda.
+4. O comportamento é **idempotente** (voltar de PI→SEE restaura a chave original).
 
-### Conteúdo da legenda
+### Arquivo único
 
-Pequeno chip no canto superior direito da área do gráfico, com 3 linhas:
+**`src/test/components/winloss/ScenarioForecastBandModeSwitch.test.tsx`** (novo, ~180 linhas)
 
-**Modo SEE**
-```
-SEE · ±z·σ
-z = 1.96  (95%)
-σ = 4.2 pp · fit n=12
-```
+Estende o stub de `recharts` já usado nas outras suítes para também **capturar `props.data`** do `ComposedChart` numa variável `lastChartData` mutável, atualizada a cada render. Isso permite inspecionar `realistic`/`optimistic`/`pessimistic` diretamente, sem depender do DOM do gráfico.
 
-**Modo PI 95%**
-```
-PI 95% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)
-t = 2.18  (gl=10)
-σ = 4.2 pp · fit n=12
-```
+### Casos (8 testes)
 
-- Largura ~220px, fundo `bg-popover/85` com `backdrop-blur-sm`, borda `border-border/60`, `rounded-md`, padding `px-2 py-1.5`, números em `text-[10px] font-mono tabular-nums`.
-- Posicionamento: `absolute top-2 right-3 z-10` dentro de um wrapper `relative` ao redor do `ResponsiveContainer`.
-- Primeira linha (fórmula) usa `text-foreground` + ícone `Sigma` 12px à esquerda; demais linhas em `text-muted-foreground`.
-- `aria-live="polite"` com label completo para leitores de tela ("Fórmula ativa: PI 95%, t crítico 2.18, σ 4.2 pp em 12 períodos").
-- `hidden sm:block` em viewport <640px (mobile mantém apenas o `<span>` do header para não disputar espaço).
+1. **Prefixo da chave muda** — `scenario-see-…` → `scenario-pi95-…` ao clicar no toggle PI 95%.
+2. **Hash da assinatura muda** — sufixo `-[0-9a-f]{8}` da chave é diferente entre os dois modos (prova que o payload completo dos pontos mudou, não só o label).
+3. **Idempotência SEE → PI → SEE** — voltar para SEE restaura **exatamente** a chave inicial.
+4. **PI 95% > SEE em largura** — para cada step de previsão, `optimistic - pessimistic` em PI 95% é estritamente maior que em SEE com z=1 (multiplicador t-Student > 1).
+5. **PI 95% se alarga ao longo do horizonte** — sequência de larguras é não-decrescente; última > primeira (incerteza acumulada via `(x−x̄)²/Sxx`).
+6. **Histórico colapsado nos dois modos** — `optimistic === pessimistic` para todo `!isForecast`.
+7. **Predição central inalterada** — `realistic[]` dos pontos `isForecast` é idêntico em SEE e PI 95% (a reta OLS não muda; só a banda).
+8. **Ida e volta rápida** — sequência click→click→assert prova que não há estado preso intermediário.
 
-### Mudança única
-
-**`src/components/win-loss/ScenarioForecastChart.tsx`**
-
-1. Novo subcomponente local `ActiveFormulaBadge` (~30 linhas) recebendo `bandMode`, `confidenceZ`, `tCritical`, `dof`, `stdDev`, `fitN`, `zPctLabel`. Renderiza JSX condicional ao modo.
-2. Envolver `<ResponsiveContainer>` (linha 424) num `<div className="relative h-full w-full">` e posicionar `<ActiveFormulaBadge … />` como `absolute top-2 right-3 z-10`.
-3. Adicionar `sm:hidden` ao `<span>` do header (linhas 413-420) para evitar duplicação visual em viewports onde a badge aparece.
-4. Estados `fitN < 3` (linha 237) e empty (linha 219): badge **não** é renderizada — esses estados já têm sua própria mensagem central no card.
-
-### Não-mudanças
-- `useWinLossScenarios`, `buildScenarioChartKey`, debounce, persistência localStorage, painel de auditoria, modal explicativo, tooltips dos toggles — intactos.
-- Sem mudança em testes existentes; eles validam `chartKey` via `data-chart-key`, não o conteúdo do header.
-- Sem nova string traduzida; texto inline PT-BR alinhado ao restante do card.
+### Mudanças
+- **Único arquivo novo**: o teste acima.
+- Nenhuma alteração em código de produção.
+- Stub de `recharts` é local ao arquivo (`vi.mock` com escopo do módulo) — não afeta outras suítes.
 
 ### Critério de aceite
-1. `bandMode="see"` + `z=1.96`: badge mostra `SEE · ±z·σ` / `z = 1.96 (95%)` / `σ = X pp · fit n=N`.
-2. Trocar para `bandMode="pi95"`: badge atualiza para `PI 95% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)` / `t = X (gl=N)` / `σ = X pp · fit n=N`.
-3. Mudar z no popover SEE: linha 2 da badge atualiza instantaneamente.
-4. Mudar horizonte: `t` recalcula via `tCritical` do hook; badge reflete.
-5. Em viewport `<640px` a badge desaparece e o `<span>` do header continua visível.
-6. Suíte completa segue verde — nenhum teste tocava nesse `<span>`.
+1. 8 testes verdes em `ScenarioForecastBandModeSwitch.test.tsx`.
+2. Suítes existentes (`ScenarioForecastChartKey`, `ScenarioForecastPersistence`, `ScenarioChartKey`, `useDebouncedValue`) seguem verdes.
+3. Se uma futura regressão tornar a banda PI 95% colapsada (igual à SEE), o teste 4 falha.
+4. Se a predição central começar a oscilar entre modos (bug onde `bandMode` afeta `slope`), o teste 7 falha.
+5. Se o `chartKey` deixar de incluir `bandMode` no payload do hash, o teste 2 falha.
 
