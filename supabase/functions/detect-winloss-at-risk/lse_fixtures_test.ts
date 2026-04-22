@@ -53,7 +53,7 @@ for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFam
       }
 
       for (const needle of c.expect.reasonsInclude ?? []) {
-        const hit = reasons.some((r) => includesCI(r, needle));
+        const hit = reasons.some((r) => includesNormalized(r, needle));
         assert(hit, `reason missing "${needle}" — got: ${reasons.join(" | ")}`);
       }
 
