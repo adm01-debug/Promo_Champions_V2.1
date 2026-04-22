@@ -8,6 +8,62 @@ export function includesCI(haystack: string, needle: string): boolean {
 }
 
 /**
+ * Normalize a string for fuzzy substring matching in `reasonsInclude` assertions.
+ *
+ * Pipeline:
+ *   1. NFD + strip combining marks → diacritics removed (Preço → Preco).
+ *   2. Lowercase.
+ *   3. Apply a tiny PT/EN stemmer to each token (≥4 chars):
+ *        - ções/ção (post-strip: "coes"/"cao") → "ca"
+ *        - mente / ando / endo / indo / ado / ada / ido / ida / oso / osa → drop
+ *        - plural -es / -s drop (only when root stays ≥3 chars).
+ *      The goal is NOT linguistic correctness — it's collapsing the most common
+ *      surface variations the engine produces ("estagnado" vs "estagnada",
+ *      "negociação" vs "negociações", "competitivo" vs "competitiva").
+ *   4. Collapse non-alphanumerics into single spaces and trim.
+ */
+export function normalizeForMatch(input: string): string {
+  const stripped = (input ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return stripped.split(/[^a-z0-9]+/).filter(Boolean).map(stemToken).join(" ").trim();
+}
+
+function stemToken(t: string): string {
+  if (t.length < 4) return t;
+  const suffixes = [
+    "coes", "cao",
+    "mente",
+    "ando", "endo", "indo",
+    "ado", "ada", "ido", "ida",
+    "oso", "osa",
+  ];
+  for (const s of suffixes) {
+    if (t.length >= s.length + 3 && t.endsWith(s)) {
+      if (s === "coes" || s === "cao") return t.slice(0, -s.length) + "ca";
+      return t.slice(0, -s.length);
+    }
+  }
+  if (t.endsWith("es") && t.length > 4) return t.slice(0, -2);
+  if (t.endsWith("s") && t.length > 4) return t.slice(0, -1);
+  return t;
+}
+
+/**
+ * Substring match tolerant to accent / casing / minor inflectional variation.
+ * Use for `reasonsInclude` so small wording shifts in the engine do not break
+ * tests (e.g. "negociação travada" matches "negociações travadas").
+ *
+ * Falls back to `includesCI` when normalization collapses the needle to empty.
+ */
+export function includesNormalized(haystack: string, needle: string): boolean {
+  const n = normalizeForMatch(needle);
+  if (!n) return includesCI(haystack, needle);
+  return normalizeForMatch(haystack).includes(n);
+}
+
+/**
  * `actionIncludes` accepts three shapes (in increasing expressiveness):
  *   1. `string`              — substring must appear (single AND).
  *   2. `string[]`            — at least one substring must appear (pure OR).
