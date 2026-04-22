@@ -56,6 +56,30 @@ const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
 ];
 const DEFAULT_RETENTION_MS = 30_000;
 
+// Mapeamento de event → rótulo amigável (PT-BR).
+// Eventos não mapeados (ou ausentes) caem no fallback "Evento desconhecido".
+const EVENT_LABELS: Record<string, string> = {
+  "winloss.deal.won": "Negócio ganho",
+  "winloss.deal.lost": "Negócio perdido",
+  "winloss.deal.updated": "Negócio atualizado",
+  "winloss.deal.stage_changed": "Mudança de estágio",
+  "winloss.deal.at_risk": "Negócio em risco",
+  "winloss.forecast.updated": "Forecast atualizado",
+  "winloss.battlecard.created": "Battlecard criado",
+  "quote.created": "Orçamento criado",
+  "quote.updated": "Orçamento atualizado",
+  "quote.accepted": "Orçamento aceito",
+  "quote.rejected": "Orçamento rejeitado",
+};
+
+function getEventLabel(event: string | null | undefined): string {
+  if (!event || event.trim().length === 0 || event === "unknown") {
+    return "Evento desconhecido";
+  }
+  return EVENT_LABELS[event] ?? event;
+}
+
+
 function readStoredRetention(): number | null {
   try {
     const raw = localStorage.getItem(RETENTION_STORAGE_KEY);
@@ -283,45 +307,67 @@ export function WebhookDeliveriesDrawer({
   const [confirm, setConfirm] = useState<{ ids: string[] } | null>(null);
 
   const confirmSummary = useMemo(() => {
-    if (!confirm || !data)
-      return {
-        count: 0,
-        byEvent: [] as { event: string; count: number }[],
-        single: null as null | {
-          id: string;
-          event: string;
-          attempt: number;
-          status: number;
-          error: string | null;
-        },
-      };
+    const empty = {
+      count: 0,
+      byEvent: [] as { event: string; label: string; count: number; unknown: boolean }[],
+      items: [] as { id: string; event: string; label: string; unknown: boolean }[],
+      missingCount: 0,
+      unknownCount: 0,
+      single: null as null | {
+        id: string;
+        event: string;
+        label: string;
+        unknown: boolean;
+        attempt: number;
+        status: number;
+        error: string | null;
+      },
+    };
+    if (!confirm || !data) return empty;
     const idSet = new Set(confirm.ids);
+    const byId = new Map(data.map((d) => [d.id, d] as const));
     const map = new Map<string, number>();
-    let single: {
-      id: string;
-      event: string;
-      attempt: number;
-      status: number;
-      error: string | null;
-    } | null = null;
-    for (const d of data) {
-      if (idSet.has(d.id)) map.set(d.event, (map.get(d.event) ?? 0) + 1);
+    const items: { id: string; event: string; label: string; unknown: boolean }[] = [];
+    let missingCount = 0;
+    let unknownCount = 0;
+    for (const id of confirm.ids) {
+      const d = byId.get(id);
+      const rawEvent = d?.event;
+      const event = rawEvent && rawEvent.trim().length > 0 ? rawEvent : "unknown";
+      const unknown = !d || !rawEvent || rawEvent.trim().length === 0;
+      if (!d) missingCount++;
+      if (unknown) unknownCount++;
+      map.set(event, (map.get(event) ?? 0) + 1);
+      items.push({ id, event, label: getEventLabel(event), unknown });
     }
+    let single: typeof empty.single = null;
     if (confirm.ids.length === 1) {
-      const d = data.find((x) => x.id === confirm.ids[0]);
-      if (d) {
-        single = {
-          id: d.id,
-          event: d.event,
-          attempt: d.attempt,
-          status: d.status,
-          error: d.error_message,
-        };
-      }
+      const id = confirm.ids[0];
+      const d = byId.get(id);
+      const rawEvent = d?.event;
+      const event = rawEvent && rawEvent.trim().length > 0 ? rawEvent : "unknown";
+      const unknown = !d || !rawEvent || rawEvent.trim().length === 0;
+      single = {
+        id,
+        event,
+        label: getEventLabel(event),
+        unknown,
+        attempt: d?.attempt ?? 0,
+        status: d?.status ?? 0,
+        error: d?.error_message ?? (unknown ? "Detalhes da entrega indisponíveis (pode ter sido removida)." : null),
+      };
     }
     return {
       count: confirm.ids.length,
-      byEvent: Array.from(map, ([event, count]) => ({ event, count })).sort((a, b) => b.count - a.count),
+      byEvent: Array.from(map, ([event, count]) => ({
+        event,
+        label: getEventLabel(event),
+        count,
+        unknown: event === "unknown",
+      })).sort((a, b) => b.count - a.count),
+      items,
+      missingCount,
+      unknownCount,
       single,
     };
   }, [confirm, data]);
@@ -943,9 +989,20 @@ export function WebhookDeliveriesDrawer({
                 {confirmSummary.single ? (
                   <div className="rounded-md border bg-muted/30 px-3 py-2 space-y-1.5">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <Badge variant="outline" className="text-[10px] py-0 px-1.5 font-mono">
-                        {confirmSummary.single.event}
+                      <Badge
+                        variant={confirmSummary.single.unknown ? "outline" : "outline"}
+                        className={cn(
+                          "text-[10px] py-0 px-1.5",
+                          confirmSummary.single.unknown && "border-warning/40 text-warning",
+                        )}
+                      >
+                        {confirmSummary.single.label}
                       </Badge>
+                      {!confirmSummary.single.unknown && (
+                        <code className="text-[10px] text-muted-foreground font-mono">
+                          {confirmSummary.single.event}
+                        </code>
+                      )}
                       <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
                         HTTP {confirmSummary.single.status || "—"}
                       </Badge>
@@ -972,11 +1029,70 @@ export function WebhookDeliveriesDrawer({
                     {confirmSummary.byEvent.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {confirmSummary.byEvent.map((b) => (
-                          <Badge key={b.event} variant="outline" className="text-[10px] py-0 px-1.5">
-                            {b.event} · {b.count}
+                          <Badge
+                            key={b.event}
+                            variant="outline"
+                            className={cn(
+                              "text-[10px] py-0 px-1.5",
+                              b.unknown && "border-warning/40 text-warning",
+                            )}
+                            title={b.unknown ? "Evento sem rótulo conhecido" : b.event}
+                          >
+                            {b.label} · {b.count}
                           </Badge>
                         ))}
                       </div>
+                    )}
+                    {confirmSummary.unknownCount > 0 && (
+                      <p className="text-[11px] text-warning flex items-start gap-1">
+                        <span aria-hidden>⚠</span>
+                        <span>
+                          {confirmSummary.unknownCount}{" "}
+                          {confirmSummary.unknownCount === 1
+                            ? "entrega tem evento desconhecido"
+                            : "entregas têm evento desconhecido"}
+                          {confirmSummary.missingCount > 0 &&
+                            ` (${confirmSummary.missingCount} sem detalhes carregados)`}
+                          . O reenvio prosseguirá normalmente.
+                        </span>
+                      </p>
+                    )}
+                    {confirmSummary.items.length > 0 && (
+                      <details className="rounded-md border bg-muted/20 px-2 py-1.5">
+                        <summary className="cursor-pointer text-[11px] font-medium text-foreground hover:text-primary transition-colors">
+                          Ver mapeamento por entrega ({confirmSummary.items.length})
+                        </summary>
+                        <ScrollArea className="mt-1.5 max-h-40">
+                          <ul className="space-y-1 pr-2" aria-label="Mapeamento de eventos por entrega">
+                            {confirmSummary.items.map((it) => (
+                              <li
+                                key={it.id}
+                                className="flex items-center justify-between gap-2 text-[10px]"
+                              >
+                                <span className="font-mono text-muted-foreground shrink-0">
+                                  {it.id.slice(0, 8)}…{it.id.slice(-4)}
+                                </span>
+                                <span className="text-muted-foreground">→</span>
+                                <div className="flex items-center gap-1.5 min-w-0 flex-1 justify-end">
+                                  <span
+                                    className={cn(
+                                      "truncate font-medium",
+                                      it.unknown ? "text-warning" : "text-foreground",
+                                    )}
+                                  >
+                                    {it.label}
+                                  </span>
+                                  {!it.unknown && (
+                                    <code className="text-muted-foreground font-mono shrink-0 opacity-70">
+                                      {it.event}
+                                    </code>
+                                  )}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </ScrollArea>
+                      </details>
                     )}
                   </>
                 )}
