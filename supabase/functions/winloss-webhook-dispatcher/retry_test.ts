@@ -1240,6 +1240,85 @@ Deno.test("fan-out N=20 (escala): total exato de POSTs, X-Winloss-Event em 100% 
   assertEquals(h.updates.length, N, "deve haver 1 updateSubscription por sub");
 });
 
+Deno.test("fan-out: body por subscription corresponde EXATAMENTE ao payload daquela sub (sem reuso/cross-talk)", async () => {
+  // Cenário: cada subscription recebe um payload DIFERENTE no mesmo fan-out concorrente.
+  // O harness captura por URL, então conseguimos provar que o body entregue a cada
+  // subscription é exatamente o payload destinado a ela — sem mistura entre chamadas
+  // (nenhum closure compartilhado, nenhuma referência mutável reaproveitada).
+  const subs = [SUB_A, SUB_B, SUB_C];
+  const h = makeFanoutHarness({
+    [SUB_A.url]: () => new Response("ok", { status: 200 }),
+    [SUB_B.url]: () => new Response("ok", { status: 200 }),
+    [SUB_C.url]: () => new Response("ok", { status: 200 }),
+  });
+
+  // Payloads distintos por subscription: deal_id, event e nested meta diferentes.
+  const payloadByUrl: Record<string, Record<string, unknown>> = {
+    [SUB_A.url]: { event: "winloss.deal.won", deal_id: "deal-A-001", meta: { region: "BR", tier: 1 } },
+    [SUB_B.url]: { event: "winloss.deal.lost", deal_id: "deal-B-002", meta: { region: "US", tier: 2, reason: "price" } },
+    [SUB_C.url]: { event: "winloss.deal.stalled", deal_id: "deal-C-003", meta: { region: "EU", tier: 3, tags: ["a", "b"] } },
+  };
+  // Snapshot serializado ANTES do dispatch — usado para detectar mutação no payload original.
+  const snapshotByUrl: Record<string, string> = Object.fromEntries(
+    Object.entries(payloadByUrl).map(([url, p]) => [url, JSON.stringify(p)]),
+  );
+
+  // Disparo concorrente: cada sub recebe SEU próprio payload.
+  await Promise.all(subs.map((s) => dispatchOne(s, payloadByUrl[s.url], h.deps)));
+
+  // Sanity: 1 POST por sub.
+  assertEquals(h.capturedInits.length, subs.length);
+  for (const s of subs) {
+    assertEquals(h.fetchesByUrl[s.url], 1, `${s.id}: deve ter exatamente 1 POST em ${s.url}`);
+  }
+
+  // Para cada captura, o body parseado deve bater EXATAMENTE com o payload daquela sub.
+  // Conferimos:
+  //   (a) deal_id e event corretos por subscription (sem cross-talk de campos).
+  //   (b) meta (objeto aninhado) deep-equal ao do payload daquela sub.
+  //   (c) campo desconhecido de OUTRA sub não pode aparecer aqui.
+  //   (d) o payload original (snapshot) não foi mutado durante o dispatch.
+  const seenDealIds = new Set<string>();
+  for (const { url, init } of h.capturedInits) {
+    const expected = payloadByUrl[url];
+    assert(expected, `payload esperado ausente para ${url}`);
+    const parsed = JSON.parse(String(init.body)) as Record<string, unknown>;
+
+    // (a) campos primários exatos
+    assertEquals(parsed.event, expected.event, `${url}: event divergente`);
+    assertEquals(parsed.deal_id, expected.deal_id, `${url}: deal_id divergente`);
+
+    // (b) meta deep-equal
+    assertEquals(parsed.meta, expected.meta, `${url}: meta divergente (cross-talk?)`);
+
+    // (c) nenhum deal_id de OUTRA sub vazou
+    for (const [otherUrl, otherPayload] of Object.entries(payloadByUrl)) {
+      if (otherUrl === url) continue;
+      assert(
+        parsed.deal_id !== otherPayload.deal_id,
+        `${url}: vazou deal_id de ${otherUrl} (${String(otherPayload.deal_id)})`,
+      );
+      assert(
+        parsed.event !== otherPayload.event,
+        `${url}: vazou event de ${otherUrl} (${String(otherPayload.event)})`,
+      );
+    }
+
+    seenDealIds.add(String(parsed.deal_id));
+  }
+
+  // Cobertura: cada deal_id distinto chegou exatamente 1 vez (sem duplicação cruzada).
+  assertEquals(seenDealIds.size, subs.length, "cada deal_id distinto deve ter sido visto exatamente 1 vez");
+  for (const url of Object.keys(payloadByUrl)) {
+    assert(seenDealIds.has(String(payloadByUrl[url].deal_id)), `deal_id de ${url} ausente nas capturas`);
+  }
+
+  // (d) Imutabilidade dos payloads originais: snapshots batem após o dispatch.
+  for (const [url, snap] of Object.entries(snapshotByUrl)) {
+    assertEquals(JSON.stringify(payloadByUrl[url]), snap, `${url}: payload original sofreu mutação`);
+  }
+});
+
 Deno.test("fan-out: retries de uma sub não acoplam às outras (sleeps isolados)", async () => {
   const h = makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
