@@ -1,6 +1,6 @@
 // Pure resolvers for whitelisted NLQ tools. Uses caller's Supabase client (RLS applied).
 // deno-lint-ignore-file no-explicit-any
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 
 export type ResolverResult = {
   rows: Record<string, unknown>[];
