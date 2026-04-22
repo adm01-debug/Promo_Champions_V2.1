@@ -68,17 +68,26 @@ function extractFailingImport(stderr: string): string | null {
   return null;
 }
 
+/** Strip ANSI escape sequences (color codes) from `deno check` output so
+ *  pattern matching isn't broken by `^[[0m` between `TS2440` and `[ERROR]`. */
+function stripAnsi(s: string): string {
+  // eslint-disable-next-line no-control-regex
+  return s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, "");
+}
+
 /** Distinguish module-resolution failures (the thing CI must block on) from
  *  pure TypeScript-checking errors (TS#### codes). The bundler check exists to
  *  catch broken imports — TS errors are a separate concern owned by other
  *  tooling and would otherwise produce huge amounts of noise. */
 function classifyFailure(stderr: string): "import" | "typecheck" {
-  if (extractFailingImport(stderr)) return "import";
-  // Deno surfaces TS errors as "TSxxxx [ERROR]:" lines. If every reported error
-  // is a TS code (and no module-resolution signal was matched above), treat as
-  // typecheck-only.
-  const hasTsError = /TS\d{3,5}\s*\[ERROR\]/.test(stderr);
-  if (hasTsError) return "typecheck";
+  const clean = stripAnsi(stderr);
+  // Definitive signal emitted by `deno check` when only TS errors were found
+  // (vs. "Module not found" / "error sending request" for resolution issues).
+  if (/^error:\s*Type checking failed\./m.test(clean)) return "typecheck";
+  if (extractFailingImport(clean)) return "import";
+  // TS error code present but no explicit "Type checking failed" marker
+  // (older Deno versions) → still treat as typecheck.
+  if (/TS\d{3,5}\s*\[ERROR\]/.test(clean)) return "typecheck";
   // Anything else (network down, deno panic, permission error) → treat as
   // import-class so it blocks CI rather than passing silently.
   return "import";
