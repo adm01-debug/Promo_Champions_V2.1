@@ -1,0 +1,70 @@
+name: Edge Functions Bundle Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+      - 'scripts/bundle-edge-functions.ts'
+      - '.github/workflows/edge-functions-bundle.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+      - 'scripts/bundle-edge-functions.ts'
+      - '.github/workflows/edge-functions-bundle.yml'
+
+# Cancel in-flight runs when a new commit is pushed to the same branch/PR.
+concurrency:
+  group: edge-bundle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle:
+    name: Bundle every edge function & report failing imports
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Cache the Deno module download directory so repeat runs are fast and
+      # network blips don't masquerade as bundle failures.
+      - name: Cache Deno dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/deno
+          key: deno-${{ runner.os }}-${{ hashFiles('supabase/functions/**/*.ts', 'scripts/bundle-edge-functions.ts') }}
+          restore-keys: |
+            deno-${{ runner.os }}-
+
+      - name: Bundle every edge function
+        id: bundle
+        run: |
+          deno run --allow-read --allow-run --allow-env --allow-net \
+            scripts/bundle-edge-functions.ts | tee bundle-report.txt
+        # The script exits 1 when any function fails to bundle; let the step
+        # propagate that exit code so the job (and PR check) goes red.
+
+      - name: Upload bundle report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edge-functions-bundle-report
+          path: bundle-report.txt
+          retention-days: 14
+
+      - name: Append summary to job
+        if: always()
+        run: |
+          {
+            echo "## Edge Functions Bundle Check"
+            echo ""
+            echo '```'
+            tail -n 80 bundle-report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
