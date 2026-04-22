@@ -565,6 +565,56 @@ Deno.test("dispatchOne: onDeadLetter NÃO chamado quando deps.onDeadLetter é un
   assertEquals(h.deadLetters.length, 0);
 });
 
+Deno.test("dispatchOne: sem onDeadLetter, NÃO há inserção/log de DLQ e execução não lança", async () => {
+  // Captura todos os logs estruturados emitidos pelo dispatcher e verifica que
+  // nenhum evento relacionado à DLQ foi registrado quando deps.onDeadLetter é undefined.
+  const logs: Array<{ level: string; data: Record<string, unknown> }> = [];
+  const deliveries: DeliveryRow[] = [];
+  const updates: Array<{ id: string; status: number }> = [];
+
+  const deps: DispatchDeps = {
+    fetchFn: (() => Promise.resolve(new Response("err", { status: 500 }))) as typeof fetch,
+    sleep: () => Promise.resolve(),
+    insertDelivery: (row) => { deliveries.push(row); return Promise.resolve(); },
+    updateSubscription: (id, status) => { updates.push({ id, status }); return Promise.resolve(); },
+    // onDeadLetter intencionalmente OMITIDO (undefined)
+    rand: () => 0,
+    now: () => 0,
+    log: (level, data) => { logs.push({ level, data }); },
+  };
+
+  // Sanity: confirma contrato — onDeadLetter ausente.
+  assertEquals(deps.onDeadLetter, undefined);
+
+  // Não deve lançar mesmo com todas as tentativas falhando.
+  let threw: unknown = null;
+  let result: Awaited<ReturnType<typeof dispatchOne>> | null = null;
+  try {
+    result = await dispatchOne(SUB, PAYLOAD, deps);
+  } catch (e) {
+    threw = e;
+  }
+  assertEquals(threw, null, "dispatchOne não pode lançar quando onDeadLetter está ausente");
+  assert(result !== null);
+  assertEquals(result!.succeeded, false);
+  assertEquals(result!.attempts, MAX_ATTEMPTS);
+
+  // Side-effects normais permanecem: deliveries por tentativa + update final de status.
+  assertEquals(deliveries.length, MAX_ATTEMPTS, "deliveries devem continuar sendo registradas");
+  assert(updates.length >= 1, "updateSubscription ainda deve ocorrer");
+
+  // Nenhum log estruturado deve mencionar dead letter / DLQ.
+  const dlqLogs = logs.filter((l) => {
+    const text = JSON.stringify(l.data).toLowerCase();
+    return text.includes("dead_letter") || text.includes("deadletter") || text.includes("dlq");
+  });
+  assertEquals(
+    dlqLogs.length,
+    0,
+    `nenhum log de DLQ deve ser emitido quando onDeadLetter é undefined; encontrados: ${JSON.stringify(dlqLogs)}`,
+  );
+});
+
 Deno.test("dispatchOne: onDeadLetter recebe payload original deep-equal e SEM mutações entre tentativas", async () => {
   // Payload aninhado e variado para detectar mutações em qualquer nível.
   const ORIGINAL = {
