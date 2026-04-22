@@ -43,6 +43,7 @@ interface Props {
 
 import { toast } from "sonner";
 import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
+import { logReplayValidationFailure } from "@/hooks/win-loss/replayValidationDiagnostics";
 
 const MAX_REPLAY = MAX_REPLAY_IDS;
 
@@ -458,6 +459,10 @@ export function WebhookDeliveriesDrawer({
     }
     const validation = validateReplayIds(ids);
     if (!validation.ok) {
+      logReplayValidationFailure(ids, validation.message, {
+        subscriptionId,
+        source: ids.length === 1 ? "row" : "bulk",
+      });
       toast.error(validation.message);
       return;
     }
