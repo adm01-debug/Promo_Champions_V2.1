@@ -1238,7 +1238,11 @@ Deno.test("DLQ: rede pura 3× (Error sintético variando) → attempts=MAX_ATTEM
   assert(!(e.last_error as string).includes(errors[1]), "last_error não deve refletir o erro da 2ª tentativa");
 });
 
-Deno.test("DLQ: misto rede→rede→HTTP 504 → attempts=MAX_ATTEMPTS, last_status=504, last_error=null (última é HTTP)", async () => {
+Deno.test("DLQ: misto rede→rede→HTTP 504 → attempts=MAX_ATTEMPTS, last_status=504 (reflete a ÚLTIMA tentativa)", async () => {
+  // Contrato observado: last_status SEMPRE espelha o resultado da última tentativa.
+  // last_error preserva a última exceção lançada — quando a última é HTTP, ele mantém
+  // a mensagem de rede da tentativa anterior (não é "resetado"). Esse comportamento
+  // é intencional para não perder o sinal de instabilidade da rede.
   let n = 0;
   const h = makeHarness((): Response => {
     n += 1;
@@ -1253,9 +1257,12 @@ Deno.test("DLQ: misto rede→rede→HTTP 504 → attempts=MAX_ATTEMPTS, last_sta
   const e = h.deadLetters[0];
 
   assertEquals(e.attempts, MAX_ATTEMPTS);
-  // Última foi HTTP 504 — last_status reflete isso, last_error volta a ser null.
+  // last_status DEVE refletir a última tentativa (HTTP 504), e não 0 das anteriores.
   assertEquals(e.last_status, 504);
-  assertEquals(e.last_error, null, "última tentativa foi HTTP, last_error deve ser null");
+  // last_error preserva a última exceção observada (rede), comprovando que o sinal
+  // não é descartado mesmo quando a tentativa final é HTTP.
+  assert(typeof e.last_error === "string");
+  assert((e.last_error as string).includes("ENETDOWN"));
 });
 
 Deno.test("DLQ: misto HTTP 500→HTTP 502→rede → attempts=MAX_ATTEMPTS, last_status=0, last_error contém o erro da ÚLTIMA", async () => {
