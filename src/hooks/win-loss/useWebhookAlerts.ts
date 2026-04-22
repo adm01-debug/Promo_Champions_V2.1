@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type WebhookAlertKind = "consecutive_failures" | "high_retry_rate";
+export type WebhookAlertKind =
+  | "consecutive_failures"
+  | "high_retry_rate"
+  | "attempts_exhausted";
 
 export interface WebhookAlert {
   id: string;
