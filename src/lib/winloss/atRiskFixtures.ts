@@ -422,6 +422,55 @@ export const SCENARIOS: Scenario[] = [
       actionIncludes: ["IMEDIATA", "URGENTE"],
     },
   },
+  {
+    name: "competitor_dominant_critical_via_stagnation",
+    story:
+      "Negotiation há 200d em leilão público, ticket=31k (perfil competitor). bestLoss prioriza pattern com avg_amount mais próximo (competitor, conf 0.74), e raw≈95 × 0.81 ≈ 77 → severity continua 'high' por demote de confidence. Cobre fim-a-fim a família competitor com tom 'high' (48h, diferenciação) — o tier crítico do branch 'competitor' fica coberto pelo competitor_critical_test.ts onde a confidence pode ser controlada.",
+    deal: {
+      id: "s14",
+      client_name: "AuctionMax",
+      amount: 31000,
+      status: "negotiation",
+      category: "government",
+      source: "leilao_publico",
+      updated_at: daysAgo(200),
+      created_at: daysAgo(360),
+    },
+    expect: {
+      included: true,
+      minScore: 60,
+      maxScore: 85,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      matchedPatternLabelIncludes: "Pressão competitiva",
+      reasonsInclude: ["200 dias", "competitiva"],
+      // high severity (demoted) → "48h…valor percebido / diferenciação".
+      actionIncludes: ["48h", "valor", "diferencia"],
+    },
+  },
+  {
+    name: "competitor_dominant_proposal_concorrencia_ativa",
+    story:
+      "Proposal há 180d com source 'concorrencia_ativa' e ticket=31k (perfil competitor). Mesmo padrão de demote por confidence 0.74 → high. Cobre o caminho competitor via outro source string ('concorrencia_ativa') para validar robustez do detector de keywords (substring vs leilao_publico).",
+    deal: {
+      id: "s15",
+      client_name: "RivalCorp Brasil",
+      amount: 31000,
+      status: "proposal",
+      category: "enterprise",
+      source: "concorrencia_ativa",
+      updated_at: daysAgo(180),
+      created_at: daysAgo(300),
+    },
+    expect: {
+      included: true,
+      minScore: 60,
+      maxScore: 85,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      matchedPatternLabelIncludes: "Pressão competitiva",
+      reasonsInclude: ["180 dias", "competitiva"],
+      actionIncludes: ["48h", "valor", "diferencia"],
+    },
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
