@@ -73,7 +73,16 @@ export default function WinLossIntelligence() {
   useWinLossRealtime({ onNewPattern: focusInsights });
 
   const { filters, setFilters, reset } = useWinLossFilters();
-  const { prefs: viewPrefs, update: updateViewPrefs } = useWinLossViewPrefs();
+  const { prefs: viewPrefs, update: updateViewPrefs, reset: resetViewPrefs } = useWinLossViewPrefs();
+  const viewPrefsAreDefault =
+    viewPrefs.granularity === VIEW_PREFS_DEFAULTS.granularity &&
+    viewPrefs.forecastHorizon === VIEW_PREFS_DEFAULTS.forecastHorizon;
+  const handleResetViewPrefs = useCallback(() => {
+    resetViewPrefs();
+    toast.success("Preferências de visualização restauradas", {
+      description: "Granularidade Mensal · Horizonte 3 períodos",
+    });
+  }, [resetViewPrefs]);
   const { data: allRows = [], isLoading } = useFilteredWinLossAnalyses(filters);
 
   // Quick filter overlay state (client-side, doesn't refetch)
