@@ -8,12 +8,13 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription,
 } from "@/components/ui/drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, RotateCcw, Archive, Eye, History } from "lucide-react";
+import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
+import { classifyDeadLetterError } from "@/hooks/win-loss/classifyDeadLetterError";
 import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
