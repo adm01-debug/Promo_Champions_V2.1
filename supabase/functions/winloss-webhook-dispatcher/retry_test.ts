@@ -731,7 +731,7 @@ function makeFanoutHarness(
     insertDelivery: (row) => { deliveries.push(row); return Promise.resolve(); },
     updateSubscription: (id, status) => { updates.push({ id, status }); return Promise.resolve(); },
     onDeadLetter: opts.withDeadLetter ? (entry) => { deadLetters.push(entry); return Promise.resolve(); } : undefined,
-    rand: () => 0,
+    rand: opts.rand ?? (() => 0),
     now: () => 0,
     log: () => {},
   };
