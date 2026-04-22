@@ -915,6 +915,96 @@ Deno.test("fan-out: asserções consolidadas — fetch count por URL + X-Winloss
   assert(seenUrls.has(SUB_A.url) && seenUrls.has(SUB_B.url) && seenUrls.has(SUB_C.url));
 });
 
+Deno.test("fan-out: asserções consolidadas POR SUBSCRIPTION — fetchCount(URL) + X-Winloss-Event + JSON.parse(body).deal_id, sem substring", async () => {
+  // Mistura de cenários: SUB_A 1 sucesso (1 POST), SUB_B falha persistente (MAX_ATTEMPTS POSTs),
+  // SUB_C sucede na 2ª tentativa (2 POSTs). Garante que o teste funciona mesmo com retries.
+  const h = makeFanoutHarness({
+    [SUB_A.url]: () => new Response("ok", { status: 200 }),
+    [SUB_B.url]: () => new Response("err", { status: 500 }),
+    [SUB_C.url]: (attempt) => attempt === 1
+      ? new Response("err", { status: 503 })
+      : new Response("ok", { status: 200 }),
+  });
+
+  const payload = { event: "winloss.deal.lost", deal_id: "deal-consolidado-7", reason: "price" };
+  const subs = [SUB_A, SUB_B, SUB_C];
+  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+
+  // Tabela de expectativas POR subscription (URL canônica como chave de identidade).
+  const expectedByUrl: Record<string, { subId: string; fetchCount: number }> = {
+    [SUB_A.url]: { subId: SUB_A.id, fetchCount: 1 },
+    [SUB_B.url]: { subId: SUB_B.id, fetchCount: MAX_ATTEMPTS },
+    [SUB_C.url]: { subId: SUB_C.id, fetchCount: 2 },
+  };
+
+  // 1) Conjunto de URLs efetivamente chamadas == conjunto esperado (sem URLs estranhas, sem faltas).
+  assertEquals(
+    new Set(Object.keys(h.fetchesByUrl)),
+    new Set(Object.keys(expectedByUrl)),
+    "URLs alvo divergem do esperado",
+  );
+
+  // 2) Para cada subscription: contagem de fetch por URL bate exatamente.
+  for (const [url, exp] of Object.entries(expectedByUrl)) {
+    assertEquals(
+      h.fetchesByUrl[url],
+      exp.fetchCount,
+      `${exp.subId}: esperava ${exp.fetchCount} POST(s) em ${url}, recebeu ${h.fetchesByUrl[url]}`,
+    );
+  }
+
+  // Total de inits capturados == soma das contagens esperadas (não houve POSTs órfãos).
+  const expectedTotal = Object.values(expectedByUrl).reduce((acc, e) => acc + e.fetchCount, 0);
+  assertEquals(h.capturedInits.length, expectedTotal);
+
+  // 3+4) Para CADA init capturado, validar header X-Winloss-Event e body via JSON.parse.
+  // Agrupa por URL para também conferir consistência entre tentativas de uma mesma sub.
+  const initsByUrl: Record<string, RequestInit[]> = {};
+  for (const { url, init } of h.capturedInits) {
+    initsByUrl[url] = initsByUrl[url] ?? [];
+    initsByUrl[url].push(init);
+  }
+
+  for (const [url, exp] of Object.entries(expectedByUrl)) {
+    const inits = initsByUrl[url] ?? [];
+    assertEquals(inits.length, exp.fetchCount, `inits agrupados para ${url}`);
+
+    for (let i = 0; i < inits.length; i += 1) {
+      const init = inits[i];
+      const ctx = `${exp.subId} attempt ${i + 1}`;
+
+      assertEquals(init.method, "POST", `${ctx}: método deve ser POST`);
+
+      const headers = init.headers as Record<string, string>;
+      // Header obrigatório, comparado por igualdade exata (NÃO substring).
+      assertEquals(
+        headers["X-Winloss-Event"],
+        payload.event,
+        `${ctx}: X-Winloss-Event deve ser exatamente "${payload.event}"`,
+      );
+      assertEquals(headers["Content-Type"], "application/json", `${ctx}: Content-Type`);
+
+      // Body parseado como JSON real — sem .includes(), sem regex, sem substring.
+      const rawBody = init.body;
+      assert(typeof rawBody === "string", `${ctx}: body deve ser string serializada`);
+      let parsed: Record<string, unknown>;
+      try {
+        parsed = JSON.parse(rawBody as string) as Record<string, unknown>;
+      } catch (e) {
+        throw new Error(`${ctx}: body não é JSON válido: ${(e as Error).message}`);
+      }
+      assert(
+        parsed !== null && typeof parsed === "object" && !Array.isArray(parsed),
+        `${ctx}: body parseado deve ser objeto`,
+      );
+      // deal_id presente E com valor exato — comparação estrutural, não textual.
+      assertEquals(parsed.deal_id, payload.deal_id, `${ctx}: body.deal_id divergente`);
+      // Coerência cruzada: header.event == body.event.
+      assertEquals(parsed.event, headers["X-Winloss-Event"], `${ctx}: body.event != header X-Winloss-Event`);
+    }
+  }
+});
+
 Deno.test("fan-out: backoff de uma sub falhando NÃO atrasa updateSubscription das demais (medido por id)", async () => {
   // Harness próprio: cada dispatchOne tem deps EXCLUSIVO via closure.
   // sleeps/fetches/updates são amarrados ao subId, não a estado global racy.
