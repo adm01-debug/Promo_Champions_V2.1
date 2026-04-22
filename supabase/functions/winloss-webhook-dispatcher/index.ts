@@ -162,7 +162,16 @@ export const handler = async (req: Request): Promise<Response> => {
         return envelope(requestId, 404, { error: "subscription not found" });
       }
       if (!sub.active) {
-        structuredLog("warn", { msg: "replay_subscription_inactive", subscriptionId: targetSubId }, requestId);
+        structuredLog("warn", {
+          msg: "replay_rejected_inactive_subscription",
+          subscriptionId: targetSubId,
+          event,
+          replay_of: replayOf,
+        }, requestId);
+        return envelope(requestId, 409, {
+          error: "subscription is inactive",
+          extra: { subscriptionId: targetSubId, reason: "inactive_subscription" },
+        });
       }
       targets = [{ id: sub.id as string, url: sub.url as string, events: sub.events as string[], secret: (sub.secret as string | null) ?? null }];
       activeSubsCount = 1;
