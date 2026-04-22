@@ -231,6 +231,8 @@ export const useWinLossScenarios = (
         meanX: 0,
         sxx: 0,
         fitN: n,
+        rSquared: 0,
+        residuals: [],
         bandMode,
         tCritical: bandMode === "pi95" ? tCritical(Math.max(1, n - 2), confidenceLevel) : null,
         bandLabel: labelFor(bandMode),
