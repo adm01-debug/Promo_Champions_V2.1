@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useWinLossScenarios, type BandMode } from "@/hooks/win-loss/useWinLossScenarios";
+import { useWinLossScenarios, type BandMode, type ConfidenceLevel, CONFIDENCE_LEVELS } from "@/hooks/win-loss/useWinLossScenarios";
 import { ScenarioForecastAuditPanel } from "./ScenarioForecastAuditPanel";
 import { ScenarioFormulaExplainerDialog } from "./ScenarioFormulaExplainerDialog";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
@@ -38,12 +38,19 @@ interface Props {
 const BAND_MODE_KEY = "winloss-scenario-bandmode";
 const LEGACY_SEE_OLS_KEY = "winloss-scenario-see-ols-inflation";
 const CONFIDENCE_Z_KEY = "winloss-scenario-confidence-z";
+const PI_LEVEL_KEY = "winloss-scenario-pi-level";
 
 const Z_PRESETS: ReadonlyArray<{ z: number; label: string; pct: string }> = [
   { z: 1.0, label: "68%", pct: "1 desvio-padrão" },
   { z: 1.28, label: "80%", pct: "z = 1.28" },
   { z: 1.645, label: "90%", pct: "z = 1.645" },
   { z: 1.96, label: "95%", pct: "z = 1.96" },
+];
+
+const PI_LEVEL_OPTIONS: ReadonlyArray<{ level: ConfidenceLevel; label: string; hint: string }> = [
+  { level: 0.90, label: "90%", hint: "Banda mais estreita · maior risco de cobertura" },
+  { level: 0.95, label: "95%", hint: "Padrão estatístico · recomendado" },
+  { level: 0.99, label: "99%", hint: "Banda mais ampla · maior segurança" },
 ];
 
 const Z_MIN = 0.5;
@@ -62,6 +69,15 @@ function readConfidenceZ(): number {
   const n = Number(raw);
   if (!Number.isFinite(n) || n < Z_MIN || n > Z_MAX) return 1;
   return n;
+}
+
+function readConfidenceLevel(): ConfidenceLevel {
+  if (typeof window === "undefined") return 0.95;
+  const raw = window.localStorage.getItem(PI_LEVEL_KEY);
+  if (!raw) return 0.95;
+  const n = Number(raw);
+  if (n === 0.90 || n === 0.95 || n === 0.99) return n;
+  return 0.95;
 }
 
 function pctFromZ(z: number): string {
@@ -138,6 +154,7 @@ interface ActiveFormulaBadgeProps {
   dof: number;
   stdDev: number;
   fitN: number;
+  confidenceLevel: ConfidenceLevel;
 }
 
 function ActiveFormulaBadge({
@@ -148,17 +165,21 @@ function ActiveFormulaBadge({
   dof,
   stdDev,
   fitN,
+  confidenceLevel,
 }: ActiveFormulaBadgeProps) {
   const isPi = bandMode === "pi95";
+  const levelPct = Math.round(confidenceLevel * 100);
   const formula = isPi
-    ? "PI 95% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)"
+    ? `PI ${levelPct}% · ±t·σ·√(1+1/n+(x−x̄)²/Sxx)`
     : "SEE · ±z·σ";
   const paramLine = isPi
-    ? `t = ${(tCritical ?? 0).toFixed(2)}  (gl=${dof})`
+    ? `t = ${(tCritical ?? 0).toFixed(2)}  (gl=${dof}, ${levelPct}%)`
     : `z = ${confidenceZ.toFixed(2)}  (${zPctLabel})`;
   const sigmaLine = `σ = ${stdDev.toFixed(1)} pp · fit n=${fitN}`;
-  const a11y = `Fórmula ativa: ${isPi ? "PI 95%" : "SEE"}, ${
-    isPi ? `t crítico ${(tCritical ?? 0).toFixed(2)} com ${dof} graus de liberdade` : `z ${confidenceZ.toFixed(2)} (${zPctLabel})`
+  const a11y = `Fórmula ativa: ${isPi ? `PI ${levelPct}%` : "SEE"}, ${
+    isPi
+      ? `t crítico ${(tCritical ?? 0).toFixed(2)} com ${dof} graus de liberdade no nível ${levelPct} por cento`
+      : `z ${confidenceZ.toFixed(2)} (${zPctLabel})`
   }, sigma ${stdDev.toFixed(1)} pontos percentuais em ${fitN} períodos`;
 
   return (
@@ -189,6 +210,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
   const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
+  const [confidenceLevel, setConfidenceLevel] = useState<ConfidenceLevel>(() => readConfidenceLevel());
   const [explainerOpen, setExplainerOpen] = useState(false);
 
   // Silent migration: drop the legacy `seeUseOlsInflation` key so that
@@ -218,6 +240,14 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [confidenceZ]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(PI_LEVEL_KEY, confidenceLevel.toString());
+    } catch {
+      /* ignore */
+    }
+  }, [confidenceLevel]);
+
   // Debounce only the data input. Internal toggles (horizon/mode/z) stay
   // instant; rapid filter changes from the parent (which mutate `points`)
   // are coalesced into a single OLS recomputation + chart remount.
@@ -228,6 +258,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
       forecastSteps: horizon,
       bandMode,
       confidenceZ,
+      confidenceLevel,
     });
 
   const data = useMemo(
@@ -264,8 +295,9 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         confidenceZ,
         horizon,
         stdDev,
+        confidenceLevel,
       }),
-    [data, stdDev, fitN, bandMode, horizon, confidenceZ],
+    [data, stdDev, fitN, bandMode, horizon, confidenceZ, confidenceLevel],
   );
 
   if (!data.length) {
@@ -368,10 +400,72 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
                     </ToggleGroupItem>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="text-xs max-w-[240px]">
-                    Intervalo de previsão 95% (t·σ·√(1+1/n+(x−x̄)²/Sxx)). Mais conservador, leva em conta a distância do centro dos dados.
+                    Intervalo de previsão com multiplicador t-Student no nível escolhido (90/95/99%). Mais conservador, leva em conta a distância do centro dos dados.
                   </TooltipContent>
                 </UITooltip>
               </ToggleGroup>
+              {bandMode === "pi95" && (
+                <Popover>
+                  <UITooltip>
+                    <TooltipTrigger asChild>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 px-2 text-[10px] font-medium tabular-nums"
+                          aria-label={`Nível de confiança PI: ${Math.round(confidenceLevel * 100)}% · t=${(tCritical ?? 0).toFixed(2)}`}
+                        >
+                          t={(tCritical ?? 0).toFixed(2)}{" "}
+                          <span className="ml-1 text-muted-foreground">({Math.round(confidenceLevel * 100)}%)</span>
+                        </Button>
+                      </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs max-w-[220px]">
+                      Nível de confiança do intervalo de previsão. t-Student é recalculado conforme gl.
+                    </TooltipContent>
+                  </UITooltip>
+                  <PopoverContent align="end" className="w-64 space-y-3">
+                    <div>
+                      <p className="text-xs font-medium mb-2">Nível de confiança PI</p>
+                      <RadioGroup
+                        value={confidenceLevel.toString()}
+                        onValueChange={(v) => {
+                          const n = Number(v);
+                          if (n === 0.90 || n === 0.95 || n === 0.99) setConfidenceLevel(n);
+                        }}
+                      >
+                        {PI_LEVEL_OPTIONS.map((opt) => (
+                          <div key={opt.level} className="flex items-center gap-2">
+                            <RadioGroupItem value={opt.level.toString()} id={`pi-level-${opt.label}`} />
+                            <Label
+                              htmlFor={`pi-level-${opt.label}`}
+                              className="text-xs cursor-pointer flex-1"
+                              title={opt.hint}
+                            >
+                              {opt.label}{" "}
+                              <span className="text-muted-foreground tabular-nums">
+                                (α={(1 - opt.level).toFixed(2)})
+                              </span>
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed border-t pt-2">
+                      90% = banda mais estreita · 95% = padrão · 99% = mais ampla. O multiplicador t é recalculado para cada nível conforme os graus de liberdade.
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full h-7 text-xs"
+                      onClick={() => setConfidenceLevel(0.95)}
+                      disabled={confidenceLevel === 0.95}
+                    >
+                      Restaurar padrão (95%)
+                    </Button>
+                  </PopoverContent>
+                </Popover>
+              )}
               {bandMode === "see" && (
                 <Popover>
                   <UITooltip>
@@ -467,7 +561,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
             title={`${bandLabel} sobre a tendência ajustada com ${fitN} períodos`}
           >
             {bandMode === "pi95" && tCritical != null
-              ? `PI 95% · t=${tCritical.toFixed(2)} · σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`
+              ? `PI ${Math.round(confidenceLevel * 100)}% · t=${tCritical.toFixed(2)} · σ ±${stdDev.toFixed(1)}pp · fit em ${fitN}`
               : `σ ±${stdDev.toFixed(1)}pp · z=${confidenceZ.toFixed(2)} · fit em ${fitN}`}
           </span>
         </CardTitle>
@@ -482,6 +576,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
           dof={dof}
           stdDev={stdDev}
           fitN={fitN}
+          confidenceLevel={confidenceLevel}
         />
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart key={chartKey} data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
@@ -562,6 +657,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         tCritical={tCritical}
         confidenceZ={confidenceZ}
         bandLabel={bandLabel}
+        confidenceLevel={confidenceLevel}
       />
       <ScenarioFormulaExplainerDialog
         open={explainerOpen}

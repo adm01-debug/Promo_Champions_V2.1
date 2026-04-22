@@ -31,6 +31,8 @@ export interface ScenarioChartKeyInput {
   confidenceZ: number;
   horizon: number;
   stdDev: number;
+  /** Confidence level for PI mode (0.90 / 0.95 / 0.99). Default 0.95. */
+  confidenceLevel?: number;
 }
 
 const isBadNumber = (n: unknown): boolean =>
@@ -52,6 +54,7 @@ export function buildScenarioChartKey({
   confidenceZ,
   horizon,
   stdDev,
+  confidenceLevel = 0.95,
 }: ScenarioChartKeyInput): string {
   if (!data || data.length === 0 || fitN === 0) {
     return "scenario-empty";
@@ -80,6 +83,7 @@ export function buildScenarioChartKey({
   const sig = djb2(payload);
   const safeStd = Number.isFinite(stdDev) ? stdDev.toFixed(2) : "0.00";
   const safeZ = Number.isFinite(confidenceZ) ? confidenceZ.toFixed(2) : "1.00";
+  const safeLvl = Number.isFinite(confidenceLevel) ? confidenceLevel.toFixed(2) : "0.95";
 
-  return `scenario-${bandMode}-z${safeZ}-h${horizon}-n${data.length}-fit${fitN}-σ${safeStd}-${sig}${partial ? "-partial" : ""}`;
+  return `scenario-${bandMode}-z${safeZ}-l${safeLvl}-h${horizon}-n${data.length}-fit${fitN}-σ${safeStd}-${sig}${partial ? "-partial" : ""}`;
 }
