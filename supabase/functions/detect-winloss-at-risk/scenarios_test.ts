@@ -204,9 +204,17 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
     // actionIncludes → string=AND single, array=OR (any match).
     const needles = actionNeedles(s.expect.actionIncludes);
     if (needles.length > 0) {
-      const hit = needles.some((n) => includesCI(r.suggested_action, n));
-      if (!hit) {
-        failures.push(`${s.name}: action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`);
+      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
+      if (matched.length === 0) {
+        failures.push(
+          [
+            `${s.name}: action does not contain any expected substring (OR).`,
+            `    score=${r.risk_score} severity=${r.severity} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
+            `    expected (any of): ${JSON.stringify(needles)}`,
+            `    actual action    : "${r.suggested_action}"`,
+            `    reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
+          ].join("\n"),
+        );
       }
     }
   }
