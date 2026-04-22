@@ -398,6 +398,30 @@ export const SCENARIOS: Scenario[] = [
       actionIncludes: ["48h", "valor", "percebido"],
     },
   },
+  {
+    name: "critical_imperative_tokens_e2e",
+    story:
+      "Negotiation há 240d, ticket exato no perfil de loss (28.5k), source 'concorrencia_ativa' — força saturação completa: stagnation=50 + amount=25 + stage=20 = 95 raw, × confidence 0.88 ≈ 84 → severity=critical. Garante end-to-end que a ação sugerida traz ao menos um dos tokens imperativos canônicos (URGENTE para stuck_stage, IMEDIATA para loss_factor) — qual ramo vence depende do dominant pattern, mas o tom imperativo é mandatório.",
+    deal: {
+      id: "s13",
+      client_name: "Imperative Tokens Co.",
+      amount: 28500,
+      status: "negotiation",
+      category: "enterprise",
+      source: "concorrencia_ativa",
+      updated_at: daysAgo(240),
+      created_at: daysAgo(400),
+    },
+    expect: {
+      included: true,
+      minScore: 80,
+      maxScore: 100,
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      reasonsInclude: ["240 dias", "competitiva"],
+      // OR: critical de loss_factor → "IMEDIATA…24h"; critical de stuck_stage → "URGENTE…hoje".
+      actionIncludes: ["IMEDIATA", "URGENTE"],
+    },
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
