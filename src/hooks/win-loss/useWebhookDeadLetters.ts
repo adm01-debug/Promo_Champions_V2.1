@@ -54,11 +54,24 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = "pending") {
 
   const replay = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
-        body: { dead_letter_ids: ids },
-      });
-      if (error) throw error;
-      return data as { requestId: string; results: Array<{ id: string; succeeded: boolean; status: number; error: string | null }> };
+      const CHUNK = 50;
+      const chunks: string[][] = [];
+      for (let i = 0; i < ids.length; i += CHUNK) chunks.push(ids.slice(i, i + CHUNK));
+
+      const aggregated = {
+        requestId: "" as string,
+        results: [] as Array<{ id: string; succeeded: boolean; status: number; error: string | null }>,
+      };
+      for (const chunk of chunks) {
+        const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
+          body: { dead_letter_ids: chunk },
+        });
+        if (error) throw error;
+        const d = data as { requestId: string; results: typeof aggregated.results };
+        if (!aggregated.requestId) aggregated.requestId = d.requestId;
+        aggregated.results.push(...d.results);
+      }
+      return aggregated;
     },
     onSuccess: (data) => {
       const ok = data.results.filter((r) => r.succeeded).length;
