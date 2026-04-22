@@ -70,6 +70,7 @@ function buildDeps(
       }
     },
     log: (level: LogLevel, data: Record<string, unknown>) => structuredLog(level, data, requestId),
+    requestId,
   };
 }
 
