@@ -4,7 +4,7 @@
  * reasons and suggested action all make sense as a coherent story.
  */
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { computeAtRiskDeals, computeDealRisk } from "./scoring.ts";
+import { computeAtRiskDeals, computeDealRisk, severityFromScore } from "./scoring.ts";
 import { LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS } from "./fixtures.ts";
 import { actionNeedles, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
 
