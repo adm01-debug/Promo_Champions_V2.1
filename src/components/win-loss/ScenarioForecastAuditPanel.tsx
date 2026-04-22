@@ -99,10 +99,24 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
   confidenceZ,
   bandLabel,
   confidenceLevel = 0.95,
+  rSquared,
+  residuals = [],
 }: Props) {
   const sign = slope >= 0 ? "+" : "−";
   const equation = `ŷ = ${intercept.toFixed(2)} ${sign} ${Math.abs(slope).toFixed(3)}·x`;
   const levelPct = Math.round(confidenceLevel * 100);
+
+  const r2Display = rSquared === undefined || !Number.isFinite(rSquared)
+    ? "—"
+    : rSquared.toFixed(3);
+  const r2Quality = rSquared === undefined
+    ? ""
+    : rSquared >= 0.7
+      ? " (forte)"
+      : rSquared >= 0.4
+        ? " (moderado)"
+        : " (fraco)";
+  const maxAbsResidual = residuals.reduce((m, r) => Math.max(m, Math.abs(r)), 0);
 
   return (
     <details
@@ -121,6 +135,11 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
           <Row label="Intercept (β₀)" value={`${intercept.toFixed(2)} pp`} hint="Valor previsto em x=0" />
           <Row label="Equação" value={equation} hint="ŷ = β₀ + β₁·x" />
           <Row label="fitN" value={`${fitN} períodos`} hint="Pontos históricos usados no ajuste" />
+          <Row
+            label="R² (coef. determinação)"
+            value={`${r2Display}${r2Quality}`}
+            hint="1 − SSE/SST · proporção da variância explicada pela reta (1 = perfeito)"
+          />
         </div>
         <div>
           <Row label="SSE" value={sse.toFixed(2)} hint="Σ(y − ŷ)² — soma dos quadrados dos resíduos" />
@@ -137,18 +156,31 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
               hint="1.00=68% · 1.28=80% · 1.645=90% · 1.96=95%"
             />
           )}
-          {(
-            <>
-              <Row label="x̄" value={meanX.toFixed(2)} hint="Centro do x usado no fator de inflação OLS" />
-              <Row label="Sxx" value={sxx.toFixed(2)} hint="Σ(x − x̄)²" />
-            </>
-          )}
+          <Row label="x̄" value={meanX.toFixed(2)} hint="Centro do x usado no fator de inflação OLS" />
+          <Row label="Sxx" value={sxx.toFixed(2)} hint="Σ(x − x̄)²" />
         </div>
       </div>
 
+      {residuals.length > 0 && (
+        <div className="mt-3 pt-2 border-t border-border/40">
+          <div className="flex items-baseline justify-between gap-3 mb-1">
+            <span className="text-[11px] text-muted-foreground" title="Resíduo = valor observado − valor predito (y − ŷ)">
+              Resíduos por período
+            </span>
+            <span className="text-[10px] font-mono tabular-nums text-muted-foreground">
+              máx |r| = {maxAbsResidual.toFixed(2)} pp
+            </span>
+          </div>
+          <ResidualsSparkline residuals={residuals} />
+          <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed">
+            <span className="text-success">▲</span> sub-predição (y &gt; ŷ) ·{" "}
+            <span className="text-destructive">▼</span> super-predição (y &lt; ŷ). Padrão aleatório em torno de zero = ajuste saudável.
+          </p>
+        </div>
+      )}
 
       <p className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
-        σ menor = ajuste mais aderente · |slope| baixo = sem tendência clara · SSE cresce com ruído residual.
+        σ menor = ajuste mais aderente · R² alto = reta explica bem · |slope| baixo = sem tendência clara.
       </p>
     </details>
   );
