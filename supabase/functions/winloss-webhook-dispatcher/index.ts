@@ -128,10 +128,7 @@ export const handler = async (req: Request): Promise<Response> => {
         .maybeSingle();
       if (error || !sub) {
         structuredLog("error", { msg: "replay_subscription_missing", subscriptionId: targetSubId, error: error?.message }, requestId);
-        return new Response(JSON.stringify({ error: "subscription not found", requestId }), {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
-        });
+        return envelope(requestId, 404, { error: "subscription not found" });
       }
       if (!sub.active) {
         structuredLog("warn", { msg: "replay_subscription_inactive", subscriptionId: targetSubId }, requestId);
