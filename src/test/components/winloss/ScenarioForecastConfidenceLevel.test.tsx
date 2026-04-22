@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Children, isValidElement, type ReactNode } from "react";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
@@ -91,13 +91,22 @@ const openLevelPopover = async (user: ReturnType<typeof userEvent.setup>) => {
 };
 
 const pickLevel = async (user: ReturnType<typeof userEvent.setup>, label: "90%" | "95%" | "99%") => {
-  await openLevelPopover(user);
-  // Click via id — Radix Popover às vezes fecha o trigger anterior antes do
-  // próximo open completar, fazendo o findByRole oscilar. O id é estável.
+  // Aguarda eventual popover anterior fechar (Radix mantém o portal no DOM
+  // brevemente durante a animação de close).
+  await waitFor(() => {
+    const open = document.querySelector('[data-radix-popper-content-wrapper] [data-state="open"]');
+    if (open) throw new Error("waiting for previous popover to close");
+  }, { timeout: 1500 }).catch(() => { /* ok if none */ });
+
+  await user.click(screen.getByRole("button", { name: /Nível de confiança PI/i }));
+
+  // Aguarda popover abrir e o item específico aparecer com data-state correto.
   const id = `pi-level-${label}`;
-  const radio = await screen.findByRole("radio", { name: new RegExp(`^${label.replace("%", "%")}\\s`) }).catch(() => null);
-  const el = radio ?? document.getElementById(id);
-  if (!el) throw new Error(`Radio for level ${label} not found`);
+  const el = await waitFor(() => {
+    const node = document.getElementById(id);
+    if (!node) throw new Error(`Radio ${label} not yet rendered`);
+    return node;
+  }, { timeout: 2000 });
   await user.click(el as HTMLElement);
 };
 
