@@ -258,6 +258,35 @@ export function WebhookDeadLetterPanel({
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
                   </p>
+                  {(() => {
+                    const last = latestAuditByDl?.get(d.id);
+                    if (!last) return null;
+                    const Icon =
+                      last.status_label === "succeeded"
+                        ? CheckCircle2
+                        : last.status_label === "skipped"
+                        ? MinusCircle
+                        : XCircle;
+                    const tone =
+                      last.status_label === "succeeded"
+                        ? "text-status-success"
+                        : last.status_label === "skipped"
+                        ? "text-muted-foreground"
+                        : "text-destructive";
+                    return (
+                      <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 truncate">
+                        <Icon className={`h-3 w-3 ${tone} shrink-0`} aria-hidden />
+                        <span className="truncate">
+                          Último replay por{" "}
+                          <span className="font-medium text-foreground">
+                            {last.actor_email ?? last.actor_user_id.slice(0, 8) + "…"}
+                          </span>{" "}
+                          · {formatDistanceToNow(new Date(last.created_at), { addSuffix: true, locale: ptBR })}
+                          {last.http_status > 0 ? ` · HTTP ${last.http_status}` : ""}
+                        </span>
+                      </p>
+                    );
+                  })()}
                 </div>
                 <div className="flex flex-col gap-1">
                   <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setPreviewOf(d)} aria-label="Ver payload" title="Ver payload">
