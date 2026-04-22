@@ -920,3 +920,265 @@ export function getDominantPatternForFamily(
 export const DOMINANT_PATTERNS_LIST: DominantPatternEntry[] = Object.values(
   DOMINANT_PATTERNS_BY_FAMILY,
 );
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DEAL_HISTORY_LSE_FIXTURES — "Light / Strong / Edge" catalog.
+//
+// Sister catalog to DEAL_HISTORY_FIXTURES, organized strictly by *intensity*
+// across three deal-history families: pricing, negotiation, churn. Each group
+// declares a single expected dominant pattern label (asserted on every
+// included case) plus three canonical cases:
+//   - light  : signal exists but barely above threshold (medium severity).
+//   - strong : signal saturates the model (high → critical severity).
+//   - edge   : borderline / excluded — proves the family does NOT over-trigger
+//              when the temporal or alignment signal is missing.
+//
+// Designed to power table-driven tests like:
+//   for (const [family, group] of Object.entries(DEAL_HISTORY_LSE_FIXTURES)) {
+//     for (const intensity of ["light", "strong", "edge"] as const) {
+//       const c = group.cases[intensity];
+//       …assert dominant label, score band, included flag…
+//     }
+//   }
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type LSEIntensity = "light" | "strong" | "edge";
+
+export interface LSEScenarioGroup {
+  /** Short human label for the family (e.g. "Preço alto vs concorrência"). */
+  theme: string;
+  /**
+   * Substring that must appear in `result.matched_pattern` for every
+   * *included* case (`light` and `strong`). The `edge` case is excluded so
+   * no `matched_pattern` is asserted.
+   */
+  dominantPatternLabel: string;
+  cases: Record<LSEIntensity, Scenario>;
+}
+
+const PRICING_LSE: LSEScenarioGroup = {
+  theme: "Preço alto vs concorrência",
+  dominantPatternLabel: "Preço alto",
+  cases: {
+    light: {
+      name: "pricing.lse.light",
+      story:
+        "Proposta há 12d, ticket exato (28.5k) — sinal de preço entra com severity medium.",
+      deal: {
+        id: "lse-pricing-light",
+        client_name: "PriceLightLSE",
+        amount: 28500,
+        status: "proposal",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(12),
+        created_at: daysAgo(30),
+      },
+      expect: {
+        included: true,
+        minScore: 45,
+        maxScore: 70,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Preço alto",
+        reasonsInclude: ["12 dias", "Ticket alinhado"],
+        actionIncludes: ["valor", "ROI", "semana"],
+      },
+    },
+    strong: {
+      name: "pricing.lse.strong",
+      story:
+        "Negotiation há 150d, ticket exato (28.5k) — saturação completa, severity critical.",
+      deal: {
+        id: "lse-pricing-strong",
+        client_name: "PriceStrongLSE",
+        amount: 28500,
+        status: "negotiation",
+        category: "enterprise",
+        source: "outbound",
+        updated_at: daysAgo(150),
+        created_at: daysAgo(260),
+      },
+      expect: {
+        included: true,
+        minScore: 80,
+        maxScore: 100,
+        patternTypeOneOf: ["loss_factor", "stuck_stage"],
+        matchedPatternLabelIncludes: "Preço alto",
+        reasonsInclude: ["150 dias", "Ticket alinhado"],
+        actionIncludes: ["IMEDIATA", "URGENTE", "24h"],
+      },
+    },
+    edge: {
+      name: "pricing.lse.edge",
+      story:
+        "Lead novo (2d) com ticket exato — sem estagnação nem stage stuck, abaixo do threshold.",
+      deal: {
+        id: "lse-pricing-edge",
+        client_name: "PriceEdgeLSE",
+        amount: 28500,
+        status: "lead",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(5),
+      },
+      expect: { included: false },
+    },
+  },
+};
+
+const NEGOTIATION_LSE: LSEScenarioGroup = {
+  theme: "Negociação travada",
+  dominantPatternLabel: "Negociação travada",
+  cases: {
+    light: {
+      name: "negotiation.lse.light",
+      story:
+        "Negotiation há 7d, ticket fora dos avgs (2k) — stuck_stage domina marginalmente.",
+      deal: {
+        id: "lse-neg-light",
+        client_name: "NegLightLSE",
+        amount: 2000,
+        status: "negotiation",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(7),
+        created_at: daysAgo(14),
+      },
+      expect: {
+        included: true,
+        minScore: 38,
+        maxScore: 55,
+        patternTypeOneOf: ["loss_factor", "stuck_stage"],
+        matchedPatternLabelIncludes: "Negociação travada",
+        reasonsInclude: ["negotiation"],
+        actionIncludes: ["estágio", "Revisar", "valor"],
+      },
+    },
+    strong: {
+      name: "negotiation.lse.strong",
+      story:
+        "Negotiation há 90d, ticket fora dos avgs (2k) — estagnação severa satura o score. " +
+        "Nota: quando stagnation > stageScore (20), o dominant flipa para loss_factor (regra " +
+        "do scoring), então `matched_pattern` deixa de ser 'Negociação travada' mesmo o " +
+        "estágio sendo a evidência principal. Por isso esse caso assert apenas o pattern_type " +
+        "e o sinal de 'negotiation' nas reasons — a família continua identificável via reasons.",
+      deal: {
+        id: "lse-neg-strong",
+        client_name: "NegStrongLSE",
+        amount: 2000,
+        status: "negotiation",
+        category: "enterprise",
+        source: "outbound",
+        updated_at: daysAgo(90),
+        created_at: daysAgo(150),
+      },
+      expect: {
+        included: true,
+        minScore: 55,
+        maxScore: 90,
+        patternTypeOneOf: ["loss_factor", "stuck_stage"],
+        // matchedPatternLabelIncludes intentionally omitted (see story above).
+        reasonsInclude: ["90 dias", "negotiation"],
+        actionIncludes: ["48h", "URGENTE", "IMEDIATA", "valor"],
+      },
+    },
+    edge: {
+      name: "negotiation.lse.edge",
+      story:
+        "Lead novo (2d) com ticket pequeno fora dos avgs — sem estagnação nem stuck stage.",
+      deal: {
+        id: "lse-neg-edge",
+        client_name: "NegEdgeLSE",
+        amount: 2000,
+        status: "lead",
+        category: null,
+        source: "outbound",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(5),
+      },
+      expect: { included: false },
+    },
+  },
+};
+
+const CHURN_LSE: LSEScenarioGroup = {
+  theme: "Churn pós-trial",
+  dominantPatternLabel: "Churn pós-trial",
+  cases: {
+    light: {
+      name: "churn.lse.light",
+      story:
+        "Pending há 12d, ticket exato no perfil de churn (4.8k) — medium severity.",
+      deal: {
+        id: "lse-churn-light",
+        client_name: "ChurnLightLSE",
+        amount: 4800,
+        status: "pending",
+        category: "trial",
+        source: "trial_signup",
+        updated_at: daysAgo(12),
+        created_at: daysAgo(25),
+      },
+      expect: {
+        included: true,
+        minScore: 45,
+        maxScore: 65,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Churn pós-trial",
+        reasonsInclude: ["12 dias", "Ticket alinhado"],
+        actionIncludes: ["valor", "ROI", "semana"],
+      },
+    },
+    strong: {
+      name: "churn.lse.strong",
+      story:
+        "Pending há 60d (>>22d ciclo de churn), ticket exato — alta severity, urgência clara.",
+      deal: {
+        id: "lse-churn-strong",
+        client_name: "ChurnStrongLSE",
+        amount: 4800,
+        status: "pending",
+        category: "trial",
+        source: "trial_signup",
+        updated_at: daysAgo(60),
+        created_at: daysAgo(90),
+      },
+      expect: {
+        included: true,
+        minScore: 60,
+        maxScore: 90,
+        patternTypeOneOf: ["loss_factor"],
+        matchedPatternLabelIncludes: "Churn pós-trial",
+        reasonsInclude: ["60 dias", "Ticket alinhado"],
+        actionIncludes: ["48h", "IMEDIATA", "URGENTE", "valor"],
+      },
+    },
+    edge: {
+      name: "churn.lse.edge",
+      story:
+        "Mesmo perfil de churn mas atividade ontem (2d) — sinal não dispara, abaixo do threshold.",
+      deal: {
+        id: "lse-churn-edge",
+        client_name: "ChurnEdgeLSE",
+        amount: 4800,
+        status: "pending",
+        category: "trial",
+        source: "trial_signup",
+        updated_at: daysAgo(2),
+        created_at: daysAgo(20),
+      },
+      expect: { included: false },
+    },
+  },
+};
+
+export const DEAL_HISTORY_LSE_FIXTURES = {
+  pricing: PRICING_LSE,
+  negotiation: NEGOTIATION_LSE,
+  churn: CHURN_LSE,
+} as const;
+
+export type DealHistoryLSEFamily = keyof typeof DEAL_HISTORY_LSE_FIXTURES;
+export const LSE_INTENSITIES: readonly LSEIntensity[] = ["light", "strong", "edge"] as const;
+
