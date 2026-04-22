@@ -140,8 +140,11 @@ Deno.test("LSE meta-coverage: every group has ≥1 included AND ≥1 excluded/ed
  * map in the same change.
  */
 const EXPECTED_LSE_PATTERN_TYPES: Record<DealHistoryLSEFamily, string[]> = {
-  pricing: ["loss_factor"],
+  // pricing.strong saturates at 150d → stuck_stage may dominate over loss_factor.
+  pricing: ["loss_factor", "stuck_stage"],
+  // negotiation isolates stuck_stage via amount-mismatch but loss_factor stays valid.
   negotiation: ["loss_factor", "stuck_stage"],
+  // churn fixtures stay short enough that loss_factor remains the only dominant.
   churn: ["loss_factor"],
 };
 
