@@ -213,6 +213,7 @@ export const handler = async (req: Request): Promise<Response> => {
           last_replay_at: new Date().toISOString(),
           last_replay_status: results[0].status,
           last_replay_error: null,
+          last_replay_request_id: requestId,
         })
         .eq("id", replayOf);
     }
