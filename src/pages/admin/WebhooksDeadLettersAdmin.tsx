@@ -13,9 +13,11 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterPanel";
+import { ReplayStatusByIdPanel } from "@/components/win-loss/ReplayStatusByIdPanel";
 import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 import { useDeadLetterErrorGroups } from "@/hooks/win-loss/useDeadLetterErrorGroups";
@@ -104,86 +106,99 @@ function WebhooksDeadLettersAdminContent() {
           <StatusStat label="Arquivados" value={counts?.archived ?? 0} tone="muted" />
         </div>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              Filtros
-              {(filterText || filterSubscriptionId !== "all" || filterEvent !== "all" || filterErrorGroup !== "all" || dateRange !== "all") && (
-                <Badge variant="secondary" className="text-[10px]">Ativos</Badge>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-3">
-            <div className="md:col-span-2">
-              <Input
-                placeholder="Buscar evento, URL, request_id ou erro…"
-                value={filterText}
-                onChange={(e) => setFilterText(e.target.value)}
-                aria-label="Buscar dead-letters"
-              />
-            </div>
-            <Select value={filterSubscriptionId} onValueChange={setFilterSubscriptionId}>
-              <SelectTrigger aria-label="Filtrar por assinatura">
-                <SelectValue placeholder="Assinatura" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as assinaturas</SelectItem>
-                {subscriptions.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.url.length > 50 ? `${s.url.slice(0, 50)}…` : s.url}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterErrorGroup} onValueChange={setFilterErrorGroup}>
-              <SelectTrigger aria-label="Filtrar por tipo de erro">
-                <SelectValue placeholder="Tipo de erro" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os erros</SelectItem>
-                {(errorGroups ?? []).map((g) => (
-                  <SelectItem key={g.key} value={g.key}>
-                    {g.label} · {g.count}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="grid grid-cols-2 gap-2">
-              <Select value={filterEvent} onValueChange={setFilterEvent}>
-                <SelectTrigger aria-label="Filtrar por evento">
-                  <SelectValue placeholder="Evento" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos eventos</SelectItem>
-                  {eventOptions.map((e) => (
-                    <SelectItem key={e} value={e}>{e}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
-                <SelectTrigger aria-label="Filtrar por período">
-                  <SelectValue placeholder="Período" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tudo</SelectItem>
-                  <SelectItem value="24h">Últimas 24h</SelectItem>
-                  <SelectItem value="7d">Últimos 7 dias</SelectItem>
-                  <SelectItem value="30d">Últimos 30 dias</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="list" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="list">Lista & filtros</TabsTrigger>
+            <TabsTrigger value="by-id">Status por ID</TabsTrigger>
+          </TabsList>
 
-        <WebhookDeadLetterPanel
-          fullWidth
-          filterText={filterText}
-          filterSubscriptionId={filterSubscriptionId === "all" ? undefined : filterSubscriptionId}
-          filterEvent={filterEvent === "all" ? undefined : filterEvent}
-          filterErrorGroup={filterErrorGroup === "all" ? undefined : filterErrorGroup}
-          dateRange={dateRange}
-        />
+          <TabsContent value="list" className="space-y-6 mt-0">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Search className="h-4 w-4" />
+                  Filtros
+                  {(filterText || filterSubscriptionId !== "all" || filterEvent !== "all" || filterErrorGroup !== "all" || dateRange !== "all") && (
+                    <Badge variant="secondary" className="text-[10px]">Ativos</Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div className="md:col-span-2">
+                  <Input
+                    placeholder="Buscar evento, URL, request_id ou erro…"
+                    value={filterText}
+                    onChange={(e) => setFilterText(e.target.value)}
+                    aria-label="Buscar dead-letters"
+                  />
+                </div>
+                <Select value={filterSubscriptionId} onValueChange={setFilterSubscriptionId}>
+                  <SelectTrigger aria-label="Filtrar por assinatura">
+                    <SelectValue placeholder="Assinatura" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as assinaturas</SelectItem>
+                    {subscriptions.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.url.length > 50 ? `${s.url.slice(0, 50)}…` : s.url}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterErrorGroup} onValueChange={setFilterErrorGroup}>
+                  <SelectTrigger aria-label="Filtrar por tipo de erro">
+                    <SelectValue placeholder="Tipo de erro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os erros</SelectItem>
+                    {(errorGroups ?? []).map((g) => (
+                      <SelectItem key={g.key} value={g.key}>
+                        {g.label} · {g.count}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="grid grid-cols-2 gap-2">
+                  <Select value={filterEvent} onValueChange={setFilterEvent}>
+                    <SelectTrigger aria-label="Filtrar por evento">
+                      <SelectValue placeholder="Evento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos eventos</SelectItem>
+                      {eventOptions.map((e) => (
+                        <SelectItem key={e} value={e}>{e}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
+                    <SelectTrigger aria-label="Filtrar por período">
+                      <SelectValue placeholder="Período" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tudo</SelectItem>
+                      <SelectItem value="24h">Últimas 24h</SelectItem>
+                      <SelectItem value="7d">Últimos 7 dias</SelectItem>
+                      <SelectItem value="30d">Últimos 30 dias</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            <WebhookDeadLetterPanel
+              fullWidth
+              filterText={filterText}
+              filterSubscriptionId={filterSubscriptionId === "all" ? undefined : filterSubscriptionId}
+              filterEvent={filterEvent === "all" ? undefined : filterEvent}
+              filterErrorGroup={filterErrorGroup === "all" ? undefined : filterErrorGroup}
+              dateRange={dateRange}
+            />
+          </TabsContent>
+
+          <TabsContent value="by-id" className="mt-0">
+            <ReplayStatusByIdPanel />
+          </TabsContent>
+        </Tabs>
       </div>
     </>
   );
