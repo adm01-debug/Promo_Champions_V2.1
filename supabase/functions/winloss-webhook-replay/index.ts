@@ -279,12 +279,14 @@ export const handler = async (req: Request): Promise<Response> => {
 
     jlog("info", { msg: "replay_complete", requestId, source, summary });
 
-    return jsonResponse({ requestId, source, summary, results });
+    return jsonResponse({ requestId, source, summary, results }, 200, requestId);
   } catch (e) {
     jlog("error", { msg: "replay_fatal", requestId, ...describeError(e) });
     return jsonResponse({
       error: e instanceof Error ? e.message : "unknown",
       requestId,
-    }, 500);
+    }, 500, requestId);
   }
-});
+};
+
+serve(handler);
