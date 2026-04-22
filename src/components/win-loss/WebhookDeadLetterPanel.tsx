@@ -39,6 +39,7 @@ export function WebhookDeadLetterPanel({
   filterText,
   filterSubscriptionId,
   filterEvent,
+  filterErrorGroup,
   dateRange = "all",
 }: WebhookDeadLetterPanelProps = {}) {
   const { isAdmin, isLoadingCurrentRole } = useUserRoles();
@@ -57,6 +58,10 @@ export function WebhookDeadLetterPanel({
       if (filterSubscriptionId && d.subscription_id !== filterSubscriptionId) return false;
       if (filterEvent && d.event !== filterEvent) return false;
       if (!withinRange(d.created_at, dateRange)) return false;
+      if (filterErrorGroup) {
+        const g = classifyDeadLetterError({ last_status: d.last_status, last_error: d.last_error });
+        if (g.key !== filterErrorGroup) return false;
+      }
       if (needle) {
         const hay = [
           d.event,
@@ -68,9 +73,22 @@ export function WebhookDeadLetterPanel({
       }
       return true;
     });
-  }, [rawItems, filterText, filterSubscriptionId, filterEvent, dateRange]);
+  }, [rawItems, filterText, filterSubscriptionId, filterEvent, filterErrorGroup, dateRange]);
   const allSelected = items.length > 0 && items.every((i) => selected.has(i.id));
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
+
+  const errorGroups = useMemo(() => {
+    const map = new Map<string, { label: string; ids: string[] }>();
+    for (const d of items) {
+      const g = classifyDeadLetterError({ last_status: d.last_status, last_error: d.last_error });
+      const entry = map.get(g.key);
+      if (entry) entry.ids.push(d.id);
+      else map.set(g.key, { label: g.label, ids: [d.id] });
+    }
+    return Array.from(map.entries())
+      .map(([key, v]) => ({ key, label: v.label, ids: v.ids, count: v.ids.length }))
+      .sort((a, b) => b.count - a.count);
+  }, [items]);
 
   if (isLoadingCurrentRole) return null;
   if (!isAdmin) return null;
