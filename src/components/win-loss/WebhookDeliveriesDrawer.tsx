@@ -989,9 +989,20 @@ export function WebhookDeliveriesDrawer({
                 {confirmSummary.single ? (
                   <div className="rounded-md border bg-muted/30 px-3 py-2 space-y-1.5">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <Badge variant="outline" className="text-[10px] py-0 px-1.5 font-mono">
-                        {confirmSummary.single.event}
+                      <Badge
+                        variant={confirmSummary.single.unknown ? "outline" : "outline"}
+                        className={cn(
+                          "text-[10px] py-0 px-1.5",
+                          confirmSummary.single.unknown && "border-warning/40 text-warning",
+                        )}
+                      >
+                        {confirmSummary.single.label}
                       </Badge>
+                      {!confirmSummary.single.unknown && (
+                        <code className="text-[10px] text-muted-foreground font-mono">
+                          {confirmSummary.single.event}
+                        </code>
+                      )}
                       <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
                         HTTP {confirmSummary.single.status || "—"}
                       </Badge>
@@ -1018,11 +1029,70 @@ export function WebhookDeliveriesDrawer({
                     {confirmSummary.byEvent.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {confirmSummary.byEvent.map((b) => (
-                          <Badge key={b.event} variant="outline" className="text-[10px] py-0 px-1.5">
-                            {b.event} · {b.count}
+                          <Badge
+                            key={b.event}
+                            variant="outline"
+                            className={cn(
+                              "text-[10px] py-0 px-1.5",
+                              b.unknown && "border-warning/40 text-warning",
+                            )}
+                            title={b.unknown ? "Evento sem rótulo conhecido" : b.event}
+                          >
+                            {b.label} · {b.count}
                           </Badge>
                         ))}
                       </div>
+                    )}
+                    {confirmSummary.unknownCount > 0 && (
+                      <p className="text-[11px] text-warning flex items-start gap-1">
+                        <span aria-hidden>⚠</span>
+                        <span>
+                          {confirmSummary.unknownCount}{" "}
+                          {confirmSummary.unknownCount === 1
+                            ? "entrega tem evento desconhecido"
+                            : "entregas têm evento desconhecido"}
+                          {confirmSummary.missingCount > 0 &&
+                            ` (${confirmSummary.missingCount} sem detalhes carregados)`}
+                          . O reenvio prosseguirá normalmente.
+                        </span>
+                      </p>
+                    )}
+                    {confirmSummary.items.length > 0 && (
+                      <details className="rounded-md border bg-muted/20 px-2 py-1.5">
+                        <summary className="cursor-pointer text-[11px] font-medium text-foreground hover:text-primary transition-colors">
+                          Ver mapeamento por entrega ({confirmSummary.items.length})
+                        </summary>
+                        <ScrollArea className="mt-1.5 max-h-40">
+                          <ul className="space-y-1 pr-2" aria-label="Mapeamento de eventos por entrega">
+                            {confirmSummary.items.map((it) => (
+                              <li
+                                key={it.id}
+                                className="flex items-center justify-between gap-2 text-[10px]"
+                              >
+                                <span className="font-mono text-muted-foreground shrink-0">
+                                  {it.id.slice(0, 8)}…{it.id.slice(-4)}
+                                </span>
+                                <span className="text-muted-foreground">→</span>
+                                <div className="flex items-center gap-1.5 min-w-0 flex-1 justify-end">
+                                  <span
+                                    className={cn(
+                                      "truncate font-medium",
+                                      it.unknown ? "text-warning" : "text-foreground",
+                                    )}
+                                  >
+                                    {it.label}
+                                  </span>
+                                  {!it.unknown && (
+                                    <code className="text-muted-foreground font-mono shrink-0 opacity-70">
+                                      {it.event}
+                                    </code>
+                                  )}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </ScrollArea>
+                      </details>
                     )}
                   </>
                 )}
