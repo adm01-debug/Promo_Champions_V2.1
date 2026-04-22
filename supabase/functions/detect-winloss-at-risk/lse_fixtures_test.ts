@@ -7,6 +7,7 @@ import {
   NOW,
   type DealHistoryLSEFamily,
 } from "./fixtures.ts";
+import { actionNeedles, includesCI } from "./_testHelpers.ts";
 
 const RISK_THRESHOLD = 40;
 
@@ -30,13 +31,11 @@ for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFam
       assert(result, `Expected included but got null for ${c.name}`);
       const { risk_score, reasons, suggested_action, breakdown, matched_pattern } = result;
 
-      // Score band
       assert(
         risk_score >= (c.expect.minScore ?? 0) && risk_score <= (c.expect.maxScore ?? 100),
         `Score ${risk_score} outside [${c.expect.minScore},${c.expect.maxScore}] for ${c.name}`,
       );
 
-      // Pattern type
       if (c.expect.patternTypeOneOf) {
         assert(
           c.expect.patternTypeOneOf.includes(breakdown.matched_pattern_type ?? ""),
@@ -44,34 +43,22 @@ for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFam
         );
       }
 
-      // Dominant label
       if (c.expect.matchedPatternLabelIncludes) {
         assert(
-          (matched_pattern ?? "").toLowerCase().includes(
-            c.expect.matchedPatternLabelIncludes.toLowerCase(),
-          ),
+          includesCI(matched_pattern ?? "", c.expect.matchedPatternLabelIncludes),
           `matched_pattern="${matched_pattern}" missing "${c.expect.matchedPatternLabelIncludes}"`,
         );
       }
 
-      // Reasons (AND)
       for (const needle of c.expect.reasonsInclude ?? []) {
-        const hay = reasons.join(" | ").toLowerCase();
-        assert(
-          hay.includes(needle.toLowerCase()),
-          `reason missing "${needle}" — got: ${reasons.join(" | ")}`,
-        );
+        const hit = reasons.some((r) => includesCI(r, needle));
+        assert(hit, `reason missing "${needle}" — got: ${reasons.join(" | ")}`);
       }
 
-      // Action (OR if array)
-      const ai = c.expect.actionIncludes;
-      if (ai) {
-        const needles = Array.isArray(ai) ? ai : [ai];
-        const action = (suggested_action ?? "").toLowerCase();
-        assert(
-          needles.some((n) => action.includes(n.toLowerCase())),
-          `action missing any of [${needles.join(", ")}] — got: ${suggested_action}`,
-        );
+      const needles = actionNeedles(c.expect.actionIncludes);
+      if (needles.length > 0) {
+        const hit = needles.some((n) => includesCI(suggested_action ?? "", n));
+        assert(hit, `action missing any of [${needles.join(", ")}] — got: ${suggested_action}`);
       }
     });
   }
