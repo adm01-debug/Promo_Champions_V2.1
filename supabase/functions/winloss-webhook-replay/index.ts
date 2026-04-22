@@ -100,7 +100,7 @@ async function persistDlqOutcome(
   }
 }
 
-serve(async (req) => {
+export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const requestId = crypto.randomUUID();
 
@@ -108,7 +108,7 @@ serve(async (req) => {
     // --- Auth ---
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return jsonResponse({ error: "Unauthorized", requestId }, 401);
+      return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
     }
     const token = authHeader.replace("Bearer ", "");
 
@@ -120,7 +120,7 @@ serve(async (req) => {
     const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
     if (claimsErr || !claimsData?.claims?.sub) {
       jlog("warn", { msg: "auth_invalid_token", requestId, ...(claimsErr ? describeError(claimsErr) : {}) });
-      return jsonResponse({ error: "Unauthorized", requestId }, 401);
+      return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
     }
     const userId = claimsData.claims.sub as string;
 
