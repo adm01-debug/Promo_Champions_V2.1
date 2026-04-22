@@ -70,11 +70,11 @@ async function assertAdmin(
     .maybeSingle();
   if (error) {
     jlog("error", { msg: "auth_role_lookup_failed", requestId, userId, ...describeError(error) });
-    return jsonResponse({ error: "Forbidden", requestId }, 403);
+    return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
   }
   if (!data) {
     jlog("warn", { msg: "auth_forbidden", requestId, userId });
-    return jsonResponse({ error: "Forbidden", requestId }, 403);
+    return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
   }
   return null;
 }
