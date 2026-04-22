@@ -4,6 +4,7 @@
 
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
+  type DeadLetterEntry,
   type DeliveryRow,
   type DispatchDeps,
   dispatchOne,
@@ -17,13 +18,16 @@ const PAYLOAD = { event: "x", data: { foo: 1 } };
 interface Harness {
   deps: DispatchDeps;
   deliveries: DeliveryRow[];
+  deadLetters: DeadLetterEntry[];
 }
 
 function makeHarness(
   fetchImpl: (attempt: number) => Response | Promise<Response>,
+  opts: { withDeadLetter?: boolean } = {},
 ): Harness {
   let attempt = 0;
   const deliveries: DeliveryRow[] = [];
+  const deadLetters: DeadLetterEntry[] = [];
   const deps: DispatchDeps = {
     fetchFn: ((_u: string, _i?: RequestInit) => {
       attempt += 1;
@@ -32,10 +36,13 @@ function makeHarness(
     sleep: () => Promise.resolve(),
     insertDelivery: (row) => { deliveries.push(row); return Promise.resolve(); },
     updateSubscription: () => Promise.resolve(),
+    onDeadLetter: opts.withDeadLetter
+      ? (entry) => { deadLetters.push(entry); return Promise.resolve(); }
+      : undefined,
     now: () => 0,
     rand: () => 0,
   };
-  return { deps, deliveries };
+  return { deps, deliveries, deadLetters };
 }
 
 function makeNamedError(name: string, message: string): Error {
