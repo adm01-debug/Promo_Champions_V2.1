@@ -143,7 +143,7 @@ export const handler = async (req: Request): Promise<Response> => {
         message: "Provide exactly one of dead_letter_ids or delivery_ids (1–50 valid UUIDs).",
         details: parsed.error.flatten(),
         requestId,
-      }, 400);
+      }, 400, requestId);
     }
 
     const source: "dlq" | "delivery" = parsed.data.dead_letter_ids ? "dlq" : "delivery";
