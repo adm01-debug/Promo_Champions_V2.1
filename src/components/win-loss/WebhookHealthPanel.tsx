@@ -24,6 +24,7 @@ import { useWebhookAlerts, activeAlertsBySubscription } from "@/hooks/win-loss/u
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { cn } from "@/lib/utils";
 import { WebhookAttemptSliceDrawer } from "./WebhookAttemptSliceDrawer";
+import { WebhookSubscriptionLatestList } from "./WebhookSubscriptionLatestList";
 
 const WINDOW_OPTIONS: ReadonlyArray<{ value: WebhookStatsWindow; label: string; aria: string }> = [
   { value: "24h", label: "24h", aria: "Últimas 24 horas" },
