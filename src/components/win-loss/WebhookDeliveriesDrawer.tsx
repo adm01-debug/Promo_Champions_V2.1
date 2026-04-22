@@ -304,6 +304,15 @@ export function WebhookDeliveriesDrawer({
     setConfirm({ ids: validation.ids });
   };
 
+  // --- Batch tracking (para resumo "X/Y reenviando, Z falhou") ---
+  interface BatchState {
+    id: string;
+    ids: string[];
+    startedAt: number;
+    results: Map<string, "ok" | "skipped" | "fail">;
+  }
+  const [activeBatch, setActiveBatch] = useState<BatchState | null>(null);
+
   const executeReplay = () => {
     if (!confirm) return;
     const ids = confirm.ids;
@@ -318,11 +327,54 @@ export function WebhookDeliveriesDrawer({
       return next;
     });
     if (ids.length > 1) clearSelection();
+
+    // Só rastreamos lotes (>1) — uma única linha já tem feedback inline
+    const batchId =
+      ids.length > 1
+        ? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+        : null;
+    if (batchId) {
+      setActiveBatch({
+        id: batchId,
+        ids,
+        startedAt: Date.now(),
+        results: new Map(),
+      });
+    }
+
     replay(ids, {
-      onSuccess: (payload) => recordResults(ids, payload),
+      onSuccess: (payload) => {
+        recordResults(ids, payload);
+        if (batchId) {
+          setActiveBatch((prev) => {
+            if (!prev || prev.id !== batchId) return prev;
+            const next = new Map(prev.results);
+            const returned = new Set<string>();
+            for (const r of payload?.results ?? []) {
+              const status: "ok" | "skipped" | "fail" = r.skipped
+                ? "skipped"
+                : r.succeeded
+                  ? "ok"
+                  : "fail";
+              next.set(r.id, status);
+              returned.add(r.id);
+            }
+            for (const id of ids) {
+              if (!returned.has(id) && !next.has(id)) next.set(id, "fail");
+            }
+            return { ...prev, results: next };
+          });
+        }
+      },
       onSettled: () => {
         if (ids.length === 1) setPendingId(null);
         clearProcessing(ids);
+        // Auto-clear do resumo após pequeno delay para o usuário ler
+        if (batchId) {
+          window.setTimeout(() => {
+            setActiveBatch((prev) => (prev && prev.id === batchId ? null : prev));
+          }, 6000);
+        }
       },
     });
   };
