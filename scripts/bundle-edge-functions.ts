@@ -33,6 +33,10 @@ const ONLY = (Deno.env.get("ONLY") ?? "")
 interface CheckResult {
   fn: string;
   ok: boolean;
+  /** "import" → module resolution failed (CI must fail).
+   *  "typecheck" → all imports resolved but TS errors exist (warn only).
+   *  null → ok. */
+  failureKind: "import" | "typecheck" | null;
   failingImport: string | null;
   stderrHead: string;
 }
@@ -42,7 +46,7 @@ interface CheckResult {
  *  npm: specifiers, missing relative imports, and integrity drift. */
 function extractFailingImport(stderr: string): string | null {
   const patterns: RegExp[] = [
-    // "error: Module not found "https://esm.sh/..."
+    // "error: Module not found "https://esm.sh/...""
     /Module not found\s+"([^"]+)"/,
     // "error: Import 'npm:foo' failed: ..."
     /Import\s+'([^']+)'\s+failed/,
@@ -52,6 +56,8 @@ function extractFailingImport(stderr: string): string | null {
     /Specifier\s+"([^"]+)"\s+was not found/i,
     // "Relative import path "..." not prefixed with..."
     /Relative import path\s+"([^"]+)"/,
+    // "Could not find a matching package for 'npm:...'" (Deno 2 + nodeModulesDir)
+    /Could not find a matching package for\s+'([^']+)'/,
     // Generic fallback: first quoted URL-looking token after "error"
     /error[^\n]*?["'`](https?:\/\/[^"'`\s]+|npm:[^"'`\s]+)["'`]/i,
   ];
@@ -60,6 +66,22 @@ function extractFailingImport(stderr: string): string | null {
     if (m?.[1]) return m[1];
   }
   return null;
+}
+
+/** Distinguish module-resolution failures (the thing CI must block on) from
+ *  pure TypeScript-checking errors (TS#### codes). The bundler check exists to
+ *  catch broken imports — TS errors are a separate concern owned by other
+ *  tooling and would otherwise produce huge amounts of noise. */
+function classifyFailure(stderr: string): "import" | "typecheck" {
+  if (extractFailingImport(stderr)) return "import";
+  // Deno surfaces TS errors as "TSxxxx [ERROR]:" lines. If every reported error
+  // is a TS code (and no module-resolution signal was matched above), treat as
+  // typecheck-only.
+  const hasTsError = /TS\d{3,5}\s*\[ERROR\]/.test(stderr);
+  if (hasTsError) return "typecheck";
+  // Anything else (network down, deno panic, permission error) → treat as
+  // import-class so it blocks CI rather than passing silently.
+  return "import";
 }
 
 async function checkFunction(fn: string, indexPath: string): Promise<CheckResult> {
@@ -71,12 +93,14 @@ async function checkFunction(fn: string, indexPath: string): Promise<CheckResult
   const { code, stderr } = await cmd.output();
   const stderrText = new TextDecoder().decode(stderr);
   if (code === 0) {
-    return { fn, ok: true, failingImport: null, stderrHead: "" };
+    return { fn, ok: true, failureKind: null, failingImport: null, stderrHead: "" };
   }
+  const kind = classifyFailure(stderrText);
   return {
     fn,
     ok: false,
-    failingImport: extractFailingImport(stderrText),
+    failureKind: kind,
+    failingImport: kind === "import" ? extractFailingImport(stderrText) : null,
     stderrHead: stderrText.split("\n").slice(0, 3).join("\n").trim(),
   };
 }
