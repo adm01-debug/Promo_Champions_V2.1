@@ -513,6 +513,7 @@ export function WebhookDeliveriesDrawer({
       onSettled: () => {
         if (ids.length === 1) setPendingId(null);
         clearProcessing(ids);
+        setConfirm(null);
         // Auto-clear do resumo após pequeno delay para o usuário ler
         if (batchId) {
           window.setTimeout(() => {
