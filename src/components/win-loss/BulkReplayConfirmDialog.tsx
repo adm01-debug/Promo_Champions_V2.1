@@ -81,8 +81,8 @@ export function BulkReplayConfirmDialog({
               )}
 
               {!overCap && summary.alreadyReplayed > 0 && (
-                <div className="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-2.5">
-                  <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
+                <div className="flex items-start gap-2 rounded-md border border-status-warning/40 bg-status-warning/10 p-2.5">
+                  <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-status-warning" />
                   <span className="text-xs text-foreground">
                     <strong>{summary.alreadyReplayed}</strong> item(ns) já foram
                     reprocessados anteriormente. Reenviar pode causar entregas duplicadas
