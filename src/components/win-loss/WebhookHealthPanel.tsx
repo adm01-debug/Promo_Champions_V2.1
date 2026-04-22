@@ -413,6 +413,8 @@ export function WebhookHealthPanel() {
                 </>
               )}
             </div>
+
+            <WebhookSubscriptionLatestList windowKey={windowKey} />
           </>
         )}
       </CardContent>
