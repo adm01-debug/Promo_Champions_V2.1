@@ -24,6 +24,7 @@ interface WebhookDeadLetterPanelProps {
   filterText?: string;
   filterSubscriptionId?: string;
   filterEvent?: string;
+  filterErrorGroup?: string;
   dateRange?: DateRange;
 }
 
