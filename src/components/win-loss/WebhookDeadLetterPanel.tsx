@@ -8,13 +8,15 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription,
 } from "@/components/ui/drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers } from "lucide-react";
+import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
 import { classifyDeadLetterError } from "@/hooks/win-loss/classifyDeadLetterError";
+import { useLatestReplayAuditByDeadLetters } from "@/hooks/win-loss/useReplayAudit";
+import { ReplayAuditTrail } from "./ReplayAuditTrail";
 import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
