@@ -344,6 +344,71 @@ export function WebhookDeliveriesDrawer({
   }
   const [activeBatch, setActiveBatch] = useState<BatchState | null>(null);
 
+  // --- Histórico local de replays (últimos N) ---
+  interface ReplayHistoryEntry {
+    id: string;
+    at: number;
+    total: number;
+    ok: number;
+    skipped: number;
+    fail: number;
+    byEvent: Array<{ event: string; ok: number; skipped: number; fail: number }>;
+  }
+  const MAX_HISTORY = 8;
+  const [replayHistory, setReplayHistory] = useState<ReplayHistoryEntry[]>([]);
+
+  const recordHistory = (
+    ids: string[],
+    payload:
+      | {
+          results: Array<{ id: string; succeeded: boolean; skipped?: boolean }>;
+        }
+      | undefined,
+  ) => {
+    if (!data) return;
+    const idToEvent = new Map<string, string>();
+    for (const d of data) idToEvent.set(d.id, d.event);
+    const statusById = new Map<string, "ok" | "skipped" | "fail">();
+    const returned = new Set<string>();
+    for (const r of payload?.results ?? []) {
+      const status: "ok" | "skipped" | "fail" = r.skipped
+        ? "skipped"
+        : r.succeeded
+          ? "ok"
+          : "fail";
+      statusById.set(r.id, status);
+      returned.add(r.id);
+    }
+    for (const id of ids) if (!returned.has(id)) statusById.set(id, "fail");
+
+    const eventMap = new Map<string, { ok: number; skipped: number; fail: number }>();
+    let ok = 0;
+    let skipped = 0;
+    let fail = 0;
+    for (const id of ids) {
+      const s = statusById.get(id) ?? "fail";
+      const ev = idToEvent.get(id) ?? "unknown";
+      const cur = eventMap.get(ev) ?? { ok: 0, skipped: 0, fail: 0 };
+      cur[s]++;
+      eventMap.set(ev, cur);
+      if (s === "ok") ok++;
+      else if (s === "skipped") skipped++;
+      else fail++;
+    }
+    const entry: ReplayHistoryEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      at: Date.now(),
+      total: ids.length,
+      ok,
+      skipped,
+      fail,
+      byEvent: Array.from(eventMap, ([event, v]) => ({ event, ...v })).sort(
+        (a, b) => b.ok + b.skipped + b.fail - (a.ok + a.skipped + a.fail),
+      ),
+    };
+    setReplayHistory((prev) => [entry, ...prev].slice(0, MAX_HISTORY));
+  };
+
   const executeReplay = () => {
     if (!confirm) return;
     const ids = confirm.ids;
@@ -376,6 +441,7 @@ export function WebhookDeliveriesDrawer({
     replay(ids, {
       onSuccess: (payload) => {
         recordResults(ids, payload);
+        recordHistory(ids, payload);
         if (batchId) {
           setActiveBatch((prev) => {
             if (!prev || prev.id !== batchId) return prev;
@@ -601,6 +667,84 @@ export function WebhookDeliveriesDrawer({
                   </>
                 )}
               </div>
+            </div>
+          )}
+
+          {replayHistory.length > 0 && (
+            <div className="border-b bg-muted/10 px-4 py-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <h4 className="text-[11px] font-semibold text-foreground uppercase tracking-wide">
+                  Histórico do replay
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => setReplayHistory([])}
+                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Limpar histórico de replays"
+                >
+                  Limpar
+                </button>
+              </div>
+              <ScrollArea className="max-h-32">
+                <ol className="space-y-1.5 pr-2" aria-label="Últimos reenvios">
+                  {replayHistory.map((h) => (
+                    <li
+                      key={h.id}
+                      className="rounded-md border bg-background/60 px-2 py-1.5 text-[10px]"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-medium text-foreground">
+                            {h.total} {h.total === 1 ? "entrega" : "entregas"}
+                          </span>
+                          {h.ok > 0 && (
+                            <Badge variant="secondary" className="text-[9px] py-0 px-1 bg-success/15 text-success">
+                              {h.ok} ok
+                            </Badge>
+                          )}
+                          {h.skipped > 0 && (
+                            <Badge variant="outline" className="text-[9px] py-0 px-1 text-muted-foreground">
+                              {h.skipped} já entregue{h.skipped === 1 ? "" : "s"}
+                            </Badge>
+                          )}
+                          {h.fail > 0 && (
+                            <Badge variant="destructive" className="text-[9px] py-0 px-1">
+                              {h.fail} falhou
+                            </Badge>
+                          )}
+                        </div>
+                        <span className="text-muted-foreground shrink-0">
+                          {formatDistanceToNow(new Date(h.at), { addSuffix: true, locale: ptBR })}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {h.byEvent.map((e) => {
+                          const variant: "secondary" | "destructive" | "outline" =
+                            e.fail > 0 ? "destructive" : e.ok > 0 ? "secondary" : "outline";
+                          const cls =
+                            e.fail > 0
+                              ? ""
+                              : e.ok > 0
+                                ? "bg-success/15 text-success"
+                                : "text-muted-foreground";
+                          return (
+                            <Badge
+                              key={e.event}
+                              variant={variant}
+                              className={cn("text-[9px] py-0 px-1 font-mono", cls)}
+                            >
+                              {e.event}
+                              {e.ok > 0 && <span className="ml-1 opacity-80">✓{e.ok}</span>}
+                              {e.skipped > 0 && <span className="ml-1 opacity-80">↷{e.skipped}</span>}
+                              {e.fail > 0 && <span className="ml-1 opacity-80">✕{e.fail}</span>}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </ScrollArea>
             </div>
           )}
 
