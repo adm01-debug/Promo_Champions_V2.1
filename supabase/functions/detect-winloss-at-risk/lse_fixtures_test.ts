@@ -1,4 +1,4 @@
-import { assert, assertEquals } from "https://deno.land/[email protected]/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeDealRisk } from "./scoring.ts";
 import {
   DEAL_HISTORY_LSE_FIXTURES,
