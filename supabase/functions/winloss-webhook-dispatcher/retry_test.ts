@@ -1113,6 +1113,83 @@ Deno.test("fan-out N=20: contagem por URL, header X-Winloss-Event e deal_id cheg
   }
 });
 
+Deno.test("fan-out N=20 (escala): total exato de POSTs, X-Winloss-Event em 100% e deal_id por sub via JSON.parse", async () => {
+  // Escala: 20 subscriptions independentes recebendo o MESMO evento.
+  // Validações fortes:
+  //   1) Total de POSTs == N (sem dups, sem POSTs órfãos).
+  //   2) Cada uma das N subs recebeu exatamente 1 POST na sua URL.
+  //   3) 100% das requisições têm header X-Winloss-Event == event do payload.
+  //   4) Cada body é JSON parseável e contém o deal_id esperado (comparação estrutural).
+  //   5) Resultados por sub: succeeded=true, status=200, attempts=1.
+  const N = 20;
+  const EVENT = "winloss.deal.lost";
+  const DEAL_ID = "deal-scale-N20-abc";
+
+  const subs: Subscription[] = Array.from({ length: N }, (_, i) => ({
+    id: `sub-${i}`,
+    url: `https://sub-${i}.scale.test/hook`,
+    events: [EVENT],
+    secret: i % 3 === 0 ? `sec-${i}` : null, // mistura com/sem secret
+  }));
+  const routes: Record<string, () => Response> = {};
+  for (const s of subs) routes[s.url] = () => new Response("ok", { status: 200 });
+
+  const h = makeFanoutHarness(routes);
+  const payload = { event: EVENT, deal_id: DEAL_ID, meta: { source: "scale-test" } };
+  const results = await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+
+  // (1) Total exato de POSTs
+  const totalPosts = Object.values(h.fetchesByUrl).reduce((a, b) => a + b, 0);
+  assertEquals(totalPosts, N, `total de POSTs deve ser ${N}, foi ${totalPosts}`);
+  assertEquals(h.capturedInits.length, N, "capturedInits deve corresponder ao total de POSTs");
+
+  // (2) Cobertura de URLs: conjunto exato == conjunto das N subs (sem extras, sem faltas).
+  const expectedUrls = new Set(subs.map((s) => s.url));
+  const seenUrls = new Set(Object.keys(h.fetchesByUrl));
+  assertEquals(seenUrls, expectedUrls, "conjunto de URLs chamadas divergente");
+  for (const s of subs) {
+    assertEquals(h.fetchesByUrl[s.url], 1, `${s.id}: deve ter exatamente 1 POST em ${s.url}`);
+  }
+
+  // (3+4) 100% das requisições: header e body.deal_id corretos
+  let headerHits = 0;
+  let dealIdHits = 0;
+  for (const { url, init } of h.capturedInits) {
+    assertEquals(init.method, "POST", `${url}: método deve ser POST`);
+    const headers = init.headers as Record<string, string>;
+
+    assertEquals(headers["X-Winloss-Event"], EVENT, `${url}: X-Winloss-Event divergente`);
+    headerHits += 1;
+
+    assert(typeof init.body === "string", `${url}: body deve ser string serializada`);
+    const parsed = JSON.parse(init.body as string) as Record<string, unknown>;
+    assert(
+      parsed !== null && typeof parsed === "object" && !Array.isArray(parsed),
+      `${url}: body parseado deve ser objeto`,
+    );
+    assertEquals(parsed.deal_id, DEAL_ID, `${url}: body.deal_id divergente`);
+    assertEquals(parsed.event, EVENT, `${url}: body.event divergente`);
+    dealIdHits += 1;
+  }
+  assertEquals(headerHits, N, "header X-Winloss-Event deve estar em 100% das requisições");
+  assertEquals(dealIdHits, N, "deal_id correto deve estar em 100% dos bodies");
+
+  // (5) Resultados por sub
+  assertEquals(results.length, N);
+  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
+  for (const s of subs) {
+    const r = resById[s.id];
+    assert(r, `${s.id}: resultado ausente`);
+    assertEquals(r.succeeded, true, `${s.id}: succeeded`);
+    assertEquals(r.status, 200, `${s.id}: status`);
+    assertEquals(r.attempts, 1, `${s.id}: attempts`);
+  }
+
+  // Side-effects coerentes com a escala
+  assertEquals(h.deliveries.length, N, "deve haver 1 delivery por sub");
+  assertEquals(h.updates.length, N, "deve haver 1 updateSubscription por sub");
+});
+
 Deno.test("fan-out: retries de uma sub não acoplam às outras (sleeps isolados)", async () => {
   const h = makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
