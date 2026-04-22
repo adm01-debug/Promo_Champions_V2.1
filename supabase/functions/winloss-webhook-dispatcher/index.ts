@@ -69,7 +69,7 @@ function buildDeps(
   };
 }
 
-serve(async (req) => {
+export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const requestId = crypto.randomUUID();
@@ -208,4 +208,6 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
     });
   }
-});
+};
+
+serve(handler);
