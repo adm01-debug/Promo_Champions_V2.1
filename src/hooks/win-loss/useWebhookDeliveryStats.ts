@@ -15,14 +15,24 @@ export interface WebhookDeliveryStats {
   failuresByAttempt: AttemptBucket[];
 }
 
-const WINDOW_DAYS = 7;
+export type WebhookStatsWindow = "24h" | "7d" | "30d";
 
-export function useWebhookDeliveryStats(subscriptionId?: string | null) {
+const WINDOW_HOURS: Record<WebhookStatsWindow, number> = {
+  "24h": 24,
+  "7d": 24 * 7,
+  "30d": 24 * 30,
+};
+
+export function useWebhookDeliveryStats(
+  subscriptionId?: string | null,
+  windowKey: WebhookStatsWindow = "7d",
+) {
   return useQuery({
-    queryKey: ["winloss-webhook-delivery-stats", subscriptionId ?? "all"],
+    queryKey: ["winloss-webhook-delivery-stats", subscriptionId ?? "all", windowKey],
     staleTime: 30_000,
     queryFn: async (): Promise<WebhookDeliveryStats> => {
-      const since = new Date(Date.now() - WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
+      const hours = WINDOW_HOURS[windowKey];
+      const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
       let query = supabase
         .from("winloss_webhook_deliveries")
