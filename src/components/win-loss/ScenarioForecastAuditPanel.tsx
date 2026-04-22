@@ -72,7 +72,7 @@ export const ScenarioForecastAuditPanel = memo(function ScenarioForecastAuditPan
           <Row label="Graus de liberdade" value={`n − 2 = ${dof}`} />
           <Row
             label="Modo de banda"
-            value={bandMode === "pi95" ? `PI 95% (t=${(tCritical ?? 0).toFixed(2)})` : bandLabel}
+            value={bandMode === "pi95" ? `PI ${levelPct}% (t=${(tCritical ?? 0).toFixed(2)})` : bandLabel}
           />
           {bandMode === "see" && (
             <Row
