@@ -143,6 +143,7 @@ export const SecurityDashboard = lazy(() => import("@/pages/SecurityDashboard"))
 export const WebhooksDeadLettersAdmin = lazy(() => import("@/pages/admin/WebhooksDeadLettersAdmin"));
 export const WebhookTimelinePage = lazy(() => import("@/pages/admin/WebhookTimelinePage"));
 export const WebhookAlertHistoryPage = lazy(() => import("@/pages/admin/WebhookAlertHistoryPage"));
+export const WebhookAlertSettingsPage = lazy(() => import("@/pages/admin/WebhookAlertSettingsPage"));
 export const CustomerSuccessHubPage = lazy(() => import("@/pages/CustomerSuccessHub"));
 export const SalesEnablementHubPage = lazy(() => import("@/pages/SalesEnablementHub"));
 export const PricingIntelligenceHubPage = lazy(() => import("@/pages/PricingIntelligenceHub"));

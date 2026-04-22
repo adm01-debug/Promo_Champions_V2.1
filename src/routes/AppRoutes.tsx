@@ -37,7 +37,7 @@ import {
   // Ferramentas & IA
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
-  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage,
+  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
 } from "./lazyPages";
@@ -235,6 +235,7 @@ export function AppRoutes() {
                     <Route path="/admin/webhooks-dead-letters" element={<Admin><WebhooksDeadLettersAdmin /></Admin>} />
                     <Route path="/admin/webhooks-timeline" element={<Admin><WebhookTimelinePage /></Admin>} />
                     <Route path="/admin/webhooks-alert-history" element={<Admin><WebhookAlertHistoryPage /></Admin>} />
+                    <Route path="/admin/webhooks-alert-settings" element={<Admin><WebhookAlertSettingsPage /></Admin>} />
                     <Route path="/admin/retry-test-status" element={<Admin><RetryTestStatusPage /></Admin>} />
 
                     {/* ─── Meus Pedidos ──────────────────────────── */}

@@ -10,12 +10,55 @@ const corsHeaders = {
 type LogLevel = "info" | "warn" | "error";
 type AlertKind = "consecutive_failures" | "high_retry_rate" | "attempts_exhausted";
 
-const CONSECUTIVE_FAILURES = Number(Deno.env.get("ALERT_CONSECUTIVE_FAILURES") ?? 5);
-const RETRY_RATE_THRESHOLD = Number(Deno.env.get("ALERT_RETRY_RATE_THRESHOLD") ?? 0.5);
-const WINDOW_MINUTES = Number(Deno.env.get("ALERT_WINDOW_MINUTES") ?? 30);
-const MIN_DELIVERIES = Number(Deno.env.get("ALERT_MIN_DELIVERIES") ?? 10);
-const SUPPRESS_MINUTES = Number(Deno.env.get("ALERT_SUPPRESS_MINUTES") ?? 60);
-const MAX_ATTEMPTS = Number(Deno.env.get("ALERT_MAX_ATTEMPTS") ?? 3);
+// Defaults — used when DB row is missing or a column is null. Env vars stay
+// supported as a final fallback to avoid breaking existing deployments.
+interface AlertSettings {
+  consecutive_failures: number;
+  retry_rate_threshold: number;
+  window_minutes: number;
+  min_deliveries: number;
+  suppress_minutes: number;
+  max_attempts: number;
+}
+
+const DEFAULT_SETTINGS: AlertSettings = {
+  consecutive_failures: Number(Deno.env.get("ALERT_CONSECUTIVE_FAILURES") ?? 5),
+  retry_rate_threshold: Number(Deno.env.get("ALERT_RETRY_RATE_THRESHOLD") ?? 0.5),
+  window_minutes: Number(Deno.env.get("ALERT_WINDOW_MINUTES") ?? 30),
+  min_deliveries: Number(Deno.env.get("ALERT_MIN_DELIVERIES") ?? 10),
+  suppress_minutes: Number(Deno.env.get("ALERT_SUPPRESS_MINUTES") ?? 60),
+  max_attempts: Number(Deno.env.get("ALERT_MAX_ATTEMPTS") ?? 3),
+};
+
+async function loadSettings(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  requestId: string,
+): Promise<AlertSettings> {
+  try {
+    const { data, error } = await supabase
+      .from("winloss_alert_settings")
+      .select("consecutive_failures, retry_rate_threshold, window_minutes, min_deliveries, suppress_minutes, max_attempts")
+      .eq("singleton", true)
+      .maybeSingle();
+    if (error) {
+      structuredLog("warn", { msg: "settings_load_failed", error: error.message }, requestId);
+      return DEFAULT_SETTINGS;
+    }
+    if (!data) return DEFAULT_SETTINGS;
+    return {
+      consecutive_failures: Number(data.consecutive_failures ?? DEFAULT_SETTINGS.consecutive_failures),
+      retry_rate_threshold: Number(data.retry_rate_threshold ?? DEFAULT_SETTINGS.retry_rate_threshold),
+      window_minutes: Number(data.window_minutes ?? DEFAULT_SETTINGS.window_minutes),
+      min_deliveries: Number(data.min_deliveries ?? DEFAULT_SETTINGS.min_deliveries),
+      suppress_minutes: Number(data.suppress_minutes ?? DEFAULT_SETTINGS.suppress_minutes),
+      max_attempts: Number(data.max_attempts ?? DEFAULT_SETTINGS.max_attempts),
+    };
+  } catch (e) {
+    structuredLog("warn", { msg: "settings_load_exception", ...describeError(e) }, requestId);
+    return DEFAULT_SETTINGS;
+  }
+}
 
 function describeError(e: unknown): { error_name: string; error: string; error_stack: string | null } {
   if (e instanceof Error) {
@@ -68,7 +111,7 @@ interface EvaluationResult {
   suppressed: AlertKind[];
 }
 
-function evaluate(rows: DeliveryRow[]): {
+function evaluate(rows: DeliveryRow[], settings: AlertSettings): {
   total: number;
   failed: number;
   retries: number;
@@ -90,36 +133,33 @@ function evaluate(rows: DeliveryRow[]): {
 
   const triggers: Array<{ kind: AlertKind; details: Record<string, unknown> }> = [];
 
-  if (consecutiveFailures >= CONSECUTIVE_FAILURES) {
+  if (consecutiveFailures >= settings.consecutive_failures) {
     const last = rows[0];
     triggers.push({
       kind: "consecutive_failures",
       details: {
         consecutive_failures: consecutiveFailures,
-        threshold: CONSECUTIVE_FAILURES,
+        threshold: settings.consecutive_failures,
         last_status: last?.status ?? null,
         last_error: last?.error_message ?? null,
       },
     });
   }
 
-  if (total >= MIN_DELIVERIES && retryRate > RETRY_RATE_THRESHOLD) {
+  if (total >= settings.min_deliveries && retryRate > settings.retry_rate_threshold) {
     triggers.push({
       kind: "high_retry_rate",
       details: {
         retry_rate: Number(retryRate.toFixed(3)),
-        threshold: RETRY_RATE_THRESHOLD,
+        threshold: settings.retry_rate_threshold,
         retries,
         total,
-        window_minutes: WINDOW_MINUTES,
+        window_minutes: settings.window_minutes,
       },
     });
   }
 
-  // Attempts exhausted: any request_id where all MAX_ATTEMPTS attempts failed.
-  // Emits one trigger per offending request_id so the alert carries enough
-  // context (request_id + last_status + last_error) to investigate directly
-  // without correlating manually in the timeline.
+  // Attempts exhausted: any request_id where all max_attempts attempts failed.
   const byRequest = new Map<string, DeliveryRow[]>();
   for (const r of rows) {
     if (!r.request_id) continue;
@@ -128,20 +168,19 @@ function evaluate(rows: DeliveryRow[]): {
     byRequest.set(r.request_id, arr);
   }
   for (const [reqId, attempts] of byRequest) {
-    if (attempts.length < MAX_ATTEMPTS) continue;
+    if (attempts.length < settings.max_attempts) continue;
     if (attempts.some((a) => a.succeeded)) continue;
-    // sorted DESC by created_at (input order); the head is the latest attempt
     const last = attempts[0];
     triggers.push({
       kind: "attempts_exhausted",
       details: {
         request_id: reqId,
         attempts: attempts.length,
-        max_attempts: MAX_ATTEMPTS,
+        max_attempts: settings.max_attempts,
         event: last?.event ?? null,
         last_status: last?.status ?? null,
         last_error: last?.error_message ?? null,
-        window_minutes: WINDOW_MINUTES,
+        window_minutes: settings.window_minutes,
       },
     });
   }
@@ -207,13 +246,16 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    const settings = await loadSettings(supabase, requestId);
+
     structuredLog("info", {
       msg: "monitor_start",
-      consecutive_threshold: CONSECUTIVE_FAILURES,
-      retry_rate_threshold: RETRY_RATE_THRESHOLD,
-      window_minutes: WINDOW_MINUTES,
-      min_deliveries: MIN_DELIVERIES,
-      suppress_minutes: SUPPRESS_MINUTES,
+      consecutive_threshold: settings.consecutive_failures,
+      retry_rate_threshold: settings.retry_rate_threshold,
+      window_minutes: settings.window_minutes,
+      min_deliveries: settings.min_deliveries,
+      suppress_minutes: settings.suppress_minutes,
+      max_attempts: settings.max_attempts,
     }, requestId);
 
     const { data: subs, error: subsError } = await supabase
@@ -227,8 +269,8 @@ serve(async (req) => {
     }
 
     const subscriptions = (subs as SubscriptionRow[] | null) ?? [];
-    const sinceIso = new Date(Date.now() - WINDOW_MINUTES * 60_000).toISOString();
-    const suppressIso = new Date(Date.now() - SUPPRESS_MINUTES * 60_000).toISOString();
+    const sinceIso = new Date(Date.now() - settings.window_minutes * 60_000).toISOString();
+    const suppressIso = new Date(Date.now() - settings.suppress_minutes * 60_000).toISOString();
 
     const evaluations: EvaluationResult[] = [];
     let firedCount = 0;
@@ -249,7 +291,7 @@ serve(async (req) => {
       }
 
       const deliveries = (rows as DeliveryRow[] | null) ?? [];
-      const result = evaluate(deliveries);
+      const result = evaluate(deliveries, settings);
 
       const evalEntry: EvaluationResult = {
         subscriptionId: sub.id,
@@ -317,7 +359,7 @@ serve(async (req) => {
             subscriptionId: sub.id,
             kind: trigger.kind,
             triggerRequestId,
-            suppress_minutes: SUPPRESS_MINUTES,
+            suppress_minutes: settings.suppress_minutes,
           }, requestId);
 
           // Persist the suppressed event so the alert history page can show
@@ -342,7 +384,7 @@ serve(async (req) => {
               monitor_request_id: requestId,
               suppressed: true,
               suppress_reason: reason,
-              suppress_minutes: SUPPRESS_MINUTES,
+              suppress_minutes: settings.suppress_minutes,
             },
           });
           if (suppInsertError) {
