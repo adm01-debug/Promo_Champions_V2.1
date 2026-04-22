@@ -1833,8 +1833,13 @@ Deno.test("fan-out [limites]: sleeps por subscription respeitam backoff (sem atr
     { withDeadLetter: true, rand: () => 0.999 }, // jitter no limite superior
   );
 
+  // Execução sequencial: o harness atribui sleeps por `currentUrl`, então
+  // rodamos uma sub por vez para garantir contabilização determinística por
+  // subscription (o paralelismo é coberto por outros testes do fan-out).
   const subs = [SUB_A, SUB_B, SUB_C];
-  await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
+  for (const s of subs) {
+    await dispatchOne(s, PAYLOAD, h.deps);
+  }
 
   // ── Invariante por sub: sleeps == fetches - 1 ─────────────────────
   for (const s of subs) {
