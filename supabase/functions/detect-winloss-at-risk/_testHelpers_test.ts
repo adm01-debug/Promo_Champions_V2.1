@@ -1,5 +1,11 @@
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { matchesPatternFamily, patternLabelTokens } from "./_testHelpers.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import {
+  actionNeedles,
+  evaluateActionIncludes,
+  hasMeaningfulActionIncludes,
+  matchesPatternFamily,
+  patternLabelTokens,
+} from "./_testHelpers.ts";
 
 Deno.test("patternLabelTokens: extracts significant tokens, strips diacritics & punctuation", () => {
   assertEquals(patternLabelTokens("Preço alto vs concorrência"), ["preco", "alto", "concorrencia"]);
