@@ -210,6 +210,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
 }: Props) {
   const [bandMode, setBandMode] = useState<BandMode>(() => readBandMode());
   const [confidenceZ, setConfidenceZ] = useState<number>(() => readConfidenceZ());
+  const [confidenceLevel, setConfidenceLevel] = useState<ConfidenceLevel>(() => readConfidenceLevel());
   const [explainerOpen, setExplainerOpen] = useState(false);
 
   // Silent migration: drop the legacy `seeUseOlsInflation` key so that
@@ -239,6 +240,14 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     }
   }, [confidenceZ]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(PI_LEVEL_KEY, confidenceLevel.toString());
+    } catch {
+      /* ignore */
+    }
+  }, [confidenceLevel]);
+
   // Debounce only the data input. Internal toggles (horizon/mode/z) stay
   // instant; rapid filter changes from the parent (which mutate `points`)
   // are coalesced into a single OLS recomputation + chart remount.
@@ -249,6 +258,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
       forecastSteps: horizon,
       bandMode,
       confidenceZ,
+      confidenceLevel,
     });
 
   const data = useMemo(
