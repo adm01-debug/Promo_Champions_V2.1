@@ -109,12 +109,12 @@ function WebhooksDeadLettersAdminContent() {
             <CardTitle className="text-base flex items-center gap-2">
               <Search className="h-4 w-4" />
               Filtros
-              {(filterText || filterSubscriptionId !== "all" || filterEvent !== "all" || dateRange !== "all") && (
+              {(filterText || filterSubscriptionId !== "all" || filterEvent !== "all" || filterErrorGroup !== "all" || dateRange !== "all") && (
                 <Badge variant="secondary" className="text-[10px]">Ativos</Badge>
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div className="md:col-span-2">
               <Input
                 placeholder="Buscar evento, URL, request_id ou erro…"
@@ -132,6 +132,19 @@ function WebhooksDeadLettersAdminContent() {
                 {subscriptions.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.url.length > 50 ? `${s.url.slice(0, 50)}…` : s.url}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterErrorGroup} onValueChange={setFilterErrorGroup}>
+              <SelectTrigger aria-label="Filtrar por tipo de erro">
+                <SelectValue placeholder="Tipo de erro" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os erros</SelectItem>
+                {(errorGroups ?? []).map((g) => (
+                  <SelectItem key={g.key} value={g.key}>
+                    {g.label} · {g.count}
                   </SelectItem>
                 ))}
               </SelectContent>
