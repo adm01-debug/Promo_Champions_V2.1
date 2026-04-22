@@ -6,7 +6,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeAtRiskDeals, computeDealRisk } from "./scoring.ts";
 import { LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS } from "./fixtures.ts";
-import { includesCI } from "./_testHelpers.ts";
+import { actionNeedles, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
 
 for (const scenario of SCENARIOS) {
   Deno.test(`scenario: ${scenario.name} — ${scenario.story}`, () => {
@@ -107,14 +107,28 @@ Deno.test("scenarios: computeAtRiskDeals sorts desc, filters <40, respects limit
   assert(limited.length <= 3);
 });
 
-Deno.test("scenarios: every included scenario declares actionIncludes (anti-regression)", () => {
-  const missing = SCENARIOS.filter(
-    (s) => s.expect.included && s.expect.actionIncludes === undefined,
-  ).map((s) => s.name);
+Deno.test("scenarios: every included scenario declares a meaningful actionIncludes (anti-regression)", () => {
+  // Forbid 3 silent failure modes on included scenarios:
+  //   1. actionIncludes omitted entirely
+  //   2. actionIncludes = []  (array passes truthy, but `some()` returns false → no assertion)
+  //   3. actionIncludes = "" / "   "  (string passes truthy, but matches everything CI)
+  const offenders = SCENARIOS
+    .filter((s) => s.expect.included)
+    .map((s) => {
+      const a = s.expect.actionIncludes;
+      if (a === undefined) return { name: s.name, reason: "missing" };
+      if (!hasMeaningfulActionIncludes(a)) {
+        return { name: s.name, reason: `empty (got ${JSON.stringify(a)})` };
+      }
+      return null;
+    })
+    .filter((x): x is { name: string; reason: string } => x !== null);
   assertEquals(
-    missing,
+    offenders,
     [],
-    `included scenarios missing actionIncludes (suggested_action coherence not asserted): ${missing.join(", ")}`,
+    `included scenarios with missing/empty actionIncludes (suggested_action coherence not asserted):\n  - ${offenders
+      .map((o) => `${o.name}: ${o.reason}`)
+      .join("\n  - ")}`,
   );
 });
 
@@ -123,10 +137,7 @@ Deno.test("scenarios: every included scenario declares actionIncludes (anti-regr
 // aggregated assertions (better for at-a-glance review and bulk diagnostics).
 // ─────────────────────────────────────────────────────────────────────────────
 
-function actionNeedles(a: string | string[] | undefined): string[] {
-  if (a === undefined) return [];
-  return Array.isArray(a) ? a : [a];
-}
+// `actionNeedles` is imported from `_testHelpers.ts` (single source of truth).
 
 Deno.test("fixtures table: included flag matches threshold filter (40)", () => {
   const diff: Array<{ name: string; expected: boolean; got: boolean; score: number | null }> = [];
