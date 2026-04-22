@@ -247,7 +247,7 @@ export const handler = async (req: Request): Promise<Response> => {
         source: "alert",
         kind: `alert_${String(r.kind)}`,
         subscription_id: String(r.subscription_id),
-        request_id: null,
+        request_id: (r.request_id as string | null) ?? null,
         status: null,
         succeeded: null,
         attempt: null,
