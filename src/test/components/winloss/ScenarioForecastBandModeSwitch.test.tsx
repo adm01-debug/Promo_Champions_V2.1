@@ -52,12 +52,16 @@ vi.mock("recharts", () => {
 
 import { ScenarioForecastChart } from "@/components/win-loss/ScenarioForecastChart";
 
+// Série com ruído real em torno da tendência: garante SEE > 0 (residuais não-nulos),
+// caso contrário todas as bandas colapsariam para zero e os testes não distinguiriam
+// SEE de PI 95%.
+const NOISE = [0, 4, -3, 2, -5, 6, -2, 3, -4, 5, -1, 4];
 const makePoints = (n: number): TrendPoint[] =>
   Array.from({ length: n }, (_, i) => ({
     period: `p${i}`,
     wins: 5 + (i % 3),
     losses: 3 + (i % 2),
-    winRate: 50 + i * 0.8,
+    winRate: 50 + i * 0.8 + NOISE[i % NOISE.length],
   }));
 
 const renderChart = (horizon: 3 | 6 | 12 = 6) =>
