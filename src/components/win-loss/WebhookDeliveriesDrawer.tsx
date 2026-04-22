@@ -454,13 +454,18 @@ export function WebhookDeliveriesDrawer({
     }
     const n = validation.ids.length;
     const dupes = ids.length - n;
+    const descriptionParts: string[] = [];
+    if (dupes > 0) {
+      descriptionParts.push(
+        `${dupes} ID${dupes === 1 ? "" : "s"} duplicado${dupes === 1 ? "" : "s"} removido${dupes === 1 ? "" : "s"}.`,
+      );
+    }
+    descriptionParts.push(`Limite de ${MAX_REPLAY_IDS} por reenvio (${n}/${MAX_REPLAY_IDS}).`);
     toast.info(
       n === 1
         ? "1 entrega pronta para reenvio — confirme no diálogo."
         : `${n} entregas prontas para reenvio — confirme no diálogo.`,
-      dupes > 0
-        ? { description: `${dupes} ID${dupes === 1 ? "" : "s"} duplicado${dupes === 1 ? "" : "s"} removido${dupes === 1 ? "" : "s"}.` }
-        : undefined,
+      { description: descriptionParts.join(" ") },
     );
     setConfirm({ ids: validation.ids });
   };
@@ -770,9 +775,13 @@ export function WebhookDeliveriesDrawer({
               >
                 {selected.size > 0 && (
                   <>
-                    <span className="text-xs text-muted-foreground">
-                      {selected.size} selecionado{selected.size === 1 ? "" : "s"}
-                    </span>
+                    <Badge
+                      variant={atLimit ? "destructive" : "outline"}
+                      className="text-[10px] py-0 px-1.5 tabular-nums"
+                      title={`Máximo de ${MAX_REPLAY} por reenvio`}
+                    >
+                      {selected.size}/{MAX_REPLAY} selecionada{selected.size === 1 ? "" : "s"}
+                    </Badge>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -921,7 +930,7 @@ export function WebhookDeliveriesDrawer({
                         </TooltipTrigger>
                         {atLimit && !isChecked && (
                           <TooltipContent side="right" className="text-xs">
-                            Máx {MAX_REPLAY} por reenvio
+                            Máximo de {MAX_REPLAY} por reenvio — desmarque uma entrega para selecionar outra.
                           </TooltipContent>
                         )}
                       </Tooltip>
