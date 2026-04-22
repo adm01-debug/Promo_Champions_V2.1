@@ -1,14 +1,26 @@
 /**
  * Circuit Breaker Hook Tests
- * Tests: state transitions, failure thresholds, recovery, reset
+ * Tests: state transitions, failure thresholds, recovery, reset.
+ *
+ * Determinístico: nenhum Math.random — `calculateBackoffDelay` recebe
+ * `rand` injetado via `constRand`. Magic numbers (failureThreshold,
+ * resetTimeout, baseDelay) referenciam constantes exportadas.
  */
 import { describe, it, expect, vi } from 'vitest';
-import { CircuitBreakerError } from '@/hooks/useCircuitBreaker';
+import { CircuitBreakerError, CIRCUIT_BREAKER_DEFAULTS } from '@/hooks/useCircuitBreaker';
 import {
   calculateBackoffDelay,
   isRetryableError,
   withRetry,
+  JITTER_FACTOR,
+  RETRY_DEFAULTS,
 } from '@/hooks/useRetryMutation';
+
+const constRand = (v: number) => () => v;
+const MAX_RAND = 0.9999999999;
+const THRESHOLD = CIRCUIT_BREAKER_DEFAULTS.failureThreshold;
+const RESET_TIMEOUT = CIRCUIT_BREAKER_DEFAULTS.resetTimeout;
+const HALF_OPEN_MAX = CIRCUIT_BREAKER_DEFAULTS.halfOpenMaxAttempts;
 
 // Test CircuitBreakerError
 describe('CircuitBreakerError', () => {
@@ -64,7 +76,7 @@ describe('Circuit Breaker State Machine Logic', () => {
     if (circuit.state === 'OPEN') {
       return Date.now() - (circuit.lastFailure || 0) >= resetTimeout;
     }
-    return circuit.halfOpenAttempts < 3;
+    return circuit.halfOpenAttempts < HALF_OPEN_MAX;
   }
 
   it('should start in CLOSED state', () => {
@@ -75,49 +87,49 @@ describe('Circuit Breaker State Machine Logic', () => {
 
   it('should remain CLOSED below threshold', () => {
     let circuit = createCircuit();
-    circuit = recordFailure(circuit, 5);
+    circuit = recordFailure(circuit, THRESHOLD);
     expect(circuit.state).toBe('CLOSED');
     expect(circuit.failures).toBe(1);
 
-    circuit = recordFailure(circuit, 5);
+    circuit = recordFailure(circuit, THRESHOLD);
     expect(circuit.state).toBe('CLOSED');
     expect(circuit.failures).toBe(2);
   });
 
   it('should transition to OPEN at threshold', () => {
     let circuit = createCircuit();
-    for (let i = 0; i < 5; i++) {
-      circuit = recordFailure(circuit, 5);
+    for (let i = 0; i < THRESHOLD; i++) {
+      circuit = recordFailure(circuit, THRESHOLD);
     }
     expect(circuit.state).toBe('OPEN');
-    expect(circuit.failures).toBe(5);
+    expect(circuit.failures).toBe(THRESHOLD);
   });
 
   it('should block requests when OPEN', () => {
     const circuit: CircuitBreakerState = {
       state: 'OPEN',
-      failures: 5,
+      failures: THRESHOLD,
       lastFailure: Date.now(),
       halfOpenAttempts: 0,
     };
-    expect(shouldAllow(circuit, 30000)).toBe(false);
+    expect(shouldAllow(circuit, RESET_TIMEOUT)).toBe(false);
   });
 
   it('should allow requests when OPEN timeout expired', () => {
     const circuit: CircuitBreakerState = {
       state: 'OPEN',
-      failures: 5,
-      lastFailure: Date.now() - 60000, // 60s ago
+      failures: THRESHOLD,
+      lastFailure: Date.now() - (RESET_TIMEOUT * 2),
       halfOpenAttempts: 0,
     };
-    expect(shouldAllow(circuit, 30000)).toBe(true);
+    expect(shouldAllow(circuit, RESET_TIMEOUT)).toBe(true);
   });
 
   it('should recover from HALF_OPEN on success', () => {
     const circuit: CircuitBreakerState = {
       state: 'HALF_OPEN',
-      failures: 5,
-      lastFailure: Date.now() - 60000,
+      failures: THRESHOLD,
+      lastFailure: Date.now() - (RESET_TIMEOUT * 2),
       halfOpenAttempts: 1,
     };
     const result = recordSuccess(circuit);
@@ -137,45 +149,55 @@ describe('Circuit Breaker State Machine Logic', () => {
   });
 
   it('should allow requests in CLOSED state', () => {
-    expect(shouldAllow(createCircuit(), 30000)).toBe(true);
+    expect(shouldAllow(createCircuit(), RESET_TIMEOUT)).toBe(true);
   });
 
   it('should limit HALF_OPEN attempts', () => {
     const circuit: CircuitBreakerState = {
       state: 'HALF_OPEN',
-      failures: 5,
+      failures: THRESHOLD,
       lastFailure: null,
-      halfOpenAttempts: 3,
+      halfOpenAttempts: HALF_OPEN_MAX,
     };
-    expect(shouldAllow(circuit, 30000)).toBe(false);
+    expect(shouldAllow(circuit, RESET_TIMEOUT)).toBe(false);
   });
 });
 
-// Test Backoff Delay
+// Test Backoff Delay — deterministic via injected rand (no Math.random).
 describe('calculateBackoffDelay', () => {
-  it('should return base delay on first attempt', () => {
-    const delay = calculateBackoffDelay(1, 1000, 30000, 2);
-    expect(delay).toBeGreaterThanOrEqual(1000);
-    expect(delay).toBeLessThanOrEqual(1300); // base + 30% jitter
+  const { baseDelay: BASE, maxDelay: MAX, backoffMultiplier: MULT } = RETRY_DEFAULTS;
+
+  it('should return base delay on first attempt (rand=0 → exact base)', () => {
+    expect(calculateBackoffDelay(1, BASE, MAX, MULT, constRand(0))).toBe(BASE);
   });
 
-  it('should increase delay exponentially', () => {
-    const delay1 = calculateBackoffDelay(1, 1000, 30000, 2);
-    const delay2 = calculateBackoffDelay(2, 1000, 30000, 2);
-    const delay3 = calculateBackoffDelay(3, 1000, 30000, 2);
-    // Each subsequent delay should be roughly 2x (with jitter)
-    expect(delay2).toBeGreaterThan(delay1);
-    expect(delay3).toBeGreaterThan(delay2);
+  it('should respect upper jitter bound on first attempt (rand≈1)', () => {
+    const delay = calculateBackoffDelay(1, BASE, MAX, MULT, constRand(MAX_RAND));
+    expect(delay).toBeGreaterThanOrEqual(BASE);
+    expect(delay).toBeLessThanOrEqual(BASE * (1 + JITTER_FACTOR));
   });
 
-  it('should cap at max delay', () => {
-    const delay = calculateBackoffDelay(20, 1000, 5000, 2);
-    expect(delay).toBeLessThanOrEqual(5000);
+  it('should increase delay exponentially with fixed rand', () => {
+    const r = constRand(0.5);
+    const d1 = calculateBackoffDelay(1, BASE, MAX, MULT, r);
+    const d2 = calculateBackoffDelay(2, BASE, MAX, MULT, r);
+    const d3 = calculateBackoffDelay(3, BASE, MAX, MULT, r);
+    expect(d2).toBeGreaterThan(d1);
+    expect(d3).toBeGreaterThan(d2);
+    // Exact ratio with constant rand: delay grows by exactly MULT.
+    expect(d2 / d1).toBeCloseTo(MULT, 9);
+    expect(d3 / d2).toBeCloseTo(MULT, 9);
   });
 
-  it('should handle zero base delay', () => {
-    const delay = calculateBackoffDelay(1, 0, 30000, 2);
-    expect(delay).toBe(0);
+  it('should cap at max delay even with maximum jitter', () => {
+    const delay = calculateBackoffDelay(20, BASE, 5000, MULT, constRand(MAX_RAND));
+    expect(delay).toBe(5000);
+  });
+
+  it('should handle zero base delay deterministically', () => {
+    for (const r of [0, 0.5, MAX_RAND]) {
+      expect(calculateBackoffDelay(1, 0, MAX, MULT, constRand(r))).toBe(0);
+    }
   });
 });
 

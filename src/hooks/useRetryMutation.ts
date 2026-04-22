@@ -18,12 +18,15 @@ interface CircuitBreakerConfig {
   resetTimeout?: number;
 }
 
-const DEFAULT_RETRY_CONFIG: Required<Omit<RetryConfig, 'onRetry' | 'retryCondition'>> = {
+// Exported as the single source of truth for default retry behavior.
+// Tests must reference these instead of duplicating literals.
+export const RETRY_DEFAULTS: Required<Omit<RetryConfig, 'onRetry' | 'retryCondition'>> = {
   maxRetries: 3,
   baseDelay: 1000,
   maxDelay: 30000,
   backoffMultiplier: 2,
 };
+const DEFAULT_RETRY_CONFIG = RETRY_DEFAULTS;
 
 // Maximum jitter as a fraction of the exponential delay (0.3 = up to +30%).
 // Exported so tests and callers can reference the single source of truth.

@@ -6,19 +6,22 @@
 import { describe, it, expect, vi } from 'vitest';
 
 // --- Session ID generation ---
+// Determinístico: IDs de sessão derivados de contador, não de Math.random.
+let sessionCounter = 0;
+const buildSessionId = () => {
+  sessionCounter += 1;
+  // Mantém formato "<timestamp>-<token>" usado pelo gerador real.
+  return `${Date.now()}-${sessionCounter.toString(36).padStart(7, '0')}`;
+};
+
 describe('Analytics - Session ID', () => {
   it('should produce unique session IDs each time', () => {
-    const ids = new Set(
-      Array.from({ length: 50 }, () =>
-        `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-      )
-    );
+    const ids = new Set(Array.from({ length: 50 }, () => buildSessionId()));
     expect(ids.size).toBe(50);
   });
 
   it('should match expected format (timestamp-random)', () => {
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    expect(id).toMatch(/^\d+-[a-z0-9]+$/);
+    expect(buildSessionId()).toMatch(/^\d+-[a-z0-9]+$/);
   });
 });
 

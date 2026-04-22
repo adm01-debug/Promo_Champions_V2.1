@@ -6,10 +6,17 @@ import type { ColdLead, LeadTemperature } from '@/components/follow-up/types';
 // Tests the data flow, interactions, and business logic of each component
 // ============================================================================
 
+// Determinístico: nenhum Math.random — IDs gerados via contador incremental.
+let leadIdCounter = 0;
+function nextLeadId(): string {
+  leadIdCounter += 1;
+  return `lead-${leadIdCounter.toString(36).padStart(6, '0')}`;
+}
+
 // Factory for creating test leads
 function createLead(overrides: Partial<ColdLead> = {}): ColdLead {
   return {
-    id: `lead-${Math.random().toString(36).slice(2, 8)}`,
+    id: nextLeadId(),
     client_name: 'Cliente Teste',
     product_name: 'Produto A',
     amount: 25000,

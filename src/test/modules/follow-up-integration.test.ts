@@ -304,11 +304,12 @@ describe('Follow-up Integration E2E', () => {
   describe('Performance — Large Dataset Handling', () => {
     it('should handle 1000 leads efficiently', () => {
       const start = performance.now();
+      // Determinístico: amounts derivados do índice (sem Math.random).
       const leads = Array.from({ length: 1000 }, (_, i) => ({
         id: `perf-${i}`,
         client_name: `Client ${i}`,
         product_name: `Product ${i % 10}`,
-        amount: Math.random() * 100000,
+        amount: ((i * 9301 + 49297) % 100000), // PRNG determinístico (LCG)
         status: 'qualified',
         updated_at: new Date(Date.now() - (i % 30) * 86400000).toISOString(),
         days_inactive: i % 30,
