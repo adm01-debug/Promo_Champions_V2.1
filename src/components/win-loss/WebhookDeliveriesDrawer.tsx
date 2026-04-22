@@ -283,15 +283,46 @@ export function WebhookDeliveriesDrawer({
   const [confirm, setConfirm] = useState<{ ids: string[] } | null>(null);
 
   const confirmSummary = useMemo(() => {
-    if (!confirm || !data) return { count: 0, byEvent: [] as { event: string; count: number }[] };
+    if (!confirm || !data)
+      return {
+        count: 0,
+        byEvent: [] as { event: string; count: number }[],
+        single: null as null | {
+          id: string;
+          event: string;
+          attempt: number;
+          status: number;
+          error: string | null;
+        },
+      };
     const idSet = new Set(confirm.ids);
     const map = new Map<string, number>();
+    let single: {
+      id: string;
+      event: string;
+      attempt: number;
+      status: number;
+      error: string | null;
+    } | null = null;
     for (const d of data) {
       if (idSet.has(d.id)) map.set(d.event, (map.get(d.event) ?? 0) + 1);
+    }
+    if (confirm.ids.length === 1) {
+      const d = data.find((x) => x.id === confirm.ids[0]);
+      if (d) {
+        single = {
+          id: d.id,
+          event: d.event,
+          attempt: d.attempt,
+          status: d.status,
+          error: d.error_message,
+        };
+      }
     }
     return {
       count: confirm.ids.length,
       byEvent: Array.from(map, ([event, count]) => ({ event, count })).sort((a, b) => b.count - a.count),
+      single,
     };
   }, [confirm, data]);
 
@@ -765,21 +796,50 @@ export function WebhookDeliveriesDrawer({
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-3">
-                <p>
-                  <span className="font-semibold text-foreground">{confirmSummary.count}</span>{" "}
-                  {confirmSummary.count === 1 ? "entrega será reenviada." : "entregas serão reenviadas."}
-                </p>
-                {confirmSummary.byEvent.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {confirmSummary.byEvent.map((b) => (
-                      <Badge key={b.event} variant="outline" className="text-[10px] py-0 px-1.5">
-                        {b.event} · {b.count}
+                {confirmSummary.single ? (
+                  <div className="rounded-md border bg-muted/30 px-3 py-2 space-y-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge variant="outline" className="text-[10px] py-0 px-1.5 font-mono">
+                        {confirmSummary.single.event}
                       </Badge>
-                    ))}
+                      <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
+                        HTTP {confirmSummary.single.status || "—"}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+                        tentativa {confirmSummary.single.attempt}
+                      </Badge>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground font-mono break-all">
+                      ID: <span className="text-foreground">{confirmSummary.single.id.slice(0, 8)}</span>
+                      <span className="opacity-60">…{confirmSummary.single.id.slice(-4)}</span>
+                    </div>
+                    {confirmSummary.single.error && (
+                      <p className="text-[11px] text-destructive line-clamp-2 break-words">
+                        {confirmSummary.single.error}
+                      </p>
+                    )}
                   </div>
+                ) : (
+                  <>
+                    <p>
+                      <span className="font-semibold text-foreground">{confirmSummary.count}</span>{" "}
+                      {confirmSummary.count === 1 ? "entrega será reenviada." : "entregas serão reenviadas."}
+                    </p>
+                    {confirmSummary.byEvent.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {confirmSummary.byEvent.map((b) => (
+                          <Badge key={b.event} variant="outline" className="text-[10px] py-0 px-1.5">
+                            {b.event} · {b.count}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Cada entrega criará uma nova tentativa no histórico.
+                  {confirmSummary.single
+                    ? "Uma nova tentativa será criada no histórico."
+                    : "Cada entrega criará uma nova tentativa no histórico."}
                 </p>
               </div>
             </AlertDialogDescription>
