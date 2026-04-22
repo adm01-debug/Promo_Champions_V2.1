@@ -63,7 +63,22 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = "pending") {
     onSuccess: (data) => {
       const ok = data.results.filter((r) => r.succeeded).length;
       const fail = data.results.length - ok;
-      toast.success(`Reprocessamento concluído: ${ok} sucesso · ${fail} falha${fail === 1 ? "" : "s"}`);
+      const reqId = data.requestId;
+      const summary = `Reprocessamento concluído: ${ok} sucesso · ${fail} falha${fail === 1 ? "" : "s"}`;
+      toast.success(summary, {
+        description: reqId ? `requestId: ${reqId}` : undefined,
+        action: reqId
+          ? {
+              label: "Copiar requestId",
+              onClick: () => {
+                void navigator.clipboard?.writeText(reqId).then(
+                  () => toast.success("requestId copiado"),
+                  () => toast.error("Falha ao copiar"),
+                );
+              },
+            }
+          : undefined,
+      });
       qc.invalidateQueries({ queryKey: ["winloss-dead-letters"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao reprocessar"),
