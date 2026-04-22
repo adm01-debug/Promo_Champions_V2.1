@@ -359,7 +359,7 @@ serve(async (req) => {
             subscriptionId: sub.id,
             kind: trigger.kind,
             triggerRequestId,
-            suppress_minutes: SUPPRESS_MINUTES,
+            suppress_minutes: settings.suppress_minutes,
           }, requestId);
 
           // Persist the suppressed event so the alert history page can show
@@ -384,7 +384,7 @@ serve(async (req) => {
               monitor_request_id: requestId,
               suppressed: true,
               suppress_reason: reason,
-              suppress_minutes: SUPPRESS_MINUTES,
+              suppress_minutes: settings.suppress_minutes,
             },
           });
           if (suppInsertError) {
