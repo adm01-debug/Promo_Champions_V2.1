@@ -75,6 +75,10 @@ export interface ScenarioForecast {
   sxx: number;
   /** Number of historical points actually used for the fit. */
   fitN: number;
+  /** Coeficiente de determinação R² ∈ [0,1]. 1 = ajuste perfeito; 0 = reta não explica nada. */
+  rSquared: number;
+  /** Resíduos (y − ŷ) dos pontos históricos, em ordem cronológica. */
+  residuals: number[];
   /** Active band mode used to compute uncertainty widths. */
   bandMode: BandMode;
   /** t critical value used (only for `pi95`); null in `see` mode. */
