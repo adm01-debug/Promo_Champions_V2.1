@@ -53,6 +53,34 @@ function HealthTooltip({ active, payload }: RechartsTooltipProps) {
   );
 }
 
+function ReasonTooltip({ active, payload }: RechartsTooltipProps) {
+  if (!active || !payload?.length) return null;
+  const p = payload[0].payload as {
+    label: string;
+    count: number;
+    sampleMessage: string | null;
+  };
+  return (
+    <div className="rounded-md border bg-card px-2.5 py-1.5 text-xs shadow-md max-w-[260px]">
+      <p className="font-medium">{p.label}</p>
+      <p className="text-muted-foreground">
+        {p.count} falha{p.count === 1 ? "" : "s"}
+      </p>
+      {p.sampleMessage && (
+        <p className="mt-1 text-muted-foreground/80 italic break-words">"{p.sampleMessage}"</p>
+      )}
+    </div>
+  );
+}
+
+/** Color-code reason bars: 5xx → destructive, 4xx → warning, network/other → muted. */
+function reasonColor(status: number | null, key: string): string {
+  if (status !== null && status >= 500) return "hsl(var(--destructive))";
+  if (status !== null && status >= 400) return "hsl(var(--warning))";
+  if (key === "network") return "hsl(var(--destructive))";
+  return "hsl(var(--muted-foreground))";
+}
+
 export function WebhookHealthPanel() {
   const [windowKey, setWindowKey] = useState<WebhookStatsWindow>("7d");
   const { data, isLoading } = useWebhookDeliveryStats(null, windowKey);
