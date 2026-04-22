@@ -116,6 +116,36 @@ function evaluate(rows: DeliveryRow[]): {
     });
   }
 
+  // Attempts exhausted: any request_id where all MAX_ATTEMPTS attempts failed.
+  // Emits one trigger per offending request_id so the alert carries enough
+  // context (request_id + last_status + last_error) to investigate directly
+  // without correlating manually in the timeline.
+  const byRequest = new Map<string, DeliveryRow[]>();
+  for (const r of rows) {
+    if (!r.request_id) continue;
+    const arr = byRequest.get(r.request_id) ?? [];
+    arr.push(r);
+    byRequest.set(r.request_id, arr);
+  }
+  for (const [reqId, attempts] of byRequest) {
+    if (attempts.length < MAX_ATTEMPTS) continue;
+    if (attempts.some((a) => a.succeeded)) continue;
+    // sorted DESC by created_at (input order); the head is the latest attempt
+    const last = attempts[0];
+    triggers.push({
+      kind: "attempts_exhausted",
+      details: {
+        request_id: reqId,
+        attempts: attempts.length,
+        max_attempts: MAX_ATTEMPTS,
+        event: last?.event ?? null,
+        last_status: last?.status ?? null,
+        last_error: last?.error_message ?? null,
+        window_minutes: WINDOW_MINUTES,
+      },
+    });
+  }
+
   return { total, failed, retries, retryRate, consecutiveFailures, triggers };
 }
 
