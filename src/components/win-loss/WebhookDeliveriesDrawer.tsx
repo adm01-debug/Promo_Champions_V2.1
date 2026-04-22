@@ -406,16 +406,22 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span>
+                        <span aria-busy={isProcessing}>
                           <Button
                             size="sm"
                             variant="ghost"
                             className="h-7 w-7 p-0 shrink-0"
-                            disabled={d.succeeded || isPending || isReplaying}
+                            // Bloqueio por linha: só desabilita se ESTA delivery está em voo
+                            // (não bloqueia mais quando outra linha está sendo reenviada)
+                            disabled={d.succeeded || isProcessing}
                             onClick={() => handleReplay(d.id)}
-                            aria-label="Reenviar entrega"
+                            aria-label={
+                              isProcessing
+                                ? "Reenvio em andamento para esta entrega"
+                                : "Reenviar entrega"
+                            }
                           >
-                            {isPending ? (
+                            {isProcessing ? (
                               <Loader2 className="h-3 w-3 animate-spin" />
                             ) : (
                               <RotateCw className="h-3 w-3" />
@@ -424,7 +430,11 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                         </span>
                       </TooltipTrigger>
                       <TooltipContent side="left" className="text-xs">
-                        {d.succeeded ? "Já entregue com sucesso" : "Reenviar este evento"}
+                        {d.succeeded
+                          ? "Já entregue com sucesso"
+                          : isProcessing
+                            ? "Reenvio em andamento — aguarde…"
+                            : "Reenviar este evento"}
                       </TooltipContent>
                     </Tooltip>
                     {isProcessing && (
