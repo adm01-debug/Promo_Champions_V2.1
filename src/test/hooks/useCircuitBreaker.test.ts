@@ -1,14 +1,26 @@
 /**
  * Circuit Breaker Hook Tests
- * Tests: state transitions, failure thresholds, recovery, reset
+ * Tests: state transitions, failure thresholds, recovery, reset.
+ *
+ * Determinístico: nenhum Math.random — `calculateBackoffDelay` recebe
+ * `rand` injetado via `constRand`. Magic numbers (failureThreshold,
+ * resetTimeout, baseDelay) referenciam constantes exportadas.
  */
 import { describe, it, expect, vi } from 'vitest';
-import { CircuitBreakerError } from '@/hooks/useCircuitBreaker';
+import { CircuitBreakerError, CIRCUIT_BREAKER_DEFAULTS } from '@/hooks/useCircuitBreaker';
 import {
   calculateBackoffDelay,
   isRetryableError,
   withRetry,
+  JITTER_FACTOR,
+  RETRY_DEFAULTS,
 } from '@/hooks/useRetryMutation';
+
+const constRand = (v: number) => () => v;
+const MAX_RAND = 0.9999999999;
+const THRESHOLD = CIRCUIT_BREAKER_DEFAULTS.failureThreshold;
+const RESET_TIMEOUT = CIRCUIT_BREAKER_DEFAULTS.resetTimeout;
+const HALF_OPEN_MAX = CIRCUIT_BREAKER_DEFAULTS.halfOpenMaxAttempts;
 
 // Test CircuitBreakerError
 describe('CircuitBreakerError', () => {
