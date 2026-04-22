@@ -59,6 +59,7 @@ function WebhooksDeadLettersAdminContent() {
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["winloss-dead-letters"] });
+    qc.invalidateQueries({ queryKey: ["winloss-dead-letter-error-groups"] });
   };
 
   return (
