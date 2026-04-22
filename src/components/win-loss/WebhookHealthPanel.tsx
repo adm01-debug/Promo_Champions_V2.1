@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Activity, AlertTriangle } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -11,10 +13,25 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
-import { useWebhookDeliveryStats } from "@/hooks/win-loss/useWebhookDeliveryStats";
+import {
+  useWebhookDeliveryStats,
+  type WebhookStatsWindow,
+} from "@/hooks/win-loss/useWebhookDeliveryStats";
 import { useWebhookAlerts, activeAlertsBySubscription } from "@/hooks/win-loss/useWebhookAlerts";
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { cn } from "@/lib/utils";
+
+const WINDOW_OPTIONS: ReadonlyArray<{ value: WebhookStatsWindow; label: string; aria: string }> = [
+  { value: "24h", label: "24h", aria: "Últimas 24 horas" },
+  { value: "7d", label: "7d", aria: "Últimos 7 dias" },
+  { value: "30d", label: "30d", aria: "Últimos 30 dias" },
+];
+
+const WINDOW_LABEL: Record<WebhookStatsWindow, string> = {
+  "24h": "últimas 24 horas",
+  "7d": "últimos 7 dias",
+  "30d": "últimos 30 dias",
+};
 
 function rateClasses(rate: number, total: number) {
   if (total === 0) return "text-muted-foreground";
@@ -37,7 +54,8 @@ function HealthTooltip({ active, payload }: RechartsTooltipProps) {
 }
 
 export function WebhookHealthPanel() {
-  const { data, isLoading } = useWebhookDeliveryStats();
+  const [windowKey, setWindowKey] = useState<WebhookStatsWindow>("7d");
+  const { data, isLoading } = useWebhookDeliveryStats(null, windowKey);
   const { data: alerts } = useWebhookAlerts();
   const activeBySub = activeAlertsBySubscription(alerts ?? []);
   const degradedCount = activeBySub.size;
@@ -46,10 +64,36 @@ export function WebhookHealthPanel() {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Activity className="h-4 w-4 text-primary" aria-hidden />
-          Saúde de entregas <span className="text-xs font-normal text-muted-foreground">· últimos 7 dias</span>
-        </CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Activity className="h-4 w-4 text-primary" aria-hidden />
+            Saúde de entregas{" "}
+            <span className="text-xs font-normal text-muted-foreground">
+              · {WINDOW_LABEL[windowKey]}
+            </span>
+          </CardTitle>
+          <ToggleGroup
+            type="single"
+            size="sm"
+            value={windowKey}
+            onValueChange={(v) => {
+              if (v === "24h" || v === "7d" || v === "30d") setWindowKey(v);
+            }}
+            aria-label="Janela temporal"
+            className="bg-background/60"
+          >
+            {WINDOW_OPTIONS.map((opt) => (
+              <ToggleGroupItem
+                key={opt.value}
+                value={opt.value}
+                aria-label={opt.aria}
+                className="h-7 px-2.5 text-xs"
+              >
+                {opt.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {degradedCount > 0 && (
@@ -75,7 +119,7 @@ export function WebhookHealthPanel() {
           </div>
         ) : !data || data.total === 0 ? (
           <p className="text-xs text-muted-foreground py-8 text-center">
-            Nenhuma entrega registrada nos últimos 7 dias.
+            Nenhuma entrega registrada nas {WINDOW_LABEL[windowKey]}.
           </p>
         ) : (
           <>
