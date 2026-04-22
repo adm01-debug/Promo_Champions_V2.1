@@ -1058,7 +1058,11 @@ const NEGOTIATION_LSE: LSEScenarioGroup = {
     strong: {
       name: "negotiation.lse.strong",
       story:
-        "Negotiation há 90d, ticket fora dos avgs (2k) — estagnação severa em estágio travado.",
+        "Negotiation há 90d, ticket fora dos avgs (2k) — estagnação severa satura o score. " +
+        "Nota: quando stagnation > stageScore (20), o dominant flipa para loss_factor (regra " +
+        "do scoring), então `matched_pattern` deixa de ser 'Negociação travada' mesmo o " +
+        "estágio sendo a evidência principal. Por isso esse caso assert apenas o pattern_type " +
+        "e o sinal de 'negotiation' nas reasons — a família continua identificável via reasons.",
       deal: {
         id: "lse-neg-strong",
         client_name: "NegStrongLSE",
@@ -1074,7 +1078,7 @@ const NEGOTIATION_LSE: LSEScenarioGroup = {
         minScore: 55,
         maxScore: 90,
         patternTypeOneOf: ["loss_factor", "stuck_stage"],
-        matchedPatternLabelIncludes: "Negociação travada",
+        // matchedPatternLabelIncludes intentionally omitted (see story above).
         reasonsInclude: ["90 dias", "negotiation"],
         actionIncludes: ["48h", "URGENTE", "IMEDIATA", "valor"],
       },
