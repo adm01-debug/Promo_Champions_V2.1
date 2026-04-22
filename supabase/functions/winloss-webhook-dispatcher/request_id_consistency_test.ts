@@ -3,11 +3,13 @@ import { handler } from "./index.ts";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-async function callHandler(body: BodyInit | null, init: RequestInit = {}): Promise<{
+interface Probe {
   status: number;
   headerId: string | null;
-  bodyId: string | null;
-}> {
+  body: Record<string, unknown> | null;
+}
+
+async function callHandler(body: BodyInit | null, init: RequestInit = {}): Promise<Probe> {
   const req = new Request("http://localhost/dispatch", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -17,40 +19,60 @@ async function callHandler(body: BodyInit | null, init: RequestInit = {}): Promi
   const res = await handler(req);
   const headerId = res.headers.get("X-Request-Id");
   const text = await res.text();
-  let bodyId: string | null = null;
+  let parsed: Record<string, unknown> | null = null;
   try {
-    const parsed = JSON.parse(text);
-    bodyId = typeof parsed.requestId === "string" ? parsed.requestId : null;
+    parsed = JSON.parse(text) as Record<string, unknown>;
   } catch {
-    bodyId = null;
+    parsed = null;
   }
-  return { status: res.status, headerId, bodyId };
+  return { status: res.status, headerId, body: parsed };
 }
 
-Deno.test("400 validation error: requestId is the same in header and body", async () => {
-  const { status, headerId, bodyId } = await callHandler(JSON.stringify({}));
+/** Asserts the canonical envelope: { requestId, error, dispatched, results }. */
+function assertEnvelope(body: Record<string, unknown> | null, expectError: boolean): void {
+  assert(body, "response must be JSON");
+  assert("requestId" in body!, "envelope must include `requestId`");
+  assert("error" in body!, "envelope must include `error` (null on success)");
+  assert("dispatched" in body!, "envelope must include `dispatched`");
+  assert("results" in body!, "envelope must include `results`");
+  assertEquals(typeof body!.requestId, "string");
+  assertEquals(typeof body!.dispatched, "number");
+  assert(Array.isArray(body!.results), "results must be an array");
+  if (expectError) {
+    assert(typeof body!.error === "string" && (body!.error as string).length > 0, "error must be a non-empty string");
+  } else {
+    assertEquals(body!.error, null, "error must be null on success");
+  }
+}
+
+Deno.test("400 validation error: canonical envelope + matching requestId", async () => {
+  const { status, headerId, body } = await callHandler(JSON.stringify({}));
   assertEquals(status, 400, "missing event must return 400");
   assert(headerId, "X-Request-Id header must be present");
-  assert(bodyId, "JSON body must contain requestId");
   assertMatch(headerId!, UUID_RE, "header requestId must be a UUID");
-  assertEquals(bodyId, headerId, "body.requestId must match X-Request-Id header");
+  assertEnvelope(body, true);
+  assertEquals(body!.requestId, headerId, "body.requestId must match X-Request-Id header");
+  assertEquals(body!.dispatched, 0, "errors must report dispatched=0");
+  assertEquals((body!.results as unknown[]).length, 0, "errors must report results=[]");
 });
 
-Deno.test("500 fatal error: requestId is the same in header and body", async () => {
+Deno.test("500 fatal error: canonical envelope + matching requestId", async () => {
   // Malformed JSON makes req.json() throw → caught by the dispatcher's catch block.
-  const { status, headerId, bodyId } = await callHandler("not-json{");
+  const { status, headerId, body } = await callHandler("not-json{");
   assertEquals(status, 500, "malformed body must return 500 from the catch block");
   assert(headerId, "X-Request-Id header must be present on errors");
-  assert(bodyId, "JSON error body must contain requestId");
   assertMatch(headerId!, UUID_RE, "header requestId must be a UUID");
-  assertEquals(bodyId, headerId, "body.requestId must match X-Request-Id header on 500");
+  assertEnvelope(body, true);
+  assertEquals(body!.requestId, headerId, "body.requestId must match X-Request-Id header on 500");
+  assertEquals(body!.dispatched, 0);
+  assertEquals((body!.results as unknown[]).length, 0);
 });
 
 Deno.test("each invocation gets a fresh requestId (no leakage between calls)", async () => {
   const a = await callHandler(JSON.stringify({}));
   const b = await callHandler(JSON.stringify({}));
   assert(a.headerId && b.headerId);
-  assertEquals(a.bodyId, a.headerId);
-  assertEquals(b.bodyId, b.headerId);
+  assertEquals((a.body as { requestId: string }).requestId, a.headerId);
+  assertEquals((b.body as { requestId: string }).requestId, b.headerId);
   assert(a.headerId !== b.headerId, "two distinct invocations must produce distinct requestIds");
 });
