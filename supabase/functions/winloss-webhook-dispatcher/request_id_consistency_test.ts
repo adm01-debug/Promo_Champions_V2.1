@@ -56,14 +56,14 @@ Deno.test("400 validation error: canonical envelope + matching requestId", async
   assertEquals((body!.results as unknown[]).length, 0, "errors must report results=[]");
 });
 
-Deno.test("500 fatal error: canonical envelope + matching requestId", async () => {
-  // Malformed JSON makes req.json() throw → caught by the dispatcher's catch block.
+Deno.test("400 malformed body: canonical envelope + matching requestId", async () => {
+  // Malformed JSON is rejected by the Zod input validator (object required) → 400.
   const { status, headerId, body } = await callHandler("not-json{");
-  assertEquals(status, 500, "malformed body must return 500 from the catch block");
+  assertEquals(status, 400, "malformed body must return 400 from the input validator");
   assert(headerId, "X-Request-Id header must be present on errors");
   assertMatch(headerId!, UUID_RE, "header requestId must be a UUID");
   assertEnvelope(body, true);
-  assertEquals(body!.requestId, headerId, "body.requestId must match X-Request-Id header on 500");
+  assertEquals(body!.requestId, headerId, "body.requestId must match X-Request-Id header on 400");
   assertEquals(body!.dispatched, 0);
   assertEquals((body!.results as unknown[]).length, 0);
 });
