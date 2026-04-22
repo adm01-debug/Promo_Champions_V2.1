@@ -1681,3 +1681,71 @@ Deno.test("DLQ: AbortError × MAX_ATTEMPTS → attempts=MAX_ATTEMPTS, last_statu
     `last_error="${e.last_error}" deve mencionar AbortError`,
   );
 });
+
+// ───────────── fan-out: mutação de payload entre envios ─────────────
+// Garante que dispatchOne serializa o payload no momento do envio (snapshot)
+// e NÃO mantém referência viva ao objeto. Mutar o mesmo objeto entre chamadas
+// não pode "vazar" valores novos para bodies já enviados.
+
+Deno.test("fan-out [mutação]: mutar payload entre envios não contamina bodies anteriores (sem reuso por referência)", async () => {
+  const h = makeAllOkFanout();
+
+  // Reaproveita propositalmente o MESMO objeto entre envios,
+  // mutando seus campos antes de cada dispatchOne.
+  const shared: Record<string, unknown> = { event: "x", deal_id: "DEAL-A", seq: 1, meta: { tag: "A" } };
+
+  // 1) Envio para SUB_A com snapshot A
+  await dispatchOne(SUB_A, shared, h.deps);
+  const snapshotA = { event: "x", deal_id: "DEAL-A", seq: 1, meta: { tag: "A" } };
+
+  // 2) Mutar o mesmo objeto e enviar para SUB_B
+  shared.deal_id = "DEAL-B";
+  shared.seq = 2;
+  (shared.meta as Record<string, unknown>).tag = "B";
+  await dispatchOne(SUB_B, shared, h.deps);
+  const snapshotB = { event: "x", deal_id: "DEAL-B", seq: 2, meta: { tag: "B" } };
+
+  // 3) Mutar novamente e enviar para SUB_C
+  shared.deal_id = "DEAL-C";
+  shared.seq = 3;
+  shared.meta = { tag: "C" }; // substitui o objeto aninhado
+  await dispatchOne(SUB_C, shared, h.deps);
+  const snapshotC = { event: "x", deal_id: "DEAL-C", seq: 3, meta: { tag: "C" } };
+
+  // Devem existir exatamente 3 fetches, 1 por subscription.
+  assertEquals(h.capturedInits.length, 3, "esperado 1 POST por subscription");
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1);
+  assertEquals(h.fetchesByUrl[SUB_B.url], 1);
+  assertEquals(h.fetchesByUrl[SUB_C.url], 1);
+
+  const byUrl: Record<string, Record<string, unknown>> = {};
+  for (const { url, init } of h.capturedInits) {
+    assert(typeof init.body === "string", `${url}: body deve ser string serializada (snapshot)`);
+    byUrl[url] = JSON.parse(init.body as string) as Record<string, unknown>;
+  }
+
+  // Cada body deve refletir EXATAMENTE o snapshot do momento do envio.
+  assertEquals(byUrl[SUB_A.url], snapshotA, "SUB_A: body deve refletir snapshot no envio (não pode vazar mutações posteriores)");
+  assertEquals(byUrl[SUB_B.url], snapshotB, "SUB_B: body deve refletir snapshot no envio");
+  assertEquals(byUrl[SUB_C.url], snapshotC, "SUB_C: body deve refletir snapshot no envio");
+
+  // Cross-talk: nenhum body pode conter o deal_id de outra subscription.
+  assertEquals(byUrl[SUB_A.url].deal_id, "DEAL-A");
+  assertEquals(byUrl[SUB_B.url].deal_id, "DEAL-B");
+  assertEquals(byUrl[SUB_C.url].deal_id, "DEAL-C");
+  assert(byUrl[SUB_A.url].deal_id !== byUrl[SUB_B.url].deal_id);
+  assert(byUrl[SUB_B.url].deal_id !== byUrl[SUB_C.url].deal_id);
+  assert(byUrl[SUB_A.url].deal_id !== byUrl[SUB_C.url].deal_id);
+
+  // O `seq` capturado por sub também deve ser o do momento do envio.
+  assertEquals(byUrl[SUB_A.url].seq, 1);
+  assertEquals(byUrl[SUB_B.url].seq, 2);
+  assertEquals(byUrl[SUB_C.url].seq, 3);
+
+  // E o objeto aninhado `meta` não pode ter sido "alcançado" pela mutação
+  // posterior (ex.: SUB_A.meta.tag deve permanecer "A", não "B"/"C").
+  assertEquals((byUrl[SUB_A.url].meta as Record<string, unknown>).tag, "A");
+  assertEquals((byUrl[SUB_B.url].meta as Record<string, unknown>).tag, "B");
+  assertEquals((byUrl[SUB_C.url].meta as Record<string, unknown>).tag, "C");
+});
+
