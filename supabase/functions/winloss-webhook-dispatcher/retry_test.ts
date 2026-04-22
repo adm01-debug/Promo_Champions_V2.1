@@ -1897,3 +1897,113 @@ Deno.test("fan-out [limites]: sleeps por subscription respeitam backoff (sem atr
   assertLessOrEqual(sumB, sumBmax, `SUB_B soma de sleeps ${sumB} > teórico ${sumBmax}`);
 });
 
+// ───────────── fan-out [estresse]: N=100 subs ─────────────
+// Documenta o comportamento atual do dispatcher: NÃO há limite de concorrência
+// configurado (Promise.all direto sobre os targets). Este teste valida:
+//   • Total de POSTs == sucessos*1 + falhas*MAX_ATTEMPTS (nada perdido).
+//   • Cada subscription recebe POSTs apenas na sua própria URL (sem cross-fire).
+//   • Pico de fetches em voo == N (todas disparam simultaneamente) — observabilidade.
+// Se um throttling for introduzido no futuro, o pico in-flight cairá e este teste
+// destacará a mudança via mensagem informativa (não falha).
+
+Deno.test("fan-out [estresse]: N=100 subs — total de POSTs preservado, sem cross-fire, comportamento de concorrência documentado", async () => {
+  const N = 100;
+  const FAIL_EVERY = 7; // ~14 subs falhando persistente → MAX_ATTEMPTS POSTs cada
+  const subs: Subscription[] = Array.from({ length: N }, (_, i) => ({
+    id: `sub-stress-${i.toString().padStart(3, "0")}`,
+    url: `https://stress-${i.toString().padStart(3, "0")}.test/hook`,
+    events: ["x"],
+    secret: i % 3 === 0 ? `secret-${i}` : null,
+  }));
+
+  // Instrumentação manual para medir concorrência in-flight.
+  let inFlight = 0;
+  let peakInFlight = 0;
+  const fetchesByUrl: Record<string, number> = {};
+  const capturedUrls: string[] = [];
+  const deliveries: DeliveryRow[] = [];
+  const updates: Array<{ id: string; status: number }> = [];
+  const deadLetters: DeadLetterEntry[] = [];
+
+  const failingUrls = new Set(subs.filter((_, i) => i % FAIL_EVERY === 0).map((s) => s.url));
+
+  const deps: DispatchDeps = {
+    fetchFn: ((input: Parameters<typeof fetch>[0]) => {
+      const url = typeof input === "string" ? input : (input as URL | Request).toString();
+      capturedUrls.push(url);
+      fetchesByUrl[url] = (fetchesByUrl[url] ?? 0) + 1;
+      inFlight += 1;
+      if (inFlight > peakInFlight) peakInFlight = inFlight;
+
+      // Resolução assíncrona força o loop de microtasks a observar o pico real.
+      return new Promise<Response>((resolve) => {
+        queueMicrotask(() => {
+          inFlight -= 1;
+          resolve(
+            failingUrls.has(url)
+              ? new Response("err", { status: 500 })
+              : new Response("ok", { status: 200 }),
+          );
+        });
+      });
+    }) as typeof fetch,
+    sleep: () => Promise.resolve(),
+    insertDelivery: (row) => { deliveries.push(row); return Promise.resolve(); },
+    updateSubscription: (id, status) => { updates.push({ id, status }); return Promise.resolve(); },
+    onDeadLetter: (entry) => { deadLetters.push(entry); return Promise.resolve(); },
+    rand: () => 0,
+    now: () => 0,
+    log: () => {},
+  };
+
+  const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, deps)));
+
+  // ── Cobertura: 1 resultado por sub ─────────────────────────────
+  assertEquals(results.length, N);
+
+  // ── Sucessos vs falhas determinísticos ────────────────────────
+  const failingSubs = subs.filter((s) => failingUrls.has(s.url));
+  const successSubs = subs.filter((s) => !failingUrls.has(s.url));
+  assertEquals(failingSubs.length, Math.ceil(N / FAIL_EVERY)); // 15 (índices 0,7,...,98)
+  assertEquals(successSubs.length, N - failingSubs.length);
+
+  // ── Total de POSTs: sucessos*1 + falhas*MAX_ATTEMPTS ──────────
+  const expectedTotalPosts = successSubs.length * 1 + failingSubs.length * MAX_ATTEMPTS;
+  const actualTotalPosts = capturedUrls.length;
+  assertEquals(actualTotalPosts, expectedTotalPosts, "total de POSTs divergente");
+  assertEquals(deliveries.length, expectedTotalPosts, "deliveries devem espelhar total de POSTs");
+
+  // ── Sem cross-fire: cada URL recebe POSTs apenas dela mesma ───
+  for (const s of successSubs) {
+    assertEquals(fetchesByUrl[s.url], 1, `${s.id}: sucesso deve ter 1 POST`);
+  }
+  for (const s of failingSubs) {
+    assertEquals(fetchesByUrl[s.url], MAX_ATTEMPTS, `${s.id}: falha deve ter MAX_ATTEMPTS POSTs`);
+  }
+  // Nenhuma URL além das declaradas.
+  const seenUrls = new Set(capturedUrls);
+  assertEquals(seenUrls.size, N, "deve haver exatamente N URLs distintas");
+  for (const url of seenUrls) {
+    assert(subs.some((s) => s.url === url), `URL inesperada nos POSTs: ${url}`);
+  }
+
+  // ── updateSubscription: 1× por sub com status final correto ───
+  assertEquals(updates.length, N);
+  const statusById = Object.fromEntries(updates.map((u) => [u.id, u.status]));
+  for (const s of successSubs) assertEquals(statusById[s.id], 200, `${s.id}: status final`);
+  for (const s of failingSubs) assertEquals(statusById[s.id], 500, `${s.id}: status final`);
+
+  // ── DLQ: apenas as falhas persistentes vão para a fila ────────
+  assertEquals(deadLetters.length, failingSubs.length, "DLQ deve conter apenas falhas persistentes");
+  const dlqIds = new Set(deadLetters.map((d) => d.subscription_id));
+  for (const s of failingSubs) assert(dlqIds.has(s.id), `${s.id} ausente no DLQ`);
+  for (const s of successSubs) assert(!dlqIds.has(s.id), `${s.id} não deveria estar no DLQ`);
+
+  // ── Concorrência (observabilidade do contrato atual) ──────────
+  // Sem throttling, o pico in-flight da PRIMEIRA rodada == N (todas disparam juntas).
+  // Em rodadas subsequentes (retries), o pico cai porque sucessos já terminaram.
+  assertEquals(peakInFlight, N, `pico in-flight esperado=${N} (sem throttling); obtido=${peakInFlight}`);
+  // Sanidade: nunca pode ultrapassar N (seria contagem corrompida ou cross-fire).
+  assertLessOrEqual(peakInFlight, N, "pico in-flight não pode exceder N");
+});
+
