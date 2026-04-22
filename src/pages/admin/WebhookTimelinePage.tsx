@@ -153,65 +153,104 @@ export default function WebhookTimelinePage() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
-            <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-              <CardTitle className="text-base">
-                {items.length} evento{items.length === 1 ? "" : "s"}
-              </CardTitle>
-              {isFetching && <span className="text-xs text-muted-foreground">Atualizando…</span>}
-            </CardHeader>
-            <CardContent>
-              <ol className="relative border-l border-border ml-3 space-y-3">
-                {items.map((it) => (
-                  <li key={`${it.source}:${it.ref_id}`} className="ml-4">
-                    <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border bg-background flex items-center justify-center">
-                      <SourceIcon item={it} />
-                    </span>
-                    <div className="rounded-md border bg-card p-3">
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <Badge variant="outline" className="font-normal">
-                          {SOURCE_LABEL[it.source]}
-                        </Badge>
-                        {it.event && (
-                          <span className="font-mono text-[11px] text-muted-foreground">
-                            {it.event}
-                          </span>
-                        )}
-                        {it.attempt !== null && (
-                          <span className="text-muted-foreground">
-                            tentativa {it.attempt}
-                          </span>
-                        )}
-                        {it.status !== null && (
-                          <span className={cn("font-semibold tabular-nums", statusToneClass(it.status))}>
-                            {it.status === 0 ? "rede/timeout" : `HTTP ${it.status}`}
-                          </span>
-                        )}
-                        {it.duration_ms !== null && (
-                          <span className="text-muted-foreground tabular-nums">
-                            {it.duration_ms}ms
-                          </span>
-                        )}
-                        <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
-                          {new Date(it.ts).toLocaleString()}
+          <>
+            {(() => {
+              const byAttempt = new Map<number, TimelineItem[]>();
+              for (const it of items) {
+                if (it.attempt === null) continue;
+                const arr = byAttempt.get(it.attempt) ?? [];
+                arr.push(it);
+                byAttempt.set(it.attempt, arr);
+              }
+              const attempts = [1, 2, 3].filter((n) => byAttempt.has(n));
+              if (attempts.length === 0) return null;
+              return (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Tentativas</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-wrap gap-2">
+                    {attempts.map((n) => (
+                      <a
+                        key={n}
+                        href={`#attempt-${n}`}
+                        className="inline-flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-xs hover:bg-muted/50 transition-colors"
+                      >
+                        <Badge variant="outline" className="font-normal">Tentativa {n}</Badge>
+                        <span className="text-muted-foreground tabular-nums">
+                          {byAttempt.get(n)!.length} evento{byAttempt.get(n)!.length === 1 ? "" : "s"}
                         </span>
+                      </a>
+                    ))}
+                  </CardContent>
+                </Card>
+              );
+            })()}
+
+            <Card>
+              <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-base">
+                  {items.length} evento{items.length === 1 ? "" : "s"}
+                </CardTitle>
+                {isFetching && <span className="text-xs text-muted-foreground">Atualizando…</span>}
+              </CardHeader>
+              <CardContent>
+                <ol className="relative border-l border-border ml-3 space-y-3">
+                  {items.map((it) => (
+                    <li
+                      key={`${it.source}:${it.ref_id}`}
+                      id={it.attempt !== null ? `attempt-${it.attempt}` : undefined}
+                      className="ml-4 scroll-mt-20"
+                    >
+                      <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border bg-background flex items-center justify-center">
+                        <SourceIcon item={it} />
+                      </span>
+                      <div className="rounded-md border bg-card p-3">
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <Badge variant="outline" className="font-normal">
+                            {SOURCE_LABEL[it.source]}
+                          </Badge>
+                          {it.event && (
+                            <span className="font-mono text-[11px] text-muted-foreground">
+                              {it.event}
+                            </span>
+                          )}
+                          {it.attempt !== null && (
+                            <Badge variant="secondary" className="font-normal">
+                              tentativa {it.attempt}
+                            </Badge>
+                          )}
+                          {it.status !== null && (
+                            <span className={cn("font-semibold tabular-nums", statusToneClass(it.status))}>
+                              {it.status === 0 ? "rede/timeout" : `HTTP ${it.status}`}
+                            </span>
+                          )}
+                          {it.duration_ms !== null && (
+                            <span className="text-muted-foreground tabular-nums">
+                              {it.duration_ms}ms
+                            </span>
+                          )}
+                          <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
+                            {new Date(it.ts).toLocaleString()}
+                          </span>
+                        </div>
+                        {it.message && (
+                          <p className="mt-1.5 text-xs text-muted-foreground break-words">
+                            {it.message}
+                          </p>
+                        )}
+                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] font-mono text-muted-foreground/80">
+                          <span>sub: {it.subscription_id}</span>
+                          {it.request_id && <span>req: {it.request_id}</span>}
+                          <span>id: {it.ref_id}</span>
+                        </div>
                       </div>
-                      {it.message && (
-                        <p className="mt-1.5 text-xs text-muted-foreground break-words">
-                          {it.message}
-                        </p>
-                      )}
-                      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] font-mono text-muted-foreground/80">
-                        <span>sub: {it.subscription_id}</span>
-                        {it.request_id && <span>req: {it.request_id}</span>}
-                        <span>id: {it.ref_id}</span>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </CardContent>
-          </Card>
+                    </li>
+                  ))}
+                </ol>
+              </CardContent>
+            </Card>
+          </>
         )}
       </div>
     </>
