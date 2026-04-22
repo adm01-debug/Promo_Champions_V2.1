@@ -53,6 +53,34 @@ function HealthTooltip({ active, payload }: RechartsTooltipProps) {
   );
 }
 
+function ReasonTooltip({ active, payload }: RechartsTooltipProps) {
+  if (!active || !payload?.length) return null;
+  const p = payload[0].payload as {
+    label: string;
+    count: number;
+    sampleMessage: string | null;
+  };
+  return (
+    <div className="rounded-md border bg-card px-2.5 py-1.5 text-xs shadow-md max-w-[260px]">
+      <p className="font-medium">{p.label}</p>
+      <p className="text-muted-foreground">
+        {p.count} falha{p.count === 1 ? "" : "s"}
+      </p>
+      {p.sampleMessage && (
+        <p className="mt-1 text-muted-foreground/80 italic break-words">"{p.sampleMessage}"</p>
+      )}
+    </div>
+  );
+}
+
+/** Color-code reason bars: 5xx → destructive, 4xx → warning, network/other → muted. */
+function reasonColor(status: number | null, key: string): string {
+  if (status !== null && status >= 500) return "hsl(var(--destructive))";
+  if (status !== null && status >= 400) return "hsl(var(--warning))";
+  if (key === "network") return "hsl(var(--destructive))";
+  return "hsl(var(--muted-foreground))";
+}
+
 export function WebhookHealthPanel() {
   const [windowKey, setWindowKey] = useState<WebhookStatsWindow>("7d");
   const { data, isLoading } = useWebhookDeliveryStats(null, windowKey);
@@ -168,6 +196,73 @@ export function WebhookHealthPanel() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+            </div>
+
+            <div>
+              <div className="flex items-baseline justify-between mb-1">
+                <p className="text-xs text-muted-foreground">Principais causas de falha</p>
+                <p className="text-[10px] text-muted-foreground/70">
+                  por código HTTP
+                </p>
+              </div>
+              {data.failureReasons.length === 0 ? (
+                <p className="text-xs text-muted-foreground py-6 text-center">
+                  Nenhuma falha registrada na janela.
+                </p>
+              ) : (
+                <>
+                  <ResponsiveContainer width="100%" height={Math.max(120, data.failureReasons.length * 28)}>
+                    <BarChart
+                      data={data.failureReasons}
+                      layout="vertical"
+                      margin={{ top: 4, right: 16, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" horizontal={false} />
+                      <XAxis type="number" allowDecimals={false} className="text-[11px]" />
+                      <YAxis
+                        type="category"
+                        dataKey="label"
+                        width={92}
+                        className="text-[11px]"
+                        tick={{ fill: "hsl(var(--muted-foreground))" }}
+                      />
+                      <Tooltip
+                        cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }}
+                        content={<ReasonTooltip />}
+                      />
+                      <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                        {data.failureReasons.map((r) => (
+                          <Cell key={r.key} fill={reasonColor(r.status, r.key)} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+
+                  <ul className="mt-2 space-y-1">
+                    {data.failureReasons.map((r) => {
+                      const pct = data.failed > 0 ? (r.count / data.failed) * 100 : 0;
+                      return (
+                        <li
+                          key={r.key}
+                          className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground"
+                        >
+                          <span className="flex items-center gap-1.5 min-w-0">
+                            <span
+                              className="inline-block h-2 w-2 rounded-sm shrink-0"
+                              style={{ backgroundColor: reasonColor(r.status, r.key) }}
+                              aria-hidden
+                            />
+                            <span className="truncate">{r.label}</span>
+                          </span>
+                          <span className="tabular-nums shrink-0">
+                            {r.count} ({pct.toFixed(0)}%)
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
             </div>
           </>
         )}
