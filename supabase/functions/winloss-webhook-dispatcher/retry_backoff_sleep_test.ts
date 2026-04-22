@@ -186,3 +186,60 @@ Deno.test("backoff sleeps: sucesso na 2ª após 1 AbortError → sleeps == [250]
     { kind: "delivery", attempt: 2, succeeded: true },
   ]);
 });
+
+// 9. AbortError nas 2 primeiras tentativas, 200 na 3ª → error_message null SÓ na entrega bem-sucedida
+Deno.test(
+  "backoff sleeps: AbortError × 2 + 200 na 3ª → error_message null apenas na delivery #3",
+  async () => {
+    const h = makeHarness(
+      (attempt) => {
+        if (attempt < 3) throw makeAbortError(`timeout #${attempt}`);
+        return new Response("ok", { status: 200 });
+      },
+      () => 0,
+    );
+    const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+    // 3 tentativas executadas, 2 sleeps determinísticos entre elas
+    assertEquals(h.fetches(), MAX_ATTEMPTS);
+    assertEquals(h.sleeps, [BASE, BASE * 2]);
+
+    // Resultado final reflete sucesso na última
+    assertEquals(r.attempts, MAX_ATTEMPTS);
+    assertEquals(r.succeeded, true);
+    assertEquals(r.status, 200);
+    assertEquals(r.error, null, "r.error deve ser null quando a última tentativa sucede");
+
+    // 3 entregas registradas, com error_message presente nas duas primeiras e null SÓ na terceira
+    assertEquals(h.deliveries.length, MAX_ATTEMPTS);
+
+    assertEquals(h.deliveries[0].error_message, "AbortError: timeout #1");
+    assertEquals(h.deliveries[0].succeeded, false);
+    assertEquals(h.deliveries[0].status, 0);
+
+    assertEquals(h.deliveries[1].error_message, "AbortError: timeout #2");
+    assertEquals(h.deliveries[1].succeeded, false);
+    assertEquals(h.deliveries[1].status, 0);
+
+    assertEquals(h.deliveries[2].error_message, null, "delivery #3 deve ter error_message=null");
+    assertEquals(h.deliveries[2].succeeded, true);
+    assertEquals(h.deliveries[2].status, 200);
+
+    // Invariante: exatamente 1 entrega com error_message null, e é a bem-sucedida
+    const nullErrors = h.deliveries.filter((d) => d.error_message === null);
+    assertEquals(nullErrors.length, 1);
+    assertEquals(nullErrors[0].succeeded, true);
+
+    // Ordem temporal exata: sleeps entrelaçados, sem sleep após o último delivery
+    assertEquals(h.timeline, [
+      { kind: "fetch", attempt: 1 },
+      { kind: "delivery", attempt: 1, succeeded: false },
+      { kind: "sleep", ms: BASE },
+      { kind: "fetch", attempt: 2 },
+      { kind: "delivery", attempt: 2, succeeded: false },
+      { kind: "sleep", ms: BASE * 2 },
+      { kind: "fetch", attempt: 3 },
+      { kind: "delivery", attempt: 3, succeeded: true },
+    ]);
+  },
+);
