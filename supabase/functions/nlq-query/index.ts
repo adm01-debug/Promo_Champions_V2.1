@@ -1,7 +1,7 @@
 // NLQ — Natural Language Queries against CRM data via Lovable AI tool calling.
 // Auth required (verify_jwt = true). Uses caller JWT so RLS applies.
 // deno-lint-ignore-file no-explicit-any
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import {
   querySalesMetric,
   queryPipelineSnapshot,
