@@ -2114,3 +2114,83 @@ Deno.test("fan-out [persistência por sub]: nº de deliveries por subscription e
   assertEquals(updatesById[SUB_C.id], [200]);
 });
 
+// ───────────── fan-out [body estável]: SUB_B re-tentativas usam o MESMO body ─────────────
+// Quando uma sub falha em todas as tentativas, o dispatcher constrói o body uma única
+// vez e reusa em cada retry. Captura o `init.body` de cada POST para SUB_B e garante
+// que `deal_id`, `event` e demais campos do payload são byte-a-byte iguais entre as
+// MAX_ATTEMPTS tentativas — sem mutação acidental nem reconstrução por retry.
+
+Deno.test("fan-out [body estável]: SUB_B falha persistente — body (deal_id e campos relevantes) idêntico em todas as MAX_ATTEMPTS", async () => {
+  const payload = {
+    event: "winloss.deal.lost",
+    deal_id: "deal-B-xyz-001",
+    amount: 12345.67,
+    reason: "price",
+    meta: { region: "BR", tier: 2, tags: ["enterprise", "renewal"] },
+  };
+
+  const h = makeFanoutHarness(
+    {
+      [SUB_A.url]: () => new Response("ok", { status: 200 }),
+      [SUB_B.url]: () => new Response("boom", { status: 500 }),
+      [SUB_C.url]: () => new Response("ok", { status: 200 }),
+    },
+    { withDeadLetter: true },
+  );
+
+  const subs = [SUB_A, SUB_B, SUB_C];
+  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+
+  // Coleta todos os bodies enviados para SUB_B na ordem de envio.
+  const bodiesB = h.capturedInits
+    .filter((c) => c.url === SUB_B.url)
+    .map((c) => {
+      const raw = c.init.body;
+      assert(typeof raw === "string", "body do POST deve ser string JSON");
+      return raw as string;
+    });
+
+  // (1) Quantidade de bodies == MAX_ATTEMPTS.
+  assertEquals(bodiesB.length, MAX_ATTEMPTS, "SUB_B deve ter MAX_ATTEMPTS bodies capturados");
+
+  // (2) Igualdade byte-a-byte entre todas as tentativas.
+  for (let i = 1; i < bodiesB.length; i += 1) {
+    assertEquals(
+      bodiesB[i],
+      bodiesB[0],
+      `body da tentativa #${i + 1} difere da #1 (esperado: idêntico)`,
+    );
+  }
+
+  // (3) Campos relevantes preservados em CADA tentativa.
+  for (let i = 0; i < bodiesB.length; i += 1) {
+    const parsed = JSON.parse(bodiesB[i]) as Record<string, unknown>;
+    assertEquals(parsed.event, payload.event, `tentativa #${i + 1}: event`);
+    assertEquals(parsed.deal_id, payload.deal_id, `tentativa #${i + 1}: deal_id`);
+    assertEquals(parsed.amount, payload.amount, `tentativa #${i + 1}: amount`);
+    assertEquals(parsed.reason, payload.reason, `tentativa #${i + 1}: reason`);
+    assertEquals(parsed.meta, payload.meta, `tentativa #${i + 1}: meta (objeto aninhado)`);
+    assert(typeof parsed.dispatched_at === "string", `tentativa #${i + 1}: dispatched_at presente`);
+  }
+
+  // dispatched_at idêntico em todas as tentativas (gerado 1× antes do loop de retries).
+  const dispatchedAts = bodiesB.map((b) => (JSON.parse(b) as { dispatched_at: string }).dispatched_at);
+  for (let i = 1; i < dispatchedAts.length; i += 1) {
+    assertEquals(
+      dispatchedAts[i],
+      dispatchedAts[0],
+      `dispatched_at da tentativa #${i + 1} foi regenerado (deveria ser único por dispatch)`,
+    );
+  }
+
+  // (4) Cada body de SUB_B foi efetivamente endereçado a SUB_B.url (sem cross-fire).
+  const urlsB = h.capturedInits.filter((c) => c.url === SUB_B.url).map((c) => c.url);
+  assertEquals(urlsB.length, MAX_ATTEMPTS);
+  assert(urlsB.every((u) => u === SUB_B.url));
+
+  // (5) Sanidade: SUB_B falhou de fato (do contrário o teste seria trivial).
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 1);
+  assertEquals(h.deadLetters[0].subscription_id, SUB_B.id);
+});
+
