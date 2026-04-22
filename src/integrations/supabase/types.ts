@@ -14070,6 +14070,62 @@ export type Database = {
           },
         ]
       }
+      winloss_webhook_replay_audit: {
+        Row: {
+          actor_email: string | null
+          actor_user_id: string
+          attempts: number | null
+          created_at: string
+          dead_letter_id: string | null
+          delivery_id: string | null
+          error: string | null
+          http_status: number
+          id: string
+          request_id: string
+          source: string
+          status_label: string
+          succeeded: boolean
+        }
+        Insert: {
+          actor_email?: string | null
+          actor_user_id: string
+          attempts?: number | null
+          created_at?: string
+          dead_letter_id?: string | null
+          delivery_id?: string | null
+          error?: string | null
+          http_status?: number
+          id?: string
+          request_id: string
+          source: string
+          status_label: string
+          succeeded: boolean
+        }
+        Update: {
+          actor_email?: string | null
+          actor_user_id?: string
+          attempts?: number | null
+          created_at?: string
+          dead_letter_id?: string | null
+          delivery_id?: string | null
+          error?: string | null
+          http_status?: number
+          id?: string
+          request_id?: string
+          source?: string
+          status_label?: string
+          succeeded?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "winloss_webhook_replay_audit_dead_letter_id_fkey"
+            columns: ["dead_letter_id"]
+            isOneToOne: false
+            referencedRelation: "winloss_webhook_dead_letters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       winloss_webhook_subscriptions: {
         Row: {
           active: boolean
