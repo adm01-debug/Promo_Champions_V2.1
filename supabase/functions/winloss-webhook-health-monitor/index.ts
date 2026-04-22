@@ -47,6 +47,8 @@ interface DeliveryRow {
   status: number;
   error_message: string | null;
   created_at: string;
+  request_id: string | null;
+  event: string | null;
 }
 
 interface SubscriptionRow {
