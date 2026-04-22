@@ -30,12 +30,12 @@ export function validateReplayIds(ids: readonly string[]): ValidateReplayResult 
   if (invalid.length > 0) {
     const sample = invalid
       .slice(0, 3)
-      .map((id) => (id.length > 12 ? `${id.slice(0, 8)}…` : id))
+      .map((id) => (id.length > 8 ? `${id.slice(0, 8)}…` : id))
       .join(", ");
     const more = invalid.length > 3 ? ` (+${invalid.length - 3})` : "";
     return {
       ok: false,
-      message: `IDs inválidos detectados: ${sample}${more}.`,
+      message: `${invalid.length} ID${invalid.length === 1 ? "" : "s"} inválido${invalid.length === 1 ? "" : "s"}: ${sample}${more}. Desmarque ${invalid.length === 1 ? "essa entrega" : "essas entregas"} antes de confirmar o reenvio.`,
     };
   }
 
