@@ -14,85 +14,137 @@ import { actionNeedles, hasMeaningfulActionIncludes, includesCI, matchesPatternF
 
 const FAMILIES = Object.keys(DEAL_HISTORY_FIXTURES) as DealHistoryFamily[];
 
-function validateGroup(family: DealHistoryFamily, group: ScenarioGroup): string[] {
+interface CaseReport {
+  family: DealHistoryFamily;
+  name: string;
+  expected: { included: boolean; minScore?: number; maxScore?: number };
+  got: {
+    included: boolean;
+    score: number | null;
+    matched_pattern: string | null;
+    matched_pattern_type: string | null;
+    reasons: string[];
+    suggested_action: string | null;
+  };
+  failures: string[];
+}
+
+function buildCaseReport(family: DealHistoryFamily, group: ScenarioGroup, c: ScenarioGroup["cases"][number]): CaseReport {
+  const r = computeDealRisk(c.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+  const gotIncluded = r !== null;
   const failures: string[] = [];
-  for (const c of group.cases) {
-    // Use threshold=40 so the included flag mirrors the prod default.
-    const r = computeDealRisk(c.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
-    const gotIncluded = r !== null;
+  const report: CaseReport = {
+    family,
+    name: c.name,
+    expected: { included: c.expect.included, minScore: c.expect.minScore, maxScore: c.expect.maxScore },
+    got: {
+      included: gotIncluded,
+      score: r?.risk_score ?? null,
+      matched_pattern: r?.matched_pattern ?? null,
+      matched_pattern_type: r?.breakdown.matched_pattern_type ?? null,
+      reasons: r?.reasons ?? [],
+      suggested_action: r?.suggested_action ?? null,
+    },
+    failures,
+  };
 
-    if (gotIncluded !== c.expect.included) {
+  if (gotIncluded !== c.expect.included) {
+    failures.push(
+      `included flag mismatch: expected=${c.expect.included}, got=${gotIncluded} (score=${r?.risk_score ?? "n/a"})`,
+    );
+    return report;
+  }
+  if (!c.expect.included || !r) return report;
+
+  // Score band + global [0,100]
+  if (r.risk_score < 0 || r.risk_score > 100) {
+    failures.push(`score ${r.risk_score} out of [0,100]`);
+  }
+  if (typeof c.expect.minScore === "number" && r.risk_score < c.expect.minScore) {
+    failures.push(`score ${r.risk_score} < minScore ${c.expect.minScore}`);
+  }
+  if (typeof c.expect.maxScore === "number" && r.risk_score > c.expect.maxScore) {
+    failures.push(`score ${r.risk_score} > maxScore ${c.expect.maxScore}`);
+  }
+
+  if (c.expect.patternTypeOneOf?.length && !c.expect.patternTypeOneOf.includes(r.breakdown.matched_pattern_type)) {
+    failures.push(
+      `pattern_type "${r.breakdown.matched_pattern_type}" not in ${JSON.stringify(c.expect.patternTypeOneOf)}`,
+    );
+  }
+
+  const expectedLabel = c.expect.matchedPatternLabelIncludes ?? group.dominantPatternLabel;
+  if (expectedLabel) {
+    const m = matchesPatternFamily(r.matched_pattern, expectedLabel);
+    if (!m.ok) {
       failures.push(
-        `[${family}/${c.name}] included flag mismatch: expected=${c.expect.included}, got=${gotIncluded} (score=${r?.risk_score ?? "n/a"})`,
+        `matched_pattern "${r.matched_pattern}" missing family label "${expectedLabel}" ` +
+          `(mode=${m.mode}, missingTokens=${JSON.stringify(m.missingTokens)})`,
       );
-      continue;
-    }
-    if (!c.expect.included) continue; // excluded case checked separately below
-
-    if (!r) continue;
-
-    // Score band + global [0,100]
-    if (r.risk_score < 0 || r.risk_score > 100) {
-      failures.push(`[${family}/${c.name}] score ${r.risk_score} out of [0,100]`);
-    }
-    if (typeof c.expect.minScore === "number" && r.risk_score < c.expect.minScore) {
-      failures.push(`[${family}/${c.name}] score ${r.risk_score} < minScore ${c.expect.minScore}`);
-    }
-    if (typeof c.expect.maxScore === "number" && r.risk_score > c.expect.maxScore) {
-      failures.push(`[${family}/${c.name}] score ${r.risk_score} > maxScore ${c.expect.maxScore}`);
-    }
-
-    // Pattern type
-    if (c.expect.patternTypeOneOf?.length && !c.expect.patternTypeOneOf.includes(r.breakdown.matched_pattern_type)) {
-      failures.push(
-        `[${family}/${c.name}] pattern_type "${r.breakdown.matched_pattern_type}" not in ${JSON.stringify(c.expect.patternTypeOneOf)}`,
-      );
-    }
-
-    // Family-level dominant pattern label (matchedPatternLabelIncludes overrides group default).
-    // Two-tier match: strict substring → token fallback (reduces false negatives when
-    // the engine emits a richer label than the family declares).
-    const expectedLabel = c.expect.matchedPatternLabelIncludes ?? group.dominantPatternLabel;
-    if (expectedLabel) {
-      const m = matchesPatternFamily(r.matched_pattern, expectedLabel);
-      if (!m.ok) {
-        failures.push(
-          `[${family}/${c.name}] matched_pattern "${r.matched_pattern}" missing family label "${expectedLabel}" ` +
-            `(mode=${m.mode}, missingTokens=${JSON.stringify(m.missingTokens)})`,
-        );
-      }
-    }
-
-    // Reasons
-    for (const needle of c.expect.reasonsInclude ?? []) {
-      const hit = r.reasons.some((reason) => includesCI(reason, needle));
-      if (!hit) {
-        failures.push(
-          `[${family}/${c.name}] reason needle "${needle}" not found in ${JSON.stringify(r.reasons)}`,
-        );
-      }
-    }
-
-    // Action substrings (string=single AND, array=OR)
-    const needles = actionNeedles(c.expect.actionIncludes);
-    if (needles.length > 0) {
-      const hit = needles.some((n) => includesCI(r.suggested_action, n));
-      if (!hit) {
-        failures.push(
-          `[${family}/${c.name}] action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`,
-        );
-      }
     }
   }
-  return failures;
+
+  for (const needle of c.expect.reasonsInclude ?? []) {
+    const hit = r.reasons.some((reason) => includesCI(reason, needle));
+    if (!hit) {
+      failures.push(`reason needle "${needle}" not found in ${JSON.stringify(r.reasons)}`);
+    }
+  }
+
+  const needles = actionNeedles(c.expect.actionIncludes);
+  if (needles.length > 0) {
+    const hit = needles.some((n) => includesCI(r.suggested_action, n));
+    if (!hit) {
+      failures.push(`action "${r.suggested_action}" missing any of ${JSON.stringify(needles)}`);
+    }
+  }
+
+  return report;
+}
+
+function validateGroup(family: DealHistoryFamily, group: ScenarioGroup): CaseReport[] {
+  return group.cases.map((c) => buildCaseReport(family, group, c));
+}
+
+function formatReport(reports: CaseReport[]): string {
+  const lines: string[] = [];
+  for (const r of reports) {
+    const status = r.failures.length === 0 ? "✓" : "✗";
+    lines.push(
+      `${status} [${r.family}/${r.name}] included=${r.got.included} score=${r.got.score ?? "n/a"} ` +
+        `pattern="${r.got.matched_pattern ?? ""}" type=${r.got.matched_pattern_type ?? "n/a"}`,
+    );
+    if (r.got.suggested_action) lines.push(`     action: ${r.got.suggested_action}`);
+    if (r.got.reasons.length) lines.push(`     reasons: ${r.got.reasons.join(" | ")}`);
+    for (const f of r.failures) lines.push(`     ✗ ${f}`);
+  }
+  return lines.join("\n");
+}
+
+function reportArtifact(family: DealHistoryFamily, reports: CaseReport[]): string {
+  const failed = reports.filter((r) => r.failures.length > 0);
+  const json = JSON.stringify(
+    { family, total: reports.length, failed: failed.length, cases: reports },
+    null,
+    2,
+  );
+  return `\n=== history_catalog report [${family}] — ${failed.length}/${reports.length} failed ===\n` +
+    formatReport(reports) +
+    `\n--- JSON ---\n${json}\n=== end report ===`;
 }
 
 // One Deno.test per family — easy to spot which family broke when something fails.
+// On failure we emit a per-case report (text + JSON) covering score, matched_pattern,
+// reasons and suggested_action — makes catalog regressions self-explanatory.
 for (const family of FAMILIES) {
   const group = DEAL_HISTORY_FIXTURES[family];
   Deno.test(`history catalog: ${family} — "${group.theme}" (dominant: "${group.dominantPatternLabel}")`, () => {
-    const failures = validateGroup(family, group);
-    assertEquals(failures, [], `family "${family}" failures:\n  - ${failures.join("\n  - ")}`);
+    const reports = validateGroup(family, group);
+    const failedCases = reports.filter((r) => r.failures.length > 0);
+    if (failedCases.length > 0) {
+      const flat = failedCases.flatMap((r) => r.failures.map((f) => `[${r.family}/${r.name}] ${f}`));
+      assertEquals(flat, [], reportArtifact(family, reports));
+    }
   });
 }
 
