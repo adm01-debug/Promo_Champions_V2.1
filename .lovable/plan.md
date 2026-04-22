@@ -1,47 +1,44 @@
 
 
-## Botão "Restaurar padrões de visualização" (granularidade + horizonte)
+## Suíte determinística do cap `maxDelay` no backoff frontend
 
 ### Contexto
-- `useWinLossViewPrefs.reset()` já existe e restaura `granularity: "month"` + `forecastHorizon: 3`, limpando o localStorage. Já coberto por teste no hook.
-- Falta apenas um botão na UI que chame `reset()` — hoje só há um botão "Limpar" para os filtros de dados (vendedores/segmento/período/valor), não para as preferências de visualização.
+`calculateBackoffDelay` em `src/hooks/useRetryMutation.ts`:
+```
+delay(n) = min(expDelay + rand() * JITTER_FACTOR * expDelay, maxDelay)
+```
+Hoje só há 2 casos pontuais validando o cap em `useBackoffJitter.test.ts`. Falta cobertura sistemática dos 3 regimes + bordas, com `rand` injetado.
 
-### O que muda
+### O que será criado
 
-**1. `src/components/win-loss/WinLossFilters.tsx`**
-- Novas props opcionais: `onResetViewPrefs?: () => void` e `viewPrefsAreDefault?: boolean`.
-- Renderizar botão discreto ao lado do "Limpar" existente, **apenas** quando `viewPrefsAreDefault === false`:
-  ```tsx
-  {!viewPrefsAreDefault && onResetViewPrefs && (
-    <Button size="sm" variant="ghost" className="h-8"
-      onClick={onResetViewPrefs}
-      title="Restaura granularidade (Mensal) e horizonte (3 períodos)">
-      <RotateCcw className="h-3.5 w-3.5 mr-1" /> Restaurar visualização
-    </Button>
-  )}
-  ```
-- Ícone `RotateCcw` (lucide), tokens semânticos, `variant="ghost"` para não competir com o "Limpar".
+**Novo arquivo `src/test/hooks/useBackoffMaxDelayCap.test.ts`** — 10 casos determinísticos, todos via `constRand(v)`:
 
-**2. `src/pages/WinLossIntelligence.tsx`**
-- Calcular `viewPrefsAreDefault` comparando com `VIEW_PREFS_DEFAULTS` (já exportado).
-- Passar `onResetViewPrefs` que chama `resetViewPrefs()` + dispara `toast({ title: "Preferências restauradas", description: "Granularidade Mensal · Horizonte 3 períodos" })` para feedback.
+| # | Caso | Garante |
+|---|---|---|
+| 1 | Jitter máximo, `n=1..30` | `delay ≤ maxDelay` em todas as tentativas |
+| 2 | Jitter mínimo (`rand=0`), `n=1..30` | Mesma invariante no extremo inferior |
+| 3 | Property test: `rand ∈ {0, 0.25, 0.5, 0.75, ~1}` × `n ∈ 1..20` | Invariante vale em 100 combinações |
+| 4 | Regime 1 — sem cap | Fórmula exata `expDelay × (1 + JITTER × r)` |
+| 5 | Regime 2 — jitter empurra além | `expDelay=8000, max=8500`: `rand=0.21` ativa cap em 8500 |
+| 6 | Regime 3 — exponencial sozinho ≥ cap | `n=10` (expDelay=512_000) e `n=50` retornam exatamente `maxDelay` |
+| 7 | Boundary `expDelay == maxDelay` | Qualquer jitter > 0 → cap |
+| 8 | Monotonicidade do cap | Uma vez capado, sempre capado nas tentativas seguintes |
+| 9 | `maxDelay < baseDelay` | Cap engata desde n=1 |
+| 10 | `maxDelay = 0` | Todo delay é 0 |
 
-**3. Testes — `src/test/components/winloss/WinLossFiltersResetView.test.tsx` (novo)**
-4 casos:
-1. Botão **não** aparece quando `viewPrefsAreDefault === true`.
-2. Botão **aparece** quando `viewPrefsAreDefault === false`.
-3. Clicar dispara `onResetViewPrefs`.
-4. Botão tem `title` (tooltip nativo) descrevendo os defaults.
+### Não será alterado
+- `src/hooks/useRetryMutation.ts` (só testes).
+- `src/test/hooks/useBackoffJitter.test.ts` (continua focado em fórmula/jitter; sem duplicação).
+- Edge function `backoffDelay` (contrato diferente — cap só na base; fora do escopo).
 
-### Não-mudanças
-- Hook `useWinLossViewPrefs` intacto (já tem `reset`).
-- Botão "Limpar" dos filtros de dados intacto.
-- Sem chaves novas de localStorage.
+### Como rodar
+```bash
+npx vitest run src/test/hooks/useBackoffMaxDelayCap.test.ts
+```
 
 ### Critério de aceite
-1. Mudo granularidade ou horizonte → botão "Restaurar visualização" aparece nos filtros.
-2. Clico nele → granularidade volta para Mensal, horizonte para 3, gráficos remontam, toast confirma.
-3. Recarrego a página → defaults persistem (localStorage foi limpo).
-4. Estou nos defaults → botão fica oculto (sem ruído visual).
-5. Suíte Win/Loss verde com 4 novos testes (≥ 61 totais).
+1. 10 testes novos, todos verdes.
+2. Cada um usa `rand` injetado — zero `Math.random` direto.
+3. Cobre 3 regimes + 4 bordas (igualdade, monotonicidade, max<base, max=0).
+4. Suíte existente `useBackoffJitter.test.ts` continua verde.
 
