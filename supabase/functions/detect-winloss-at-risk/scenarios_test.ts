@@ -137,10 +137,7 @@ Deno.test("scenarios: every included scenario declares a meaningful actionInclud
 // aggregated assertions (better for at-a-glance review and bulk diagnostics).
 // ─────────────────────────────────────────────────────────────────────────────
 
-function actionNeedles(a: string | string[] | undefined): string[] {
-  if (a === undefined) return [];
-  return Array.isArray(a) ? a : [a];
-}
+// `actionNeedles` is imported from `_testHelpers.ts` (single source of truth).
 
 Deno.test("fixtures table: included flag matches threshold filter (40)", () => {
   const diff: Array<{ name: string; expected: boolean; got: boolean; score: number | null }> = [];
