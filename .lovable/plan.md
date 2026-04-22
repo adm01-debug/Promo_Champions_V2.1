@@ -1,70 +1,47 @@
 
 
-## Persistir estado aberto/fechado do painel de auditoria
+## Botão "Restaurar padrões de visualização" (granularidade + horizonte)
 
-### Situação atual
-- ✅ **bandMode** já é persistido (`winloss-scenario-bandmode`) — coberto por 9 testes em `ScenarioForecastPersistence.test.tsx`.
-- ✅ **confidenceZ** persistido (`winloss-scenario-confidence-z`).
-- ✅ **confidenceLevel PI** persistido (`winloss-scenario-pi-level`).
-- ❌ **Estado expandido do painel de auditoria** — hoje usa `<details>` nativo, sem controle, então fecha a cada remount/reload.
+### Contexto
+- `useWinLossViewPrefs.reset()` já existe e restaura `granularity: "month"` + `forecastHorizon: 3`, limpando o localStorage. Já coberto por teste no hook.
+- Falta apenas um botão na UI que chame `reset()` — hoje só há um botão "Limpar" para os filtros de dados (vendedores/segmento/período/valor), não para as preferências de visualização.
 
 ### O que muda
 
-#### 1. `src/components/win-loss/ScenarioForecastAuditPanel.tsx`
+**1. `src/components/win-loss/WinLossFilters.tsx`**
+- Novas props opcionais: `onResetViewPrefs?: () => void` e `viewPrefsAreDefault?: boolean`.
+- Renderizar botão discreto ao lado do "Limpar" existente, **apenas** quando `viewPrefsAreDefault === false`:
+  ```tsx
+  {!viewPrefsAreDefault && onResetViewPrefs && (
+    <Button size="sm" variant="ghost" className="h-8"
+      onClick={onResetViewPrefs}
+      title="Restaura granularidade (Mensal) e horizonte (3 períodos)">
+      <RotateCcw className="h-3.5 w-3.5 mr-1" /> Restaurar visualização
+    </Button>
+  )}
+  ```
+- Ícone `RotateCcw` (lucide), tokens semânticos, `variant="ghost"` para não competir com o "Limpar".
 
-Trocar o `<details>` nativo por estado controlado com persistência local:
+**2. `src/pages/WinLossIntelligence.tsx`**
+- Calcular `viewPrefsAreDefault` comparando com `VIEW_PREFS_DEFAULTS` (já exportado).
+- Passar `onResetViewPrefs` que chama `resetViewPrefs()` + dispara `toast({ title: "Preferências restauradas", description: "Granularidade Mensal · Horizonte 3 períodos" })` para feedback.
 
-- Nova chave: `winloss-scenario-audit-open` (string `"1"` aberto / `"0"` fechado, default `"0"`).
-- `useState<boolean>` inicializado **lazy** lendo o localStorage (mesmo padrão dos outros estados persistidos do gráfico — sem flicker no SSR/hidratação).
-- `useEffect` grava ao mudar (com `try/catch` silencioso, igual `confidenceZ`).
-- Sanitização: qualquer valor diferente de `"1"` cai para `false`.
-- Renderização continua com `<details open={...}>` + `onToggle` para preservar acessibilidade nativa, semântica HTML e o ChevronDown rotacionando via `group-open:rotate-180` (já funciona com `open` controlado).
-
-```tsx
-const AUDIT_OPEN_KEY = "winloss-scenario-audit-open";
-const [open, setOpen] = useState<boolean>(() => {
-  try { return window.localStorage.getItem(AUDIT_OPEN_KEY) === "1"; }
-  catch { return false; }
-});
-useEffect(() => {
-  try { window.localStorage.setItem(AUDIT_OPEN_KEY, open ? "1" : "0"); }
-  catch { /* noop */ }
-}, [open]);
-
-return (
-  <details
-    open={open}
-    onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
-    className="group border-t border-border/60 px-4 py-2"
-    aria-label="Painel de auditoria do ajuste de regressão"
-  >
-    {/* ... resto inalterado */}
-  </details>
-);
-```
-
-#### 2. Testes — `src/test/components/winloss/ScenarioForecastAuditPanelPersistence.test.tsx` (novo)
-
-5 casos, mesmo padrão dos outros testes de persistência:
-
-1. **Default fechado** quando localStorage vazio (`details.open === false`).
-2. **Restaura aberto** quando `localStorage["winloss-scenario-audit-open"] === "1"`.
-3. **Sanitiza valor inválido** (`"sim"`, `"true"`) → fechado.
-4. **Toggle escreve no localStorage**: clicar no `<summary>` (`userEvent.click`) muda valor para `"1"`; clicar de novo volta para `"0"`.
-5. **Sobrevive ao remount**: abrir, `cleanup()`, remontar → continua aberto.
-
-Render helper reaproveita `ScenarioForecastChart` (igual aos outros testes), procura `screen.getByText("Auditoria do ajuste").closest("details")` para checar `open`.
+**3. Testes — `src/test/components/winloss/WinLossFiltersResetView.test.tsx` (novo)**
+4 casos:
+1. Botão **não** aparece quando `viewPrefsAreDefault === true`.
+2. Botão **aparece** quando `viewPrefsAreDefault === false`.
+3. Clicar dispara `onResetViewPrefs`.
+4. Botão tem `title` (tooltip nativo) descrevendo os defaults.
 
 ### Não-mudanças
-- `bandMode` / `confidenceZ` / `confidenceLevel` — já persistidos, intactos.
-- Layout, tokens semânticos, sparkline de resíduos, fórmula PI colorida — sem alteração visual.
-- Hook `useWinLossScenarios` — não toca.
-- Suíte existente (52 + 5 OLS = 57 se ainda não aplicado) intacta.
+- Hook `useWinLossViewPrefs` intacto (já tem `reset`).
+- Botão "Limpar" dos filtros de dados intacto.
+- Sem chaves novas de localStorage.
 
 ### Critério de aceite
-1. Abrir o painel, recarregar a página → painel continua aberto.
-2. Fechar → continua fechado no próximo reload.
-3. `localStorage.getItem("winloss-scenario-audit-open")` reflete o estado atual em tempo real.
-4. Valor corrompido na chave não quebra o componente (cai para fechado).
-5. Suíte Win/Loss verde com 5 novos testes (≥ 57 totais).
+1. Mudo granularidade ou horizonte → botão "Restaurar visualização" aparece nos filtros.
+2. Clico nele → granularidade volta para Mensal, horizonte para 3, gráficos remontam, toast confirma.
+3. Recarrego a página → defaults persistem (localStorage foi limpo).
+4. Estou nos defaults → botão fica oculto (sem ruído visual).
+5. Suíte Win/Loss verde com 4 novos testes (≥ 61 totais).
 
