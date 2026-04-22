@@ -138,3 +138,41 @@ Deno.test("history catalog: every included case declares minScore, maxScore and 
   }
   assertEquals(missing, [], `metadata gaps:\n  - ${missing.join("\n  - ")}`);
 });
+
+Deno.test("history catalog: every included case declares a meaningful actionIncludes (anti-regression)", () => {
+  // Mirrors the SCENARIOS-level guard: forbids `undefined`, `[]` and empty/whitespace strings,
+  // which would otherwise silently bypass the substring assertion in `validateGroup`.
+  const offenders: string[] = [];
+  for (const family of FAMILIES) {
+    const group = DEAL_HISTORY_FIXTURES[family];
+    for (const c of group.cases) {
+      if (!c.expect.included) continue;
+      const a = c.expect.actionIncludes;
+      if (a === undefined) {
+        offenders.push(`[${family}/${c.name}] missing actionIncludes`);
+        continue;
+      }
+      if (!hasMeaningfulActionIncludes(a)) {
+        offenders.push(`[${family}/${c.name}] empty actionIncludes (got ${JSON.stringify(a)})`);
+      }
+    }
+  }
+  assertEquals(
+    offenders,
+    [],
+    `included cases with missing/empty actionIncludes:\n  - ${offenders.join("\n  - ")}`,
+  );
+});
+
+Deno.test("_testHelpers: hasMeaningfulActionIncludes rejects undefined / [] / empty strings", () => {
+  // Self-test of the guard so a future refactor of the helper can't silently
+  // weaken the anti-regression check above.
+  assertEquals(hasMeaningfulActionIncludes(undefined), false);
+  assertEquals(hasMeaningfulActionIncludes([]), false);
+  assertEquals(hasMeaningfulActionIncludes(""), false);
+  assertEquals(hasMeaningfulActionIncludes("   "), false);
+  assertEquals(hasMeaningfulActionIncludes(["", "  "]), false);
+  assertEquals(hasMeaningfulActionIncludes("valor"), true);
+  assertEquals(hasMeaningfulActionIncludes(["", "valor"]), true);
+  assertEquals(actionNeedles(["", "valor", "  ", "ROI"]), ["valor", "ROI"]);
+});
