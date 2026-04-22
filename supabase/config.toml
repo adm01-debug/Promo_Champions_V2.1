@@ -273,3 +273,7 @@ verify_jwt = true
 
 [functions.run-retry-tests]
 verify_jwt = false
+
+[functions.winloss-webhook-replay-batch]
+verify_jwt = true
+
