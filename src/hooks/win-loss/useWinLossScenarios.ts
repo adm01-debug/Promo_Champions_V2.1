@@ -310,6 +310,8 @@ export const useWinLossScenarios = (
       meanX,
       sxx,
       fitN: n,
+      rSquared,
+      residuals,
       bandMode,
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
