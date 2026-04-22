@@ -90,31 +90,30 @@ describe("ScenarioForecastAuditPanel — persistência do estado open/closed", (
   });
 
   it("toggle pelo summary escreve no localStorage", async () => {
-    const user = userEvent.setup();
     renderChart();
     const details = getDetails();
     expect(details.open).toBe(false);
 
-    // Abrir programaticamente (jsdom não dispara toggle no click do summary)
-    details.open = true;
-    details.dispatchEvent(new Event("toggle"));
-    await user.click(document.body); // flush
+    await act(async () => {
+      details.open = true;
+      details.dispatchEvent(new Event("toggle"));
+    });
     expect(window.localStorage.getItem(AUDIT_OPEN_KEY)).toBe("1");
 
-    details.open = false;
-    details.dispatchEvent(new Event("toggle"));
-    await user.click(document.body);
+    await act(async () => {
+      details.open = false;
+      details.dispatchEvent(new Event("toggle"));
+    });
     expect(window.localStorage.getItem(AUDIT_OPEN_KEY)).toBe("0");
   });
 
   it("estado aberto sobrevive ao remount", async () => {
     renderChart();
     const details = getDetails();
-    details.open = true;
-    details.dispatchEvent(new Event("toggle"));
-
-    // Aguarda o effect persistir
-    await Promise.resolve();
+    await act(async () => {
+      details.open = true;
+      details.dispatchEvent(new Event("toggle"));
+    });
     expect(window.localStorage.getItem(AUDIT_OPEN_KEY)).toBe("1");
 
     cleanup();
