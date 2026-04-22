@@ -107,14 +107,28 @@ Deno.test("scenarios: computeAtRiskDeals sorts desc, filters <40, respects limit
   assert(limited.length <= 3);
 });
 
-Deno.test("scenarios: every included scenario declares actionIncludes (anti-regression)", () => {
-  const missing = SCENARIOS.filter(
-    (s) => s.expect.included && s.expect.actionIncludes === undefined,
-  ).map((s) => s.name);
+Deno.test("scenarios: every included scenario declares a meaningful actionIncludes (anti-regression)", () => {
+  // Forbid 3 silent failure modes on included scenarios:
+  //   1. actionIncludes omitted entirely
+  //   2. actionIncludes = []  (array passes truthy, but `some()` returns false → no assertion)
+  //   3. actionIncludes = "" / "   "  (string passes truthy, but matches everything CI)
+  const offenders = SCENARIOS
+    .filter((s) => s.expect.included)
+    .map((s) => {
+      const a = s.expect.actionIncludes;
+      if (a === undefined) return { name: s.name, reason: "missing" };
+      if (!hasMeaningfulActionIncludes(a)) {
+        return { name: s.name, reason: `empty (got ${JSON.stringify(a)})` };
+      }
+      return null;
+    })
+    .filter((x): x is { name: string; reason: string } => x !== null);
   assertEquals(
-    missing,
+    offenders,
     [],
-    `included scenarios missing actionIncludes (suggested_action coherence not asserted): ${missing.join(", ")}`,
+    `included scenarios with missing/empty actionIncludes (suggested_action coherence not asserted):\n  - ${offenders
+      .map((o) => `${o.name}: ${o.reason}`)
+      .join("\n  - ")}`,
   );
 });
 
