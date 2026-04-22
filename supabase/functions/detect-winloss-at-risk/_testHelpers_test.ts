@@ -3,7 +3,9 @@ import {
   actionNeedles,
   evaluateActionIncludes,
   hasMeaningfulActionIncludes,
+  includesNormalized,
   matchesPatternFamily,
+  normalizeForMatch,
   patternLabelTokens,
 } from "./_testHelpers.ts";
 
