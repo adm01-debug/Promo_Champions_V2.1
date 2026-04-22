@@ -3,7 +3,9 @@ import {
   actionNeedles,
   evaluateActionIncludes,
   hasMeaningfulActionIncludes,
+  includesNormalized,
   matchesPatternFamily,
+  normalizeForMatch,
   patternLabelTokens,
 } from "./_testHelpers.ts";
 
@@ -111,4 +113,44 @@ Deno.test("actionNeedles: flattens grouped form for diagnostics", () => {
     "valor",
   ]);
   assertEquals(actionNeedles({ all: ["desconto"] }), ["desconto"]);
+});
+
+// ----------------- normalizeForMatch / includesNormalized ------------------
+
+Deno.test("normalizeForMatch: strips diacritics, lowercases, stems suffixes", () => {
+  // Diacritic + ção/ções fold to the same root
+  assertEquals(normalizeForMatch("Negociação"), normalizeForMatch("negociações"));
+  // ado/ada fold to the same root
+  assertEquals(normalizeForMatch("estagnado"), normalizeForMatch("Estagnada"));
+  // oso/osa fold to the same root
+  assertEquals(normalizeForMatch("competitivo"), normalizeForMatch("competitiva"));
+  // mente suffix dropped
+  assertEquals(normalizeForMatch("rapidamente"), "rapida");
+  // Punctuation collapsed to single spaces
+  assertEquals(normalizeForMatch("Preço — alto!!"), "preco alto");
+});
+
+Deno.test("normalizeForMatch: short tokens (<4) untouched, plural -s/-es safe", () => {
+  // Short tokens preserved
+  assertEquals(normalizeForMatch("vs"), "vs");
+  // Plural drop only when root stays ≥3 chars
+  assertEquals(normalizeForMatch("clientes"), normalizeForMatch("cliente"));
+  // Won't strip "is" from a 4-char word like "pais"
+  assertEquals(normalizeForMatch("pais"), "pais");
+});
+
+Deno.test("includesNormalized: tolerates accent + inflectional variation in reasons", () => {
+  // Engine emits plural/inflected, fixture asserts singular base form
+  assert(includesNormalized("Negociações travadas há 30 dias", "negociação travada"));
+  assert(includesNormalized("Deal estagnada no estágio proposta", "estagnado"));
+  assert(includesNormalized("Pressão competitiva agressiva", "competitivo"));
+  // Diacritic-only mismatch still matches
+  assert(includesNormalized("Preço alto vs concorrência", "preco alto"));
+  // Genuine miss still rejected
+  assert(!includesNormalized("Negociação travada", "churn pos-trial"));
+});
+
+Deno.test("includesNormalized: empty needle falls back to includesCI (defensive)", () => {
+  // Empty/whitespace needle: should not silently match everything via normalization.
+  assert(includesNormalized("anything", "")); // includesCI("", "") behavior preserved
 });

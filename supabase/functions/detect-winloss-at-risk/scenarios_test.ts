@@ -6,7 +6,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeAtRiskDeals, computeDealRisk, severityFromScore } from "./scoring.ts";
 import { LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS } from "./fixtures.ts";
-import { actionNeedles, evaluateActionIncludes, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
+import { actionNeedles, evaluateActionIncludes, hasMeaningfulActionIncludes, includesCI, includesNormalized } from "./_testHelpers.ts";
 
 for (const scenario of SCENARIOS) {
   Deno.test(`scenario: ${scenario.name} — ${scenario.story}`, () => {
@@ -51,7 +51,7 @@ for (const scenario of SCENARIOS) {
 
     // Reasons include all required substrings
     for (const needle of scenario.expect.reasonsInclude ?? []) {
-      const hit = r.reasons.some((reason) => includesCI(reason, needle));
+      const hit = r.reasons.some((reason) => includesNormalized(reason, needle));
       assert(
         hit,
         `${scenario.name}: no reason includes "${needle}". Reasons: ${JSON.stringify(r.reasons)}`,
@@ -286,7 +286,7 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
     // reasonsInclude → all needles must hit some reason (AND).
     const reasonNeedles = s.expect.reasonsInclude ?? [];
     const reasonMissing = reasonNeedles.filter(
-      (needle) => !r.reasons.some((reason) => includesCI(reason, needle)),
+      (needle) => !r.reasons.some((reason) => includesNormalized(reason, needle)),
     );
     if (reasonMissing.length > 0) {
       failures.push({
@@ -410,7 +410,7 @@ Deno.test("fixtures table: SUMMARY — included/failed counts by assert category
       }
       const reasonNeedles = s.expect.reasonsInclude ?? [];
       const reasonMissing = reasonNeedles.filter(
-        (n) => !r.reasons.some((reason) => includesCI(reason, n)),
+        (n) => !r.reasons.some((reason) => includesNormalized(reason, n)),
       );
       if (reasonMissing.length > 0) {
         failures.reasons.push(`${s.name} (missing: ${JSON.stringify(reasonMissing)})`);
