@@ -319,6 +319,41 @@ serve(async (req) => {
             triggerRequestId,
             suppress_minutes: SUPPRESS_MINUTES,
           }, requestId);
+
+          // Persist the suppressed event so the alert history page can show
+          // *every* time a trigger matched, including the ones we silenced
+          // due to the anti-spam window.
+          const suppressedRequestId = trigger.kind === "attempts_exhausted" && triggerRequestId
+            ? triggerRequestId
+            : requestId;
+          const reason = trigger.kind === "attempts_exhausted"
+            ? "duplicate_request_within_suppress_window"
+            : "duplicate_kind_within_suppress_window";
+          const { error: suppInsertError } = await supabase.from("winloss_webhook_alerts").insert({
+            subscription_id: sub.id,
+            kind: trigger.kind,
+            request_id: suppressedRequestId,
+            suppressed: true,
+            suppress_reason: reason,
+            details: {
+              ...trigger.details,
+              subscription_id: sub.id,
+              request_id: suppressedRequestId,
+              monitor_request_id: requestId,
+              suppressed: true,
+              suppress_reason: reason,
+              suppress_minutes: SUPPRESS_MINUTES,
+            },
+          });
+          if (suppInsertError) {
+            structuredLog("warn", {
+              msg: "alert_suppressed_insert_failed",
+              subscriptionId: sub.id,
+              kind: trigger.kind,
+              error: suppInsertError.message,
+            }, requestId);
+          }
+
           evalEntry.suppressed.push(trigger.kind);
           suppressedCount += 1;
           continue;
