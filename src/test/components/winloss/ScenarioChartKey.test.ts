@@ -41,7 +41,19 @@ describe("buildScenarioChartKey", () => {
     const a = buildScenarioChartKey(input);
     const b = buildScenarioChartKey(input);
     expect(a).toBe(b);
-    expect(a).toMatch(/^scenario-see-z1\.00-h3-n15-fit12-σ1\.23-[0-9a-f]{8}$/);
+    expect(a).toMatch(/^scenario-see-z1\.00-l0\.95-h3-n15-fit12-σ1\.23-[0-9a-f]{8}$/);
+  });
+
+  it("muda quando confidenceLevel muda no modo PI", () => {
+    const data = Array.from({ length: 15 }, (_, i) => mk({ period: `p${i}`, realistic: i * 1.1 }));
+    const base = { data, fitN: 12, bandMode: "pi95" as const, confidenceZ: 1, horizon: 3, stdDev: 1.23 };
+    const k95 = buildScenarioChartKey({ ...base, confidenceLevel: 0.95 });
+    const k99 = buildScenarioChartKey({ ...base, confidenceLevel: 0.99 });
+    const k90 = buildScenarioChartKey({ ...base, confidenceLevel: 0.90 });
+    expect(k95).toContain("-l0.95-");
+    expect(k99).toContain("-l0.99-");
+    expect(k90).toContain("-l0.90-");
+    expect(new Set([k90, k95, k99]).size).toBe(3);
   });
 
   it("marca '-partial' quando há ponto com period undefined ou NaN", () => {

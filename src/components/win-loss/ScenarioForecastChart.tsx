@@ -657,6 +657,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         tCritical={tCritical}
         confidenceZ={confidenceZ}
         bandLabel={bandLabel}
+        confidenceLevel={confidenceLevel}
       />
       <ScenarioFormulaExplainerDialog
         open={explainerOpen}
