@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Activity, AlertTriangle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Activity, AlertTriangle, BellRing } from "lucide-react";
+import { toast } from "sonner";
 import {
   ResponsiveContainer,
   BarChart,
@@ -82,13 +85,56 @@ function reasonColor(status: number | null, key: string): string {
   return "hsl(var(--muted-foreground))";
 }
 
+const THRESHOLD_STORAGE_KEY = "winloss-webhook-success-threshold";
+const DEFAULT_THRESHOLD = 95;
+
+function loadThreshold(): number {
+  if (typeof window === "undefined") return DEFAULT_THRESHOLD;
+  const raw = window.localStorage.getItem(THRESHOLD_STORAGE_KEY);
+  if (!raw) return DEFAULT_THRESHOLD;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) return DEFAULT_THRESHOLD;
+  return parsed;
+}
+
 export function WebhookHealthPanel() {
   const [windowKey, setWindowKey] = useState<WebhookStatsWindow>("7d");
   const [drillAttempt, setDrillAttempt] = useState<number | null>(null);
+  const [threshold, setThreshold] = useState<number>(() => loadThreshold());
+  const [thresholdInput, setThresholdInput] = useState<string>(() => String(loadThreshold()));
   const { data, isLoading } = useWebhookDeliveryStats(null, windowKey);
   const { data: alerts } = useWebhookAlerts();
   const activeBySub = activeAlertsBySubscription(alerts ?? []);
   const degradedCount = activeBySub.size;
+
+  const belowThreshold =
+    !!data && data.total > 0 && data.successRate < threshold;
+
+  // Notify (once) when crossing below threshold within the current view.
+  useEffect(() => {
+    if (!belowThreshold || !data) return;
+    const key = `${windowKey}:${threshold}:${data.successRate.toFixed(1)}`;
+    const lastKey = sessionStorage.getItem("winloss-webhook-threshold-toast");
+    if (lastKey === key) return;
+    sessionStorage.setItem("winloss-webhook-threshold-toast", key);
+    toast.warning("Taxa de sucesso de webhooks abaixo do limite", {
+      description: `${data.successRate.toFixed(1)}% nas ${WINDOW_LABEL[windowKey]} (limite: ${threshold}%).`,
+    });
+  }, [belowThreshold, data, threshold, windowKey]);
+
+  const commitThreshold = (raw: string) => {
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) {
+      setThresholdInput(String(threshold));
+      return;
+    }
+    const clamped = Math.min(100, Math.max(0, Math.round(parsed * 10) / 10));
+    setThreshold(clamped);
+    setThresholdInput(String(clamped));
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(THRESHOLD_STORAGE_KEY, String(clamped));
+    }
+  };
 
   const openDrill = (attempt: number, failures: number) => {
     if (failures <= 0) return;
@@ -128,8 +174,47 @@ export function WebhookHealthPanel() {
             ))}
           </ToggleGroup>
         </div>
+        <div className="mt-2 flex items-center gap-2">
+          <Label
+            htmlFor="webhook-success-threshold"
+            className="text-[11px] font-normal text-muted-foreground flex items-center gap-1"
+          >
+            <BellRing className="h-3 w-3" aria-hidden />
+            Avisar quando a taxa cair abaixo de
+          </Label>
+          <Input
+            id="webhook-success-threshold"
+            type="number"
+            min={0}
+            max={100}
+            step={1}
+            value={thresholdInput}
+            onChange={(e) => setThresholdInput(e.target.value)}
+            onBlur={(e) => commitThreshold(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.currentTarget.blur();
+              }
+            }}
+            className="h-7 w-16 text-xs tabular-nums"
+            aria-label="Limite mínimo de taxa de sucesso em porcentagem"
+          />
+          <span className="text-[11px] text-muted-foreground">%</span>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {belowThreshold && data && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-warning-foreground"
+          >
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-warning" aria-hidden />
+            <p>
+              Taxa de sucesso em <strong>{data.successRate.toFixed(1)}%</strong> nas {WINDOW_LABEL[windowKey]} —
+              abaixo do limite configurado de <strong>{threshold}%</strong>. Investigue antes que escale.
+            </p>
+          </div>
+        )}
         {degradedCount > 0 && (
           <div
             role="alert"
