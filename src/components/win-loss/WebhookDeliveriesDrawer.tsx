@@ -452,6 +452,16 @@ export function WebhookDeliveriesDrawer({
       toast.error(validation.message);
       return;
     }
+    const n = validation.ids.length;
+    const dupes = ids.length - n;
+    toast.info(
+      n === 1
+        ? "1 entrega pronta para reenvio — confirme no diálogo."
+        : `${n} entregas prontas para reenvio — confirme no diálogo.`,
+      dupes > 0
+        ? { description: `${dupes} ID${dupes === 1 ? "" : "s"} duplicado${dupes === 1 ? "" : "s"} removido${dupes === 1 ? "" : "s"}.` }
+        : undefined,
+    );
     setConfirm({ ids: validation.ids });
   };
 
