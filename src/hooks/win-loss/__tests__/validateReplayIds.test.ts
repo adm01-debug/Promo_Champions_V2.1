@@ -83,7 +83,7 @@ describe("validateReplayIds", () => {
       expect(r.ok).toBe(false);
       if (!r.ok) {
         expect(r.message).toMatch(/inválido/i);
-        expect(r.message).toContain("not-a-ui"); // primeiros 8 chars
+        expect(r.message).toContain("not-a-uu"); // primeiros 8 chars
       }
     });
 
