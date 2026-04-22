@@ -56,6 +56,30 @@ const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
 ];
 const DEFAULT_RETENTION_MS = 30_000;
 
+// Mapeamento de event → rótulo amigável (PT-BR).
+// Eventos não mapeados (ou ausentes) caem no fallback "Evento desconhecido".
+const EVENT_LABELS: Record<string, string> = {
+  "winloss.deal.won": "Negócio ganho",
+  "winloss.deal.lost": "Negócio perdido",
+  "winloss.deal.updated": "Negócio atualizado",
+  "winloss.deal.stage_changed": "Mudança de estágio",
+  "winloss.deal.at_risk": "Negócio em risco",
+  "winloss.forecast.updated": "Forecast atualizado",
+  "winloss.battlecard.created": "Battlecard criado",
+  "quote.created": "Orçamento criado",
+  "quote.updated": "Orçamento atualizado",
+  "quote.accepted": "Orçamento aceito",
+  "quote.rejected": "Orçamento rejeitado",
+};
+
+function getEventLabel(event: string | null | undefined): string {
+  if (!event || event.trim().length === 0 || event === "unknown") {
+    return "Evento desconhecido";
+  }
+  return EVENT_LABELS[event] ?? event;
+}
+
+
 function readStoredRetention(): number | null {
   try {
     const raw = localStorage.getItem(RETENTION_STORAGE_KEY);
