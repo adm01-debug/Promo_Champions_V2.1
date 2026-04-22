@@ -415,9 +415,11 @@ Deno.test("fixtures table: SUMMARY — included/failed counts by assert category
       if (reasonMissing.length > 0) {
         failures.reasons.push(`${s.name} (missing: ${JSON.stringify(reasonMissing)})`);
       }
-      const aNeedles = actionNeedles(s.expect.actionIncludes);
-      if (aNeedles.length > 0 && !aNeedles.some((n) => includesCI(r.suggested_action, n))) {
-        failures.action.push(`${s.name} (none of ${JSON.stringify(aNeedles)})`);
+      if (s.expect.actionIncludes !== undefined) {
+        const ev = evaluateActionIncludes(r.suggested_action, s.expect.actionIncludes);
+        if (!ev.ok) {
+          failures.action.push(`${s.name} (${ev.reason}; missing=${JSON.stringify(ev.missing)})`);
+        }
       }
     }
 
