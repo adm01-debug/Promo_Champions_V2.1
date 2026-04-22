@@ -32,6 +32,13 @@ interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   url?: string;
+  /**
+   * Tempo (ms) que o status de cada linha (Reenviado/Falhou/Já entregue)
+   * permanece visível após o replay. `0` ou `Infinity` mantêm até reload.
+   * Default: 30s. Pode ser sobrescrito pelo usuário via seletor no header
+   * (persistido em localStorage).
+   */
+  resultRetentionMs?: number;
 }
 
 import { toast } from "sonner";
@@ -39,7 +46,35 @@ import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateRepl
 
 const MAX_REPLAY = MAX_REPLAY_IDS;
 
-export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, url }: Props) {
+const RETENTION_STORAGE_KEY = "winloss.replay.resultRetentionMs";
+const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
+  { label: "10s", value: 10_000 },
+  { label: "30s", value: 30_000 },
+  { label: "2min", value: 120_000 },
+  { label: "10min", value: 600_000 },
+  { label: "Manter", value: Number.POSITIVE_INFINITY },
+];
+const DEFAULT_RETENTION_MS = 30_000;
+
+function readStoredRetention(): number | null {
+  try {
+    const raw = localStorage.getItem(RETENTION_STORAGE_KEY);
+    if (!raw) return null;
+    if (raw === "Infinity") return Number.POSITIVE_INFINITY;
+    const n = Number(raw);
+    return Number.isFinite(n) && n >= 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+export function WebhookDeliveriesDrawer({
+  subscriptionId,
+  open,
+  onOpenChange,
+  url,
+  resultRetentionMs,
+}: Props) {
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -48,14 +83,36 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
     new Map(),
   );
   const [requestIds, setRequestIds] = useState<Map<string, string>>(new Map());
+  const [resultTimestamps, setResultTimestamps] = useState<Map<string, number>>(new Map());
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
-  // Reset selection when drawer closes
+  // Retention configurável (prop > localStorage > default)
+  const [retentionMs, setRetentionMs] = useState<number>(
+    () => resultRetentionMs ?? readStoredRetention() ?? DEFAULT_RETENTION_MS,
+  );
+  // Mantém em ref para uso dentro de callbacks sem recriar handlers
+  const retentionRef = useRef(retentionMs);
+  useEffect(() => {
+    retentionRef.current = retentionMs;
+  }, [retentionMs]);
+
+  const updateRetention = (ms: number) => {
+    setRetentionMs(ms);
+    try {
+      localStorage.setItem(
+        RETENTION_STORAGE_KEY,
+        ms === Number.POSITIVE_INFINITY ? "Infinity" : String(ms),
+      );
+    } catch {
+      // localStorage indisponível — ok, mantém em memória
+    }
+  };
+
+  // Reset selection when drawer closes (mantém lastResults p/ revisão posterior)
   useEffect(() => {
     if (!open) {
       setSelected(new Set());
       setProcessingIds(new Set());
-      setRequestIds(new Map());
     }
   }, [open]);
 
@@ -71,16 +128,73 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
   const scheduleClearResult = (id: string) => {
     const existing = timersRef.current.get(id);
     if (existing) clearTimeout(existing);
+    const ms = retentionRef.current;
+    if (!Number.isFinite(ms) || ms <= 0) {
+      // Modo "manter": não agenda expiração
+      timersRef.current.delete(id);
+      return;
+    }
     const t = setTimeout(() => {
       setLastResults((prev) => {
         const next = new Map(prev);
         next.delete(id);
         return next;
       });
+      setResultTimestamps((prev) => {
+        const next = new Map(prev);
+        next.delete(id);
+        return next;
+      });
+      setRequestIds((prev) => {
+        const next = new Map(prev);
+        next.delete(id);
+        return next;
+      });
       timersRef.current.delete(id);
-    }, 4000);
+    }, ms);
     timersRef.current.set(id, t);
   };
+
+  // Quando o usuário muda a retenção, reagenda timers existentes
+  useEffect(() => {
+    timersRef.current.forEach((t, id) => {
+      clearTimeout(t);
+      timersRef.current.delete(id);
+      const baseTs = resultTimestamps.get(id) ?? Date.now();
+      const elapsed = Date.now() - baseTs;
+      const remaining = retentionMs - elapsed;
+      if (!Number.isFinite(retentionMs) || retentionMs <= 0) return;
+      if (remaining <= 0) {
+        setLastResults((prev) => {
+          const next = new Map(prev);
+          next.delete(id);
+          return next;
+        });
+        setResultTimestamps((prev) => {
+          const next = new Map(prev);
+          next.delete(id);
+          return next;
+        });
+        return;
+      }
+      const handle = setTimeout(() => {
+        setLastResults((prev) => {
+          const next = new Map(prev);
+          next.delete(id);
+          return next;
+        });
+        setResultTimestamps((prev) => {
+          const next = new Map(prev);
+          next.delete(id);
+          return next;
+        });
+        timersRef.current.delete(id);
+      }, remaining);
+      timersRef.current.set(id, handle);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [retentionMs]);
+
 
   const recordResults = (
     ids: string[],
