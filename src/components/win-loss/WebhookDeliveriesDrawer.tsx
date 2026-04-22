@@ -805,14 +805,19 @@ export function WebhookDeliveriesDrawer({
                       size="sm"
                       className="h-7 text-xs"
                       onClick={handleReplaySelected}
-                      disabled={isReplaying}
+                      disabled={isReplaying || processingIds.size > 0}
+                      aria-label={
+                        isReplaying || processingIds.size > 0
+                          ? "Aguardando reenvio em andamento concluir"
+                          : "Reenviar entregas selecionadas"
+                      }
                     >
                       {isReplaying ? (
                         <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                       ) : (
                         <RotateCw className="h-3 w-3 mr-1" />
                       )}
-                      Reenviar selecionados
+                      {isReplaying ? "Reenviando…" : "Reenviar selecionados"}
                     </Button>
                   </>
                 )}
@@ -1042,14 +1047,16 @@ export function WebhookDeliveriesDrawer({
                             size="sm"
                             variant="ghost"
                             className="h-7 w-7 p-0 shrink-0"
-                            // Bloqueio por linha: só desabilita se ESTA delivery está em voo
-                            // (não bloqueia mais quando outra linha está sendo reenviada)
-                            disabled={d.succeeded || isProcessing}
+                            // Bloqueio: desabilita se ESTA delivery está em voo OU se há
+                            // qualquer reenvio global em andamento (evita disparar nova mutation).
+                            disabled={d.succeeded || isProcessing || isReplaying}
                             onClick={() => handleReplay(d.id)}
                             aria-label={
                               isProcessing
                                 ? "Reenvio em andamento para esta entrega"
-                                : "Reenviar entrega"
+                                : isReplaying
+                                  ? "Aguardando reenvio em andamento concluir"
+                                  : "Reenviar entrega"
                             }
                           >
                             {isProcessing ? (
