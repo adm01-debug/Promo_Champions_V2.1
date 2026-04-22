@@ -8,15 +8,18 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription,
 } from "@/components/ui/drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
+import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers, CheckCircle2, XCircle, MinusCircle, ListOrdered } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
+import { AsyncReplayQueueDialog } from "./AsyncReplayQueueDialog";
 import { classifyDeadLetterError } from "@/hooks/win-loss/classifyDeadLetterError";
 import { useLatestReplayAuditByDeadLetters } from "@/hooks/win-loss/useReplayAudit";
 import { ReplayAuditTrail } from "./ReplayAuditTrail";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
@@ -51,6 +54,9 @@ export function WebhookDeadLetterPanel({
   const [previewOf, setPreviewOf] = useState<DeadLetter | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingReplayIds, setPendingReplayIds] = useState<string[]>([]);
+  const [asyncMode, setAsyncMode] = useState(false);
+  const [asyncQueueOpen, setAsyncQueueOpen] = useState(false);
+  const [asyncQueueIds, setAsyncQueueIds] = useState<string[]>([]);
 
 
   const rawItems = list.data ?? [];
@@ -122,6 +128,12 @@ export function WebhookDeadLetterPanel({
       );
       return;
     }
+    if (asyncMode) {
+      setAsyncQueueIds(ids);
+      setAsyncQueueOpen(true);
+      setSelected(new Set());
+      return;
+    }
     setPendingReplayIds(ids);
     setConfirmOpen(true);
   };
@@ -151,6 +163,26 @@ export function WebhookDeadLetterPanel({
             <TabsTrigger value="archived" className="text-xs">Arquivados</TabsTrigger>
           </TabsList>
         </Tabs>
+
+        {tab === "pending" && (
+          <div className="flex items-center justify-between rounded-md border bg-muted/10 px-2.5 py-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <ListOrdered className="h-3 w-3" />
+              <span>Modo fila assíncrona</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="async-mode-toggle" className="text-[11px] text-muted-foreground cursor-pointer">
+                {asyncMode ? "Ativo · com progresso" : "Inativo · síncrono"}
+              </Label>
+              <Switch
+                id="async-mode-toggle"
+                checked={asyncMode}
+                onCheckedChange={setAsyncMode}
+                aria-label="Alternar modo fila assíncrona"
+              />
+            </div>
+          </div>
+        )}
 
         {tab === "pending" && errorGroups.length > 0 && (
           <div className="rounded-md border bg-muted/20 p-2.5 space-y-2">
@@ -374,6 +406,15 @@ export function WebhookDeadLetterPanel({
           setPendingReplayIds([]);
           onReplay(ids);
         }}
+      />
+
+      <AsyncReplayQueueDialog
+        open={asyncQueueOpen}
+        onOpenChange={(v) => {
+          setAsyncQueueOpen(v);
+          if (!v) setAsyncQueueIds([]);
+        }}
+        ids={asyncQueueIds}
       />
     </Card>
   );
