@@ -275,6 +275,7 @@ serve(async (req) => {
         const { error: insertError } = await supabase.from("winloss_webhook_alerts").insert({
           subscription_id: sub.id,
           kind: trigger.kind,
+          request_id: requestId,
           details: { ...trigger.details, request_id: requestId },
         });
 
