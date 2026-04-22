@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
+import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle, History } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 
@@ -19,6 +19,7 @@ const QUICK_LINKS = [
   { to: "/relatorio-atividades", icon: BarChart3, label: "Rel. Atividades", color: "text-chart-3" },
   { to: "/icp", icon: TrendingUp, label: "ICP", color: "text-chart-4" },
   { to: "/admin/webhooks-timeline", icon: Activity, label: "Timeline Webhooks", color: "text-chart-5" },
+  { to: "/admin/webhooks-alert-history", icon: History, label: "Histórico Alertas", color: "text-warning" },
 ];
 
 export function AdminQuickLinks() {
