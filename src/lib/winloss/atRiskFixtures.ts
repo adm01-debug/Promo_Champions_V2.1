@@ -423,9 +423,9 @@ export const SCENARIOS: Scenario[] = [
     },
   },
   {
-    name: "competitor_critical_leilao",
+    name: "competitor_dominant_critical_via_stagnation",
     story:
-      "Negotiation há 200d em leilão público, ticket=31k (centro do perfil 'Pressão competitiva'). Estagnação satura (50) + amount_alignment alto + stage=20. Apesar do bestLoss escolher loss_factor/stuck_stage como dominant_type, o sinal COMPETITOR_PRESSURE entra em reasons via source 'leilao_publico' e o label 'Pressão competitiva' deve aparecer em matched_pattern. Score saturado força severity=critical → tom imperativo (IMEDIATA ou URGENTE).",
+      "Negotiation há 200d em leilão público, ticket=31k (perfil competitor). bestLoss prioriza pattern com avg_amount mais próximo (competitor, conf 0.74), e raw≈95 × 0.81 ≈ 77 → severity continua 'high' por demote de confidence. Cobre fim-a-fim a família competitor com tom 'high' (48h, diferenciação) — o tier crítico do branch 'competitor' fica coberto pelo competitor_critical_test.ts onde a confidence pode ser controlada.",
     deal: {
       id: "s14",
       client_name: "AuctionMax",
@@ -438,18 +438,19 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 80,
-      maxScore: 100,
+      minScore: 60,
+      maxScore: 85,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       matchedPatternLabelIncludes: "Pressão competitiva",
       reasonsInclude: ["200 dias", "competitiva"],
-      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
+      // high severity (demoted) → "48h…valor percebido / diferenciação".
+      actionIncludes: ["48h", "valor", "diferencia"],
     },
   },
   {
-    name: "competitor_critical_concorrencia_ativa",
+    name: "competitor_dominant_proposal_concorrencia_ativa",
     story:
-      "Proposal há 180d com source 'concorrencia_ativa' e ticket alinhado ao perfil competitor (31k). Stagnation satura, source força COMPETITOR_PRESSURE em reasons. Stage 'proposal' contribui com stage_match=20. Cobre o caminho competitor crítico via outro source string para garantir robustez do detector de keywords.",
+      "Proposal há 180d com source 'concorrencia_ativa' e ticket=31k (perfil competitor). Mesmo padrão de demote por confidence 0.74 → high. Cobre o caminho competitor via outro source string ('concorrencia_ativa') para validar robustez do detector de keywords (substring vs leilao_publico).",
     deal: {
       id: "s15",
       client_name: "RivalCorp Brasil",
@@ -462,12 +463,12 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 80,
-      maxScore: 100,
+      minScore: 60,
+      maxScore: 85,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       matchedPatternLabelIncludes: "Pressão competitiva",
       reasonsInclude: ["180 dias", "competitiva"],
-      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
+      actionIncludes: ["48h", "valor", "diferencia"],
     },
   },
 ];
