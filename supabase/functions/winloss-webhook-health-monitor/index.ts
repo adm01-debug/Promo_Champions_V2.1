@@ -279,10 +279,13 @@ serve(async (req) => {
         continue;
       }
 
-      // Anti-spam: check recent alerts of the same kind
+      // Anti-spam: check recent alerts of the same kind. For
+      // `attempts_exhausted` we suppress per-request_id (each failed request
+      // is a distinct incident); other kinds are suppressed per-kind globally
+      // for this subscription.
       const { data: recent, error: recentError } = await supabase
         .from("winloss_webhook_alerts")
-        .select("kind, fired_at")
+        .select("kind, details, fired_at")
         .eq("subscription_id", sub.id)
         .gte("fired_at", suppressIso);
 
@@ -290,14 +293,30 @@ serve(async (req) => {
         structuredLog("warn", { msg: "fetch_recent_alerts_failed", subscriptionId: sub.id, error: recentError.message }, requestId);
       }
 
-      const recentKinds = new Set((recent ?? []).map((r) => (r as { kind: string }).kind));
+      const recentRows = (recent ?? []) as Array<{ kind: string; details: Record<string, unknown> | null }>;
+      const recentKinds = new Set(recentRows.map((r) => r.kind));
+      const recentExhaustedRequestIds = new Set(
+        recentRows
+          .filter((r) => r.kind === "attempts_exhausted")
+          .map((r) => (r.details && typeof r.details === "object" ? (r.details as Record<string, unknown>).request_id : null))
+          .filter((v): v is string => typeof v === "string"),
+      );
 
       for (const trigger of result.triggers) {
-        if (recentKinds.has(trigger.kind)) {
+        const triggerRequestId = trigger.kind === "attempts_exhausted"
+          ? (trigger.details.request_id as string | undefined)
+          : undefined;
+
+        const isSuppressed = trigger.kind === "attempts_exhausted"
+          ? !!triggerRequestId && recentExhaustedRequestIds.has(triggerRequestId)
+          : recentKinds.has(trigger.kind);
+
+        if (isSuppressed) {
           structuredLog("info", {
             msg: "alert_suppressed",
             subscriptionId: sub.id,
             kind: trigger.kind,
+            triggerRequestId,
             suppress_minutes: SUPPRESS_MINUTES,
           }, requestId);
           evalEntry.suppressed.push(trigger.kind);
@@ -305,11 +324,23 @@ serve(async (req) => {
           continue;
         }
 
+        // For attempts_exhausted, persist the offending request_id at the
+        // top level so timeline filtering by request_id surfaces this alert
+        // alongside the failed delivery rows for the same request.
+        const persistRequestId = trigger.kind === "attempts_exhausted" && triggerRequestId
+          ? triggerRequestId
+          : requestId;
+
         const { error: insertError } = await supabase.from("winloss_webhook_alerts").insert({
           subscription_id: sub.id,
           kind: trigger.kind,
-          request_id: requestId,
-          details: { ...trigger.details, request_id: requestId },
+          request_id: persistRequestId,
+          details: {
+            ...trigger.details,
+            subscription_id: sub.id,
+            request_id: persistRequestId,
+            monitor_request_id: requestId,
+          },
         });
 
         if (insertError) {
@@ -326,6 +357,7 @@ serve(async (req) => {
           msg: "alert_fired",
           subscriptionId: sub.id,
           kind: trigger.kind,
+          alert_request_id: persistRequestId,
           details: trigger.details,
         }, requestId);
 
