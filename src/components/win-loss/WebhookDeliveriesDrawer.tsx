@@ -447,6 +447,15 @@ export function WebhookDeliveriesDrawer({
   }, [confirm, data]);
 
   const requestReplay = (ids: string[]) => {
+    // Bloqueio global: já existe um lote em voo ou diálogo aberto aguardando confirmação.
+    if (isReplaying) {
+      toast.info("Aguarde o reenvio em andamento concluir antes de iniciar outro.");
+      return;
+    }
+    if (confirm) {
+      toast.info("Há um reenvio aguardando confirmação — finalize ou cancele primeiro.");
+      return;
+    }
     const validation = validateReplayIds(ids);
     if (!validation.ok) {
       toast.error(validation.message);
