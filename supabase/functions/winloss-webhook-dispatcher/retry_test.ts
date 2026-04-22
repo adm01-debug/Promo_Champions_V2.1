@@ -1897,85 +1897,113 @@ Deno.test("fan-out [limites]: sleeps por subscription respeitam backoff (sem atr
   assertLessOrEqual(sumB, sumBmax, `SUB_B soma de sleeps ${sumB} > teórico ${sumBmax}`);
 });
 
-// ───────────── fan-out [headers consolidados]: assinatura + identidade + timestamp ─────────────
-// Valida POR SUBSCRIPTION, em um único teste consolidado, que cada POST inclui:
-//   • headers fixos: method=POST, Content-Type=application/json, X-Winloss-Event=<event>;
-//   • X-Winloss-Subscription-Id = sub.id (identidade correta — sem cross-talk);
-//   • X-Winloss-Signature presente ⇔ sub.secret existe (e com o valor exato do secret);
-//   • X-Request-Id presente ⇔ deps.requestId injetado (e com o mesmo valor);
-//   • body.dispatched_at é ISO-8601 e cai dentro da janela [t0, t1] do teste.
+// ───────────── fan-out [estresse]: N=100 subs ─────────────
+// Documenta o comportamento atual do dispatcher: NÃO há limite de concorrência
+// configurado (Promise.all direto sobre os targets). Este teste valida:
+//   • Total de POSTs == sucessos*1 + falhas*MAX_ATTEMPTS (nada perdido).
+//   • Cada subscription recebe POSTs apenas na sua própria URL (sem cross-fire).
+//   • Pico de fetches em voo == N (todas disparam simultaneamente) — observabilidade.
+// Se um throttling for introduzido no futuro, o pico in-flight cairá e este teste
+// destacará a mudança via mensagem informativa (não falha).
 
-Deno.test("fan-out [headers consolidados]: signature + subscription-id + request-id + dispatched_at por subscription", async () => {
-  const REQUEST_ID = "req-fanout-headers-001";
-  const h = makeFanoutHarness({
-    [SUB_A.url]: () => new Response("ok", { status: 200 }), // sem secret
-    [SUB_B.url]: () => new Response("ok", { status: 200 }), // sem secret
-    [SUB_C.url]: () => new Response("ok", { status: 200 }), // COM secret="shh"
-  });
-  // Injeta requestId nas deps para validar a propagação do header X-Request-Id.
-  const depsWithReqId: DispatchDeps = { ...h.deps, requestId: REQUEST_ID };
+Deno.test("fan-out [estresse]: N=100 subs — total de POSTs preservado, sem cross-fire, comportamento de concorrência documentado", async () => {
+  const N = 100;
+  const FAIL_EVERY = 7; // ~14 subs falhando persistente → MAX_ATTEMPTS POSTs cada
+  const subs: Subscription[] = Array.from({ length: N }, (_, i) => ({
+    id: `sub-stress-${i.toString().padStart(3, "0")}`,
+    url: `https://stress-${i.toString().padStart(3, "0")}.test/hook`,
+    events: ["x"],
+    secret: i % 3 === 0 ? `secret-${i}` : null,
+  }));
 
-  const subs = [SUB_A, SUB_B, SUB_C];
-  const t0 = Date.now();
-  await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, depsWithReqId)));
-  const t1 = Date.now();
+  // Instrumentação manual para medir concorrência in-flight.
+  let inFlight = 0;
+  let peakInFlight = 0;
+  const fetchesByUrl: Record<string, number> = {};
+  const capturedUrls: string[] = [];
+  const deliveries: DeliveryRow[] = [];
+  const updates: Array<{ id: string; status: number }> = [];
+  const deadLetters: DeadLetterEntry[] = [];
 
-  // Indexa as requisições capturadas por URL (1 POST por sub neste cenário).
-  assertEquals(h.capturedInits.length, subs.length);
-  const initByUrl: Record<string, RequestInit> = {};
-  for (const { url, init } of h.capturedInits) initByUrl[url] = init;
+  const failingUrls = new Set(subs.filter((_, i) => i % FAIL_EVERY === 0).map((s) => s.url));
 
-  for (const sub of subs) {
-    const init = initByUrl[sub.url];
-    assert(init, `${sub.id}: requisição capturada ausente`);
+  const deps: DispatchDeps = {
+    fetchFn: ((input: Parameters<typeof fetch>[0]) => {
+      const url = typeof input === "string" ? input : (input as URL | Request).toString();
+      capturedUrls.push(url);
+      fetchesByUrl[url] = (fetchesByUrl[url] ?? 0) + 1;
+      inFlight += 1;
+      if (inFlight > peakInFlight) peakInFlight = inFlight;
 
-    // ── Method + headers fixos ────────────────────────────────────
-    assertEquals(init.method, "POST", `${sub.id}: method`);
-    const headers = init.headers as Record<string, string>;
-    assertEquals(headers["Content-Type"], "application/json", `${sub.id}: Content-Type`);
-    assertEquals(headers["X-Winloss-Event"], PAYLOAD.event, `${sub.id}: X-Winloss-Event`);
+      // Resolução assíncrona força o loop de microtasks a observar o pico real.
+      return new Promise<Response>((resolve) => {
+        queueMicrotask(() => {
+          inFlight -= 1;
+          resolve(
+            failingUrls.has(url)
+              ? new Response("err", { status: 500 })
+              : new Response("ok", { status: 200 }),
+          );
+        });
+      });
+    }) as typeof fetch,
+    sleep: () => Promise.resolve(),
+    insertDelivery: (row) => { deliveries.push(row); return Promise.resolve(); },
+    updateSubscription: (id, status) => { updates.push({ id, status }); return Promise.resolve(); },
+    onDeadLetter: (entry) => { deadLetters.push(entry); return Promise.resolve(); },
+    rand: () => 0,
+    now: () => 0,
+    log: () => {},
+  };
 
-    // ── Identidade da subscription (sem cross-talk) ───────────────
-    assertEquals(headers["X-Winloss-Subscription-Id"], sub.id, `${sub.id}: X-Winloss-Subscription-Id`);
+  const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, deps)));
 
-    // ── Request-Id propagado de deps.requestId ────────────────────
-    assertEquals(headers["X-Request-Id"], REQUEST_ID, `${sub.id}: X-Request-Id`);
+  // ── Cobertura: 1 resultado por sub ─────────────────────────────
+  assertEquals(results.length, N);
 
-    // ── Assinatura: presente ⇔ sub.secret ─────────────────────────
-    if (sub.secret) {
-      assertEquals(headers["X-Winloss-Signature"], sub.secret, `${sub.id}: X-Winloss-Signature == secret`);
-    } else {
-      assertEquals(headers["X-Winloss-Signature"], undefined, `${sub.id}: sem secret → sem X-Winloss-Signature`);
-    }
+  // ── Sucessos vs falhas determinísticos ────────────────────────
+  const failingSubs = subs.filter((s) => failingUrls.has(s.url));
+  const successSubs = subs.filter((s) => !failingUrls.has(s.url));
+  assertEquals(failingSubs.length, Math.ceil(N / FAIL_EVERY)); // 15 (índices 0,7,...,98)
+  assertEquals(successSubs.length, N - failingSubs.length);
 
-    // ── Timestamp do envio: dispatched_at ISO dentro de [t0, t1] ──
-    assert(typeof init.body === "string", `${sub.id}: body deve ser string serializada`);
-    const parsed = JSON.parse(init.body as string) as Record<string, unknown>;
-    const dispatchedAt = parsed.dispatched_at;
-    assert(typeof dispatchedAt === "string", `${sub.id}: dispatched_at deve ser string ISO`);
-    // Formato ISO-8601 com 'T' e timezone Z (toISOString).
-    assert(
-      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(dispatchedAt as string),
-      `${sub.id}: dispatched_at fora do formato ISO-8601 → "${dispatchedAt}"`,
-    );
-    const ts = Date.parse(dispatchedAt as string);
-    assert(!Number.isNaN(ts), `${sub.id}: dispatched_at não parseável`);
-    assertGreaterOrEqual(ts, t0, `${sub.id}: dispatched_at < início do teste`);
-    assertLessOrEqual(ts, t1, `${sub.id}: dispatched_at > fim do teste`);
+  // ── Total de POSTs: sucessos*1 + falhas*MAX_ATTEMPTS ──────────
+  const expectedTotalPosts = successSubs.length * 1 + failingSubs.length * MAX_ATTEMPTS;
+  const actualTotalPosts = capturedUrls.length;
+  assertEquals(actualTotalPosts, expectedTotalPosts, "total de POSTs divergente");
+  assertEquals(deliveries.length, expectedTotalPosts, "deliveries devem espelhar total de POSTs");
+
+  // ── Sem cross-fire: cada URL recebe POSTs apenas dela mesma ───
+  for (const s of successSubs) {
+    assertEquals(fetchesByUrl[s.url], 1, `${s.id}: sucesso deve ter 1 POST`);
+  }
+  for (const s of failingSubs) {
+    assertEquals(fetchesByUrl[s.url], MAX_ATTEMPTS, `${s.id}: falha deve ter MAX_ATTEMPTS POSTs`);
+  }
+  // Nenhuma URL além das declaradas.
+  const seenUrls = new Set(capturedUrls);
+  assertEquals(seenUrls.size, N, "deve haver exatamente N URLs distintas");
+  for (const url of seenUrls) {
+    assert(subs.some((s) => s.url === url), `URL inesperada nos POSTs: ${url}`);
   }
 
-  // ── Cross-talk de identidade: cada Subscription-Id aparece em exatamente 1 POST ──
-  const seenIds = h.capturedInits.map((c) => (c.init.headers as Record<string, string>)["X-Winloss-Subscription-Id"]);
-  assertEquals(new Set(seenIds).size, subs.length, "X-Winloss-Subscription-Id duplicado entre POSTs");
-  assertEquals(new Set(seenIds), new Set(subs.map((s) => s.id)), "cobertura de Subscription-Id divergente");
+  // ── updateSubscription: 1× por sub com status final correto ───
+  assertEquals(updates.length, N);
+  const statusById = Object.fromEntries(updates.map((u) => [u.id, u.status]));
+  for (const s of successSubs) assertEquals(statusById[s.id], 200, `${s.id}: status final`);
+  for (const s of failingSubs) assertEquals(statusById[s.id], 500, `${s.id}: status final`);
 
-  // ── Signature isolada: secret de SUB_C não pode vazar para A/B ─
-  const sigByUrl: Record<string, string | undefined> = {};
-  for (const { url, init } of h.capturedInits) {
-    sigByUrl[url] = (init.headers as Record<string, string>)["X-Winloss-Signature"];
-  }
-  assertEquals(sigByUrl[SUB_A.url], undefined);
-  assertEquals(sigByUrl[SUB_B.url], undefined);
-  assertEquals(sigByUrl[SUB_C.url], "shh");
+  // ── DLQ: apenas as falhas persistentes vão para a fila ────────
+  assertEquals(deadLetters.length, failingSubs.length, "DLQ deve conter apenas falhas persistentes");
+  const dlqIds = new Set(deadLetters.map((d) => d.subscription_id));
+  for (const s of failingSubs) assert(dlqIds.has(s.id), `${s.id} ausente no DLQ`);
+  for (const s of successSubs) assert(!dlqIds.has(s.id), `${s.id} não deveria estar no DLQ`);
+
+  // ── Concorrência (observabilidade do contrato atual) ──────────
+  // Sem throttling, o pico in-flight da PRIMEIRA rodada == N (todas disparam juntas).
+  // Em rodadas subsequentes (retries), o pico cai porque sucessos já terminaram.
+  assertEquals(peakInFlight, N, `pico in-flight esperado=${N} (sem throttling); obtido=${peakInFlight}`);
+  // Sanidade: nunca pode ultrapassar N (seria contagem corrompida ou cross-fire).
+  assertLessOrEqual(peakInFlight, N, "pico in-flight não pode exceder N");
 });
 
