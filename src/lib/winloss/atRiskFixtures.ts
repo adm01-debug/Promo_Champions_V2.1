@@ -369,6 +369,32 @@ export const SCENARIOS: Scenario[] = [
       // Tom imperativo obrigatório quando severity=critical, independente da branch
       actionIncludes: ["IMEDIATA", "URGENTE", "24h", "hoje"],
     },
+  {
+    name: "competitor_dominant_critical",
+    story:
+      "Negotiation há 75d em leilão público com ticket=31k (centro do perfil 'Pressão competitiva'). Cenário desenhado para que o pattern competitor seja o bestLoss (proximidade de avg_amount=31k) e o sinal COMPETITOR_PRESSURE apareça em reasons via source 'leilao_publico'.",
+    deal: {
+      id: "s12",
+      client_name: "BidWar Telecom",
+      amount: 31000,
+      status: "negotiation",
+      category: "enterprise",
+      source: "leilao_publico",
+      updated_at: daysAgo(75),
+      created_at: daysAgo(140),
+    },
+    expect: {
+      included: true,
+      minScore: 70,
+      maxScore: 100,
+      // O dominant_type é loss_factor/stuck_stage (engine não usa "competitor" como dominant),
+      // mas o matched_pattern.label deve carregar a família "Pressão competitiva".
+      patternTypeOneOf: ["loss_factor", "stuck_stage"],
+      matchedPatternLabelIncludes: "Pressão competitiva",
+      reasonsInclude: ["75 dias", "competitiva"],
+      // critical → tom imperativo (24h/IMEDIATA/URGENTE) ou, em loss_factor critical, "resgate".
+      actionIncludes: ["IMEDIATA", "URGENTE", "24h", "battle card"],
+    },
   },
 ];
 
