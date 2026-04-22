@@ -443,3 +443,71 @@ Deno.test(
     assertEquals(h.deadLetters.length, 0);
   },
 );
+
+// ─────────────── insertDelivery falha em #1 e #2, fetch sucesso em #3 ───────────────
+
+Deno.test(
+  "insertDelivery rejeita em #1/#2 + fetch 500/500/200: dispatcher para na 3ª, succeeded=true, sem DLQ",
+  async () => {
+    let attempt = 0;
+    const sleeps: number[] = [];
+    const insertCalls: Array<{ attempt: number; succeeded: boolean; status: number }> = [];
+    const insertedRows: DeliveryRow[] = [];
+    const deadLetters: DeadLetterEntry[] = [];
+
+    const deps: DispatchDeps = {
+      fetchFn: ((_u: string) => {
+        attempt += 1;
+        // 1ª e 2ª: HTTP 500 (falha) — 3ª: 200 (sucesso)
+        const status = attempt < 3 ? 500 : 200;
+        return Promise.resolve(new Response(attempt < 3 ? "err" : "ok", { status }));
+      }) as typeof fetch,
+      insertDelivery: (row) => {
+        insertCalls.push({ attempt: row.attempt, succeeded: row.succeeded, status: row.status });
+        // Rejeita nas 2 primeiras; aceita na 3ª
+        if (row.attempt < 3) {
+          return Promise.reject(new Error(`DB_WRITE_FAILED: attempt ${row.attempt}`));
+        }
+        insertedRows.push(row);
+        return Promise.resolve();
+      },
+      sleep: (ms) => { sleeps.push(ms); return Promise.resolve(); },
+      updateSubscription: () => Promise.resolve(),
+      onDeadLetter: (entry) => { deadLetters.push(entry); return Promise.resolve(); },
+      now: () => 0,
+      rand: () => 0,
+    };
+
+    const r = await dispatchOne(SUB, PAYLOAD, deps);
+
+    // Resultado final: dispatcher PAROU na 3ª e retornou sucesso
+    assertEquals(r.succeeded, true, "succeeded=true após sucesso na 3ª tentativa");
+    assertEquals(r.attempts, 3, "attempts=3 (esgotou as anteriores)");
+    assertEquals(r.status, 200);
+    assertEquals(r.error, null);
+
+    // Fetches: exatamente 3
+    assertEquals(attempt, 3, "fetch chamado 3×");
+
+    // insertDelivery foi chamado 3× (mesmo as que rejeitaram)
+    assertEquals(insertCalls.length, 3);
+    assertEquals(insertCalls.map((c) => c.attempt), [1, 2, 3]);
+    assertEquals(insertCalls.map((c) => c.succeeded), [false, false, true]);
+    assertEquals(insertCalls.map((c) => c.status), [500, 500, 200]);
+
+    // Apenas a 3ª linha sobreviveu
+    assertEquals(insertedRows.length, 1, "somente a 3ª linha persiste");
+    assertEquals(insertedRows[0].attempt, 3);
+    assertEquals(insertedRows[0].succeeded, true);
+    assertEquals(insertedRows[0].status, 200);
+
+    // Sleeps: exatamente 2 (entre #1→#2 e #2→#3); nenhum após a 3ª
+    assertEquals(sleeps.length, 2, "sleeps = MAX_ATTEMPTS - 1 mesmo com inserts falhando");
+
+    // Sucesso terminal → DLQ NÃO acionada (mesmo com 2 inserts rejeitados)
+    assertEquals(deadLetters.length, 0, "DLQ não é chamada quando há sucesso terminal");
+
+    // Sanity: MAX_ATTEMPTS não foi excedido
+    assert(r.attempts <= MAX_ATTEMPTS);
+  },
+);
