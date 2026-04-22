@@ -124,3 +124,85 @@ Deno.test("LSE meta-coverage: every group has ≥1 included AND ≥1 excluded/ed
   }
   assertEquals(gaps, []);
 });
+
+/**
+ * Expected `matched_pattern_type` coverage per LSE family.
+ *
+ * This is a design contract — independent of `matchedPatternLabelIncludes` /
+ * substring checks. It guarantees that:
+ *   1. Every included fixture declares which dominant types are acceptable.
+ *   2. The union of declared types across the family matches this set exactly
+ *      (no silent drift if someone adds/removes a type from a single case).
+ *   3. The engine actually emits a type within this set at runtime.
+ *
+ * If the engine legitimately starts emitting a new dominant type for a family
+ * (e.g. "competitor" becomes first-class), update both the fixtures and this
+ * map in the same change.
+ */
+const EXPECTED_LSE_PATTERN_TYPES: Record<DealHistoryLSEFamily, string[]> = {
+  pricing: ["loss_factor"],
+  negotiation: ["loss_factor", "stuck_stage"],
+  churn: ["loss_factor"],
+};
+
+Deno.test("LSE meta-coverage: each group covers expected matched_pattern_type set (declared + runtime)", () => {
+  const gaps: string[] = [];
+
+  for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFamily[]) {
+    const group = DEAL_HISTORY_LSE_FIXTURES[family];
+    const expected = new Set(EXPECTED_LSE_PATTERN_TYPES[family]);
+    const declared = new Set<string>();
+    const runtime = new Set<string>();
+    const missingDeclaration: string[] = [];
+
+    for (const intensity of LSE_INTENSITIES) {
+      const c = group.cases[intensity];
+      if (!c.expect.included) continue;
+
+      // (1) Every included case must declare patternTypeOneOf.
+      if (!c.expect.patternTypeOneOf?.length) {
+        missingDeclaration.push(`${c.name} (intensity=${intensity})`);
+        continue;
+      }
+      for (const t of c.expect.patternTypeOneOf) declared.add(t);
+
+      // (3) Runtime engine emits a type within the expected set.
+      const result = computeDealRisk(c.deal, LOSS_PATTERNS_REALISTIC, NOW);
+      const actualType = result?.breakdown.matched_pattern_type ?? null;
+      if (actualType) runtime.add(actualType);
+      if (actualType && !expected.has(actualType)) {
+        gaps.push(
+          `[${family}/${c.name}] runtime type "${actualType}" not in expected set ` +
+            `${JSON.stringify([...expected])}`,
+        );
+      }
+    }
+
+    if (missingDeclaration.length > 0) {
+      gaps.push(
+        `[${family}] included cases missing patternTypeOneOf declaration: ` +
+          missingDeclaration.join(", "),
+      );
+    }
+
+    // (2) Declared union must equal expected set (no extras, no omissions).
+    const declaredArr = [...declared].sort();
+    const expectedArr = [...expected].sort();
+    const extra = declaredArr.filter((t) => !expected.has(t));
+    const missing = expectedArr.filter((t) => !declared.has(t));
+    if (extra.length > 0 || missing.length > 0) {
+      gaps.push(
+        `[${family}] declared patternTypeOneOf union mismatch:\n` +
+          `      expected: ${JSON.stringify(expectedArr)}\n` +
+          `      declared: ${JSON.stringify(declaredArr)}\n` +
+          (extra.length > 0 ? `      unexpected extras: ${JSON.stringify(extra)}\n` : "") +
+          (missing.length > 0 ? `      missing from fixtures: ${JSON.stringify(missing)}` : ""),
+      );
+    }
+  }
+
+  if (gaps.length > 0) {
+    throw new Error(`LSE matched_pattern_type coverage gaps:\n  ✗ ${gaps.join("\n  ✗ ")}`);
+  }
+  assertEquals(gaps, []);
+});
