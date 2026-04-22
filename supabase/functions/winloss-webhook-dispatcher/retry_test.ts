@@ -1104,12 +1104,62 @@ Deno.test("fan-out N=20: contagem por URL, header X-Winloss-Event e deal_id cheg
   assertEquals(totalFetches, N);
   assertEquals(h.capturedInits.length, N);
 
-  // Header + body por captura
+  // Header + body + método + Content-Type por captura (uma vez por sub)
+  const postsByUrl: Record<string, number> = {};
   for (const { url, init } of h.capturedInits) {
+    postsByUrl[url] = (postsByUrl[url] ?? 0) + 1;
+    assertEquals(init.method, "POST", `método deve ser POST em ${url}`);
     const headers = init.headers as Record<string, string>;
+    assertEquals(headers["Content-Type"], "application/json", `Content-Type deve ser application/json em ${url}`);
     assertEquals(headers["X-Winloss-Event"], "x", `X-Winloss-Event ausente em ${url}`);
     const parsed = JSON.parse(String(init.body));
     assertEquals(parsed.deal_id, "deal-bulk-999", `deal_id ausente em ${url}`);
+  }
+  // Cada subscription recebeu exatamente 1 POST
+  for (const s of subs) assertEquals(postsByUrl[s.url], 1, `${s.id}: deve ter exatamente 1 POST`);
+});
+
+Deno.test("fan-out: cada subscription recebe exatamente 1 POST com method=POST e Content-Type=application/json", async () => {
+  // Foco exclusivo: método HTTP + Content-Type, validados UMA vez por subscription.
+  // Cenário sem retries (todas 2xx) → garante mapeamento 1:1 entre sub e POST.
+  const h = makeFanoutHarness({
+    [SUB_A.url]: () => new Response("ok", { status: 200 }),
+    [SUB_B.url]: () => new Response("ok", { status: 201 }),
+    [SUB_C.url]: () => new Response("ok", { status: 202 }),
+  });
+  const payload = { event: "x", deal_id: "d-method-ct" };
+  const subs = [SUB_A, SUB_B, SUB_C];
+  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+
+  // Total: 1 POST por sub
+  assertEquals(h.capturedInits.length, subs.length);
+  for (const s of subs) {
+    assertEquals(h.fetchesByUrl[s.url], 1, `${s.id}: deve ter exatamente 1 POST em ${s.url}`);
+  }
+
+  // Agrupa por URL para garantir "uma vez por subscription"
+  const initsByUrl: Record<string, RequestInit[]> = {};
+  for (const { url, init } of h.capturedInits) {
+    initsByUrl[url] = initsByUrl[url] ?? [];
+    initsByUrl[url].push(init);
+  }
+
+  for (const s of subs) {
+    const inits = initsByUrl[s.url] ?? [];
+    assertEquals(inits.length, 1, `${s.id}: esperava exatamente 1 init capturado`);
+
+    const init = inits[0];
+    // Asserção 1: method === "POST"
+    assertEquals(init.method, "POST", `${s.id}: method deve ser exatamente "POST"`);
+
+    // Asserção 2: Content-Type === "application/json"
+    const headers = init.headers as Record<string, string>;
+    assert(headers, `${s.id}: headers ausentes`);
+    assertEquals(
+      headers["Content-Type"],
+      "application/json",
+      `${s.id}: Content-Type deve ser exatamente "application/json"`,
+    );
   }
 });
 
