@@ -358,6 +358,11 @@ export const handler = async (req: Request): Promise<Response> => {
 
     jlog("info", { msg: "replay_complete", requestId, source, summary });
 
+    await persistInvocationAudit(supabase, {
+      requestId, userId, userEmail, source, ids,
+      summary, durationMs: Date.now() - startedAt,
+    });
+
     return jsonResponse({ requestId, source, summary, results }, 200, requestId);
   } catch (e) {
     jlog("error", { msg: "replay_fatal", requestId, ...describeError(e) });
