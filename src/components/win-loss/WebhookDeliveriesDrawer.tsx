@@ -283,15 +283,46 @@ export function WebhookDeliveriesDrawer({
   const [confirm, setConfirm] = useState<{ ids: string[] } | null>(null);
 
   const confirmSummary = useMemo(() => {
-    if (!confirm || !data) return { count: 0, byEvent: [] as { event: string; count: number }[] };
+    if (!confirm || !data)
+      return {
+        count: 0,
+        byEvent: [] as { event: string; count: number }[],
+        single: null as null | {
+          id: string;
+          event: string;
+          attempt: number;
+          status: number;
+          error: string | null;
+        },
+      };
     const idSet = new Set(confirm.ids);
     const map = new Map<string, number>();
+    let single: {
+      id: string;
+      event: string;
+      attempt: number;
+      status: number;
+      error: string | null;
+    } | null = null;
     for (const d of data) {
       if (idSet.has(d.id)) map.set(d.event, (map.get(d.event) ?? 0) + 1);
+    }
+    if (confirm.ids.length === 1) {
+      const d = data.find((x) => x.id === confirm.ids[0]);
+      if (d) {
+        single = {
+          id: d.id,
+          event: d.event,
+          attempt: d.attempt,
+          status: d.status,
+          error: d.error_message,
+        };
+      }
     }
     return {
       count: confirm.ids.length,
       byEvent: Array.from(map, ([event, count]) => ({ event, count })).sort((a, b) => b.count - a.count),
+      single,
     };
   }, [confirm, data]);
 
