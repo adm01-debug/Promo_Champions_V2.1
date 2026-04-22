@@ -36,7 +36,8 @@ import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterP
 import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
-import { useWinLossViewPrefs } from "@/hooks/win-loss/useWinLossViewPrefs";
+import { useWinLossViewPrefs, VIEW_PREFS_DEFAULTS } from "@/hooks/win-loss/useWinLossViewPrefs";
+import { toast } from "sonner";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
 import {
   aggregateByCompetitor,
@@ -72,7 +73,16 @@ export default function WinLossIntelligence() {
   useWinLossRealtime({ onNewPattern: focusInsights });
 
   const { filters, setFilters, reset } = useWinLossFilters();
-  const { prefs: viewPrefs, update: updateViewPrefs } = useWinLossViewPrefs();
+  const { prefs: viewPrefs, update: updateViewPrefs, reset: resetViewPrefs } = useWinLossViewPrefs();
+  const viewPrefsAreDefault =
+    viewPrefs.granularity === VIEW_PREFS_DEFAULTS.granularity &&
+    viewPrefs.forecastHorizon === VIEW_PREFS_DEFAULTS.forecastHorizon;
+  const handleResetViewPrefs = useCallback(() => {
+    resetViewPrefs();
+    toast.success("Preferências de visualização restauradas", {
+      description: "Granularidade Mensal · Horizonte 3 períodos",
+    });
+  }, [resetViewPrefs]);
   const { data: allRows = [], isLoading } = useFilteredWinLossAnalyses(filters);
 
   // Quick filter overlay state (client-side, doesn't refetch)
@@ -228,7 +238,13 @@ export default function WinLossIntelligence() {
           </div>
 
           <div className="no-print">
-            <WinLossFilters filters={filters} onChange={setFilters} onReset={reset} />
+            <WinLossFilters
+              filters={filters}
+              onChange={setFilters}
+              onReset={reset}
+              onResetViewPrefs={handleResetViewPrefs}
+              viewPrefsAreDefault={viewPrefsAreDefault}
+            />
           </div>
 
           {!isEmpty && !isLoading && (

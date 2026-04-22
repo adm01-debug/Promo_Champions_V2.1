@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, X } from "lucide-react";
+import { Filter, X, RotateCcw } from "lucide-react";
 import {
   PERIOD_OPTIONS,
   type WLPeriod,
@@ -16,9 +16,11 @@ interface Props {
   filters: WinLossFilterState;
   onChange: (patch: Partial<WinLossFilterState>) => void;
   onReset: () => void;
+  onResetViewPrefs?: () => void;
+  viewPrefsAreDefault?: boolean;
 }
 
-export function WinLossFilters({ filters, onChange, onReset }: Props) {
+export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, viewPrefsAreDefault }: Props) {
   const { data: salespeople = [] } = useActiveSalespeople();
   const { data: segments = [] } = useWinLossSegments();
   const activeCount =
@@ -123,11 +125,24 @@ export function WinLossFilters({ filters, onChange, onReset }: Props) {
           />
         </div>
 
-        {activeCount > 0 && (
-          <Button size="sm" variant="ghost" className="h-8 ml-auto" onClick={onReset}>
-            <X className="h-3.5 w-3.5 mr-1" /> Limpar
-          </Button>
-        )}
+        <div className="ml-auto flex items-center gap-1">
+          {onResetViewPrefs && viewPrefsAreDefault === false && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-8"
+              onClick={onResetViewPrefs}
+              title="Restaura granularidade (Mensal) e horizonte (3 períodos)"
+            >
+              <RotateCcw className="h-3.5 w-3.5 mr-1" /> Restaurar visualização
+            </Button>
+          )}
+          {activeCount > 0 && (
+            <Button size="sm" variant="ghost" className="h-8" onClick={onReset}>
+              <X className="h-3.5 w-3.5 mr-1" /> Limpar
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
