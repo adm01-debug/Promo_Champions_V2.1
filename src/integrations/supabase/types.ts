@@ -7076,6 +7076,112 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          product_name: string
+          quantity?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_name?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_status_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          order_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          cancellation_reason: string | null
+          created_at: string
+          id: string
+          order_number: string
+          shipping: number
+          status: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancellation_reason?: string | null
+          created_at?: string
+          id?: string
+          order_number: string
+          shipping?: number
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancellation_reason?: string | null
+          created_at?: string
+          id?: string
+          order_number?: string
+          shipping?: number
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       outbound_messages: {
         Row: {
           body: string | null
