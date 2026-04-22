@@ -410,7 +410,7 @@ Deno.test("fixtures table: SUMMARY — included/failed counts by assert category
       }
       const reasonNeedles = s.expect.reasonsInclude ?? [];
       const reasonMissing = reasonNeedles.filter(
-        (n) => !r.reasons.some((reason) => includesCI(reason, n)),
+        (n) => !r.reasons.some((reason) => includesNormalized(reason, n)),
       );
       if (reasonMissing.length > 0) {
         failures.reasons.push(`${s.name} (missing: ${JSON.stringify(reasonMissing)})`);
