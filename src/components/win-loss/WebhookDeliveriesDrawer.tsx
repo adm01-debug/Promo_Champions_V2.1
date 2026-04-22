@@ -980,7 +980,14 @@ export function WebhookDeliveriesDrawer({
         </TooltipProvider>
       </DrawerContent>
 
-      <AlertDialog open={!!confirm} onOpenChange={(o) => !o && setConfirm(null)}>
+      <AlertDialog
+        open={!!confirm}
+        onOpenChange={(o) => {
+          if (o) return;
+          if (isReplaying) return; // bloqueia ESC/overlay enquanto replay roda
+          setConfirm(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
