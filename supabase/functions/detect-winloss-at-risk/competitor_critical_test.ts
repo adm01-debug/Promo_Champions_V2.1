@@ -144,7 +144,7 @@ Deno.test("end-to-end: severity=critical do engine + competitor → ação imper
   // simulando a UI que prioriza competitor quando matches estão presentes.
   const action = suggestedActionFor("competitor", deal.status, {
     outcome: "lost",
-    severity: r.breakdown.severity,
+    severity: r.breakdown.severity ?? "critical",
   });
   assertMatch(action, COMPETITOR_CRITICAL_RE);
   assertMatch(action, URGENCY_RE);
