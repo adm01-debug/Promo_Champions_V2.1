@@ -65,14 +65,14 @@ describe("validateReplayIds", () => {
       if (r.ok) expect(r.ids).toEqual([a, b, c]);
     });
 
-    it("considera UUIDs case-insensitive como distintos (não normaliza)", () => {
-      // O regex aceita case-insensitive, mas Set diferencia 'a' e 'A'.
-      // Documenta o comportamento atual: NÃO normaliza para lowercase.
+    it("Set dedupe é case-sensitive (documenta comportamento atual)", () => {
+      // O regex aceita ambas as caixas, e o Set diferencia por bytes,
+      // então 'aaaa…' e 'AAAA…' contam como 2 entradas.
       const lower = uuid(7);
       const upper = lower.toUpperCase();
-      const r = validateReplayIds([lower, upper]);
+      const r = validateReplayIds([lower, lower, upper, upper]);
       expect(r.ok).toBe(true);
-      if (r.ok) expect(r.ids).toHaveLength(2);
+      if (r.ok) expect(r.ids).toEqual([lower, upper]);
     });
   });
 
