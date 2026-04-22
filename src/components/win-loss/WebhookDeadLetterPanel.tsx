@@ -347,6 +347,10 @@ export function WebhookDeadLetterPanel({
                     </>
                   )}
                 </div>
+                <div className="mb-3 space-y-1.5">
+                  <p className="text-[11px] font-medium text-foreground">Trilha de auditoria de replays</p>
+                  <ReplayAuditTrail deadLetterId={previewOf.id} />
+                </div>
                 <pre className="text-[11px] bg-muted/40 rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-words">
 {JSON.stringify(previewOf.payload, null, 2)}
                 </pre>
