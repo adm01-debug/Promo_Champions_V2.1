@@ -1144,6 +1144,25 @@ export function WebhookDeliveriesDrawer({
                       <span className="font-semibold text-foreground">{confirmSummary.count}</span>{" "}
                       {confirmSummary.count === 1 ? "entrega será reenviada." : "entregas serão reenviadas."}
                     </p>
+                    {confirm && confirm.requestedCount !== confirmSummary.count && (
+                      <p className="text-[11px] text-muted-foreground">
+                        Selecionado{confirm.requestedCount === 1 ? "" : "s"}:{" "}
+                        <span className="font-medium text-foreground tabular-nums">
+                          {confirm.requestedCount}
+                        </span>
+                        {" · "}após dedupe:{" "}
+                        <span className="font-medium text-foreground tabular-nums">
+                          {confirmSummary.count}
+                        </span>
+                        {" · "}
+                        <span className="text-warning">
+                          {confirm.requestedCount - confirmSummary.count} duplicada
+                          {confirm.requestedCount - confirmSummary.count === 1 ? "" : "s"} removida
+                          {confirm.requestedCount - confirmSummary.count === 1 ? "" : "s"}
+                        </span>
+                        .
+                      </p>
+                    )}
                     {confirmSummary.byEvent.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {confirmSummary.byEvent.map((b) => (
