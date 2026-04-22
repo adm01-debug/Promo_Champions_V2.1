@@ -18,6 +18,7 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterPanel";
 import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
+import { useDeadLetterErrorGroups } from "@/hooks/win-loss/useDeadLetterErrorGroups";
 import { useQueryClient } from "@tanstack/react-query";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
