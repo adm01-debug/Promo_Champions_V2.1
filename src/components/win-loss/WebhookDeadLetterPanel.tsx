@@ -255,6 +255,22 @@ export function WebhookDeadLetterPanel({
           </ScrollArea>
         </DrawerContent>
       </Drawer>
+
+      <BulkReplayConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(v) => {
+          setConfirmOpen(v);
+          if (!v) setPendingReplayIds([]);
+        }}
+        items={items.filter((i) => pendingReplayIds.includes(i.id))}
+        isReplaying={isReplaying}
+        onConfirm={() => {
+          const ids = pendingReplayIds;
+          setConfirmOpen(false);
+          setPendingReplayIds([]);
+          onReplay(ids);
+        }}
+      />
     </Card>
   );
 }
