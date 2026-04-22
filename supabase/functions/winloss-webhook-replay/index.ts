@@ -83,6 +83,7 @@ async function persistDlqOutcome(
   supabase: SupabaseClient,
   row: SourceRow,
   result: { succeeded: boolean; status: number; error: string | null },
+  requestId: string,
 ): Promise<void> {
   const update: Record<string, unknown> = {
     status: result.succeeded ? "replayed" : "pending",
@@ -90,13 +91,14 @@ async function persistDlqOutcome(
     last_replay_at: new Date().toISOString(),
     last_replay_status: result.status,
     last_replay_error: result.succeeded ? null : result.error,
+    last_replay_request_id: requestId,
   };
   const { error } = await supabase
     .from("winloss_webhook_dead_letters")
     .update(update)
     .eq("id", row.id);
   if (error) {
-    jlog("error", { msg: "dlq_outcome_persist_failed", id: row.id, ...describeError(error) });
+    jlog("error", { msg: "dlq_outcome_persist_failed", id: row.id, requestId, ...describeError(error) });
   }
 }
 
