@@ -295,8 +295,9 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
         confidenceZ,
         horizon,
         stdDev,
+        confidenceLevel,
       }),
-    [data, stdDev, fitN, bandMode, horizon, confidenceZ],
+    [data, stdDev, fitN, bandMode, horizon, confidenceZ, confidenceLevel],
   );
 
   if (!data.length) {
