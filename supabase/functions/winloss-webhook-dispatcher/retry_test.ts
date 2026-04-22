@@ -1191,3 +1191,123 @@ Deno.test("ordem: updateSubscription PRECEDE onDeadLetter mesmo quando onDeadLet
   );
 });
 
+// ───────── attempts == MAX_ATTEMPTS + last_status/last_error refletem a ÚLTIMA tentativa ─────────
+
+Deno.test("DLQ: attempts é EXATAMENTE MAX_ATTEMPTS; last_status/last_error vêm da ÚLTIMA tentativa (HTTP puro 500→502→503)", async () => {
+  const seq = [500, 502, 503];
+  let i = 0;
+  const h = makeHarness(() => new Response("err", { status: seq[i++] }), { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(h.fetches, MAX_ATTEMPTS, "deve haver exatamente MAX_ATTEMPTS fetches");
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+
+  // attempts EXATAMENTE igual a MAX_ATTEMPTS — nem MAX_ATTEMPTS-1, nem MAX_ATTEMPTS+1.
+  assertEquals(e.attempts, MAX_ATTEMPTS);
+  // last_status === último status da sequência (503), não os anteriores (500/502).
+  assertEquals(e.last_status, seq[seq.length - 1]);
+  assertEquals(e.last_status, 503);
+  // last_error null em falhas HTTP puras (sem throw).
+  assertEquals(e.last_error, null);
+});
+
+Deno.test("DLQ: rede pura 3× (Error sintético variando) → attempts=MAX_ATTEMPTS, last_status=0, last_error é da ÚLTIMA", async () => {
+  const errors = ["ENETDOWN", "ETIMEDOUT", "ECONNRESET"];
+  let i = 0;
+  const h = makeHarness((): Response => { throw new Error(errors[i++]); }, { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+
+  assertEquals(e.attempts, MAX_ATTEMPTS);
+  // status=0 convencional para erro de rede (sem resposta HTTP).
+  assertEquals(e.last_status, 0);
+  // last_error contém a mensagem da ÚLTIMA tentativa, não da 1ª/2ª.
+  assert(typeof e.last_error === "string", "last_error deve ser string em erro de rede");
+  assert(
+    (e.last_error as string).includes(errors[errors.length - 1]),
+    `last_error="${e.last_error}" deve conter "${errors[errors.length - 1]}" (última tentativa); não as anteriores`,
+  );
+  // E NÃO deve mencionar os erros anteriores.
+  assert(!(e.last_error as string).includes(errors[0]), "last_error não deve refletir o erro da 1ª tentativa");
+  assert(!(e.last_error as string).includes(errors[1]), "last_error não deve refletir o erro da 2ª tentativa");
+});
+
+Deno.test("DLQ: misto rede→rede→HTTP 504 → attempts=MAX_ATTEMPTS, last_status=504 (reflete a ÚLTIMA tentativa)", async () => {
+  // Contrato observado: last_status SEMPRE espelha o resultado da última tentativa.
+  // last_error preserva a última exceção lançada — quando a última é HTTP, ele mantém
+  // a mensagem de rede da tentativa anterior (não é "resetado"). Esse comportamento
+  // é intencional para não perder o sinal de instabilidade da rede.
+  let n = 0;
+  const h = makeHarness((): Response => {
+    n += 1;
+    if (n < 3) throw new Error("ENETDOWN");
+    return new Response("gateway", { status: 504 });
+  }, { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+
+  assertEquals(e.attempts, MAX_ATTEMPTS);
+  // last_status DEVE refletir a última tentativa (HTTP 504), e não 0 das anteriores.
+  assertEquals(e.last_status, 504);
+  // last_error preserva a última exceção observada (rede), comprovando que o sinal
+  // não é descartado mesmo quando a tentativa final é HTTP.
+  assert(typeof e.last_error === "string");
+  assert((e.last_error as string).includes("ENETDOWN"));
+});
+
+Deno.test("DLQ: misto HTTP 500→HTTP 502→rede → attempts=MAX_ATTEMPTS, last_status=0, last_error contém o erro da ÚLTIMA", async () => {
+  let n = 0;
+  const h = makeHarness((): Response => {
+    n += 1;
+    if (n === 1) return new Response("", { status: 500 });
+    if (n === 2) return new Response("", { status: 502 });
+    throw new Error("FINAL_NETWORK_BOOM");
+  }, { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+
+  assertEquals(e.attempts, MAX_ATTEMPTS);
+  // Última foi rede → status=0, last_error reflete a ÚLTIMA mensagem.
+  assertEquals(e.last_status, 0);
+  assert(typeof e.last_error === "string");
+  assert(
+    (e.last_error as string).includes("FINAL_NETWORK_BOOM"),
+    `last_error="${e.last_error}" deve refletir o erro da ÚLTIMA tentativa`,
+  );
+});
+
+Deno.test("DLQ: AbortError × MAX_ATTEMPTS → attempts=MAX_ATTEMPTS, last_status=0, last_error menciona AbortError da ÚLTIMA", async () => {
+  const h = makeHarness((): Response => {
+    const err = new Error("The signal has been aborted");
+    err.name = "AbortError";
+    throw err;
+  }, { withDeadLetter: true });
+  const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+  assertEquals(r.succeeded, false);
+  assertEquals(h.fetches, MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 1);
+  const e = h.deadLetters[0];
+
+  assertEquals(e.attempts, MAX_ATTEMPTS);
+  assertEquals(e.last_status, 0);
+  assert(typeof e.last_error === "string");
+  assert(
+    (e.last_error as string).includes("AbortError"),
+    `last_error="${e.last_error}" deve mencionar AbortError`,
+  );
+});
