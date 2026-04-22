@@ -237,7 +237,7 @@ serve(async (req) => {
     for (const sub of subscriptions) {
       const { data: rows, error: rowsError } = await supabase
         .from("winloss_webhook_deliveries")
-        .select("attempt, succeeded, status, error_message, created_at")
+        .select("attempt, succeeded, status, error_message, created_at, request_id, event")
         .eq("subscription_id", sub.id)
         .gte("created_at", sinceIso)
         .order("created_at", { ascending: false })
