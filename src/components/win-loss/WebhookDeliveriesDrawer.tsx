@@ -458,7 +458,8 @@ export function WebhookDeliveriesDrawer({
   const executeReplay = () => {
     if (!confirm) return;
     const ids = confirm.ids;
-    setConfirm(null);
+    // Mantém o modal aberto durante o replay para mostrar spinner inline.
+    // Será fechado em onSettled abaixo.
 
     if (ids.length === 1) {
       setPendingId(ids[0]);
@@ -512,6 +513,7 @@ export function WebhookDeliveriesDrawer({
       onSettled: () => {
         if (ids.length === 1) setPendingId(null);
         clearProcessing(ids);
+        setConfirm(null);
         // Auto-clear do resumo após pequeno delay para o usuário ler
         if (batchId) {
           window.setTimeout(() => {
@@ -978,7 +980,14 @@ export function WebhookDeliveriesDrawer({
         </TooltipProvider>
       </DrawerContent>
 
-      <AlertDialog open={!!confirm} onOpenChange={(o) => !o && setConfirm(null)}>
+      <AlertDialog
+        open={!!confirm}
+        onOpenChange={(o) => {
+          if (o) return;
+          if (isReplaying) return; // bloqueia ESC/overlay enquanto replay roda
+          setConfirm(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
@@ -1104,11 +1113,31 @@ export function WebhookDeliveriesDrawer({
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
+          {isReplaying && (
+            <div
+              className="flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-[11px] text-primary"
+              role="status"
+              aria-live="polite"
+            >
+              <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden />
+              <span>Reenviando {confirmSummary.count}… aguarde a conclusão.</span>
+            </div>
+          )}
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={executeReplay}>
-              <RotateCw className="h-3.5 w-3.5 mr-1.5" />
-              Reenviar {confirmSummary.count}
+            <AlertDialogCancel disabled={isReplaying}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                executeReplay();
+              }}
+              disabled={isReplaying}
+            >
+              {isReplaying ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" aria-hidden />
+              ) : (
+                <RotateCw className="h-3.5 w-3.5 mr-1.5" aria-hidden />
+              )}
+              {isReplaying ? "Reenviando…" : `Reenviar ${confirmSummary.count}`}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
