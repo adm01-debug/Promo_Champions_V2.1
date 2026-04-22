@@ -576,6 +576,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
           dof={dof}
           stdDev={stdDev}
           fitN={fitN}
+          confidenceLevel={confidenceLevel}
         />
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart key={chartKey} data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
