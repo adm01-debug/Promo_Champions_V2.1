@@ -351,8 +351,36 @@ export function WebhookDeliveriesDrawer({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader className="border-b">
-          <DrawerTitle className="text-base">Histórico de entregas</DrawerTitle>
-          <DrawerDescription className="truncate text-xs">{url ?? subscriptionId}</DrawerDescription>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <DrawerTitle className="text-base">Histórico de entregas</DrawerTitle>
+              <DrawerDescription className="truncate text-xs">{url ?? subscriptionId}</DrawerDescription>
+            </div>
+            <label className="flex items-center gap-1.5 shrink-0 text-[10px] text-muted-foreground">
+              <span className="hidden sm:inline">Manter status por</span>
+              <select
+                className="h-7 rounded-md border bg-background px-1.5 text-[11px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                value={Number.isFinite(retentionMs) ? String(retentionMs) : "Infinity"}
+                onChange={(e) =>
+                  updateRetention(
+                    e.target.value === "Infinity"
+                      ? Number.POSITIVE_INFINITY
+                      : Number(e.target.value),
+                  )
+                }
+                aria-label="Tempo de retenção do status de replay nas linhas"
+              >
+                {RETENTION_OPTIONS.map((opt) => (
+                  <option
+                    key={opt.label}
+                    value={Number.isFinite(opt.value) ? String(opt.value) : "Infinity"}
+                  >
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </DrawerHeader>
 
         <TooltipProvider delayDuration={200}>
