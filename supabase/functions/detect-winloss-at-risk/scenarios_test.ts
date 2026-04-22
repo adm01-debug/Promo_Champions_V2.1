@@ -58,20 +58,17 @@ for (const scenario of SCENARIOS) {
       );
     }
 
-    // Suggested action coherent (string = AND single needle; string[] = OR — any match)
+    // Suggested action coherent — supports string (AND), string[] (OR) and { all, anyOf? } (AND+OR).
     if (scenario.expect.actionIncludes !== undefined) {
-      const needles = Array.isArray(scenario.expect.actionIncludes)
-        ? scenario.expect.actionIncludes
-        : [scenario.expect.actionIncludes];
-      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
-      const hit = matched.length > 0;
+      const evalRes = evaluateActionIncludes(r.suggested_action, scenario.expect.actionIncludes);
       assert(
-        hit,
+        evalRes.ok,
         [
-          `${scenario.name}: suggested_action does not contain any expected substring (OR semantics).`,
+          `${scenario.name}: suggested_action does not satisfy actionIncludes (${evalRes.reason}).`,
           `  score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
-          `  expected (any of): ${JSON.stringify(needles)}`,
-          `  matched          : ${JSON.stringify(matched)}`,
+          `  expected         : ${JSON.stringify(scenario.expect.actionIncludes)}`,
+          `  matched          : ${JSON.stringify(evalRes.matched)}`,
+          `  missing          : ${JSON.stringify(evalRes.missing)}`,
           `  actual action    : "${r.suggested_action}"`,
           `  reasons sample   : ${JSON.stringify(r.reasons.slice(0, 3))}`,
         ].join("\n"),
