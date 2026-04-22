@@ -92,6 +92,46 @@ function readStoredRetention(): number | null {
   }
 }
 
+// --- Persistência da seleção por assinatura ---
+const SELECTION_STORAGE_PREFIX = "winloss.replay.selection:";
+const SELECTION_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
+
+function selectionKey(subscriptionId: string | null): string | null {
+  return subscriptionId ? `${SELECTION_STORAGE_PREFIX}${subscriptionId}` : null;
+}
+
+function readStoredSelection(subscriptionId: string | null): string[] {
+  const key = selectionKey(subscriptionId);
+  if (!key) return [];
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as { ids?: unknown; at?: unknown };
+    if (typeof parsed?.at === "number" && Date.now() - parsed.at > SELECTION_MAX_AGE_MS) {
+      localStorage.removeItem(key);
+      return [];
+    }
+    if (!Array.isArray(parsed?.ids)) return [];
+    return parsed.ids.filter((x): x is string => typeof x === "string");
+  } catch {
+    return [];
+  }
+}
+
+function writeStoredSelection(subscriptionId: string | null, ids: string[]) {
+  const key = selectionKey(subscriptionId);
+  if (!key) return;
+  try {
+    if (ids.length === 0) {
+      localStorage.removeItem(key);
+      return;
+    }
+    localStorage.setItem(key, JSON.stringify({ ids, at: Date.now() }));
+  } catch {
+    // localStorage indisponível — ok
+  }
+}
+
 export function WebhookDeliveriesDrawer({
   subscriptionId,
   open,
