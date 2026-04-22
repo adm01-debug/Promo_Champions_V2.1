@@ -299,18 +299,17 @@ Deno.test("fixtures table: reasons & action substrings present per scenario", ()
         sample: r.reasons.slice(0, 5),
       });
     }
-    // actionIncludes → string=AND single, array=OR (any match).
-    const needles = actionNeedles(s.expect.actionIncludes);
-    if (needles.length > 0) {
-      const matched = needles.filter((n) => includesCI(r.suggested_action, n));
-      if (matched.length === 0) {
+    // actionIncludes → string (AND), string[] (OR), or { all, anyOf? } (AND+OR).
+    if (s.expect.actionIncludes !== undefined) {
+      const evalRes = evaluateActionIncludes(r.suggested_action, s.expect.actionIncludes);
+      if (!evalRes.ok) {
         failures.push({
           name: s.name,
           kind: "action",
           ...ctx,
-          expected: needles,
-          matched,
-          actual: r.suggested_action,
+          expected: actionNeedles(s.expect.actionIncludes),
+          matched: evalRes.matched,
+          actual: `${r.suggested_action} | ${evalRes.reason}`,
           sample: r.reasons.slice(0, 3),
         });
       }
