@@ -13872,6 +13872,45 @@ export type Database = {
           },
         ]
       }
+      winloss_alert_settings: {
+        Row: {
+          consecutive_failures: number
+          id: string
+          max_attempts: number
+          min_deliveries: number
+          retry_rate_threshold: number
+          singleton: boolean
+          suppress_minutes: number
+          updated_at: string
+          updated_by: string | null
+          window_minutes: number
+        }
+        Insert: {
+          consecutive_failures?: number
+          id?: string
+          max_attempts?: number
+          min_deliveries?: number
+          retry_rate_threshold?: number
+          singleton?: boolean
+          suppress_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+          window_minutes?: number
+        }
+        Update: {
+          consecutive_failures?: number
+          id?: string
+          max_attempts?: number
+          min_deliveries?: number
+          retry_rate_threshold?: number
+          singleton?: boolean
+          suppress_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+          window_minutes?: number
+        }
+        Relationships: []
+      }
       winloss_webhook_alerts: {
         Row: {
           details: Json
