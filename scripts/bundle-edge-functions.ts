@@ -100,7 +100,7 @@ async function checkFunction(fn: string, indexPath: string): Promise<CheckResult
     stderr: "piped",
   });
   const { code, stderr } = await cmd.output();
-  const stderrText = new TextDecoder().decode(stderr);
+  const stderrText = stripAnsi(new TextDecoder().decode(stderr));
   if (code === 0) {
     return { fn, ok: true, failureKind: null, failingImport: null, stderrHead: "" };
   }
