@@ -166,8 +166,10 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 55,
-      maxScore: 90,
+      // Observed: 64 (medium). Tight ±4 around observed → catches drift either
+      // direction without flipping severity bucket (medium = 40–64; high = 65–79).
+      minScore: 60,
+      maxScore: 68,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["21 dias", "Ticket alinhado"],
       // medium severity loss_factor → "Reforçar valor percebido…ROI nesta semana"
@@ -189,8 +191,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 50,
-      maxScore: 90,
+      // Observed: 52 (medium). Tight ±4 around observed.
+      minScore: 48,
+      maxScore: 58,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["60 dias"],
       // OR: medium → "valor"/"ROI"/"semana"; high → "48h"; critical → "IMEDIATA"/"24h"
@@ -212,8 +215,10 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 75,
-      maxScore: 100,
+      // Observed: 84 (critical). Tight ±4 around observed; lower bound stays
+      // ≥80 to guarantee severity stays "critical".
+      minScore: 80,
+      maxScore: 88,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["90 dias", "competitiva"],
       // critical severity → "AÇÃO IMEDIATA…24h"
@@ -253,8 +258,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 45,
-      maxScore: 80,
+      // Observed: 50 (medium). Tight ±5 around observed.
+      minScore: 46,
+      maxScore: 56,
       // 45d satura stagnation (50) → ultrapassa stage_match (20), então loss_factor pode dominar.
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["45 dias"],
@@ -277,8 +283,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 40,
-      maxScore: 65,
+      // Observed: 48 (low — score<50 is "low" even when included). Tight ±4.
+      minScore: 44,
+      maxScore: 52,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["Ticket alinhado"],
       // low severity → "Revisar abordagem…próximas semanas"
@@ -316,8 +323,9 @@ export const SCENARIOS: Scenario[] = [
     expect: {
       // Saturação: stagnation=50 + amount=25 + stage=20 = 95 raw, * conf 0.88 ≈ 84.
       included: true,
+      // Observed: 84 (critical, saturated). Tight ±4; lower bound ≥80 keeps severity critical.
       minScore: 80,
-      maxScore: 100,
+      maxScore: 88,
       patternTypeOneOf: ["stuck_stage", "loss_factor"],
       reasonsInclude: ["120 dias"],
       // critical severity → "AÇÃO IMEDIATA…24h"
@@ -339,8 +347,10 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 45,
-      maxScore: 90,
+      // Observed: 65 (high — 65 is the high threshold). Tight ±4 keeps it in
+      // the high band (65–79).
+      minScore: 62,
+      maxScore: 70,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["30 dias", "competitiva"],
       // high severity (score ~65) → "…48h…valor percebido…"
@@ -362,8 +372,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
+      // Observed: 84 (critical, saturated). Tight ±4 keeps severity critical.
       minScore: 80,
-      maxScore: 100,
+      maxScore: 88,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["180 dias"],
       // Tom imperativo obrigatório quando severity=critical, independente da branch
@@ -386,9 +397,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      // raw≈95 × conf 0.74 ≈ 70 → high.
-      minScore: 60,
-      maxScore: 80,
+      // Observed: 70 (high). Tight ±4 keeps severity in the high band (65–79).
+      minScore: 66,
+      maxScore: 74,
       // O dominant_type é loss_factor/stuck_stage (engine não usa "competitor" como dominant);
       // mas o matched_pattern.label deve carregar a família "Pressão competitiva".
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
@@ -414,8 +425,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
+      // Observed: 84 (critical, saturated). Tight ±4 keeps severity critical.
       minScore: 80,
-      maxScore: 100,
+      maxScore: 88,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       reasonsInclude: ["240 dias", "competitiva"],
       // OR: critical de loss_factor → "IMEDIATA…24h"; critical de stuck_stage → "URGENTE…hoje".
@@ -438,8 +450,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 60,
-      maxScore: 85,
+      // Observed: 70 (high, demoted from raw≈95 by conf 0.74). Tight ±4 keeps high band.
+      minScore: 66,
+      maxScore: 74,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       matchedPatternLabelIncludes: "Pressão competitiva",
       reasonsInclude: ["200 dias", "competitiva"],
@@ -463,8 +476,9 @@ export const SCENARIOS: Scenario[] = [
     },
     expect: {
       included: true,
-      minScore: 60,
-      maxScore: 85,
+      // Observed: 70 (high, demoted by conf 0.74). Tight ±4 keeps high band.
+      minScore: 66,
+      maxScore: 74,
       patternTypeOneOf: ["loss_factor", "stuck_stage"],
       matchedPatternLabelIncludes: "Pressão competitiva",
       reasonsInclude: ["180 dias", "competitiva"],
