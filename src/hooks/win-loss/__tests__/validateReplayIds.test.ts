@@ -68,8 +68,9 @@ describe("validateReplayIds", () => {
     it("Set dedupe é case-sensitive (documenta comportamento atual)", () => {
       // O regex aceita ambas as caixas, e o Set diferencia por bytes,
       // então 'aaaa…' e 'AAAA…' contam como 2 entradas.
-      const lower = uuid(7);
+      const lower = uuid(0xabcdef); // garante chars a-f
       const upper = lower.toUpperCase();
+      expect(lower).not.toBe(upper);
       const r = validateReplayIds([lower, lower, upper, upper]);
       expect(r.ok).toBe(true);
       if (r.ok) expect(r.ids).toEqual([lower, upper]);
