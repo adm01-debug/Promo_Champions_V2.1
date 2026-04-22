@@ -188,3 +188,56 @@ Deno.test("TimeoutError × 2 + 200 na 3ª → error_message reflete TimeoutError
   assertEquals(nullErrors.length, 1);
   assertEquals(nullErrors[0].succeeded, true);
 });
+
+// ───────────────────────── Dead-letter após 3 AbortError ─────────────────────────
+
+Deno.test(
+  "DLQ após 3 AbortError: last_error exato, attempts=3 e payload preservado (deep-eq + identity + chaves __*)",
+  async () => {
+    const MSG = "aborted by deadline";
+    const payload = {
+      event: "x",
+      data: { foo: 1, nested: [1, 2] },
+      __dispatch_id: "trace-abc",
+      __replay: true,
+    };
+
+    const h = makeHarness(
+      () => { throw makeNamedError("AbortError", MSG); },
+      { withDeadLetter: true },
+    );
+    const r = await dispatchOne(SUB, payload, h.deps);
+
+    // Resultado geral
+    assertEquals(r.succeeded, false);
+    assertEquals(r.attempts, MAX_ATTEMPTS);
+    assertEquals(r.error, `AbortError: ${MSG}`);
+
+    // DLQ chamada exatamente 1×
+    assertEquals(h.deadLetters.length, 1);
+    const entry = h.deadLetters[0];
+
+    // Campos da entry
+    assertEquals(entry.subscription_id, SUB.id);
+    assertEquals(entry.event, "x");
+    assertEquals(entry.attempts, MAX_ATTEMPTS);
+    assertEquals(entry.last_status, 0);
+    assertEquals(entry.last_error, `AbortError: ${MSG}`);
+    assert(typeof entry.total_latency_ms === "number");
+    assert(entry.total_latency_ms >= 0);
+
+    // Payload preservado: deep-eq
+    assertEquals(entry.payload, payload);
+    // Identidade referencial — retry.ts repassa o objeto original sem clonar
+    assert(entry.payload === payload, "DLQ recebe o mesmo objeto payload (sem clone)");
+    // Chaves internas __* mantidas (DLQ recebe payload NÃO sanitizado)
+    assertEquals(entry.payload.__dispatch_id, "trace-abc");
+    assertEquals(entry.payload.__replay, true);
+    // Estrutura aninhada intacta
+    assertEquals((entry.payload.data as { foo: number; nested: number[] }).nested, [1, 2]);
+
+    // Coerência: DLQ.last_error == error_message da última delivery
+    assertEquals(h.deliveries.length, MAX_ATTEMPTS);
+    assertEquals(h.deliveries[MAX_ATTEMPTS - 1].error_message, entry.last_error);
+  },
+);
