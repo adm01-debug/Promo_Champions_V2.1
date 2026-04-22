@@ -568,10 +568,9 @@ Deno.test("dispatchOne: onDeadLetter NÃO chamado quando deps.onDeadLetter é un
 Deno.test("dispatchOne: sem onDeadLetter, NÃO há inserção/log de DLQ e execução não lança", async () => {
   // Captura todos os logs estruturados emitidos pelo dispatcher e verifica que
   // nenhum evento relacionado à DLQ foi registrado quando deps.onDeadLetter é undefined.
-  const logs: Array<{ level: string; msg: string; meta?: Record<string, unknown> }> = [];
+  const logs: Array<{ level: string; data: Record<string, unknown> }> = [];
   const deliveries: DeliveryRow[] = [];
   const updates: Array<{ id: string; status: number }> = [];
-  let dlqCalls = 0;
 
   const deps: DispatchDeps = {
     fetchFn: (() => Promise.resolve(new Response("err", { status: 500 }))) as typeof fetch,
@@ -581,7 +580,7 @@ Deno.test("dispatchOne: sem onDeadLetter, NÃO há inserção/log de DLQ e execu
     // onDeadLetter intencionalmente OMITIDO (undefined)
     rand: () => 0,
     now: () => 0,
-    log: (level, msg, meta) => { logs.push({ level, msg, meta }); },
+    log: (level, data) => { logs.push({ level, data }); },
   };
 
   // Sanity: confirma contrato — onDeadLetter ausente.
@@ -604,12 +603,9 @@ Deno.test("dispatchOne: sem onDeadLetter, NÃO há inserção/log de DLQ e execu
   assertEquals(deliveries.length, MAX_ATTEMPTS, "deliveries devem continuar sendo registradas");
   assert(updates.length >= 1, "updateSubscription ainda deve ocorrer");
 
-  // dlqCalls precisa permanecer 0 (não há closure de DLQ disponível).
-  assertEquals(dlqCalls, 0);
-
   // Nenhum log estruturado deve mencionar dead letter / DLQ.
   const dlqLogs = logs.filter((l) => {
-    const text = `${l.msg} ${JSON.stringify(l.meta ?? {})}`.toLowerCase();
+    const text = JSON.stringify(l.data).toLowerCase();
     return text.includes("dead_letter") || text.includes("deadletter") || text.includes("dlq");
   });
   assertEquals(
