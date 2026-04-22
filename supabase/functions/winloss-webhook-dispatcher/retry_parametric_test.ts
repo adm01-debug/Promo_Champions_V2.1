@@ -253,15 +253,24 @@ function assertInvariants(label: string, h: Harness, sc: Scenario) {
     if (isSuccess) {
       assertEquals(d.error_message, null, `[${label}] delivery#${i+1} sucesso → error_message null`);
       assertEquals(d.succeeded, true);
+      assert(d.status >= 200 && d.status < 300, `[${label}] delivery#${i+1} sucesso → status 2xx`);
     } else {
-      assert(d.error_message, `[${label}] delivery#${i+1} falha → error_message não-null`);
-      assertEquals(d.succeeded, false);
+      assertEquals(d.succeeded, false, `[${label}] delivery#${i+1} falha → succeeded=false`);
       if (sc.failurePrefix === "HTTP") {
+        // Falha HTTP: error_message é null (sinal vem do status não-2xx)
+        assertEquals(
+          d.error_message,
+          null,
+          `[${label}] delivery#${i+1} falha HTTP → error_message null (sinal via status)`,
+        );
         assert(
-          d.error_message!.startsWith("HTTP "),
-          `[${label}] delivery#${i+1} prefixo HTTP, got: ${d.error_message}`,
+          d.status >= 400,
+          `[${label}] delivery#${i+1} falha HTTP → status >=400, got ${d.status}`,
         );
       } else {
+        // Falha por exceção: status=0 e error_message com prefixo "Name: "
+        assertEquals(d.status, 0, `[${label}] delivery#${i+1} falha por exceção → status=0`);
+        assert(d.error_message, `[${label}] delivery#${i+1} falha por exceção → error_message não-null`);
         assert(
           d.error_message!.startsWith(`${sc.failurePrefix}: `),
           `[${label}] delivery#${i+1} prefixo '${sc.failurePrefix}: ', got: ${d.error_message}`,
