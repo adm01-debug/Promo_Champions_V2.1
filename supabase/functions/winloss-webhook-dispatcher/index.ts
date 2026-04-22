@@ -28,9 +28,9 @@ function buildDeps(
 ) {
   return {
     fetchFn: fetch,
-    sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
+    sleep: (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms)),
     insertDelivery: async (row: Parameters<typeof dispatchOne>[2]["insertDelivery"] extends (r: infer R) => unknown ? R : never) => {
-      const { error } = await supabase.from("winloss_webhook_deliveries").insert(row);
+      const { error } = await supabase.from("winloss_webhook_deliveries").insert(row as unknown as Record<string, unknown>);
       if (error) throw error;
     },
     updateSubscription: async (id: string, status: number) => {
@@ -46,7 +46,7 @@ function buildDeps(
           .from("winloss_webhook_dead_letters")
           .update({
             status: "pending",
-            replay_count: ((await supabase.from("winloss_webhook_dead_letters").select("replay_count").eq("id", replayOf).single()).data?.replay_count ?? 0) + 1,
+            replay_count: (((await supabase.from("winloss_webhook_dead_letters").select("replay_count").eq("id", replayOf).single()).data as { replay_count?: number } | null)?.replay_count ?? 0) + 1,
             last_replay_at: new Date().toISOString(),
             last_replay_status: entry.last_status,
             last_replay_error: entry.last_error,
@@ -69,7 +69,7 @@ function buildDeps(
   };
 }
 
-serve(async (req) => {
+export const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const requestId = crypto.randomUUID();
@@ -144,8 +144,8 @@ serve(async (req) => {
       }, requestId);
     }
 
-    const deps = buildDeps(supabase, requestId, replayOf);
-    const results = await Promise.all(targets.map((s) => dispatchOne(s, payload, deps)));
+    const deps = buildDeps(supabase as unknown as ReturnType<typeof createClient>, requestId, replayOf);
+    const results = await Promise.all(targets.map((s) => dispatchOne(s, payload, deps as unknown as Parameters<typeof dispatchOne>[2])));
 
     // Per-subscription outcome log → end-of-flow marker per subscriptionId
     for (const r of results) {
@@ -208,4 +208,6 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
     });
   }
-});
+};
+
+serve(handler);
