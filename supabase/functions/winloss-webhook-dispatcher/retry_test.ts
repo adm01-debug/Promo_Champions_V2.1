@@ -2085,3 +2085,87 @@ Deno.test("fan-out [isolamento]: SUB_B falha em todas as tentativas; SUB_A/SUB_C
   assert(urlsHit.every((u) => u === SUB_A.url || u === SUB_B.url || u === SUB_C.url));
 });
 
+// ───────────── fan-out [DLQ isolado]: somente a sub que falha entra no DLQ ─────────────
+// Verifica, num cenário misto, que:
+//   • o DLQ contém EXATAMENTE 1 entrada e refere-se à única sub que esgotou MAX_ATTEMPTS;
+//   • `last_status` e `attempts` da entrada batem com o status final dessa sub;
+//   • `total_latency_ms` da entrada DLQ é coerente com o `result.total_latency_ms`
+//     retornado pelo dispatcher para a MESMA subscription (sem cross-fire de métricas);
+//   • subs que sucederam (na 1ª ou via recovery) NÃO geram entrada no DLQ.
+
+Deno.test("fan-out [DLQ isolado]: DLQ contém só a sub falha com last_status, status e total_latency_ms corretos", async () => {
+  // `now` determinístico: avança 100ms a cada chamada (mede start→end por tentativa).
+  let clock = 0;
+  const tick = () => {
+    clock += 100;
+    return clock;
+  };
+
+  const h = makeFanoutHarness(
+    {
+      // SUB_A: sucesso na 1ª (1 tentativa) → sem DLQ
+      [SUB_A.url]: () => new Response("ok", { status: 200 }),
+      // SUB_B: falha em todas (MAX_ATTEMPTS) → única que entra no DLQ, last_status=500
+      [SUB_B.url]: () => new Response("boom", { status: 500 }),
+      // SUB_C: 503 → 200 (2 tentativas, recupera) → sem DLQ
+      [SUB_C.url]: (attempt) => attempt === 1
+        ? new Response("e", { status: 503 })
+        : new Response("ok", { status: 200 }),
+    },
+    { withDeadLetter: true },
+  );
+  // Substitui o `now` do harness por um relógio que avança a cada call.
+  h.deps.now = tick;
+
+  const subs = [SUB_A, SUB_B, SUB_C];
+  const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
+  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
+
+  // ── (1) DLQ contém EXATAMENTE 1 entrada e é a SUB_B ─────────────
+  assertEquals(h.deadLetters.length, 1, "DLQ deve conter exatamente 1 entrada");
+  const dlq = h.deadLetters[0];
+  assertEquals(dlq.subscription_id, SUB_B.id, "DLQ.subscription_id deve ser SUB_B");
+
+  // SUB_A e SUB_C não podem aparecer no DLQ.
+  const dlqIds = h.deadLetters.map((d) => d.subscription_id);
+  assert(!dlqIds.includes(SUB_A.id), "SUB_A não pode entrar no DLQ (sucedeu na 1ª)");
+  assert(!dlqIds.includes(SUB_C.id), "SUB_C não pode entrar no DLQ (recuperou no retry)");
+
+  // ── (2) last_status e attempts da entrada DLQ batem com a sub falha ─
+  assertEquals(dlq.last_status, 500, "DLQ.last_status deve refletir o último HTTP status (500)");
+  assertEquals(dlq.attempts, MAX_ATTEMPTS, "DLQ.attempts deve ser MAX_ATTEMPTS");
+
+  // ── (3) `status` final da SUB_B (resultado do dispatcher) == DLQ.last_status ─
+  assertEquals(resById[SUB_B.id].status, 500, "result.status de SUB_B");
+  assertEquals(
+    resById[SUB_B.id].status,
+    dlq.last_status,
+    "result.status de SUB_B deve ser igual a DLQ.last_status",
+  );
+  assertEquals(resById[SUB_B.id].succeeded, false);
+  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
+
+  // ── (4) total_latency_ms positivo, finito, e == result.total_latency_ms ─
+  assertGreaterOrEqual(dlq.total_latency_ms, 0, "DLQ.total_latency_ms deve ser >= 0");
+  assert(Number.isFinite(dlq.total_latency_ms), "DLQ.total_latency_ms deve ser finito");
+  assertEquals(
+    dlq.total_latency_ms,
+    resById[SUB_B.id].total_latency_ms,
+    "DLQ.total_latency_ms deve bater com result.total_latency_ms da SUB_B",
+  );
+
+  // Sanidade: SUB_B (MAX_ATTEMPTS tentativas) deve ter latência >= SUB_A (1 tentativa),
+  // confirmando que o `total_latency_ms` reportado no DLQ é o ACUMULADO da SUB_B
+  // — não o de outra subscription que possa ter rodado em paralelo.
+  assertGreaterOrEqual(
+    resById[SUB_B.id].total_latency_ms,
+    resById[SUB_A.id].total_latency_ms,
+    "latência de SUB_B (MAX_ATTEMPTS) deve ser >= latência de SUB_A (1 tentativa)",
+  );
+
+  // ── (5) Coerência do payload/event registrados no DLQ ───────────
+  assertEquals(dlq.event, "x", "DLQ.event deve ser o event original do payload");
+  assertEquals(dlq.payload, PAYLOAD, "DLQ.payload deve ser o payload original");
+  assert(dlq.last_error === null || typeof dlq.last_error === "string", "DLQ.last_error deve ser string|null");
+});
+
