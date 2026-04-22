@@ -880,39 +880,63 @@ Deno.test("fan-out: cada POST carrega header X-Winloss-Event correto e payload s
   assertEquals((aInit.init.headers as Record<string, string>)["X-Winloss-Signature"], undefined);
 });
 
-Deno.test("fan-out: asserções consolidadas — fetch count por URL + X-Winloss-Event + body.deal_id por subscription", async () => {
-  const h = makeFanoutHarness({
+// ───────────── fan-out: asserções modulares (fetch / headers / body) ─────────────
+// Cada bloco abaixo isola UMA dimensão da validação para falhar com mensagem precisa.
+// O teste consolidado (POR SUBSCRIPTION, abaixo) cobre todas as dimensões em conjunto.
+
+const FANOUT_PAYLOAD = { event: "x", deal_id: "deal-fan-123", extra: { foo: "bar" } };
+const FANOUT_SUBS = [SUB_A, SUB_B, SUB_C];
+
+function makeAllOkFanout() {
+  return makeFanoutHarness({
     [SUB_A.url]: () => new Response("ok", { status: 200 }),
     [SUB_B.url]: () => new Response("ok", { status: 200 }),
     [SUB_C.url]: () => new Response("ok", { status: 200 }),
   });
-  const payload = { event: "x", deal_id: "deal-fan-123", extra: { foo: "bar" } };
-  const subs = [SUB_A, SUB_B, SUB_C];
-  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
+}
 
-  // 1) Contagem de fetch por URL — exatamente 1 POST por subscription, sem cross-fire
-  assertEquals(h.fetchesByUrl[SUB_A.url], 1);
-  assertEquals(h.fetchesByUrl[SUB_B.url], 1);
-  assertEquals(h.fetchesByUrl[SUB_C.url], 1);
-  assertEquals(Object.keys(h.fetchesByUrl).length, 3);
-  assertEquals(h.capturedInits.length, 3);
+Deno.test("fan-out [fetch]: 1 POST por subscription, sem cross-fire entre URLs", async () => {
+  const h = makeAllOkFanout();
+  await Promise.all(FANOUT_SUBS.map((s) => dispatchOne(s, FANOUT_PAYLOAD, h.deps)));
 
-  // 2/3/4) Para cada init capturado: método, headers e body.deal_id
-  const seenUrls = new Set<string>();
+  assertEquals(h.fetchesByUrl[SUB_A.url], 1, "SUB_A deve ter 1 POST");
+  assertEquals(h.fetchesByUrl[SUB_B.url], 1, "SUB_B deve ter 1 POST");
+  assertEquals(h.fetchesByUrl[SUB_C.url], 1, "SUB_C deve ter 1 POST");
+  assertEquals(Object.keys(h.fetchesByUrl).length, FANOUT_SUBS.length, "nenhuma URL extra deve aparecer");
+  assertEquals(h.capturedInits.length, FANOUT_SUBS.length);
+
+  const seenUrls = new Set(h.capturedInits.map((c) => c.url));
+  assertEquals(seenUrls, new Set(FANOUT_SUBS.map((s) => s.url)), "cobertura de URLs divergente");
+});
+
+Deno.test("fan-out [headers]: method=POST + Content-Type=application/json + X-Winloss-Event por requisição", async () => {
+  const h = makeAllOkFanout();
+  await Promise.all(FANOUT_SUBS.map((s) => dispatchOne(s, FANOUT_PAYLOAD, h.deps)));
+
+  assertEquals(h.capturedInits.length, FANOUT_SUBS.length);
   for (const { url, init } of h.capturedInits) {
-    seenUrls.add(url);
-    assertEquals(init.method, "POST");
+    assertEquals(init.method, "POST", `${url}: method`);
     const headers = init.headers as Record<string, string>;
-    assertEquals(headers["X-Winloss-Event"], "x", `header X-Winloss-Event ausente/errado para ${url}`);
-    assertEquals(headers["Content-Type"], "application/json");
-
-    const parsed = JSON.parse(String(init.body));
-    assertEquals(parsed.deal_id, "deal-fan-123", `body.deal_id ausente/errado para ${url}`);
-    assertEquals(parsed.event, "x");
+    assertEquals(headers["Content-Type"], "application/json", `${url}: Content-Type`);
+    assertEquals(headers["X-Winloss-Event"], FANOUT_PAYLOAD.event, `${url}: X-Winloss-Event`);
   }
-  // Cobertura de URLs: as 3 subs receberam o POST
-  assertEquals(seenUrls.size, 3);
-  assert(seenUrls.has(SUB_A.url) && seenUrls.has(SUB_B.url) && seenUrls.has(SUB_C.url));
+});
+
+Deno.test("fan-out [body]: JSON.parse(body) contém event + deal_id esperados em cada subscription", async () => {
+  const h = makeAllOkFanout();
+  await Promise.all(FANOUT_SUBS.map((s) => dispatchOne(s, FANOUT_PAYLOAD, h.deps)));
+
+  assertEquals(h.capturedInits.length, FANOUT_SUBS.length);
+  for (const { url, init } of h.capturedInits) {
+    assert(typeof init.body === "string", `${url}: body deve ser string serializada`);
+    const parsed = JSON.parse(init.body as string) as Record<string, unknown>;
+    assert(
+      parsed !== null && typeof parsed === "object" && !Array.isArray(parsed),
+      `${url}: body deve ser objeto JSON`,
+    );
+    assertEquals(parsed.event, FANOUT_PAYLOAD.event, `${url}: body.event`);
+    assertEquals(parsed.deal_id, FANOUT_PAYLOAD.deal_id, `${url}: body.deal_id`);
+  }
 });
 
 Deno.test("fan-out: asserções consolidadas POR SUBSCRIPTION — fetchCount(URL) + X-Winloss-Event + JSON.parse(body).deal_id, sem substring", async () => {
