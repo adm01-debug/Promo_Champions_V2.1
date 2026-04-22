@@ -13978,6 +13978,7 @@ export type Database = {
           event: string
           id: string
           payload: Json
+          request_id: string | null
           status: number
           subscription_id: string
           succeeded: boolean
@@ -13990,6 +13991,7 @@ export type Database = {
           event: string
           id?: string
           payload?: Json
+          request_id?: string | null
           status?: number
           subscription_id: string
           succeeded?: boolean
@@ -14002,6 +14004,7 @@ export type Database = {
           event?: string
           id?: string
           payload?: Json
+          request_id?: string | null
           status?: number
           subscription_id?: string
           succeeded?: boolean

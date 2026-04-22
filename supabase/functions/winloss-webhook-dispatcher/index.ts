@@ -30,7 +30,10 @@ function buildDeps(
     fetchFn: fetch,
     sleep: (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms)),
     insertDelivery: async (row: Parameters<typeof dispatchOne>[2]["insertDelivery"] extends (r: infer R) => unknown ? R : never) => {
-      const { error } = await supabase.from("winloss_webhook_deliveries").insert(row as unknown as Record<string, unknown>);
+      // Augment with request_id so each delivery row can be correlated back to the
+      // dispatcher invocation that produced it (used by the timeline endpoint).
+      const enriched = { ...(row as unknown as Record<string, unknown>), request_id: requestId };
+      const { error } = await supabase.from("winloss_webhook_deliveries").insert(enriched);
       if (error) throw error;
     },
     updateSubscription: async (id: string, status: number) => {
