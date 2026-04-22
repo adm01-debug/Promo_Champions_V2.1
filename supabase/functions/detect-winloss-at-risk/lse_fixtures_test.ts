@@ -7,7 +7,7 @@ import {
   NOW,
   type DealHistoryLSEFamily,
 } from "./fixtures.ts";
-import { actionNeedles, includesCI } from "./_testHelpers.ts";
+import { actionNeedles, includesCI, matchesPatternFamily } from "./_testHelpers.ts";
 
 const RISK_THRESHOLD = 40;
 
@@ -44,9 +44,11 @@ for (const family of Object.keys(DEAL_HISTORY_LSE_FIXTURES) as DealHistoryLSEFam
       }
 
       if (c.expect.matchedPatternLabelIncludes) {
+        const m = matchesPatternFamily(matched_pattern, c.expect.matchedPatternLabelIncludes);
         assert(
-          includesCI(matched_pattern ?? "", c.expect.matchedPatternLabelIncludes),
-          `matched_pattern="${matched_pattern}" missing "${c.expect.matchedPatternLabelIncludes}"`,
+          m.ok,
+          `matched_pattern="${matched_pattern}" missing "${c.expect.matchedPatternLabelIncludes}" ` +
+            `(mode=${m.mode}, missingTokens=${JSON.stringify(m.missingTokens)})`,
         );
       }
 
