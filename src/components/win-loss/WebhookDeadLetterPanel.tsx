@@ -92,6 +92,9 @@ export function WebhookDeadLetterPanel({
       .sort((a, b) => b.count - a.count);
   }, [items]);
 
+  const itemIds = useMemo(() => items.map((i) => i.id), [items]);
+  const { data: latestAuditByDl } = useLatestReplayAuditByDeadLetters(itemIds);
+
   if (isLoadingCurrentRole) return null;
   if (!isAdmin) return null;
 
