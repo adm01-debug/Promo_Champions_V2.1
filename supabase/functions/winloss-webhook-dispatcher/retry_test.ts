@@ -1,4 +1,4 @@
-import { assertEquals, assert, assertGreaterOrEqual, assertLessOrEqual } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals, assert, assertGreaterOrEqual, assertLessOrEqual, assertObjectMatch } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { backoffDelay, dispatchOne, MAX_ATTEMPTS, type DeadLetterEntry, type DeliveryRow, type DispatchDeps, type Subscription } from "./retry.ts";
 
 const SUB: Subscription = { id: "sub-1", url: "https://example.test/hook", events: ["x"], secret: null };
