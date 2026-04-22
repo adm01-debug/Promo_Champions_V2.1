@@ -241,3 +241,127 @@ Deno.test(
     assertEquals(h.deliveries[MAX_ATTEMPTS - 1].error_message, entry.last_error);
   },
 );
+
+// ───────────────────── Falhas mistas: Abort + Timeout + rede ─────────────────────
+
+Deno.test(
+  "falhas mistas Abort→Timeout→Network: cada delivery persiste seu próprio error_message com name+message corretos",
+  async () => {
+    const ABORT_MSG = "aborted by deadline";
+    const TIMEOUT_MSG = "signal timed out after 8000ms";
+    const NET_MSG = "tcp connect ECONNREFUSED 10.0.0.1:443";
+
+    const h = makeHarness((attempt) => {
+      if (attempt === 1) throw makeNamedError("AbortError", ABORT_MSG);
+      if (attempt === 2) throw makeNamedError("TimeoutError", TIMEOUT_MSG);
+      // Erro de rede genérico: TypeError é o que `fetch` lança no Deno em falhas de conexão
+      throw makeNamedError("TypeError", NET_MSG);
+    });
+    const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+    assertEquals(r.succeeded, false);
+    assertEquals(r.attempts, MAX_ATTEMPTS);
+    assertEquals(r.status, 0);
+    assertEquals(r.error, `TypeError: ${NET_MSG}`);
+    assertEquals(h.deliveries.length, MAX_ATTEMPTS);
+
+    // Por-tentativa: name + message + status=0 + succeeded=false
+    const expected = [
+      { name: "AbortError", msg: ABORT_MSG },
+      { name: "TimeoutError", msg: TIMEOUT_MSG },
+      { name: "TypeError", msg: NET_MSG },
+    ];
+    for (let i = 0; i < MAX_ATTEMPTS; i++) {
+      const d = h.deliveries[i];
+      assertEquals(d.attempt, i + 1, `delivery ${i + 1} attempt`);
+      assertEquals(d.status, 0, `delivery ${i + 1} status=0 (sem HTTP response)`);
+      assertEquals(d.succeeded, false, `delivery ${i + 1} succeeded=false`);
+      assertEquals(
+        d.error_message,
+        `${expected[i].name}: ${expected[i].msg}`,
+        `delivery ${i + 1} error_message exato`,
+      );
+      const parts = splitErrorMessage(d.error_message!);
+      assertEquals(parts.name, expected[i].name, `delivery ${i + 1} name isolado`);
+      assertEquals(parts.message, expected[i].msg, `delivery ${i + 1} message isolada`);
+    }
+
+    // Asserts cruzados: cada delivery NÃO tem o erro das outras (zero cross-talk)
+    assert(!h.deliveries[0].error_message!.includes("TimeoutError"));
+    assert(!h.deliveries[0].error_message!.includes("TypeError"));
+    assert(!h.deliveries[1].error_message!.includes("AbortError"));
+    assert(!h.deliveries[1].error_message!.includes("TypeError"));
+    assert(!h.deliveries[2].error_message!.includes("AbortError"));
+    assert(!h.deliveries[2].error_message!.includes("TimeoutError"));
+  },
+);
+
+Deno.test(
+  "erro de rede (TypeError) persistente × 3 → error_message 'TypeError: <msg>' em todas as deliveries",
+  async () => {
+    const MSG = "error sending request: connection closed before message completed";
+    const h = makeHarness(() => { throw makeNamedError("TypeError", MSG); });
+    const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+    assertEquals(r.succeeded, false);
+    assertEquals(r.attempts, MAX_ATTEMPTS);
+    assertEquals(r.error, `TypeError: ${MSG}`);
+    assertEquals(h.deliveries.length, MAX_ATTEMPTS);
+
+    for (let i = 0; i < MAX_ATTEMPTS; i++) {
+      const d = h.deliveries[i];
+      assertEquals(d.error_message, `TypeError: ${MSG}`, `delivery ${i + 1}`);
+      assertEquals(d.status, 0);
+      assertEquals(d.succeeded, false);
+      const parts = splitErrorMessage(d.error_message!);
+      assertEquals(parts.name, "TypeError");
+      assertEquals(parts.message, MSG);
+    }
+    // Sem cross-talk com erros de timing
+    assert(h.deliveries.every((d) => !d.error_message!.startsWith("AbortError")));
+    assert(h.deliveries.every((d) => !d.error_message!.startsWith("TimeoutError")));
+  },
+);
+
+Deno.test(
+  "rede falha 2× e recupera no 3º (200) → error_message é TypeError nos 2 primeiros e null no sucesso",
+  async () => {
+    const NET_MSGS = [
+      "tcp connect ECONNREFUSED",
+      "error sending request: connection reset by peer",
+    ];
+    const h = makeHarness((attempt) => {
+      if (attempt < 3) throw makeNamedError("TypeError", NET_MSGS[attempt - 1]);
+      return new Response("ok", { status: 200 });
+    });
+    const r = await dispatchOne(SUB, PAYLOAD, h.deps);
+
+    assertEquals(r.succeeded, true);
+    assertEquals(r.attempts, 3);
+    assertEquals(r.status, 200);
+    assertEquals(r.error, null);
+    assertEquals(h.deliveries.length, 3);
+
+    for (let i = 0; i < 2; i++) {
+      const d = h.deliveries[i];
+      assertEquals(d.error_message, `TypeError: ${NET_MSGS[i]}`, `delivery ${i + 1} error_message`);
+      assertEquals(d.status, 0);
+      assertEquals(d.succeeded, false);
+      const parts = splitErrorMessage(d.error_message!);
+      assertEquals(parts.name, "TypeError");
+      assertEquals(parts.message, NET_MSGS[i]);
+    }
+
+    // Sucesso na 3ª
+    assertEquals(h.deliveries[2].error_message, null);
+    assertEquals(h.deliveries[2].status, 200);
+    assertEquals(h.deliveries[2].succeeded, true);
+
+    // Exatamente 1 delivery com null (sucesso) e 2 com prefixo TypeError
+    assertEquals(h.deliveries.filter((d) => d.error_message === null).length, 1);
+    assertEquals(
+      h.deliveries.filter((d) => d.error_message?.startsWith("TypeError: ")).length,
+      2,
+    );
+  },
+);
