@@ -213,6 +213,7 @@ export const handler = async (req: Request): Promise<Response> => {
       mode: replayOf ? "replay" : "broadcast",
       replay_of: replayOf,
       targets: targets.length,
+      active_subscriptions_count: activeSubsCount,
       target_ids: targets.map((t) => t.id),
     }, requestId);
 
