@@ -69,7 +69,7 @@ for (const scenario of SCENARIOS) {
         hit,
         [
           `${scenario.name}: suggested_action does not contain any expected substring (OR semantics).`,
-          `  score=${r.risk_score} severity=${r.severity} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
+          `  score=${r.risk_score} severity=${r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence)} dominant=${r.breakdown.matched_pattern_type} label="${r.matched_pattern}"`,
           `  expected (any of): ${JSON.stringify(needles)}`,
           `  matched          : ${JSON.stringify(matched)}`,
           `  actual action    : "${r.suggested_action}"`,
