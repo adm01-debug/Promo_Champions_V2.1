@@ -458,7 +458,8 @@ export function WebhookDeliveriesDrawer({
   const executeReplay = () => {
     if (!confirm) return;
     const ids = confirm.ids;
-    setConfirm(null);
+    // Mantém o modal aberto durante o replay para mostrar spinner inline.
+    // Será fechado em onSettled abaixo.
 
     if (ids.length === 1) {
       setPendingId(ids[0]);
