@@ -17,6 +17,7 @@ const ALL_EVENTS = ["critical_pattern", "anomaly", "perf_drop"] as const;
 const KIND_LABEL: Record<string, string> = {
   consecutive_failures: "Falhas consecutivas",
   high_retry_rate: "Taxa de retry alta",
+  attempts_exhausted: "Tentativas 1–3 esgotadas",
 };
 
 function DegradedBadge({ alerts }: { alerts: WebhookAlert[] }) {
