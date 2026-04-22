@@ -8,12 +8,13 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription,
 } from "@/components/ui/drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, RotateCcw, Archive, Eye, History } from "lucide-react";
+import { AlertTriangle, RotateCcw, Archive, Eye, History, Layers } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWebhookDeadLetters, type DeadLetter, type DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { BulkReplayConfirmDialog, BULK_REPLAY_HARD_CAP } from "./BulkReplayConfirmDialog";
+import { classifyDeadLetterError } from "@/hooks/win-loss/classifyDeadLetterError";
 import { toast } from "sonner";
 
 type DateRange = "all" | "24h" | "7d" | "30d";
@@ -23,6 +24,7 @@ interface WebhookDeadLetterPanelProps {
   filterText?: string;
   filterSubscriptionId?: string;
   filterEvent?: string;
+  filterErrorGroup?: string;
   dateRange?: DateRange;
 }
 
@@ -37,6 +39,7 @@ export function WebhookDeadLetterPanel({
   filterText,
   filterSubscriptionId,
   filterEvent,
+  filterErrorGroup,
   dateRange = "all",
 }: WebhookDeadLetterPanelProps = {}) {
   const { isAdmin, isLoadingCurrentRole } = useUserRoles();
@@ -55,6 +58,10 @@ export function WebhookDeadLetterPanel({
       if (filterSubscriptionId && d.subscription_id !== filterSubscriptionId) return false;
       if (filterEvent && d.event !== filterEvent) return false;
       if (!withinRange(d.created_at, dateRange)) return false;
+      if (filterErrorGroup) {
+        const g = classifyDeadLetterError({ last_status: d.last_status, last_error: d.last_error });
+        if (g.key !== filterErrorGroup) return false;
+      }
       if (needle) {
         const hay = [
           d.event,
@@ -66,9 +73,22 @@ export function WebhookDeadLetterPanel({
       }
       return true;
     });
-  }, [rawItems, filterText, filterSubscriptionId, filterEvent, dateRange]);
+  }, [rawItems, filterText, filterSubscriptionId, filterEvent, filterErrorGroup, dateRange]);
   const allSelected = items.length > 0 && items.every((i) => selected.has(i.id));
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
+
+  const errorGroups = useMemo(() => {
+    const map = new Map<string, { label: string; ids: string[] }>();
+    for (const d of items) {
+      const g = classifyDeadLetterError({ last_status: d.last_status, last_error: d.last_error });
+      const entry = map.get(g.key);
+      if (entry) entry.ids.push(d.id);
+      else map.set(g.key, { label: g.label, ids: [d.id] });
+    }
+    return Array.from(map.entries())
+      .map(([key, v]) => ({ key, label: v.label, ids: v.ids, count: v.ids.length }))
+      .sort((a, b) => b.count - a.count);
+  }, [items]);
 
   if (isLoadingCurrentRole) return null;
   if (!isAdmin) return null;
@@ -126,6 +146,52 @@ export function WebhookDeadLetterPanel({
             <TabsTrigger value="archived" className="text-xs">Arquivados</TabsTrigger>
           </TabsList>
         </Tabs>
+
+        {tab === "pending" && errorGroups.length > 0 && (
+          <div className="rounded-md border bg-muted/20 p-2.5 space-y-2">
+            <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Layers className="h-3 w-3" />
+              Agrupado por tipo de erro
+            </div>
+            <ul className="space-y-1" role="list" aria-label="Grupos de erro">
+              {errorGroups.map((g) => (
+                <li
+                  key={g.key}
+                  className="flex items-center justify-between gap-2 rounded-md bg-background/60 px-2 py-1.5"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Badge variant="outline" className="text-[10px] py-0 px-1.5 shrink-0">
+                      {g.count}
+                    </Badge>
+                    <span className="text-xs truncate">{g.label}</span>
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 px-2 text-[11px]"
+                      onClick={() => setSelected(new Set(g.ids))}
+                      title="Selecionar todos deste grupo"
+                    >
+                      Selecionar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="default"
+                      className="h-7 px-2 text-[11px]"
+                      disabled={isReplaying}
+                      onClick={() => requestBulkReplay(g.ids)}
+                      title={`Reprocessar todos do grupo ${g.label}`}
+                    >
+                      <RotateCcw className="h-3 w-3 mr-1" />
+                      Reprocessar
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {selectedIds.length > 0 && tab === "pending" && (
           <div className="flex items-center justify-between rounded-md border bg-primary/5 px-2.5 py-1.5">
