@@ -14070,6 +14070,39 @@ export type Database = {
           },
         ]
       }
+      winloss_webhook_dispatch_metrics: {
+        Row: {
+          active_subscriptions_count: number
+          created_at: string
+          event: string
+          id: string
+          matching_subscriptions_count: number
+          metadata: Json
+          metric: string
+          request_id: string | null
+        }
+        Insert: {
+          active_subscriptions_count?: number
+          created_at?: string
+          event: string
+          id?: string
+          matching_subscriptions_count?: number
+          metadata?: Json
+          metric: string
+          request_id?: string | null
+        }
+        Update: {
+          active_subscriptions_count?: number
+          created_at?: string
+          event?: string
+          id?: string
+          matching_subscriptions_count?: number
+          metadata?: Json
+          metric?: string
+          request_id?: string | null
+        }
+        Relationships: []
+      }
       winloss_webhook_replay_audit: {
         Row: {
           actor_email: string | null
@@ -14125,6 +14158,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      winloss_webhook_replay_invocations: {
+        Row: {
+          actor_email: string | null
+          actor_user_id: string
+          created_at: string
+          duration_ms: number | null
+          failed_count: number
+          id: string
+          ids: string[]
+          item_count: number
+          request_id: string
+          skipped_count: number
+          source: string
+          succeeded_count: number
+        }
+        Insert: {
+          actor_email?: string | null
+          actor_user_id: string
+          created_at?: string
+          duration_ms?: number | null
+          failed_count?: number
+          id?: string
+          ids?: string[]
+          item_count?: number
+          request_id: string
+          skipped_count?: number
+          source: string
+          succeeded_count?: number
+        }
+        Update: {
+          actor_email?: string | null
+          actor_user_id?: string
+          created_at?: string
+          duration_ms?: number | null
+          failed_count?: number
+          id?: string
+          ids?: string[]
+          item_count?: number
+          request_id?: string
+          skipped_count?: number
+          source?: string
+          succeeded_count?: number
+        }
+        Relationships: []
       }
       winloss_webhook_subscriptions: {
         Row: {
