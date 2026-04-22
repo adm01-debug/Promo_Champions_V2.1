@@ -32,11 +32,13 @@ export function normalizeForMatch(input: string): string {
 
 function stemToken(t: string): string {
   if (t.length < 4) return t;
+  // Order matters: longest, most specific suffixes first.
   const suffixes = [
     "coes", "cao",
     "mente",
     "ando", "endo", "indo",
     "ado", "ada", "ido", "ida",
+    "ivo", "iva",
     "oso", "osa",
   ];
   for (const s of suffixes) {
@@ -45,8 +47,10 @@ function stemToken(t: string): string {
       return t.slice(0, -s.length);
     }
   }
-  if (t.endsWith("es") && t.length > 4) return t.slice(0, -2);
-  if (t.endsWith("s") && t.length > 4) return t.slice(0, -1);
+  // Singular/plural folding (root must stay ≥4 chars to avoid mangling short stems).
+  if (t.endsWith("es") && t.length > 5) return t.slice(0, -2);
+  if (t.endsWith("s") && t.length > 5) return t.slice(0, -1);
+  if (t.endsWith("e") && t.length > 5) return t.slice(0, -1);
   return t;
 }
 
