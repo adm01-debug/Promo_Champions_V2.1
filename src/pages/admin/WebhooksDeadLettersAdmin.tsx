@@ -181,6 +181,7 @@ function WebhooksDeadLettersAdminContent() {
           filterText={filterText}
           filterSubscriptionId={filterSubscriptionId === "all" ? undefined : filterSubscriptionId}
           filterEvent={filterEvent === "all" ? undefined : filterEvent}
+          filterErrorGroup={filterErrorGroup === "all" ? undefined : filterErrorGroup}
           dateRange={dateRange}
         />
       </div>
