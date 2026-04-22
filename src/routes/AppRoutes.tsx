@@ -9,6 +9,7 @@ import { RaceTransitionWrapper } from "@/components/race";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
 const RaceSpectator = lazy(() => import("@/pages/RaceSpectator"));
 const RetryTestStatusPage = lazy(() => import("@/pages/RetryTestStatusPage"));
+const OrderDetailPage = lazy(() => import("@/pages/OrderDetailPage"));
 import {
   // Auth & System
   Auth, ResetPassword, NotFound, AccessDenied,
@@ -231,6 +232,9 @@ export function AppRoutes() {
                     <Route path="/admin/tarefas" element={<Admin><AdminTasksPage /></Admin>} />
                     <Route path="/admin/webhooks-dead-letters" element={<Admin><WebhooksDeadLettersAdmin /></Admin>} />
                     <Route path="/admin/retry-test-status" element={<Admin><RetryTestStatusPage /></Admin>} />
+
+                    {/* ─── Meus Pedidos ──────────────────────────── */}
+                    <Route path="/meus-pedidos/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
 
                     {/* ─── System ────────────────────────────────── */}
                     <Route path="/acesso-negado" element={<AccessDenied />} />
