@@ -85,7 +85,7 @@ function buildCaseReport(family: DealHistoryFamily, group: ScenarioGroup, c: Sce
   }
 
   for (const needle of c.expect.reasonsInclude ?? []) {
-    const hit = r.reasons.some((reason) => includesCI(reason, needle));
+    const hit = r.reasons.some((reason) => includesNormalized(reason, needle));
     if (!hit) {
       failures.push(`reason needle "${needle}" not found in ${JSON.stringify(r.reasons)}`);
     }
