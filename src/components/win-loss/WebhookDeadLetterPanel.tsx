@@ -44,6 +44,9 @@ export function WebhookDeadLetterPanel({
   const { list, replay, archive, isReplaying, isArchiving } = useWebhookDeadLetters(tab);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewOf, setPreviewOf] = useState<DeadLetter | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingReplayIds, setPendingReplayIds] = useState<string[]>([]);
+
 
   const rawItems = list.data ?? [];
   const items = useMemo(() => {
