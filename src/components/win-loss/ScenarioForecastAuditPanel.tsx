@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { ChevronDown, FlaskConical } from "lucide-react";
 import type { BandMode, ConfidenceLevel } from "@/hooks/win-loss/useWinLossScenarios";
 
@@ -16,6 +16,62 @@ interface Props {
   confidenceZ: number;
   bandLabel: string;
   confidenceLevel?: ConfidenceLevel;
+  rSquared?: number;
+  residuals?: number[];
+}
+
+/**
+ * Mini-sparkline dos resíduos (y − ŷ) ao longo dos pontos históricos.
+ * Linha zero centralizada; barras acima = sub-predição, abaixo = super-predição.
+ */
+function ResidualsSparkline({ residuals }: { residuals: number[] }) {
+  const { bars, width, height, midY, maxAbs } = useMemo(() => {
+    const w = Math.max(80, residuals.length * 10);
+    const h = 28;
+    const max = residuals.reduce((m, r) => Math.max(m, Math.abs(r)), 0) || 1;
+    const mid = h / 2;
+    const barW = residuals.length > 0 ? (w - 2) / residuals.length : 0;
+    const result = residuals.map((r, i) => {
+      const norm = r / max;
+      const barH = Math.abs(norm) * (mid - 1);
+      const x = 1 + i * barW;
+      const y = norm >= 0 ? mid - barH : mid;
+      return { x, y, w: Math.max(1, barW - 1), h: Math.max(1, barH), positive: norm >= 0 };
+    });
+    return { bars: result, width: w, height: h, midY: mid, maxAbs: max };
+  }, [residuals]);
+
+  if (residuals.length === 0) return null;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label={`Resíduos do ajuste, ${residuals.length} pontos, máximo absoluto ${maxAbs.toFixed(2)} pp`}
+    >
+      <line
+        x1="0"
+        x2={width}
+        y1={midY}
+        y2={midY}
+        className="stroke-border"
+        strokeWidth="1"
+        strokeDasharray="2 2"
+      />
+      {bars.map((b, i) => (
+        <rect
+          key={i}
+          x={b.x}
+          y={b.y}
+          width={b.w}
+          height={b.h}
+          className={b.positive ? "fill-success/70" : "fill-destructive/70"}
+        />
+      ))}
+    </svg>
+  );
 }
 
 function Row({ label, value, hint }: { label: string; value: string; hint?: string }) {
