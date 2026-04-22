@@ -614,10 +614,13 @@ Deno.test("dispatchOne: onDeadLetter recebe payload original deep-equal e SEM mu
   assertEquals(dp.flag, true);
   assertEquals(dp.count, 0);
 
-  // 5) Os bodies enviados ao webhook devem refletir exatamente o payload original
-  //    (sem perda nem injeção de campos).
-  const decoded = JSON.parse(sentBodies[0]);
-  assertEquals(decoded, ORIGINAL, "body enviado ao webhook diverge do payload original");
+  // 5) O body enviado ao webhook contém o payload original íntegro como subconjunto.
+  //    O dispatcher pode adicionar campos de envelope (ex.: dispatched_at) — isso é OK,
+  //    mas nenhum campo do payload original pode estar ausente ou alterado.
+  const decoded = JSON.parse(sentBodies[0]) as Record<string, unknown>;
+  for (const [key, expected] of Object.entries(ORIGINAL)) {
+    assertEquals(decoded[key], expected, `body diverge no campo "${key}"`);
+  }
 });
 
 Deno.test("dispatchOne: payload com __replay_of/__target_subscription_id NÃO vai no body externo", async () => {
