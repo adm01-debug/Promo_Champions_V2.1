@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 type LogLevel = "info" | "warn" | "error";
-type AlertKind = "consecutive_failures" | "high_retry_rate";
+type AlertKind = "consecutive_failures" | "high_retry_rate" | "attempts_exhausted";
 
 const CONSECUTIVE_FAILURES = Number(Deno.env.get("ALERT_CONSECUTIVE_FAILURES") ?? 5);
 const RETRY_RATE_THRESHOLD = Number(Deno.env.get("ALERT_RETRY_RATE_THRESHOLD") ?? 0.5);
