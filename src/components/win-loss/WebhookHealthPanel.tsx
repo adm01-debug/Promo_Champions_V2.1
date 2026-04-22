@@ -174,8 +174,47 @@ export function WebhookHealthPanel() {
             ))}
           </ToggleGroup>
         </div>
+        <div className="mt-2 flex items-center gap-2">
+          <Label
+            htmlFor="webhook-success-threshold"
+            className="text-[11px] font-normal text-muted-foreground flex items-center gap-1"
+          >
+            <BellRing className="h-3 w-3" aria-hidden />
+            Avisar quando a taxa cair abaixo de
+          </Label>
+          <Input
+            id="webhook-success-threshold"
+            type="number"
+            min={0}
+            max={100}
+            step={1}
+            value={thresholdInput}
+            onChange={(e) => setThresholdInput(e.target.value)}
+            onBlur={(e) => commitThreshold(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.currentTarget.blur();
+              }
+            }}
+            className="h-7 w-16 text-xs tabular-nums"
+            aria-label="Limite mínimo de taxa de sucesso em porcentagem"
+          />
+          <span className="text-[11px] text-muted-foreground">%</span>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {belowThreshold && data && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-warning-foreground"
+          >
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-warning" aria-hidden />
+            <p>
+              Taxa de sucesso em <strong>{data.successRate.toFixed(1)}%</strong> nas {WINDOW_LABEL[windowKey]} —
+              abaixo do limite configurado de <strong>{threshold}%</strong>. Investigue antes que escale.
+            </p>
+          </div>
+        )}
         {degradedCount > 0 && (
           <div
             role="alert"
