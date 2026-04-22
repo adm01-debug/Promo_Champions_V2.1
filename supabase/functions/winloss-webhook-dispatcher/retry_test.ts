@@ -2007,18 +2007,23 @@ Deno.test("fan-out [estresse]: N=100 subs — total de POSTs preservado, sem cro
   assertLessOrEqual(peakInFlight, N, "pico in-flight não pode exceder N");
 });
 
-// ───────────── fan-out [isolamento de falha total]: 1 sub falha sempre, demais ok ─────────────
-// Cenário dedicado: SUB_B falha em TODAS as MAX_ATTEMPTS tentativas; SUB_A e SUB_C
-// continuam recebendo POSTs normalmente e gravam last_status correto. Garante que
-// um vizinho "ruim" não impede entregas, retries ou updates dos demais — e que
-// somente o vizinho ruim entra no DLQ.
+// ───────────── fan-out [persistência por sub]: contagem de deliveries + attempts ─────────────
+// Garante que o número de linhas em `deliveries` é exatamente o esperado por
+// subscription e que, para a sub que falha em TODAS as tentativas, o maior
+// `attempt` registrado é EXATAMENTE MAX_ATTEMPTS, com a sequência 1..MAX_ATTEMPTS
+// completa e sem buracos. Cobre também o registro do `last_status` final por sub.
 
-Deno.test("fan-out [isolamento]: SUB_B falha em todas as tentativas; SUB_A/SUB_C entregam e atualizam last_status normalmente", async () => {
+Deno.test("fan-out [persistência por sub]: nº de deliveries por subscription e attempts==MAX_ATTEMPTS para a que falha", async () => {
+  // SUB_A → 200 na 1ª     → 1 delivery, attempt=[1]
+  // SUB_B → 500 em todas  → MAX_ATTEMPTS deliveries, attempt=[1..MAX_ATTEMPTS]
+  // SUB_C → 503 → 200     → 2 deliveries, attempt=[1, 2]
   const h = makeFanoutHarness(
     {
       [SUB_A.url]: () => new Response("ok", { status: 200 }),
-      [SUB_B.url]: () => new Response("server down", { status: 500 }),
-      [SUB_C.url]: () => new Response(null, { status: 204 }),
+      [SUB_B.url]: () => new Response("err", { status: 500 }),
+      [SUB_C.url]: (attempt) => attempt === 1
+        ? new Response("e", { status: 503 })
+        : new Response("ok", { status: 200 }),
     },
     { withDeadLetter: true },
   );
@@ -2026,62 +2031,86 @@ Deno.test("fan-out [isolamento]: SUB_B falha em todas as tentativas; SUB_A/SUB_C
   const subs = [SUB_A, SUB_B, SUB_C];
   const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
 
-  // ── Counts de POST por subscription ────────────────────────────────
-  assertEquals(h.fetchesByUrl[SUB_A.url], 1, "SUB_A deve ter 1 POST (sucesso na 1ª)");
-  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS, "SUB_B deve esgotar MAX_ATTEMPTS");
-  assertEquals(h.fetchesByUrl[SUB_C.url], 1, "SUB_C deve ter 1 POST (sucesso na 1ª)");
+  // Agrupa deliveries por subscription_id preservando a ordem cronológica.
+  const deliveriesById: Record<string, DeliveryRow[]> = {};
+  for (const d of h.deliveries) {
+    deliveriesById[d.subscription_id] = deliveriesById[d.subscription_id] ?? [];
+    deliveriesById[d.subscription_id].push(d);
+  }
+
+  // ── (1) Contagem exata de deliveries persistidos por sub ─────────
+  assertEquals(deliveriesById[SUB_A.id]?.length ?? 0, 1, "SUB_A deve persistir 1 delivery");
+  assertEquals(deliveriesById[SUB_B.id]?.length ?? 0, MAX_ATTEMPTS, "SUB_B deve persistir MAX_ATTEMPTS deliveries");
+  assertEquals(deliveriesById[SUB_C.id]?.length ?? 0, 2, "SUB_C deve persistir 2 deliveries");
+
+  // Soma global = sum(por sub) — nenhuma linha "vaza" entre subs.
   assertEquals(
-    h.capturedInits.length,
-    1 + MAX_ATTEMPTS + 1,
-    "total de POSTs = SUB_A(1) + SUB_B(MAX) + SUB_C(1)",
+    h.deliveries.length,
+    1 + MAX_ATTEMPTS + 2,
+    "total de deliveries deve bater com a soma por subscription",
   );
 
-  // ── Resultado por subscription ─────────────────────────────────────
+  // ── (2) Sequência de attempts completa e sem buracos ─────────────
+  const attemptsA = deliveriesById[SUB_A.id].map((d) => d.attempt);
+  const attemptsB = deliveriesById[SUB_B.id].map((d) => d.attempt);
+  const attemptsC = deliveriesById[SUB_C.id].map((d) => d.attempt);
+
+  assertEquals(attemptsA, [1], "SUB_A: única tentativa numerada como 1");
+  assertEquals(
+    attemptsB,
+    Array.from({ length: MAX_ATTEMPTS }, (_, i) => i + 1),
+    "SUB_B: attempts devem ser 1..MAX_ATTEMPTS sem buracos",
+  );
+  assertEquals(attemptsC, [1, 2], "SUB_C: attempts devem ser [1, 2]");
+
+  // ── (3) Asserção dedicada: maior `attempt` da sub que falha == MAX_ATTEMPTS ─
+  const maxAttemptB = Math.max(...attemptsB);
+  assertEquals(maxAttemptB, MAX_ATTEMPTS, "SUB_B: max(attempt) deve ser EXATAMENTE MAX_ATTEMPTS");
+
+  // E o resultado retornado pelo dispatcher reflete o mesmo número de tentativas.
   const resById = Object.fromEntries(results.map((r) => [r.id, r]));
-  assertEquals(resById[SUB_A.id].succeeded, true);
-  assertEquals(resById[SUB_A.id].status, 200);
+  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS, "result.attempts de SUB_B == MAX_ATTEMPTS");
+  assertEquals(resById[SUB_B.id].succeeded, false);
   assertEquals(resById[SUB_A.id].attempts, 1);
+  assertEquals(resById[SUB_C.id].attempts, 2);
 
-  assertEquals(resById[SUB_B.id].succeeded, false, "SUB_B não pode ter sucedido");
-  assertEquals(resById[SUB_B.id].status, 500);
-  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
+  // ── (4) Coerência por linha: status/succeeded/url/event esperados ─
+  // SUB_A: 1 linha sucedida com status 200.
+  assertEquals(deliveriesById[SUB_A.id][0].status, 200);
+  assertEquals(deliveriesById[SUB_A.id][0].succeeded, true);
 
-  assertEquals(resById[SUB_C.id].succeeded, true);
-  assertEquals(resById[SUB_C.id].status, 204);
-  assertEquals(resById[SUB_C.id].attempts, 1);
+  // SUB_B: todas as MAX_ATTEMPTS linhas falham com 500 e succeeded=false.
+  for (let i = 0; i < MAX_ATTEMPTS; i += 1) {
+    const d = deliveriesById[SUB_B.id][i];
+    assertEquals(d.status, 500, `SUB_B delivery #${i + 1}: status`);
+    assertEquals(d.succeeded, false, `SUB_B delivery #${i + 1}: succeeded`);
+    assertEquals(d.subscription_id, SUB_B.id);
+  }
 
-  // ── updateSubscription: 1× por sub, com last_status correto e isolado ──
-  assertEquals(h.updates.length, 3, "updateSubscription deve ser chamado 1× por sub");
-  const statusById = Object.fromEntries(h.updates.map((u) => [u.id, u.status]));
-  assertEquals(statusById[SUB_A.id], 200, "SUB_A: last_status persistido = 200");
-  assertEquals(statusById[SUB_B.id], 500, "SUB_B: last_status persistido = 500");
-  assertEquals(statusById[SUB_C.id], 204, "SUB_C: last_status persistido = 204");
+  // SUB_C: 1ª falha (503), 2ª sucede (200).
+  assertEquals(deliveriesById[SUB_C.id][0].status, 503);
+  assertEquals(deliveriesById[SUB_C.id][0].succeeded, false);
+  assertEquals(deliveriesById[SUB_C.id][1].status, 200);
+  assertEquals(deliveriesById[SUB_C.id][1].succeeded, true);
 
-  // Cada sub atualizada exatamente uma vez (sem updates duplicados pelos retries de B).
-  const updateCountsById = h.updates.reduce<Record<string, number>>((acc, u) => {
-    acc[u.id] = (acc[u.id] ?? 0) + 1;
-    return acc;
-  }, {});
-  for (const s of subs) assertEquals(updateCountsById[s.id], 1, `${s.id}: updateSubscription chamado 1×`);
+  // ── (5) DLQ persiste APENAS para SUB_B com attempts==MAX_ATTEMPTS ─
+  assertEquals(h.deadLetters.length, 1, "DLQ deve ter exatamente 1 entrada");
+  assertEquals(h.deadLetters[0].subscription_id, SUB_B.id);
+  assertEquals(
+    h.deadLetters[0].attempts,
+    MAX_ATTEMPTS,
+    "DLQ.attempts da sub que falha deve ser EXATAMENTE MAX_ATTEMPTS",
+  );
+  assertEquals(h.deadLetters[0].last_status, 500);
 
-  // ── DLQ: apenas SUB_B (a que esgotou tentativas) ───────────────────
-  assertEquals(h.deadLetters.length, 1, "DLQ deve conter apenas a sub que esgotou tentativas");
-  const dlq = h.deadLetters[0];
-  assertEquals(dlq.subscription_id, SUB_B.id);
-  assertEquals(dlq.attempts, MAX_ATTEMPTS);
-  assertEquals(dlq.last_status, 500);
-
-  // ── Deliveries: 1 por sub OK + MAX_ATTEMPTS para SUB_B ─────────────
-  const deliveriesById = h.deliveries.reduce<Record<string, number>>((acc, d) => {
-    acc[d.subscription_id] = (acc[d.subscription_id] ?? 0) + 1;
-    return acc;
-  }, {});
-  assertEquals(deliveriesById[SUB_A.id], 1);
-  assertEquals(deliveriesById[SUB_B.id], MAX_ATTEMPTS);
-  assertEquals(deliveriesById[SUB_C.id], 1);
-
-  // ── Sem cross-fire: cada URL recebe POSTs apenas para si ───────────
-  const urlsHit = h.capturedInits.map((c) => c.url);
-  assert(urlsHit.every((u) => u === SUB_A.url || u === SUB_B.url || u === SUB_C.url));
+  // ── (6) updateSubscription: 1× por sub com status final ──────────
+  const updatesById: Record<string, number[]> = {};
+  for (const u of h.updates) {
+    updatesById[u.id] = updatesById[u.id] ?? [];
+    updatesById[u.id].push(u.status);
+  }
+  assertEquals(updatesById[SUB_A.id], [200]);
+  assertEquals(updatesById[SUB_B.id], [500]);
+  assertEquals(updatesById[SUB_C.id], [200]);
 });
 
