@@ -36,7 +36,8 @@ import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterP
 import { ExportPdfButton } from "@/components/win-loss/ExportPdfButton";
 
 import { useWinLossFilters } from "@/hooks/win-loss/useWinLossFilters";
-import { useWinLossViewPrefs } from "@/hooks/win-loss/useWinLossViewPrefs";
+import { useWinLossViewPrefs, VIEW_PREFS_DEFAULTS } from "@/hooks/win-loss/useWinLossViewPrefs";
+import { toast } from "sonner";
 import { useFilteredWinLossAnalyses } from "@/hooks/win-loss/useWinLossData";
 import {
   aggregateByCompetitor,
