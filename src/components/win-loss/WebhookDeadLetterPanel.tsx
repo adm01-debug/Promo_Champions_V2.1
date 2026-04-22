@@ -131,7 +131,7 @@ export function WebhookDeadLetterPanel({
           <div className="flex items-center justify-between rounded-md border bg-primary/5 px-2.5 py-1.5">
             <span className="text-xs text-muted-foreground">{selectedIds.length} selecionado(s)</span>
             <div className="flex gap-1.5">
-              <Button size="sm" variant="default" className="h-7" disabled={isReplaying} onClick={() => onReplay(selectedIds)}>
+              <Button size="sm" variant="default" className="h-7" disabled={isReplaying} onClick={() => requestBulkReplay(selectedIds)}>
                 <RotateCcw className="h-3 w-3 mr-1" /> Reprocessar
               </Button>
               <Button size="sm" variant="ghost" className="h-7" disabled={isArchiving} onClick={() => onArchive(selectedIds)}>
