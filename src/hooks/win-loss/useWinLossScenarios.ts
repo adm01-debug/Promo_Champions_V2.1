@@ -54,6 +54,9 @@ export interface ScenarioPoint {
   isForecast: boolean;
 }
 
+export type ConfidenceLevel = 0.90 | 0.95 | 0.99;
+export const CONFIDENCE_LEVELS: ReadonlyArray<ConfidenceLevel> = [0.90, 0.95, 0.99];
+
 export interface ScenarioForecast {
   series: ScenarioPoint[];
   /** Standard error of the regression estimate (residual σ), in winRate percentage points. */
@@ -78,8 +81,10 @@ export interface ScenarioForecast {
   tCritical: number | null;
   /** Human-readable label for the active mode (e.g. "SEE z=1.00 (PI)" or "PI 95% (t·σ)"). */
   bandLabel: string;
-  /** Multiplicador `z` aplicado à largura SEE (1.00≈68% · 1.96≈95%). PI 95% ignora. */
+  /** Multiplicador `z` aplicado à largura SEE (1.00≈68% · 1.96≈95%). PI ignora. */
   confidenceZ: number;
+  /** Nível de confiança usado no modo `pi95` (0.90 / 0.95 / 0.99). Refletido também em `see` para UI. */
+  confidenceLevel: ConfidenceLevel;
 }
 
 export interface ScenarioOptions {
@@ -92,6 +97,11 @@ export interface ScenarioOptions {
    * Clamp em `[0.1, 5]`. Ignorado em `pi95` (que usa o t-Student).
    */
   confidenceZ?: number;
+  /**
+   * Nível de confiança do intervalo de previsão no modo `pi95`.
+   * Aceita 0.90, 0.95 (default) ou 0.99. Ignorado em `see`.
+   */
+  confidenceLevel?: ConfidenceLevel;
 }
 
 const Z_MIN = 0.1;
@@ -101,23 +111,60 @@ const clampZ = (v: number) =>
 
 const clamp01 = (v: number) => Math.max(0, Math.min(100, v));
 
-/**
- * Two-tailed t-Student critical values at α=0.05 (i.e. t_{df, 0.975}) for df 1..30.
- * Usado apenas no modo PI 95%; para SEE 1σ o multiplicador é implicitamente 1.
- */
-const T_TABLE_975: Record<number, number> = {
-  1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
-  6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
-  11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131,
-  16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
-  21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060,
-  26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042,
+const sanitizeLevel = (v: unknown): ConfidenceLevel => {
+  if (v === 0.90 || v === 0.95 || v === 0.99) return v;
+  return 0.95;
 };
 
+/**
+ * Two-tailed t-Student critical values for df 1..30 at the three supported
+ * confidence levels. df ≥ 30 cai para o quantil normal correspondente:
+ *   90% → 1.645  ·  95% → 1.960  ·  99% → 2.576
+ */
+const T_TABLES: Record<ConfidenceLevel, Record<number, number>> = {
+  0.90: {
+    1: 6.314, 2: 2.920, 3: 2.353, 4: 2.132, 5: 2.015,
+    6: 1.943, 7: 1.895, 8: 1.860, 9: 1.833, 10: 1.812,
+    11: 1.796, 12: 1.782, 13: 1.771, 14: 1.761, 15: 1.753,
+    16: 1.746, 17: 1.740, 18: 1.734, 19: 1.729, 20: 1.725,
+    21: 1.721, 22: 1.717, 23: 1.714, 24: 1.711, 25: 1.708,
+    26: 1.706, 27: 1.703, 28: 1.701, 29: 1.699, 30: 1.697,
+  },
+  0.95: {
+    1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
+    6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+    11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131,
+    16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
+    21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060,
+    26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042,
+  },
+  0.99: {
+    1: 63.657, 2: 9.925, 3: 5.841, 4: 4.604, 5: 4.032,
+    6: 3.707, 7: 3.499, 8: 3.355, 9: 3.250, 10: 3.169,
+    11: 3.106, 12: 3.055, 13: 3.012, 14: 2.977, 15: 2.947,
+    16: 2.921, 17: 2.898, 18: 2.878, 19: 2.861, 20: 2.845,
+    21: 2.831, 22: 2.819, 23: 2.807, 24: 2.797, 25: 2.787,
+    26: 2.779, 27: 2.771, 28: 2.763, 29: 2.756, 30: 2.750,
+  },
+};
+
+const Z_NORMAL: Record<ConfidenceLevel, number> = {
+  0.90: 1.645,
+  0.95: 1.960,
+  0.99: 2.576,
+};
+
+export function tCritical(dof: number, level: ConfidenceLevel = 0.95): number {
+  const lvl = sanitizeLevel(level);
+  const table = T_TABLES[lvl];
+  if (dof <= 0) return table[1];
+  if (dof >= 30) return Z_NORMAL[lvl];
+  return table[dof] ?? Z_NORMAL[lvl];
+}
+
+/** @deprecated Use `tCritical(dof, 0.95)` instead. Mantido para compat. */
 export function tCritical975(dof: number): number {
-  if (dof <= 0) return T_TABLE_975[1];
-  if (dof >= 30) return 1.96;
-  return T_TABLE_975[dof] ?? 1.96;
+  return tCritical(dof, 0.95);
 }
 
 /**
@@ -142,21 +189,24 @@ export const useWinLossScenarios = (
 ): ScenarioForecast => {
   const opts: Required<ScenarioOptions> =
     typeof optionsOrSteps === "number"
-      ? { forecastSteps: optionsOrSteps, bandMode: "see", confidenceZ: 1 }
+      ? { forecastSteps: optionsOrSteps, bandMode: "see", confidenceZ: 1, confidenceLevel: 0.95 }
       : {
           forecastSteps: optionsOrSteps.forecastSteps ?? 3,
           bandMode: optionsOrSteps.bandMode ?? "see",
           confidenceZ: clampZ(optionsOrSteps.confidenceZ ?? 1),
+          confidenceLevel: sanitizeLevel(optionsOrSteps.confidenceLevel ?? 0.95),
         };
 
-  const { forecastSteps, bandMode, confidenceZ } = opts;
+  const { forecastSteps, bandMode, confidenceZ, confidenceLevel } = opts;
 
   return useMemo(() => {
     const safePoints = points ?? [];
     const n = safePoints.length;
 
+    const levelPct = Math.round(confidenceLevel * 100);
     const seeLabel = `SEE z=${confidenceZ.toFixed(2)} (PI)`;
-    const labelFor = (mode: BandMode) => (mode === "pi95" ? "PI 95% (t·σ)" : seeLabel);
+    const labelFor = (mode: BandMode) =>
+      mode === "pi95" ? `PI ${levelPct}% (t·σ)` : seeLabel;
 
     // Need at least 3 points for a meaningful regression + residual σ.
     if (n < 3) {
@@ -178,9 +228,10 @@ export const useWinLossScenarios = (
         sxx: 0,
         fitN: n,
         bandMode,
-        tCritical: bandMode === "pi95" ? tCritical975(Math.max(1, n - 2)) : null,
+        tCritical: bandMode === "pi95" ? tCritical(Math.max(1, n - 2), confidenceLevel) : null,
         bandLabel: labelFor(bandMode),
         confidenceZ,
+        confidenceLevel,
       };
     }
 
@@ -206,7 +257,7 @@ export const useWinLossScenarios = (
     // SEE: σ̂ = √(SSE / dof). Mede o desvio típico dos resíduos do ajuste —
     // base de toda a banda de incerteza (ver doc do topo do arquivo).
     const residualStdDev = Math.sqrt(sse / dof);
-    const t = tCritical975(dof);
+    const t = tCritical(dof, confidenceLevel);
 
     // Pontos históricos: banda colapsada — só extrapolamos incerteza no futuro.
     const historical: ScenarioPoint[] = safePoints.map((p) => ({
@@ -256,6 +307,7 @@ export const useWinLossScenarios = (
       tCritical: bandMode === "pi95" ? t : null,
       bandLabel: labelFor(bandMode),
       confidenceZ,
+      confidenceLevel,
     };
-  }, [points, forecastSteps, bandMode, confidenceZ]);
+  }, [points, forecastSteps, bandMode, confidenceZ, confidenceLevel]);
 };
