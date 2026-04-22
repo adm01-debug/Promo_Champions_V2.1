@@ -150,6 +150,7 @@ export const handler = async (req: Request): Promise<Response> => {
     );
 
     let targets: Subscription[];
+    let activeSubsCount = 0;
     if (targetSubId) {
       const { data: sub, error } = await supabase
         .from("winloss_webhook_subscriptions")
@@ -164,6 +165,7 @@ export const handler = async (req: Request): Promise<Response> => {
         structuredLog("warn", { msg: "replay_subscription_inactive", subscriptionId: targetSubId }, requestId);
       }
       targets = [{ id: sub.id as string, url: sub.url as string, events: sub.events as string[], secret: (sub.secret as string | null) ?? null }];
+      activeSubsCount = 1;
     } else {
       const { data: subs, error: subsError } = await supabase
         .from("winloss_webhook_subscriptions")
@@ -173,7 +175,50 @@ export const handler = async (req: Request): Promise<Response> => {
         structuredLog("error", { msg: "fetch_subscriptions_failed", event, error: subsError.message }, requestId);
         throw subsError;
       }
-      targets = ((subs as Subscription[] | null) ?? []).filter((s) => s.events.includes(event));
+      const allActive = (subs as Subscription[] | null) ?? [];
+      activeSubsCount = allActive.length;
+      targets = allActive.filter((s) => s.events.includes(event));
+
+      // Silent-failure detection: in broadcast mode an empty target set means no
+      // subscriber will ever receive this event. Emit a structured warn log AND
+      // persist a metric row so admins can alert on it without scraping logs.
+      if (targets.length === 0) {
+        const reason = activeSubsCount === 0 ? "no_active_subscriptions" : "no_event_match";
+        structuredLog("warn", {
+          msg: "broadcast_no_subscribers",
+          event,
+          mode: "broadcast",
+          active_subscriptions_count: activeSubsCount,
+          matching_subscriptions_count: 0,
+          reason,
+        }, requestId);
+
+        try {
+          const { error: metricError } = await supabase
+            .from("winloss_webhook_dispatch_metrics")
+            .insert({
+              metric: "broadcast_no_subscribers",
+              event,
+              request_id: requestId,
+              active_subscriptions_count: activeSubsCount,
+              matching_subscriptions_count: 0,
+              metadata: { reason },
+            });
+          if (metricError) {
+            structuredLog("error", {
+              msg: "metric_insert_failed",
+              metric: "broadcast_no_subscribers",
+              error: metricError.message,
+            }, requestId);
+          }
+        } catch (metricEx) {
+          structuredLog("error", {
+            msg: "metric_insert_exception",
+            metric: "broadcast_no_subscribers",
+            ...describeError(metricEx),
+          }, requestId);
+        }
+      }
     }
 
     structuredLog("info", {
@@ -182,6 +227,7 @@ export const handler = async (req: Request): Promise<Response> => {
       mode: replayOf ? "replay" : "broadcast",
       replay_of: replayOf,
       targets: targets.length,
+      active_subscriptions_count: activeSubsCount,
       target_ids: targets.map((t) => t.id),
     }, requestId);
 
