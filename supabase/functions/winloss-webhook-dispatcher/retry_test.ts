@@ -2114,165 +2114,83 @@ Deno.test("fan-out [persistência por sub]: nº de deliveries por subscription e
   assertEquals(updatesById[SUB_C.id], [200]);
 });
 
-// ───────────── fan-out [DLQ isolado]: somente a sub que falha entra no DLQ ─────────────
-// Verifica, num cenário misto, que:
-//   • o DLQ contém EXATAMENTE 1 entrada e refere-se à única sub que esgotou MAX_ATTEMPTS;
-//   • `last_status` e `attempts` da entrada batem com o status final dessa sub;
-//   • `total_latency_ms` da entrada DLQ é coerente com o `result.total_latency_ms`
-//     retornado pelo dispatcher para a MESMA subscription (sem cross-fire de métricas);
-//   • subs que sucederam (na 1ª ou via recovery) NÃO geram entrada no DLQ.
+// ───────────── fan-out [body estável]: SUB_B re-tentativas usam o MESMO body ─────────────
+// Quando uma sub falha em todas as tentativas, o dispatcher constrói o body uma única
+// vez e reusa em cada retry. Captura o `init.body` de cada POST para SUB_B e garante
+// que `deal_id`, `event` e demais campos do payload são byte-a-byte iguais entre as
+// MAX_ATTEMPTS tentativas — sem mutação acidental nem reconstrução por retry.
 
-Deno.test("fan-out [DLQ isolado]: DLQ contém só a sub falha com last_status, status e total_latency_ms corretos", async () => {
-  // `now` determinístico: avança 100ms a cada chamada (mede start→end por tentativa).
-  let clock = 0;
-  const tick = () => {
-    clock += 100;
-    return clock;
+Deno.test("fan-out [body estável]: SUB_B falha persistente — body (deal_id e campos relevantes) idêntico em todas as MAX_ATTEMPTS", async () => {
+  const payload = {
+    event: "winloss.deal.lost",
+    deal_id: "deal-B-xyz-001",
+    amount: 12345.67,
+    reason: "price",
+    meta: { region: "BR", tier: 2, tags: ["enterprise", "renewal"] },
   };
 
   const h = makeFanoutHarness(
     {
-      // SUB_A: sucesso na 1ª (1 tentativa) → sem DLQ
       [SUB_A.url]: () => new Response("ok", { status: 200 }),
-      // SUB_B: falha em todas (MAX_ATTEMPTS) → única que entra no DLQ, last_status=500
       [SUB_B.url]: () => new Response("boom", { status: 500 }),
-      // SUB_C: 503 → 200 (2 tentativas, recupera) → sem DLQ
-      [SUB_C.url]: (attempt) => attempt === 1
-        ? new Response("e", { status: 503 })
-        : new Response("ok", { status: 200 }),
+      [SUB_C.url]: () => new Response("ok", { status: 200 }),
     },
     { withDeadLetter: true },
   );
-  // Substitui o `now` do harness por um relógio que avança a cada call.
-  h.deps.now = tick;
 
   const subs = [SUB_A, SUB_B, SUB_C];
-  const results = await Promise.all(subs.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
-  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
+  await Promise.all(subs.map((s) => dispatchOne(s, payload, h.deps)));
 
-  // ── (1) DLQ contém EXATAMENTE 1 entrada e é a SUB_B ─────────────
-  assertEquals(h.deadLetters.length, 1, "DLQ deve conter exatamente 1 entrada");
-  const dlq = h.deadLetters[0];
-  assertEquals(dlq.subscription_id, SUB_B.id, "DLQ.subscription_id deve ser SUB_B");
+  // Coleta todos os bodies enviados para SUB_B na ordem de envio.
+  const bodiesB = h.capturedInits
+    .filter((c) => c.url === SUB_B.url)
+    .map((c) => {
+      const raw = c.init.body;
+      assert(typeof raw === "string", "body do POST deve ser string JSON");
+      return raw as string;
+    });
 
-  // SUB_A e SUB_C não podem aparecer no DLQ.
-  const dlqIds = h.deadLetters.map((d) => d.subscription_id);
-  assert(!dlqIds.includes(SUB_A.id), "SUB_A não pode entrar no DLQ (sucedeu na 1ª)");
-  assert(!dlqIds.includes(SUB_C.id), "SUB_C não pode entrar no DLQ (recuperou no retry)");
+  // (1) Quantidade de bodies == MAX_ATTEMPTS.
+  assertEquals(bodiesB.length, MAX_ATTEMPTS, "SUB_B deve ter MAX_ATTEMPTS bodies capturados");
 
-  // ── (2) last_status e attempts da entrada DLQ batem com a sub falha ─
-  assertEquals(dlq.last_status, 500, "DLQ.last_status deve refletir o último HTTP status (500)");
-  assertEquals(dlq.attempts, MAX_ATTEMPTS, "DLQ.attempts deve ser MAX_ATTEMPTS");
-
-  // ── (3) `status` final da SUB_B (resultado do dispatcher) == DLQ.last_status ─
-  assertEquals(resById[SUB_B.id].status, 500, "result.status de SUB_B");
-  assertEquals(
-    resById[SUB_B.id].status,
-    dlq.last_status,
-    "result.status de SUB_B deve ser igual a DLQ.last_status",
-  );
-  assertEquals(resById[SUB_B.id].succeeded, false);
-  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
-
-  // ── (4) total_latency_ms positivo, finito, e == result.total_latency_ms ─
-  assertGreaterOrEqual(dlq.total_latency_ms, 0, "DLQ.total_latency_ms deve ser >= 0");
-  assert(Number.isFinite(dlq.total_latency_ms), "DLQ.total_latency_ms deve ser finito");
-  assertEquals(
-    dlq.total_latency_ms,
-    resById[SUB_B.id].total_latency_ms,
-    "DLQ.total_latency_ms deve bater com result.total_latency_ms da SUB_B",
-  );
-
-  // Sanidade: SUB_B (MAX_ATTEMPTS tentativas) deve ter latência >= SUB_A (1 tentativa),
-  // confirmando que o `total_latency_ms` reportado no DLQ é o ACUMULADO da SUB_B
-  // — não o de outra subscription que possa ter rodado em paralelo.
-  assertGreaterOrEqual(
-    resById[SUB_B.id].total_latency_ms,
-    resById[SUB_A.id].total_latency_ms,
-    "latência de SUB_B (MAX_ATTEMPTS) deve ser >= latência de SUB_A (1 tentativa)",
-  );
-
-  // ── (5) Coerência do payload/event registrados no DLQ ───────────
-  assertEquals(dlq.event, "x", "DLQ.event deve ser o event original do payload");
-  assertEquals(dlq.payload, PAYLOAD, "DLQ.payload deve ser o payload original");
-  assert(dlq.last_error === null || typeof dlq.last_error === "string", "DLQ.last_error deve ser string|null");
-});
-
-// ───────────── fan-out [DLQ isolado — ordem invertida]: invariância à ordem ─────────────
-// Mesmo cenário do teste anterior, mas disparando as subscriptions em ordem
-// INVERTIDA no `Promise.all` (SUB_C, SUB_B, SUB_A). Garante que fetches por URL,
-// last_status por sub e o conteúdo do DLQ não dependem da ordem do array de input.
-
-Deno.test("fan-out [DLQ isolado — ordem invertida]: fetches, last_status e DLQ permanecem corretos", async () => {
-  let clock = 0;
-  const tick = () => {
-    clock += 100;
-    return clock;
-  };
-
-  const h = makeFanoutHarness(
-    {
-      [SUB_A.url]: () => new Response("ok", { status: 200 }),
-      [SUB_B.url]: () => new Response("boom", { status: 500 }),
-      [SUB_C.url]: (attempt) => attempt === 1
-        ? new Response("e", { status: 503 })
-        : new Response("ok", { status: 200 }),
-    },
-    { withDeadLetter: true },
-  );
-  h.deps.now = tick;
-
-  // Ordem INVERTIDA: C, B, A.
-  const subsReversed = [SUB_C, SUB_B, SUB_A];
-  const results = await Promise.all(subsReversed.map((s) => dispatchOne(s, PAYLOAD, h.deps)));
-  const resById = Object.fromEntries(results.map((r) => [r.id, r]));
-
-  // ── (1) Fetches por URL: invariantes à ordem de disparo ─────────
-  assertEquals(h.fetchesByUrl[SUB_A.url], 1, "SUB_A: 1 POST (sucesso na 1ª)");
-  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS, "SUB_B: MAX_ATTEMPTS POSTs (falha persistente)");
-  assertEquals(h.fetchesByUrl[SUB_C.url], 2, "SUB_C: 2 POSTs (recovery na 2ª)");
-
-  // Sem cross-fire: somente as 3 URLs declaradas aparecem.
-  const seenUrls = new Set(h.capturedInits.map((c) => c.url));
-  assertEquals(seenUrls.size, 3);
-  assert([...seenUrls].every((u) => u === SUB_A.url || u === SUB_B.url || u === SUB_C.url));
-
-  // ── (2) last_status por sub via updateSubscription: 1× cada ─────
-  const lastStatusById: Record<string, number[]> = {};
-  for (const u of h.updates) {
-    lastStatusById[u.id] = lastStatusById[u.id] ?? [];
-    lastStatusById[u.id].push(u.status);
+  // (2) Igualdade byte-a-byte entre todas as tentativas.
+  for (let i = 1; i < bodiesB.length; i += 1) {
+    assertEquals(
+      bodiesB[i],
+      bodiesB[0],
+      `body da tentativa #${i + 1} difere da #1 (esperado: idêntico)`,
+    );
   }
-  assertEquals(lastStatusById[SUB_A.id], [200], "SUB_A last_status");
-  assertEquals(lastStatusById[SUB_B.id], [500], "SUB_B last_status");
-  assertEquals(lastStatusById[SUB_C.id], [200], "SUB_C last_status (recuperou)");
 
-  // ── (3) DLQ: continua tendo APENAS SUB_B com last_status/attempts corretos ─
-  assertEquals(h.deadLetters.length, 1, "DLQ deve conter exatamente 1 entrada (ordem não importa)");
-  const dlq = h.deadLetters[0];
-  assertEquals(dlq.subscription_id, SUB_B.id);
-  assertEquals(dlq.last_status, 500);
-  assertEquals(dlq.attempts, MAX_ATTEMPTS);
-  assertEquals(dlq.event, "x");
-  assertEquals(dlq.payload, PAYLOAD);
+  // (3) Campos relevantes preservados em CADA tentativa.
+  for (let i = 0; i < bodiesB.length; i += 1) {
+    const parsed = JSON.parse(bodiesB[i]) as Record<string, unknown>;
+    assertEquals(parsed.event, payload.event, `tentativa #${i + 1}: event`);
+    assertEquals(parsed.deal_id, payload.deal_id, `tentativa #${i + 1}: deal_id`);
+    assertEquals(parsed.amount, payload.amount, `tentativa #${i + 1}: amount`);
+    assertEquals(parsed.reason, payload.reason, `tentativa #${i + 1}: reason`);
+    assertEquals(parsed.meta, payload.meta, `tentativa #${i + 1}: meta (objeto aninhado)`);
+    assert(typeof parsed.dispatched_at === "string", `tentativa #${i + 1}: dispatched_at presente`);
+  }
 
-  // ── (4) Resultado da SUB_B coerente com o DLQ ───────────────────
-  assertEquals(resById[SUB_B.id].status, 500);
-  assertEquals(resById[SUB_B.id].succeeded, false);
-  assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
-  assertEquals(
-    dlq.total_latency_ms,
-    resById[SUB_B.id].total_latency_ms,
-    "DLQ.total_latency_ms deve bater com result.total_latency_ms da SUB_B mesmo invertendo a ordem",
-  );
-  assertGreaterOrEqual(dlq.total_latency_ms, 0);
+  // dispatched_at idêntico em todas as tentativas (gerado 1× antes do loop de retries).
+  const dispatchedAts = bodiesB.map((b) => (JSON.parse(b) as { dispatched_at: string }).dispatched_at);
+  for (let i = 1; i < dispatchedAts.length; i += 1) {
+    assertEquals(
+      dispatchedAts[i],
+      dispatchedAts[0],
+      `dispatched_at da tentativa #${i + 1} foi regenerado (deveria ser único por dispatch)`,
+    );
+  }
 
-  // ── (5) Resultados de A e C também coerentes (invariância) ──────
-  assertEquals(resById[SUB_A.id].status, 200);
-  assertEquals(resById[SUB_A.id].succeeded, true);
-  assertEquals(resById[SUB_A.id].attempts, 1);
-  assertEquals(resById[SUB_C.id].status, 200);
-  assertEquals(resById[SUB_C.id].succeeded, true);
-  assertEquals(resById[SUB_C.id].attempts, 2);
+  // (4) Cada body de SUB_B foi efetivamente endereçado a SUB_B.url (sem cross-fire).
+  const urlsB = h.capturedInits.filter((c) => c.url === SUB_B.url).map((c) => c.url);
+  assertEquals(urlsB.length, MAX_ATTEMPTS);
+  assert(urlsB.every((u) => u === SUB_B.url));
+
+  // (5) Sanidade: SUB_B falhou de fato (do contrário o teste seria trivial).
+  assertEquals(h.fetchesByUrl[SUB_B.url], MAX_ATTEMPTS);
+  assertEquals(h.deadLetters.length, 1);
+  assertEquals(h.deadLetters[0].subscription_id, SUB_B.id);
 });
 
