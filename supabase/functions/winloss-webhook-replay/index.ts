@@ -27,11 +27,10 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   else console.log(line);
 }
 
-function jsonResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
+  const headers: Record<string, string> = { ...corsHeaders, "Content-Type": "application/json" };
+  if (requestId) headers["X-Request-Id"] = requestId;
+  return new Response(JSON.stringify(body), { status, headers });
 }
 
 // BodySchema imported from ./schema.ts (single source of truth, also covered by schema_test.ts)
