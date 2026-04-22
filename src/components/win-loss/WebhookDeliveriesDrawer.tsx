@@ -92,6 +92,46 @@ function readStoredRetention(): number | null {
   }
 }
 
+// --- Persistência da seleção por assinatura ---
+const SELECTION_STORAGE_PREFIX = "winloss.replay.selection:";
+const SELECTION_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
+
+function selectionKey(subscriptionId: string | null): string | null {
+  return subscriptionId ? `${SELECTION_STORAGE_PREFIX}${subscriptionId}` : null;
+}
+
+function readStoredSelection(subscriptionId: string | null): string[] {
+  const key = selectionKey(subscriptionId);
+  if (!key) return [];
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as { ids?: unknown; at?: unknown };
+    if (typeof parsed?.at === "number" && Date.now() - parsed.at > SELECTION_MAX_AGE_MS) {
+      localStorage.removeItem(key);
+      return [];
+    }
+    if (!Array.isArray(parsed?.ids)) return [];
+    return parsed.ids.filter((x): x is string => typeof x === "string");
+  } catch {
+    return [];
+  }
+}
+
+function writeStoredSelection(subscriptionId: string | null, ids: string[]) {
+  const key = selectionKey(subscriptionId);
+  if (!key) return;
+  try {
+    if (ids.length === 0) {
+      localStorage.removeItem(key);
+      return;
+    }
+    localStorage.setItem(key, JSON.stringify({ ids, at: Date.now() }));
+  } catch {
+    // localStorage indisponível — ok
+  }
+}
+
 export function WebhookDeliveriesDrawer({
   subscriptionId,
   open,
@@ -132,13 +172,47 @@ export function WebhookDeliveriesDrawer({
     }
   };
 
-  // Reset selection when drawer closes (mantém lastResults p/ revisão posterior)
+  // Quando o drawer fecha, mantemos `selected` (persistido) para restaurar
+  // ao reabrir. Apenas limpamos estado transitório.
   useEffect(() => {
     if (!open) {
-      setSelected(new Set());
       setProcessingIds(new Set());
     }
   }, [open]);
+
+  // Restaura seleção persistida quando abre OU quando os dados (failedIds) chegam.
+  // Filtra por entregas falhas ainda existentes para evitar IDs órfãos.
+  const restoredForRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!open || !subscriptionId || !data) return;
+    if (restoredForRef.current === subscriptionId) return;
+    const stored = readStoredSelection(subscriptionId);
+    if (stored.length === 0) {
+      restoredForRef.current = subscriptionId;
+      return;
+    }
+    const failedSet = new Set(data.filter((d) => !d.succeeded).map((d) => d.id));
+    const valid = stored.filter((id) => failedSet.has(id)).slice(0, MAX_REPLAY);
+    if (valid.length > 0) {
+      setSelected(new Set(valid));
+    }
+    // Reescreve removendo IDs órfãos (ou zera se nenhum válido)
+    if (valid.length !== stored.length) {
+      writeStoredSelection(subscriptionId, valid);
+    }
+    restoredForRef.current = subscriptionId;
+  }, [open, subscriptionId, data]);
+
+  // Reseta o "já restaurei" ao trocar de assinatura ou fechar
+  useEffect(() => {
+    if (!open) restoredForRef.current = null;
+  }, [open, subscriptionId]);
+
+  // Persiste qualquer mudança de seleção
+  useEffect(() => {
+    if (!subscriptionId) return;
+    writeStoredSelection(subscriptionId, Array.from(selected));
+  }, [selected, subscriptionId]);
 
   // Cleanup timers on unmount
   useEffect(() => {
