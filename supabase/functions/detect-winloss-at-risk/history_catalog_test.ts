@@ -10,7 +10,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { computeDealRisk } from "./scoring.ts";
 import { DEAL_HISTORY_FIXTURES, LOSS_PATTERNS_REALISTIC, NOW, type DealHistoryFamily, type ScenarioGroup } from "./fixtures.ts";
-import { actionNeedles, includesCI } from "./_testHelpers.ts";
+import { actionNeedles, hasMeaningfulActionIncludes, includesCI } from "./_testHelpers.ts";
 
 const FAMILIES = Object.keys(DEAL_HISTORY_FIXTURES) as DealHistoryFamily[];
 
