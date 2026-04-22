@@ -497,3 +497,169 @@ Deno.test("fixtures table: SUMMARY — included/failed counts by assert category
     "summary: actually included+excluded must equal total",
   );
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Severity alignment — validates that the computed severity bucket is coherent
+// with each scenario's expected include/exclude behavior:
+//   - excluded scenarios (filtered at threshold=40) must resolve to "low"
+//     (or null) when probed at threshold=0.
+//   - included scenarios must land in a severity bucket that is reachable from
+//     the declared [minScore, maxScore] band, where the bucket boundaries are
+//     low<50, medium 50–64, high 65–79, critical ≥80. Confidence demotion may
+//     pull "critical" → "high"; we accept that demotion when confidence < 0.7.
+// ─────────────────────────────────────────────────────────────────────────────
+
+type SeverityBucket = "low" | "medium" | "high" | "critical";
+
+function bucketForScore(score: number): SeverityBucket {
+  if (score >= 80) return "critical";
+  if (score >= 65) return "high";
+  if (score >= 50) return "medium";
+  return "low";
+}
+
+/** Set of severity buckets that any score within [min,max] could legitimately fall into. */
+function allowedBucketsForBand(min: number | undefined, max: number | undefined): SeverityBucket[] {
+  const lo = typeof min === "number" ? min : 0;
+  const hi = typeof max === "number" ? max : 100;
+  const all: SeverityBucket[] = ["low", "medium", "high", "critical"];
+  return all.filter((b) => {
+    // bucket ranges
+    const [bLo, bHi] =
+      b === "critical" ? [80, 100] :
+      b === "high"     ? [65, 79]  :
+      b === "medium"   ? [50, 64]  :
+                         [0, 49];
+    return bLo <= hi && bHi >= lo; // intervals overlap
+  });
+}
+
+Deno.test("severity alignment: excluded scenarios resolve to 'low' (or null) at threshold=0", () => {
+  const offenders: Array<{ name: string; score: number; severity: string }> = [];
+  for (const s of SCENARIOS) {
+    if (s.expect.included) continue;
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 0);
+    if (!r) continue; // null is acceptable for excluded — no signals at all.
+    const sev = r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence);
+    if (sev !== "low") {
+      offenders.push({ name: s.name, score: r.risk_score, severity: sev });
+    }
+  }
+  assertEquals(
+    offenders,
+    [],
+    `excluded scenarios with non-low severity (${offenders.length}):\n${offenders
+      .map((o) => `  - ${o.name} → score=${o.score} severity=${o.severity}`)
+      .join("\n")}`,
+  );
+});
+
+Deno.test("severity alignment: included scenarios land in a bucket reachable from their score band", () => {
+  type SevFailure = {
+    name: string;
+    score: number;
+    confidence: number | null;
+    computedSeverity: string;
+    bucketOfScore: SeverityBucket;
+    band: [number | undefined, number | undefined];
+    allowedBuckets: SeverityBucket[];
+    note: string;
+  };
+  const failures: SevFailure[] = [];
+
+  for (const s of SCENARIOS) {
+    if (!s.expect.included) continue;
+    const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+    if (!r) continue; // covered by other tests
+    const computed = r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence);
+    const bucketOfScore = bucketForScore(r.risk_score);
+    const allowed = allowedBucketsForBand(s.expect.minScore, s.expect.maxScore);
+    const conf = r.breakdown.matched_confidence ?? null;
+
+    // 1. The computed severity must be reachable from the declared score band.
+    //    Allow "high" when band only allows "critical" but confidence < 0.7
+    //    (legitimate demotion documented in severityFromScore).
+    const allowedWithDemote = new Set<string>(allowed);
+    if (allowed.includes("critical") && (conf ?? 1) < 0.7) {
+      allowedWithDemote.add("high");
+    }
+    if (!allowedWithDemote.has(computed)) {
+      failures.push({
+        name: s.name,
+        score: r.risk_score,
+        confidence: conf,
+        computedSeverity: computed,
+        bucketOfScore,
+        band: [s.expect.minScore, s.expect.maxScore],
+        allowedBuckets: allowed,
+        note: `computed severity "${computed}" not reachable from band ${JSON.stringify(allowed)} (with conf-demote: ${JSON.stringify([...allowedWithDemote])})`,
+      });
+      continue;
+    }
+
+    // 2. The computed severity must be coherent with the actual score:
+    //    either equal to the score's bucket, or one step lower (confidence demote
+    //    can demote "critical"→"high" only).
+    const isExactBucket = computed === bucketOfScore;
+    const isLegitDemote =
+      bucketOfScore === "critical" && computed === "high" && (conf ?? 1) < 0.7;
+    if (!isExactBucket && !isLegitDemote) {
+      failures.push({
+        name: s.name,
+        score: r.risk_score,
+        confidence: conf,
+        computedSeverity: computed,
+        bucketOfScore,
+        band: [s.expect.minScore, s.expect.maxScore],
+        allowedBuckets: allowed,
+        note: `computed severity "${computed}" inconsistent with score bucket "${bucketOfScore}" (only critical→high demote with conf<0.7 allowed)`,
+      });
+    }
+  }
+
+  assertEquals(
+    failures,
+    [],
+    `severity alignment failures (${failures.length}):\n${failures
+      .map(
+        (f) =>
+          `  - ${f.name}\n      score             = ${f.score}\n      confidence        = ${f.confidence}\n      computedSeverity  = ${f.computedSeverity}\n      bucketOfScore     = ${f.bucketOfScore}\n      band              = [${f.band[0] ?? "—"}, ${f.band[1] ?? "—"}]\n      allowedBuckets    = ${JSON.stringify(f.allowedBuckets)}\n      issue             = ${f.note}`,
+      )
+      .join("\n")}`,
+  );
+});
+
+Deno.test("severity alignment: per-scenario coherence check (one assertion per scenario)", async (t) => {
+  for (const s of SCENARIOS) {
+    await t.step(`${s.name} → ${s.expect.included ? "included" : "excluded"}`, () => {
+      if (!s.expect.included) {
+        const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 0);
+        if (!r) return; // null is fine — no signals
+        const sev = r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence);
+        assertEquals(
+          sev,
+          "low",
+          `excluded scenario "${s.name}" must have severity "low", got "${sev}" (score=${r.risk_score})`,
+        );
+        return;
+      }
+      const r = computeDealRisk(s.deal, LOSS_PATTERNS_REALISTIC, NOW, 40);
+      assert(r, `included scenario "${s.name}" must produce a result`);
+      const sev = r.breakdown.severity ?? severityFromScore(r.risk_score, r.breakdown.matched_confidence);
+      const bucket = bucketForScore(r.risk_score);
+      const conf = r.breakdown.matched_confidence ?? 1;
+      const isExact = sev === bucket;
+      const isDemote = bucket === "critical" && sev === "high" && conf < 0.7;
+      assert(
+        isExact || isDemote,
+        `${s.name}: severity "${sev}" mismatched score bucket "${bucket}" (score=${r.risk_score}, conf=${conf})`,
+      );
+      // And the bucket must overlap the declared band.
+      const allowed = allowedBucketsForBand(s.expect.minScore, s.expect.maxScore);
+      assert(
+        allowed.includes(bucket) || (allowed.includes("critical") && bucket === "high" && conf < 0.7),
+        `${s.name}: score bucket "${bucket}" not reachable from band [${s.expect.minScore},${s.expect.maxScore}] (allowed=${JSON.stringify(allowed)})`,
+      );
+    });
+  }
+});
