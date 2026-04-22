@@ -2039,15 +2039,15 @@ Deno.test("fan-out [isolamento]: SUB_B falha em todas as tentativas; SUB_A/SUB_C
   // ── Resultado por subscription ─────────────────────────────────────
   const resById = Object.fromEntries(results.map((r) => [r.id, r]));
   assertEquals(resById[SUB_A.id].succeeded, true);
-  assertEquals(resById[SUB_A.id].lastStatus, 200);
+  assertEquals(resById[SUB_A.id].status, 200);
   assertEquals(resById[SUB_A.id].attempts, 1);
 
   assertEquals(resById[SUB_B.id].succeeded, false, "SUB_B não pode ter sucedido");
-  assertEquals(resById[SUB_B.id].lastStatus, 500);
+  assertEquals(resById[SUB_B.id].status, 500);
   assertEquals(resById[SUB_B.id].attempts, MAX_ATTEMPTS);
 
   assertEquals(resById[SUB_C.id].succeeded, true);
-  assertEquals(resById[SUB_C.id].lastStatus, 204);
+  assertEquals(resById[SUB_C.id].status, 204);
   assertEquals(resById[SUB_C.id].attempts, 1);
 
   // ── updateSubscription: 1× por sub, com last_status correto e isolado ──
