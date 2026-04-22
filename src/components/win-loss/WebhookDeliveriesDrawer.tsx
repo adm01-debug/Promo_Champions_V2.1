@@ -172,13 +172,47 @@ export function WebhookDeliveriesDrawer({
     }
   };
 
-  // Reset selection when drawer closes (mantém lastResults p/ revisão posterior)
+  // Quando o drawer fecha, mantemos `selected` (persistido) para restaurar
+  // ao reabrir. Apenas limpamos estado transitório.
   useEffect(() => {
     if (!open) {
-      setSelected(new Set());
       setProcessingIds(new Set());
     }
   }, [open]);
+
+  // Restaura seleção persistida quando abre OU quando os dados (failedIds) chegam.
+  // Filtra por entregas falhas ainda existentes para evitar IDs órfãos.
+  const restoredForRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!open || !subscriptionId || !data) return;
+    if (restoredForRef.current === subscriptionId) return;
+    const stored = readStoredSelection(subscriptionId);
+    if (stored.length === 0) {
+      restoredForRef.current = subscriptionId;
+      return;
+    }
+    const failedSet = new Set(data.filter((d) => !d.succeeded).map((d) => d.id));
+    const valid = stored.filter((id) => failedSet.has(id)).slice(0, MAX_REPLAY);
+    if (valid.length > 0) {
+      setSelected(new Set(valid));
+    }
+    // Reescreve removendo IDs órfãos (ou zera se nenhum válido)
+    if (valid.length !== stored.length) {
+      writeStoredSelection(subscriptionId, valid);
+    }
+    restoredForRef.current = subscriptionId;
+  }, [open, subscriptionId, data]);
+
+  // Reseta o "já restaurei" ao trocar de assinatura ou fechar
+  useEffect(() => {
+    if (!open) restoredForRef.current = null;
+  }, [open, subscriptionId]);
+
+  // Persiste qualquer mudança de seleção
+  useEffect(() => {
+    if (!subscriptionId) return;
+    writeStoredSelection(subscriptionId, Array.from(selected));
+  }, [selected, subscriptionId]);
 
   // Cleanup timers on unmount
   useEffect(() => {
