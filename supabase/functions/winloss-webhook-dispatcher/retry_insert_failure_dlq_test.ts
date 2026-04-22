@@ -301,3 +301,145 @@ Deno.test(
     }
   },
 );
+
+// ─────────────── Sleep timing: insertDelivery falhando → exatamente 2 sleeps, nenhum após a última ───────────────
+
+/**
+ * Harness instrumentado com timeline (fetch/insert/sleep + attempt) para
+ * provar que NENHUM sleep ocorre depois da última tentativa.
+ */
+type TimelineEvent =
+  | { seq: number; kind: "fetch"; attempt: number }
+  | { seq: number; kind: "insert"; attempt: number; rejected: boolean }
+  | { seq: number; kind: "sleep"; attempt: number; ms: number };
+
+interface TimelineHarness {
+  deps: DispatchDeps;
+  events: TimelineEvent[];
+  insertedRows: DeliveryRow[];
+  deadLetters: DeadLetterEntry[];
+}
+
+function makeFailingInsertTimelineHarness(
+  fetchImpl: (n: number) => Response | Promise<Response>,
+): TimelineHarness {
+  let attempt = 0;
+  let seq = 0;
+  const events: TimelineEvent[] = [];
+  const insertedRows: DeliveryRow[] = [];
+  const deadLetters: DeadLetterEntry[] = [];
+
+  const deps: DispatchDeps = {
+    fetchFn: ((_u: string) => {
+      attempt += 1;
+      events.push({ seq: ++seq, kind: "fetch", attempt });
+      return Promise.resolve(fetchImpl(attempt));
+    }) as typeof fetch,
+    insertDelivery: (row) => {
+      events.push({ seq: ++seq, kind: "insert", attempt: row.attempt, rejected: true });
+      return Promise.reject(new Error("DB_WRITE_FAILED"));
+    },
+    sleep: (ms) => {
+      events.push({ seq: ++seq, kind: "sleep", attempt, ms });
+      return Promise.resolve();
+    },
+    updateSubscription: () => Promise.resolve(),
+    onDeadLetter: (entry) => { deadLetters.push(entry); return Promise.resolve(); },
+    now: () => 0,
+    rand: () => 0,
+  };
+  return { deps, events, insertedRows, deadLetters };
+}
+
+Deno.test(
+  "insertDelivery falhando + falha persistente: EXATAMENTE 2 sleeps, NENHUM após attempt=MAX_ATTEMPTS",
+  async () => {
+    // Fixture cobre todos os modos de falha terminal: HTTP, Abort, Timeout, TypeError
+    const fixtures: Array<{ name: string; impl: (n: number) => Response | Promise<Response> }> = [
+      { name: "HTTP 500×3", impl: () => new Response("e", { status: 500 }) },
+      { name: "AbortError×3", impl: () => { throw namedError("AbortError", "abrt"); } },
+      { name: "TimeoutError×3", impl: () => { throw namedError("TimeoutError", "tmo"); } },
+      { name: "TypeError×3", impl: () => { throw namedError("TypeError", "net"); } },
+    ];
+
+    for (const fx of fixtures) {
+      const h = makeFailingInsertTimelineHarness(fx.impl);
+      await dispatchOne(SUB, PAYLOAD, h.deps);
+
+      const fetches = h.events.filter((e) => e.kind === "fetch");
+      const sleeps = h.events.filter((e) => e.kind === "sleep");
+      const inserts = h.events.filter((e) => e.kind === "insert");
+
+      // (1) Quantidade EXATA de sleeps: 2 (= MAX_ATTEMPTS - 1)
+      assertEquals(sleeps.length, 2, `[${fx.name}] sleeps EXATAMENTE 2`);
+      assertEquals(sleeps.length, MAX_ATTEMPTS - 1, `[${fx.name}] sleeps === MAX_ATTEMPTS-1`);
+
+      // (2) Sleeps cobrem APENAS attempts 1 e 2 — NUNCA o último (3)
+      const sleepAttempts = sleeps.map((e) => e.attempt).sort((a, b) => a - b);
+      assertEquals(sleepAttempts, [1, 2], `[${fx.name}] sleeps em attempts [1, 2] apenas`);
+      const sleepOnLast = sleeps.find((e) => e.attempt === MAX_ATTEMPTS);
+      assert(
+        !sleepOnLast,
+        `[${fx.name}] NENHUM sleep com attempt=${MAX_ATTEMPTS}, achei seq=${sleepOnLast?.seq}`,
+      );
+
+      // (3) Backoff determinístico mantido mesmo com insert quebrado (rand=0)
+      assertEquals(sleeps.map((e) => e.ms), [250, 500], `[${fx.name}] backoff [250, 500]`);
+
+      // (4) Fetches/inserts continuam acontecendo 3× (loop não interrompido)
+      assertEquals(fetches.length, MAX_ATTEMPTS, `[${fx.name}] fetches=3`);
+      assertEquals(inserts.length, MAX_ATTEMPTS, `[${fx.name}] insertDelivery invocado 3×`);
+      assert(inserts.every((e) => e.kind === "insert" && e.rejected), `[${fx.name}] todos os inserts rejeitaram`);
+
+      // (5) Nenhum evento APÓS o último insert (=> nenhum sleep depois da 3ª)
+      const lastInsertIdx = h.events.findLastIndex((e) => e.kind === "insert" && e.attempt === MAX_ATTEMPTS);
+      const eventsAfterLastInsert = h.events.slice(lastInsertIdx + 1);
+      assertEquals(
+        eventsAfterLastInsert.filter((e) => e.kind === "sleep").length,
+        0,
+        `[${fx.name}] zero sleeps após insert da última tentativa`,
+      );
+
+      // (6) Timeline ordenada: para n∈{1,2}, fetch_n → insert_n → sleep_n → fetch_{n+1}
+      for (const n of [1, 2]) {
+        const f = h.events.find((e) => e.kind === "fetch" && e.attempt === n)!;
+        const i = h.events.find((e) => e.kind === "insert" && e.attempt === n)!;
+        const s = h.events.find((e) => e.kind === "sleep" && e.attempt === n)!;
+        const fNext = h.events.find((e) => e.kind === "fetch" && e.attempt === n + 1)!;
+        assert(f.seq < i.seq, `[${fx.name}] fetch#${n} < insert#${n}`);
+        assert(i.seq < s.seq, `[${fx.name}] insert#${n} < sleep#${n}`);
+        assert(s.seq < fNext.seq, `[${fx.name}] sleep#${n} < fetch#${n+1}`);
+      }
+
+      // (7) DLQ chamada 1× confirmando que o flow chegou ao fim sem sleep extra
+      assertEquals(h.deadLetters.length, 1, `[${fx.name}] DLQ 1×`);
+      assertEquals(h.deadLetters[0].attempts, MAX_ATTEMPTS, `[${fx.name}] DLQ.attempts=3`);
+    }
+  },
+);
+
+Deno.test(
+  "insertDelivery falhando + sucesso na 3ª: zero sleeps após sucesso, sleeps=2 mesmo assim",
+  async () => {
+    // Cenário oposto: loop chega à 3ª e ganha. Ainda assim, 2 sleeps (entre 1→2 e 2→3),
+    // e NENHUM sleep após a 3ª (sucesso encerra).
+    const responses = [500, 500, 200];
+    const h = makeFailingInsertTimelineHarness((n) => new Response("x", { status: responses[n - 1] }));
+    await dispatchOne(SUB, PAYLOAD, h.deps);
+
+    const sleeps = h.events.filter((e) => e.kind === "sleep");
+    assertEquals(sleeps.length, 2, "sleeps=2 mesmo com sucesso na última");
+    assertEquals(sleeps.map((e) => e.attempt).sort((a, b) => a - b), [1, 2]);
+
+    // Último evento da timeline deve ser o insert da 3ª tentativa (não um sleep)
+    const lastEvent = h.events[h.events.length - 1];
+    assertEquals(lastEvent.kind, "insert", "último evento é insert (rejected) da 3ª, NÃO um sleep");
+    assertEquals(lastEvent.attempt, 3);
+
+    // Nenhum sleep com attempt=3
+    assert(!sleeps.find((e) => e.attempt === 3), "nenhum sleep após a 3ª tentativa");
+
+    // Sucesso → DLQ NÃO chamada
+    assertEquals(h.deadLetters.length, 0);
+  },
+);
