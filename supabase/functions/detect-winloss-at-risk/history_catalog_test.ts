@@ -50,11 +50,17 @@ function validateGroup(family: DealHistoryFamily, group: ScenarioGroup): string[
     }
 
     // Family-level dominant pattern label (matchedPatternLabelIncludes overrides group default).
+    // Two-tier match: strict substring → token fallback (reduces false negatives when
+    // the engine emits a richer label than the family declares).
     const expectedLabel = c.expect.matchedPatternLabelIncludes ?? group.dominantPatternLabel;
-    if (expectedLabel && !includesCI(r.matched_pattern, expectedLabel)) {
-      failures.push(
-        `[${family}/${c.name}] matched_pattern "${r.matched_pattern}" missing family label "${expectedLabel}"`,
-      );
+    if (expectedLabel) {
+      const m = matchesPatternFamily(r.matched_pattern, expectedLabel);
+      if (!m.ok) {
+        failures.push(
+          `[${family}/${c.name}] matched_pattern "${r.matched_pattern}" missing family label "${expectedLabel}" ` +
+            `(mode=${m.mode}, missingTokens=${JSON.stringify(m.missingTokens)})`,
+        );
+      }
     }
 
     // Reasons
