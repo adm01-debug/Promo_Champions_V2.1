@@ -379,10 +379,23 @@ export function WebhookDeliveriesDrawer({ subscriptionId, open, onOpenChange, ur
                               Já entregue
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 text-destructive px-2 py-0.5 text-[10px] font-medium">
-                              <XCircle className="h-3 w-3" />
-                              Falhou
-                            </span>
+                            <>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 text-destructive px-2 py-0.5 text-[10px] font-medium">
+                                <XCircle className="h-3 w-3" />
+                                Falhou
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="ml-1 h-5 px-2 text-[10px] gap-1 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => handleReplay(d.id)}
+                                disabled={d.succeeded || isProcessing}
+                                aria-label={`Tentar reenviar novamente entrega ${d.event}`}
+                              >
+                                <RotateCw className="h-2.5 w-2.5" />
+                                Tentar novamente
+                              </Button>
+                            </>
                           )}
                           {reqId && !isProcessing && (
                             <Tooltip>
