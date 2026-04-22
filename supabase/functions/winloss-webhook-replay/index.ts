@@ -232,13 +232,17 @@ export const handler = async (req: Request): Promise<Response> => {
     for (const row of rows) {
       // Skip already-succeeded deliveries (no-op for DLQ source)
       if (source === "delivery" && row.succeeded) {
-        results.push({
+        const skipped: ReplayResult = {
           id: row.id,
           succeeded: false,
           status: 0,
           status_label: "skipped",
           error: "already_succeeded",
           skipped: true,
+        };
+        results.push(skipped);
+        await persistAuditEntry(supabase, {
+          source, row, outcome: skipped, requestId, userId, userEmail,
         });
         continue;
       }
@@ -285,6 +289,9 @@ export const handler = async (req: Request): Promise<Response> => {
             error: outcome.error,
           }, requestId);
         }
+        await persistAuditEntry(supabase, {
+          source, row, outcome, requestId, userId, userEmail,
+        });
       } catch (e) {
         const d = describeError(e);
         const errMsg = `${d.error_name}: ${d.error}`;
@@ -298,12 +305,16 @@ export const handler = async (req: Request): Promise<Response> => {
           }, requestId);
         }
 
-        results.push({
+        const failed: ReplayResult = {
           id: row.id,
           succeeded: false,
           status: 0,
           status_label: "failed",
           error: errMsg,
+        };
+        results.push(failed);
+        await persistAuditEntry(supabase, {
+          source, row, outcome: failed, requestId, userId, userEmail,
         });
       }
     }
