@@ -158,7 +158,7 @@ export function useUpdateQuoteStatus() {
         if (rejection_reason) updates.rejection_reason = rejection_reason;
       }
 
-      const { error } = await supabase.from('quotes').update(updates).eq('id', id);
+      const { error } = await supabase.from('quotes').update(updates as never).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

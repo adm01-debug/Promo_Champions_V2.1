@@ -130,7 +130,7 @@ export const useUpdateTeam = () => {
       if (Object.keys(updates).length > 0) {
         const { error } = await supabase
           .from('teams')
-          .update(updates)
+          .update(updates as never)
           .eq('id', id);
         
         if (error) throw error;

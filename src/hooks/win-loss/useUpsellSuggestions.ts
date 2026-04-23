@@ -7,7 +7,7 @@ export interface UpsellSuggestion {
   basedOn: number;
 }
 
-interface SaleRow { id: string; segment: string | null; product_name: string | null; status: string | null }
+interface SaleRow { id: string; category: string | null; product_name: string | null; status: string | null }
 
 export function useUpsellSuggestions(saleId: string | undefined) {
   return useQuery({
@@ -16,16 +16,16 @@ export function useUpsellSuggestions(saleId: string | undefined) {
     queryFn: async (): Promise<UpsellSuggestion[]> => {
       const { data: base } = await supabase
         .from("sales")
-        .select("id, segment, product_name, status")
+        .select("id, category, product_name, status")
         .eq("id", saleId!)
         .maybeSingle();
       const seed = base as SaleRow | null;
-      if (!seed?.segment || !seed.product_name) return [];
+      if (!seed?.category || !seed.product_name) return [];
 
       const { data: peers } = await supabase
         .from("sales")
-        .select("id, segment, product_name, status")
-        .eq("segment", seed.segment)
+        .select("id, category, product_name, status")
+        .eq("category", seed.category)
         .eq("status", "won")
         .neq("product_name", seed.product_name)
         .limit(200);
