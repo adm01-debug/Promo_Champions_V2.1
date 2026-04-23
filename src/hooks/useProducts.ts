@@ -130,7 +130,7 @@ export const useUpdateProduct = () => {
 
       const { data, error } = await supabase
         .from('products')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();

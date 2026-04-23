@@ -58,7 +58,7 @@ export function useUpdateCoachingAction() {
 
       const { error } = await supabase
         .from("coaching_actions")
-        .update(patch)
+        .update(patch as never)
         .eq("id", input.id);
       if (error) throw error;
     },

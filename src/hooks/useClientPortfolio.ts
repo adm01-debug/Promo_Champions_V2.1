@@ -44,7 +44,7 @@ export const useUpdatePortfolioStatus = () => {
     mutationFn: async ({ portfolioId, status, lastPurchaseDate }: { portfolioId: string; status: string; lastPurchaseDate?: string }) => {
       const updates: Record<string, string> = { status };
       if (lastPurchaseDate) updates.last_purchase_date = lastPurchaseDate;
-      const { error } = await supabase.from('client_portfolio').update(updates).eq('id', portfolioId);
+      const { error } = await supabase.from('client_portfolio').update(updates as never).eq('id', portfolioId);
       if (error) throw error;
     },
     onSuccess: () => {

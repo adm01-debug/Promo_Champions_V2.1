@@ -77,7 +77,7 @@ export function useSavedFilters(entityType: string) {
 
       const { error } = await supabase
         .from('saved_filters')
-        .update(payload)
+        .update(payload as never)
         .eq('id', id);
 
       if (error) throw error;
