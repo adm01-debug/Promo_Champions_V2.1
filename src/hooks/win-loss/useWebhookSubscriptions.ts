@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 
 export interface WebhookSubscription {
   id: string;
@@ -18,11 +19,7 @@ export function useWebhookSubscriptions() {
   const list = useQuery({
     queryKey: ["winloss-webhooks"],
     queryFn: async (): Promise<WebhookSubscription[]> => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => { order: (c: string, o: { ascending: boolean }) => Promise<{ data: WebhookSubscription[] | null; error: Error | null }> };
-        };
-      })
+      const { data, error } = await supabase
         .from("winloss_webhook_subscriptions")
         .select("*")
         .order("created_at", { ascending: false });
@@ -36,11 +33,9 @@ export function useWebhookSubscriptions() {
     mutationFn: async ({ url, events }: { url: string; events: string[] }) => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error("Não autenticado");
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => { insert: (p: Record<string, unknown>) => Promise<{ error: Error | null }> };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_subscriptions")
-        .insert({ url, events, created_by: auth.user.id });
+        .insert(insertPayload("winloss_webhook_subscriptions", { url, events, created_by: auth.user.id }));
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["winloss-webhooks"] }); toast.success("Webhook criado"); },
@@ -49,13 +44,9 @@ export function useWebhookSubscriptions() {
 
   const toggle = useMutation({
     mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          update: (p: Record<string, unknown>) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> };
-        };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_subscriptions")
-        .update({ active })
+        .update(updatePayload("winloss_webhook_subscriptions", { active }))
         .eq("id", id);
       if (error) throw error;
     },
@@ -64,11 +55,7 @@ export function useWebhookSubscriptions() {
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          delete: () => { eq: (c: string, v: string) => Promise<{ error: Error | null }> };
-        };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_subscriptions")
         .delete()
         .eq("id", id);

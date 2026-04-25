@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
+import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 
 export interface Webhook {
   id: string;
@@ -83,7 +85,15 @@ export function useCreateWebhook() {
       if (!user) throw new Error("Not authenticated");
       const { data, error } = await supabase
         .from("webhooks")
-        .insert({ ...params, created_by: user.id } as never)
+        .insert(insertPayload("webhooks", {
+          name: params.name ?? "Webhook",
+          url: params.url ?? "",
+          events: params.events ?? [],
+          secret: params.secret,
+          headers: params.headers as Json | undefined,
+          is_active: params.is_active,
+          created_by: user.id,
+        }))
         .select()
         .single();
       if (error) throw error;
@@ -101,7 +111,18 @@ export function useUpdateWebhook() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Webhook> & { id: string }) => {
-      const { error } = await supabase.from("webhooks").update(updates as never).eq("id", id);
+      const { error } = await supabase.from("webhooks").update(updatePayload("webhooks", {
+        name: updates.name,
+        url: updates.url,
+        events: updates.events,
+        secret: updates.secret,
+        headers: updates.headers as Json | undefined,
+        is_active: updates.is_active,
+        failure_count: updates.failure_count,
+        last_triggered_at: updates.last_triggered_at,
+        last_success_at: updates.last_success_at,
+        last_failure_at: updates.last_failure_at,
+      })).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

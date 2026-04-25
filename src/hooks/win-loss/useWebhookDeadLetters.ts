@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { updatePayload } from "@/lib/supabase/typed-payloads";
 
 export type DeadLetterStatus = "pending" | "replaying" | "replayed" | "archived";
 
@@ -100,13 +101,9 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = "pending") {
 
   const archive = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          update: (p: Record<string, unknown>) => { in: (c: string, v: string[]) => Promise<{ error: Error | null }> };
-        };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_dead_letters")
-        .update({ status: "archived" })
+        .update(updatePayload("winloss_webhook_dead_letters", { status: "archived" }))
         .in("id", ids);
       if (error) throw error;
     },

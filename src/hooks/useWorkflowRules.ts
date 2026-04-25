@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
+import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 
 export type TriggerType = "deal_stagnant" | "stage_change" | "task_overdue" | "no_activity";
 export type ActionType = "create_task" | "send_notification" | "change_stage" | "add_note";
@@ -74,15 +76,15 @@ export function useCreateWorkflowRule() {
     }) => {
       const { data, error } = await supabase
         .from("workflow_rules")
-        .insert({
+        .insert(insertPayload("workflow_rules", {
           name: input.name,
           description: input.description || null,
           trigger_type: input.trigger_type,
-          trigger_config: input.trigger_config,
+          trigger_config: input.trigger_config as Json,
           action_type: input.action_type,
-          action_config: input.action_config,
+          action_config: input.action_config as Json,
           salesperson_id: salesperson?.id,
-        } as never)
+        }))
         .select()
         .single();
 
@@ -104,7 +106,7 @@ export function useToggleWorkflowRule() {
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
       const { error } = await supabase
         .from("workflow_rules")
-        .update({ is_active, updated_at: new Date().toISOString() } as never)
+        .update(updatePayload("workflow_rules", { is_active, updated_at: new Date().toISOString() }))
         .eq("id", id);
 
       if (error) throw error;

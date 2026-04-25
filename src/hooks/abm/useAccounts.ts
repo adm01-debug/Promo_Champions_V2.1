@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { insertPayload } from "@/lib/supabase/typed-payloads";
 
 export type AccountTier = "strategic" | "enterprise" | "mid_market" | "smb";
 export type HealthStatus = "healthy" | "at_risk" | "critical" | "unknown";
@@ -91,7 +92,7 @@ export const useCreateAccount = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Partial<Account> & { name: string }) => {
-      const { data, error } = await supabase.from("accounts").insert(payload as never).select().single();
+      const { data, error } = await supabase.from("accounts").insert(insertPayload("accounts", payload)).select().single();
       if (error) throw error;
       return data;
     },
@@ -107,7 +108,7 @@ export const useCreateContact = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Partial<AccountContact> & { account_id: string; name: string }) => {
-      const { data, error } = await supabase.from("account_contacts").insert(payload as never).select().single();
+      const { data, error } = await supabase.from("account_contacts").insert(insertPayload("account_contacts", payload)).select().single();
       if (error) throw error;
       return data;
     },

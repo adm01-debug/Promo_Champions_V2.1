@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 import type { ScheduledReport, ScheduleFrequency, ScheduleFormat } from "@/components/reporting/scheduledReportHelpers";
 
 const KEY = ["scheduled-reports"] as const;
@@ -10,7 +11,7 @@ export function useScheduledReports() {
     queryKey: KEY,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("scheduled_reports" as never)
+        .from("scheduled_reports")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -39,8 +40,8 @@ export function useCreateScheduledReport() {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error("Não autenticado");
       const { data, error } = await supabase
-        .from("scheduled_reports" as never)
-        .insert({ ...input, created_by: u.user.id, enabled: input.enabled ?? true } as never)
+        .from("scheduled_reports")
+        .insert(insertPayload("scheduled_reports", { ...input, created_by: u.user.id, enabled: input.enabled ?? true }))
         .select()
         .single();
       if (error) throw error;
@@ -59,8 +60,8 @@ export function useUpdateScheduledReport() {
   return useMutation({
     mutationFn: async ({ id, ...patch }: Partial<ScheduledReport> & { id: string }) => {
       const { error } = await supabase
-        .from("scheduled_reports" as never)
-        .update(patch as never)
+        .from("scheduled_reports")
+        .update(updatePayload("scheduled_reports", patch))
         .eq("id", id);
       if (error) throw error;
     },
@@ -76,7 +77,7 @@ export function useDeleteScheduledReport() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("scheduled_reports" as never).delete().eq("id", id);
+      const { error } = await supabase.from("scheduled_reports").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -92,8 +93,8 @@ export function useToggleScheduledReport() {
   return useMutation({
     mutationFn: async ({ id, enabled }: { id: string; enabled: boolean }) => {
       const { error } = await supabase
-        .from("scheduled_reports" as never)
-        .update({ enabled } as never)
+        .from("scheduled_reports")
+        .update(updatePayload("scheduled_reports", { enabled }))
         .eq("id", id);
       if (error) throw error;
     },
