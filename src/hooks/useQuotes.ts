@@ -151,7 +151,7 @@ export function useUpdateQuoteStatus() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status, rejection_reason }: { id: string; status: string; rejection_reason?: string }) => {
-      const updates: Record<string, any> = { status };
+      const updates: TableUpdate<'quotes'> = { status };
       if (status === 'sent') updates.sent_at = new Date().toISOString();
       if (status === 'approved') updates.approved_at = new Date().toISOString();
       if (status === 'rejected') {
@@ -159,7 +159,7 @@ export function useUpdateQuoteStatus() {
         if (rejection_reason) updates.rejection_reason = rejection_reason;
       }
 
-      const { error } = await supabase.from('quotes').update(updates as never).eq('id', id);
+      const { error } = await supabase.from('quotes').update(updates).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
