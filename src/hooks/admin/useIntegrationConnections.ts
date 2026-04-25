@@ -126,7 +126,11 @@ export interface IntegrationHealthCheck {
   triggered_by: string | null;
 }
 
-export function useIntegrationHealth(connectionId?: string, limit = 100) {
+export function useIntegrationHealth(
+  connectionId?: string,
+  limit = 100,
+  options?: { refetchInterval?: number | false },
+) {
   return useQuery({
     queryKey: ["integration-health", connectionId ?? "all", limit],
     queryFn: async () => {
@@ -140,5 +144,7 @@ export function useIntegrationHealth(connectionId?: string, limit = 100) {
       if (error) throw error;
       return (data ?? []) as unknown as IntegrationHealthCheck[];
     },
+    refetchInterval: options?.refetchInterval,
+    refetchIntervalInBackground: false,
   });
 }
