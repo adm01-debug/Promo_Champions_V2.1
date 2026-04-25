@@ -52,7 +52,7 @@ export const useUpdateTask = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Omit<TaskRecord, 'sale' | 'salesperson'>> & { id: string }) => {
-      const updateData: Record<string, unknown> = {
+      const updateData: TableUpdate<'tasks'> = {
         updated_at: new Date().toISOString(),
       };
 
@@ -69,7 +69,7 @@ export const useUpdateTask = () => {
 
       const { data, error } = await supabase
         .from('tasks')
-        .update(updateData as never)
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
