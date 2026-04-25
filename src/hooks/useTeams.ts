@@ -121,7 +121,7 @@ export const useUpdateTeam = () => {
       inactivity_days?: number;
       closer_ids?: string[];
     }) => {
-      const updates: Record<string, unknown> = {};
+      const updates: TableUpdate<'teams'> = {};
       if (name !== undefined) updates.name = name;
       if (sdr_id !== undefined) updates.sdr_id = sdr_id;
       if (is_active !== undefined) updates.is_active = is_active;
@@ -130,7 +130,7 @@ export const useUpdateTeam = () => {
       if (Object.keys(updates).length > 0) {
         const { error } = await supabase
           .from('teams')
-          .update(updates as never)
+          .update(updates)
           .eq('id', id);
         
         if (error) throw error;
