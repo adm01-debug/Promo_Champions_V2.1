@@ -19,6 +19,7 @@ import { FailureWindowCard } from "@/components/admin/connections/FailureWindowC
 import { AutoTestJobStatusCard } from "@/components/admin/connections/AutoTestJobStatusCard";
 import { CredentialsSourceFilterProvider } from "@/components/admin/connections/CredentialsSourceFilterContext";
 import { CredentialsSourceFilter } from "@/components/admin/connections/CredentialsSourceFilter";
+import { HealthStatusFilter } from "@/components/admin/connections/HealthStatusFilter";
 import { GlobalRefreshFromDbButton } from "@/components/admin/connections/GlobalRefreshFromDbButton";
 
 function AdminConexoesContent() {
@@ -44,8 +45,9 @@ function AdminConexoesContent() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <CredentialsSourceFilter />
+            <HealthStatusFilter />
             <GlobalRefreshFromDbButton onRefreshed={handleGlobalRefreshed} />
           </div>
         </div>
