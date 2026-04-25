@@ -71,7 +71,7 @@ export const useUpdateCommissionStatus = () => {
       status: CommissionStatus;
       payment_notes?: string;
     }) => {
-      const updates: Record<string, unknown> = { status };
+      const updates: TableUpdate<"commissions"> = { status };
       if (status === "approved") {
         updates.approved_at = new Date().toISOString();
         const user = (await supabase.auth.getUser()).data.user;
@@ -83,7 +83,7 @@ export const useUpdateCommissionStatus = () => {
         if (user) updates.paid_by = user.id;
         if (payment_notes) updates.payment_notes = payment_notes;
       }
-      const { error } = await supabase.from("commissions").update(updates as never).eq("id", id);
+      const { error } = await supabase.from("commissions").update(updates).eq("id", id);
       if (error) throw error;
     },
     onSuccess: (_d, vars) => {
