@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 import type { ScheduledReport, ScheduleFrequency, ScheduleFormat } from "@/components/reporting/scheduledReportHelpers";
 
 const KEY = ["scheduled-reports"] as const;
