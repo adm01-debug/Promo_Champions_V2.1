@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 import { CACHE_TIMES } from '@/constants';
 
 export interface TeamMember {
