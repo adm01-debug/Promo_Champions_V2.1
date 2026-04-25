@@ -71,14 +71,14 @@ export function useSavedFilters(entityType: string) {
 
   const updateFilter = useMutation({
     mutationFn: async ({ id, ...updates }: { id: string; name?: string; filters?: Record<string, unknown>; is_default?: boolean }) => {
-      const payload: Record<string, unknown> = {};
+      const payload: TableUpdate<'saved_filters'> = {};
       if (updates.name !== undefined) payload.name = updates.name;
       if (updates.filters !== undefined) payload.filters = updates.filters as unknown as Json;
       if (updates.is_default !== undefined) payload.is_default = updates.is_default;
 
       const { error } = await supabase
         .from('saved_filters')
-        .update(payload as never)
+        .update(payload)
         .eq('id', id);
 
       if (error) throw error;
