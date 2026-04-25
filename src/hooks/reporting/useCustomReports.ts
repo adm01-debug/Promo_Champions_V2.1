@@ -90,7 +90,13 @@ export function useUpdateCustomReport() {
     mutationFn: async ({ id, ...patch }: Partial<CustomReport> & { id: string }) => {
       const { data, error } = await supabase
         .from("custom_reports")
-        .update(patch as never)
+        .update(updatePayload("custom_reports", {
+          name: patch.name,
+          description: patch.description,
+          entity: patch.entity,
+          config: patch.config as unknown as Json | undefined,
+          is_shared: patch.is_shared,
+        }))
         .eq("id", id)
         .select()
         .single();
