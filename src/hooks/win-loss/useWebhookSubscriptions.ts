@@ -44,13 +44,9 @@ export function useWebhookSubscriptions() {
 
   const toggle = useMutation({
     mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          update: (p: Record<string, unknown>) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> };
-        };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_subscriptions")
-        .update({ active })
+        .update(updatePayload("winloss_webhook_subscriptions", { active }))
         .eq("id", id);
       if (error) throw error;
     },
