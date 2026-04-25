@@ -68,7 +68,15 @@ export const useCreateWorkflow = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Partial<AutomationWorkflow> & { name: string; trigger_type: TriggerType }) => {
-      const { data, error } = await supabase.from("automation_workflows").insert(payload as never).select().single();
+      const { data, error } = await supabase.from("automation_workflows").insert(insertPayload("automation_workflows", {
+        name: payload.name,
+        description: payload.description,
+        trigger_type: payload.trigger_type,
+        trigger_config: payload.trigger_config as Json | undefined,
+        conditions: payload.conditions as unknown as Json | undefined,
+        actions: payload.actions as unknown as Json | undefined,
+        is_active: payload.is_active,
+      })).select().single();
       if (error) throw error;
       return data;
     },
