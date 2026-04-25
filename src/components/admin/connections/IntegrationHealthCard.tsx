@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   type IntegrationConnection,
 } from "@/hooks/admin/useIntegrationConnections";
 import { IntegrationHealthHistorySheet } from "./IntegrationHealthHistorySheet";
+import { isHistoryOpenPersisted, setHistoryOpenPersisted } from "./historyOpenPersistence";
 
 const KIND_ICON = {
   database: Database,
@@ -40,7 +41,14 @@ const FAILING_REFETCH_MS = 15_000;
 const HEALTHY_REFETCH_MS = 60_000;
 
 export function IntegrationHealthCard({ connection }: { connection: IntegrationConnection }) {
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyOpen, setHistoryOpenState] = useState<boolean>(() => isHistoryOpenPersisted(connection.id));
+  const setHistoryOpen = (open: boolean) => {
+    setHistoryOpenState(open);
+    setHistoryOpenPersisted(connection.id, open);
+  };
+  useEffect(() => {
+    setHistoryOpenState(isHistoryOpenPersisted(connection.id));
+  }, [connection.id]);
   // First pass: no polling until we know status. Then adapt based on last check.
   const initial = useIntegrationHealth(connection.id, 10);
   const lastStatus = initial.data?.[0]?.status;
