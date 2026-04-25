@@ -37,7 +37,7 @@ import {
   // Ferramentas & IA
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
-  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage,
+  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
 } from "./lazyPages";
