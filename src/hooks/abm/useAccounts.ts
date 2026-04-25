@@ -108,7 +108,7 @@ export const useCreateContact = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Partial<AccountContact> & { account_id: string; name: string }) => {
-      const { data, error } = await supabase.from("account_contacts").insert(payload as never).select().single();
+      const { data, error } = await supabase.from("account_contacts").insert(insertPayload("account_contacts", payload)).select().single();
       if (error) throw error;
       return data;
     },
