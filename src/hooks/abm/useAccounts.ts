@@ -92,7 +92,7 @@ export const useCreateAccount = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Partial<Account> & { name: string }) => {
-      const { data, error } = await supabase.from("accounts").insert(payload as never).select().single();
+      const { data, error } = await supabase.from("accounts").insert(insertPayload("accounts", payload)).select().single();
       if (error) throw error;
       return data;
     },
