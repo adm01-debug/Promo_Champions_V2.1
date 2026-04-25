@@ -103,8 +103,13 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
         {test.isPending && (
           <>
             <div className="pointer-events-none absolute inset-0 z-10 rounded-xl bg-background/40 backdrop-blur-[1px] animate-in fade-in-0" />
-            <div className="pointer-events-none absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium">
-              <Loader2 className="h-3 w-3 animate-spin" />
+            <div
+              className="pointer-events-none absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium"
+              role="status"
+              aria-live="polite"
+              aria-label={`Testando conexão ${connection.label}`}
+            >
+              <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
               Testando…
             </div>
           </>
