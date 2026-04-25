@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
+import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 
 export type TriggerType = "deal_stagnant" | "stage_change" | "task_overdue" | "no_activity";
 export type ActionType = "create_task" | "send_notification" | "change_stage" | "add_note";
