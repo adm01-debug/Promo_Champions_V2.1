@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 import type { TaskRecord, TaskType, TaskPriority, TaskStatus } from './types';
 
 export const useCreateTask = () => {
