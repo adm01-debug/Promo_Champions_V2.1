@@ -76,15 +76,15 @@ export function useCreateWorkflowRule() {
     }) => {
       const { data, error } = await supabase
         .from("workflow_rules")
-        .insert({
+        .insert(insertPayload("workflow_rules", {
           name: input.name,
           description: input.description || null,
           trigger_type: input.trigger_type,
-          trigger_config: input.trigger_config,
+          trigger_config: input.trigger_config as Json,
           action_type: input.action_type,
-          action_config: input.action_config,
+          action_config: input.action_config as Json,
           salesperson_id: salesperson?.id,
-        } as never)
+        }))
         .select()
         .single();
 
