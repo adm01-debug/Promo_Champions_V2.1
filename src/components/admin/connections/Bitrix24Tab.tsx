@@ -40,7 +40,7 @@ export function Bitrix24Tab() {
           </Button>
           {b.isConnected && (
             <>
-              <Button variant="outline" onClick={() => b.sync()} disabled={b.isSyncing} className="gap-2">
+              <Button variant="outline" onClick={() => b.sync("incremental")} disabled={b.isSyncing} className="gap-2">
                 {b.isSyncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                 Sincronizar
               </Button>
