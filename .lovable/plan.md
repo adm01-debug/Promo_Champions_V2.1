@@ -1,75 +1,90 @@
 
+# Módulo de Conexões — Hub Central de Integrações
 
-## Relatório Semanal/Mensal de Vendas com Gráficos e Exportação PDF
+Cria a rota `/admin/conexoes` (`AdminConexoesPage`) e todos os componentes/hook/edge functions referenciados no esqueleto enviado. Reaproveita o que já existe (`useBitrix24`, `useWebhooks`, `ExternalDBSettings`, `dispatch-webhook`, `external-db-bridge`, `bitrix24-oauth`).
 
-Adicionar uma nova seção ao dashboard onde o usuário gera relatórios de vendas (semanal ou mensal) com KPIs, gráficos e exportação em PDF.
+## 1. Banco de dados (migration)
 
-### Escopo funcional
+Novas tabelas (RLS: somente admin):
 
-1. **Nova rota `/relatorios/vendas`** (lazy-loaded, protegida por auth) acessível via card no dashboard ("Relatório de Vendas") e item no menu Relatórios.
-2. **Seletor de período** no topo: toggle "Semanal" / "Mensal" + date picker para escolher a semana/mês de referência. Padrão: semana/mês atual.
-3. **KPIs animados** (4 cards): Receita total, Nº de vendas, Ticket médio, Taxa de conversão — cada um com Δ% vs. período anterior (badge `success`/`destructive`).
-4. **Gráficos** (Recharts, tipagem estrita via `src/types/recharts.ts`):
-   - **Linha**: Receita por dia (semanal) ou por semana (mensal).
-   - **Barras**: Top 5 produtos por receita.
-   - **Pizza/Donut**: Distribuição por status (`completed`, `pending`, `cancelled`).
-   - **Barras horizontais**: Ranking de vendedores (top 5).
-5. **Tabela "Top negócios"**: 10 maiores vendas do período (cliente, produto, vendedor, valor, status).
-6. **Botão "Exportar PDF"** no header da página: gera PDF A4 com cabeçalho institucional, KPIs, snapshots dos gráficos (via `html2canvas`) e tabelas, usando `jsPDF` + `jspdf-autotable` (já presentes no projeto via `pdfExporter.ts`).
-7. **Loading**: Skeletons. **Empty**: banner "Sem vendas no período" com CTA para criar venda.
+- **`integration_connections`** — registro unificado de cada integração (id, kind: `database|bitrix24|n8n|mcp|webhook|other`, label, config jsonb, secret_refs text[], enabled bool, source: `db|env|secret`, created_by, timestamps).
+- **`integration_health_checks`** — histórico de testes (connection_id, status `success|failure|degraded`, latency_ms, error, checked_at, triggered_by `manual|auto`).
+- **`integration_autotest_settings`** — singleton (interval_minutes, failure_window_minutes, enabled, updated_by, updated_at).
+- **`integration_autotest_jobs`** — última execução do job agendado (started_at, finished_at, status, results jsonb).
 
-### Backend
+Trigger + função `has_role(auth.uid(),'admin')` em todas as policies (segue padrão do projeto).
 
-Sem novas tabelas. Consome `sales`, `daily_metrics`, `salespeople`, `sales_goals` (já existentes). 
+## 2. Edge functions
 
-Um único hook `useSalesReport(period, refDate)` em `src/hooks/reports/useSalesReport.ts` agrega tudo em paralelo via React Query (chave: `["sales-report", period, refDate]`, staleTime 5min). Lógica de agregação extraída para `src/hooks/reports/salesReportHelpers.ts` (cálculo de Δ%, agrupamento por dia/semana, top N).
+- **`test-integration-connection`** — recebe `{ connection_id }`, executa probe específico por kind:
+  - `database` → reutiliza `external-db-bridge` com `select limit 1`.
+  - `bitrix24` → chama `bitrix24-oauth` para validar token.
+  - `n8n` → `GET {base_url}/healthz` com header `X-N8N-API-KEY`.
+  - `mcp` → `POST {url}` com `{"jsonrpc":"2.0","method":"initialize",...}` e `Accept: application/json, text/event-stream`.
+  - `webhook` → reaproveita `dispatch-webhook` com `event_type:"test.ping"`.
+  - Persiste resultado em `integration_health_checks`.
+- **`run-integration-autotests`** — varre `integration_connections` ativos e dispara `test-integration-connection` em paralelo (com limite). Grava `integration_autotest_jobs`.
+- **`schedule-integration-autotests`** — cron via `pg_cron` (extensão já habilitada se possível; senão expõe endpoint para acionar via Lovable scheduler externo). Lê `interval_minutes` da tabela settings.
 
-### Geração do PDF
+Padrões obrigatórios: `corsHeaders` de `_shared/cors.ts`, import `@supabase/supabase-js@2.49.4` via `npm:`, validação Zod, `verify_jwt = true` (admin only via RPC `has_role`).
 
-- Usar **`jsPDF` + `jspdf-autotable`** (já no bundle) + **`html2canvas`** para snapshot dos gráficos.
-- Estrutura do PDF:
-  1. Capa: logo Promo Champions, título, período, data de geração.
-  2. Página 2: KPIs em grid + gráfico de receita.
-  3. Página 3: Top produtos + distribuição por status.
-  4. Página 4: Ranking de vendedores + tabela de top negócios.
-- Função pura `generateSalesReportPdf(data, period)` em `src/lib/reports/salesReportPdf.ts` (≤300 linhas), reutilizável fora do componente.
+## 3. Hooks novos
 
-### Detalhes técnicos
+- `src/hooks/admin/useSecretsManager.ts` — lista secrets do projeto via edge function dedicada (`list-project-secrets`, somente nomes — nunca valores). Expõe `{ secrets, list, refresh }`.
+- `src/hooks/admin/useIntegrationConnections.ts` — CRUD via React Query usando `updatePayload`/`insertPayload` (typed helpers já existentes).
+- `src/hooks/admin/useIntegrationHealth.ts` — histórico + `runTest(connectionId)`.
+- `src/hooks/admin/useAutoTestSettings.ts` — get/update settings + status do último job.
 
-**Arquivos novos**:
-- `src/pages/SalesReportPage.tsx` (≤200 linhas) — orquestra seletor + hook + renderização.
-- `src/components/reports/sales/SalesReportHeader.tsx` — seletor de período + botão exportar.
-- `src/components/reports/sales/SalesReportKpis.tsx` — 4 cards com CountUp + Δ.
-- `src/components/reports/sales/SalesRevenueChart.tsx` — LineChart Recharts.
-- `src/components/reports/sales/SalesTopProductsChart.tsx` — BarChart.
-- `src/components/reports/sales/SalesStatusDonut.tsx` — PieChart.
-- `src/components/reports/sales/SalesTeamRankingChart.tsx` — BarChart horizontal.
-- `src/components/reports/sales/SalesTopDealsTable.tsx` — tabela.
-- `src/hooks/reports/useSalesReport.ts` — React Query.
-- `src/hooks/reports/salesReportHelpers.ts` — agregações puras (testável).
-- `src/lib/reports/salesReportPdf.ts` — geração do PDF.
+## 4. Componentes (`src/components/admin/connections/`)
 
-**Arquivos editados**:
-- `src/routes/AppRoutes.tsx` — rota lazy `/relatorios/vendas`.
-- `src/components/dashboard/DashboardHeader.tsx` — botão "Exportar PDF" existente passa a navegar para `/relatorios/vendas` (mantém comportamento atual como fallback rápido).
-- Item de menu em "Relatórios" (sidebar/topbar).
+Mantém limite de 400 linhas por arquivo (extrair helpers em `*Helpers.ts` quando necessário).
 
-**Padrões aplicados**: React Query, Framer Motion (stagger nos KPIs e gráficos), Skeleton loading, Helmet (SEO), semantic tokens (`success`/`destructive`/`warning`/`primary`), Sora em títulos / Inter em corpo, formato BRL via `Intl.NumberFormat('pt-BR')`, `Recharts` com `RechartsTooltipProps`. Limite de 400 linhas por arquivo respeitado via extração de helpers.
+- `CredentialsSourceFilterContext.tsx` — Context com `source: 'all'|'db'|'env'|'secret'` + setter.
+- `CredentialsSourceFilter.tsx` — `Tabs`/`SegmentedControl` que controla o context.
+- `GlobalRefreshFromDbButton.tsx` — botão que invalida queries + chama `useSecretsManager.refresh()` e dispara `onRefreshed`.
+- `IntegrationsHealthCard.tsx` — cards de status agregado (total, OK, falhando, degradados) com sparkline das últimas execuções.
+- `ConnectionsOverviewTable.tsx` — tabela unificada com kind, label, source badge, last check, latency, ações (Testar, Editar, Toggle, Excluir).
+- `SmokeTestChecklist.tsx` — checklist visual rodando todos os testes em sequência com progresso animado (Framer motion).
+- `AutoTestIntervalCard.tsx` — slider + input numérico para `interval_minutes` (5–1440).
+- `FailureWindowCard.tsx` — input para janela de tolerância (min) antes de marcar como degradado.
+- `AutoTestJobStatusCard.tsx` — última execução, próximo agendamento, botão "Rodar agora".
+- `SupabaseConnectionsTab.tsx` — engloba `ExternalDBSettings` + cadastro de DBs adicionais (form com URL, anon key, label) gravando em `integration_connections` (kind=database) com secrets via `add_secret`.
+- `Bitrix24Tab.tsx` — usa `useBitrix24` (status, sync logs, botão sync, OAuth reconnect).
+- `N8nTab.tsx` — form (base URL, API key secret name), lista workflows (via `GET /workflows` se API key presente), test ping.
+- `McpTab.tsx` — form para servidor MCP (URL, auth header opcional), valida com `initialize` JSON-RPC, lista tools retornadas.
+- `WebhooksTab.tsx` — embute hooks `useWebhooks`, formulário CRUD existente, deliveries recentes, botão "Testar" (`useTestWebhook`).
 
-### Diagrama da página
+Todos respeitam tokens semânticos (sem cores hardcoded), Sora para títulos / Inter para corpo, skeletons + empty states padronizados.
 
-```text
-┌────────────────────────────────────────────────────────┐
-│ Relatório de Vendas    [Semanal|Mensal] [📅] [⬇ PDF]  │
-├────────────────────────────────────────────────────────┤
-│ [Receita ↑12%] [Vendas ↑8%] [Ticket ↓3%] [Conv ↑5%]   │
-├────────────────────────────────────┬───────────────────┤
-│  Receita por dia (linha)            │ Top produtos     │
-│                                     │ (barras)         │
-├────────────────────────────────────┼───────────────────┤
-│  Status (donut)                     │ Ranking vendedor │
-├────────────────────────────────────┴───────────────────┤
-│  Top 10 negócios (tabela)                              │
-└────────────────────────────────────────────────────────┘
-```
+## 5. Página
 
+`src/pages/admin/AdminConexoesPage.tsx` — usa o esqueleto enviado, envolto em:
+- `ProtectedRoute requiredRole="admin"`
+- `PageTransition`
+- `PageSEO` com title "Conexões | Promo Champions"
+- `CredentialsSourceFilterProvider`
+- Layout: header (ícone `Plug`, título, subtítulo, `GlobalRefreshFromDbButton`, `CredentialsSourceFilter`) → `IntegrationsHealthCard` → `ConnectionsOverviewTable` → grid de cards (`AutoTestIntervalCard`, `FailureWindowCard`, `AutoTestJobStatusCard`) → `SmokeTestChecklist` → `Tabs` (Bancos, Bitrix24, n8n, MCP, Webhooks).
+
+## 6. Rotas e navegação
+
+- Adicionar em `src/routes/AppRoutes.tsx`:
+  ```tsx
+  <Route path="/admin/conexoes" element={<Admin><AdminConexoesPage /></Admin>} />
+  ```
+- Adicionar item no `AdminQuickLinks.tsx` ("Conexões", ícone `Plug`, rota `/admin/conexoes`).
+- Adicionar entrada na sidebar (grupo Admin) respeitando RBAC (admin only).
+
+## 7. Validação e qualidade
+
+- TypeScript: 100% tipado via `TableUpdate`/`TableInsert` + types gerados do Supabase.
+- `tsc --noEmit` e `bun run lint` limpos.
+- Testes Deno básicos para `test-integration-connection` (mock fetch para cada kind).
+- Telemetria: emitir evento `integration.tested` via `useTelemetry`.
+- Memória nova: `mem://admin/connections-hub` documentando arquitetura, kinds suportados e padrão de probe.
+
+## 8. Fora de escopo (próxima iteração)
+
+- Realtime subscriptions na tabela de health checks.
+- Rotação automática de secrets.
+- Importação em massa via CSV.
+- Integração direta com MCP connectors do Lovable (apenas servidores MCP externos nesta versão).
