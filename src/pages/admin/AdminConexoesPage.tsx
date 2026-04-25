@@ -54,6 +54,8 @@ function AdminConexoesContent() {
 
         <ConnectionsOverviewTable />
 
+        <IntegrationHealthCardsGrid />
+
         <div className="grid gap-4 md:grid-cols-3">
           <AutoTestIntervalCard />
           <FailureWindowCard />
