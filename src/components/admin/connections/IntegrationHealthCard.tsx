@@ -71,10 +71,13 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
   }, [checks]);
 
   const statusBadge = (() => {
-    if (!connection.enabled) return <Badge variant="warning">Desativado</Badge>;
-    if (!last) return <Badge variant="secondary">Não testado</Badge>;
-    if (last.status === "success") return <Badge variant="success">Operacional</Badge>;
-    return <Badge variant="destructive">Falhando</Badge>;
+    if (!connection.enabled)
+      return <Badge variant="warning" aria-label={`${connection.label}: integração desativada`}>Desativado</Badge>;
+    if (!last)
+      return <Badge variant="secondary" aria-label={`${connection.label}: ainda não testado`}>Não testado</Badge>;
+    if (last.status === "success")
+      return <Badge variant="success" aria-label={`${connection.label}: operacional`}>Operacional</Badge>;
+    return <Badge variant="destructive" aria-label={`${connection.label}: com falha no último teste`}>Falhando</Badge>;
   })();
 
   const stop = (e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation();
