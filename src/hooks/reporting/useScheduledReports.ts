@@ -11,7 +11,7 @@ export function useScheduledReports() {
     queryKey: KEY,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("scheduled_reports" as never)
+        .from("scheduled_reports")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
