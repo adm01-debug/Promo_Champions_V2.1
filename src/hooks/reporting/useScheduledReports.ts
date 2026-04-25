@@ -40,8 +40,8 @@ export function useCreateScheduledReport() {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error("Não autenticado");
       const { data, error } = await supabase
-        .from("scheduled_reports" as never)
-        .insert({ ...input, created_by: u.user.id, enabled: input.enabled ?? true } as never)
+        .from("scheduled_reports")
+        .insert(insertPayload("scheduled_reports", { ...input, created_by: u.user.id, enabled: input.enabled ?? true }))
         .select()
         .single();
       if (error) throw error;
