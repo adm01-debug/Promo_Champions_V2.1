@@ -162,7 +162,11 @@ export function SmokeTestChecklist() {
           </div>
         </div>
         {running !== null && stats.total > 0 && (
-          <Progress value={progressValue} className="h-1.5" />
+          <Progress
+            value={progressValue}
+            className="h-1.5"
+            aria-label={`Progresso do smoke test: ${stats.ran} de ${stats.total} executados`}
+          />
         )}
       </CardHeader>
       <CardContent className="space-y-3">
