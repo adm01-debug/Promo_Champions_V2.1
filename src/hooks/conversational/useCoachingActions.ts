@@ -48,7 +48,7 @@ export function useUpdateCoachingAction() {
       status?: CoachingStatus;
       manager_note?: string | null;
     }) => {
-      const patch: Record<string, unknown> = {};
+      const patch: TableUpdate<"coaching_actions"> = {};
       if (input.status) {
         patch.status = input.status;
         if (input.status === "accepted" || input.status === "practiced") {
@@ -59,7 +59,7 @@ export function useUpdateCoachingAction() {
 
       const { error } = await supabase
         .from("coaching_actions")
-        .update(patch as never)
+        .update(patch)
         .eq("id", input.id);
       if (error) throw error;
     },
