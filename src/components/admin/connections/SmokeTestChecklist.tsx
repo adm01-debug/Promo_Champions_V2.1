@@ -150,8 +150,13 @@ export function SmokeTestChecklist() {
               onClick={runAll}
               disabled={running !== null || visible.length === 0}
               className="gap-2"
+              aria-label="Rodar smoke test em todas as conexões visíveis"
             >
-              {isRunningAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
+              {isRunningAll ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <PlayCircle className="h-4 w-4" aria-hidden="true" />
+              )}
               Rodar todos
             </Button>
           </div>
