@@ -111,7 +111,18 @@ export function useUpdateWebhook() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Webhook> & { id: string }) => {
-      const { error } = await supabase.from("webhooks").update(updates as never).eq("id", id);
+      const { error } = await supabase.from("webhooks").update(updatePayload("webhooks", {
+        name: updates.name,
+        url: updates.url,
+        events: updates.events,
+        secret: updates.secret,
+        headers: updates.headers as Json | undefined,
+        is_active: updates.is_active,
+        failure_count: updates.failure_count,
+        last_triggered_at: updates.last_triggered_at,
+        last_success_at: updates.last_success_at,
+        last_failure_at: updates.last_failure_at,
+      })).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
