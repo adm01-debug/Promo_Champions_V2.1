@@ -152,13 +152,26 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
           </div>
 
           {last && last.status !== "success" && last.error && (
-            <Alert variant="destructive" className="py-2" onClick={stop}>
-              <AlertTriangle className="h-3.5 w-3.5" />
+            <Alert
+              variant="destructive"
+              className="py-2"
+              onClick={stop}
+              role="alert"
+              aria-live="polite"
+              aria-label={`Erro no último teste de ${connection.label}`}
+            >
+              <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
               <AlertDescription className="text-xs">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="cursor-help">{truncate(last.error)}</span>
+                      <span
+                        className="cursor-help"
+                        tabIndex={0}
+                        aria-label={`Mensagem de erro: ${last.error}`}
+                      >
+                        {truncate(last.error)}
+                      </span>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-md">
                       <p className="text-xs whitespace-pre-wrap break-words">{last.error}</p>
@@ -179,11 +192,12 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
                 test.mutate(connection.id);
               }}
               disabled={test.isPending}
+              aria-label={`Testar conexão ${connection.label}`}
             >
               {test.isPending ? (
-                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" aria-hidden="true" />
               ) : (
-                <TestTube2 className="h-3.5 w-3.5 mr-1.5" />
+                <TestTube2 className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
               )}
               Testar
             </Button>
@@ -195,8 +209,9 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
                 e.stopPropagation();
                 openHistory();
               }}
+              aria-label={`Abrir histórico de testes de ${connection.label}`}
             >
-              <History className="h-3.5 w-3.5 mr-1.5" />
+              <History className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
               Histórico
             </Button>
           </div>
