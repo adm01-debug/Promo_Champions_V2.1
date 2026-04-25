@@ -14,18 +14,31 @@ export function Bitrix24Tab() {
         <CardDescription>Status da integração OAuth com o Bitrix24.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" role="status" aria-live="polite">
           {b.isLoadingStatus ? (
-            <Badge variant="outline">Verificando…</Badge>
+            <Badge variant="outline" aria-label="Verificando status do Bitrix24">Verificando…</Badge>
           ) : b.isConnected ? (
             <>
-              <Badge className="bg-success/20 text-success border-success/30">Conectado</Badge>
+              <Badge
+                className="bg-success/20 text-success border-success/30"
+                aria-label="Bitrix24: conectado"
+              >
+                Conectado
+              </Badge>
               <span className="text-sm text-muted-foreground">{b.domain}</span>
             </>
           ) : (
-            <Badge variant="destructive">Não conectado</Badge>
+            <Badge variant="destructive" aria-label="Bitrix24: não conectado">Não conectado</Badge>
           )}
-          {b.needsReauth && <Badge variant="outline" className="text-warning">Re-autenticação necessária</Badge>}
+          {b.needsReauth && (
+            <Badge
+              variant="outline"
+              className="text-warning"
+              aria-label="Bitrix24: re-autenticação necessária"
+            >
+              Re-autenticação necessária
+            </Badge>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -34,23 +47,43 @@ export function Bitrix24Tab() {
             onClick={() => b.authorize()}
             disabled={b.isAuthorizing}
             className="gap-2"
+            aria-label={b.isConnected ? "Reconectar ao Bitrix24" : "Conectar ao Bitrix24"}
           >
-            {b.isAuthorizing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
+            {b.isAuthorizing ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            )}
             {b.isConnected ? "Reconectar" : "Conectar"}
           </Button>
           {b.isConnected && (
             <>
-              <Button variant="outline" onClick={() => b.sync("incremental")} disabled={b.isSyncing} className="gap-2">
-                {b.isSyncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              <Button
+                variant="outline"
+                onClick={() => b.sync("incremental")}
+                disabled={b.isSyncing}
+                className="gap-2"
+                aria-label="Sincronizar dados com o Bitrix24"
+              >
+                {b.isSyncing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                )}
                 Sincronizar
               </Button>
-              <Button variant="outline" onClick={() => b.refreshToken()} disabled={b.isRefreshing}>
+              <Button
+                variant="outline"
+                onClick={() => b.refreshToken()}
+                disabled={b.isRefreshing}
+                aria-label="Atualizar token de acesso do Bitrix24"
+              >
                 {b.isRefreshing ? "..." : "Atualizar token"}
               </Button>
             </>
           )}
           <Button asChild variant="ghost">
-            <Link to="/bitrix24">Página completa →</Link>
+            <Link to="/bitrix24" aria-label="Abrir página completa do Bitrix24">Página completa →</Link>
           </Button>
         </div>
 

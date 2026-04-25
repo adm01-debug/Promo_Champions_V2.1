@@ -150,14 +150,23 @@ export function SmokeTestChecklist() {
               onClick={runAll}
               disabled={running !== null || visible.length === 0}
               className="gap-2"
+              aria-label="Rodar smoke test em todas as conexões visíveis"
             >
-              {isRunningAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
+              {isRunningAll ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <PlayCircle className="h-4 w-4" aria-hidden="true" />
+              )}
               Rodar todos
             </Button>
           </div>
         </div>
         {running !== null && stats.total > 0 && (
-          <Progress value={progressValue} className="h-1.5" />
+          <Progress
+            value={progressValue}
+            className="h-1.5"
+            aria-label={`Progresso do smoke test: ${stats.ran} de ${stats.total} executados`}
+          />
         )}
       </CardHeader>
       <CardContent className="space-y-3">
@@ -174,27 +183,70 @@ export function SmokeTestChecklist() {
                 const r = results[c.id];
                 const status = r?.status ?? "idle";
                 const isDisabled = !c.enabled;
+                const statusLabel =
+                  status === "running"
+                    ? "Em execução"
+                    : status === "ok"
+                      ? "Sucesso"
+                      : status === "fail"
+                        ? "Falha"
+                        : "Não executado";
                 return (
                   <li
                     key={c.id}
                     className={`flex items-center justify-between gap-3 border border-border/40 rounded-lg px-3 py-2 ${
                       isDisabled ? "opacity-60" : ""
                     }`}
+                    aria-label={`${c.label} — ${statusLabel}`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {status === "running" && <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />}
-                      {status === "ok" && <CheckCircle2 className="h-4 w-4 text-success shrink-0" />}
-                      {status === "fail" && <XCircle className="h-4 w-4 text-destructive shrink-0" />}
-                      {status === "idle" && <div className="h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0 ml-1" />}
+                      {status === "running" && (
+                        <Loader2
+                          className="h-4 w-4 animate-spin text-primary shrink-0"
+                          aria-label="Em execução"
+                          role="img"
+                        />
+                      )}
+                      {status === "ok" && (
+                        <CheckCircle2
+                          className="h-4 w-4 text-success shrink-0"
+                          aria-label="Sucesso"
+                          role="img"
+                        />
+                      )}
+                      {status === "fail" && (
+                        <XCircle
+                          className="h-4 w-4 text-destructive shrink-0"
+                          aria-label="Falha"
+                          role="img"
+                        />
+                      )}
+                      {status === "idle" && (
+                        <div
+                          className="h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0 ml-1"
+                          aria-label="Não executado"
+                          role="img"
+                        />
+                      )}
                       <span className="text-sm font-medium truncate">{c.label}</span>
                       <span className="text-xs text-muted-foreground uppercase shrink-0">{c.kind}</span>
                       {isDisabled && (
-                        <Badge variant="outline" className="text-[10px] shrink-0">Desativada</Badge>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] shrink-0"
+                          aria-label={`${c.label}: integração desativada`}
+                        >
+                          Desativada
+                        </Badge>
                       )}
                       {status === "fail" && r?.error && (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className="text-xs text-destructive truncate cursor-help">
+                            <span
+                              className="text-xs text-destructive truncate cursor-help"
+                              tabIndex={0}
+                              aria-label={`Mensagem de erro: ${r.error}`}
+                            >
                               {truncate(r.error, 80)}
                             </span>
                           </TooltipTrigger>
@@ -206,7 +258,12 @@ export function SmokeTestChecklist() {
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       {r?.latency_ms !== undefined && (
-                        <span className="text-xs text-muted-foreground tabular-nums">{r.latency_ms}ms</span>
+                        <span
+                          className="text-xs text-muted-foreground tabular-nums"
+                          aria-label={`Latência: ${r.latency_ms} milissegundos`}
+                        >
+                          {r.latency_ms}ms
+                        </span>
                       )}
                       {r?.ran_at && (
                         <span className="text-xs text-muted-foreground hidden md:inline">
@@ -219,8 +276,9 @@ export function SmokeTestChecklist() {
                         className="h-7 px-2 gap-1"
                         onClick={() => handleRunOne(c.id)}
                         disabled={running !== null}
+                        aria-label={`Testar conexão ${c.label}`}
                       >
-                        <Play className="h-3 w-3" />
+                        <Play className="h-3 w-3" aria-hidden="true" />
                         <span className="text-xs">Rodar</span>
                       </Button>
                     </div>
@@ -232,8 +290,14 @@ export function SmokeTestChecklist() {
         )}
         {hasRun && visible.length > 0 && (
           <div className="flex justify-end pt-2 border-t border-border/40">
-            <Button size="sm" variant="outline" className="gap-2" onClick={copyReport}>
-              <ClipboardCopy className="h-3 w-3" />
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2"
+              onClick={copyReport}
+              aria-label="Copiar relatório do smoke test em Markdown"
+            >
+              <ClipboardCopy className="h-3 w-3" aria-hidden="true" />
               Copiar relatório
             </Button>
           </div>

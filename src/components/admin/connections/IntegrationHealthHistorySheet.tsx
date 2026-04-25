@@ -39,25 +39,40 @@ export function IntegrationHealthHistorySheet({ open, onOpenChange, connectionId
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell className="text-xs whitespace-nowrap">
-                      {format(new Date(r.checked_at), "dd/MM HH:mm:ss", { locale: ptBR })}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={r.status === "success" ? "success" : "destructive"} className="text-xs">
-                        {r.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {r.latency_ms != null ? `${r.latency_ms}ms` : "—"}
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground uppercase">{r.triggered_by ?? "—"}</TableCell>
-                    <TableCell className="text-xs text-destructive max-w-[200px] truncate" title={r.error ?? ""}>
-                      {r.error ?? "—"}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {rows.map((r) => {
+                  const isOk = r.status === "success";
+                  const statusLabel = isOk ? "Operacional" : "Falha";
+                  return (
+                    <TableRow key={r.id}>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        {format(new Date(r.checked_at), "dd/MM HH:mm:ss", { locale: ptBR })}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={isOk ? "success" : "destructive"}
+                          className="text-xs"
+                          aria-label={`Status do teste: ${statusLabel}`}
+                        >
+                          {statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell
+                        className="text-xs text-muted-foreground"
+                        aria-label={r.latency_ms != null ? `Latência: ${r.latency_ms} milissegundos` : undefined}
+                      >
+                        {r.latency_ms != null ? `${r.latency_ms}ms` : "—"}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground uppercase">{r.triggered_by ?? "—"}</TableCell>
+                      <TableCell
+                        className="text-xs text-destructive max-w-[200px] truncate"
+                        title={r.error ?? ""}
+                        aria-label={r.error ? `Mensagem de erro: ${r.error}` : undefined}
+                      >
+                        {r.error ?? "—"}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
