@@ -36,9 +36,21 @@ function truncate(s: string, n = 200) {
   return s.length > n ? `${s.slice(0, n)}…` : s;
 }
 
+const FAILING_REFETCH_MS = 15_000;
+const HEALTHY_REFETCH_MS = 60_000;
+
 export function IntegrationHealthCard({ connection }: { connection: IntegrationConnection }) {
   const [historyOpen, setHistoryOpen] = useState(false);
-  const { data: checks = [] } = useIntegrationHealth(connection.id, 10);
+  // First pass: no polling until we know status. Then adapt based on last check.
+  const initial = useIntegrationHealth(connection.id, 10);
+  const lastStatus = initial.data?.[0]?.status;
+  const isFailing = connection.enabled && lastStatus && lastStatus !== "success";
+  const refetchInterval: number | false = !connection.enabled
+    ? false
+    : isFailing
+      ? FAILING_REFETCH_MS
+      : HEALTHY_REFETCH_MS;
+  const { data: checks = [] } = useIntegrationHealth(connection.id, 10, { refetchInterval });
   const test = useTestConnection();
 
   const Icon = KIND_ICON[connection.kind];
