@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
+import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
 // Extended product interface with database fields
 export interface Product {
