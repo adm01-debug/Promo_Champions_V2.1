@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   type IntegrationConnection,
 } from "@/hooks/admin/useIntegrationConnections";
 import { IntegrationHealthHistorySheet } from "./IntegrationHealthHistorySheet";
+import { isHistoryOpenPersisted, setHistoryOpenPersisted } from "./historyOpenPersistence";
 
 const KIND_ICON = {
   database: Database,
