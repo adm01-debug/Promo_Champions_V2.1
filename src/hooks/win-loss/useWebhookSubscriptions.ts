@@ -33,11 +33,9 @@ export function useWebhookSubscriptions() {
     mutationFn: async ({ url, events }: { url: string; events: string[] }) => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error("Não autenticado");
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => { insert: (p: Record<string, unknown>) => Promise<{ error: Error | null }> };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_subscriptions")
-        .insert({ url, events, created_by: auth.user.id });
+        .insert(insertPayload("winloss_webhook_subscriptions", { url, events, created_by: auth.user.id }));
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["winloss-webhooks"] }); toast.success("Webhook criado"); },
