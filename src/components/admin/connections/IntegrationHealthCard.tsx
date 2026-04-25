@@ -87,6 +87,7 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
         role="button"
         tabIndex={0}
         aria-label={`Abrir histórico de testes de ${connection.label}`}
+        aria-busy={test.isPending}
         onClick={openHistory}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -94,8 +95,17 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
             openHistory();
           }
         }}
-        className="border-border/40 flex flex-col cursor-pointer transition-colors hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="relative border-border/40 flex flex-col cursor-pointer transition-colors hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
+        {test.isPending && (
+          <>
+            <div className="pointer-events-none absolute inset-0 z-10 rounded-xl bg-background/40 backdrop-blur-[1px] animate-in fade-in-0" />
+            <div className="pointer-events-none absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Testando…
+            </div>
+          </>
+        )}
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 min-w-0">
