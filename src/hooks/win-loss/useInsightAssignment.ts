@@ -8,17 +8,11 @@ export function useInsightAssignment() {
 
   const assign = useMutation({
     mutationFn: async ({ insightId, salespersonId }: { insightId: string; salespersonId: string | null }) => {
-      const patch: Record<string, unknown> = {
+      const patch = updatePayload("win_loss_insights", {
         assigned_to: salespersonId,
         assigned_at: salespersonId ? new Date().toISOString() : null,
-      };
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          update: (p: Record<string, unknown>) => {
-            eq: (col: string, v: string) => Promise<{ error: Error | null }>;
-          };
-        };
-      })
+      });
+      const { error } = await supabase
         .from("win_loss_insights")
         .update(patch)
         .eq("id", insightId);
