@@ -55,11 +55,7 @@ export function useWebhookSubscriptions() {
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          delete: () => { eq: (c: string, v: string) => Promise<{ error: Error | null }> };
-        };
-      })
+      const { error } = await supabase
         .from("winloss_webhook_subscriptions")
         .delete()
         .eq("id", id);
