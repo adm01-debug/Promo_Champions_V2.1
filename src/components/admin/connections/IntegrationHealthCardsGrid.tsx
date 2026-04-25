@@ -1,17 +1,35 @@
 import { useMemo } from "react";
-import { useIntegrationConnections } from "@/hooks/admin/useIntegrationConnections";
+import { useIntegrationConnections, useIntegrationHealth } from "@/hooks/admin/useIntegrationConnections";
 import { useCredentialsSource } from "./CredentialsSourceFilterContext";
 import { IntegrationHealthCard } from "./IntegrationHealthCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function IntegrationHealthCardsGrid() {
-  const { source } = useCredentialsSource();
+  const { source, healthStatus } = useCredentialsSource();
   const { data: conns = [], isLoading } = useIntegrationConnections();
+  const { data: checks = [] } = useIntegrationHealth(undefined, 500);
 
-  const filtered = useMemo(
-    () => (source === "all" ? conns : conns.filter((c) => c.source === source)),
-    [conns, source]
-  );
+  const lastStatusByConn = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const ch of checks) {
+      if (!map.has(ch.connection_id)) map.set(ch.connection_id, ch.status);
+    }
+    return map;
+  }, [checks]);
+
+  const filtered = useMemo(() => {
+    return conns.filter((c) => {
+      if (source !== "all" && c.source !== source) return false;
+      if (healthStatus === "all") return true;
+      const last = lastStatusByConn.get(c.id);
+      // warning = disabled OR never tested
+      if (healthStatus === "warning") return !c.enabled || !last;
+      if (!c.enabled) return false;
+      if (healthStatus === "healthy") return last === "success";
+      if (healthStatus === "failing") return !!last && last !== "success";
+      return true;
+    });
+  }, [conns, source, healthStatus, lastStatusByConn]);
 
   if (isLoading) {
     return (
@@ -28,7 +46,7 @@ export function IntegrationHealthCardsGrid() {
   if (filtered.length === 0) {
     return (
       <div className="text-sm text-muted-foreground py-6 text-center border border-dashed rounded-xl">
-        Nenhuma conexão para esta origem.
+        Nenhuma conexão para os filtros selecionados.
       </div>
     );
   }
