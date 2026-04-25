@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle, History, SlidersHorizontal } from "lucide-react";
+import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle, History, SlidersHorizontal, Plug } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 
 const QUICK_LINKS = [
+  { to: "/admin/conexoes", icon: Plug, label: "Conexões", color: "text-primary" },
   { to: "/configuracoes", icon: Settings, label: "Configurações", color: "text-muted-foreground" },
   { to: "/vendedores", icon: Users, label: "Vendedores", color: "text-chart-1" },
   { to: "/times", icon: Activity, label: "Atribuições SDR", color: "text-chart-2" },

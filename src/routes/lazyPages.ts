@@ -149,3 +149,4 @@ export const SalesEnablementHubPage = lazy(() => import("@/pages/SalesEnablement
 export const PricingIntelligenceHubPage = lazy(() => import("@/pages/PricingIntelligenceHub"));
 export const TerritoryOptimizationHubPage = lazy(() => import("@/pages/TerritoryOptimizationHub"));
 export const CustomerSuccess360Page = lazy(() => import("@/pages/CustomerSuccess360"));
+export const AdminConexoesPage = lazy(() => import("@/pages/admin/AdminConexoesPage"));

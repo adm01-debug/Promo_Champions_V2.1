@@ -5931,6 +5931,149 @@ export type Database = {
           },
         ]
       }
+      integration_autotest_jobs: {
+        Row: {
+          failed: number | null
+          finished_at: string | null
+          id: string
+          results: Json | null
+          started_at: string
+          status: string
+          succeeded: number | null
+          total: number | null
+        }
+        Insert: {
+          failed?: number | null
+          finished_at?: string | null
+          id?: string
+          results?: Json | null
+          started_at?: string
+          status?: string
+          succeeded?: number | null
+          total?: number | null
+        }
+        Update: {
+          failed?: number | null
+          finished_at?: string | null
+          id?: string
+          results?: Json | null
+          started_at?: string
+          status?: string
+          succeeded?: number | null
+          total?: number | null
+        }
+        Relationships: []
+      }
+      integration_autotest_settings: {
+        Row: {
+          enabled: boolean
+          failure_window_minutes: number
+          id: string
+          interval_minutes: number
+          singleton: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          enabled?: boolean
+          failure_window_minutes?: number
+          id?: string
+          interval_minutes?: number
+          singleton?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          enabled?: boolean
+          failure_window_minutes?: number
+          id?: string
+          interval_minutes?: number
+          singleton?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      integration_connections: {
+        Row: {
+          config: Json
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          id: string
+          kind: Database["public"]["Enums"]["integration_kind"]
+          label: string
+          secret_refs: string[]
+          source: Database["public"]["Enums"]["integration_source"]
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          kind: Database["public"]["Enums"]["integration_kind"]
+          label: string
+          secret_refs?: string[]
+          source?: Database["public"]["Enums"]["integration_source"]
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          kind?: Database["public"]["Enums"]["integration_kind"]
+          label?: string
+          secret_refs?: string[]
+          source?: Database["public"]["Enums"]["integration_source"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      integration_health_checks: {
+        Row: {
+          checked_at: string
+          connection_id: string
+          details: Json | null
+          error: string | null
+          id: string
+          latency_ms: number | null
+          status: Database["public"]["Enums"]["integration_health_status"]
+          triggered_by: Database["public"]["Enums"]["integration_trigger"]
+        }
+        Insert: {
+          checked_at?: string
+          connection_id: string
+          details?: Json | null
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          status: Database["public"]["Enums"]["integration_health_status"]
+          triggered_by?: Database["public"]["Enums"]["integration_trigger"]
+        }
+        Update: {
+          checked_at?: string
+          connection_id?: string
+          details?: Json | null
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          status?: Database["public"]["Enums"]["integration_health_status"]
+          triggered_by?: Database["public"]["Enums"]["integration_trigger"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_health_checks_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "integration_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_levels: {
         Row: {
           created_at: string
@@ -15561,6 +15704,16 @@ export type Database = {
         | "pipeline"
         | "omitted"
         | "closed"
+      integration_health_status: "success" | "failure" | "degraded" | "pending"
+      integration_kind:
+        | "database"
+        | "bitrix24"
+        | "n8n"
+        | "mcp"
+        | "webhook"
+        | "other"
+      integration_source: "db" | "env" | "secret"
+      integration_trigger: "manual" | "auto"
       onboarding_status: "not_started" | "in_progress" | "completed" | "stalled"
       qbr_frequency: "monthly" | "quarterly" | "biannual" | "annual"
       renewal_status: "upcoming" | "at_risk" | "renewed" | "churned" | "lost"
@@ -15747,6 +15900,17 @@ export const Constants = {
         "omitted",
         "closed",
       ],
+      integration_health_status: ["success", "failure", "degraded", "pending"],
+      integration_kind: [
+        "database",
+        "bitrix24",
+        "n8n",
+        "mcp",
+        "webhook",
+        "other",
+      ],
+      integration_source: ["db", "env", "secret"],
+      integration_trigger: ["manual", "auto"],
       onboarding_status: ["not_started", "in_progress", "completed", "stalled"],
       qbr_frequency: ["monthly", "quarterly", "biannual", "annual"],
       renewal_status: ["upcoming", "at_risk", "renewed", "churned", "lost"],
