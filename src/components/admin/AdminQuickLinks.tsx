@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 
 const QUICK_LINKS = [
+  { to: "/admin/conexoes", icon: Plug, label: "Conexões", color: "text-primary" },
   { to: "/configuracoes", icon: Settings, label: "Configurações", color: "text-muted-foreground" },
   { to: "/vendedores", icon: Users, label: "Vendedores", color: "text-chart-1" },
   { to: "/times", icon: Activity, label: "Atribuições SDR", color: "text-chart-2" },
