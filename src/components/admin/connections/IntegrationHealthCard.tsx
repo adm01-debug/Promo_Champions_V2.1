@@ -69,9 +69,25 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
     return <Badge variant="destructive">Falhando</Badge>;
   })();
 
+  const stop = (e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation();
+  const openHistory = () => setHistoryOpen(true);
+
   return (
     <>
-      <Card variant="glass" className="border-border/40 flex flex-col">
+      <Card
+        variant="glass"
+        role="button"
+        tabIndex={0}
+        aria-label={`Abrir histórico de testes de ${connection.label}`}
+        onClick={openHistory}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openHistory();
+          }
+        }}
+        className="border-border/40 flex flex-col cursor-pointer transition-colors hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 min-w-0">
@@ -110,7 +126,7 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
           </div>
 
           {last && last.status !== "success" && last.error && (
-            <Alert variant="destructive" className="py-2">
+            <Alert variant="destructive" className="py-2" onClick={stop}>
               <AlertTriangle className="h-3.5 w-3.5" />
               <AlertDescription className="text-xs">
                 <TooltipProvider>
@@ -127,12 +143,15 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
             </Alert>
           )}
 
-          <div className="flex gap-2 mt-auto pt-1">
+          <div className="flex gap-2 mt-auto pt-1" onClick={stop}>
             <Button
               variant="outline"
               size="sm"
               className="flex-1"
-              onClick={() => test.mutate(connection.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                test.mutate(connection.id);
+              }}
               disabled={test.isPending}
             >
               {test.isPending ? (
@@ -142,7 +161,15 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
               )}
               Testar
             </Button>
-            <Button variant="ghost" size="sm" className="flex-1" onClick={() => setHistoryOpen(true)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                openHistory();
+              }}
+            >
               <History className="h-3.5 w-3.5 mr-1.5" />
               Histórico
             </Button>
