@@ -12,6 +12,7 @@ import { McpTab } from "@/components/admin/connections/McpTab";
 import { WebhooksTab } from "@/components/admin/connections/WebhooksTab";
 import { IntegrationsHealthCard } from "@/components/admin/connections/IntegrationsHealthCard";
 import { ConnectionsOverviewTable } from "@/components/admin/connections/ConnectionsOverviewTable";
+import { IntegrationHealthCardsGrid } from "@/components/admin/connections/IntegrationHealthCardsGrid";
 import { SmokeTestChecklist } from "@/components/admin/connections/SmokeTestChecklist";
 import { AutoTestIntervalCard } from "@/components/admin/connections/AutoTestIntervalCard";
 import { FailureWindowCard } from "@/components/admin/connections/FailureWindowCard";
