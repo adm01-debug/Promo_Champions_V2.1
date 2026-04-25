@@ -19,11 +19,7 @@ export function useWebhookSubscriptions() {
   const list = useQuery({
     queryKey: ["winloss-webhooks"],
     queryFn: async (): Promise<WebhookSubscription[]> => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => { order: (c: string, o: { ascending: boolean }) => Promise<{ data: WebhookSubscription[] | null; error: Error | null }> };
-        };
-      })
+      const { data, error } = await supabase
         .from("winloss_webhook_subscriptions")
         .select("*")
         .order("created_at", { ascending: false });
