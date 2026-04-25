@@ -60,8 +60,8 @@ export function useUpdateScheduledReport() {
   return useMutation({
     mutationFn: async ({ id, ...patch }: Partial<ScheduledReport> & { id: string }) => {
       const { error } = await supabase
-        .from("scheduled_reports" as never)
-        .update(patch as never)
+        .from("scheduled_reports")
+        .update(updatePayload("scheduled_reports", patch))
         .eq("id", id);
       if (error) throw error;
     },
