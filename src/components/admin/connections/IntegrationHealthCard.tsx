@@ -41,7 +41,14 @@ const FAILING_REFETCH_MS = 15_000;
 const HEALTHY_REFETCH_MS = 60_000;
 
 export function IntegrationHealthCard({ connection }: { connection: IntegrationConnection }) {
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyOpen, setHistoryOpenState] = useState<boolean>(() => isHistoryOpenPersisted(connection.id));
+  const setHistoryOpen = (open: boolean) => {
+    setHistoryOpenState(open);
+    setHistoryOpenPersisted(connection.id, open);
+  };
+  useEffect(() => {
+    setHistoryOpenState(isHistoryOpenPersisted(connection.id));
+  }, [connection.id]);
   // First pass: no polling until we know status. Then adapt based on last check.
   const initial = useIntegrationHealth(connection.id, 10);
   const lastStatus = initial.data?.[0]?.status;
