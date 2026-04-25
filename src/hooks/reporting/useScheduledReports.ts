@@ -77,7 +77,7 @@ export function useDeleteScheduledReport() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("scheduled_reports" as never).delete().eq("id", id);
+      const { error } = await supabase.from("scheduled_reports").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
