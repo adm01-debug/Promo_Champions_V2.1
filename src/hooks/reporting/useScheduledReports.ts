@@ -93,8 +93,8 @@ export function useToggleScheduledReport() {
   return useMutation({
     mutationFn: async ({ id, enabled }: { id: string; enabled: boolean }) => {
       const { error } = await supabase
-        .from("scheduled_reports" as never)
-        .update({ enabled } as never)
+        .from("scheduled_reports")
+        .update(updatePayload("scheduled_reports", { enabled }))
         .eq("id", id);
       if (error) throw error;
     },
