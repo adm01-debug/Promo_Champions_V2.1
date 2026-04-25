@@ -85,7 +85,15 @@ export function useCreateWebhook() {
       if (!user) throw new Error("Not authenticated");
       const { data, error } = await supabase
         .from("webhooks")
-        .insert({ ...params, created_by: user.id } as never)
+        .insert(insertPayload("webhooks", {
+          name: params.name ?? "Webhook",
+          url: params.url ?? "",
+          events: params.events ?? [],
+          secret: params.secret,
+          headers: params.headers as Json | undefined,
+          is_active: params.is_active,
+          created_by: user.id,
+        }))
         .select()
         .single();
       if (error) throw error;
