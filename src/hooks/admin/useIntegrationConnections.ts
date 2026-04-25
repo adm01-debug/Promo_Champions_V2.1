@@ -116,19 +116,29 @@ export function useTestConnection() {
   });
 }
 
-export function useIntegrationHealth(connectionId?: string) {
+export interface IntegrationHealthCheck {
+  id: string;
+  connection_id: string;
+  status: string;
+  latency_ms: number | null;
+  error: string | null;
+  checked_at: string;
+  triggered_by: string | null;
+}
+
+export function useIntegrationHealth(connectionId?: string, limit = 100) {
   return useQuery({
-    queryKey: ["integration-health", connectionId ?? "all"],
+    queryKey: ["integration-health", connectionId ?? "all", limit],
     queryFn: async () => {
       let q = supabase
         .from("integration_health_checks")
         .select("*")
         .order("checked_at", { ascending: false })
-        .limit(100);
+        .limit(limit);
       if (connectionId) q = q.eq("connection_id", connectionId);
       const { data, error } = await q;
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as unknown as IntegrationHealthCheck[];
     },
   });
 }

@@ -1,90 +1,80 @@
+## Cards de saúde por conexão
 
-# Módulo de Conexões — Hub Central de Integrações
+Hoje, o status detalhado de cada integração só aparece em uma linha de tabela. Vou adicionar uma seção visual de **cards individuais por conexão** acima da `ConnectionsOverviewTable`, mostrando todos os dados úteis para diagnóstico rápido.
 
-Cria a rota `/admin/conexoes` (`AdminConexoesPage`) e todos os componentes/hook/edge functions referenciados no esqueleto enviado. Reaproveita o que já existe (`useBitrix24`, `useWebhooks`, `ExternalDBSettings`, `dispatch-webhook`, `external-db-bridge`, `bitrix24-oauth`).
+### Novo componente: `IntegrationHealthCardsGrid.tsx`
 
-## 1. Banco de dados (migration)
+Localização: `src/components/admin/connections/IntegrationHealthCardsGrid.tsx`
 
-Novas tabelas (RLS: somente admin):
+Renderiza um grid responsivo (`md:grid-cols-2 lg:grid-cols-3`) de `IntegrationHealthCard`, um por conexão filtrada pelo `useCredentialsSource()`.
 
-- **`integration_connections`** — registro unificado de cada integração (id, kind: `database|bitrix24|n8n|mcp|webhook|other`, label, config jsonb, secret_refs text[], enabled bool, source: `db|env|secret`, created_by, timestamps).
-- **`integration_health_checks`** — histórico de testes (connection_id, status `success|failure|degraded`, latency_ms, error, checked_at, triggered_by `manual|auto`).
-- **`integration_autotest_settings`** — singleton (interval_minutes, failure_window_minutes, enabled, updated_by, updated_at).
-- **`integration_autotest_jobs`** — última execução do job agendado (started_at, finished_at, status, results jsonb).
+### Card individual: `IntegrationHealthCard`
 
-Trigger + função `has_role(auth.uid(),'admin')` em todas as policies (segue padrão do projeto).
+Para cada `integration_connection`, exibe:
 
-## 2. Edge functions
+- **Header**: ícone por tipo (Database / Plug / Webhook / Bot / Workflow) + label + badge de tipo + badge de origem (`db` / `env` / `secret`)
+- **Status atual** (do último `integration_health_checks`):
+  - Badge verde "Operacional" se `status = success`
+  - Badge vermelha "Falhando" se `status = error`
+  - Badge cinza "Não testado" se sem registros
+  - Badge amarela "Desativado" se `enabled = false` (override visual)
+- **Métricas inline**:
+  - Última verificação (`formatDistanceToNow` em pt-BR)
+  - Latência do último teste (ms)
+  - Taxa de sucesso nas **últimas 10 execuções** (% calculado client-side a partir de `useIntegrationHealth(connectionId)` filtrado)
+  - Mini sparkline de latência (últimos 10 testes) usando `MiniSparkline` existente em `src/components/ui` se disponível, senão omitir
+- **Bloco de erro** (apenas se último check falhou):
+  - `Alert` destrutivo com mensagem `error` truncada (max 200 chars) + tooltip com texto completo
+- **Footer**: 2 botões — "Testar agora" (chama `useTestConnection`) e "Ver histórico" (abre `Sheet` lateral com tabela das últimas 50 execuções)
 
-- **`test-integration-connection`** — recebe `{ connection_id }`, executa probe específico por kind:
-  - `database` → reutiliza `external-db-bridge` com `select limit 1`.
-  - `bitrix24` → chama `bitrix24-oauth` para validar token.
-  - `n8n` → `GET {base_url}/healthz` com header `X-N8N-API-KEY`.
-  - `mcp` → `POST {url}` com `{"jsonrpc":"2.0","method":"initialize",...}` e `Accept: application/json, text/event-stream`.
-  - `webhook` → reaproveita `dispatch-webhook` com `event_type:"test.ping"`.
-  - Persiste resultado em `integration_health_checks`.
-- **`run-integration-autotests`** — varre `integration_connections` ativos e dispara `test-integration-connection` em paralelo (com limite). Grava `integration_autotest_jobs`.
-- **`schedule-integration-autotests`** — cron via `pg_cron` (extensão já habilitada se possível; senão expõe endpoint para acionar via Lovable scheduler externo). Lê `interval_minutes` da tabela settings.
+### Sheet de histórico: `IntegrationHealthHistorySheet`
 
-Padrões obrigatórios: `corsHeaders` de `_shared/cors.ts`, import `@supabase/supabase-js@2.49.4` via `npm:`, validação Zod, `verify_jwt = true` (admin only via RPC `has_role`).
+- `Sheet` lateral com `SheetTrigger` no card
+- Tabela com colunas: Data/hora, Status, Latência (ms), Erro, Origem do trigger (`manual` / `auto` / `smoke`)
+- Reusa `useIntegrationHealth(connectionId)` (já existe e aceita filtro por id)
+- Limita a 50 últimos registros (já é o `.limit(100)` do hook → ajustar para receber limit opcional, default 100)
 
-## 3. Hooks novos
+### Ajustes em hook existente
 
-- `src/hooks/admin/useSecretsManager.ts` — lista secrets do projeto via edge function dedicada (`list-project-secrets`, somente nomes — nunca valores). Expõe `{ secrets, list, refresh }`.
-- `src/hooks/admin/useIntegrationConnections.ts` — CRUD via React Query usando `updatePayload`/`insertPayload` (typed helpers já existentes).
-- `src/hooks/admin/useIntegrationHealth.ts` — histórico + `runTest(connectionId)`.
-- `src/hooks/admin/useAutoTestSettings.ts` — get/update settings + status do último job.
+Em `src/hooks/admin/useIntegrationConnections.ts`:
 
-## 4. Componentes (`src/components/admin/connections/`)
+- Atualizar `useIntegrationHealth(connectionId?, limit = 100)` para aceitar `limit` opcional, mantendo retrocompatibilidade.
+- Tipar o retorno como `IntegrationHealthCheck[]` (interface nova exportada) com campos: `id, connection_id, status, latency_ms, error, checked_at, triggered_by`.
 
-Mantém limite de 400 linhas por arquivo (extrair helpers em `*Helpers.ts` quando necessário).
+### Integração na página
 
-- `CredentialsSourceFilterContext.tsx` — Context com `source: 'all'|'db'|'env'|'secret'` + setter.
-- `CredentialsSourceFilter.tsx` — `Tabs`/`SegmentedControl` que controla o context.
-- `GlobalRefreshFromDbButton.tsx` — botão que invalida queries + chama `useSecretsManager.refresh()` e dispara `onRefreshed`.
-- `IntegrationsHealthCard.tsx` — cards de status agregado (total, OK, falhando, degradados) com sparkline das últimas execuções.
-- `ConnectionsOverviewTable.tsx` — tabela unificada com kind, label, source badge, last check, latency, ações (Testar, Editar, Toggle, Excluir).
-- `SmokeTestChecklist.tsx` — checklist visual rodando todos os testes em sequência com progresso animado (Framer motion).
-- `AutoTestIntervalCard.tsx` — slider + input numérico para `interval_minutes` (5–1440).
-- `FailureWindowCard.tsx` — input para janela de tolerância (min) antes de marcar como degradado.
-- `AutoTestJobStatusCard.tsx` — última execução, próximo agendamento, botão "Rodar agora".
-- `SupabaseConnectionsTab.tsx` — engloba `ExternalDBSettings` + cadastro de DBs adicionais (form com URL, anon key, label) gravando em `integration_connections` (kind=database) com secrets via `add_secret`.
-- `Bitrix24Tab.tsx` — usa `useBitrix24` (status, sync logs, botão sync, OAuth reconnect).
-- `N8nTab.tsx` — form (base URL, API key secret name), lista workflows (via `GET /workflows` se API key presente), test ping.
-- `McpTab.tsx` — form para servidor MCP (URL, auth header opcional), valida com `initialize` JSON-RPC, lista tools retornadas.
-- `WebhooksTab.tsx` — embute hooks `useWebhooks`, formulário CRUD existente, deliveries recentes, botão "Testar" (`useTestWebhook`).
+Em `src/pages/admin/AdminConexoesPage.tsx`, inserir o novo grid **entre `ConnectionsOverviewTable` e o grid dos 3 cards de auto-teste**:
 
-Todos respeitam tokens semânticos (sem cores hardcoded), Sora para títulos / Inter para corpo, skeletons + empty states padronizados.
+```tsx
+<ConnectionsOverviewTable />
 
-## 5. Página
+<IntegrationHealthCardsGrid />   {/* NOVO */}
 
-`src/pages/admin/AdminConexoesPage.tsx` — usa o esqueleto enviado, envolto em:
-- `ProtectedRoute requiredRole="admin"`
-- `PageTransition`
-- `PageSEO` com title "Conexões | Promo Champions"
-- `CredentialsSourceFilterProvider`
-- Layout: header (ícone `Plug`, título, subtítulo, `GlobalRefreshFromDbButton`, `CredentialsSourceFilter`) → `IntegrationsHealthCard` → `ConnectionsOverviewTable` → grid de cards (`AutoTestIntervalCard`, `FailureWindowCard`, `AutoTestJobStatusCard`) → `SmokeTestChecklist` → `Tabs` (Bancos, Bitrix24, n8n, MCP, Webhooks).
+<div className="grid gap-4 md:grid-cols-3">
+  <AutoTestIntervalCard />
+  ...
+</div>
+```
 
-## 6. Rotas e navegação
+Ambos consomem o mesmo `CredentialsSourceFilterProvider`, então o filtro Banco/ENV/Secret afeta os dois automaticamente.
 
-- Adicionar em `src/routes/AppRoutes.tsx`:
-  ```tsx
-  <Route path="/admin/conexoes" element={<Admin><AdminConexoesPage /></Admin>} />
-  ```
-- Adicionar item no `AdminQuickLinks.tsx` ("Conexões", ícone `Plug`, rota `/admin/conexoes`).
-- Adicionar entrada na sidebar (grupo Admin) respeitando RBAC (admin only).
+### Comportamento de loading e empty
 
-## 7. Validação e qualidade
+- Loading: 6 skeletons no grid (mesma altura ~180px)
+- Empty (após filtro): mensagem "Nenhuma conexão para esta origem"
+- Empty global (zero conexões): omite o grid inteiro (a tabela acima já comunica)
 
-- TypeScript: 100% tipado via `TableUpdate`/`TableInsert` + types gerados do Supabase.
-- `tsc --noEmit` e `bun run lint` limpos.
-- Testes Deno básicos para `test-integration-connection` (mock fetch para cada kind).
-- Telemetria: emitir evento `integration.tested` via `useTelemetry`.
-- Memória nova: `mem://admin/connections-hub` documentando arquitetura, kinds suportados e padrão de probe.
+### Arquivos a criar
+- `src/components/admin/connections/IntegrationHealthCardsGrid.tsx`
+- `src/components/admin/connections/IntegrationHealthCard.tsx`
+- `src/components/admin/connections/IntegrationHealthHistorySheet.tsx`
 
-## 8. Fora de escopo (próxima iteração)
+### Arquivos a editar
+- `src/hooks/admin/useIntegrationConnections.ts` (tipo `IntegrationHealthCheck` + parâmetro `limit` opcional)
+- `src/pages/admin/AdminConexoesPage.tsx` (montar o grid)
 
-- Realtime subscriptions na tabela de health checks.
-- Rotação automática de secrets.
-- Importação em massa via CSV.
-- Integração direta com MCP connectors do Lovable (apenas servidores MCP externos nesta versão).
+### Validação final
+- `tsc --noEmit` limpo
+- Smoke visual: criar 1 conexão fake (n8n), rodar teste, confirmar card mostra status, latência e abre sheet de histórico
+
+Sem mudanças de schema, sem nova edge function, sem novas migrations — usa exclusivamente as tabelas `integration_connections` e `integration_health_checks` já criadas.

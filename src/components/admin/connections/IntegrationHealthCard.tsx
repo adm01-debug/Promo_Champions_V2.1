@@ -1,0 +1,149 @@
+import { useMemo, useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Database, Plug, Webhook, Bot, Workflow, TestTube2, Loader2, History, AlertTriangle } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import {
+  useIntegrationHealth,
+  useTestConnection,
+  type IntegrationConnection,
+} from "@/hooks/admin/useIntegrationConnections";
+import { IntegrationHealthHistorySheet } from "./IntegrationHealthHistorySheet";
+
+const KIND_ICON = {
+  database: Database,
+  bitrix24: Plug,
+  n8n: Workflow,
+  mcp: Bot,
+  webhook: Webhook,
+  other: Plug,
+} as const;
+
+const KIND_LABEL: Record<IntegrationConnection["kind"], string> = {
+  database: "Banco",
+  bitrix24: "Bitrix24",
+  n8n: "n8n",
+  mcp: "MCP",
+  webhook: "Webhook",
+  other: "Outro",
+};
+
+function truncate(s: string, n = 200) {
+  return s.length > n ? `${s.slice(0, n)}…` : s;
+}
+
+export function IntegrationHealthCard({ connection }: { connection: IntegrationConnection }) {
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const { data: checks = [] } = useIntegrationHealth(connection.id, 10);
+  const test = useTestConnection();
+
+  const Icon = KIND_ICON[connection.kind];
+  const last = checks[0];
+
+  const successRate = useMemo(() => {
+    if (checks.length === 0) return null;
+    const ok = checks.filter((c) => c.status === "success").length;
+    return Math.round((ok / checks.length) * 100);
+  }, [checks]);
+
+  const statusBadge = (() => {
+    if (!connection.enabled) return <Badge variant="warning">Desativado</Badge>;
+    if (!last) return <Badge variant="secondary">Não testado</Badge>;
+    if (last.status === "success") return <Badge variant="success">Operacional</Badge>;
+    return <Badge variant="destructive">Falhando</Badge>;
+  })();
+
+  return (
+    <>
+      <Card variant="glass" className="border-border/40 flex flex-col">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2 min-w-0">
+              <div className="p-2 rounded-lg bg-muted/40 shrink-0">
+                <Icon className="h-4 w-4 text-primary" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-display font-semibold text-sm truncate">{connection.label}</h3>
+                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <Badge variant="outline" className="text-[10px]">{KIND_LABEL[connection.kind]}</Badge>
+                  <Badge variant="secondary" className="text-[10px] uppercase">{connection.source}</Badge>
+                </div>
+              </div>
+            </div>
+            {statusBadge}
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 flex flex-col gap-3">
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-md bg-muted/30 p-2">
+              <div className="text-[10px] uppercase text-muted-foreground">Último teste</div>
+              <div className="text-xs font-medium mt-1 truncate">
+                {last ? formatDistanceToNow(new Date(last.checked_at), { addSuffix: true, locale: ptBR }) : "—"}
+              </div>
+            </div>
+            <div className="rounded-md bg-muted/30 p-2">
+              <div className="text-[10px] uppercase text-muted-foreground">Latência</div>
+              <div className="text-xs font-medium mt-1">
+                {last?.latency_ms != null ? `${last.latency_ms}ms` : "—"}
+              </div>
+            </div>
+            <div className="rounded-md bg-muted/30 p-2">
+              <div className="text-[10px] uppercase text-muted-foreground">Sucesso (10x)</div>
+              <div className="text-xs font-medium mt-1">{successRate != null ? `${successRate}%` : "—"}</div>
+            </div>
+          </div>
+
+          {last && last.status !== "success" && last.error && (
+            <Alert variant="destructive" className="py-2">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              <AlertDescription className="text-xs">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help">{truncate(last.error)}</span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-md">
+                      <p className="text-xs whitespace-pre-wrap break-words">{last.error}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <div className="flex gap-2 mt-auto pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={() => test.mutate(connection.id)}
+              disabled={test.isPending}
+            >
+              {test.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <TestTube2 className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Testar
+            </Button>
+            <Button variant="ghost" size="sm" className="flex-1" onClick={() => setHistoryOpen(true)}>
+              <History className="h-3.5 w-3.5 mr-1.5" />
+              Histórico
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <IntegrationHealthHistorySheet
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+        connectionId={connection.id}
+        label={connection.label}
+      />
+    </>
+  );
+}
