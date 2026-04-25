@@ -1,4 +1,5 @@
 const STORAGE_KEY = "integration-health:open-history";
+const LAST_KEY = "integration-health:last-opened";
 
 function readSet(): Set<string> {
   try {
@@ -25,7 +26,30 @@ export function isHistoryOpenPersisted(connectionId: string): boolean {
 
 export function setHistoryOpenPersisted(connectionId: string, open: boolean): void {
   const set = readSet();
-  if (open) set.add(connectionId);
-  else set.delete(connectionId);
+  if (open) {
+    set.add(connectionId);
+    try {
+      localStorage.setItem(LAST_KEY, connectionId);
+    } catch {
+      // noop
+    }
+  } else {
+    set.delete(connectionId);
+    try {
+      const last = localStorage.getItem(LAST_KEY);
+      if (last === connectionId) localStorage.removeItem(LAST_KEY);
+    } catch {
+      // noop
+    }
+  }
   writeSet(set);
 }
+
+export function getLastOpenedConnectionId(): string | null {
+  try {
+    return localStorage.getItem(LAST_KEY);
+  } catch {
+    return null;
+  }
+}
+
