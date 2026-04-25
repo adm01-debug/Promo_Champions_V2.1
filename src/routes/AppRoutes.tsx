@@ -227,6 +227,7 @@ export function AppRoutes() {
 
                     {/* ─── Admin ─────────────────────────────────── */}
                     <Route path="/admin" element={<Admin><AdminDashboard /></Admin>} />
+                    <Route path="/admin/conexoes" element={<Admin><AdminConexoesPage /></Admin>} />
                     <Route path="/admin/telemetria" element={<Manager><AdminTelemetria /></Manager>} />
                     <Route path="/usage-analytics" element={<Admin><UsageAnalytics /></Admin>} />
                     <Route path="/feature-flags" element={<Admin><FeatureFlagsAdmin /></Admin>} />
