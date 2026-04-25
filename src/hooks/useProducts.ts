@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
+import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
 // Extended product interface with database fields
 export interface Product {
@@ -122,7 +123,7 @@ export const useUpdateProduct = () => {
       category?: string;
       status?: string;
     }) => {
-      const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      const updates: TableUpdate<'products'> = { updated_at: new Date().toISOString() };
       if (name !== undefined) updates.name = name;
       if (price !== undefined) updates.price = price;
       if (category !== undefined) updates.category = category;
@@ -130,7 +131,7 @@ export const useUpdateProduct = () => {
 
       const { data, error } = await supabase
         .from('products')
-        .update(updates as never)
+        .update(updates)
         .eq('id', id)
         .select()
         .single();

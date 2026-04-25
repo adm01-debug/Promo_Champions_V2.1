@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { TableUpdate } from "@/lib/supabase/typed-payloads";
 
 export const useTogglePlaybookItem = () => {
   const queryClient = useQueryClient();
@@ -156,12 +157,12 @@ export const useUpdatePlaybookItem = () => {
 
   return useMutation({
     mutationFn: async ({ id, content, is_required }: { id: string; content: string; is_required?: boolean }) => {
-      const updates: Record<string, unknown> = { content };
+      const updates: TableUpdate<"playbook_items"> = { content };
       if (is_required !== undefined) updates.is_required = is_required;
 
       const { error } = await supabase
         .from("playbook_items")
-        .update(updates as never)
+        .update(updates)
         .eq("id", id);
       if (error) throw error;
     },

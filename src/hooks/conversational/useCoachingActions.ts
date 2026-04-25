@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { TableUpdate } from "@/lib/supabase/typed-payloads";
 import type { CoachingAction, CoachingStatus } from "@/components/conversational/coachingHelpers";
 
 export function useCoachingActions(recordingId?: string) {
@@ -47,7 +48,7 @@ export function useUpdateCoachingAction() {
       status?: CoachingStatus;
       manager_note?: string | null;
     }) => {
-      const patch: Record<string, unknown> = {};
+      const patch: TableUpdate<"coaching_actions"> = {};
       if (input.status) {
         patch.status = input.status;
         if (input.status === "accepted" || input.status === "practiced") {
@@ -58,7 +59,7 @@ export function useUpdateCoachingAction() {
 
       const { error } = await supabase
         .from("coaching_actions")
-        .update(patch as never)
+        .update(patch)
         .eq("id", input.id);
       if (error) throw error;
     },
