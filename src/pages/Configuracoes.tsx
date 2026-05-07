@@ -97,30 +97,25 @@ export default function Configuracoes() {
 
                 {/* Visual separator */}
                 <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
-                <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  IP
+                <TabsTrigger value="ip-whitelist" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Globe className="h-3.5 w-3.5 mr-2" />Security IP
                 </TabsTrigger>
-                <TabsTrigger value="geo-blocking" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Geo
+                <TabsTrigger value="geo-blocking" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <MapPin className="h-3.5 w-3.5 mr-2" />Geo Block
                 </TabsTrigger>
-                <TabsTrigger value="password-reset" className="flex items-center gap-2">
-                  <KeyRound className="h-4 w-4" />
-                  Senha
+                <TabsTrigger value="password-reset" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <KeyRound className="h-3.5 w-3.5 mr-2" />Pass Reset
                 </TabsTrigger>
-                <TabsTrigger value="audit" className="flex items-center gap-2">
-                  <FileWarning className="h-4 w-4" />
-                  Auditoria
+                <TabsTrigger value="audit" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <FileWarning className="h-3.5 w-3.5 mr-2" />Audit Log
                 </TabsTrigger>
-                <TabsTrigger value="circuits" className="flex items-center gap-2">
-                  <Activity className="h-4 w-4" />
-                  Circuits
+                <TabsTrigger value="circuits" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Activity className="h-3.5 w-3.5 mr-2" />Circuits
                 </TabsTrigger>
-                <TabsTrigger value="feature-flags" className="flex items-center gap-2">
-                  <Flag className="h-4 w-4" />
-                  Flags
+                <TabsTrigger value="feature-flags" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Flag className="h-3.5 w-3.5 mr-2" />Flags
                 </TabsTrigger>
+
               </>
             )}
             </TabsList>
