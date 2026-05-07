@@ -68,24 +68,54 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
 
   return (
     <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
-              <Trophy className="h-4 w-4 text-primary-foreground" />
+      <CardHeader className="pb-4 border-b border-border/10">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-display font-black uppercase tracking-widest flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+                <Trophy className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <span className="gradient-text">Race Arena: Diário</span>
+            </CardTitle>
+            {completedCount > 0 && (
+              <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] border border-status-success/40 shadow-sm shadow-status-success/20 animate-bounce-in hover:animate-pop font-black uppercase">
+                🎉 {completedCount} Champions
+              </Badge>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-2">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Piloto ou Time..."
+                className="pl-8 h-9 text-xs glass border-border/20 focus-visible:ring-primary/30"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-            <span className="gradient-text">Ranking do Dia</span>
-          </CardTitle>
-          {completedCount > 0 && (
-            <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-xs border border-status-success/40 shadow-sm shadow-status-success/20 animate-bounce-in hover:animate-pop font-medium">
-              🎉 {completedCount} bateram meta
-            </Badge>
-          )}
+            <div className="flex gap-2">
+              <Select value={filterType} onValueChange={(v: any) => setFilterType(v)}>
+                <SelectTrigger className="h-9 text-[10px] glass border-border/20 font-bold uppercase tracking-tight">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-3 w-3" />
+                    <SelectValue placeholder="Métrica" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="glass border-border/40">
+                  <SelectItem value="overall">Geral (%)</SelectItem>
+                  <SelectItem value="calls">Ligações</SelectItem>
+                  <SelectItem value="emails">E-mails</SelectItem>
+                  <SelectItem value="meetings">Agendamentos</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[400px]">
-          <div className="p-4 space-y-2">
+        <ScrollArea className="h-[440px]">
+          <div className="p-4 space-y-3">
             {rankedData.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-lg border border-dashed border-border/50">
                 <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner">
