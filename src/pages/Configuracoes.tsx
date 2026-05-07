@@ -85,18 +85,16 @@ export default function Configuracoes() {
               <>
                 {/* Visual separator */}
                 <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
-                <TabsTrigger value="api-integration" className="flex items-center gap-2">
-                  <Plug className="h-4 w-4" />
-                  API
+                <TabsTrigger value="api-integration" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Plug className="h-3.5 w-3.5 mr-2" />API
                 </TabsTrigger>
-                <TabsTrigger value="custom-fields" className="flex items-center gap-2">
-                  <Settings2 className="h-4 w-4" />
-                  Campos
+                <TabsTrigger value="custom-fields" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Settings2 className="h-3.5 w-3.5 mr-2" />Fields
                 </TabsTrigger>
-                <TabsTrigger value="permissions" className="flex items-center gap-2">
-                  <Key className="h-4 w-4" />
-                  Permissões
+                <TabsTrigger value="permissions" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Key className="h-3.5 w-3.5 mr-2" />Permissions
                 </TabsTrigger>
+
                 {/* Visual separator */}
                 <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
                 <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
