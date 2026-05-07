@@ -39,7 +39,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDashboardPriorities } from "@/hooks/useDashboardPriorities";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import {
   DollarSign,
