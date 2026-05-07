@@ -160,7 +160,8 @@ export function ThemeCustomizer() {
             Restaurar Padrões
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }
