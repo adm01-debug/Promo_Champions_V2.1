@@ -10,6 +10,7 @@ interface GoalComparisonChartProps {
     currentSales: number;
     goalAmount: number;
     progress: number;
+    projection: number;
   }[];
 }
 
