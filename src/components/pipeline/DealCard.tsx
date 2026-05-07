@@ -82,9 +82,13 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     >
       <Card className={cn(
         "p-3 glass border border-border/40 dark:border-glow hover-lift transition-all duration-300",
-        "hover:shadow-lg hover:shadow-primary/5 group",
-        isDragging && "shadow-xl shadow-primary/20 rotate-2 scale-105"
+        "hover:shadow-lg hover:shadow-primary/10 group overflow-hidden",
+        isDragging && "shadow-2xl shadow-primary/30 rotate-2 scale-105 border-primary/50"
       )}>
+        {/* Glow effect on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute -right-8 -top-8 w-16 h-16 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
+
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex-1 min-w-0">
