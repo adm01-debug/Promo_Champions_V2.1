@@ -80,61 +80,68 @@ export default function Metas() {
               </div>
             </motion.div>
 
-            {/* Quick Stats */}
+            {/* Quick Stats - Enhanced Pro Metrics */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-4 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40 hover-lift-sm">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-primary/10">
-                      <Target className="h-5 w-5 text-primary" />
+                <Card className="glass border-border/40 hover-lift-sm overflow-hidden relative group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-2xl rounded-full -mr-12 -mt-12 transition-all group-hover:bg-primary/10" />
+                  <CardContent className="p-6 flex items-center gap-5 relative z-10">
+                    <div className="p-4 rounded-2xl bg-primary/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                      <Target className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-metric">{formatCurrency(data?.totalGoal || 0)}</p>
-                      <p className="text-xs text-muted-foreground">Meta Total</p>
+                      <p className="text-2xl font-display font-black tracking-tighter gradient-text">{formatCurrency(data?.totalGoal || 0)}</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Budget da Operação</p>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
+              
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40 hover-lift-sm">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-success/10">
-                      <TrendingUp className="h-5 w-5 text-success" />
+                <Card className="glass border-border/40 hover-lift-sm overflow-hidden relative group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-success/5 blur-2xl rounded-full -mr-12 -mt-12 transition-all group-hover:bg-success/10" />
+                  <CardContent className="p-6 flex items-center gap-5 relative z-10">
+                    <div className="p-4 rounded-2xl bg-success/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                      <TrendingUp className="h-6 w-6 text-success" />
                     </div>
                     <div>
-                      <p className="text-metric">{formatCurrency(data?.totalSales || 0)}</p>
-                      <p className="text-xs text-muted-foreground">Vendido</p>
+                      <p className="text-2xl font-display font-black tracking-tighter text-success">{formatCurrency(data?.totalSales || 0)}</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Volume Faturado</p>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
+
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40 hover-lift-sm">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-primary/10">
-                      <Users className="h-5 w-5 text-primary" />
+                <Card className="glass border-border/40 hover-lift-sm overflow-hidden relative group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-info/5 blur-2xl rounded-full -mr-12 -mt-12 transition-all group-hover:bg-info/10" />
+                  <CardContent className="p-6 flex items-center gap-5 relative z-10">
+                    <div className="p-4 rounded-2xl bg-info/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                      <Users className="h-6 w-6 text-info" />
                     </div>
                     <div>
-                      <p className="text-metric">{onTrackCount}/{totalWithGoals}</p>
-                      <p className="text-xs text-muted-foreground">No Caminho</p>
+                      <p className="text-2xl font-display font-black tracking-tighter text-info">{onTrackCount}/{totalWithGoals}</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Taxa de Atingimento</p>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
+
               <motion.div variants={itemVariants}>
-                <Card className="glass border-border/40 hover-lift-sm">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-warning/10">
-                      <Zap className="h-5 w-5 text-warning" />
+                <Card className="glass border-border/40 hover-lift-sm overflow-hidden relative group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-warning/5 blur-2xl rounded-full -mr-12 -mt-12 transition-all group-hover:bg-warning/10" />
+                  <CardContent className="p-6 flex items-center gap-5 relative z-10">
+                    <div className="p-4 rounded-2xl bg-warning/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                      <Zap className="h-6 w-6 text-warning" />
                     </div>
                     <div>
-                      <p className="text-metric">{exceededCount}</p>
-                      <p className="text-xs text-muted-foreground">Metas Batidas</p>
+                      <p className="text-2xl font-display font-black tracking-tighter text-warning">{exceededCount}</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Over-Achievement</p>
                     </div>
                   </CardContent>
                 </Card>
