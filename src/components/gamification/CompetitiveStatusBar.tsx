@@ -1,11 +1,12 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
-import { Crown, Swords, Trophy, TrendingUp, Target, Users } from "lucide-react";
+import { Crown, Swords, Trophy, TrendingUp, Target, Users, Zap, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const RANK_ICONS: Record<number, React.ElementType> = {
   1: Crown,
@@ -20,42 +21,34 @@ export function CompetitiveStatusBar() {
 
   if (!salesperson) {
     return (
-      <div 
-        className="glass rounded-xl p-4 border border-border/40 dark:border-glow cursor-pointer hover:border-primary/50 hover-lift transition-all card-elevated"
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-[2.5rem] border border-white/[0.05] bg-[#0d1117]/30 backdrop-blur-2xl p-6 sm:p-8 flex items-center justify-between group cursor-pointer hover:border-white/[0.1] transition-all duration-700"
         onClick={() => navigate("/auth")}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/30">
-              <Users className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="text-sm font-display font-semibold">Faça login para competir</p>
-              <p className="text-xs text-muted-foreground">Entre na arena e conquiste seu lugar</p>
-            </div>
+        <div className="flex items-center gap-6">
+          <div className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+            <Users className="h-6 w-6 text-white/20" />
           </div>
-          <Button variant="outline" size="sm" className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors">
-            Entrar
-          </Button>
+          <div className="space-y-1">
+            <h3 className="text-lg font-black uppercase tracking-tightest text-white/90">Authentication Required</h3>
+            <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Enter the arena to claim your ranking</p>
+          </div>
         </div>
-      </div>
+        <Button variant="default" className="rounded-full px-8 font-black bg-primary text-primary-foreground">LOGIN</Button>
+      </motion.div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="glass rounded-xl p-4 border border-border/40">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-11 w-11 rounded-xl" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-3 w-48" />
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <Skeleton className="h-10 w-20" />
-            <Skeleton className="h-10 w-20" />
+      <div className="rounded-[2.5rem] border border-white/[0.05] bg-[#0d1117]/30 backdrop-blur-2xl p-6 sm:p-8">
+        <div className="flex items-center gap-6">
+          <Skeleton className="h-14 w-14 rounded-2xl bg-white/5" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32 bg-white/5" />
+            <Skeleton className="h-3 w-48 bg-white/5" />
           </div>
         </div>
       </div>
@@ -79,103 +72,104 @@ export function CompetitiveStatusBar() {
   };
 
   return (
-    <div 
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "rounded-xl p-4 transition-all border backdrop-blur-sm",
-        "bg-gradient-to-r from-card via-card to-primary/[0.03]",
-        isTopThree 
-          ? "border-primary/30 shadow-md shadow-primary/5" 
-          : "border-border/40 shadow-sm"
+        "rounded-[2.5rem] border backdrop-blur-2xl p-6 sm:p-8 relative overflow-hidden group",
+        isTopThree ? "bg-primary/5 border-primary/20" : "bg-[#0d1117]/30 border-white/[0.05]"
       )}
     >
-      <div className="flex items-center gap-4 flex-wrap">
-        {/* === RANK POSITION (Primary - visually prominent) === */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+      <div className="relative z-10 flex items-center gap-8 flex-wrap lg:flex-nowrap">
+        {/* === RANK POSITION === */}
+        <div className="flex items-center gap-6 shrink-0">
           <div 
-            className={`p-2.5 rounded-xl shadow-lg ${
-              myRanking.color 
-                ? `bg-gradient-to-br ${myRanking.color}` 
-                : "bg-gradient-to-br from-muted to-muted/50"
-            }`}
+            className={cn(
+              "h-20 w-20 rounded-[2rem] flex items-center justify-center border transition-all duration-700 group-hover:rotate-6 group-hover:scale-110 shadow-2xl relative",
+              myRanking.rank === 1 ? "bg-gradient-to-br from-rank-gold/30 to-rank-gold/5 border-rank-gold/30 shadow-rank-gold/20" : 
+              myRanking.rank === 2 ? "bg-gradient-to-br from-rank-silver/30 to-rank-silver/5 border-rank-silver/30 shadow-rank-silver/20" :
+              myRanking.rank === 3 ? "bg-gradient-to-br from-rank-bronze/30 to-rank-bronze/5 border-rank-bronze/30 shadow-rank-bronze/20" :
+              "bg-white/[0.03] border-white/[0.08]"
+            )}
           >
-            <RankIcon className={`h-5 w-5 ${isTopThree ? "text-primary-foreground" : "text-muted-foreground"}`} />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "inline-flex items-center justify-center font-display font-black text-lg min-w-[2.5rem] h-9 rounded-xl border-2 shadow-sm",
-                myRanking.rank === 1 && "bg-gradient-to-br from-coins to-rank-gold text-rank-gold-foreground border-rank-gold/60",
-                myRanking.rank === 2 && "bg-gradient-to-br from-rank-silver to-muted text-rank-silver-foreground border-rank-silver/60",
-                myRanking.rank === 3 && "bg-gradient-to-br from-streak to-rank-gold text-streak-foreground border-streak/60",
-                myRanking.rank > 3 && "bg-muted text-foreground border-border/50"
-              )}>
-                #{myRanking.rank}
-              </span>
-              {myRanking.title && (
-                <Badge 
-                  variant="outline" 
-                  className={`bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0 shadow-sm`}
-                >
-                  {myRanking.title}
-                </Badge>
-              )}
+            <div className="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-background border-2 border-current flex items-center justify-center font-black text-xs shadow-xl">
+               #{myRanking.rank}
             </div>
-            <p className="text-sm text-muted-foreground/80 mt-0.5">
-              Olá, <span className="font-medium text-foreground">{salesperson.name}</span>! 
-              {myRanking.rank === 1 
-                ? " Você é o líder! 👑"
-                : ` Falta ${formatCurrency(myRanking.gapToFirst)} para o 1º lugar.`
-              }
-            </p>
+            <RankIcon className={cn("h-8 w-8", isTopThree ? "text-white" : "text-white/20")} />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <h3 className="text-2xl font-black uppercase tracking-tightest text-white">
+                {myRanking.title || "Elite Operator"}
+              </h3>
+              <Badge variant="outline" className="rounded-full bg-primary/10 text-primary border-primary/20 text-[8px] font-black uppercase tracking-widest px-3 py-0.5">
+                <Zap className="h-3 w-3 mr-1" />
+                Active Season
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3">
+               <div className="flex h-5 w-5 rounded-full bg-white/5 border border-white/10 items-center justify-center text-[10px] font-black text-white/40 uppercase">
+                 {salesperson.name?.[0]}
+               </div>
+               <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] leading-none">
+                 {myRanking.rank === 1 
+                   ? "Absolute Dominion • Peak Performance"
+                   : `${formatCurrency(myRanking.gapToFirst)} to reach Apex Position`
+                 }
+               </p>
+            </div>
           </div>
         </div>
 
         {/* === DIVIDER === */}
-        <div className="hidden md:block w-px h-10 bg-border/50" />
+        <div className="hidden lg:block w-px h-16 bg-white/5 mx-4" />
 
-        {/* === STATS (Secondary - compact, aligned right) === */}
-        <div className="flex items-center gap-3 ml-auto">
-          <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Vendas</p>
-            <p className="font-display font-bold gradient-text">{formatCurrency(myRanking.totalSales)}</p>
+        {/* === STATS === */}
+        <div className="flex-1 flex items-center gap-6 justify-between w-full lg:w-auto overflow-x-auto no-scrollbar pb-2 lg:pb-0">
+          <div className="flex items-center gap-8">
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.3em]">Total Revenue</p>
+              <p className="text-xl font-black text-primary tracking-tight tabular-nums">{formatCurrency(myRanking.totalSales)}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.3em]">Success Count</p>
+              <p className="text-xl font-black text-white tracking-tight tabular-nums">{myRanking.dealsCount}</p>
+            </div>
+            {myRanking.leadsCount > 0 && (
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.3em]">Active Targets</p>
+                <div className="flex items-center gap-2">
+                   <p className="text-xl font-black text-info tracking-tight tabular-nums">{myRanking.leadsCount}</p>
+                   <ShieldCheck className="h-4 w-4 text-info/40" />
+                </div>
+              </div>
+            )}
           </div>
-          <div className="text-center px-3 py-1.5 rounded-lg bg-muted/50 border border-border/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Deals</p>
-            <p className="font-display font-bold">{myRanking.dealsCount}</p>
-          </div>
-          {myRanking.leadsCount > 0 && (
-            <div className="text-center px-3 py-1.5 rounded-lg bg-status-info/10 border border-status-info/20">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium flex items-center justify-center gap-1">
-                <Target className="h-3 w-3" />
-                Leads
-              </p>
-              <p className="font-display font-bold text-status-info">{myRanking.leadsCount}</p>
+
+          {myRanking.rank > 1 && (
+            <div className="hidden xl:flex flex-col items-end gap-1 px-6 border-l border-white/5">
+              <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.3em]">Delta to Next</p>
+              <div className="flex items-center gap-2 text-primary">
+                 <TrendingUp className="h-4 w-4" />
+                 <span className="text-sm font-black tracking-tighter">+{formatCurrency(myRanking.gapToNext)}</span>
+              </div>
             </div>
           )}
           
-          {myRanking.rank > 1 && (
-            <div className="hidden md:block pl-3 border-l border-border/50">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Para subir</p>
-              <p className="font-display font-medium text-sm text-status-warning">
-                +{formatCurrency(myRanking.gapToNext)}
-              </p>
-            </div>
-          )}
-
-          {/* CTA */}
-          {myRanking.leadsCount > 0 && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="hidden lg:flex gap-2 border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
-              onClick={() => navigate("/pipeline")}
-            >
-              <Target className="h-4 w-4" />
-              {myRanking.leadsCount} leads abertos
-            </Button>
-          )}
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="rounded-full px-8 font-black border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all shrink-0 ml-4"
+            onClick={() => navigate("/pipeline")}
+          >
+            MANAGE OPS
+          </Button>
         </div>
       </div>
-    </div>
+      {/* Background glow for top rank */}
+      {isTopThree && <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/20 transition-all duration-700" />}
+    </motion.div>
   );
 }
