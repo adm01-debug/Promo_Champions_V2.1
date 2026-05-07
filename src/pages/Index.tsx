@@ -132,21 +132,23 @@ const Index = () => {
 
             {/* Competitive Status Bar */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
               className="hidden sm:block"
             >
               <CompetitiveStatusBar />
             </motion.div>
 
             {/* ===== HERO KPIs ===== */}
+            <AnimatePresence>
             {allEmpty ? (
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.15 }}
-                className="relative overflow-hidden rounded-xl border border-dashed border-primary/30 bg-gradient-to-r from-primary/5 via-card/80 to-accent/5 p-6"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.8 }}
+                className="relative overflow-hidden rounded-[2.5rem] border border-dashed border-white/10 bg-[#0d1117]/30 p-12 backdrop-blur-2xl"
               >
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="p-3 rounded-xl bg-primary/10">
