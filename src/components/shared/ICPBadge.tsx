@@ -42,17 +42,15 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
         <Badge
           variant="outline"
           className={cn(
-            "flex items-center font-bold border transition-all",
-            "bg-gradient-to-r from-status-success/20 to-success/20",
-            "text-status-success border-status-success/40",
-            "hover:from-success/30 hover:to-success/20",
+            "flex items-center font-black border-none transition-all uppercase tracking-widest",
+            "bg-emerald-500/10 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)]",
+            "hover:bg-emerald-500/20",
             sizeClasses[size],
             className
           )}
         >
-          <Target className={iconSizes[size]} />
-          <span>ICP</span>
-          <Check className={iconSizes[size]} />
+          <Target className={cn("animate-pulse", iconSizes[size])} />
+          <span>ICP ELITE</span>
         </Badge>
       );
     }
@@ -62,17 +60,15 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
         <Badge
           variant="outline"
           className={cn(
-            "flex items-center font-bold border transition-all",
-            "bg-gradient-to-r from-status-warning/20 to-warning/20",
-            "text-status-warning border-status-warning/40",
-            "hover:from-warning/30 hover:to-warning/20",
+            "flex items-center font-black border-none transition-all uppercase tracking-widest",
+            "bg-amber-500/10 text-amber-500",
+            "hover:bg-amber-500/20",
             sizeClasses[size],
             className
           )}
         >
           <Target className={iconSizes[size]} />
-          <span>ICP</span>
-          <HelpCircle className={iconSizes[size]} />
+          <span>ICP ACTIVE</span>
         </Badge>
       );
     }
@@ -81,18 +77,18 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
       <Badge
         variant="outline"
         className={cn(
-          "flex items-center font-bold border transition-all",
-          "bg-muted/50 text-muted-foreground border-border/50",
+          "flex items-center font-black border-none transition-all uppercase tracking-widest",
+          "bg-muted/40 text-muted-foreground/60",
           sizeClasses[size],
           className
         )}
       >
         <Target className={iconSizes[size]} />
-        <span>ICP</span>
-        <X className={iconSizes[size]} />
+        <span>NON-ICP</span>
       </Badge>
     );
   };
+
 
   if (!showTooltip) {
     return getBadgeContent();
