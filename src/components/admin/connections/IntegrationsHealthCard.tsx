@@ -6,8 +6,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCredentialsSource } from "./CredentialsSourceFilterContext";
 
 export function IntegrationsHealthCard() {
-  const { data: conns = [] } = useIntegrationConnections();
-  const { data: checks = [] } = useIntegrationHealth();
+  const { data: conns = [], isLoading: loadingConns } = useIntegrationConnections();
+  const { data: checks = [], isLoading: loadingChecks } = useIntegrationHealth();
+  const { setHealthStatus, healthStatus } = useCredentialsSource();
+
+  const isLoading = loadingConns || loadingChecks;
 
   const stats = useMemo(() => {
     const total = conns.length;
