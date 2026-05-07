@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export const ProfilePerformanceCard = React.memo(function ProfilePerformanceCard() {
+const ProfilePerformanceCard = React.memo(function ProfilePerformanceCard() {
   const { salesperson } = useAuth();
 
   // Mock data for high-fidelity feel - in a real app this would come from a specialized hook
@@ -143,3 +143,4 @@ export const ProfilePerformanceCard = React.memo(function ProfilePerformanceCard
 });
 
 ProfilePerformanceCard.displayName = "ProfilePerformanceCard";
+export default ProfilePerformanceCard;
