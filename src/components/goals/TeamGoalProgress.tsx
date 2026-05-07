@@ -143,21 +143,24 @@ export function TeamGoalProgress({
 
         {/* Projection */}
         <div 
-          className="p-5 rounded-2xl glass border border-border/30 space-y-4 hover-lift shadow-sm transition-all animate-fade-in bg-gradient-to-br from-background/50 to-muted/30"
+          className="p-5 rounded-2xl glass border border-border/30 space-y-4 hover-lift shadow-xl transition-all animate-fade-in bg-gradient-to-br from-background/80 to-muted/50 relative overflow-hidden group/forecast"
           style={{ animationDelay: '50ms' }}
         >
-          <div className="flex items-center justify-between">
+          {/* Animated Glow for Forecast */}
+          <div className={`absolute top-0 right-0 w-32 h-32 blur-[80px] rounded-full -mr-16 -mt-16 transition-all duration-700 opacity-20 ${onTrack ? "bg-status-success" : "bg-status-warning"}`} />
+
+          <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10 shadow-sm">
-                <Zap className="h-5 w-5 text-primary" />
+              <div className={`p-2.5 rounded-xl shadow-lg transition-transform group-hover/forecast:rotate-12 duration-500 ${onTrack ? "bg-status-success/10" : "bg-status-warning/10"}`}>
+                <Zap className={`h-5 w-5 ${onTrack ? "text-status-success" : "text-status-warning"}`} />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-foreground">Forecast de Fechamento</span>
-                <span className="text-[10px] text-muted-foreground uppercase">Projeção Baseada no Ritmo Atual</span>
+                <span className="text-sm font-black text-foreground uppercase tracking-tight italic">Radar de Performance</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Forecast de Encerramento</span>
               </div>
             </div>
             <div className="text-right">
-              <span className={`text-2xl font-display font-black tracking-tight ${onTrack ? "text-status-success" : "text-status-warning"}`}>
+              <span className={`text-3xl font-display font-black tracking-tighter italic ${onTrack ? "text-status-success drop-shadow-[0_0_10px_rgba(var(--status-success),0.2)]" : "text-status-warning"}`}>
                 {formatCurrency(projection)}
               </span>
             </div>
@@ -186,14 +189,14 @@ export function TeamGoalProgress({
             </div>
           </div>
 
-          <div className={`p-3 rounded-lg text-center font-bold text-xs border ${
+          <div className={`p-4 rounded-xl text-center font-black text-[10px] uppercase tracking-widest border shadow-inner relative z-10 ${
             onTrack 
               ? "bg-status-success/5 border-status-success/20 text-status-success" 
               : "bg-status-warning/5 border-status-warning/20 text-status-warning"
           }`}>
             {onTrack 
-              ? `🚀 EXCELENTE! Projeção de bater ${(projectionProgress - 100).toFixed(1)}% além da meta.`
-              : `⚠️ ATENÇÃO: Faltam ${formatCurrency(totalGoal - projection)} no forecast para atingir o objetivo.`
+              ? `🏆 PERFORMANCE ELITE! Forecast de ${(projectionProgress - 100).toFixed(1)}% acima do teto.`
+              : `🚨 ALERTA DE RISCO! Necessário recuperar ${formatCurrency(totalGoal - projection)} no forecast.`
             }
           </div>
         </div>
@@ -201,28 +204,30 @@ export function TeamGoalProgress({
         {/* Daily Stats */}
         <div className="grid grid-cols-2 gap-4">
           <div 
-            className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in"
+            className="p-5 rounded-2xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in relative overflow-hidden"
             style={{ animationDelay: '100ms' }}
           >
-            <div className="p-2 rounded-lg bg-primary/10 w-fit mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-2.5 rounded-xl bg-primary/10 w-fit mx-auto mb-3 group-hover:scale-110 group-hover:-rotate-6 transition-all relative z-10 shadow-sm">
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
-            <p className="text-xl font-display font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
-            <p className="text-overline font-medium mt-1">Média diária atual</p>
+            <p className="text-2xl font-display font-black tracking-tighter gradient-text italic relative z-10 leading-none mb-1">{formatCurrency(dailyAverage)}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mt-2 relative z-10">Ritmo Atual / Dia</p>
           </div>
           <div 
-            className="p-4 rounded-xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in"
+            className="p-5 rounded-2xl glass border border-border/30 text-center hover-lift cursor-pointer transition-all group animate-fade-in relative overflow-hidden"
             style={{ animationDelay: '150ms' }}
           >
-            <div className={`p-2 rounded-lg w-fit mx-auto mb-2 group-hover:scale-110 transition-transform ${
+            <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity ${requiredDailyAverage > dailyAverage ? "bg-status-warning/5" : "bg-status-success/5"}`} />
+            <div className={`p-2.5 rounded-xl w-fit mx-auto mb-3 group-hover:scale-110 group-hover:rotate-6 transition-all relative z-10 shadow-sm ${
               requiredDailyAverage > dailyAverage ? "bg-status-warning/10" : "bg-status-success/10"
             }`}>
               <Target className={`h-4 w-4 ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`} />
             </div>
-            <p className={`text-xl font-display font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
+            <p className={`text-2xl font-display font-black tracking-tighter italic relative z-10 leading-none mb-1 ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
               {formatCurrency(requiredDailyAverage)}
             </p>
-            <p className="text-overline font-medium mt-1">Necessário/dia</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mt-2 relative z-10">Strike Rate Alvo</p>
           </div>
         </div>
 
@@ -246,34 +251,34 @@ export function TeamGoalProgress({
 
           {!onTrack && (
             <div 
-              className="p-4 rounded-xl bg-status-warning/10 border border-status-warning/20 animate-pulse-subtle"
+              className="p-5 rounded-2xl bg-gradient-to-br from-status-warning/10 to-transparent border border-status-warning/20 animate-pulse-subtle relative overflow-hidden"
               style={{ animationDelay: '250ms' }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 rounded-full bg-status-warning/20">
-                  <TrendingDown className="h-3.5 w-3.5 text-status-warning" />
+              <div className="flex items-center gap-2 mb-2 relative z-10">
+                <div className="p-1.5 rounded-full bg-status-warning/20">
+                  <TrendingDown className="h-4 w-4 text-status-warning" />
                 </div>
-                <span className="text-xs font-bold text-status-warning uppercase tracking-wider">Análise de GAP (Ponto de Inflexão)</span>
+                <span className="text-xs font-black text-status-warning uppercase tracking-widest italic">Análise de GAP Crítico</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Para recuperar a meta em <span className="text-foreground font-bold">{daysRemaining} dias</span>, a equipe precisa aumentar o ritmo atual em <span className="text-status-warning font-bold">+{(((requiredDailyAverage / dailyAverage) - 1) * 100).toFixed(0)}%</span> por dia.
+              <p className="text-xs text-muted-foreground leading-relaxed relative z-10">
+                Para reverter o cenário em <span className="text-foreground font-black italic">{daysRemaining} dias</span>, a força de vendas deve acelerar o volume em <span className="text-status-warning font-black">+{(((requiredDailyAverage / dailyAverage) - 1) * 100).toFixed(0)}%</span> por ciclo.
               </p>
             </div>
           )}
           
           {onTrack && progress < 100 && (
             <div 
-              className="p-4 rounded-xl bg-status-success/10 border border-status-success/20"
+              className="p-5 rounded-2xl bg-gradient-to-br from-status-success/10 to-transparent border border-status-success/20 relative overflow-hidden"
               style={{ animationDelay: '250ms' }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 rounded-full bg-status-success/20">
-                  <TrendingUp className="h-3.5 w-3.5 text-status-success" />
+              <div className="flex items-center gap-2 mb-2 relative z-10">
+                <div className="p-1.5 rounded-full bg-status-success/20">
+                  <TrendingUp className="h-4 w-4 text-status-success" />
                 </div>
-                <span className="text-xs font-bold text-status-success uppercase tracking-wider">Ponto de Manutenção</span>
+                <span className="text-xs font-black text-status-success uppercase tracking-widest italic">Otimização de Fluxo</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Mantendo o ritmo atual, a meta será atingida em aproximadamente <span className="text-foreground font-bold">{Math.ceil((totalGoal - totalSales) / dailyAverage)} dias</span>.
+              <p className="text-xs text-muted-foreground leading-relaxed relative z-10">
+                Mantendo a cadência de elite, a dominação da meta será consolidada em <span className="text-foreground font-black italic">{Math.ceil((totalGoal - totalSales) / dailyAverage)} dias</span>.
               </p>
             </div>
           )}
