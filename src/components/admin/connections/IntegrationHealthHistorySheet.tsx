@@ -1,6 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useIntegrationHealth } from "@/hooks/admin/useIntegrationConnections";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -24,7 +25,11 @@ export function IntegrationHealthHistorySheet({ open, onOpenChange, connectionId
         </SheetHeader>
         <div className="mt-4">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <div className="space-y-2 mt-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
           ) : rows.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">Nenhum teste registrado ainda.</p>
           ) : (
