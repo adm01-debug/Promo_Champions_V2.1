@@ -46,16 +46,23 @@ const getStatusBadge = (progress: number, hasGoals: boolean) => {
 
 function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
   const { data: xpData } = useAllSalespeopleXP();
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState<"overall" | "calls" | "emails" | "meetings">("overall");
 
   const getXPInfo = (salespersonId: string) => {
     const xp = xpData?.find(x => x.salesperson_id === salespersonId);
     return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
   };
 
-  // Filter only those with goals and sort by progress
-  const rankedData = data
-    .filter(d => d.hasGoals)
-    .sort((a, b) => b.progress.overall - a.progress.overall);
+  // Filter and Sort
+  const filteredData = data.filter(d => 
+    d.hasGoals && d.salesperson_name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const rankedData = [...filteredData].sort((a, b) => {
+    if (filterType === "overall") return b.progress.overall - a.progress.overall;
+    return b.current[filterType] - a.current[filterType];
+  });
 
   const completedCount = rankedData.filter(d => d.progress.overall >= 100).length;
 
