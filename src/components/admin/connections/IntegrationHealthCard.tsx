@@ -136,22 +136,49 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-3">
           <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-md bg-muted/30 p-2">
-              <div className="text-[10px] uppercase text-muted-foreground">Último teste</div>
-              <div className="text-xs font-medium mt-1 truncate">
-                {last ? formatDistanceToNow(new Date(last.checked_at), { addSuffix: true, locale: ptBR }) : "—"}
-              </div>
-            </div>
-            <div className="rounded-md bg-muted/30 p-2">
-              <div className="text-[10px] uppercase text-muted-foreground">Latência</div>
-              <div className="text-xs font-medium mt-1">
-                {last?.latency_ms != null ? `${last.latency_ms}ms` : "—"}
-              </div>
-            </div>
-            <div className="rounded-md bg-muted/30 p-2">
-              <div className="text-[10px] uppercase text-muted-foreground">Sucesso (10x)</div>
-              <div className="text-xs font-medium mt-1">{successRate != null ? `${successRate}%` : "—"}</div>
-            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="rounded-md bg-muted/30 p-2 cursor-help transition-colors hover:bg-muted/50">
+                    <div className="text-[10px] uppercase text-muted-foreground">Último teste</div>
+                    <div className="text-xs font-medium mt-1 truncate">
+                      {last ? formatDistanceToNow(new Date(last.checked_at), { addSuffix: true, locale: ptBR }) : "—"}
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">
+                    {last ? `Verificado em: ${new Date(last.checked_at).toLocaleString('pt-BR')}` : "Nenhum teste realizado"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="rounded-md bg-muted/30 p-2 cursor-help transition-colors hover:bg-muted/50">
+                    <div className="text-[10px] uppercase text-muted-foreground">Latência</div>
+                    <div className="text-xs font-medium mt-1">
+                      {last?.latency_ms != null ? `${last.latency_ms}ms` : "—"}
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Tempo de resposta da última requisição</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="rounded-md bg-muted/30 p-2 cursor-help transition-colors hover:bg-muted/50">
+                    <div className="text-[10px] uppercase text-muted-foreground">Sucesso (10x)</div>
+                    <div className="text-xs font-medium mt-1">{successRate != null ? `${successRate}%` : "—"}</div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Taxa de sucesso baseada nas últimas 10 verificações</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {last && last.status !== "success" && last.error && (
