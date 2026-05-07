@@ -57,8 +57,10 @@ export default function Configuracoes() {
 
 
       <Tabs defaultValue="roles" className="w-full">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <TabsList className="inline-flex w-max gap-1">
+        <div className="bg-muted/20 border border-border/10 p-1.5 rounded-2xl mb-8 overflow-hidden">
+          <ScrollArea className="w-full whitespace-nowrap">
+            <TabsList className="inline-flex w-max gap-2 bg-transparent h-12">
+
             {/* Personalização */}
             <TabsTrigger value="roles" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
