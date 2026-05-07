@@ -16,9 +16,9 @@ const periodLabels: Record<Period, string> = {
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-primary/20 bg-popover/95 px-4 py-3 shadow-xl backdrop-blur-md">
-      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-base font-bold text-foreground font-display">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0d1117]/80 px-5 py-4 shadow-2xl backdrop-blur-xl ring-1 ring-white/10">
+      <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1.5">{label}</p>
+      <p className="text-xl font-black text-white tracking-tight">
         R$ {payload[0].value.toLocaleString("pt-BR")}
       </p>
     </div>
@@ -29,27 +29,33 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
   const [period, setPeriod] = useState<Period>("90d");
   const { data: liveData, isLoading } = useSalesChartData(period);
 
-  // Fallback to empty if no data
   const data = liveData && liveData.length > 0 ? liveData : [];
 
   return (
-    <Card ref={ref} className="h-full">
-      <CardHeader className="pb-2">
+    <Card ref={ref} className="h-full border-none bg-transparent shadow-none">
+      <CardHeader className="pb-8 pt-6 px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Evolução de Vendas
-          </CardTitle>
-          <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted/50 border border-border/40">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+              <CardTitle className="text-xl font-black uppercase tracking-tightest text-white/90">
+                Performance Velocity
+              </CardTitle>
+            </div>
+            <p className="text-xs font-bold text-white/20 uppercase tracking-widest ml-11">Evolução estratégica de volume</p>
+          </div>
+          <div className="flex gap-1 p-1 rounded-2xl bg-white/[0.03] border border-white/[0.05] backdrop-blur-md">
             {(Object.keys(periodLabels) as Period[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={cn(
-                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-200",
+                  "px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500",
                   period === p
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]"
+                    : "text-white/30 hover:text-white/60 hover:bg-white/[0.02]"
                 )}
               >
                 {periodLabels[p]}
@@ -58,44 +64,58 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent className="pb-8 px-2">
         {isLoading ? (
-          <div className="h-[220px] animate-pulse bg-muted/20 rounded-lg" />
+          <div className="h-[250px] animate-pulse bg-white/[0.02] rounded-3xl mx-4" />
         ) : data.length === 0 ? (
-          <div className="h-[220px] flex items-center justify-center text-sm text-muted-foreground">
-            Sem dados de vendas no período
+          <div className="h-[250px] flex items-center justify-center text-[10px] font-black uppercase tracking-[0.2em] text-white/10">
+            No trajectory data available
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={data}>
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.45} />
-                  <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                  <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={1} />
-                  <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.9} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
-              <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} dy={8} />
-              <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} width={40} />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary) / 0.4)', strokeWidth: 1, strokeDasharray: '4 4' }} />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="url(#strokeGradient)"
-                fillOpacity={1}
-                fill="url(#colorValue)"
-                strokeWidth={2.5}
-                dot={false}
-                activeDot={{ r: 6, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--background))', strokeWidth: 3, className: 'drop-shadow-md' }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
+                    <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                    <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.8} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 10, fontWeight: 900 }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  dy={15} 
+                />
+                <YAxis 
+                  tick={{ fill: 'rgba(255,255,255,0.15)', fontSize: 9, fontWeight: 900 }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} 
+                  width={45} 
+                />
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.05)', strokeWidth: 2 }} />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="url(#strokeGradient)"
+                  fillOpacity={1}
+                  fill="url(#colorValue)"
+                  strokeWidth={4}
+                  dot={false}
+                  activeDot={{ r: 8, fill: 'hsl(var(--primary))', stroke: '#02040a', strokeWidth: 4, className: 'drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]' }}
+                  animationDuration={2000}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </CardContent>
     </Card>

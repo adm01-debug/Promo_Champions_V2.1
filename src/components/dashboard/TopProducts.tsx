@@ -38,46 +38,51 @@ export const TopProducts = React.memo(() => {
 
   if (isLoading) {
     return (
-      <Card className="h-full">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Package className="h-4 w-4 text-primary" />
-            Top Produtos
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <Card className="border-none bg-transparent shadow-none">
+        <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 rounded-md" />
+            <Skeleton key={i} className="h-12 rounded-2xl bg-white/[0.03]" />
           ))}
-        </CardContent>
+        </div>
       </Card>
     );
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <Package className="h-4 w-4 text-primary" />
-          Top Produtos
+    <Card className="border-none bg-transparent shadow-none group">
+      <CardHeader className="pb-6 pt-0 px-0">
+        <CardTitle className="text-sm font-black uppercase tracking-widest text-white/30 flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-accent/10 ring-1 ring-accent/20">
+            <Package className="h-4 w-4 text-accent" />
+          </div>
+          Inventory Alpha
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-6 p-0">
         {products && products.length > 0 ? products.map((product, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex justify-between text-xs">
-              <span className="font-medium truncate">{product.name}</span>
-              <span className="text-muted-foreground">{product.sales} vendas</span>
+          <div key={index} className="space-y-2 group/item">
+            <div className="flex justify-between items-end">
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Sku {index + 1}</span>
+                <p className="text-xs font-black text-white/70 group-hover/item:text-white transition-colors uppercase tracking-tight truncate max-w-[150px]">{product.name}</p>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-black text-white tabular-nums tracking-tighter">{product.sales}</span>
+                <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest ml-1">Closed</span>
+              </div>
             </div>
-            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+            <div className="h-2 bg-white/[0.03] rounded-full overflow-hidden border border-white/[0.05] p-[1px]">
               <div
-                className="h-full bg-primary rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-primary/40 to-primary rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]"
                 style={{ width: `${(product.sales / maxSales) * 100}%` }}
               />
             </div>
           </div>
         )) : (
-          <p className="text-sm text-muted-foreground text-center py-4">Sem dados de produtos</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center opacity-20">
+             <Package className="h-8 w-8 mb-2" />
+             <p className="text-[10px] font-black uppercase tracking-widest">No assets found</p>
+          </div>
         )}
       </CardContent>
     </Card>

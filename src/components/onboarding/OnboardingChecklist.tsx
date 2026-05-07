@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOnboardingChecklist } from '@/hooks/useOnboardingChecklist';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, ArrowRight, Rocket, X, ChevronRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Rocket, X, ChevronRight, Sparkles } from 'lucide-react';
 import { useState, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,86 +19,90 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <motion.div ref={ref}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, scale: 0.98, y: -10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, height: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-card to-accent/5 p-4 backdrop-blur-sm shadow-sm">
-        {/* Compact Header — always visible */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/15 shrink-0">
-            <Rocket className="h-4 w-4 text-primary" />
+      <div className="rounded-[2.5rem] border border-white/[0.05] bg-[#0d1117]/30 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group hover:border-white/[0.1] transition-all duration-700">
+        {/* Animated accent background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+        
+        {/* Compact Header */}
+        <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.08] shadow-2xl backdrop-blur-xl group transition-all duration-500 hover:scale-110 hover:border-primary/30 shrink-0">
+            <Rocket className="h-8 w-8 text-primary/80 group-hover:text-primary transition-colors" />
           </div>
 
-          {/* Step indicators */}
-          <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            {steps.map((step, i) => (
-              <div key={step.id} className="flex items-center gap-1.5">
-                <button
-                  onClick={() => !step.completed && navigate(step.route)}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-all whitespace-nowrap",
-                    step.completed
-                      ? "bg-success/15 text-success"
-                      : step === nextStep
-                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
-                        : "bg-muted/50 text-muted-foreground"
-                  )}
-                  aria-label={step.title}
-                >
-                  {step.completed ? (
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                  ) : (
-                    <span className="h-3.5 w-3.5 rounded-full border-2 border-current flex items-center justify-center text-[9px] font-bold">
-                      {i + 1}
-                    </span>
-                  )}
-                  <span className="hidden lg:inline">{step.title}</span>
-                </button>
-                {i < steps.length - 1 && (
-                  <ChevronRight className="h-3 w-3 text-muted-foreground/40 shrink-0 hidden sm:block" />
-                )}
+          <div className="flex-1 space-y-4 w-full">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1 text-center sm:text-left">
+                <h3 className="text-xl font-black uppercase tracking-tightest text-white/90 flex items-center gap-2">
+                  Launch Sequence
+                  <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+                </h3>
+                <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Initialize your performance trajectory</p>
               </div>
-            ))}
+              <div className="flex items-center gap-4 bg-white/[0.03] px-5 py-2 rounded-full border border-white/[0.05]">
+                <span className="text-xs font-black text-white/40 tabular-nums tracking-widest uppercase">
+                  {completedCount} / {totalSteps} Core Tasks
+                </span>
+                <div className="w-24">
+                  <Progress value={progress} className="h-1.5 bg-white/5" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
+              {steps.map((step, i) => (
+                <div key={step.id} className="flex items-center gap-2">
+                  <button
+                    onClick={() => !step.completed && navigate(step.route)}
+                    className={cn(
+                      "flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all duration-500 whitespace-nowrap border",
+                      step.completed
+                        ? "bg-success/10 text-success border-success/20 opacity-40 hover:opacity-100"
+                        : step === nextStep
+                          ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]"
+                          : "bg-white/[0.02] text-white/20 border-white/[0.05] hover:border-white/20"
+                    )}
+                  >
+                    {step.completed ? (
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <span className="h-3.5 w-3.5 rounded-full border border-current flex items-center justify-center text-[8px]">
+                        {i + 1}
+                      </span>
+                    )}
+                    {step.title}
+                  </button>
+                  {i < steps.length - 1 && (
+                    <ChevronRight className="h-3 w-3 text-white/5 shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Progress & actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-medium text-muted-foreground tabular-nums">
-              {completedCount}/{totalSteps}
-            </span>
-            <div className="w-16 hidden sm:block">
-              <Progress value={progress} className="h-1.5" />
-            </div>
-            {nextStep && (
-              <Button
-                size="sm"
-                variant="default"
-                className="h-7 gap-1 text-xs hidden md:flex"
-                onClick={() => navigate(nextStep.route)}
-              >
-                Próximo
-                <ArrowRight className="h-3 w-3" />
-              </Button>
-            )}
-            <Button
-              variant="ghost"
+          <div className="flex items-center gap-3 shrink-0">
+             <Button
+              variant="outline"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+              className={cn(
+                "h-12 w-12 rounded-2xl border-white/5 bg-white/[0.02] transition-all duration-500",
+                expanded ? "bg-white/[0.08] text-white" : "text-white/20 hover:text-white"
+              )}
               onClick={() => setExpanded(!expanded)}
-              aria-label={expanded ? "Recolher detalhes" : "Expandir detalhes"}
             >
-              <ChevronRight className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-90")} />
+              <ChevronRight className={cn("h-5 w-5 transition-transform duration-500", expanded && "rotate-90")} />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+              className="h-12 w-12 rounded-2xl text-white/10 hover:text-white/40 hover:bg-white/[0.05] transition-all"
               onClick={() => setDismissed(true)}
-              aria-label="Fechar onboarding"
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-5 w-5" />
             </Button>
           </div>
         </div>
@@ -110,39 +114,41 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="overflow-hidden"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mt-3 pt-3 border-t border-border/50">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-8 border-t border-white/[0.05]">
                 {steps.map((step, i) => {
                   const isNext = step === nextStep;
                   return (
                     <motion.button
                       key={step.id}
                       className={cn(
-                        "flex items-start gap-2.5 p-3 rounded-lg text-left transition-colors",
+                        "flex flex-col gap-4 p-6 rounded-3xl text-left transition-all duration-500 border",
                         step.completed
-                          ? "opacity-60"
+                          ? "bg-white/[0.01] border-transparent opacity-30 hover:opacity-60"
                           : isNext
-                            ? "bg-primary/10 border border-primary/20"
-                            : "hover:bg-muted/50"
+                            ? "bg-primary/5 border-primary/20 shadow-xl"
+                            : "bg-white/[0.02] border-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.04]"
                       )}
                       onClick={() => !step.completed && navigate(step.route)}
-                      whileHover={{ scale: step.completed ? 1 : 1.02 }}
                     >
-                      {step.completed ? (
-                        <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
-                      ) : (
-                        <span className={cn(
-                          "h-4 w-4 rounded-full border-2 flex items-center justify-center text-[9px] font-bold shrink-0 mt-0.5",
-                          isNext ? "border-primary text-primary" : "border-muted-foreground text-muted-foreground"
-                        )}>
-                          {i + 1}
-                        </span>
-                      )}
-                      <div className="min-w-0">
-                        <p className={cn("text-xs font-medium", step.completed && "line-through")}>{step.title}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">{step.description}</p>
+                      <div className="flex items-center justify-between w-full">
+                        {step.completed ? (
+                          <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+                        ) : (
+                          <span className={cn(
+                            "h-6 w-6 rounded-lg border-2 flex items-center justify-center text-[10px] font-black shrink-0",
+                            isNext ? "border-primary text-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]" : "border-white/10 text-white/20"
+                          )}>
+                            {i + 1}
+                          </span>
+                        )}
+                        {isNext && <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Execute Now</span>}
+                      </div>
+                      <div className="space-y-1">
+                        <p className={cn("text-xs font-black uppercase tracking-tightest", step.completed ? "text-white/40" : "text-white")}>{step.title}</p>
+                        <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest leading-relaxed line-clamp-2">{step.description}</p>
                       </div>
                     </motion.button>
                   );
