@@ -81,7 +81,43 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
       </CardHeader>
       <CardContent className="p-0">
         <ScrollArea className="h-[500px]">
-          <div className="p-4 space-y-3">
+          <div className="p-4 space-y-4">
+            {withGoals.length > 0 && (
+              <div className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-rank-gold/20 via-rank-gold/5 to-transparent border border-rank-gold/30 relative overflow-hidden group shadow-lg animate-fade-in">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Trophy className="h-20 w-20 text-rank-gold" />
+                </div>
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-rank-gold to-yellow-500 rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity animate-pulse" />
+                    <div className="relative h-16 w-16 rounded-full border-2 border-rank-gold overflow-hidden">
+                      <img 
+                        src={withGoals[0].avatar_url || "/placeholder.svg"} 
+                        alt={withGoals[0].name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-rank-gold text-[10px] font-black px-1.5 py-0.5 rounded-md shadow-lg border border-white/20">
+                      MVP
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-display font-black tracking-tight text-foreground uppercase italic leading-none mb-1">
+                      {withGoals[0].name}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-rank-gold text-rank-gold-foreground border-none text-[10px] font-bold h-4">
+                        #1 NO RANKING
+                      </Badge>
+                      <span className="text-xs font-bold text-rank-gold">
+                        {withGoals[0].progress.toFixed(1)}% atingido
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {withGoals.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl animate-fade-in">
                 <div className="p-4 rounded-full bg-muted/20 mb-4">
@@ -91,23 +127,26 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
                 <p className="text-xs mt-1 text-muted-foreground/70">Configure metas para os vendedores</p>
               </div>
             ) : (
-              withGoals.map((sp, index) => {
-                const xpInfo = getXPInfo(sp.id);
-                return (
-                  <div 
-                    key={sp.id} 
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
-                    <SalespersonGoalCard
-                      {...sp}
-                      rank={index + 1}
-                      level={xpInfo.level}
-                      totalXP={xpInfo.totalXP}
-                    />
-                  </div>
-                );
-              })
+              <div className="space-y-3">
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mb-2 px-1">Geral</p>
+                {withGoals.map((sp, index) => {
+                  const xpInfo = getXPInfo(sp.id);
+                  return (
+                    <div 
+                      key={sp.id} 
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <SalespersonGoalCard
+                        {...sp}
+                        rank={index + 1}
+                        level={xpInfo.level}
+                        totalXP={xpInfo.totalXP}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             )}
 
             {withoutGoals.length > 0 && withGoals.length > 0 && (
