@@ -78,41 +78,83 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
   }
 
   return (
-    <Card className="glass">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
+    <Card className="glass border-border/40 card-elevated">
+      <CardHeader className="pb-2 border-b border-border/10">
+        <CardTitle className="text-sm font-display font-black uppercase tracking-widest flex items-center gap-2">
           <PieIcon className="h-4 w-4 text-primary" />
-          Distribuição de Status
+          Status da Operação
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={240}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={55}
-              outerRadius={85}
-              paddingAngle={4}
-              dataKey="value"
-              stroke="none"
+      <CardContent className="pt-6">
+        <div className="relative h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                activeIndex={activeIndex}
+                activeShape={renderActiveShape}
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={65}
+                outerRadius={85}
+                paddingAngle={6}
+                dataKey="value"
+                stroke="none"
+                onMouseEnter={(_, index) => setActiveIndex(index)}
+              >
+                {data.map((entry, i) => (
+                  <Cell 
+                    key={i} 
+                    fill={entry.color} 
+                    className="transition-all duration-300 outline-none" 
+                    style={{ filter: activeIndex === i ? `drop-shadow(0 0 8px ${entry.color})` : 'none' }}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="glass p-3 rounded-xl border border-border/40 shadow-xl animate-in fade-in zoom-in duration-200">
+                        <p className="text-xs font-black uppercase tracking-wider mb-1" style={{ color: payload[0].payload.color }}>
+                          {payload[0].name}
+                        </p>
+                        <p className="text-sm font-bold">
+                          {payload[0].value} Vendedores
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-1 italic">
+                          {((Number(payload[0].value) / withGoals.length) * 100).toFixed(0)}% da base
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mt-4">
+          {data.map((entry, i) => (
+            <button
+              key={i}
+              onMouseEnter={() => setActiveIndex(i)}
+              className={cn(
+                "flex items-center justify-between p-2 rounded-lg border transition-all text-left",
+                activeIndex === i 
+                  ? "bg-muted/50 border-border/40 shadow-sm translate-x-1" 
+                  : "border-transparent opacity-70 hover:opacity-100"
+              )}
             >
-              {data.map((entry, i) => (
-                <Cell key={i} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(v: number, name: string) => [`${v} vendedores`, name]}
-              contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}
-            />
-            <Legend
-              iconType="circle"
-              iconSize={8}
-              wrapperStyle={{ fontSize: 11 }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="text-[11px] font-bold uppercase tracking-tight">{entry.name}</span>
+              </div>
+              <span className="text-xs font-black">{entry.value}</span>
+            </button>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
