@@ -41,21 +41,31 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
   }, []);
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
+    <Card className="h-full border-none bg-gradient-to-br from-card/30 to-background shadow-lg shadow-black/5 overflow-hidden">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Bell className="h-4 w-4 text-primary" />
-            Alertas
+          <CardTitle className="text-sm font-bold flex items-center gap-2 tracking-tight uppercase">
+            <div className="p-1.5 rounded-lg bg-primary/10">
+              <Bell className="h-4 w-4 text-primary" />
+            </div>
+            Central de Alertas
           </CardTitle>
-          {alerts.length > 0 && (
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive">
-              {alerts.length}
-            </span>
-          )}
+          <AnimatePresence>
+            {alerts.length > 0 && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+              >
+                <Badge variant="destructive" className="h-5 min-w-[20px] px-1 flex items-center justify-center text-[10px] font-black rounded-full animate-pulse">
+                  {alerts.length}
+                </Badge>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-3">
         <AnimatePresence mode="popLayout">
           {alerts.length > 0 ? (
             alerts.map((alert) => {
@@ -65,25 +75,25 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
                 <motion.div
                   key={alert.id}
                   layout
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, x: 50, height: 0 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.25 }}
                   className={cn(
-                    "flex items-start gap-2 p-2.5 rounded-lg border group",
+                    "flex items-start gap-3 p-3 rounded-xl border border-transparent hover:border-border/40 hover:bg-muted/40 transition-all group relative",
                     config.bg
                   )}
                 >
-                  <Icon
-                    className={cn("h-4 w-4 mt-0.5 shrink-0", config.iconColor)}
-                  />
-                  <p className="text-xs flex-1">{alert.message}</p>
+                  <div className={cn("p-1.5 rounded-lg bg-background/50 shrink-0", config.iconColor)}>
+                    <Icon className="h-3.5 w-3.5" />
+                  </div>
+                  <p className="text-xs font-bold leading-relaxed pr-6">{alert.message}</p>
                   <button
                     onClick={() => dismissAlert(alert.id)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-foreground/10"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-background/80 text-muted-foreground hover:text-foreground"
                     aria-label="Dispensar alerta"
                   >
-                    <X className="h-3 w-3 text-muted-foreground" />
+                    <X className="h-3 w-3" />
                   </button>
                 </motion.div>
               );
@@ -92,12 +102,15 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-6 text-center"
+              className="flex flex-col items-center justify-center py-10 text-center space-y-3"
             >
-              <CheckCircle2 className="h-8 w-8 text-success/50 mb-2" />
-              <p className="text-xs text-muted-foreground">
-                Tudo em dia! Nenhum alerta.
-              </p>
+              <div className="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center border border-success/20">
+                <CheckCircle2 className="h-6 w-6 text-success animate-bounce" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-black uppercase tracking-widest text-foreground">Zero Anomalias</p>
+                <p className="text-[10px] text-muted-foreground font-medium italic">Sistema operando em 100%</p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -105,3 +118,5 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
     </Card>
   );
 });
+
+AlertsPanel.displayName = "AlertsPanel";
