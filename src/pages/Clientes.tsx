@@ -169,79 +169,106 @@ const Clientes = () => {
                 {paginatedItems.map((client, index) => (
                 <div 
                   key={client.id}
-                  className="opacity-0 animate-fade-in-up glass rounded-xl p-5 hover:bg-card/80 transition-all group relative"
-                  style={{ animationDelay: `${200 + index * 50}ms` }}
+                  className="group relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 hover:border-primary/30"
                 >
+                  {/* Decorative background scan-line */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  
                   {/* Action Buttons */}
-                  <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 z-10">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
-                      className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
+                      className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary hover:border-primary/40"
                       onClick={() => setTimelineClient(client)}
                       title="Ver timeline"
                     >
                       <History className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="icon" aria-label="Editar"
-                      className="h-8 w-8 hover:bg-primary/20 hover:text-primary"
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary hover:border-primary/40"
                       onClick={() => setEditingClient(client)}
+                      title="Editar"
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="icon" aria-label="Excluir"
-                      className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive"
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/40"
                       onClick={() => setDeletingClient(client)}
+                      title="Excluir"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
 
-                    <div className="flex items-start gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="relative">
+                      <Avatar className="h-14 w-14 rounded-2xl ring-2 ring-background group-hover:ring-primary/20 transition-all">
+                        <AvatarFallback className="bg-gradient-to-br from-primary/10 to-accent/10 text-primary font-black text-lg uppercase">
                           {client.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 min-w-0 pr-16">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
-                            {client.name}
-                          </h3>
-                          <ICPBadge icpData={icpMap.get(client.id)} size="sm" />
-                        </div>
-                        <p className="text-sm text-muted-foreground truncate">{client.company || "Sem empresa"}</p>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-lg bg-emerald-500 border-2 border-background flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                       </div>
                     </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-display font-black text-base uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
+                          {client.name}
+                        </h3>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
+                          {client.company || "INDEPENDENT OPERATIVE"}
+                        </p>
+                        <ICPBadge icpData={icpMap.get(client.id)} size="sm" />
+                      </div>
+                    </div>
+                  </div>
                   
-                  <div className="mt-4 space-y-2">
+                  <div className="space-y-3 mb-6">
                     {client.email && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Mail className="h-3.5 w-3.5" />
-                        <span className="truncate">{client.email}</span>
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-accent/20 border border-white/5 group-hover:border-primary/10 transition-colors">
+                        <div className="p-1.5 rounded-lg bg-primary/10">
+                          <Mail className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground truncate">{client.email}</span>
                       </div>
                     )}
                     {client.phone && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Phone className="h-3.5 w-3.5" />
-                        <span>{client.phone}</span>
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-accent/20 border border-white/5 group-hover:border-primary/10 transition-colors">
+                        <div className="p-1.5 rounded-lg bg-indigo-500/10">
+                          <Phone className="h-3.5 w-3.5 text-indigo-500" />
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground">{client.phone}</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-border/30">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Valor total</span>
-                      <span className="font-semibold text-primary">
-                        R$ {Number(client.total_value).toLocaleString("pt-BR")}
-                      </span>
+                  <div className="pt-4 border-t border-border/10">
+                    <div className="flex justify-between items-end">
+                      <div className="space-y-0.5">
+                        <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Total Lifecycle</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-display font-black text-xl text-primary tracking-tighter">
+                            R$ {Number(client.total_value).toLocaleString("pt-BR", { notation: 'compact' })}
+                          </span>
+                          <span className="text-[9px] font-bold text-emerald-500 uppercase">Valued</span>
+                        </div>
+                      </div>
+                      <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">
+                        Rank Elite
+                      </div>
                     </div>
                   </div>
-                  </div>
+                </div>
+
                 ))}
               </div>
               <TablePagination
