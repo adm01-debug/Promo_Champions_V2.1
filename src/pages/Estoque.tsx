@@ -108,8 +108,9 @@ export default function Estoque() {
                     <SelectItem value="adjustment">Ajuste</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input type="number" placeholder="Quantidade" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} />
-                <Input placeholder="Motivo (opcional)" value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} />
+                <Input type="number" placeholder="Operation Quantity" className="h-12 bg-muted/20 border-border/40 text-sm font-bold" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} />
+                <Input placeholder="Operational Briefing (optional)" className="h-12 bg-muted/20 border-border/40 text-sm font-medium italic" value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} />
+
                 <Button onClick={handleSubmit} disabled={addMovement.isPending} className="w-full bg-primary text-[10px] font-black uppercase tracking-widest h-12 rounded-xl">
                   {addMovement.isPending ? "Syncing..." : "Confirm Deployment"}
                 </Button>
