@@ -18,13 +18,14 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
-const EVENT_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string; badgeVariant: "default" | "secondary" | "destructive" | "outline" }> = {
-  sent: { label: "Enviado", icon: <Send className="h-3 w-3" />, color: "text-primary", badgeVariant: "default" },
-  opened: { label: "Aberto", icon: <Eye className="h-3 w-3" />, color: "text-status-success", badgeVariant: "secondary" },
-  clicked: { label: "Clicado", icon: <MousePointer2 className="h-3 w-3" />, color: "text-status-info", badgeVariant: "outline" },
-  replied: { label: "Respondido", icon: <Reply className="h-3 w-3" />, color: "text-status-purple", badgeVariant: "secondary" },
-  bounced: { label: "Bounce", icon: <AlertTriangle className="h-3 w-3" />, color: "text-status-error", badgeVariant: "destructive" },
+const EVENT_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string; bg: string; badgeVariant: "default" | "secondary" | "destructive" | "outline" }> = {
+  sent: { label: "DEPLOYED", icon: <Send className="h-3 w-3" />, color: "text-primary", bg: "bg-primary/10", badgeVariant: "default" },
+  opened: { label: "ENGAGED", icon: <Eye className="h-3 w-3" />, color: "text-emerald-500", bg: "bg-emerald-500/10", badgeVariant: "secondary" },
+  clicked: { label: "INTERACTED", icon: <MousePointer2 className="h-3 w-3" />, color: "text-blue-500", bg: "bg-blue-500/10", badgeVariant: "outline" },
+  replied: { label: "RESPONDED", icon: <Reply className="h-3 w-3" />, color: "text-indigo-500", bg: "bg-indigo-500/10", badgeVariant: "secondary" },
+  bounced: { label: "FAILED", icon: <AlertTriangle className="h-3 w-3" />, color: "text-rose-500", bg: "bg-rose-500/10", badgeVariant: "destructive" },
 };
+
 
 export function EmailTrackingDashboard() {
   const { data: events, isLoading: eventsLoading } = useEmailTracking();
