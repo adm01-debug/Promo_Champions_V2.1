@@ -86,9 +86,10 @@ export default function Estoque() {
             </DialogTrigger>
 
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Registrar Movimentação</DialogTitle>
+              <DialogHeader className="pb-4 border-b border-border/10">
+                <DialogTitle className="font-display font-black text-xl uppercase tracking-tighter italic">Logistics Deployment</DialogTitle>
               </DialogHeader>
+
               <div className="space-y-4">
                 <Select value={form.product_id} onValueChange={v => setForm(f => ({ ...f, product_id: v }))}>
                   <SelectTrigger><SelectValue placeholder="Selecionar produto" /></SelectTrigger>
