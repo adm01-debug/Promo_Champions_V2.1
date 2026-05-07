@@ -271,57 +271,69 @@ export default function Estoque() {
           </TabsContent>
 
           <TabsContent value="movements" className="mt-4">
-            <Card>
+            <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+              <CardHeader className="p-6 border-b border-border/10 flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-black uppercase tracking-tighter italic">Tactical Movements</CardTitle>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent/30 border border-white/5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Live Flow</span>
+                </div>
+              </CardHeader>
               <CardContent className="p-0">
                 {loadingMov ? (
                   <div className="p-4 space-y-3">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div key={i} className="flex items-center gap-4">
-                        <div className="h-4 w-24 bg-muted/70 rounded animate-pulse" />
-                        <div className="h-4 w-32 bg-muted/70 rounded animate-pulse" />
-                        <div className="h-5 w-16 bg-muted/70 rounded-full animate-pulse" />
-                        <div className="h-4 w-12 bg-muted/70 rounded animate-pulse" />
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-5 w-16 rounded-full" />
+                        <Skeleton className="h-4 w-12" />
                       </div>
                     ))}
                   </div>
                 ) : movements.length === 0 ? (
-                  <div className="p-8 text-center text-muted-foreground">Nenhuma movimentação registrada</div>
+                  <div className="p-12 text-center flex flex-col items-center">
+                    <History className="h-12 w-12 text-muted-foreground/20 mb-3" />
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Nenhuma movimentação tática detectada...</p>
+                  </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b text-left">
-                          <th className="p-3 text-label">Data</th>
-                          <th className="p-3 text-label">Produto</th>
-                          <th className="p-3 text-label">Tipo</th>
-                          <th className="p-3 text-label">Qtd</th>
-                          <th className="p-3 text-label">Motivo</th>
+                        <tr className="border-b border-border/10 text-left bg-muted/20">
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Time Index</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Equipment</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Operation</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Quantity</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Briefing</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y divide-border/10">
                         {movements.map(mov => (
-                          <tr key={mov.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                            <td className="p-3 text-sm text-muted-foreground">
+                          <tr key={mov.id} className="group hover:bg-primary/5 transition-colors">
+                            <td className="p-4 text-[10px] font-black text-muted-foreground uppercase tabular-nums">
                               {format(new Date(mov.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
                             </td>
-                            <td className="p-3 font-medium">{mov.products?.name || "—"}</td>
-                            <td className="p-3">
+                            <td className="p-4 font-display font-black text-sm uppercase tracking-tighter group-hover:text-primary transition-colors">
+                              {mov.products?.name || "UNIDENTIFIED UNIT"}
+                            </td>
+                            <td className="p-4">
                               {mov.movement_type === "entry" && (
-                                <Badge className="bg-success/20 text-success border-success/30">
-                                  <ArrowUpCircle className="h-3 w-3 mr-1" />Entrada
+                                <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black text-[9px] uppercase tracking-widest">
+                                  <ArrowUpCircle className="h-2.5 w-2.5 mr-1" />INTAKE
                                 </Badge>
                               )}
                               {mov.movement_type === "exit" && (
-                                <Badge variant="destructive">
-                                  <ArrowDownCircle className="h-3 w-3 mr-1" />Saída
+                                <Badge variant="destructive" className="font-black text-[9px] uppercase tracking-widest border-none">
+                                  <ArrowDownCircle className="h-2.5 w-2.5 mr-1" />RELEASE
                                 </Badge>
                               )}
                               {mov.movement_type === "adjustment" && (
-                                <Badge variant="outline">Ajuste</Badge>
+                                <Badge variant="outline" className="font-black text-[9px] uppercase tracking-widest text-muted-foreground border-muted-foreground/30">ADJUSTMENT</Badge>
                               )}
                             </td>
-                            <td className="p-3 font-mono">{mov.quantity}</td>
-                            <td className="p-3 text-sm text-muted-foreground">{mov.reason || "—"}</td>
+                            <td className="p-4 font-display font-black text-base">{mov.quantity}</td>
+                            <td className="p-4 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">{mov.reason || "OPERATIONAL LOG"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -331,6 +343,7 @@ export default function Estoque() {
               </CardContent>
             </Card>
           </TabsContent>
+
         </Tabs>
       </div>
       </PageTransition>
