@@ -18,7 +18,7 @@ export const ProfilePerformanceCard = React.memo(function ProfilePerformanceCard
   const stats = [
     { 
       label: "Nível Ativo", 
-      value: salesperson?.level || 42, 
+      value: 42, 
       icon: Trophy, 
       color: "text-yellow-500", 
       bg: "bg-yellow-500/10",
