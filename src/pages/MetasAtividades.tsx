@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame } from "lucide-react";
+import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame, Calendar } from "lucide-react";
 import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
@@ -116,10 +116,10 @@ export default function MetasAtividades() {
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Button 
-                  variant="glass" 
+                  variant="outline" 
                   size="sm" 
                   onClick={handleTestCelebration}
-                  className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 group rounded-xl"
+                  className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 group rounded-xl bg-transparent"
                 >
                   <PartyPopper className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Simular Vitória</span>

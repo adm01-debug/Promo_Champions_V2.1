@@ -189,7 +189,7 @@ export const MilestoneTracker: FC<MilestoneProps> = ({ milestones, onComplete })
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <Badge variant="glass" className="text-[10px] font-black uppercase tracking-widest px-3 py-1 border-primary/20 text-primary mb-1">
+          <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest px-3 py-1 border-primary/20 text-primary mb-1 bg-primary/5">
             {milestones.filter(m => m.isCompleted).length} / {milestones.length}
           </Badge>
           <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Concluídos</span>
