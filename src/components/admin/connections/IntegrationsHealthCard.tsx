@@ -41,19 +41,38 @@ export function IntegrationsHealthCard() {
 
   return (
     <div className="grid gap-3 grid-cols-2 md:grid-cols-5">
-      {items.map((it) => (
-        <Card key={it.label} className="glass border-border/40">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-muted/40">
-              <it.icon className={`h-4 w-4 ${it.color}`} />
-            </div>
-            <div>
-              <div className="text-2xl font-display font-bold">{it.value}</div>
-              <div className="text-xs text-muted-foreground">{it.label}</div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {items.map((it) => {
+        const isActive = healthStatus === it.filter && it.filter !== "all";
+        
+        return (
+          <Card 
+            key={it.label} 
+            className={`glass border-border/40 transition-all duration-200 cursor-pointer hover:bg-muted/30 hover:scale-[1.02] active:scale-[0.98] ${
+              isActive ? "ring-2 ring-primary bg-primary/5" : ""
+            }`}
+            onClick={() => setHealthStatus(it.filter)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Filtrar por ${it.label}`}
+          >
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className={`p-2 rounded-lg bg-muted/40 ${isActive ? "bg-primary/20" : ""}`}>
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                ) : (
+                  <it.icon className={`h-4 w-4 ${it.color}`} />
+                )}
+              </div>
+              <div>
+                <div className="text-2xl font-display font-bold">
+                  {isLoading ? <Skeleton className="h-8 w-10" /> : it.value}
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{it.label}</div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
