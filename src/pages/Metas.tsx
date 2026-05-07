@@ -1,4 +1,6 @@
 import { Helmet } from "react-helmet-async";
+import { cn } from "@/lib/utils";
+
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { TeamGoalProgress } from "@/components/goals/TeamGoalProgress";
 import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
@@ -49,36 +51,44 @@ export default function Metas() {
       <PageTransition>
         <div className="min-h-screen bg-background">
           <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-            {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <h1 className="text-page-title gradient-text">Dashboard de Metas</h1>
-                  <p className="text-sm text-muted-foreground mt-1 capitalize">
-                    {currentMonth} • Atualizado às {lastUpdate}
-                  </p>
+            {/* Header with High-Tech Command Style */}
+            <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
+                    <Target className="h-7 w-7 text-primary animate-pulse" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                 </div>
-                <div className="flex items-center gap-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-2"
-                    onClick={handleRefresh}
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Atualizar
-                  </Button>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-                    <Target className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-medium text-primary">Tempo Real</span>
+                <div>
+                  <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Strategic Command</h1>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{currentMonth}</span>
+                    <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                    <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                      TELEMETRY UPDATED: {lastUpdate}
+                    </p>
                   </div>
                 </div>
               </div>
-            </motion.div>
+              
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-11 px-5 rounded-xl border-border/40 bg-muted/20 text-[10px] font-black uppercase tracking-widest hover:border-primary/50 transition-all duration-300 gap-2"
+                  onClick={handleRefresh}
+                >
+                  <RefreshCw className={cn("h-3.5 w-3.5", isLoading && "animate-spin")} />
+                  Resync
+                </Button>
+                <div className="flex items-center gap-2 px-4 h-11 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">LIVE DATA FEED</span>
+                </div>
+              </div>
+            </div>
+
 
             {/* Quick Stats - Enhanced Pro Metrics */}
             <motion.div 
