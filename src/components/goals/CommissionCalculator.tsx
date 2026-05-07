@@ -185,12 +185,6 @@ export function CommissionCalculator({
                     </div>
                   </div>
                 </motion.div>
-                  
-                  {/* Subtle background glow for top performers */}
-                  {index === 0 && (
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-rank-gold/5 blur-3xl -z-0 pointer-events-none" />
-                  )}
-                </div>
               );
             })}
 
