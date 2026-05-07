@@ -81,9 +81,9 @@ export function TeamGoalProgress({
               <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text drop-shadow-sm group-hover/price:scale-105 transition-transform duration-300">
                 {formatCurrency(totalSales)}
               </p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/60">Objetivo:</span>
-                <span className="text-xs font-black text-foreground/80 tracking-tight">{formatCurrency(totalGoal)}</span>
+              <div className="flex items-center gap-3 mt-1 px-3 py-1 rounded-full bg-muted/20 border border-border/10 w-fit">
+                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/60 italic">Budget Alvo</span>
+                <span className="text-xs font-black text-foreground tracking-tight drop-shadow-sm">{formatCurrency(totalGoal)}</span>
               </div>
             </div>
             <div className="text-right">
