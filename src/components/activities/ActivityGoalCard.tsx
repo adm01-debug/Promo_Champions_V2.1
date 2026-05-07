@@ -108,11 +108,11 @@ function _ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   };
 
   const activities = [
-    { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-status-success" },
-    { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-status-info" },
-    { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-status-purple" },
-    { icon: Linkedin, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary" },
-    { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-accent" },
+    { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-status-success", weight: 0.3 },
+    { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-status-info", weight: 0.1 },
+    { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-status-purple", weight: 0.5 },
+    { icon: Linkedin, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary", weight: 0.05 },
+    { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-accent", weight: 0.05 },
   ];
 
   const streakDisplay = currentStreak > 0 ? getStreakDisplay(currentStreak, bestStreak) : null;
