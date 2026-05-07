@@ -110,9 +110,10 @@ export default function Estoque() {
                 </Select>
                 <Input type="number" placeholder="Quantidade" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} />
                 <Input placeholder="Motivo (opcional)" value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} />
-                <Button onClick={handleSubmit} disabled={addMovement.isPending} className="w-full">
-                  {addMovement.isPending ? "Registrando..." : "Registrar"}
+                <Button onClick={handleSubmit} disabled={addMovement.isPending} className="w-full bg-primary text-[10px] font-black uppercase tracking-widest h-12 rounded-xl">
+                  {addMovement.isPending ? "Syncing..." : "Confirm Deployment"}
                 </Button>
+
               </div>
             </DialogContent>
           </Dialog>
