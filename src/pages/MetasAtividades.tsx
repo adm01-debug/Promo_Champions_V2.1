@@ -100,25 +100,38 @@ export default function MetasAtividades() {
         {/* Header */}
         <div className="animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-page-title gradient-text">Metas de Atividades Diárias</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Acompanhe o progresso diário de cada vendedor • {format(new Date(), "dd 'de' MMMM", { locale: ptBR })}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleTestCelebration}
-                className="gap-2 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <PartyPopper className="h-4 w-4" />
-                Testar Celebração
-              </Button>
-              <Badge variant="secondary" className="text-xs shadow-sm">
-                Progresso médio: {avgProgress.toFixed(0)}%
-              </Badge>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Operations</span>
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none">
+                  Arena de Atividades
+                </h1>
+                <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-primary/60" />
+                  {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })} • <span className="text-foreground/80">Ciclo de Alta Performance</span>
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button 
+                  variant="glass" 
+                  size="sm" 
+                  onClick={handleTestCelebration}
+                  className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 group rounded-xl"
+                >
+                  <PartyPopper className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Simular Vitória</span>
+                </Button>
+                <div className="px-4 py-2 rounded-xl glass border border-primary/20 shadow-lg shadow-primary/5 flex flex-col items-end">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none mb-1">Ritmo Global</span>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-3 w-3 text-status-success" />
+                    <span className="text-lg font-display font-black text-primary leading-none">{avgProgress.toFixed(0)}%</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

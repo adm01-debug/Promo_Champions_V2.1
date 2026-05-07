@@ -173,42 +173,50 @@ interface MilestoneProps {
 export const MilestoneTracker: FC<MilestoneProps> = ({ milestones, onComplete }) => {
   return (
     <Card className="p-6 glass border-border/40 card-elevated overflow-hidden relative group">
-      <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-primary/5 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-primary/5 blur-[80px] rounded-full pointer-events-none transition-opacity group-hover:opacity-20" />
       
-      <div className="flex items-center justify-between mb-6 relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
-            <Trophy className="h-5 w-5 text-primary-foreground" />
+      <div className="flex items-center justify-between mb-8 relative z-10">
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl shadow-primary/20 group-hover:rotate-6 transition-all duration-500">
+            <Trophy className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h4 className="font-display font-black text-base tracking-tight uppercase italic">Roadmap de Sucesso</h4>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-0.5">Marcos e Conquistas</p>
+            <h4 className="font-display font-black text-xl tracking-tighter uppercase italic gradient-text">Roadmap de Elite</h4>
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] mt-1 opacity-70">
+              <Target className="h-3 w-3 text-primary" />
+              Progressão de Conquistas
+            </div>
           </div>
         </div>
-        <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 glass border-border/40">
-          {milestones.filter(m => m.isCompleted).length}/{milestones.length} Concluídos
-        </Badge>
+        <div className="flex flex-col items-end">
+          <Badge variant="glass" className="text-[10px] font-black uppercase tracking-widest px-3 py-1 border-primary/20 text-primary mb-1">
+            {milestones.filter(m => m.isCompleted).length} / {milestones.length}
+          </Badge>
+          <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Concluídos</span>
+        </div>
       </div>
 
       <div className="space-y-4 relative z-10">
         {milestones.map((milestone, index) => (
           <div 
             key={milestone.id}
-            className={`flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 border ${
+            className={`flex items-start gap-5 p-5 rounded-2xl transition-all duration-500 border ${
               milestone.isCompleted 
                 ? 'bg-status-success/5 border-status-success/20 shadow-inner' 
-                : 'bg-muted/30 border-border/10 hover:bg-muted/50 hover:border-primary/20'
-            } group/milestone`}
+                : 'bg-background/20 border-border/10 hover:bg-background/40 hover:border-primary/20'
+            } group/milestone relative overflow-hidden`}
           >
+            <div className={`absolute inset-0 bg-gradient-to-r from-status-success/5 to-transparent transition-opacity duration-700 ${milestone.isCompleted ? 'opacity-100' : 'opacity-0'}`} />
+            
             <button
               onClick={() => !milestone.isCompleted && onComplete?.(milestone.id)}
-              className={`mt-0.5 w-6 h-6 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
+              className={`mt-0.5 w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all duration-500 relative z-10 ${
                 milestone.isCompleted 
                   ? 'bg-status-success border-status-success text-white shadow-lg shadow-status-success/30 rotate-12 scale-110' 
                   : 'border-muted-foreground/30 hover:border-primary hover:scale-110'
               }`}
             >
-              {milestone.isCompleted ? <CheckCircle2 className="h-4 w-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />}
+              {milestone.isCompleted ? <CheckCircle2 className="h-4 w-4" /> : <div className="w-2 h-2 rounded-full bg-muted-foreground/20 group-hover/milestone:bg-primary/40 transition-colors" />}
             </button>
             
             <div className="flex-1 min-w-0">
