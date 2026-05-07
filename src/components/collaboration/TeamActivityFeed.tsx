@@ -71,29 +71,63 @@ export const TeamActivityFeed = React.memo(() => {
   const { data: feed, isLoading } = useTeamActivityFeed(15);
 
   return (
-    <div className="glass rounded-xl border border-border/40 p-4">
-      <h3 className="font-display font-semibold text-sm mb-3">Feed da Equipe</h3>
-      {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <Skeleton className="h-7 w-7 rounded-full" />
-              <div className="flex-1 space-y-1">
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-2 w-1/3" />
-              </div>
+    <div className="relative overflow-hidden glass-morphism rounded-2xl border border-border/40 bg-gradient-to-br from-card/80 via-card/50 to-background/50 shadow-2xl transition-all duration-500 hover:shadow-primary/5">
+      {/* Header with status pulse */}
+      <div className="flex items-center justify-between p-4 border-b border-border/20">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="p-2 rounded-xl bg-primary/10">
+              <Phone className="h-4 w-4 text-primary" />
             </div>
-          ))}
+            <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-background animate-pulse" />
+          </div>
+          <div>
+            <h3 className="font-display font-black text-sm uppercase tracking-tighter italic">Elite Activity</h3>
+            <p className="text-[10px] text-muted-foreground/60 font-bold tracking-widest leading-none">REAL-TIME COMMAND FEED</p>
+          </div>
         </div>
-      ) : !feed?.length ? (
-        <p className="text-xs text-muted-foreground text-center py-4">Nenhuma atividade recente</p>
-      ) : (
-        <div className="max-h-[320px] overflow-y-auto scrollbar-thin">
-          {feed.map((item) => (
-            <ActivityItem key={item.id} item={item} />
-          ))}
+        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-accent/30 border border-white/5">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">LIVE</span>
         </div>
-      )}
+      </div>
+
+      <div className="p-1">
+        {isLoading ? (
+          <div className="space-y-4 p-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <Skeleton className="h-9 w-9 rounded-xl shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-3 w-3/4 rounded-md" />
+                  <Skeleton className="h-2 w-1/4 rounded-md" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : !feed?.length ? (
+          <div className="py-12 flex flex-col items-center justify-center text-center px-4">
+            <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mb-3">
+              <Phone className="h-6 w-6 text-muted-foreground/40" />
+            </div>
+            <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">Aguardando comandos da elite...</p>
+          </div>
+        ) : (
+          <div className="max-h-[380px] overflow-y-auto scrollbar-none hover:scrollbar-thin transition-all pr-1">
+            <div className="space-y-1 p-2">
+              {feed.map((item) => (
+                <ActivityItem key={item.id} item={item} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Decorative corner scan line */}
+      <div className="absolute bottom-0 right-0 w-24 h-24 pointer-events-none opacity-5">
+        <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-primary to-transparent" />
+        <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-primary to-transparent" />
+      </div>
     </div>
   );
 });
