@@ -32,11 +32,11 @@ export function IntegrationsHealthCard() {
   }, [conns, checks]);
 
   const items = [
-    { label: "Conexões", value: stats.total, icon: Activity, color: "text-primary" },
-    { label: "Ativas", value: stats.enabled, icon: CheckCircle2, color: "text-success" },
-    { label: "OK", value: stats.ok, icon: CheckCircle2, color: "text-success" },
-    { label: "Falhando", value: stats.fail, icon: XCircle, color: "text-destructive" },
-    { label: "Não testadas", value: stats.untested, icon: AlertTriangle, color: "text-warning" },
+    { label: "Conexões", value: stats.total, icon: Activity, color: "text-primary", filter: "all" as const },
+    { label: "Ativas", value: stats.enabled, icon: CheckCircle2, color: "text-success", filter: "all" as const },
+    { label: "OK", value: stats.ok, icon: CheckCircle2, color: "text-success", filter: "healthy" as const },
+    { label: "Falhando", value: stats.fail, icon: XCircle, color: "text-destructive", filter: "failing" as const },
+    { label: "Pendentes", value: stats.untested, icon: AlertTriangle, color: "text-warning", filter: "warning" as const },
   ];
 
   return (
