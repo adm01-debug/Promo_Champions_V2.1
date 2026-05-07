@@ -19,7 +19,40 @@ const STATUS_COLORS = {
   behind: "hsl(var(--destructive))",
 };
 
+const renderActiveShape = (props: any) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } = props;
+  return (
+    <g>
+      <text x={cx} y={cy} dy={-8} textAnchor="middle" fill="hsl(var(--foreground))" className="text-xl font-bold font-display">
+        {value}
+      </text>
+      <text x={cx} y={cy} dy={16} textAnchor="middle" fill="hsl(var(--muted-foreground))" className="text-[10px] uppercase font-bold tracking-wider">
+        Vendedores
+      </text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 6}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        innerRadius={outerRadius + 10}
+        outerRadius={outerRadius + 12}
+        fill={fill}
+      />
+    </g>
+  );
+};
+
 export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeople }) => {
+  const [activeIndex, setActiveIndex] = React.useState(0);
   const withGoals = salespeople.filter(sp => sp.goalAmount > 0);
 
   const exceeded = withGoals.filter(sp => sp.progress >= 100).length;
@@ -28,9 +61,9 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
   const behind = withGoals.filter(sp => sp.progress < 40).length;
 
   const data = [
-    { name: "Meta Batida", value: exceeded, color: STATUS_COLORS.exceeded },
-    { name: "No Caminho", value: onTrack, color: STATUS_COLORS.onTrack },
-    { name: "Em Risco", value: atRisk, color: STATUS_COLORS.atRisk },
+    { name: "Batida", value: exceeded, color: STATUS_COLORS.exceeded },
+    { name: "No Ritmo", value: onTrack, color: STATUS_COLORS.onTrack },
+    { name: "Risco", value: atRisk, color: STATUS_COLORS.atRisk },
     { name: "Atrasado", value: behind, color: STATUS_COLORS.behind },
   ].filter(d => d.value > 0);
 
