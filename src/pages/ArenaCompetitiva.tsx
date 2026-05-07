@@ -41,15 +41,25 @@ const ArenaCompetitiva = () => {
       </Helmet>
 
       <PageTransition>
-      <div className="p-4 lg:p-8 space-y-6">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold font-display text-foreground">
-            🏟️ Arena Competitiva
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Feed de vitórias, duelos, missões, ligas, streaks e muito mais
-          </p>
-        </div>
+      <div className="min-h-screen bg-background bg-gradient-subtle">
+        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+          <div className="animate-fade-in-up">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Tournament Hub</span>
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none">
+                  Arena Competitiva
+                </h1>
+                <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
+                  <Swords className="h-4 w-4 text-primary/60" />
+                  Ecossistema Global de Competição • <span className="text-foreground/80 italic font-bold">Modo Ativo</span>
+                </p>
+              </div>
+            </div>
+          </div>
 
         <SeasonAndPowerUps />
 
