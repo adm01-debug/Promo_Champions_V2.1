@@ -121,17 +121,18 @@ export function AIAssistantSettings() {
   }
 
   return (
-    <Card className="glass">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+      <div className="p-6 border-b border-border/10">
+        <h3 className="font-display font-black text-lg uppercase tracking-tighter italic flex items-center gap-3">
           <Bot className="h-5 w-5 text-primary" />
-          Personalizar Assistente IA
-        </CardTitle>
-        <CardDescription>
-          Personalize seu assistente de vendas para ter uma experiência única e humanizada!
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+          Neural Link Interface
+        </h3>
+        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">
+          Configure your tactical AI pilot companion
+        </p>
+      </div>
+      <div className="p-6 space-y-6">
+
         {/* Current Assistant Display */}
         <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
           <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
@@ -286,7 +287,8 @@ export function AIAssistantSettings() {
             Outros vendedores não têm acesso às suas informações.
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }

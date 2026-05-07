@@ -32,96 +32,112 @@ export default function Configuracoes() {
         <meta name="description" content="Preferências e configurações do sistema" />
       </Helmet>
     <PageTransition>
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
-          <Settings className="h-6 w-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-page-title gradient-text">Configurações</h1>
-          <p className="text-muted-foreground">Gerencie as configurações do sistema</p>
+    <div className="space-y-8 p-4 lg:p-8">
+      {/* Header with High-Tech Command Style */}
+      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
+              <Settings className="h-7 w-7 text-primary animate-pulse" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
+          </div>
+          <div>
+            <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">System Core</h1>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Settings Engine v5.0</span>
+              <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+              <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                CENTRAL COMMAND ACCESS GRANTED
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
+
       <Tabs defaultValue="roles" className="w-full">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <TabsList className="inline-flex w-max gap-1">
+        <div className="bg-muted/20 border border-border/10 p-1.5 rounded-2xl mb-8 overflow-hidden">
+          <ScrollArea className="w-full whitespace-nowrap">
+            <TabsList className="inline-flex w-max gap-2 bg-transparent h-12">
+
             {/* Personalização */}
-            <TabsTrigger value="roles" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Roles
+            <TabsTrigger value="roles" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Shield className="h-3.5 w-3.5 mr-2" />Roles
             </TabsTrigger>
-            <TabsTrigger value="sounds" className="flex items-center gap-2">
-              <Volume2 className="h-4 w-4" />
-              Sons
+            <TabsTrigger value="sounds" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Volume2 className="h-3.5 w-3.5 mr-2" />Sons
             </TabsTrigger>
-            <TabsTrigger value="ai-assistant" className="flex items-center gap-2">
-              <Bot className="h-4 w-4" />
-              Assistente IA
+            <TabsTrigger value="ai-assistant" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Bot className="h-3.5 w-3.5 mr-2" />AI Pilot
             </TabsTrigger>
-            <TabsTrigger value="portfolio" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              Portfólio
+            <TabsTrigger value="portfolio" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Briefcase className="h-3.5 w-3.5 mr-2" />Portfolio
             </TabsTrigger>
-            <TabsTrigger value="skins" className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              Skins
+            <TabsTrigger value="skins" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Palette className="h-3.5 w-3.5 mr-2" />Skins
             </TabsTrigger>
-            <TabsTrigger value="passkeys" className="flex items-center gap-2">
-              <Fingerprint className="h-4 w-4" />
-              Passkeys
+            <TabsTrigger value="passkeys" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Fingerprint className="h-3.5 w-3.5 mr-2" />Passkeys
             </TabsTrigger>
+
             {isAdmin && (
               <>
                 {/* Visual separator */}
                 <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
-                <TabsTrigger value="api-integration" className="flex items-center gap-2">
-                  <Plug className="h-4 w-4" />
-                  API
+                <TabsTrigger value="api-integration" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Plug className="h-3.5 w-3.5 mr-2" />API
                 </TabsTrigger>
-                <TabsTrigger value="custom-fields" className="flex items-center gap-2">
-                  <Settings2 className="h-4 w-4" />
-                  Campos
+                <TabsTrigger value="custom-fields" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Settings2 className="h-3.5 w-3.5 mr-2" />Fields
                 </TabsTrigger>
-                <TabsTrigger value="permissions" className="flex items-center gap-2">
-                  <Key className="h-4 w-4" />
-                  Permissões
+                <TabsTrigger value="permissions" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Key className="h-3.5 w-3.5 mr-2" />Permissions
                 </TabsTrigger>
+
                 {/* Visual separator */}
                 <div className="h-5 w-px bg-border/60 mx-1 self-center" aria-hidden="true" />
-                <TabsTrigger value="ip-whitelist" className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  IP
+                <TabsTrigger value="ip-whitelist" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Globe className="h-3.5 w-3.5 mr-2" />Security IP
                 </TabsTrigger>
-                <TabsTrigger value="geo-blocking" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Geo
+                <TabsTrigger value="geo-blocking" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <MapPin className="h-3.5 w-3.5 mr-2" />Geo Block
                 </TabsTrigger>
-                <TabsTrigger value="password-reset" className="flex items-center gap-2">
-                  <KeyRound className="h-4 w-4" />
-                  Senha
+                <TabsTrigger value="password-reset" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <KeyRound className="h-3.5 w-3.5 mr-2" />Pass Reset
                 </TabsTrigger>
-                <TabsTrigger value="audit" className="flex items-center gap-2">
-                  <FileWarning className="h-4 w-4" />
-                  Auditoria
+                <TabsTrigger value="audit" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <FileWarning className="h-3.5 w-3.5 mr-2" />Audit Log
                 </TabsTrigger>
-                <TabsTrigger value="circuits" className="flex items-center gap-2">
-                  <Activity className="h-4 w-4" />
-                  Circuits
+                <TabsTrigger value="circuits" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Activity className="h-3.5 w-3.5 mr-2" />Circuits
                 </TabsTrigger>
-                <TabsTrigger value="feature-flags" className="flex items-center gap-2">
-                  <Flag className="h-4 w-4" />
-                  Flags
+                <TabsTrigger value="feature-flags" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <Flag className="h-3.5 w-3.5 mr-2" />Flags
                 </TabsTrigger>
+
               </>
             )}
-          </TabsList>
-          <ScrollBar orientation="horizontal" className="h-1.5" />
-        </ScrollArea>
+            </TabsList>
+            <ScrollBar orientation="horizontal" className="h-1.5" />
+          </ScrollArea>
+        </div>
 
-        <TabsContent value="roles" className="mt-6">
-          <RoleManagement />
+
+        <TabsContent value="roles" className="mt-0">
+          <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+            <div className="p-6 border-b border-border/10">
+              <h3 className="font-display font-black text-lg uppercase tracking-tighter italic flex items-center gap-3">
+                <Shield className="h-5 w-5 text-primary" />
+                Role Management Unit
+              </h3>
+            </div>
+            <div className="p-6">
+              <RoleManagement />
+            </div>
+          </div>
         </TabsContent>
+
 
         <TabsContent value="sounds" className="mt-6">
           <SoundSettingsTabs />

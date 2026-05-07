@@ -78,17 +78,14 @@ export function RoleManagement() {
   }) || [];
 
   return (
-    <Card className="glass border-border/40">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-primary" />
-          Gerenciamento de Roles
-        </CardTitle>
-        <CardDescription>
-          Atribua roles para controlar as permissões de cada usuário no sistema.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-1">
+        <h4 className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Operational Access Control</h4>
+        <p className="text-sm text-muted-foreground italic font-medium">Assign roles to manage tactical permissions across the command unit.</p>
+      </div>
+      
+      <div className="bg-muted/10 border border-border/10 rounded-xl overflow-hidden">
+
         <Table>
           <TableHeader>
             <TableRow>
@@ -181,7 +178,8 @@ export function RoleManagement() {
             <li><User className="h-4 w-4 inline mr-2" /><strong>Vendedor:</strong> Acesso às próprias vendas, atividades e metas</li>
           </ul>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }

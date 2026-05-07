@@ -17,19 +17,22 @@ export function SoundSettingsTabs() {
   const { preferences: systemPreferences, updatePreference: updateSystemPreference, volume: systemVolume, setVolume: setSystemVolume, previewSound: previewSystemSound, playReadySound, soundOptions: systemSoundOptions } = useSystemSoundSettings();
 
   return (
-    <Card className="card-elevated">
-      <CardHeader>
-        <div className="flex items-center gap-2">
+    <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+      <div className="p-6 border-b border-border/10">
+        <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10">
             <Volume2 className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <CardTitle className="font-display">Configurações de Som</CardTitle>
-            <CardDescription>Gerencie todos os sons do sistema</CardDescription>
+            <h3 className="font-display font-black text-lg uppercase tracking-tighter italic">Acoustic Telemetry</h3>
+            <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">
+              Configure operational audio feedback and tactical alerts
+            </p>
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6">
+
         <Tabs defaultValue="celebration" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="celebration" className="flex items-center gap-2">
@@ -109,7 +112,8 @@ export function SoundSettingsTabs() {
             />
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }

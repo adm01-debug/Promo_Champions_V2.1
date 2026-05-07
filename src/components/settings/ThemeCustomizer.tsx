@@ -47,17 +47,18 @@ export function ThemeCustomizer() {
   } = useCustomTheme();
 
   return (
-    <Card className="glass-card">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+      <div className="p-6 border-b border-border/10">
+        <h3 className="font-display font-black text-lg uppercase tracking-tighter italic flex items-center gap-3">
           <Sparkles className="h-5 w-5 text-primary" />
-          Personalização do Tema
-        </CardTitle>
-        <CardDescription>
-          Customize a aparência do sistema de acordo com suas preferências
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+          Appearance Module
+        </h3>
+        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">
+          Customize system interface and aesthetics
+        </p>
+      </div>
+      <div className="p-6 space-y-6">
+
         {/* Theme Mode */}
         <div className="space-y-3">
           <Label className="text-sm font-medium">Modo do Tema</Label>
@@ -159,7 +160,8 @@ export function ThemeCustomizer() {
             Restaurar Padrões
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }
