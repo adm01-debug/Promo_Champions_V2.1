@@ -265,17 +265,25 @@ const Index = () => {
               <div className="mb-4">
                 <DashboardNLQWidget />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                <FunnelChart />
-                <SalesForecast />
-                <KPIGrid />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <KPIGrid />
+                </div>
                 <AlertsPanel />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                <FunnelChart />
+                <SalesForecast />
                 <BenchmarkPanel />
-                <TeamActivityFeed />
-                <ClientHealthPanel />
-                <EngagementLeaderboardWidget limit={8} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                <div className="lg:col-span-2">
+                  <TeamActivityFeed />
+                </div>
+                <div className="space-y-6">
+                  <ClientHealthPanel />
+                  <EngagementLeaderboardWidget limit={5} />
+                </div>
               </div>
             </DashboardSection>
 
