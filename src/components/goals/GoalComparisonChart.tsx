@@ -113,28 +113,48 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
               name="forecast" 
               dx={0} 
             />
-            <Bar dataKey="vendido" radius={[6, 6, 0, 0]} barSize={20} name="vendido" dx={-10}>
+            <Bar dataKey="vendido" radius={[4, 4, 0, 0]} barSize={18} name="vendido" dx={-8}>
               {data.map((entry, i) => (
                 <Cell
                   key={i}
-                  className="transition-all duration-500 hover:opacity-80"
+                  className="transition-all duration-700 hover:brightness-125"
                   fill={
                     entry.progress >= 100
-                      ? "hsl(var(--success))"
+                      ? "url(#colorSuccess)"
                       : entry.progress >= 70
-                      ? "hsl(var(--primary))"
+                      ? "url(#colorPrimary)"
                       : entry.progress >= 40
-                      ? "hsl(var(--warning))"
-                      : "hsl(var(--destructive))"
+                      ? "url(#colorWarning)"
+                      : "url(#colorDestructive)"
                   }
                   style={{ 
-                    filter: `drop-shadow(0 0 4px ${
-                      entry.progress >= 100 ? "rgba(34,197,94,0.3)" : "rgba(var(--primary),0.2)"
+                    filter: `drop-shadow(0 0 6px ${
+                      entry.progress >= 100 ? "rgba(34,197,94,0.4)" : 
+                      entry.progress >= 70 ? "rgba(var(--primary),0.3)" : 
+                      entry.progress >= 40 ? "rgba(var(--warning),0.3)" : "rgba(var(--destructive),0.3)"
                     })` 
                   }}
                 />
               ))}
             </Bar>
+            <defs>
+              <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+              </linearGradient>
+              <linearGradient id="colorSuccess" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--success))" stopOpacity={1} />
+                <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity={0.8} />
+              </linearGradient>
+              <linearGradient id="colorWarning" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--warning))" stopOpacity={1} />
+                <stop offset="100%" stopColor="hsl(var(--warning))" stopOpacity={0.8} />
+              </linearGradient>
+              <linearGradient id="colorDestructive" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={1} />
+                <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0.8} />
+              </linearGradient>
+            </defs>
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
