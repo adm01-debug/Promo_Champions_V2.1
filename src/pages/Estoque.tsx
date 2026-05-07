@@ -92,7 +92,7 @@ export default function Estoque() {
 
               <div className="space-y-4">
                 <Select value={form.product_id} onValueChange={v => setForm(f => ({ ...f, product_id: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Selecionar produto" /></SelectTrigger>
+                  <SelectTrigger className="h-12 bg-muted/20 border-border/40 font-bold"><SelectValue placeholder="Target Unit" /></SelectTrigger>
                   <SelectContent>
                     {inventory.map(i => (
                       <SelectItem key={i.id} value={i.product_id || i.id}>
