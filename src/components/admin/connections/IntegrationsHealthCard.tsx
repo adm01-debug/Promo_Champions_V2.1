@@ -1,11 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, XCircle, Activity, AlertTriangle } from "lucide-react";
+import { CheckCircle2, XCircle, Activity, AlertTriangle, Loader2 } from "lucide-react";
 import { useIntegrationConnections, useIntegrationHealth } from "@/hooks/admin/useIntegrationConnections";
 import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCredentialsSource } from "./CredentialsSourceFilterContext";
 
 export function IntegrationsHealthCard() {
-  const { data: conns = [] } = useIntegrationConnections();
-  const { data: checks = [] } = useIntegrationHealth();
+  const { data: conns = [], isLoading: loadingConns } = useIntegrationConnections();
+  const { data: checks = [], isLoading: loadingChecks } = useIntegrationHealth();
+  const { setHealthStatus, healthStatus } = useCredentialsSource();
+
+  const isLoading = loadingConns || loadingChecks;
 
   const stats = useMemo(() => {
     const total = conns.length;
@@ -27,28 +32,47 @@ export function IntegrationsHealthCard() {
   }, [conns, checks]);
 
   const items = [
-    { label: "Conexões", value: stats.total, icon: Activity, color: "text-primary" },
-    { label: "Ativas", value: stats.enabled, icon: CheckCircle2, color: "text-success" },
-    { label: "OK", value: stats.ok, icon: CheckCircle2, color: "text-success" },
-    { label: "Falhando", value: stats.fail, icon: XCircle, color: "text-destructive" },
-    { label: "Não testadas", value: stats.untested, icon: AlertTriangle, color: "text-warning" },
+    { label: "Conexões", value: stats.total, icon: Activity, color: "text-primary", filter: "all" as const },
+    { label: "Ativas", value: stats.enabled, icon: CheckCircle2, color: "text-success", filter: "all" as const },
+    { label: "OK", value: stats.ok, icon: CheckCircle2, color: "text-success", filter: "healthy" as const },
+    { label: "Falhando", value: stats.fail, icon: XCircle, color: "text-destructive", filter: "failing" as const },
+    { label: "Pendentes", value: stats.untested, icon: AlertTriangle, color: "text-warning", filter: "warning" as const },
   ];
 
   return (
     <div className="grid gap-3 grid-cols-2 md:grid-cols-5">
-      {items.map((it) => (
-        <Card key={it.label} className="glass border-border/40">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-muted/40">
-              <it.icon className={`h-4 w-4 ${it.color}`} />
-            </div>
-            <div>
-              <div className="text-2xl font-display font-bold">{it.value}</div>
-              <div className="text-xs text-muted-foreground">{it.label}</div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {items.map((it) => {
+        const isActive = healthStatus === it.filter && it.filter !== "all";
+        
+        return (
+          <Card 
+            key={it.label} 
+            className={`glass border-border/40 transition-all duration-200 cursor-pointer hover:bg-muted/30 hover:scale-[1.02] active:scale-[0.98] ${
+              isActive ? "ring-2 ring-primary bg-primary/5" : ""
+            }`}
+            onClick={() => setHealthStatus(it.filter)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Filtrar por ${it.label}`}
+          >
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className={`p-2 rounded-lg bg-muted/40 ${isActive ? "bg-primary/20" : ""}`}>
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                ) : (
+                  <it.icon className={`h-4 w-4 ${it.color}`} />
+                )}
+              </div>
+              <div>
+                <div className="text-2xl font-display font-bold">
+                  {isLoading ? <Skeleton className="h-8 w-10" /> : it.value}
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{it.label}</div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
