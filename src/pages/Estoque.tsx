@@ -186,11 +186,16 @@ export default function Estoque() {
         </div>
 
 
-        <Tabs defaultValue="inventory">
-          <TabsList>
-            <TabsTrigger value="inventory"><Package className="h-4 w-4 mr-2" />Inventário</TabsTrigger>
-            <TabsTrigger value="movements"><History className="h-4 w-4 mr-2" />Movimentações</TabsTrigger>
+        <Tabs defaultValue="inventory" className="w-full">
+          <TabsList className="bg-muted/20 border border-border/10 p-1 rounded-xl h-12">
+            <TabsTrigger value="inventory" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full">
+              <Package className="h-3.5 w-3.5 mr-2" />Equipment
+            </TabsTrigger>
+            <TabsTrigger value="movements" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full">
+              <History className="h-3.5 w-3.5 mr-2" />Tactical Log
+            </TabsTrigger>
           </TabsList>
+
 
           <TabsContent value="inventory" className="mt-4">
             <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
