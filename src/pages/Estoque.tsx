@@ -113,45 +113,73 @@ export default function Estoque() {
           </Dialog>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="glass-card hover-lift-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                <Package className="h-4 w-4" />
-                <span className="text-label">Total em Estoque</span>
+        {/* Enhanced Logistics Telemetry */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="p-4 rounded-2xl bg-primary/10 ring-1 ring-white/5">
+                <Package className="h-6 w-6 text-primary" />
               </div>
-              <p className="text-metric">{totalItems.toLocaleString("pt-BR")}</p>
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Global Stock</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display font-black text-3xl tracking-tighter">{totalItems.toLocaleString("pt-BR")}</span>
+                  <span className="text-[10px] font-bold text-primary italic">UNITS</span>
+                </div>
+              </div>
             </CardContent>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-transparent opacity-20" />
           </Card>
-          <Card className="glass-card hover-lift-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                <AlertTriangle className="h-4 w-4 text-destructive" />
-                <span className="text-label">Estoque Crítico</span>
+
+          <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="p-4 rounded-2xl bg-rose-500/10 ring-1 ring-white/5">
+                <AlertTriangle className="h-6 w-6 text-rose-500" />
               </div>
-              <p className="text-metric text-destructive">{criticalCount}</p>
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Critical Units</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display font-black text-3xl tracking-tighter text-rose-500">{criticalCount}</span>
+                  <span className="text-[10px] font-bold text-rose-500 italic">ALERTS</span>
+                </div>
+              </div>
             </CardContent>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500/50 to-transparent opacity-20" />
           </Card>
-          <Card className="glass-card hover-lift-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                <TrendingUp className="h-4 w-4 text-warning" />
-                <span className="text-label">Estoque Baixo</span>
+
+          <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="p-4 rounded-2xl bg-amber-500/10 ring-1 ring-white/5">
+                <TrendingUp className="h-6 w-6 text-amber-500" />
               </div>
-              <p className="text-metric text-warning">{lowCount}</p>
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Low Supply</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display font-black text-3xl tracking-tighter text-amber-500">{lowCount}</span>
+                  <span className="text-[10px] font-bold text-amber-500 italic">WARNING</span>
+                </div>
+              </div>
             </CardContent>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/50 to-transparent opacity-20" />
           </Card>
-          <Card className="glass-card hover-lift-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                <ArrowUpCircle className="h-4 w-4 text-success" />
-                <span className="text-label">Entradas Recentes</span>
+
+          <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="p-4 rounded-2xl bg-emerald-500/10 ring-1 ring-white/5">
+                <ArrowUpCircle className="h-6 w-6 text-emerald-500" />
               </div>
-              <p className="text-metric text-success">{entriesCount}</p>
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Recent Intake</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display font-black text-3xl tracking-tighter text-emerald-500">{entriesCount}</span>
+                  <span className="text-[10px] font-bold text-emerald-500 italic">TX</span>
+                </div>
+              </div>
             </CardContent>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/50 to-transparent opacity-20" />
           </Card>
         </div>
+
 
         <Tabs defaultValue="inventory">
           <TabsList>
