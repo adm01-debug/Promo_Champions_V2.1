@@ -126,41 +126,74 @@ function _SalespersonGoalCard({
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mt-4 space-y-2">
-        <div className="relative">
-          <Progress 
-            value={progressCapped} 
-            className={`h-2.5 ${hasExceededGoal ? "[&>div]:bg-gradient-to-r [&>div]:from-status-success [&>div]:to-status-success/70" : ""}`} 
-          />
-          {progress >= 100 && (
-            <div className="absolute inset-0 animate-xp-shimmer opacity-50 rounded-full" />
-          )}
+      {/* Enhanced Progress Section */}
+      <div className="mt-6 space-y-3">
+        <div className="flex justify-between items-end">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Resultado Real</span>
+            <span className="text-sm font-black tracking-tight">{formatCurrency(currentSales)}</span>
+          </div>
+          <div className="text-right flex flex-col">
+            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Objetivo</span>
+            <span className="text-sm font-black tracking-tight">{formatCurrency(goalAmount)}</span>
+          </div>
         </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground">
-          <span className="font-medium">{formatCurrency(currentSales)}</span>
-          <span className="flex items-center gap-1">
-            <Target className="h-3 w-3" />
-            Meta: <span className="font-medium text-foreground">{formatCurrency(goalAmount)}</span>
-          </span>
+        
+        <div className="relative h-3 w-full bg-muted/40 rounded-full overflow-hidden shadow-inner border border-border/5">
+          <div 
+            className={`absolute h-full transition-all duration-1000 ease-out ${
+              hasExceededGoal 
+                ? "bg-gradient-to-r from-status-success via-status-success/80 to-rank-gold animate-xp-shimmer" 
+                : "bg-gradient-to-r from-primary via-primary/80 to-accent"
+            }`} 
+            style={{ width: `${progressCapped}%` }} 
+          />
+          {hasExceededGoal && (
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
+          )}
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* Strategic Insights Grid */}
       {goalAmount > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="p-2.5 rounded-xl glass border border-border/30 text-center hover:bg-muted/30 transition-colors">
-            <p className="text-sm font-display font-bold gradient-text">{formatCurrency(dailyAverage)}</p>
-            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Média/dia</p>
+        <div className="mt-6 grid grid-cols-2 gap-3 relative z-10">
+          <div className="p-3 rounded-2xl bg-muted/30 border border-border/10 flex flex-col items-center justify-center group/stat transition-all hover:bg-muted/50">
+            <div className="flex items-center gap-1.5 mb-1">
+              <TrendingUp className="h-3 w-3 text-primary group-hover/stat:scale-110 transition-transform" />
+              <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Performance</span>
+            </div>
+            <p className="text-sm font-black gradient-text">{formatCurrency(dailyAverage)}/dia</p>
           </div>
-          <div className="p-2.5 rounded-xl glass border border-border/30 text-center hover:bg-muted/30 transition-colors">
-            <p className={`text-sm font-display font-bold ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
-              {formatCurrency(requiredDailyAverage)}
+          
+          <div className={`p-3 rounded-2xl border flex flex-col items-center justify-center group/stat transition-all ${
+            requiredDailyAverage > dailyAverage 
+              ? "bg-status-warning/5 border-status-warning/20 hover:bg-status-warning/10" 
+              : "bg-status-success/5 border-status-success/20 hover:bg-status-success/10"
+          }`}>
+            <div className="flex items-center gap-1.5 mb-1">
+              <Target className={`h-3 w-3 group-hover/stat:scale-110 transition-transform ${
+                requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"
+              }`} />
+              <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Target</span>
+            </div>
+            <p className={`text-sm font-black ${
+              requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"
+            }`}>
+              {formatCurrency(requiredDailyAverage)}/dia
             </p>
-            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Precisa/dia</p>
           </div>
         </div>
       )}
+
+      {/* Floating Status Floating Tag */}
+      <div className="absolute top-4 right-4 text-right">
+        <span className={`text-2xl font-display font-black tracking-tighter italic ${
+          hasExceededGoal ? "text-status-success drop-shadow-glow-sm" : "text-foreground/80"
+        }`}>
+          {progress.toFixed(0)}%
+        </span>
+      </div>
+    </div>
     </div>
   );
 }
