@@ -112,7 +112,8 @@ export function SoundSettingsTabs() {
             />
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }
