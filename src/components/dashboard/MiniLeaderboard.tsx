@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const RANK_CONFIG = [
-  { icon: Crown, color: "text-rank-gold", bg: "bg-rank-gold/10", border: "border-rank-gold/20" },
-  { icon: Medal, color: "text-rank-silver", bg: "bg-rank-silver/10", border: "border-rank-silver/20" },
-  { icon: Trophy, color: "text-rank-bronze", bg: "bg-rank-bronze/10", border: "border-rank-bronze/20" },
+  { icon: Crown, color: "text-rank-gold", bg: "bg-rank-gold/15", border: "border-rank-gold/30" },
+  { icon: Medal, color: "text-rank-silver", bg: "bg-rank-silver/15", border: "border-rank-silver/30" },
+  { icon: Trophy, color: "text-rank-bronze", bg: "bg-rank-bronze/15", border: "border-rank-bronze/30" },
 ];
 
 function _MiniLeaderboard() {
@@ -31,12 +31,18 @@ function _MiniLeaderboard() {
 
   if (isLoading) {
     return (
-      <Card className="border-none bg-transparent shadow-none">
-        <div className="space-y-3">
+      <Card className="glass border border-border/40">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-display flex items-center gap-2">
+            <Crown className="h-4 w-4 text-rank-gold" />
+            Top Vendedores
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-14 w-full rounded-2xl bg-white/[0.03]" />
+            <Skeleton key={i} className="h-10 w-full rounded-lg" />
           ))}
-        </div>
+        </CardContent>
       </Card>
     );
   }
@@ -44,21 +50,21 @@ function _MiniLeaderboard() {
   if (!top3.length) return null;
 
   return (
-    <Card className="border-none bg-transparent shadow-none">
-      <CardHeader className="pb-6 pt-0 px-0">
+    <Card className="glass border border-border/40 overflow-hidden">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-widest text-white/30 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-rank-gold/10 ring-1 ring-rank-gold/20">
-              <Crown className="h-4 w-4 text-rank-gold" />
+          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-rank-gold/15">
+              <Crown className="h-3.5 w-3.5 text-rank-gold" />
             </div>
-            Elite Council
+            Top Vendedores
           </CardTitle>
-          <Button asChild variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 hover:text-primary transition-all">
-            <Link to="/ranking">Full Arena →</Link>
+          <Button asChild variant="ghost" size="sm" className="text-xs h-7 px-2 text-muted-foreground">
+            <Link to="/ranking">Ver todos</Link>
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 p-0">
+      <CardContent className="space-y-1.5 pb-3">
         {top3.map((person, index) => {
           const config = RANK_CONFIG[index];
           const RankIcon = config.icon;
@@ -68,40 +74,31 @@ function _MiniLeaderboard() {
             <div
               key={person.id}
               className={cn(
-                "flex items-center gap-4 p-4 rounded-3xl transition-all duration-500 hover:scale-[1.02] border border-white/[0.03] group",
-                isCurrentUser ? "bg-primary/5 border-primary/20 shadow-[0_0_30px_rgba(var(--primary-rgb),0.1)]" : "bg-white/[0.02] hover:bg-white/[0.05]"
+                "flex items-center gap-2.5 p-2 rounded-lg transition-all duration-200 hover:bg-muted/40 hover:shadow-sm hover:scale-[1.01]",
+                isCurrentUser && "bg-primary/10 border border-primary/20"
               )}
             >
-              <div className={cn("flex items-center justify-center w-10 h-10 rounded-xl transition-transform duration-500 group-hover:rotate-12", config.bg, "ring-1", config.border)}>
-                <RankIcon className={cn("h-5 w-5", config.color)} />
+              <div className={cn("flex items-center justify-center w-7 h-7 rounded-lg", config.bg)}>
+                <RankIcon className={cn("h-3.5 w-3.5", config.color)} />
               </div>
-              <Avatar className={cn("h-10 w-10 border-2", config.border)}>
+              <Avatar className={cn("h-7 w-7 border", config.border)}>
                 <AvatarImage src={person.avatar_url || undefined} alt={person.name} />
-                <AvatarFallback className="text-[10px] font-black uppercase bg-white/5">
+                <AvatarFallback className="text-[10px] font-display font-medium">
                   {person.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <span className={cn(
-                  "text-xs font-black uppercase tracking-tight truncate block group-hover:text-white transition-colors",
-                  isCurrentUser ? "text-primary" : "text-white/60"
+                  "text-xs font-medium truncate block",
+                  isCurrentUser && "text-primary"
                 )}>
                   {person.name}
-                </span>
-                <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">
-                  Level {Math.floor(person.totalSales / 10000) + 1}
+                  {isCurrentUser && " (Você)"}
                 </span>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-black text-white tabular-nums tracking-tighter">
-                  {formatCurrency(person.totalSales)}
-                </p>
-                <div className="flex gap-0.5 mt-1 justify-end">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className={cn("h-1 w-2 rounded-full", i <= (3 - index) ? "bg-primary/40" : "bg-white/5")} />
-                  ))}
-                </div>
-              </div>
+              <span className="text-xs font-display font-bold tabular-nums">
+                {formatCurrency(person.totalSales)}
+              </span>
             </div>
           );
         })}

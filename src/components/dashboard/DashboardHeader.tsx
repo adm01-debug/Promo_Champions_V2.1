@@ -6,7 +6,6 @@ import { FileDown, Sparkles, Sun, Moon, Coffee } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 const motivationalTips = [
   "Cada ligação te aproxima do topo! 🎯",
@@ -47,57 +46,50 @@ export const DashboardHeader = () => {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.05] bg-[#0d1117]/40 p-8 sm:p-10 backdrop-blur-2xl shadow-2xl transition-all duration-500 hover:border-white/[0.1]">
-      {/* Decorative ambient light */}
-      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-r from-card via-card to-card/80 p-5 sm:p-6 shadow-sm">
+      {/* Decorative mesh background */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'var(--gradient-mesh)' }} />
       
-      <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-        <div className="flex items-center gap-6">
-          <div className="hidden sm:flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.08] shadow-2xl backdrop-blur-xl group transition-all duration-500 hover:scale-110 hover:border-primary/30">
-            <GreetingIcon className="h-8 w-8 text-primary/80 group-hover:text-primary transition-colors" />
+      <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/10 shadow-sm">
+            <GreetingIcon className="h-6 w-6 text-primary" />
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tightest">
-                <span className="bg-gradient-to-r from-white via-white/90 to-white/60 bg-clip-text text-transparent">
-                  {greeting}, {firstName}
-                </span>
-              </h1>
-              <motion.div 
-                animate={{ scale: [1, 1.2, 1] }} 
-                transition={{ duration: 2, repeat: Infinity }}
-                className="h-3 w-3 rounded-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" 
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <p className="text-sm font-bold uppercase tracking-widest text-white/40">{today}</p>
-              <div className="h-1 w-1 rounded-full bg-white/10 hidden sm:block" />
-              <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.05] px-3 py-1.5 rounded-full backdrop-blur-md">
-                <Sparkles className="h-3.5 w-3.5 text-primary/80" />
-                <span className="text-xs font-medium text-white/60">{tip}</span>
-              </div>
+          <div className="space-y-1">
+            <h1 className="text-page-title">
+              <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
+                {greeting}, {firstName}!
+              </span>
+            </h1>
+            <div className="flex items-center gap-2 min-w-0">
+              <p className="text-caption capitalize shrink-0">{today}</p>
+              <span className="text-muted-foreground/30 hidden sm:inline">·</span>
+              <p className="text-caption items-center gap-1 truncate hidden sm:flex">
+                <Sparkles className="h-3 w-3 text-primary/60 shrink-0" />
+                <span className="truncate">{tip}</span>
+              </p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             variant="default"
-            size="lg"
+            size="sm"
             onClick={() => navigate("/relatorios/vendas")}
-            className="rounded-full px-8 font-bold bg-primary text-primary-foreground hover:shadow-[0_0_25px_rgba(var(--primary-rgb),0.4)] transition-all duration-500 hover:scale-105"
+            className="gap-1.5 text-xs"
           >
-            <FileDown className="h-4 w-4 mr-2" />
-            Explorar Performance
+            <FileDown className="h-3.5 w-3.5" />
+            Relatório de Vendas
           </Button>
           <Button
             variant="outline"
-            size="lg"
+            size="sm"
             onClick={handleExportPDF}
             disabled={exporting}
-            className="rounded-full px-8 font-bold border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-500"
+            className="gap-1.5 text-xs"
           >
-            <FileDown className="h-4 w-4 mr-2 text-primary/60" />
-            {exporting ? "Gerando..." : "Instant PDF"}
+            <FileDown className="h-3.5 w-3.5" />
+            {exporting ? "Gerando..." : "PDF rápido"}
           </Button>
         </div>
       </div>

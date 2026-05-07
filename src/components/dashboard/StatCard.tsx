@@ -37,29 +37,29 @@ export const StatCard = React.memo(({
   });
 
   const variantStyles = useMemo(() => ({
-    default: "bg-[#0d1117]/60 border-white/[0.05] hover:border-white/[0.1] backdrop-blur-xl shadow-xl",
-    primary: "bg-primary/5 border-primary/20 hover:border-primary/40 backdrop-blur-2xl shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]",
-    success: "bg-success/5 border-success/20 hover:border-success/40 backdrop-blur-2xl shadow-[0_0_50px_rgba(var(--success-rgb),0.1)]",
-    warning: "bg-warning/5 border-warning/20 hover:border-warning/40 backdrop-blur-2xl shadow-[0_0_50px_rgba(var(--warning-rgb),0.1)]",
+    default: "bg-card border-border/50 hover:border-border",
+    primary: "bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 hover:border-primary/40",
+    success: "bg-gradient-to-br from-success/10 via-success/5 to-transparent border-success/20 hover:border-success/40",
+    warning: "bg-gradient-to-br from-warning/10 via-warning/5 to-transparent border-warning/20 hover:border-warning/40",
   }), []);
 
   const iconColors = useMemo(() => ({
-    default: "bg-white/[0.03] text-white/40",
-    primary: "bg-primary/10 text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]",
-    success: "bg-success/10 text-success shadow-[0_0_20px_rgba(var(--success-rgb),0.3)]",
-    warning: "bg-warning/10 text-warning shadow-[0_0_20px_rgba(var(--warning-rgb),0.3)]",
+    default: "bg-muted/50 text-muted-foreground",
+    primary: "bg-primary/15 text-primary shadow-sm shadow-primary/10",
+    success: "bg-success/15 text-success shadow-sm shadow-success/10",
+    warning: "bg-warning/15 text-warning shadow-sm shadow-warning/10",
   }), []);
 
   const sparklineColors = useMemo(() => ({
-    default: "text-white/20",
-    primary: "text-primary/60",
-    success: "text-success/60",
-    warning: "text-warning/60",
+    default: "text-muted-foreground",
+    primary: "text-primary",
+    success: "text-success",
+    warning: "text-warning",
   }), []);
 
   const heroStyles = hero
-    ? "relative overflow-hidden ring-1 ring-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-[1.02]"
-    : "hover:scale-[1.03] transition-transform duration-500 ease-out";
+    ? "relative overflow-hidden ring-1 ring-primary/10 shadow-lg shadow-primary/5"
+    : "";
 
   const displayValue = useMemo(() => {
     if (numericValue === undefined) return value;
@@ -74,88 +74,87 @@ export const StatCard = React.memo(({
 
   return (
     <Card className={cn(
-      "transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] rounded-3xl group",
+      "hover-lift transition-all duration-200",
       variantStyles[variant],
       heroStyles,
     )}>
-      <CardContent className={cn("p-6 sm:p-8", hero && "sm:p-10")}>
-        <div className="flex items-start justify-between relative z-10">
-          <div className={cn("space-y-2 flex-1 min-w-0", hero && "space-y-4")}>
+      <CardContent className={cn("p-4 sm:p-6", hero && "sm:p-8")}>
+        <div className="flex items-start justify-between">
+          <div className={cn("space-y-1 sm:space-y-2 flex-1 min-w-0", hero && "space-y-2 sm:space-y-3")}>
             <p className={cn(
-              "text-[10px] sm:text-xs text-white/30 font-black tracking-[0.2em] uppercase",
-              hero && "text-xs sm:text-sm text-primary/80"
+              "text-xs sm:text-sm text-muted-foreground font-medium tracking-wide uppercase",
+              hero && "text-sm sm:text-base"
             )}>
               {title}
             </p>
             <p className={cn(
-              "text-3xl sm:text-4xl font-black tabular-nums tracking-tightest leading-none",
-              hero && "text-5xl sm:text-6xl lg:text-7xl bg-gradient-to-br from-white via-white to-white/40 bg-clip-text text-transparent"
+              "text-lg sm:text-2xl font-bold tabular-nums font-display tracking-tight",
+              hero && "text-2xl sm:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text"
             )}>
               {displayValue}
             </p>
             {change !== undefined && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className={cn(
-                  "inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider",
+                  "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-xs font-semibold",
                   isPositive
-                    ? "bg-success/10 text-success ring-1 ring-success/20"
-                    : "bg-destructive/10 text-destructive ring-1 ring-destructive/20",
-                  hero && "text-xs px-3 py-1.5"
+                    ? "bg-success/10 text-success"
+                    : "bg-destructive/10 text-destructive",
+                  hero && "text-sm px-2 py-1"
                 )}>
                   {isPositive ? (
-                    <TrendingUp className={cn("h-3 w-3", hero && "h-4 w-4")} />
+                    <TrendingUp className={cn("h-3 w-3", hero && "h-3.5 w-3.5")} />
                   ) : (
-                    <TrendingDown className={cn("h-3 w-3", hero && "h-4 w-4")} />
+                    <TrendingDown className={cn("h-3 w-3", hero && "h-3.5 w-3.5")} />
                   )}
                   {isPositive ? "+" : ""}{change.toFixed(1)}%
                 </span>
                 {previousValue && (
-                  <span className={cn("text-[10px] font-bold text-white/20 uppercase tracking-widest", hero && "text-xs")}>
+                  <span className={cn("text-xs text-muted-foreground", hero && "text-sm")}>
                     vs {previousValue}
                   </span>
                 )}
               </div>
             )}
           </div>
-          <div className="flex flex-col items-end gap-4">
+          <div className="flex flex-col items-end gap-2">
             <div className={cn(
-              "p-4 rounded-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6",
+              "p-2 sm:p-3 rounded-xl transition-transform duration-200",
               iconColors[variant],
-              hero && "p-6 rounded-[2rem]"
+              hero && "p-3 sm:p-4 rounded-2xl"
             )}>
               <Icon className={cn(
-                "h-6 w-6",
-                hero && "h-10 w-10"
+                "h-4 w-4 sm:h-5 sm:w-5",
+                hero && "h-6 w-6 sm:h-8 sm:w-8"
               )} />
             </div>
             {!hero && sparklineData && sparklineData.length > 1 && (
               <MiniSparkline
                 data={sparklineData}
                 className={sparklineColors[variant]}
-                width={80}
-                height={24}
-                strokeWidth={2}
+                width={56}
+                height={20}
               />
             )}
           </div>
         </div>
 
         {hero && sparklineData && sparklineData.length > 1 && (
-          <div className="mt-8 -mb-4 opacity-40 group-hover:opacity-80 transition-opacity duration-700">
+          <div className="mt-3 -mb-2">
             <MiniSparkline
               data={sparklineData}
               className={sparklineColors[variant]}
-              width={400}
-              height={60}
-              strokeWidth={3}
+              width={240}
+              height={32}
+              strokeWidth={2}
             />
           </div>
         )}
 
         {hero && (
           <>
-            <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-8 -left-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
           </>
         )}
       </CardContent>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Clock, Flame, Percent, Zap, ChevronRight } from "lucide-react";
+import { Clock, Flame, Percent, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,15 +44,25 @@ function CountdownTimer({ endDate }: { endDate: string }) {
     [timeLeft.days, timeLeft.hours]
   );
 
+  const isCritical = useMemo(() =>
+    timeLeft.days === 0 && timeLeft.hours < 1,
+    [timeLeft.days, timeLeft.hours]
+  );
+
   return (
     <div className={cn(
-      "flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05]",
-      isUrgent ? "text-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.2)]" : "text-white/40"
+      "flex items-center gap-1 font-mono text-xs font-bold",
+      isUrgent ? "text-destructive" : "text-primary",
+      isCritical && "animate-pulse"
     )}>
-      <Clock className={cn("h-3 w-3", isUrgent && "animate-pulse")} />
-      <span className="text-[9px] font-black uppercase tracking-widest tabular-nums">
-        {timeLeft.days > 0 && `${timeLeft.days}d `}
-        {String(timeLeft.hours).padStart(2, "0")}:{String(timeLeft.minutes).padStart(2, "0")}:{String(timeLeft.seconds).padStart(2, "0")}
+      <Clock className={cn("h-3 w-3", isCritical && "animate-bounce")} />
+      {timeLeft.days > 0 && (
+        <span>{timeLeft.days}d</span>
+      )}
+      <span>
+        {String(timeLeft.hours).padStart(2, "0")}:
+        {String(timeLeft.minutes).padStart(2, "0")}:
+        {String(timeLeft.seconds).padStart(2, "0")}
       </span>
     </div>
   );
@@ -84,67 +94,71 @@ export function FlashSalesBanner({ promotions: externalPromos, onBuy, className 
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className={cn("h-full", className)}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className={className}
     >
-      <Card className="relative overflow-hidden rounded-[2rem] border border-white/[0.05] bg-[#0d1117]/30 backdrop-blur-2xl transition-all duration-700 hover:border-white/[0.1] h-full group">
-        <CardContent className="p-8 h-full flex flex-col justify-center">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg animate-pulse">
-                <Flame className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="text-lg font-black uppercase tracking-tightest text-white/90">Temporal Shift</h3>
-              <Badge variant="destructive" className="rounded-full bg-primary text-primary-foreground border-none text-[8px] font-black uppercase tracking-widest px-3">
-                Limited Burst
+      <Card className="overflow-hidden border-streak/20 bg-gradient-to-r from-streak/5 via-destructive/5 to-primary-glow/5 h-full">
+        <CardContent className="p-4 h-full flex flex-col justify-center">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <Flame className="h-5 w-5 text-streak" />
+              </motion.div>
+              <h3 className="font-bold text-sm">Promoção Relâmpago</h3>
+              <Badge variant="destructive" className="text-[10px]">
+                <Zap className="h-3 w-3 mr-0.5" />
+                LIMITADO
               </Badge>
             </div>
           </div>
 
-          <div className="space-y-4">
+          {/* Promotion Cards */}
+          <div className="space-y-2">
             {promotions.map((promo) => (
               <div
                 key={promo.id}
-                className="flex items-center gap-6 p-6 rounded-3xl bg-white/[0.02] border border-white/[0.03] hover:bg-white/[0.05] transition-all duration-500 group/item"
+                className="flex items-center gap-3 p-3 rounded-lg bg-background/80 border"
               >
-                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col items-center justify-center group-hover/item:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
-                  <Percent className="h-4 w-4 text-primary" />
-                  <span className="text-xl font-black text-primary leading-none">
+                {/* Discount Badge */}
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-destructive/10 flex flex-col items-center justify-center">
+                  <Percent className="h-3 w-3 text-destructive" />
+                  <span className="text-sm font-bold text-destructive">
                     {promo.discount_percent}
                   </span>
                 </div>
 
-                <div className="flex-1 min-w-0 space-y-2">
-                  <p className="text-xs font-black uppercase tracking-tight text-white group-hover/item:text-primary transition-colors">{promo.title}</p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest line-through">
-                        {promo.original_price} CR
-                      </span>
-                      <span className="text-sm font-black text-white tabular-nums tracking-tighter">
-                        {promo.sale_price} CR
-                      </span>
-                    </div>
-                    <CountdownTimer endDate={promo.ends_at} />
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">{promo.title}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs text-muted-foreground line-through">
+                      {promo.original_price} 🪙
+                    </span>
+                    <span className="text-sm font-bold text-primary">
+                      {promo.sale_price} 🪙
+                    </span>
                   </div>
+                  <CountdownTimer endDate={promo.ends_at} />
                 </div>
 
+                {/* Buy button */}
                 <Button
-                  size="icon"
+                  size="sm"
                   variant="default"
-                  className="rounded-2xl h-12 w-12 bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)] transition-all duration-500 hover:scale-110"
+                  className="flex-shrink-0"
                   onClick={() => onBuy?.(promo.id)}
                 >
-                  <ChevronRight className="h-6 w-6" />
+                  Comprar
                 </Button>
               </div>
             ))}
           </div>
         </CardContent>
-        {/* Animated background glow */}
-        <div className="absolute -top-12 -left-12 w-32 h-32 bg-primary/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-primary/20 transition-all duration-700" />
       </Card>
     </motion.div>
   );
