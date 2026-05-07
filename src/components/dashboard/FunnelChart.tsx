@@ -51,54 +51,75 @@ export const FunnelChart: FC = React.memo(() => {
 
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <Filter className="h-4 w-4 text-primary" />
-          Funil de Vendas
+    <Card className="h-full border-none bg-gradient-to-br from-card/30 to-background shadow-lg shadow-black/5 overflow-hidden">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-sm font-bold flex items-center gap-2 tracking-tight uppercase">
+          <div className="p-1.5 rounded-lg bg-primary/10">
+            <Filter className="h-4 w-4 text-primary" />
+          </div>
+          Vortex de Conversão
         </CardTitle>
       </CardHeader>
       <CardContent>
         {data && data.some(d => d.value > 0) ? (
-          <div className="space-y-3">
-            <ResponsiveContainer width="100%" height={160}>
-              <BarChart data={data} layout="vertical" margin={{ top: 0, right: 10, bottom: 0, left: 5 }}>
-                <XAxis type="number" hide />
-                <YAxis
-                  type="category"
-                  dataKey="stage"
-                  width={80}
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <Tooltip
-                  formatter={(v: number) => [`${v} deals`, "Quantidade"]}
-                  contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}
-                />
-                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={16}>
-                  {data.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="space-y-6">
+            <div className="relative">
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={data} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 0 }}>
+                  <XAxis type="number" hide />
+                  <YAxis
+                    type="category"
+                    dataKey="stage"
+                    width={80}
+                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))", fontWeight: "bold" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'hsl(var(--primary)/0.05)' }}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-popover/95 backdrop-blur-md border border-border/50 p-2 rounded-lg shadow-xl">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground">{payload[0].payload.stage}</p>
+                            <p className="text-sm font-black text-foreground">{payload[0].value} Negócios</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={14}>
+                    {data.map((entry, i) => (
+                      <Cell 
+                        key={i} 
+                        fill={entry.color} 
+                        className="filter drop-shadow-[0_0_4px_rgba(var(--primary-rgb),0.2)]"
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
             {/* Conversion rates between stages */}
-            <div className="flex items-center justify-between px-2">
+            <div className="flex items-center justify-around bg-muted/30 py-2 rounded-xl border border-border/10">
               {data.slice(0, -1).map((stage, i) => {
                 const next = data[i + 1];
                 const convRate = stage.value > 0 ? Math.round((next.value / stage.value) * 100) : 0;
                 return (
-                  <div key={i} className="flex flex-col items-center">
-                    <span className="text-[10px] font-bold text-primary">{convRate}%</span>
-                    <span className="text-[9px] text-muted-foreground">→</span>
+                  <div key={i} className="flex flex-col items-center gap-0.5">
+                    <span className="text-[10px] font-black text-primary">{convRate}%</span>
+                    <div className="h-0.5 w-4 bg-primary/20 rounded-full" />
                   </div>
                 );
               })}
             </div>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground text-center py-8">Sem dados no funil</p>
+          <div className="flex flex-col items-center justify-center py-10 opacity-30">
+            <Filter className="h-10 w-10 mb-2" />
+            <p className="text-xs font-bold uppercase tracking-widest">Aguardando Leads...</p>
+          </div>
         )}
       </CardContent>
     </Card>
