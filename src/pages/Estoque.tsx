@@ -15,10 +15,11 @@ import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 
 function StockStatusBadge({ current, min, reorder }: { current: number; min: number; reorder: number }) {
-  if (current <= min) return <Badge variant="destructive">Crítico</Badge>;
-  if (current <= reorder) return <Badge className="bg-warning/20 text-warning border-warning/30">Baixo</Badge>;
-  return <Badge className="bg-success/20 text-success border-success/30">Normal</Badge>;
+  if (current <= min) return <Badge variant="destructive" className="font-black uppercase tracking-widest text-[10px]">CRITICAL</Badge>;
+  if (current <= reorder) return <Badge className="bg-amber-500/20 text-amber-500 border-none font-black uppercase tracking-widest text-[10px]">LOW STOCK</Badge>;
+  return <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black uppercase tracking-widest text-[10px]">OPTIMAL</Badge>;
 }
+
 
 export default function Estoque() {
   const { data: inventory = [], isLoading: loadingInv } = useInventoryLevels();
