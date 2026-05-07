@@ -206,12 +206,24 @@ const RankingCompetitivo = () => {
           ))}
         </motion.div>
 
-        <Tabs defaultValue="ranking" className="space-y-6">
-          <TabsList className="glass">
-            <TabsTrigger value="ranking">Ranking Atual</TabsTrigger>
-            <TabsTrigger value="xp">Níveis & XP</TabsTrigger>
-            <TabsTrigger value="history">Histórico Mensal</TabsTrigger>
-            <TabsTrigger value="achievements">Conquistas</TabsTrigger>
+        <Tabs defaultValue="ranking" className="space-y-8">
+          <TabsList className="glass p-1 h-auto bg-background/20 backdrop-blur-xl border-border/40 inline-flex flex-wrap md:flex-nowrap">
+            <TabsTrigger value="ranking" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary px-6 py-3 font-bold transition-all duration-300">
+              <Trophy className="h-4 w-4 mr-2" />
+              Ranking de Vendas
+            </TabsTrigger>
+            <TabsTrigger value="xp" className="data-[state=active]:bg-accent/20 data-[state=active]:text-accent px-6 py-3 font-bold transition-all duration-300">
+              <Zap className="h-4 w-4 mr-2" />
+              Progressão de Nível
+            </TabsTrigger>
+            <TabsTrigger value="history" className="data-[state=active]:bg-secondary/20 data-[state=active]:text-secondary px-6 py-3 font-bold transition-all duration-300">
+              <Calendar className="h-4 w-4 mr-2" />
+              Histórico Mensal
+            </TabsTrigger>
+            <TabsTrigger value="achievements" className="data-[state=active]:bg-rank-gold/20 data-[state=active]:text-rank-gold px-6 py-3 font-bold transition-all duration-300">
+              <Crown className="h-4 w-4 mr-2" />
+              Conquistas
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ranking">
