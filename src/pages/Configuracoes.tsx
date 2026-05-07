@@ -124,8 +124,20 @@ export default function Configuracoes() {
         </div>
 
 
-        <TabsContent value="roles" className="mt-6">
-          <RoleManagement />
+        <TabsContent value="roles" className="mt-0">
+          <Card className="bg-gradient-to-br from-card/80 to-card/40 border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+            <CardHeader className="p-6 border-b border-border/10">
+              <CardTitle className="font-display font-black text-lg uppercase tracking-tighter italic flex items-center gap-3">
+                <Shield className="h-5 w-5 text-primary" />
+                Role Management Unit
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <RoleManagement />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         </TabsContent>
 
         <TabsContent value="sounds" className="mt-6">
