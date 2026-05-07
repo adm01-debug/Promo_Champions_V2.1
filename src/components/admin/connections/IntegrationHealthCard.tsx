@@ -112,7 +112,7 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
               aria-live="polite"
               aria-label={`Testando conexão ${connection.label}`}
             >
-              <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+              <Loader2 className="h-3 w-3 animate-spin text-primary" aria-hidden="true" />
               Testando…
             </div>
           </>
