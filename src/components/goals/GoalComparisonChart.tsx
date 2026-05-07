@@ -38,24 +38,27 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
   }
 
   return (
-    <Card className="glass border-border/40 card-elevated">
-      <CardHeader className="pb-2 border-b border-border/10">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            Vendido vs Meta por Vendedor
+    <Card className="glass border-border/40 card-elevated overflow-hidden group">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -mr-16 -mt-16 pointer-events-none" />
+      <CardHeader className="pb-2 border-b border-border/10 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <CardTitle className="text-base font-display font-black flex items-center gap-2 uppercase italic tracking-tight">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:rotate-6 transition-transform">
+              <BarChart3 className="h-5 w-5 text-primary" />
+            </div>
+            <span className="gradient-text">Arena de Comparação</span>
           </CardTitle>
-          <div className="flex items-center gap-4 text-[10px] uppercase font-bold text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm bg-primary/20" />
-              <span>Meta</span>
+          <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/30 border border-border/10">
+              <div className="w-2 h-2 rounded-full bg-primary/20" />
+              <span>Target Alvo</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm bg-primary" />
-              <span>Vendido</span>
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/30 border border-border/10">
+              <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
+              <span>Realizado</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm bg-primary/40 border border-primary/20 border-dashed" />
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/30 border border-border/10">
+              <div className="w-2 h-2 rounded-full border border-primary/40 border-dashed" />
               <span>Forecast</span>
             </div>
           </div>
@@ -93,12 +96,28 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
                 fontSize: 12 
               }}
             />
-            <Bar dataKey="meta" fill="hsl(var(--muted-foreground)/0.15)" radius={[4, 4, 0, 0]} barSize={32} name="meta" />
-            <Bar dataKey="projecao" fill="hsl(var(--primary)/0.2)" radius={[4, 4, 0, 0]} barSize={16} name="forecast" dx={0} />
-            <Bar dataKey="vendido" radius={[4, 4, 0, 0]} barSize={16} name="vendido" dx={-8}>
+            <Bar 
+              dataKey="meta" 
+              fill="hsl(var(--primary)/0.05)" 
+              radius={[6, 6, 0, 0]} 
+              barSize={40} 
+              name="meta" 
+              stroke="hsl(var(--primary)/0.1)"
+              strokeDasharray="4 2"
+            />
+            <Bar 
+              dataKey="projecao" 
+              fill="hsl(var(--primary)/0.15)" 
+              radius={[6, 6, 0, 0]} 
+              barSize={20} 
+              name="forecast" 
+              dx={0} 
+            />
+            <Bar dataKey="vendido" radius={[6, 6, 0, 0]} barSize={20} name="vendido" dx={-10}>
               {data.map((entry, i) => (
                 <Cell
                   key={i}
+                  className="transition-all duration-500 hover:opacity-80"
                   fill={
                     entry.progress >= 100
                       ? "hsl(var(--success))"
@@ -108,6 +127,11 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
                       ? "hsl(var(--warning))"
                       : "hsl(var(--destructive))"
                   }
+                  style={{ 
+                    filter: `drop-shadow(0 0 4px ${
+                      entry.progress >= 100 ? "rgba(34,197,94,0.3)" : "rgba(var(--primary),0.2)"
+                    })` 
+                  }}
                 />
               ))}
             </Bar>
