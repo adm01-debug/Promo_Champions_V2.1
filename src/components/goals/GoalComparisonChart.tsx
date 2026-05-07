@@ -48,17 +48,17 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
             </div>
             <span className="gradient-text">Arena de Comparação</span>
           </CardTitle>
-          <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase font-black tracking-widest text-muted-foreground">
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/30 border border-border/10">
-              <div className="w-2 h-2 rounded-full bg-primary/20" />
+          <div className="flex flex-wrap items-center gap-2 text-[9px] uppercase font-black tracking-widest">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary/80 backdrop-blur-sm shadow-sm hover:bg-primary/10 transition-colors">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-pulse" />
               <span>Target Alvo</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/30 border border-border/10">
-              <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/5 border border-success/20 text-success backdrop-blur-sm shadow-sm hover:bg-success/10 transition-colors">
+              <div className="w-1.5 h-1.5 rounded-full bg-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
               <span>Realizado</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/30 border border-border/10">
-              <div className="w-2 h-2 rounded-full border border-primary/40 border-dashed" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/30 border border-border/10 text-muted-foreground backdrop-blur-sm shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full border border-primary/40 border-dashed animate-spin-slow" />
               <span>Forecast</span>
             </div>
           </div>
