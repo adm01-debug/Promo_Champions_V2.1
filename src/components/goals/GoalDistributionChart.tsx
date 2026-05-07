@@ -82,8 +82,8 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
     <Card className="glass border-border/40 card-elevated overflow-hidden group">
       <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/5 blur-3xl rounded-full pointer-events-none" />
       <CardHeader className="pb-2 border-b border-border/10 relative z-10">
-        <CardTitle className="text-sm font-display font-black uppercase tracking-widest flex items-center gap-2 italic">
-          <div className="p-1.5 rounded-lg bg-primary/10 group-hover:scale-110 transition-transform">
+        <CardTitle className="text-[10px] font-display font-black uppercase tracking-[0.2em] flex items-center gap-2 italic">
+          <div className="p-2 rounded-xl bg-primary/10 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
             <PieIcon className="h-4 w-4 text-primary" />
           </div>
           <span className="gradient-text">Health Check Operacional</span>
@@ -153,12 +153,15 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
             >
               <div className="flex items-center gap-2.5">
                 <div 
-                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" 
+                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor] animate-pulse" 
                   style={{ backgroundColor: entry.color, color: entry.color }} 
                 />
-                <span className="text-[10px] font-black uppercase tracking-widest leading-none">{entry.name}</span>
+                <span className="text-[9px] font-black uppercase tracking-widest leading-none text-muted-foreground group-hover/btn:text-foreground transition-colors">{entry.name}</span>
               </div>
-              <span className="text-xs font-black font-display gradient-text">{entry.value}</span>
+              <div className="flex flex-col items-end">
+                <span className="text-xs font-black font-display gradient-text">{entry.value}</span>
+                <span className="text-[7px] font-bold text-muted-foreground/60 uppercase">Unity</span>
+              </div>
             </button>
           ))}
         </div>
