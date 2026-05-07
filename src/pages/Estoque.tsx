@@ -102,7 +102,7 @@ export default function Estoque() {
                   </SelectContent>
                 </Select>
                 <Select value={form.movement_type} onValueChange={v => setForm(f => ({ ...f, movement_type: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-12 bg-muted/20 border-border/40 font-bold"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="entry" className="text-xs font-bold uppercase tracking-widest">Intake</SelectItem>
                     <SelectItem value="exit" className="text-xs font-bold uppercase tracking-widest">Release</SelectItem>
