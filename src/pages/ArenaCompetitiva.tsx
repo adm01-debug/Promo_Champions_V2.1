@@ -118,9 +118,10 @@ const ArenaCompetitiva = () => {
           <TabsContent value="scoreboard"><LiveScoreboard /></TabsContent>
           <TabsContent value="alerts"><RankNotifications salespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="evolution"><EvolutionChart /></TabsContent>
-        </div>
+        </Tabs>
       </div>
-      </PageTransition>
+    </div>
+    </PageTransition>
     </>
   );
 };
