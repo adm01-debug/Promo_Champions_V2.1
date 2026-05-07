@@ -181,14 +181,21 @@ export function EmailTrackingDashboard() {
           </CardContent>
         </Card>
 
-        {/* Event Log */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" />
-              Histórico de Eventos
-            </CardTitle>
+        {/* Elite Event Log */}
+        <Card className="lg:col-span-2 relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+          <CardHeader className="p-6 border-b border-border/10">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-3 text-lg font-black uppercase tracking-tighter italic">
+                <Clock className="h-5 w-5 text-primary" />
+                Strategic Signal History
+              </CardTitle>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent/30 border border-white/5">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">LIVE DEPLOYMENT</span>
+              </div>
+            </div>
           </CardHeader>
+
           <CardContent>
             <ScrollArea className="max-h-[400px]">
               <div className="space-y-2">
