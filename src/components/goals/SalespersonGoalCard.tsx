@@ -35,7 +35,7 @@ function _SalespersonGoalCard({
   goalAmount,
   currentSales,
   progress,
-  projection: _projection,
+  projection,
   onTrack,
   dailyAverage,
   requiredDailyAverage,
@@ -49,16 +49,24 @@ function _SalespersonGoalCard({
   const progressCapped = Math.min(progress, 100);
   const isTopPerformer = rank <= 3;
   const hasExceededGoal = progress >= 100;
+  
+  // Calculate trend: if projection is 10% higher than goal, it's strong
+  const isStrongTrend = projection > goalAmount * 1.1;
 
   return (
-    <div className={`p-4 rounded-xl border transition-all duration-300 hover-lift cursor-pointer ${
+    <div className={`group p-5 rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer relative overflow-hidden ${
       hasExceededGoal 
-        ? "glass bg-status-success/5 border-status-success/40 hover:border-status-success/60 shadow-md shadow-status-success/10 hover-glow-success" 
+        ? "bg-gradient-to-br from-status-success/10 via-background to-background border-status-success/40 shadow-xl shadow-status-success/10" 
         : onTrack 
-          ? "glass bg-card border-border/40 hover:border-primary/40 dark:border-glow" 
-          : "glass bg-status-warning/5 border-status-warning/30 hover:border-status-warning/50"
+          ? "glass bg-card/80 border-border/40 hover:border-primary/40" 
+          : "bg-gradient-to-br from-status-warning/10 via-background to-background border-status-warning/30 shadow-lg shadow-status-warning/5"
     }`}>
-      <div className="flex items-start gap-3">
+      {/* Dynamic Background Glow */}
+      <div className={`absolute -top-24 -right-24 w-48 h-48 blur-[80px] opacity-20 pointer-events-none transition-opacity group-hover:opacity-40 ${
+        hasExceededGoal ? "bg-status-success" : onTrack ? "bg-primary" : "bg-status-warning"
+      }`} />
+
+      <div className="flex items-start gap-4 relative z-10">
         {/* Rank & Avatar */}
         <div className="relative">
           <Avatar className={`h-12 w-12 shadow-md ${isTopPerformer ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-2 border-background"}`}>
