@@ -1,7 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, XCircle, Activity, AlertTriangle } from "lucide-react";
+import { CheckCircle2, XCircle, Activity, AlertTriangle, Loader2 } from "lucide-react";
 import { useIntegrationConnections, useIntegrationHealth } from "@/hooks/admin/useIntegrationConnections";
 import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCredentialsSource } from "./CredentialsSourceFilterContext";
 
 export function IntegrationsHealthCard() {
   const { data: conns = [] } = useIntegrationConnections();
