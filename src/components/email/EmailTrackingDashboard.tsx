@@ -203,31 +203,31 @@ export function EmailTrackingDashboard() {
                   events.map(event => {
                     const config = EVENT_CONFIG[event.event_type] || EVENT_CONFIG.sent;
                     return (
-                      <div key={event.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors border border-border/30">
-                        <div className={cn(
-                          "p-1.5 rounded-md",
-                          event.event_type === 'sent' && "bg-primary/10",
-                          event.event_type === 'opened' && "bg-success/10",
-                          event.event_type === 'clicked' && "bg-info/10",
-                          event.event_type === 'replied' && "bg-primary/10",
-                          event.event_type === 'bounced' && "bg-destructive/10",
-                          !['sent','opened','clicked','replied','bounced'].includes(event.event_type) && "bg-muted/10"
-                        )}>
-                          {config.icon}
+                      <div key={event.id} className="group relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 border border-transparent hover:border-border/50 hover:bg-accent/30">
+                        <div className={cn("p-2.5 rounded-xl shrink-0 transition-transform group-hover:scale-110", config.bg)}>
+                          {config.icon && React.cloneElement(config.icon as React.ReactElement, { className: cn("h-4 w-4", config.color) })}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{event.subject}</p>
-                          <p className="text-xs text-muted-foreground truncate">{event.recipient_email}</p>
+                          <p className="text-sm font-black uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
+                            {event.subject || "NO SUBJECT SIGNAL"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">{event.recipient_email}</span>
+                          </div>
                         </div>
-                        <Badge variant={config.badgeVariant} className="text-[10px] shrink-0">
-                          {config.label}
-                        </Badge>
-                        <span className="text-[10px] text-muted-foreground shrink-0">
-                          {formatDistanceToNow(new Date(event.tracked_at), { addSuffix: true, locale: ptBR })}
-                        </span>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <Badge variant={config.badgeVariant} className="text-[9px] font-black uppercase tracking-widest border-none">
+                            {config.label}
+                          </Badge>
+                          <span className="text-[9px] font-bold text-muted-foreground uppercase tabular-nums">
+                            {formatDistanceToNow(new Date(event.tracked_at), { addSuffix: true, locale: ptBR })}
+                          </span>
+                        </div>
+                        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     );
                   })
+
                 ) : (
                   <div className="text-center py-12">
                     <Mail className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
