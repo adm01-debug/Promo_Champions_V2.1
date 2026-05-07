@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Search, Filter, SortAsc, SortDesc } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SalespersonGoalCard } from "./SalespersonGoalCard";
