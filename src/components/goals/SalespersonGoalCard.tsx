@@ -68,42 +68,52 @@ function _SalespersonGoalCard({
 
       <div className="flex items-start gap-4 relative z-10">
         {/* Rank & Avatar */}
+        {/* Rank & Avatar with XP Ring */}
         <div className="relative">
-          <Avatar className={`h-12 w-12 shadow-md ${isTopPerformer ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-2 border-background"}`}>
-            <AvatarImage src={avatar_url || undefined} />
-            <AvatarFallback className="text-sm font-display font-medium gradient-primary text-primary-foreground">
+          <div className={`absolute -inset-1 rounded-full blur-sm opacity-0 group-hover:opacity-60 transition-opacity ${
+            hasExceededGoal ? "bg-status-success" : "bg-primary"
+          }`} />
+          <Avatar className={`h-14 w-14 shadow-2xl relative border-2 transition-transform duration-500 group-hover:scale-110 ${
+            isTopPerformer ? "border-primary" : "border-background"
+          }`}>
+            <AvatarImage src={avatar_url || undefined} className="object-cover" />
+            <AvatarFallback className="text-base font-display font-black gradient-primary text-primary-foreground">
               {name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          {isTopPerformer && (
-            <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full gradient-primary flex items-center justify-center shadow-md">
-              <span className="text-[11px] font-display font-bold text-primary-foreground">{rank}</span>
+          
+          {rank <= 3 && (
+            <div className={`absolute -top-1 -left-1 h-7 w-7 rounded-full flex items-center justify-center shadow-lg border-2 border-background z-20 ${
+              rank === 1 ? "bg-rank-gold" : rank === 2 ? "bg-rank-silver" : "bg-rank-bronze"
+            }`}>
+              <span className="text-[10px] font-black text-white">{rank}º</span>
             </div>
           )}
         </div>
 
-        {/* Info */}
+        {/* Info & Badges */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="font-display font-medium truncate gradient-text">{name}</span>
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="text-base font-display font-black tracking-tight truncate group-hover:text-primary transition-colors">
+              {name}
+            </h3>
             <SalespersonLevelBadge level={level} totalXP={totalXP} size="xs" />
-            {hasExceededGoal && <Flame className="h-4 w-4 text-streak animate-fire-pulse" />}
           </div>
-          <div className="flex items-center gap-2 mt-1">
-            <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 shadow-sm">
+          
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-background/50 border-border/40">
               {roleLabels[role] || role}
             </Badge>
-            <Badge 
-              variant="outline" 
-              className={`text-[9px] px-1.5 py-0 shadow-sm ${
-                onTrack 
-                  ? "bg-status-success/10 text-status-success border-status-success/20" 
-                  : "bg-status-warning/10 text-status-warning border-status-warning/20"
-              }`}
-            >
-              {onTrack ? <TrendingUp className="h-2.5 w-2.5 mr-0.5" /> : <TrendingDown className="h-2.5 w-2.5 mr-0.5" />}
-              {onTrack ? "No caminho" : "Atenção"}
-            </Badge>
+            {isStrongTrend && (
+              <Badge className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-status-success/20 text-status-success border-none animate-pulse">
+                Ritmo Acelerado
+              </Badge>
+            )}
+            {hasExceededGoal && (
+              <Badge className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-rank-gold/20 text-rank-gold border-none">
+                Bônus Ativo
+              </Badge>
+            )}
           </div>
         </div>
 
