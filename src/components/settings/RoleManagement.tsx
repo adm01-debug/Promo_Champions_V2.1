@@ -178,7 +178,8 @@ export function RoleManagement() {
             <li><User className="h-4 w-4 inline mr-2" /><strong>Vendedor:</strong> Acesso às próprias vendas, atividades e metas</li>
           </ul>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }
