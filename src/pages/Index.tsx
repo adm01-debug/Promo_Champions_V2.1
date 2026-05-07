@@ -120,10 +120,15 @@ const Index = () => {
             <OnboardingChecklist />
 
             {/* ── SECTION: Event Banners ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
               <SeasonalEventBanner />
               <FlashSalesBanner />
-            </div>
+            </motion.div>
 
             {/* Competitive Status Bar */}
             <motion.div
