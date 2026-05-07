@@ -6,6 +6,7 @@ import { FileDown, Sparkles, Sun, Moon, Coffee } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const motivationalTips = [
   "Cada ligação te aproxima do topo! 🎯",
