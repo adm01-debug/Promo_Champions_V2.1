@@ -80,8 +80,11 @@ export default function Estoque() {
 
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Nova Movimentação</Button>
+              <Button className="h-11 px-6 rounded-xl bg-primary text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
+                <Plus className="h-4 w-4 mr-2" />Deploy Movement
+              </Button>
             </DialogTrigger>
+
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Registrar Movimentação</DialogTitle>
