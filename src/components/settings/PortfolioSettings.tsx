@@ -65,21 +65,22 @@ export function PortfolioSettings() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-border/40">
-        <CardHeader>
+      <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+        <div className="p-6 border-b border-border/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+            <div className="p-2 rounded-lg bg-primary/10">
               <Briefcase className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle>Configurações de Portfólio</CardTitle>
-              <CardDescription>
-                Defina regras de inatividade e distribuição de clientes
-              </CardDescription>
+              <h3 className="font-display font-black text-lg uppercase tracking-tighter italic">Portfolio Directives</h3>
+              <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">
+                Manage client inactivity and tactical redistribution
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-8">
+        </div>
+        <div className="p-6 space-y-8">
+
           {/* Inactivity Threshold */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
