@@ -45,14 +45,16 @@ const KPIRow = React.memo(function KPIRow({ kpi, index }: { kpi: KPIItem; index:
 
 export const KPIGrid = React.memo(function KPIGrid() {
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-primary" />
-          KPIs
+    <Card className="h-full border-none bg-gradient-to-br from-primary/5 via-transparent to-accent/5 shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-sm font-bold flex items-center gap-2 tracking-tight uppercase">
+          <div className="p-1.5 rounded-lg bg-primary/10">
+            <BarChart3 className="h-4 w-4 text-primary" />
+          </div>
+          Métricas de Performance
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {defaultKpis.map((kpi, index) => (
           <KPIRow key={kpi.label} kpi={kpi} index={index} />
         ))}
