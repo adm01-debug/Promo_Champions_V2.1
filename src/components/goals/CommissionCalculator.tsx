@@ -14,6 +14,7 @@ interface SalespersonCommission {
   currentCommission: number;
   projectedCommission: number;
   projection: number;
+  progress: number;
 }
 
 interface CommissionCalculatorProps {
