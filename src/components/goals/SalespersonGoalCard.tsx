@@ -196,6 +196,5 @@ function _SalespersonGoalCard({
     </div>
   );
 }
-}
 
 export const SalespersonGoalCard = React.memo(_SalespersonGoalCard);
