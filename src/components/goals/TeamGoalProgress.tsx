@@ -213,21 +213,57 @@ export function TeamGoalProgress({
           </div>
         </div>
 
-        {/* Days Progress */}
-        <div 
-          className="flex items-center gap-3 text-sm p-3 rounded-xl glass border border-border/30 hover-lift transition-all animate-fade-in"
-          style={{ animationDelay: '200ms' }}
-        >
-          <div className="p-2 rounded-lg bg-muted/50">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="flex-1">
-            <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-              <span className="font-medium">{daysElapsed} dias passados</span>
-              <span className="font-medium">{daysRemaining} restantes</span>
+        {/* Days Progress & Gap Analysis */}
+        <div className="space-y-4">
+          <div 
+            className="flex items-center gap-3 text-sm p-3 rounded-xl glass border border-border/30 hover-lift transition-all animate-fade-in"
+            style={{ animationDelay: '200ms' }}
+          >
+            <div className="p-2 rounded-lg bg-muted/50">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
             </div>
-            <Progress value={(daysElapsed / (daysElapsed + daysRemaining)) * 100} className="h-2" />
+            <div className="flex-1">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                <span className="font-medium">{daysElapsed} dias passados</span>
+                <span className="font-medium">{daysRemaining} restantes</span>
+              </div>
+              <Progress value={(daysElapsed / (daysElapsed + daysRemaining)) * 100} className="h-2" />
+            </div>
           </div>
+
+          {!onTrack && (
+            <div 
+              className="p-4 rounded-xl bg-status-warning/10 border border-status-warning/20 animate-pulse-subtle"
+              style={{ animationDelay: '250ms' }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1 rounded-full bg-status-warning/20">
+                  <TrendingDown className="h-3.5 w-3.5 text-status-warning" />
+                </div>
+                <span className="text-xs font-bold text-status-warning uppercase tracking-wider">Análise de GAP (Ponto de Inflexão)</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Para recuperar a meta em <span className="text-foreground font-bold">{daysRemaining} dias</span>, a equipe precisa aumentar o ritmo atual em <span className="text-status-warning font-bold">+{(((requiredDailyAverage / dailyAverage) - 1) * 100).toFixed(0)}%</span> por dia.
+              </p>
+            </div>
+          )}
+          
+          {onTrack && progress < 100 && (
+            <div 
+              className="p-4 rounded-xl bg-status-success/10 border border-status-success/20"
+              style={{ animationDelay: '250ms' }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1 rounded-full bg-status-success/20">
+                  <TrendingUp className="h-3.5 w-3.5 text-status-success" />
+                </div>
+                <span className="text-xs font-bold text-status-success uppercase tracking-wider">Ponto de Manutenção</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Mantendo o ritmo atual, a meta será atingida em aproximadamente <span className="text-foreground font-bold">{Math.ceil((totalGoal - totalSales) / dailyAverage)} dias</span>.
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
