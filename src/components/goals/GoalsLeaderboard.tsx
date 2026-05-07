@@ -32,14 +32,28 @@ interface GoalsLeaderboardProps {
 function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
   const { data: xpData } = useAllSalespeopleXP();
 
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("progress");
+
   const getXPInfo = (salespersonId: string) => {
     const xp = xpData?.find(x => x.salesperson_id === salespersonId);
     return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
   };
 
-  // Filter only those with goals set
-  const withGoals = salespeople.filter(sp => sp.goalAmount > 0);
-  const withoutGoals = salespeople.filter(sp => sp.goalAmount === 0);
+  const filteredSalespeople = salespeople.filter(sp => 
+    sp.name.toLowerCase().includes(search.toLowerCase()) ||
+    sp.role.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const sortedSalespeople = [...filteredSalespeople].sort((a, b) => {
+    if (sortBy === "progress") return b.progress - a.progress;
+    if (sortBy === "sales") return b.currentSales - a.currentSales;
+    if (sortBy === "name") return a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  const withGoals = sortedSalespeople.filter(sp => sp.goalAmount > 0);
+  const withoutGoals = sortedSalespeople.filter(sp => sp.goalAmount === 0);
 
   if (isLoading) {
     return (
