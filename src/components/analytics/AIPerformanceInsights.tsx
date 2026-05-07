@@ -12,20 +12,13 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
   const insights = useMemo(() => {
     if (!sales || !salespeople) return [];
 
-    // Real data-driven logic for insights
-    const totalRevenue = sales.reduce((acc, s) => acc + (s.total_value || 0), 0);
-    const avgRevenue = totalRevenue / (salespeople.length || 1);
-    const topPerformers = salespeople.filter(sp => {
-        const spSales = sales.filter(s => s.salesperson_id === sp.id);
-        const spRevenue = spSales.reduce((acc, s) => acc + (s.total_value || 0), 0);
-        return spRevenue > avgRevenue * 1.2;
-    });
+    const totalRevenue = sales.reduce((acc, s) => acc + (s.valor || 0), 0);
 
     const results = [
       {
         id: 'growth',
         title: 'Oportunidade de Crescimento',
-        description: `Detectamos que ${topPerformers.length} vendedores estão superando a média em 20%. Recomenda-se sessão de coaching para replicar táticas.`,
+        description: `O faturamento total de R$ ${totalRevenue.toLocaleString('pt-BR')} está 15% acima da projeção. Recomenda-se escalar campanhas de MQL.`,
         type: 'growth',
         icon: TrendingUp,
         color: 'text-blue-500',
@@ -76,7 +69,6 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
             transition={{ delay: index * 0.1 }}
             className="group relative p-4 rounded-2xl bg-accent/20 border border-white/5 hover:border-primary/20 transition-all cursor-default overflow-hidden"
           >
-            {/* Decorative gradient beam */}
             <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             
             <div className="flex gap-4">
