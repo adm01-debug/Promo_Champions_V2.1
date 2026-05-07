@@ -82,9 +82,13 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     >
       <Card className={cn(
         "p-3 glass border border-border/40 dark:border-glow hover-lift transition-all duration-300",
-        "hover:shadow-lg hover:shadow-primary/5 group",
-        isDragging && "shadow-xl shadow-primary/20 rotate-2 scale-105"
+        "hover:shadow-lg hover:shadow-primary/10 group overflow-hidden",
+        isDragging && "shadow-2xl shadow-primary/30 rotate-2 scale-105 border-primary/50"
       )}>
+        {/* Glow effect on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute -right-8 -top-8 w-16 h-16 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
+
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex-1 min-w-0">
@@ -149,25 +153,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
         {/* Meta info */}
         <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground">
           {deal.category && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted/70 text-foreground/80 border border-border/50">
+            <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-muted/50 text-foreground/80 border-none">
               {deal.category}
             </Badge>
           )}
           
           {probability && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-primary/30 text-primary">
-              <Zap className="h-2.5 w-2.5 mr-0.5" />
-              {probability.probability}%
+            <Badge variant="outline" className={cn(
+              "text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 border-none",
+              probability.probability > 70 ? "bg-emerald-500/10 text-emerald-500" : "bg-primary/10 text-primary"
+            )}>
+              <Zap className="h-2.5 w-2.5 mr-0.5 fill-current" />
+              {probability.probability}% WIN
             </Badge>
           )}
 
           {icpData?.is_icp_match && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-status-success/30 text-status-success">
+            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-indigo-500/10 text-indigo-500 border-none">
               <Users className="h-2.5 w-2.5 mr-0.5" />
-              ICP
+              TARGET ICP
             </Badge>
           )}
         </div>
+
 
         {/* Active Cadence */}
         {activeCadence && (

@@ -50,25 +50,31 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col min-w-[280px] max-w-[320px] rounded-xl transition-all duration-300 snap-center",
-        isOver && "ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02] shadow-lg shadow-primary/10"
+        "flex flex-col min-w-[300px] max-w-[320px] rounded-2xl transition-all duration-500 snap-center h-full",
+        "bg-gradient-to-b from-card/40 to-background/20 backdrop-blur-sm border border-border/20",
+        isOver && "ring-2 ring-primary ring-offset-4 ring-offset-background scale-[1.03] shadow-2xl shadow-primary/20 z-10"
       )}
     >
+
       {/* Column Header */}
-      <div className="glass rounded-t-xl p-4 border-b border-border/30 dark:border-glow card-elevated">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <div className={cn("w-3 h-3 rounded-full shadow-md ring-2 ring-background", stage.color)} />
-            <h3 className="font-display font-semibold text-sm">{stage.label}</h3>
+      <div className="relative rounded-t-2xl p-5 border-b border-border/10 overflow-hidden group">
+        {/* Animated accent line */}
+        <div className={cn("absolute bottom-0 left-0 h-1 transition-all duration-500", isOver ? "w-full" : "w-1/3", stage.color.replace('bg-', 'bg-'))} />
+        
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className={cn("w-3 h-3 rounded-full shadow-[0_0_12px_rgba(var(--primary-rgb),0.5)] ring-2 ring-background animate-pulse", stage.color)} />
+            <h3 className="font-display font-black text-xs uppercase tracking-widest italic group-hover:text-primary transition-colors">{stage.label}</h3>
           </div>
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
+          <span className="text-[10px] font-black px-3 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:scale-110 transition-transform">
             {deals.length}
           </span>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Total: <span className="font-display font-bold gradient-text">{formatCurrency(totalValue)}</span>
+        <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-tighter">
+          VOL: <span className="font-display font-black text-foreground">{formatCurrency(totalValue)}</span>
         </p>
       </div>
+
 
       {/* Column Content */}
       <div className={cn(

@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
 import {
   DndContext,
   DragEndEvent,
@@ -228,47 +230,59 @@ export const PipelineBoard = () => {
       />
 
       {/* Stats Bar */}
-      <div className="flex items-center justify-between p-4 rounded-xl glass border border-border/40 dark:border-glow card-elevated">
-        <div className="flex gap-8">
-          <div className="relative">
-            <p className="text-xs text-muted-foreground font-medium mb-1">Total de Deals</p>
-            <p className="text-2xl font-display font-bold">{totalDeals}</p>
-            <div className="absolute -right-4 top-1/2 -translate-y-1/2 h-8 w-px bg-border/50" />
+      <div className="relative flex items-center justify-between p-6 rounded-2xl bg-gradient-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
+        {/* Background glow overlay */}
+        <div className="absolute -right-24 -top-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
+        
+        <div className="flex gap-12 relative z-10">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Active Commands</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-display font-black tracking-tighter">{totalDeals}</span>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase">Deployed</span>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground font-medium mb-1">Valor Total no Pipeline</p>
-            <p className="text-2xl font-display font-bold gradient-text">
-              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalValue)}
-            </p>
+          
+          <div className="hidden sm:flex items-center">
+            <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Pipeline Liquidity</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-display font-black tracking-tighter gradient-text">
+                  {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(totalValue)}
+                </span>
+                <span className="text-[10px] font-bold text-primary uppercase">Volume</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex gap-3 relative z-10">
           {isDefaultPipeline && (
             <Button
               variant="outline"
               size="sm"
-              className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors"
+              className="h-11 px-5 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               onClick={() => calculateScores.mutate(allDealIds)}
               disabled={calculateScores.isPending}
-              aria-label="Calcular scores de leads"
             >
-              <Zap className={`h-4 w-4 mr-2 ${calculateScores.isPending ? "animate-pulse text-primary" : ""}`} />
-              Calcular Scores
+              <Zap className={cn("h-3.5 w-3.5 mr-2", calculateScores.isPending ? "animate-pulse" : "fill-current")} />
+              Analyze Leads
             </Button>
           )}
           <Button
             variant="outline"
             size="sm"
-            className="border-border/50 hover:border-border hover:bg-muted/50 transition-colors"
+            className="h-11 px-5 rounded-xl border-border/40 bg-muted/20 text-[10px] font-black uppercase tracking-widest hover:border-primary/50 transition-all duration-300"
             onClick={handleRefetch}
             disabled={isRefetching}
-            aria-label="Atualizar pipeline"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? "animate-spin" : ""}`} />
-            Atualizar
+            <RefreshCw className={cn("h-3.5 w-3.5 mr-2", isRefetching ? "animate-spin" : "")} />
+            Sync
           </Button>
         </div>
       </div>
+
 
       {/* Kanban Board */}
       <DndContext
