@@ -43,10 +43,12 @@ export function TeamGoalProgress({
       {/* Dynamic Background Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
       
-      <div className={`h-1.5 relative z-10 ${onTrack 
+      <div className={`h-2 relative z-10 w-full overflow-hidden ${onTrack 
         ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50 animate-pulse-subtle" 
         : "bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50"
-      }`} />
+      }`}>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] animate-shimmer" />
+      </div>
       
       <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
@@ -79,9 +81,9 @@ export function TeamGoalProgress({
               <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text drop-shadow-sm group-hover/price:scale-105 transition-transform duration-300">
                 {formatCurrency(totalSales)}
               </p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/60">Objetivo:</span>
-                <span className="text-xs font-black text-foreground/80 tracking-tight">{formatCurrency(totalGoal)}</span>
+              <div className="flex items-center gap-3 mt-1 px-3 py-1 rounded-full bg-muted/20 border border-border/10 w-fit">
+                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/60 italic">Budget Alvo</span>
+                <span className="text-xs font-black text-foreground tracking-tight drop-shadow-sm">{formatCurrency(totalGoal)}</span>
               </div>
             </div>
             <div className="text-right">
