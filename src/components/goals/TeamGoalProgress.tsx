@@ -43,10 +43,12 @@ export function TeamGoalProgress({
       {/* Dynamic Background Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
       
-      <div className={`h-1.5 relative z-10 ${onTrack 
+      <div className={`h-2 relative z-10 w-full overflow-hidden ${onTrack 
         ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50 animate-pulse-subtle" 
         : "bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50"
-      }`} />
+      }`}>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] animate-shimmer" />
+      </div>
       
       <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
