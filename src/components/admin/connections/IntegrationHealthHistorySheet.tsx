@@ -25,7 +25,11 @@ export function IntegrationHealthHistorySheet({ open, onOpenChange, connectionId
         </SheetHeader>
         <div className="mt-4">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <div className="space-y-2 mt-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
           ) : rows.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">Nenhum teste registrado ainda.</p>
           ) : (
