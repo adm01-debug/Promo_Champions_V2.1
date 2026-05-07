@@ -46,32 +46,40 @@ export default function MetasAtividades() {
 
   const stats = [
     {
-      label: "Com Metas",
+      label: "Com Metas Ativas",
       value: withGoals.length,
       icon: Users,
       color: "text-primary",
       bgColor: "bg-primary/10",
+      description: "Base total monitorada",
+      trend: "Estável"
     },
     {
-      label: "No Caminho",
+      label: "Performance Turbo",
       value: onTrack,
       icon: TrendingUp,
       color: "text-info",
       bgColor: "bg-info/10",
+      description: "Acima de 70% da meta",
+      trend: "+12%"
     },
     {
-      label: "Meta Batida",
+      label: "Hall da Fama",
       value: completed,
       icon: CheckCircle,
-      color: "text-success",
-      bgColor: "bg-success/10",
+      color: "text-status-success",
+      bgColor: "bg-status-success/10",
+      description: "Metas 100% batidas",
+      trend: "MVP"
     },
     {
-      label: "Atenção",
+      label: "Zonas de Risco",
       value: needsAttention,
       icon: AlertTriangle,
-      color: "text-destructive",
-      bgColor: "bg-destructive/10",
+      color: "text-status-error",
+      bgColor: "bg-status-error/10",
+      description: "Abaixo de 40% da meta",
+      trend: "Crítico"
     },
   ];
 
