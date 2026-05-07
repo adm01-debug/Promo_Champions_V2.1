@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 const STAGE_WEIGHTS: Record<string, number> = {
   pending: 0.05,
