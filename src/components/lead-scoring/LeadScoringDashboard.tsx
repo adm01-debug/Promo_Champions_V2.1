@@ -294,11 +294,14 @@ export function LeadScoringDashboard() {
                       </button>
                     )}
 
-                    {/* Trend */}
-                    <div className="hidden md:flex items-center gap-1 text-xs text-status-success shrink-0">
-                      <TrendingUp className="h-3.5 w-3.5" />
-                      <span>Ativo</span>
+                    {/* Status Signal */}
+                    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/5 shrink-0 border border-emerald-500/10">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">DEPLOYED</span>
                     </div>
+
+                    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
                   </div>
                 );
               })}
