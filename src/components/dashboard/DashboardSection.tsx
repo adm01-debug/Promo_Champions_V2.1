@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const STORAGE_KEY = "dashboard-sections-state";
 
-/** Read persisted section states from localStorage */
 function getPersistedStates(): Record<string, boolean> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -15,14 +15,12 @@ function getPersistedStates(): Record<string, boolean> {
   }
 }
 
-/** Persist a single section's state */
 function persistSectionState(sectionId: string, isOpen: boolean) {
   try {
     const current = getPersistedStates();
     current[sectionId] = isOpen;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
   } catch {
-    // Silent fail — localStorage might be full or disabled
   }
 }
 
@@ -33,13 +31,9 @@ interface DashboardSectionProps {
   defaultOpen?: boolean;
   className?: string;
   badge?: string;
-  /** Teaser text shown when section is collapsed */
   teaser?: string;
-  /** Mini stats/preview shown inline when collapsed */
   previewStats?: Array<{ label: string; value: string }>;
-  /** If true, no collapsible wrapper — just render children directly */
   alwaysOpen?: boolean;
-  /** Unique ID for state persistence. Defaults to slugified title. */
   persistId?: string;
 }
 
@@ -75,86 +69,83 @@ export function DashboardSection({
   }
 
   return (
-    <div className={cn("space-y-3", className)}>
-      <button
+    <div className={cn(
+      "group rounded-[2.5rem] border border-white/[0.03] bg-[#0d1117]/30 backdrop-blur-xl transition-all duration-700 overflow-hidden",
+      isOpen ? "p-4 sm:p-8 border-white/[0.08] shadow-[0_20px_80px_rgba(0,0,0,0.4)]" : "p-4 sm:p-6 hover:border-white/[0.1]",
+      className
+    )}>
+      <div 
+        className="flex items-center justify-between cursor-pointer select-none relative z-10"
         onClick={toggle}
-        className="flex items-center gap-3 group w-full text-left py-2 px-2 rounded-xl hover:bg-muted/40 transition-all duration-200 -mx-2"
-        aria-expanded={isOpen}
       >
-        {icon && (
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15 transition-colors shrink-0">
+        <div className="flex items-center gap-6 min-w-0">
+          <div className={cn(
+            "h-14 w-14 rounded-2xl flex items-center justify-center transition-all duration-700",
+            isOpen ? "bg-primary/10 text-primary shadow-[0_0_30px_rgba(var(--primary-rgb),0.2)] scale-110" : "bg-white/[0.03] text-white/20"
+          )}>
             {icon}
-          </span>
-        )}
-        <h2 className="text-sm font-semibold text-foreground/85 group-hover:text-foreground transition-colors">
-          {title}
-        </h2>
-        {badge && (
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-            {badge}
-          </span>
-        )}
-        <div className="flex-1 h-px bg-gradient-to-r from-border/40 via-border/20 to-transparent mx-2" />
-        <motion.span
-          animate={{ rotate: isOpen ? 0 : -90 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-        </motion.span>
-      </button>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h2 className={cn(
+                "text-2xl font-black tracking-tightest uppercase transition-colors duration-500",
+                isOpen ? "text-white" : "text-white/40"
+              )}>
+                {title}
+              </h2>
+              {badge && (
+                <Badge variant="outline" className="rounded-full bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-3">
+                  {badge}
+                </Badge>
+              )}
+            </div>
+            {!isOpen && teaser && (
+              <p className="text-xs font-bold text-white/20 uppercase tracking-widest animate-in fade-in slide-in-from-left-2 duration-500">
+                {teaser}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-8">
+          {!isOpen && previewStats && (
+            <div className="hidden lg:flex items-center gap-8">
+              {previewStats.map((stat, i) => (
+                <div key={i} className="text-right">
+                  <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.2em]">{stat.label}</p>
+                  <p className="text-sm font-black text-white/40">{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            className={cn(
+              "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-700",
+              isOpen ? "bg-white/[0.05] text-white" : "bg-transparent text-white/20"
+            )}
+          >
+            <ChevronDown className="h-6 w-6" />
+          </motion.div>
+        </div>
+      </div>
 
       <AnimatePresence initial={false}>
-        {isOpen ? (
+        {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            initial={{ height: 0, opacity: 0, marginTop: 0 }}
+            animate={{ height: "auto", opacity: 1, marginTop: 40 }}
+            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            {children}
-          </motion.div>
-        ) : teaser ? (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => {
-              setIsOpen(true);
-              persistSectionState(sectionId, true);
-            }}
-            className="w-full text-left px-4 py-3 rounded-xl bg-gradient-to-r from-muted/30 to-muted/10 border border-border/30 hover:bg-muted/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300 group/teaser"
-          >
-            <div className="flex items-center gap-3">
-              {previewStats && previewStats.length > 0 ? (
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  {previewStats.map((stat, i) => (
-                    <div key={i} className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-foreground/90">{stat.value}</span>
-                      <span className="text-[10px] text-muted-foreground">{stat.label}</span>
-                      {i < previewStats.length - 1 && <span className="text-muted-foreground/30 mx-0.5">·</span>}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <div className="flex gap-1">
-                    <motion.div className="h-1.5 w-6 rounded-full bg-primary/30" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
-                    <motion.div className="h-1.5 w-4 rounded-full bg-primary/20" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.3, repeat: Infinity }} />
-                    <motion.div className="h-1.5 w-5 rounded-full bg-primary/15" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.6, repeat: Infinity }} />
-                  </div>
-                  <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors flex-1">
-                    {teaser}
-                  </p>
-                </>
-              )}
-              <span className="text-primary font-medium text-xs shrink-0 group-hover/teaser:translate-x-1 transition-transform duration-200">
-                → Expandir
-              </span>
+            <div className="pt-8 border-t border-white/[0.05] relative z-10">
+              {children}
             </div>
-          </motion.button>
-        ) : null}
+            {/* Ambient inner glow */}
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
