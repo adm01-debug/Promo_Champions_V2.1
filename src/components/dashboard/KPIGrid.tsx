@@ -32,13 +32,13 @@ const KPIRow = React.memo(function KPIRow({ kpi, index }: { kpi: KPIItem; index:
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 hover:bg-muted/80 transition-colors"
+      className="flex flex-col gap-1 p-4 rounded-xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-md transition-all group"
     >
-      <span className="text-xs text-muted-foreground">{kpi.label}</span>
-      <span className="text-sm font-semibold tabular-nums">{formatted}</span>
+      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider group-hover:text-primary transition-colors">{kpi.label}</span>
+      <span className="text-xl font-black tabular-nums tracking-tight">{formatted}</span>
     </motion.div>
   );
 });
