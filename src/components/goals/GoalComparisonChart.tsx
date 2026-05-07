@@ -24,6 +24,7 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
       vendido: sp.currentSales,
       meta: sp.goalAmount,
       progress: sp.progress,
+      projecao: sp.projection,
     }));
 
   if (data.length === 0) {
