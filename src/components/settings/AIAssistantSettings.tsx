@@ -287,7 +287,8 @@ export function AIAssistantSettings() {
             Outros vendedores não têm acesso às suas informações.
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 }
