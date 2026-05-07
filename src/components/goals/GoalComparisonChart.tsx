@@ -38,38 +38,64 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
   }
 
   return (
-    <Card className="glass">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-primary" />
-          Vendido vs Meta por Vendedor
-        </CardTitle>
+    <Card className="glass border-border/40 card-elevated">
+      <CardHeader className="pb-2 border-b border-border/10">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Vendido vs Meta por Vendedor
+          </CardTitle>
+          <div className="flex items-center gap-4 text-[10px] uppercase font-bold text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-sm bg-primary/20" />
+              <span>Meta</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-sm bg-primary" />
+              <span>Vendido</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-sm bg-primary/40 border border-primary/20 border-dashed" />
+              <span>Forecast</span>
+            </div>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data} margin={{ top: 10, right: 10, bottom: 5, left: 5 }}>
+      <CardContent className="pt-6">
+        <ResponsiveContainer width="100%" height={320}>
+          <ComposedChart data={data} margin={{ top: 10, right: 10, bottom: 5, left: 5 }}>
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fontSize: 11, fontWeight: 600, fill: "hsl(var(--muted-foreground))" }}
               axisLine={false}
               tickLine={false}
+              dy={10}
             />
             <YAxis
               tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
               axisLine={false}
               tickLine={false}
               width={50}
-              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+              tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
+              cursor={{ fill: 'hsl(var(--primary)/0.05)' }}
               formatter={(v: number, name: string) => [
                 `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-                name === "vendido" ? "Vendido" : "Meta",
+                name === "vendido" ? "Vendido" : name === "meta" ? "Meta" : "Forecast",
               ]}
-              contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.1)", fontSize: 12 }}
+              contentStyle={{ 
+                borderRadius: 12, 
+                border: "1px solid hsl(var(--border)/0.5)", 
+                backgroundColor: "hsl(var(--background)/0.95)",
+                backdropFilter: "blur(4px)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)", 
+                fontSize: 12 
+              }}
             />
-            <Bar dataKey="meta" fill="hsl(var(--muted-foreground)/0.2)" radius={[4, 4, 0, 0]} barSize={20} name="meta" />
-            <Bar dataKey="vendido" radius={[4, 4, 0, 0]} barSize={20} name="vendido">
+            <Bar dataKey="meta" fill="hsl(var(--muted-foreground)/0.15)" radius={[4, 4, 0, 0]} barSize={32} name="meta" />
+            <Bar dataKey="projecao" fill="hsl(var(--primary)/0.2)" radius={[4, 4, 0, 0]} barSize={16} name="forecast" dx={0} />
+            <Bar dataKey="vendido" radius={[4, 4, 0, 0]} barSize={16} name="vendido" dx={-8}>
               {data.map((entry, i) => (
                 <Cell
                   key={i}
@@ -85,7 +111,7 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
                 />
               ))}
             </Bar>
-          </BarChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>
