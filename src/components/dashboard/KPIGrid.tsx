@@ -32,27 +32,29 @@ const KPIRow = React.memo(function KPIRow({ kpi, index }: { kpi: KPIItem; index:
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 hover:bg-muted/80 transition-colors"
+      className="flex flex-col gap-1 p-4 rounded-xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-md transition-all group"
     >
-      <span className="text-xs text-muted-foreground">{kpi.label}</span>
-      <span className="text-sm font-semibold tabular-nums">{formatted}</span>
+      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider group-hover:text-primary transition-colors">{kpi.label}</span>
+      <span className="text-xl font-black tabular-nums tracking-tight">{formatted}</span>
     </motion.div>
   );
 });
 
 export const KPIGrid = React.memo(function KPIGrid() {
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-primary" />
-          KPIs
+    <Card className="h-full border-none bg-gradient-to-br from-primary/5 via-transparent to-accent/5 shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-sm font-bold flex items-center gap-2 tracking-tight uppercase">
+          <div className="p-1.5 rounded-lg bg-primary/10">
+            <BarChart3 className="h-4 w-4 text-primary" />
+          </div>
+          Métricas de Performance
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {defaultKpis.map((kpi, index) => (
           <KPIRow key={kpi.label} kpi={kpi} index={index} />
         ))}

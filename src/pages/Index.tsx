@@ -109,20 +109,20 @@ const Index = () => {
             </motion.div>
 
             {/* ── SECTION: Header Content ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-              <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+              <div className="lg:col-span-3 space-y-6">
                 <RankingPositionBanner />
                 <OnboardingChecklist />
+                
+                {/* ── SECTION: Event Banners (Moved here for better flow) ── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <SeasonalEventBanner />
+                  <FlashSalesBanner />
+                </div>
               </div>
               <div className="lg:col-span-1">
                 <ProfilePerformanceCard />
               </div>
-            </div>
-
-            {/* ── SECTION: Event Banners ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <SeasonalEventBanner />
-              <FlashSalesBanner />
             </div>
 
             {/* Competitive Status Bar */}
@@ -265,17 +265,25 @@ const Index = () => {
               <div className="mb-4">
                 <DashboardNLQWidget />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                <FunnelChart />
-                <SalesForecast />
-                <KPIGrid />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <KPIGrid />
+                </div>
                 <AlertsPanel />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                <FunnelChart />
+                <SalesForecast />
                 <BenchmarkPanel />
-                <TeamActivityFeed />
-                <ClientHealthPanel />
-                <EngagementLeaderboardWidget limit={8} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                <div className="lg:col-span-2">
+                  <TeamActivityFeed />
+                </div>
+                <div className="space-y-6">
+                  <ClientHealthPanel />
+                  <EngagementLeaderboardWidget limit={5} />
+                </div>
               </div>
             </DashboardSection>
 
@@ -287,15 +295,19 @@ const Index = () => {
               badge="Ativo"
             >
               <div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 data-tour="gamification"
               >
                 <RecentDeals />
                 <TopProducts />
                 <MiniLeaderboard />
-                <StreakWidget salespersonId={salesperson?.id} />
+                <div className="lg:col-span-2">
+                  <StreakWidget salespersonId={salesperson?.id} />
+                </div>
                 <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
-                <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+                <div className="lg:col-span-3">
+                  <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+                </div>
               </div>
             </DashboardSection>
 
@@ -311,7 +323,7 @@ const Index = () => {
                 { label: "Micro-metas", value: "0/4" },
               ]}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MicroGoalsWidget />
                 <VelocityScoreWidget />
                 <ActivityQualityWidget />
@@ -330,7 +342,7 @@ const Index = () => {
                 { label: "Quiz", value: "Disponível" },
               ]}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <MoodTrackerWidget />
                 <PulseSurveyWidget />
                 <DailyQuizWidget />
