@@ -62,30 +62,25 @@ export default function Configuracoes() {
             <TabsList className="inline-flex w-max gap-2 bg-transparent h-12">
 
             {/* Personalização */}
-            <TabsTrigger value="roles" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Roles
+            <TabsTrigger value="roles" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Shield className="h-3.5 w-3.5 mr-2" />Roles
             </TabsTrigger>
-            <TabsTrigger value="sounds" className="flex items-center gap-2">
-              <Volume2 className="h-4 w-4" />
-              Sons
+            <TabsTrigger value="sounds" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Volume2 className="h-3.5 w-3.5 mr-2" />Sons
             </TabsTrigger>
-            <TabsTrigger value="ai-assistant" className="flex items-center gap-2">
-              <Bot className="h-4 w-4" />
-              Assistente IA
+            <TabsTrigger value="ai-assistant" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Bot className="h-3.5 w-3.5 mr-2" />AI Pilot
             </TabsTrigger>
-            <TabsTrigger value="portfolio" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              Portfólio
+            <TabsTrigger value="portfolio" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Briefcase className="h-3.5 w-3.5 mr-2" />Portfolio
             </TabsTrigger>
-            <TabsTrigger value="skins" className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              Skins
+            <TabsTrigger value="skins" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Palette className="h-3.5 w-3.5 mr-2" />Skins
             </TabsTrigger>
-            <TabsTrigger value="passkeys" className="flex items-center gap-2">
-              <Fingerprint className="h-4 w-4" />
-              Passkeys
+            <TabsTrigger value="passkeys" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+              <Fingerprint className="h-3.5 w-3.5 mr-2" />Passkeys
             </TabsTrigger>
+
             {isAdmin && (
               <>
                 {/* Visual separator */}
