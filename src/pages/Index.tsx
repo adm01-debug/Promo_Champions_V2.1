@@ -295,15 +295,19 @@ const Index = () => {
               badge="Ativo"
             >
               <div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 data-tour="gamification"
               >
                 <RecentDeals />
                 <TopProducts />
                 <MiniLeaderboard />
-                <StreakWidget salespersonId={salesperson?.id} />
+                <div className="lg:col-span-2">
+                  <StreakWidget salespersonId={salesperson?.id} />
+                </div>
                 <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
-                <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+                <div className="lg:col-span-3">
+                  <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+                </div>
               </div>
             </DashboardSection>
 
