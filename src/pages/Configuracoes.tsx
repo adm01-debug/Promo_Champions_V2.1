@@ -130,9 +130,11 @@ export default function Configuracoes() {
                 </TabsTrigger>
               </>
             )}
-          </TabsList>
-          <ScrollBar orientation="horizontal" className="h-1.5" />
-        </ScrollArea>
+            </TabsList>
+            <ScrollBar orientation="horizontal" className="h-1.5" />
+          </ScrollArea>
+        </div>
+
 
         <TabsContent value="roles" className="mt-6">
           <RoleManagement />
