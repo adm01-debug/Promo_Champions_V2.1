@@ -47,7 +47,10 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
     setHistoryOpenPersisted(connection.id, open);
   };
   useEffect(() => {
-    setHistoryOpenState(isHistoryOpenPersisted(connection.id));
+    const isPersisted = isHistoryOpenPersisted(connection.id);
+    if (isPersisted !== historyOpen) {
+      setHistoryOpenState(isPersisted);
+    }
   }, [connection.id]);
   // First pass: no polling until we know status. Then adapt based on last check.
   const initial = useIntegrationHealth(connection.id, 10);
