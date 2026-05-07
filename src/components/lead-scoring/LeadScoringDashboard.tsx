@@ -84,34 +84,44 @@ export function LeadScoringDashboard() {
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <Target className="h-6 w-6 text-primary" />
+    <div className="space-y-8 p-1 sm:p-0">
+      {/* Header with Telemetry Style */}
+      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+              <Target className="h-7 w-7 text-primary animate-pulse" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
-            <p className="text-sm text-muted-foreground">
-              Classificação automática de {allLeads.length} leads por potencial de conversão
-            </p>
+            <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Lead Intelligence</h1>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Scoring Engine v4.0</span>
+              <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+              <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                {allLeads.length} COMBATANTS DETECTED
+              </p>
+            </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
-            if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
-          }}
-          disabled={explainBatch.isPending}
-          className="gap-2"
-        >
-          <RefreshCw className={cn("h-3.5 w-3.5", explainBatch.isPending && "animate-spin")} />
-          Reexplicar com IA
-        </Button>
+        
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            onClick={() => {
+              const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
+              if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
+            }}
+            disabled={explainBatch.isPending}
+          >
+            <Brain className={cn("h-4 w-4 mr-2", explainBatch.isPending && "animate-spin")} />
+            Neural Analysis
+          </Button>
+        </div>
       </div>
+
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
