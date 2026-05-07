@@ -153,25 +153,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
         {/* Meta info */}
         <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground">
           {deal.category && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted/70 text-foreground/80 border border-border/50">
+            <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-muted/50 text-foreground/80 border-none">
               {deal.category}
             </Badge>
           )}
           
           {probability && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-primary/30 text-primary">
-              <Zap className="h-2.5 w-2.5 mr-0.5" />
-              {probability.probability}%
+            <Badge variant="outline" className={cn(
+              "text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 border-none",
+              probability.probability > 70 ? "bg-emerald-500/10 text-emerald-500" : "bg-primary/10 text-primary"
+            )}>
+              <Zap className="h-2.5 w-2.5 mr-0.5 fill-current" />
+              {probability.probability}% WIN
             </Badge>
           )}
 
           {icpData?.is_icp_match && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-status-success/30 text-status-success">
+            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-indigo-500/10 text-indigo-500 border-none">
               <Users className="h-2.5 w-2.5 mr-0.5" />
-              ICP
+              TARGET ICP
             </Badge>
           )}
         </div>
+
 
         {/* Active Cadence */}
         {activeCadence && (
