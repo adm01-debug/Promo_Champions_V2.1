@@ -109,20 +109,20 @@ const Index = () => {
             </motion.div>
 
             {/* ── SECTION: Header Content ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-              <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+              <div className="lg:col-span-3 space-y-6">
                 <RankingPositionBanner />
                 <OnboardingChecklist />
+                
+                {/* ── SECTION: Event Banners (Moved here for better flow) ── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <SeasonalEventBanner />
+                  <FlashSalesBanner />
+                </div>
               </div>
               <div className="lg:col-span-1">
                 <ProfilePerformanceCard />
               </div>
-            </div>
-
-            {/* ── SECTION: Event Banners ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <SeasonalEventBanner />
-              <FlashSalesBanner />
             </div>
 
             {/* Competitive Status Bar */}
