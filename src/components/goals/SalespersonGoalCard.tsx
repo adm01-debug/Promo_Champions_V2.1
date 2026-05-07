@@ -185,13 +185,14 @@ function _SalespersonGoalCard({
         </div>
       )}
 
-      {/* Floating Status Floating Tag */}
-      <div className="absolute top-4 right-4 text-right">
-        <span className={`text-2xl font-display font-black tracking-tighter italic ${
+      {/* Floating Rank Indicator */}
+      <div className="absolute top-4 right-4 text-right flex flex-col items-end">
+        <span className={`text-2xl font-display font-black tracking-tighter italic leading-none ${
           hasExceededGoal ? "text-status-success drop-shadow-glow-sm" : "text-foreground/80"
         }`}>
           {progress.toFixed(0)}%
         </span>
+        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40 mt-1">Rank #{rank}</span>
       </div>
     </div>
   );

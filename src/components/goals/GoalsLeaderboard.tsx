@@ -82,42 +82,48 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
   }
 
   return (
-    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
-      <CardHeader className="pb-4 border-b border-border/30">
-        <div className="space-y-4">
+    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden group">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-rank-gold/5 blur-[100px] rounded-full -mr-32 -mt-32 pointer-events-none" />
+      
+      <CardHeader className="pb-4 border-b border-border/30 relative z-10">
+        <div className="space-y-5">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/10 shadow-md shadow-rank-gold/10">
-                <Trophy className="h-4 w-4 text-rank-gold" />
+            <CardTitle className="text-sm font-display font-black flex items-center gap-3 uppercase italic tracking-tight">
+              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/5 shadow-lg shadow-rank-gold/10 group-hover:rotate-12 transition-transform duration-500">
+                <Trophy className="h-5 w-5 text-rank-gold" />
               </div>
-              <span className="gradient-text">Ranking de Performance</span>
+              <span className="gradient-text">Hall da Fama: Vendas</span>
             </CardTitle>
-            <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
-              {withGoals.length} ativos
+            <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 shadow-sm px-3 py-1">
+              <Users className="h-3 w-3 mr-1.5" />
+              {withGoals.length} Elites Ativos
             </Badge>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="relative group/search">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-muted-foreground group-focus-within/search:text-primary transition-colors" />
+              </div>
               <Input
-                placeholder="Buscar vendedor..."
-                className="pl-8 h-9 text-xs glass border-border/20 focus-visible:ring-primary/30"
+                placeholder="Buscar Guerreiro..."
+                className="pl-10 h-10 text-xs glass border-border/20 focus-visible:ring-primary/40 focus:bg-background/40 transition-all rounded-xl"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[140px] h-9 text-xs glass border-border/20">
+              <SelectTrigger className="w-full h-10 text-xs glass border-border/20 rounded-xl hover:bg-background/40 transition-all">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-3 w-3" />
-                  <SelectValue placeholder="Ordernar por" />
+                  <Filter className="h-3.5 w-3.5 text-primary" />
+                  <SelectValue placeholder="Ordenar Por" />
                 </div>
               </SelectTrigger>
-              <SelectContent className="glass border-border/40">
-                <SelectItem value="progress">Progresso %</SelectItem>
-                <SelectItem value="sales">Volume de Vendas</SelectItem>
-                <SelectItem value="name">Nome (A-Z)</SelectItem>
+              <SelectContent className="glass border-border/40 rounded-xl">
+                <SelectItem value="progress" className="text-xs font-bold uppercase tracking-widest">⚡ Progresso %</SelectItem>
+                <SelectItem value="sales" className="text-xs font-bold uppercase tracking-widest">💰 Volume Bruto</SelectItem>
+                <SelectItem value="name" className="text-xs font-bold uppercase tracking-widest">👤 Nome Alfabético</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -125,37 +131,47 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
       </CardHeader>
       <CardContent className="p-0">
         <ScrollArea className="h-[480px]">
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-5">
             {withGoals.length > 0 && (
-              <div className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-rank-gold/20 via-rank-gold/5 to-transparent border border-rank-gold/30 relative overflow-hidden group shadow-lg animate-fade-in">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Trophy className="h-20 w-20 text-rank-gold" />
+              <div className="mb-8 p-6 rounded-3xl bg-gradient-to-br from-rank-gold/25 via-rank-gold/5 to-transparent border border-rank-gold/30 relative overflow-hidden group shadow-2xl animate-fade-in ring-1 ring-rank-gold/20">
+                {/* Animated Shine Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-all duration-700 group-hover:scale-125 group-hover:rotate-12">
+                  <Trophy className="h-24 w-24 text-rank-gold" />
                 </div>
-                <div className="relative z-10 flex items-center gap-4">
+                
+                <div className="relative z-10 flex items-center gap-6">
                   <div className="relative">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-rank-gold to-yellow-500 rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity animate-pulse" />
-                    <div className="relative h-16 w-16 rounded-full border-2 border-rank-gold overflow-hidden">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-rank-gold via-yellow-400 to-rank-gold rounded-full blur-md opacity-50 group-hover:opacity-80 transition-opacity animate-spin-slow" />
+                    <div className="relative h-20 w-20 rounded-full border-4 border-rank-gold overflow-hidden shadow-2xl group-hover:scale-105 transition-transform duration-500">
                       <img 
                         src={withGoals[0].avatar_url || "/placeholder.svg"} 
                         alt={withGoals[0].name}
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <div className="absolute -bottom-1 -right-1 bg-rank-gold text-[10px] font-black px-1.5 py-0.5 rounded-md shadow-lg border border-white/20">
-                      MVP
+                    <div className="absolute -bottom-2 -right-2 bg-rank-gold text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-2xl border-2 border-white/20 animate-bounce">
+                      👑 MVP
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-display font-black tracking-tight text-foreground uppercase italic leading-none mb-1">
-                      {withGoals[0].name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-rank-gold text-rank-gold-foreground border-none text-[10px] font-bold h-4">
-                        #1 NO RANKING
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <h3 className="text-2xl font-display font-black tracking-tighter text-foreground uppercase italic leading-none drop-shadow-sm">
+                        {withGoals[0].name}
+                      </h3>
+                      <div className="h-2 w-2 rounded-full bg-status-success animate-pulse" />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Badge className="bg-rank-gold text-white border-none text-[10px] font-black tracking-widest px-3 py-0.5 shadow-lg shadow-rank-gold/20">
+                        ABSOLUTO #1
                       </Badge>
-                      <span className="text-xs font-bold text-rank-gold">
-                        {withGoals[0].progress.toFixed(1)}% atingido
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-display font-black text-rank-gold leading-none italic">
+                          {withGoals[0].progress.toFixed(1)}%
+                        </span>
+                        <span className="text-[9px] uppercase font-black tracking-widest text-muted-foreground/60 leading-none mt-1">Status de Dominação</span>
+                      </div>
                     </div>
                   </div>
                 </div>
