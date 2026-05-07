@@ -124,11 +124,14 @@ export default function MetasAtividades() {
                   <PartyPopper className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Simular Vitória</span>
                 </Button>
-                <div className="px-4 py-2 rounded-xl glass border border-primary/20 shadow-lg shadow-primary/5 flex flex-col items-end">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none mb-1">Ritmo Global</span>
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-3 w-3 text-status-success" />
-                    <span className="text-lg font-display font-black text-primary leading-none">{avgProgress.toFixed(0)}%</span>
+                <div className="px-5 py-2.5 rounded-2xl glass border border-primary/20 shadow-xl shadow-primary/5 flex flex-col items-end group/ritmo relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover/ritmo:opacity-100 transition-opacity duration-500" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 leading-none mb-1.5 relative z-10 italic">Pulse da Arena</span>
+                  <div className="flex items-center gap-2.5 relative z-10">
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-status-success/10 border border-status-success/20">
+                      <TrendingUp className="h-3 w-3 text-status-success animate-bounce-subtle" />
+                    </div>
+                    <span className="text-2xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-sm">{avgProgress.toFixed(0)}%</span>
                   </div>
                 </div>
               </div>

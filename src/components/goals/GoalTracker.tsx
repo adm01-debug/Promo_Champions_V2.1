@@ -86,15 +86,25 @@ export const GoalTracker: FC<GoalTrackerProps> = ({ goal, onEdit, showDetails = 
             </span>
           </div>
         </div>
-        <div className="relative h-3 bg-muted/40 rounded-full overflow-hidden border border-border/5">
+        <div className="relative h-4 bg-muted/40 rounded-full overflow-hidden border border-border/10 shadow-inner group/bar">
           <div 
-            className={`absolute h-full transition-all duration-1000 ease-out ${
-              goal.status === 'completed' ? 'bg-gradient-to-r from-status-info to-primary' : status.color
+            className={`absolute h-full transition-all duration-1000 ease-out flex items-center justify-end px-2 ${
+              goal.status === 'completed' ? 'bg-gradient-to-r from-status-info via-primary to-status-info shadow-[0_0_15px_rgba(var(--primary),0.4)]' : 
+              status.color === 'bg-status-success' ? 'bg-gradient-to-r from-status-success to-status-success/60 shadow-[0_0_12px_rgba(34,197,94,0.3)]' :
+              status.color === 'bg-status-warning' ? 'bg-gradient-to-r from-status-warning to-status-warning/60 shadow-[0_0_12px_rgba(245,158,11,0.3)]' :
+              'bg-gradient-to-r from-status-error to-status-error/60'
             }`} 
             style={{ width: `${progress}%` }} 
-          />
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
+            {progress > 15 && (
+              <span className="text-[8px] font-black text-white/90 uppercase tracking-tighter drop-shadow-sm relative z-10 animate-fade-in">
+                {progress.toFixed(0)}%
+              </span>
+            )}
+          </div>
           {goal.status === 'completed' && (
-            <div className="absolute inset-0 animate-xp-shimmer opacity-30" />
+            <div className="absolute inset-0 animate-pulse bg-white/10 opacity-30" />
           )}
         </div>
       </div>
