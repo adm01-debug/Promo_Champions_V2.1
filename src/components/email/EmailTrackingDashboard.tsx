@@ -70,48 +70,73 @@ export function EmailTrackingDashboard() {
       </div>
 
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-              <Send className="h-3.5 w-3.5" />
-              Emails Enviados
+      {/* Futuristic Telemetry Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-primary/10 ring-1 ring-white/5">
+              <Send className="h-6 w-6 text-primary" />
             </div>
-            <p className="text-2xl font-bold text-primary">{stats?.total_sent || 0}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Deployed</p>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-display font-black text-3xl tracking-tighter">{stats?.total_sent || 0}</span>
+                <span className="text-[10px] font-bold text-primary italic">TX</span>
+              </div>
+            </div>
           </CardContent>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-transparent opacity-20" />
         </Card>
-        <Card className="border-status-success/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-              <Eye className="h-3.5 w-3.5" />
-              Taxa de Abertura
+
+        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-emerald-500/10 ring-1 ring-white/5">
+              <Eye className="h-6 w-6 text-emerald-500" />
             </div>
-            <p className="text-2xl font-bold text-status-success">{stats?.open_rate || 0}%</p>
-            <Progress value={stats?.open_rate || 0} className="h-1.5 mt-2" />
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Engaged</p>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-display font-black text-3xl tracking-tighter text-emerald-500">{stats?.open_rate || 0}</span>
+                <span className="text-[10px] font-bold text-emerald-500 italic">%</span>
+              </div>
+            </div>
           </CardContent>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/50 to-transparent opacity-20" />
         </Card>
-        <Card className="border-status-info/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-              <MousePointer2 className="h-3.5 w-3.5" />
-              Taxa de Clique
+
+        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-blue-500/10 ring-1 ring-white/5">
+              <MousePointer2 className="h-6 w-6 text-blue-500" />
             </div>
-            <p className="text-2xl font-bold text-status-info">{stats?.click_rate || 0}%</p>
-            <Progress value={stats?.click_rate || 0} className="h-1.5 mt-2" />
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Interacted</p>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-display font-black text-3xl tracking-tighter text-blue-500">{stats?.click_rate || 0}</span>
+                <span className="text-[10px] font-bold text-blue-500 italic">%</span>
+              </div>
+            </div>
           </CardContent>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/50 to-transparent opacity-20" />
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-              <Reply className="h-3.5 w-3.5" />
-              Taxa de Resposta
+
+        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-indigo-500/10 ring-1 ring-white/5">
+              <Reply className="h-6 w-6 text-indigo-500" />
             </div>
-            <p className="text-metric">{stats?.reply_rate || 0}%</p>
-            <Progress value={stats?.reply_rate || 0} className="h-1.5 mt-2" />
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Responded</p>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-display font-black text-3xl tracking-tighter text-indigo-500">{stats?.reply_rate || 0}</span>
+                <span className="text-[10px] font-bold text-indigo-500 italic">%</span>
+              </div>
+            </div>
           </CardContent>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/50 to-transparent opacity-20" />
         </Card>
       </div>
+
 
       {/* Performance Overview */}
       <div className="grid lg:grid-cols-3 gap-6">
