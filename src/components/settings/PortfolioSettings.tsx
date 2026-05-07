@@ -206,8 +206,9 @@ export function PortfolioSettings() {
               Salvar Configurações
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
     </div>
   );
 }
