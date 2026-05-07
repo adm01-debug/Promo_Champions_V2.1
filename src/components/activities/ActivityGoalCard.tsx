@@ -108,11 +108,11 @@ function _ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   };
 
   const activities = [
-    { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-status-success" },
-    { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-status-info" },
-    { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-status-purple" },
-    { icon: Linkedin, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary" },
-    { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-accent" },
+    { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-status-success", weight: 0.3 },
+    { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-status-info", weight: 0.1 },
+    { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-status-purple", weight: 0.5 },
+    { icon: Linkedin, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary", weight: 0.05 },
+    { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-accent", weight: 0.05 },
   ];
 
   const streakDisplay = currentStreak > 0 ? getStreakDisplay(currentStreak, bestStreak) : null;
@@ -233,22 +233,35 @@ function _ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
           </div>
         ) : (
           <>
-            {/* Overall Progress */}
-            <div className="mb-4 p-3 rounded-lg glass border border-border/30 shadow-inner">
+            {/* Overall Progress with Weight Breakdown */}
+            <div className="mb-4 p-4 rounded-xl glass border border-border/30 shadow-inner bg-gradient-to-br from-background/50 to-muted/30">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-muted-foreground font-medium">Progresso Geral</span>
-                <span className={`text-sm font-bold font-display transition-all duration-300 ${hasReachedGoal ? 'gradient-text scale-110' : ''}`}>
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Power Score</span>
+                  <span className="text-[9px] text-primary italic">Ponderado por Impacto</span>
+                </div>
+                <span className={`text-xl font-display font-black transition-all duration-300 ${hasReachedGoal ? 'gradient-text scale-110 drop-shadow-glow-sm' : ''}`}>
                   {data.progress.overall.toFixed(0)}%
                 </span>
               </div>
-              <div className="h-2.5 rounded-full bg-muted/50 overflow-hidden shadow-inner">
-                <div 
-                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(data.progress.overall)} ${hasReachedGoal ? 'animate-pulse' : ''}`}
-                  style={{ 
-                    width: `${Math.min(data.progress.overall, 100)}%`,
-                    boxShadow: hasReachedGoal ? '0 0 12px hsl(var(--status-success) / 0.6)' : undefined
-                  }}
-                />
+              <div className="relative">
+                <div className="h-3 rounded-full bg-muted/50 overflow-hidden shadow-inner border border-border/10">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-1000 ease-out shadow-inner ${getProgressColor(data.progress.overall)} ${hasReachedGoal ? 'animate-pulse' : ''}`}
+                    style={{ 
+                      width: `${Math.min(data.progress.overall, 100)}%`,
+                      boxShadow: hasReachedGoal ? '0 0 15px hsl(var(--status-success) / 0.8)' : undefined
+                    }}
+                  />
+                </div>
+                {/* Indicator markers */}
+                <div className="absolute top-0 left-[40%] w-px h-3 bg-background/20 z-10" />
+                <div className="absolute top-0 left-[70%] w-px h-3 bg-background/20 z-10" />
+              </div>
+              <div className="flex justify-between mt-1 px-0.5">
+                <span className="text-[8px] text-muted-foreground uppercase font-bold">Start</span>
+                <span className="text-[8px] text-muted-foreground uppercase font-bold">Turbo</span>
+                <span className="text-[8px] text-status-success uppercase font-bold">Max</span>
               </div>
             </div>
 
