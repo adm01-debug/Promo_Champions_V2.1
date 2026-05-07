@@ -135,19 +135,24 @@ export default function MetasAtividades() {
                 key={index} 
                 variant="glass"
                 className={cn(
-                  "animate-fade-in-up hover:shadow-lg transition-all duration-300",
+                  "animate-fade-in-up hover:shadow-2xl transition-all duration-500 overflow-hidden relative group border-border/40 card-elevated",
                   `stagger-${index + 1}`
                 )}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-xl ${stat.bgColor} shadow-sm transition-transform duration-200 group-hover:scale-110`}>
-                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                <div className={cn("absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full -mr-12 -mt-12 transition-all opacity-10 group-hover:opacity-20", stat.bgColor)} />
+                <CardContent className="p-6 relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={cn("p-3 rounded-2xl shadow-inner transition-transform duration-500 group-hover:scale-110", stat.bgColor)}>
+                      <stat.icon className={cn("h-5 w-5", stat.color)} />
                     </div>
-                    <div>
-                      <p className="text-metric">{stat.value}</p>
-                      <p className="text-overline">{stat.label}</p>
-                    </div>
+                    <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-none px-2", stat.bgColor, stat.color)}>
+                      {stat.trend}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className={cn("text-3xl font-display font-black tracking-tighter leading-none mb-1", stat.color)}>{stat.value}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/80 mb-1">{stat.label}</p>
+                    <p className="text-[9px] text-muted-foreground font-medium">{stat.description}</p>
                   </div>
                 </CardContent>
               </Card>
