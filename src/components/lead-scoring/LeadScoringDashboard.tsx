@@ -13,10 +13,11 @@ import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
-  Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/30", label: "Quente" },
-  Warm: { icon: Thermometer, color: "text-status-warning", bg: "bg-status-warning/10 border-status-warning/30", label: "Morno" },
-  Cold: { icon: Snowflake, color: "text-info", bg: "bg-info/10 border-info/30", label: "Frio" },
+  Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/20", label: "ELITE" },
+  Warm: { icon: Thermometer, color: "text-status-warning", bg: "bg-status-warning/10 border-status-warning/20", label: "ACTIVE" },
+  Cold: { icon: Snowflake, color: "text-info", bg: "bg-info/10 border-info/20", label: "STAGNANT" },
 };
+
 
 function ScoreRing({ score, size = 56 }: { score: number; size?: number }) {
   const radius = (size - 8) / 2;
@@ -83,46 +84,64 @@ export function LeadScoringDashboard() {
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <Target className="h-6 w-6 text-primary" />
+    <div className="space-y-8 p-1 sm:p-0">
+      {/* Header with Telemetry Style */}
+      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+              <Target className="h-7 w-7 text-primary animate-pulse" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
-            <p className="text-sm text-muted-foreground">
-              Classificação automática de {allLeads.length} leads por potencial de conversão
-            </p>
+            <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Lead Intelligence</h1>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Scoring Engine v4.0</span>
+              <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+              <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                {allLeads.length} COMBATANTS DETECTED
+              </p>
+            </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
-            if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
-          }}
-          disabled={explainBatch.isPending}
-          className="gap-2"
-        >
-          <RefreshCw className={cn("h-3.5 w-3.5", explainBatch.isPending && "animate-spin")} />
-          Reexplicar com IA
-        </Button>
+        
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            onClick={() => {
+              const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
+              if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
+            }}
+            disabled={explainBatch.isPending}
+          >
+            <Brain className={cn("h-4 w-4 mr-2", explainBatch.isPending && "animate-spin")} />
+            Neural Analysis
+          </Button>
+        </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="glass border-border/40">
-          <CardContent className="pt-4 pb-3 flex items-center gap-3">
-            <ScoreRing score={avgScore} />
-            <div>
-              <p className="text-xs text-muted-foreground">Score Médio</p>
-              <p className="font-display font-bold text-lg">{avgScore}</p>
+
+      {/* Enhanced KPI Telemetry */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="relative group">
+              <ScoreRing score={avgScore} size={64} />
+              <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">Global Index</p>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-display font-black text-3xl tracking-tighter">{avgScore}</span>
+                <span className="text-[10px] font-bold text-primary italic">PCT</span>
+              </div>
             </div>
           </CardContent>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-transparent opacity-20" />
         </Card>
+        
         {([
           { cat: "Hot" as const, count: hotCount },
           { cat: "Warm" as const, count: warmCount },
@@ -131,31 +150,43 @@ export function LeadScoringDashboard() {
           const cfg = categoryConfig[cat];
           const Icon = cfg.icon;
           return (
-            <Card key={cat} className={cn("glass border", cfg.bg)}>
-              <CardContent className="pt-4 pb-3 flex items-center gap-3">
-                <div className={cn("p-2 rounded-lg", cfg.bg)}>
-                  <Icon className={cn("h-5 w-5", cfg.color)} />
+            <Card key={cat} className={cn("relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-xl backdrop-blur-md transition-all hover:scale-[1.02]")}>
+              <CardContent className="p-6 flex items-center gap-5">
+                <div className={cn("p-4 rounded-2xl ring-1 ring-white/5 shadow-inner", cfg.bg)}>
+                  <Icon className={cn("h-6 w-6", cfg.color)} />
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">{cfg.label}</p>
-                  <p className="font-display font-bold text-lg">{count}</p>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest leading-none">{cfg.label}</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="font-display font-black text-3xl tracking-tighter">{count}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground">UNIT</span>
+                  </div>
                 </div>
               </CardContent>
+              <div className={cn("absolute bottom-0 left-0 w-1/2 h-0.5 opacity-40", cfg.bg.split(' ')[0])} />
             </Card>
           );
         })}
       </div>
 
-      {/* Ranking Table */}
-      <Card className="glass border-border/40">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            Ranking de Leads
-          </CardTitle>
+
+      {/* Elite Ranking Table */}
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+        <CardHeader className="p-6 border-b border-border/10">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-3 text-lg font-black uppercase tracking-tighter italic">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              Strategic Lead Ranking
+            </CardTitle>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent/30 border border-white/5">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">REAL-TIME DATA</span>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           {allLeads.length === 0 ? (
+
             <div className="text-center py-12 text-muted-foreground">
               <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="font-medium">Nenhum lead pontuado</p>
@@ -171,35 +202,44 @@ export function LeadScoringDashboard() {
                 return (
                   <div key={lead.id}
                     className={cn(
-                      "flex items-center gap-4 p-3 rounded-lg border transition-all hover:bg-accent/50",
-                      idx === 0 && "bg-primary/5 border-primary/20",
-                      idx > 0 && "border-border/40"
+                      "group relative flex items-center gap-6 p-4 rounded-xl transition-all duration-300",
+                      "border border-transparent hover:border-border/50 hover:bg-accent/30 hover:shadow-xl",
+                      idx === 0 && "bg-primary/5 border-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.05)]"
                     )}
                   >
-                    {/* Rank */}
-                    <span className={cn(
-                      "font-display font-bold text-sm w-6 text-center shrink-0",
-                      idx < 3 ? "text-primary" : "text-muted-foreground"
-                    )}>
-                      #{idx + 1}
-                    </span>
+                    {/* Futuristic Rank Indicator */}
+                    <div className="relative flex items-center justify-center w-10 h-10 shrink-0">
+                      <span className={cn(
+                        "font-display font-black text-lg tracking-tighter z-10 italic",
+                        idx < 3 ? "text-primary" : "text-muted-foreground/40"
+                      )}>
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      {idx < 3 && <div className="absolute inset-0 bg-primary/10 rounded-lg rotate-45 scale-75 blur-[2px]" />}
+                    </div>
 
-                    {/* Score Ring */}
-                    <ScoreRing score={lead.score} size={44} />
+                    {/* Enhanced Score Ring */}
+                    <div className="shrink-0 scale-110 group-hover:scale-125 transition-transform duration-500">
+                      <ScoreRing score={lead.score} size={48} />
+                    </div>
 
-                    {/* Lead Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-sm truncate">{lead.name}</h4>
-                        <Badge variant="outline" className={cn("text-[10px] shrink-0", cfg.bg)}>
-                          <Icon className={cn("h-3 w-3 mr-1", cfg.color)} />
+                    {/* Strategic Lead Info */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-3">
+                        <h4 className="font-display font-black text-base uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
+                          {lead.name}
+                        </h4>
+                        <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border-none", cfg.bg, cfg.color)}>
                           {cfg.label}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">
-                        {lead.company || lead.email || "Sem empresa"}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
+                          {lead.company || lead.email || "UNIDENTIFIED SECTOR"}
+                        </p>
+                      </div>
                     </div>
+
 
                     {/* Factors */}
                     {isServerScore ? (
@@ -254,11 +294,14 @@ export function LeadScoringDashboard() {
                       </button>
                     )}
 
-                    {/* Trend */}
-                    <div className="hidden md:flex items-center gap-1 text-xs text-status-success shrink-0">
-                      <TrendingUp className="h-3.5 w-3.5" />
-                      <span>Ativo</span>
+                    {/* Status Signal */}
+                    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/5 shrink-0 border border-emerald-500/10">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">DEPLOYED</span>
                     </div>
+
+                    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
                   </div>
                 );
               })}
