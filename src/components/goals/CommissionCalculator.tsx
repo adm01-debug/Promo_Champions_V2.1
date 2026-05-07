@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DollarSign, TrendingUp, Percent, Sparkles } from "lucide-react";
+import { DollarSign, TrendingUp, Percent, Sparkles, Trophy, Zap, ArrowUpRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 interface SalespersonCommission {
   id: string;
@@ -58,42 +59,47 @@ export function CommissionCalculator({
   }
 
   return (
-    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
-      <CardHeader className="pb-3 border-b border-border/30">
+    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden relative group">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-40 h-40 bg-status-success/5 blur-[100px] rounded-full -mr-20 -mt-20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+      <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display font-semibold flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-status-success to-status-success/70 shadow-md">
-              <DollarSign className="h-5 w-5 text-primary-foreground" />
+          <CardTitle className="text-lg font-display font-black flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-status-success to-status-success/70 shadow-lg group-hover:rotate-12 transition-transform duration-500">
+              <DollarSign className="h-5 w-5 text-white" />
             </div>
-            <span className="gradient-text">Calculadora de Comissão</span>
+            <span className="gradient-text italic uppercase tracking-tighter">Motor de Comissões</span>
           </CardTitle>
-          <Badge variant="outline" className="text-xs bg-status-success/10 text-status-success border-status-success/30 shadow-sm">
-            Tempo Real
+          <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-status-success/10 text-status-success border-status-success/30 shadow-sm animate-pulse">
+            Live Pay
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 pt-4">
+      <CardContent className="space-y-4 pt-5 relative z-10">
         {/* Team Totals */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="p-4 rounded-xl glass border border-status-success/30 hover-lift cursor-pointer hover-glow-success transition-all">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-status-success/20">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-5 rounded-2xl glass border border-status-success/20 hover-lift cursor-pointer transition-all bg-gradient-to-br from-status-success/5 to-transparent relative overflow-hidden group/stats">
+            <div className="absolute inset-0 bg-status-success/5 opacity-0 group-hover/stats:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-2 mb-3 relative z-10">
+              <div className="p-2 rounded-xl bg-status-success/20 shadow-sm">
                 <DollarSign className="h-4 w-4 text-status-success" />
               </div>
-              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Comissão Atual</span>
+              <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">Ganhos Atuais</span>
             </div>
-            <p className="text-xl font-display font-bold text-status-success">
+            <p className="text-2xl font-display font-black text-status-success italic tracking-tighter relative z-10 leading-none">
               {formatCurrency(totalCurrentCommission)}
             </p>
           </div>
-          <div className="p-4 rounded-xl glass border border-primary/30 hover-lift cursor-pointer hover-glow transition-all">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-primary/20">
+          <div className="p-5 rounded-2xl glass border border-primary/20 hover-lift cursor-pointer transition-all bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden group/stats">
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/stats:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-2 mb-3 relative z-10">
+              <div className="p-2 rounded-xl bg-primary/20 shadow-sm">
                 <Sparkles className="h-4 w-4 text-primary" />
               </div>
-              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Projeção</span>
+              <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">Total Projetado</span>
             </div>
-            <p className="text-xl font-display font-bold gradient-text">
+            <p className="text-2xl font-display font-black gradient-text italic tracking-tighter relative z-10 leading-none">
               {formatCurrency(totalProjectedCommission)}
             </p>
           </div>
@@ -108,63 +114,69 @@ export function CommissionCalculator({
               const isMaxTier = sp.progress >= 150;
               
               return (
-                <div
+                <motion.div
                   key={sp.id}
-                  className="p-4 rounded-xl glass border border-border/40 hover:border-primary/40 hover-lift transition-all group cursor-pointer relative overflow-hidden"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="p-4 rounded-2xl glass border border-border/40 hover:border-primary/40 hover-lift transition-all group/card cursor-pointer relative overflow-hidden"
                 >
-                  <div className="flex items-center gap-3 relative z-10">
+                  <div className="flex items-center gap-4 relative z-10">
                     <div className="relative">
-                      <Avatar className={`h-11 w-11 border-2 shadow-md ${index === 0 ? 'border-rank-gold' : 'border-background'}`}>
+                      <div className={`absolute -inset-1 bg-gradient-to-br ${index === 0 ? 'from-rank-gold to-yellow-500' : 'from-primary to-blue-500'} rounded-full blur opacity-0 group-hover/card:opacity-30 transition-opacity`} />
+                      <Avatar className={`h-12 w-12 border-2 shadow-lg relative ${index === 0 ? 'border-rank-gold scale-110' : 'border-background'}`}>
                         <AvatarImage src={sp.avatar_url || undefined} />
-                        <AvatarFallback className="gradient-primary text-primary-foreground text-sm font-display">
+                        <AvatarFallback className="gradient-primary text-primary-foreground text-sm font-black italic">
                           {sp.name.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       {index === 0 && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-rank-gold to-rank-gold/70 rounded-full flex items-center justify-center shadow-md animate-float">
-                          <span className="text-[10px]">👑</span>
+                        <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-gradient-to-br from-rank-gold to-yellow-600 rounded-full flex items-center justify-center shadow-xl border border-white/20 animate-bounce-subtle z-20">
+                          <Trophy className="h-3 w-3 text-white" />
                         </div>
                       )}
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
-                          <p className="font-display font-bold text-sm truncate">{sp.name}</p>
+                          <p className="font-display font-black text-sm truncate tracking-tight uppercase italic">{sp.name}</p>
                           {sp.progress >= 100 && (
-                            <Badge className="bg-status-success/20 text-status-success border-none text-[9px] h-4">
-                              ACESSO AO BÔNUS
-                            </Badge>
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-status-success/20 border border-status-success/30">
+                              <Zap className="h-2.5 w-2.5 text-status-success animate-pulse" />
+                              <span className="text-[8px] font-black text-status-success uppercase tracking-widest">BÔNUS UNLOCKED</span>
+                            </div>
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-display font-black text-status-success text-sm">
+                          <p className="font-display font-black text-status-success text-sm italic tracking-tighter">
                             {formatCurrency(sp.currentCommission)}
                           </p>
                         </div>
                       </div>
 
                       {/* Tier Progress Bar */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between items-center text-[10px]">
-                          <span className="text-muted-foreground font-medium">
-                            Ritmo: <span className="text-primary font-bold">{sp.progress.toFixed(0)}%</span>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider">
+                          <span className="text-muted-foreground/80 flex items-center gap-1">
+                            Performance: <span className="text-primary italic">{sp.progress.toFixed(0)}%</span>
                           </span>
                           {!isMaxTier ? (
-                            <span className="text-muted-foreground">
-                              Próximo Acelerador: <span className="text-foreground font-bold">{nextTier}%</span>
+                            <span className="text-muted-foreground/80 flex items-center gap-1">
+                              Target <ArrowUpRight className="h-2.5 w-2.5" /> <span className="text-foreground italic">{nextTier}%</span>
                             </span>
                           ) : (
-                            <span className="text-rank-gold font-bold flex items-center gap-1">
-                              <Sparkles className="h-2.5 w-2.5" /> MASTER
+                            <span className="text-rank-gold flex items-center gap-1 animate-pulse">
+                              <Sparkles className="h-3 w-3" /> MASTER ELITE
                             </span>
                           )}
                         </div>
-                        <div className="relative h-1.5 bg-muted/40 rounded-full overflow-hidden border border-border/10">
+                        <div className="relative h-2 bg-muted/30 rounded-full overflow-hidden border border-white/5 shadow-inner">
                           <div 
-                            className={`absolute h-full transition-all duration-1000 ${
-                              sp.progress >= 120 ? "bg-gradient-to-r from-rank-gold to-status-success" :
-                              sp.progress >= 100 ? "bg-status-success" : "bg-primary/60"
+                            className={`absolute h-full transition-all duration-1000 ease-out ${
+                              sp.progress >= 120 ? "bg-gradient-to-r from-rank-gold via-yellow-400 to-status-success shadow-[0_0_10px_rgba(255,215,0,0.3)]" :
+                              sp.progress >= 100 ? "bg-gradient-to-r from-status-success to-status-success/60 shadow-[0_0_10px_rgba(var(--status-success),0.2)]" : 
+                              "bg-gradient-to-r from-primary to-primary/40"
                             }`}
                             style={{ width: `${Math.min((sp.progress / nextTier) * 100, 100)}%` }}
                           />
@@ -172,6 +184,7 @@ export function CommissionCalculator({
                       </div>
                     </div>
                   </div>
+                </motion.div>
                   
                   {/* Subtle background glow for top performers */}
                   {index === 0 && (
