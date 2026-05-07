@@ -188,56 +188,73 @@ export default function Estoque() {
           </TabsList>
 
           <TabsContent value="inventory" className="mt-4">
-            <Card>
+            <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+              <CardHeader className="p-6 border-b border-border/10 flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-black uppercase tracking-tighter italic">Strategic Inventory</CardTitle>
+                <div className="px-3 py-1 rounded-lg bg-primary/5 border border-primary/10 text-[10px] font-black text-primary uppercase tracking-widest">
+                  Live Monitoring
+                </div>
+              </CardHeader>
               <CardContent className="p-0">
                 {loadingInv ? (
                   <div className="p-4 space-y-3">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div key={i} className="flex items-center gap-4">
-                        <div className="h-4 w-32 bg-muted/70 rounded animate-pulse" />
-                        <div className="h-4 w-16 bg-muted/70 rounded animate-pulse" />
-                        <div className="h-4 w-20 bg-muted/70 rounded animate-pulse" />
-                        <div className="h-2 w-32 bg-muted/70 rounded-full animate-pulse" />
-                        <div className="h-5 w-16 bg-muted/70 rounded-full animate-pulse" />
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-2 w-32 rounded-full" />
+                        <Skeleton className="h-5 w-16 rounded-full" />
                       </div>
                     ))}
                   </div>
                 ) : inventory.length === 0 ? (
-                  <div className="p-8 text-center text-muted-foreground">Nenhum item no inventário</div>
+                  <div className="p-12 text-center flex flex-col items-center">
+                    <Package className="h-12 w-12 text-muted-foreground/20 mb-3" />
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Aguardando suprimentos da elite...</p>
+                  </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b text-left">
-                          <th className="p-3 text-label">Produto</th>
-                          <th className="p-3 text-label">SKU</th>
-                          <th className="p-3 text-label">Estoque</th>
-                          <th className="p-3 text-label">Nível</th>
-                          <th className="p-3 text-label">Status</th>
-                          <th className="p-3 text-label">Último Reabast.</th>
+                        <tr className="border-b border-border/10 text-left bg-muted/20">
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Equipment</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Stock Level</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Condition</th>
+                          <th className="p-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Last Sync</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y divide-border/10">
                         {inventory.map(item => {
-                          const pct = Math.min(100, (item.current_stock / item.max_stock_level) * 100);
+                          const pct = Math.min(100, (item.current_stock / (item.max_stock_level || 100)) * 100);
                           return (
-                            <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                              <td className="p-3 font-medium">{item.products?.name || "—"}</td>
-                              <td className="p-3 text-muted-foreground font-mono text-sm">{"—"}</td>
-                              <td className="p-3">
-                                <span className="text-metric text-base">{item.current_stock}</span>
-                                <span className="text-muted-foreground text-xs ml-1">/ {item.max_stock_level}</span>
+                            <tr key={item.id} className="group hover:bg-primary/5 transition-colors">
+                              <td className="p-4">
+                                <div className="flex flex-col">
+                                  <span className="font-display font-black text-sm uppercase tracking-tighter group-hover:text-primary transition-colors">
+                                    {item.products?.name || "UNIDENTIFIED UNIT"}
+                                  </span>
+                                  <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">SKU: {"—"}</span>
+                                </div>
                               </td>
-                              <td className="p-3 w-32">
-                                <Progress value={pct} className="h-2" />
+                              <td className="p-4">
+                                <div className="space-y-2">
+                                  <div className="flex items-baseline gap-2">
+                                    <span className="font-display font-black text-lg">{item.current_stock}</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground/40 uppercase">/ {item.max_stock_level}</span>
+                                  </div>
+                                  <Progress value={pct} className="h-1 bg-muted/30" />
+                                </div>
                               </td>
-                              <td className="p-3">
+                              <td className="p-4">
                                 <StockStatusBadge current={item.current_stock} min={item.min_stock_level} reorder={item.reorder_point} />
                               </td>
-                              <td className="p-3 text-muted-foreground text-sm">
-                                {item.last_restock_date
-                                  ? format(new Date(item.last_restock_date), "dd/MM/yy", { locale: ptBR })
-                                  : "—"}
+                              <td className="p-4 text-right">
+                                <span className="text-[10px] font-black text-muted-foreground uppercase tabular-nums">
+                                  {item.last_restock_date
+                                    ? format(new Date(item.last_restock_date), "dd/MM/yy", { locale: ptBR })
+                                    : "NEVER"}
+                                </span>
                               </td>
                             </tr>
                           );
@@ -248,6 +265,7 @@ export default function Estoque() {
                 )}
               </CardContent>
             </Card>
+
           </TabsContent>
 
           <TabsContent value="movements" className="mt-4">
