@@ -170,16 +170,23 @@ export function LeadScoringDashboard() {
       </div>
 
 
-      {/* Ranking Table */}
-      <Card className="glass border-border/40">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            Ranking de Leads
-          </CardTitle>
+      {/* Elite Ranking Table */}
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+        <CardHeader className="p-6 border-b border-border/10">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-3 text-lg font-black uppercase tracking-tighter italic">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              Strategic Lead Ranking
+            </CardTitle>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent/30 border border-white/5">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">REAL-TIME DATA</span>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           {allLeads.length === 0 ? (
+
             <div className="text-center py-12 text-muted-foreground">
               <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="font-medium">Nenhum lead pontuado</p>
