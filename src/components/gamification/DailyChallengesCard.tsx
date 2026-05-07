@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Gift, Zap, Clock, RefreshCw } from "lucide-react";
-import { motion } from "framer-motion";
+import { Gift, Zap, Clock, RefreshCw, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -154,64 +155,93 @@ export function DailyChallengesCard({ salespersonId, compact = false, showTestBu
           return (
             <motion.div
               key={challenge.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`rounded-lg border p-3 transition-colors ${
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.08 }}
+              className={cn(
+                "group/item rounded-2xl border transition-all duration-500 overflow-hidden relative",
                 isClaimed 
-                  ? 'bg-muted/50 border-muted' 
+                  ? 'bg-muted/30 border-muted opacity-60' 
                   : challenge.isCompleted 
-                    ? 'bg-success/10 border-success/30' 
-                    : 'bg-card'
-              }`}
+                    ? 'bg-success/5 border-success/30 shadow-lg shadow-success/5 ring-1 ring-success/20' 
+                    : 'bg-background/40 backdrop-blur-sm border-border/10 hover:border-primary/40 hover:bg-background/60 shadow-xl'
+              )}
             >
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-primary-foreground text-base sm:text-lg shrink-0`}>
+              <div className="p-4 flex items-start gap-4 relative z-10">
+                <div className={cn(
+                  "flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg shrink-0 transition-transform duration-500 group-hover/item:scale-110 group-hover/item:rotate-6",
+                  getDailyChallengeColor(challenge.challenge_type),
+                  "text-white"
+                )}>
                   {getDailyChallengeIcon(challenge.challenge_type)}
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <h4 className={`font-medium text-sm truncate ${isClaimed ? 'line-through text-muted-foreground' : ''}`}>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h4 className={cn(
+                      "font-display font-black text-sm uppercase tracking-tight italic truncate",
+                      isClaimed && 'line-through text-muted-foreground'
+                    )}>
                       {challenge.title}
                     </h4>
-                    <span className="text-xs font-medium text-rank-gold dark:text-rank-gold whitespace-nowrap">
-                      +{challenge.xp_reward} XP
-                    </span>
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rank-gold/10 border border-rank-gold/20 shrink-0">
+                      <Zap className="h-2.5 w-2.5 text-rank-gold animate-pulse" />
+                      <span className="text-[10px] font-black text-rank-gold uppercase tracking-widest">
+                        +{challenge.xp_reward} XP
+                      </span>
+                    </div>
                   </div>
                   
                   {!compact && challenge.description && (
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                    <p className="text-[10px] text-muted-foreground font-medium line-clamp-1 mb-3 opacity-70">
                       {challenge.description}
                     </p>
                   )}
                   
-                  <div className="flex items-center gap-2 mt-2">
-                    <Progress 
-                      value={challenge.percentComplete} 
-                      className="h-1.5 flex-1" 
-                    />
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {challenge.progress?.current_value || 0}/{challenge.target_value}
-                    </span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest px-0.5">
+                      <span className="text-muted-foreground/60 italic">Progress</span>
+                      <span className="text-primary italic">{challenge.progress?.current_value || 0} / {challenge.target_value}</span>
+                    </div>
+                    <div className="relative h-2.5 bg-muted/40 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                      <div 
+                        className={cn(
+                          "absolute h-full transition-all duration-1000 ease-out",
+                          challenge.isCompleted ? "bg-status-success shadow-[0_0_10px_rgba(34,197,94,0.3)]" : "bg-primary"
+                        )}
+                        style={{ width: `${challenge.percentComplete}%` }}
+                      >
+                        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
+                      </div>
+                    </div>
                   </div>
 
-                  {canClaim && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleClaimReward(challenge.id, challenge.xp_reward)}
-                      disabled={claimReward.isPending}
-                      className="mt-2 h-7 text-xs gap-1"
-                    >
-                      <Gift className="h-3 w-3" />
-                      Resgatar
-                    </Button>
-                  )}
+                  <AnimatePresence>
+                    {canClaim && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-4"
+                      >
+                        <Button
+                          size="sm"
+                          onClick={() => handleClaimReward(challenge.id, challenge.xp_reward)}
+                          disabled={claimReward.isPending}
+                          className="w-full bg-status-success hover:bg-status-success/90 text-white font-black uppercase tracking-widest text-[10px] h-9 rounded-xl shadow-lg shadow-status-success/20 italic"
+                        >
+                          <Gift className="h-4 w-4 mr-2 animate-bounce" />
+                          Coletar Recompensa
+                        </Button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {isClaimed && (
-                    <span className="text-xs text-success dark:text-success mt-2 inline-block">
-                      ✓ Completado
-                    </span>
+                    <div className="mt-3 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-status-success/60 italic">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Objetivo Concluído
+                    </div>
                   )}
                 </div>
               </div>

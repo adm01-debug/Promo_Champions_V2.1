@@ -60,21 +60,22 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
   return (
     <div className={cn('space-y-5', className)}>
       {/* Stats bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { icon: Swords, label: 'Ativas', value: stats.activeCount, color: 'text-primary' },
-          { icon: Trophy, label: 'Encerradas', value: stats.completedCount, color: 'text-rank-gold' },
-          { icon: Users, label: 'Participantes', value: stats.totalParticipants, color: 'text-accent' },
-          { icon: Zap, label: 'XP em Jogo', value: stats.totalXP, color: 'text-streak' },
-        ].map(({ icon: Icon, label, value, color }) => (
-          <Card key={label} className="border-none shadow-sm">
-            <CardContent className="p-3 flex items-center gap-3">
-              <div className={cn('h-9 w-9 rounded-lg bg-muted/50 flex items-center justify-center shrink-0', color)}>
-                <Icon className="h-4 w-4" />
+          { icon: Swords, label: 'Ativas', value: stats.activeCount, color: 'text-primary', bg: 'bg-primary/10' },
+          { icon: Trophy, label: 'Encerradas', value: stats.completedCount, color: 'text-rank-gold', bg: 'bg-rank-gold/10' },
+          { icon: Users, label: 'Gladiadores', value: stats.totalParticipants, color: 'text-accent', bg: 'bg-accent/10' },
+          { icon: Zap, label: 'XP em Jogo', value: stats.totalXP, color: 'text-streak', bg: 'bg-streak/10' },
+        ].map(({ icon: Icon, label, value, color, bg }) => (
+          <Card key={label} className="glass border-border/40 hover-lift-sm overflow-hidden group/stat relative">
+            <div className={cn("absolute inset-0 opacity-0 group-hover/stat:opacity-100 transition-opacity duration-500", bg)} />
+            <CardContent className="p-4 flex items-center gap-4 relative z-10">
+              <div className={cn('h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg group-hover/stat:scale-110 group-hover/stat:rotate-6 transition-all duration-500 border border-border/10', bg, color)}>
+                <Icon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-lg font-bold font-display">{value}</p>
-                <p className="text-xs text-muted-foreground">{label}</p>
+                <p className={cn("text-2xl font-display font-black tracking-tighter italic leading-none mb-1", color)}>{value}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{label}</p>
               </div>
             </CardContent>
           </Card>

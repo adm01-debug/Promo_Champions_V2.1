@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -74,56 +75,64 @@ function ChallengeItem({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
-      className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${gradientClass} text-primary-foreground shadow-lg`}
+      whileHover={{ y: -4, scale: 1.01 }}
+      className={cn(
+        "relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br transition-all duration-500 shadow-xl group/challenge",
+        gradientClass,
+        "text-primary-foreground border border-white/10"
+      )}
     >
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-primary-foreground/10 rounded-full -translate-y-12 translate-x-12" />
-      <div className="absolute bottom-0 left-0 w-16 h-16 bg-primary-foreground/10 rounded-full translate-y-8 -translate-x-8" />
+      {/* Dynamic Background Polish */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-white/20 transition-all duration-700 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/5 blur-2xl rounded-full -ml-12 -mb-12 pointer-events-none" />
 
       <div className="relative z-10">
         {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-3xl">{icon}</span>
-            <div>
-              <h4 className="font-bold">{challenge.title}</h4>
-              <p className="text-xs text-primary-foreground/80">{challenge.description}</p>
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl shadow-lg border border-white/10 group-hover:rotate-6 transition-transform duration-500">
+              {icon}
+            </div>
+            <div className="min-w-0">
+              <h4 className="font-display font-black text-lg tracking-tight uppercase italic drop-shadow-sm truncate pr-2">{challenge.title}</h4>
+              <p className="text-[10px] font-medium text-white/70 uppercase tracking-widest line-clamp-1">{challenge.description}</p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-0">
-            <Zap className="h-3 w-3 mr-1" />
+          <Badge className="bg-white/20 text-white border-none shadow-md backdrop-blur-md font-black text-[10px] uppercase tracking-widest px-2.5 py-1">
+            <Zap className="h-3 w-3 mr-1.5 text-yellow-300 animate-pulse" />
             +{challenge.xp_reward} XP
           </Badge>
         </div>
 
-        {/* Progress */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Progresso</span>
-            <span className="font-bold">
-              {challenge.progress?.current_value || 0} / {challenge.target_value}
+        {/* Progress System */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-end text-[10px] font-black uppercase tracking-widest px-1">
+            <span className="text-white/80">Status da Missão</span>
+            <span className="text-lg font-display font-black tracking-tighter italic">
+              {challenge.progress?.current_value || 0} <span className="text-xs text-white/50">/ {challenge.target_value}</span>
             </span>
           </div>
-          <div className="relative h-3 bg-primary-foreground/20 rounded-full overflow-hidden">
+          <div className="relative h-3.5 bg-black/20 rounded-full overflow-hidden border border-white/5 shadow-inner">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${challenge.percentage}%` }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute inset-y-0 left-0 bg-primary-foreground rounded-full"
-            />
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="absolute inset-y-0 left-0 bg-white shadow-[0_0_15px_rgba(255,255,255,0.4)] flex items-center justify-end px-1"
+            >
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] animate-shimmer" />
+            </motion.div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-1 text-xs text-primary-foreground/80">
-            <Clock className="h-3 w-3" />
-            <span>
+        {/* Footer actions */}
+        <div className="flex items-center justify-between mt-5">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/10 border border-white/5 backdrop-blur-sm">
+            <Clock className="h-3 w-3 text-white/80" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-white/90">
               {challenge.daysRemaining === 0
-                ? "Último dia!"
+                ? "Fim do Prazo!"
                 : challenge.daysRemaining === 1
-                ? "1 dia restante"
+                ? "1 dia p/ encerramento"
                 : `${challenge.daysRemaining} dias restantes`}
             </span>
           </div>
@@ -131,34 +140,36 @@ function ChallengeItem({
           <AnimatePresence mode="wait">
             {canClaim && (
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
                 exit={{ scale: 0 }}
+                whileHover={{ scale: 1.1 }}
               >
                 <Button
                   size="sm"
-                  variant="secondary"
                   onClick={handleClaim}
                   disabled={claimReward.isPending}
-                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-bold"
+                  className="bg-white text-primary hover:bg-white/90 font-black uppercase tracking-widest text-[10px] h-9 px-5 rounded-xl shadow-xl shadow-black/20 italic transition-all"
                 >
-                  <Gift className="h-4 w-4 mr-1" />
-                  Resgatar
+                  <Gift className="h-3.5 w-3.5 mr-2 animate-bounce" />
+                  Resgatar Recompensa
                 </Button>
               </motion.div>
             )}
             {alreadyClaimed && (
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="flex items-center gap-1 text-primary-foreground font-medium"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/20 backdrop-blur-md font-black uppercase tracking-widest text-[10px] shadow-sm border border-white/10"
               >
-                <CheckCircle2 className="h-4 w-4" />
-                Resgatado
+                <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                Sincronizado
               </motion.div>
             )}
             {!canClaim && !alreadyClaimed && (
-              <span className="text-sm font-medium">{Math.round(challenge.percentage)}%</span>
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 italic">
+                {Math.round(challenge.percentage)}% Concluído
+              </div>
             )}
           </AnimatePresence>
         </div>
