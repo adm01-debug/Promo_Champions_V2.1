@@ -79,11 +79,14 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
   }
 
   return (
-    <Card className="glass border-border/40 card-elevated">
-      <CardHeader className="pb-2 border-b border-border/10">
-        <CardTitle className="text-sm font-display font-black uppercase tracking-widest flex items-center gap-2">
-          <PieIcon className="h-4 w-4 text-primary" />
-          Status da Operação
+    <Card className="glass border-border/40 card-elevated overflow-hidden group">
+      <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/5 blur-3xl rounded-full pointer-events-none" />
+      <CardHeader className="pb-2 border-b border-border/10 relative z-10">
+        <CardTitle className="text-sm font-display font-black uppercase tracking-widest flex items-center gap-2 italic">
+          <div className="p-1.5 rounded-lg bg-primary/10 group-hover:scale-110 transition-transform">
+            <PieIcon className="h-4 w-4 text-primary" />
+          </div>
+          <span className="gradient-text">Health Check Operacional</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
@@ -136,23 +139,26 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mt-4">
+        <div className="grid grid-cols-2 gap-3 mt-6 relative z-10">
           {data.map((entry, i) => (
             <button
               key={i}
               onMouseEnter={() => setActiveIndex(i)}
               className={cn(
-                "flex items-center justify-between p-2 rounded-lg border transition-all text-left",
+                "flex items-center justify-between p-3 rounded-xl border transition-all text-left group/btn",
                 activeIndex === i 
-                  ? "bg-muted/50 border-border/40 shadow-sm translate-x-1" 
-                  : "border-transparent opacity-70 hover:opacity-100"
+                  ? "bg-muted/50 border-border/40 shadow-lg translate-x-1 ring-1 ring-primary/20" 
+                  : "border-border/5 bg-background/20 opacity-70 hover:opacity-100 hover:bg-background/40"
               )}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-[11px] font-bold uppercase tracking-tight">{entry.name}</span>
+              <div className="flex items-center gap-2.5">
+                <div 
+                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" 
+                  style={{ backgroundColor: entry.color, color: entry.color }} 
+                />
+                <span className="text-[10px] font-black uppercase tracking-widest leading-none">{entry.name}</span>
               </div>
-              <span className="text-xs font-black">{entry.value}</span>
+              <span className="text-xs font-black font-display gradient-text">{entry.value}</span>
             </button>
           ))}
         </div>
