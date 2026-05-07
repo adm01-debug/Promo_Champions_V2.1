@@ -244,6 +244,7 @@ const Index = () => {
                 </motion.div>
               </motion.div>
             )}
+            </AnimatePresence>
 
             {/* ── SECTION: Charts & Goals ── */}
             <motion.div 
