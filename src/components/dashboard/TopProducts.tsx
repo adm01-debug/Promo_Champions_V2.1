@@ -55,29 +55,51 @@ export const TopProducts = React.memo(() => {
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <Package className="h-4 w-4 text-primary" />
-          Top Produtos
+    <Card className="h-full border-none bg-gradient-to-br from-card/50 to-background shadow-lg shadow-black/5">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-bold flex items-center gap-2 tracking-tight uppercase">
+          <div className="p-1.5 rounded-lg bg-primary/10">
+            <Package className="h-4 w-4 text-primary" />
+          </div>
+          Ranking de Produtos
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         {products && products.length > 0 ? products.map((product, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex justify-between text-xs">
-              <span className="font-medium truncate">{product.name}</span>
-              <span className="text-muted-foreground">{product.sales} vendas</span>
+          <motion.div 
+            key={index} 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="group space-y-2"
+          >
+            <div className="flex justify-between items-end">
+              <div className="min-w-0">
+                <p className="text-xs font-bold truncate group-hover:text-primary transition-colors uppercase tracking-tight">
+                  {product.name}
+                </p>
+                <p className="text-[10px] text-muted-foreground font-medium">
+                  R$ {product.revenue.toLocaleString("pt-BR")} acumulados
+                </p>
+              </div>
+              <Badge variant="secondary" className="text-[10px] font-black h-5 px-1.5">
+                {product.sales} sales
+              </Badge>
             </div>
-            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary rounded-full transition-all duration-500"
-                style={{ width: `${(product.sales / maxSales) * 100}%` }}
+            <div className="h-2 bg-muted/40 rounded-full overflow-hidden border border-border/5">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${(product.sales / maxSales) * 100}%` }}
+                transition={{ duration: 1, ease: "easeOut", delay: 0.5 + index * 0.1 }}
+                className="h-full bg-gradient-to-r from-primary to-accent rounded-full shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]"
               />
             </div>
-          </div>
+          </motion.div>
         )) : (
-          <p className="text-sm text-muted-foreground text-center py-4">Sem dados de produtos</p>
+          <div className="flex flex-col items-center justify-center py-8 opacity-40">
+            <Package className="h-8 w-8 mb-2" />
+            <p className="text-xs font-medium uppercase tracking-tighter">Inventário pendente...</p>
+          </div>
         )}
       </CardContent>
     </Card>
