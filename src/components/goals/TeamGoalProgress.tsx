@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, Target, Calendar, Zap, Trophy } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Calendar, Zap, Trophy, Flame, Rocket, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface TeamGoalProgressProps {
@@ -39,71 +39,84 @@ export function TeamGoalProgress({
   const isAheadOfIdeal = salesGap >= 0;
 
   return (
-    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
-      <div className={`h-1.5 ${onTrack 
-        ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50" 
+    <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden relative group">
+      {/* Dynamic Background Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      
+      <div className={`h-1.5 relative z-10 ${onTrack 
+        ? "bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50 animate-pulse-subtle" 
         : "bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50"
       }`} />
-      <CardHeader className="pb-3 border-b border-border/30">
+      
+      <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display font-bold flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:scale-110 transition-transform">
+          <CardTitle className="text-lg font-display font-black flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
               <Target className="h-5 w-5 text-primary" />
             </div>
-            <span className="gradient-text">Meta da Equipe</span>
+            <span className="gradient-text italic uppercase tracking-tight">Arena de Resultados</span>
           </CardTitle>
           <Badge 
             variant="outline" 
-            className={`shadow-sm animate-fade-in ${onTrack 
-              ? "bg-status-success/10 text-status-success border-status-success/30" 
-              : "bg-status-warning/10 text-status-warning border-status-warning/30"
+            className={`shadow-sm animate-fade-in font-black uppercase text-[10px] tracking-widest py-1 px-3 ${onTrack 
+              ? "bg-status-success/10 text-status-success border-status-success/30 shadow-status-success/10" 
+              : "bg-status-warning/10 text-status-warning border-status-warning/30 shadow-status-warning/10"
             }`}
           >
             {onTrack ? (
-              <><TrendingUp className="h-3 w-3 mr-1" /> No caminho</>
+              <><Flame className="h-3 w-3 mr-1 animate-pulse" /> Em Chamas</>
             ) : (
-              <><TrendingDown className="h-3 w-3 mr-1" /> Atenção</>
+              <><TrendingDown className="h-3 w-3 mr-1" /> Reação Imediata</>
             )}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6 pt-4">
+      <CardContent className="space-y-6 pt-6 relative z-10">
         {/* Main Progress */}
-        <div className="space-y-4 animate-fade-in">
+        <div className="space-y-4 animate-fade-in relative">
           <div className="flex items-end justify-between">
-            <div>
-              <p className="text-4xl font-display font-bold gradient-text">{formatCurrency(totalSales)}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                de <span className="font-display font-medium text-foreground">{formatCurrency(totalGoal)}</span>
+            <div className="relative group/price">
+              <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text drop-shadow-sm group-hover/price:scale-105 transition-transform duration-300">
+                {formatCurrency(totalSales)}
               </p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/60">Objetivo:</span>
+                <span className="text-xs font-black text-foreground/80 tracking-tight">{formatCurrency(totalGoal)}</span>
+              </div>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-display font-bold gradient-text">{progress.toFixed(1)}%</p>
-              <p className="text-overline font-medium">atingido</p>
+              <div className="inline-flex items-center gap-1.5 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20 mb-1">
+                <Star className="h-3 w-3 text-primary animate-spin-slow" />
+                <span className="text-[10px] font-black text-primary uppercase">Elite</span>
+              </div>
+              <p className="text-4xl font-display font-black tracking-tighter text-foreground italic leading-none">{progress.toFixed(1)}%</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 mt-1">Concluído</p>
             </div>
           </div>
           
           <div className="relative pt-2">
-            <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-semibold mb-1 px-1">
-              <span>Início</span>
-              <span className="text-primary/70">Ideal: {idealProgress.toFixed(0)}%</span>
-              <span>Meta: 100%</span>
+            <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-black tracking-widest mb-2 px-1">
+              <span>Ground Zero</span>
+              <span className="text-primary/70 flex items-center gap-1">
+                <Rocket className="h-3 w-3" /> Tendência Ideal: {idealProgress.toFixed(0)}%
+              </span>
+              <span>Victory</span>
             </div>
-            <Progress value={progressCapped} className="h-4 shadow-inner" />
+            <Progress value={progressCapped} className="h-5 shadow-2xl border border-white/5 bg-muted/30" />
             
             {/* Ideal marker indicator */}
             <div 
-              className="absolute top-[22px] bottom-0 w-0.5 bg-primary/40 z-10"
+              className="absolute top-[26px] bottom-0 w-1 bg-primary/40 z-10 animate-pulse"
               style={{ left: `${idealProgress}%` }}
               title={`Tendência Ideal: ${formatCurrency(idealSales)}`}
             >
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary/40" />
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary))]" />
             </div>
 
             {progress >= 100 && (
-              <div className="absolute inset-0 top-[22px] flex items-center justify-center gap-1">
-                <Trophy className="h-3.5 w-3.5 text-primary-foreground" />
-                <span className="text-xs font-display font-bold text-primary-foreground animate-pulse">META BATIDA!</span>
+              <div className="absolute inset-0 top-[26px] flex items-center justify-center gap-2">
+                <Trophy className="h-4 w-4 text-primary-foreground drop-shadow-lg" />
+                <span className="text-xs font-display font-black text-primary-foreground animate-bounce tracking-tighter">DOMINAÇÃO TOTAL!</span>
               </div>
             )}
           </div>
