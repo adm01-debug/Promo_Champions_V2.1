@@ -1,7 +1,8 @@
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BarChart3, ChevronDown, ChevronUp } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
+import { BarChart3, ChevronDown, ChevronUp, PieChart as PieIcon, Activity, TrendingUp } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Sector } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { activityIcons, activityLabels, outcomeLabels } from "./activityConstants";
