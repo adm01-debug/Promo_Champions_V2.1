@@ -52,7 +52,7 @@ const renderActiveShape = (props: any) => {
 };
 
 export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeople }) => {
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const withGoals = salespeople.filter(sp => sp.goalAmount > 0);
 
   const exceeded = withGoals.filter(sp => sp.progress >= 100).length;
