@@ -96,13 +96,19 @@ const Index = () => {
       duration={400}
     >
       <PageTransition>
-        <div className="min-h-screen bg-background" suppressHydrationWarning>
-          <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-6 space-y-8">
+        <div className="min-h-screen bg-[#02040a] selection:bg-primary/30" suppressHydrationWarning>
+          {/* Global Ambient Glow */}
+          <div className="fixed inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px]" />
+          </div>
+
+          <div className="max-w-[1600px] mx-auto px-4 py-8 sm:px-6 lg:px-12 space-y-10 relative z-10">
             {/* ── SECTION: Greeting ── */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               <DashboardHeader />
             </motion.div>
