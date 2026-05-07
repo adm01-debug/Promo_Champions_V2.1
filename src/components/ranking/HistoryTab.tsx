@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, AreaChart, Area } from "recharts";
 import { motion } from "framer-motion";
 import { TrendingUp, BarChart3, Calendar, ArrowUpRight } from "lucide-react";
