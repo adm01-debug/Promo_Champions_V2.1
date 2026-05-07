@@ -87,7 +87,7 @@ export function CommissionCalculator({
               </div>
               <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">Ganhos Atuais</span>
             </div>
-            <p className="text-2xl font-display font-black text-status-success italic tracking-tighter relative z-10 leading-none">
+            <p className="text-2xl font-display font-black text-status-success italic tracking-tighter relative z-10 leading-none drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]">
               {formatCurrency(totalCurrentCommission)}
             </p>
           </div>
@@ -171,15 +171,17 @@ export function CommissionCalculator({
                             </span>
                           )}
                         </div>
-                        <div className="relative h-2 bg-muted/30 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                        <div className="relative h-2.5 bg-muted/40 rounded-full overflow-hidden border border-white/10 shadow-inner group/bar">
                           <div 
                             className={`absolute h-full transition-all duration-1000 ease-out ${
-                              sp.progress >= 120 ? "bg-gradient-to-r from-rank-gold via-yellow-400 to-status-success shadow-[0_0_10px_rgba(255,215,0,0.3)]" :
-                              sp.progress >= 100 ? "bg-gradient-to-r from-status-success to-status-success/60 shadow-[0_0_10px_rgba(var(--status-success),0.2)]" : 
-                              "bg-gradient-to-r from-primary to-primary/40"
+                              sp.progress >= 120 ? "bg-gradient-to-r from-rank-gold via-yellow-400 to-status-success shadow-[0_0_15px_rgba(255,215,0,0.4)]" :
+                              sp.progress >= 100 ? "bg-gradient-to-r from-status-success to-status-success/60 shadow-[0_0_12px_rgba(34,197,94,0.3)]" : 
+                              "bg-gradient-to-r from-primary via-primary/80 to-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.2)]"
                             }`}
                             style={{ width: `${Math.min((sp.progress / nextTier) * 100, 100)}%` }}
-                          />
+                          >
+                            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
+                          </div>
                         </div>
                       </div>
                     </div>
