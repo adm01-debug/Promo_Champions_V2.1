@@ -13,10 +13,11 @@ import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
-  Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/30", label: "Quente" },
-  Warm: { icon: Thermometer, color: "text-status-warning", bg: "bg-status-warning/10 border-status-warning/30", label: "Morno" },
-  Cold: { icon: Snowflake, color: "text-info", bg: "bg-info/10 border-info/30", label: "Frio" },
+  Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/20", label: "ELITE" },
+  Warm: { icon: Thermometer, color: "text-status-warning", bg: "bg-status-warning/10 border-status-warning/20", label: "ACTIVE" },
+  Cold: { icon: Snowflake, color: "text-info", bg: "bg-info/10 border-info/20", label: "STAGNANT" },
 };
+
 
 function ScoreRing({ score, size = 56 }: { score: number; size?: number }) {
   const radius = (size - 8) / 2;
