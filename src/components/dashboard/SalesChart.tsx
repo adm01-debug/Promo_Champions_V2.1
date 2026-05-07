@@ -89,7 +89,7 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
                 <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.03)" vertical={false} />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 10, fontWeight: 900, textTransform: 'uppercase' }} 
+                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 10, fontWeight: 900 }} 
                   axisLine={false} 
                   tickLine={false} 
                   dy={15} 
