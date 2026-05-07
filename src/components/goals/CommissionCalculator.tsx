@@ -99,53 +99,86 @@ export function CommissionCalculator({
         </div>
 
         {/* Individual Commissions */}
-        <ScrollArea className="h-[280px]">
-          <div className="space-y-2 pr-3">
-            {sortedSalespeople.map((sp, index) => (
-              <div
-                key={sp.id}
-                className="p-3 rounded-xl glass border border-border/40 hover:border-primary/40 hover-lift transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Avatar className={`h-10 w-10 border-2 shadow-md ${index === 0 ? 'border-rank-gold' : 'border-background'}`}>
-                      <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="gradient-primary text-primary-foreground text-sm font-display">
-                        {sp.name.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    {index === 0 && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-rank-gold to-rank-gold/70 rounded-full flex items-center justify-center shadow-md animate-float">
-                        <span className="text-[10px]">👑</span>
+        <ScrollArea className="h-[320px]">
+          <div className="space-y-3 pr-3">
+            {sortedSalespeople.map((sp, index) => {
+              const tiers = [100, 120, 150];
+              const nextTier = tiers.find(t => t > sp.progress) || 150;
+              const isMaxTier = sp.progress >= 150;
+              
+              return (
+                <div
+                  key={sp.id}
+                  className="p-4 rounded-xl glass border border-border/40 hover:border-primary/40 hover-lift transition-all group cursor-pointer relative overflow-hidden"
+                >
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="relative">
+                      <Avatar className={`h-11 w-11 border-2 shadow-md ${index === 0 ? 'border-rank-gold' : 'border-background'}`}>
+                        <AvatarImage src={sp.avatar_url || undefined} />
+                        <AvatarFallback className="gradient-primary text-primary-foreground text-sm font-display">
+                          {sp.name.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      {index === 0 && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-rank-gold to-rank-gold/70 rounded-full flex items-center justify-center shadow-md animate-float">
+                          <span className="text-[10px]">👑</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-display font-bold text-sm truncate">{sp.name}</p>
+                          {sp.progress >= 100 && (
+                            <Badge className="bg-status-success/20 text-status-success border-none text-[9px] h-4">
+                              ACESSO AO BÔNUS
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-display font-black text-status-success text-sm">
+                            {formatCurrency(sp.currentCommission)}
+                          </p>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-display font-medium text-sm truncate">{sp.name}</p>
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0 bg-muted/50 border-border/50">
-                        <Percent className="h-2.5 w-2.5 mr-0.5" />
-                        {sp.commissionRate}%
-                      </Badge>
+
+                      {/* Tier Progress Bar */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-muted-foreground font-medium">
+                            Ritmo: <span className="text-primary font-bold">{sp.progress.toFixed(0)}%</span>
+                          </span>
+                          {!isMaxTier ? (
+                            <span className="text-muted-foreground">
+                              Próximo Acelerador: <span className="text-foreground font-bold">{nextTier}%</span>
+                            </span>
+                          ) : (
+                            <span className="text-rank-gold font-bold flex items-center gap-1">
+                              <Sparkles className="h-2.5 w-2.5" /> MASTER
+                            </span>
+                          )}
+                        </div>
+                        <div className="relative h-1.5 bg-muted/40 rounded-full overflow-hidden border border-border/10">
+                          <div 
+                            className={`absolute h-full transition-all duration-1000 ${
+                              sp.progress >= 120 ? "bg-gradient-to-r from-rank-gold to-status-success" :
+                              sp.progress >= 100 ? "bg-status-success" : "bg-primary/60"
+                            }`}
+                            style={{ width: `${Math.min((sp.progress / nextTier) * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Vendas: <span className="font-medium text-foreground">{formatCurrency(sp.currentSales)}</span>
-                    </p>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-display font-bold text-status-success text-sm">
-                      {formatCurrency(sp.currentCommission)}
-                    </p>
-                    <div className="flex items-center gap-1 justify-end opacity-70 group-hover:opacity-100 transition-opacity">
-                      <TrendingUp className="h-3 w-3 text-primary" />
-                      <span className="text-xs text-primary font-medium">
-                        {formatCurrency(sp.projectedCommission)}
-                      </span>
-                    </div>
-                  </div>
+                  
+                  {/* Subtle background glow for top performers */}
+                  {index === 0 && (
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-rank-gold/5 blur-3xl -z-0 pointer-events-none" />
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {sortedSalespeople.length === 0 && (
               <div className="text-center py-10 text-muted-foreground">
