@@ -31,6 +31,7 @@ import { EngagementLeaderboardWidget } from "@/components/engagement/EngagementL
 import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
 import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { ProfilePerformanceCard } from "@/components/profile/ProfilePerformanceCard";
 import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
