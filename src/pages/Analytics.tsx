@@ -17,6 +17,7 @@ import { WeeklyPerformanceComparison } from '@/components/analytics/WeeklyPerfor
 import { ChurnPredictionPanel } from '@/components/analytics/ChurnPredictionPanel';
 import { CohortAnalysis } from '@/components/analytics/CohortAnalysis';
 import { LTVBySegment } from '@/components/analytics/LTVBySegment';
+import { AIPerformanceInsights } from '@/components/analytics/AIPerformanceInsights';
 import { AnimatedTabContent } from '@/components/analytics/AnimatedTabContent';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, Clock, TrendingUp, BookOpen, BarChart3, Layers, Timer, AlertTriangle, Brain, Users, GitCompare, Flame, Radar, CalendarDays, ShieldAlert, UserCheck, DollarSign, ChevronDown, LineChart } from 'lucide-react';
@@ -102,8 +103,6 @@ export default function Analytics() {
     setActiveTab(value);
   }, []);
 
-  const ActiveComponent = TAB_CONTENT[activeTab];
-
   return (
     <>
       <Helmet>
@@ -121,55 +120,59 @@ export default function Analytics() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-              <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-                {/* Category chips */}
-                <div className="flex flex-wrap gap-4 items-start">
-                  {TAB_CATEGORIES.map((category) => {
-                    const isCategoryActive = category.label === activeCategory;
-                    return (
-                      <div key={category.label} className="flex flex-col gap-1.5">
-                        <span className={cn(
-                          "text-[10px] font-semibold uppercase tracking-wider px-1",
-                          isCategoryActive ? "text-primary" : "text-muted-foreground/50"
-                        )}>
-                          {category.label}
-                        </span>
-                        <div className="flex items-center gap-1 rounded-lg bg-card/50 border border-border/30 p-0.5">
-                          {category.tabs.map(({ value, label, icon: Icon }) => (
-                            <button
-                              key={value}
-                              onClick={() => handleTabChange(value)}
-                              className={cn(
-                                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200",
-                                activeTab === value
-                                  ? "bg-primary text-primary-foreground shadow-sm"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                              )}
-                            >
-                              <Icon className="h-3.5 w-3.5" />
-                              <span className="hidden lg:inline">{label}</span>
-                            </button>
-                          ))}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+              <div className="lg:col-span-3">
+                <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+                  <div className="flex flex-wrap gap-4 items-start">
+                    {TAB_CATEGORIES.map((category) => {
+                      const isCategoryActive = category.label === activeCategory;
+                      return (
+                        <div key={category.label} className="flex flex-col gap-1.5">
+                          <span className={cn(
+                            "text-[10px] font-semibold uppercase tracking-wider px-1",
+                            isCategoryActive ? "text-primary" : "text-muted-foreground/50"
+                          )}>
+                            {category.label}
+                          </span>
+                          <div className="flex items-center gap-1 rounded-lg bg-card/50 border border-border/30 p-0.5">
+                            {category.tabs.map(({ value, label, icon: Icon }) => (
+                              <button
+                                key={value}
+                                onClick={() => handleTabChange(value)}
+                                className={cn(
+                                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200",
+                                  activeTab === value
+                                    ? "bg-primary text-primary-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                )}
+                              >
+                                <Icon className="h-3.5 w-3.5" />
+                                <span className="hidden lg:inline">{label}</span>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
 
-                {/* Content */}
-                <AnimatePresence mode="wait">
-                  {ALL_TABS.map(({ value }) => {
-                    const Component = TAB_CONTENT[value];
-                    return (
-                      <AnimatedTabContent key={value} value={value}>
-                        <Component />
-                      </AnimatedTabContent>
-                    );
-                  })}
-                </AnimatePresence>
-              </Tabs>
-            </motion.div>
+                  <AnimatePresence mode="wait">
+                    {ALL_TABS.map(({ value }) => {
+                      const Component = TAB_CONTENT[value];
+                      if (activeTab !== value) return null;
+                      return (
+                        <AnimatedTabContent key={value} value={value}>
+                          <Component />
+                        </AnimatedTabContent>
+                      );
+                    })}
+                  </AnimatePresence>
+                </Tabs>
+              </div>
+              <div className="lg:col-span-1">
+                <AIPerformanceInsights />
+              </div>
+            </div>
           </div>
         </PageTransition>
       </SkeletonTransition>
