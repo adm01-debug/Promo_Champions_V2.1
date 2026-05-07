@@ -124,53 +124,74 @@ export function ActivityGoalEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Metas de {salespersonName}
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md glass border-border/40 p-0 overflow-hidden">
+        <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-transparent p-6 pb-0">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3 text-xl font-display font-black uppercase tracking-tight italic">
+              <div className="p-2 rounded-xl bg-primary shadow-lg">
+                <Target className="h-5 w-5 text-primary-foreground" />
+              </div>
+              Metas de {salespersonName}
+            </DialogTitle>
+          </DialogHeader>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground">
-              Defina as metas diárias de atividades para este vendedor. Coloque 0 para desativar uma meta.
-            </p>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 pt-4 space-y-6">
+            <div className="p-3 rounded-lg bg-muted/30 border border-border/20">
+              <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                Defina o volume diário esperado. O <span className="text-primary font-bold">Power Score</span> será recalculado automaticamente com base na complexidade de cada tarefa.
+              </p>
+            </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {goalFields.map((field) => (
                 <FormField
                   key={field.name}
                   control={form.control}
                   name={field.name}
                   render={({ field: formField }) => (
-                    <FormItem className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 w-40">
-                        <field.icon className={`h-4 w-4 ${field.color}`} />
-                        <FormLabel className="text-sm mb-0">{field.label}</FormLabel>
+                    <FormItem className="flex items-center justify-between p-3 rounded-xl border border-border/10 bg-muted/10 hover:bg-muted/20 transition-all group">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-background border border-border/10 shadow-sm transition-transform group-hover:scale-110`}>
+                          <field.icon className={`h-4 w-4 ${field.color}`} />
+                        </div>
+                        <FormLabel className="text-xs font-black uppercase tracking-tight mb-0 cursor-pointer">{field.label.split(' ')[0]}</FormLabel>
                       </div>
-                      <FormControl>
-                        <Input
-                          {...formField}
-                          type="number"
-                          min="0"
-                          className="w-24"
-                        />
-                      </FormControl>
-                      <FormMessage />
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input
+                            {...formField}
+                            type="number"
+                            min="0"
+                            className="w-20 h-9 text-right font-black glass border-border/20 focus-visible:ring-primary/40"
+                          />
+                        </FormControl>
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">un/dia</span>
+                      </div>
+                      <FormMessage className="text-[10px]" />
                     </FormItem>
                   )}
                 />
               ))}
             </div>
 
-            <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <div className="flex gap-3 pt-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex-1 font-bold uppercase tracking-tight text-xs h-11"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancelar
               </Button>
-              <Button variant="glow-pulse-success" type="submit" disabled={upsertGoal.isPending}>
-                {upsertGoal.isPending ? "Salvando..." : "Salvar Metas"}
+              <Button 
+                variant="glow-pulse-success" 
+                type="submit" 
+                className="flex-1 font-bold uppercase tracking-tight text-xs h-11"
+                disabled={upsertGoal.isPending}
+              >
+                {upsertGoal.isPending ? "Sincronizando..." : "Aplicar Estratégia"}
               </Button>
             </div>
           </form>
