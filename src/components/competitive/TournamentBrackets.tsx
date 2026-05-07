@@ -320,14 +320,7 @@ function TournamentBracketsComponent() {
         </div>
       )}
     </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      )}
-    </div>
   );
 }
-
 
 export const TournamentBrackets = React.memo(TournamentBracketsComponent);
