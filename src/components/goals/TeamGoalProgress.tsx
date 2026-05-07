@@ -30,7 +30,13 @@ export function TeamGoalProgress({
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const progressCapped = Math.min(progress, 100);
-  const projectionProgress = totalGoal > 0 ? Math.min((projection / totalGoal) * 100, 150) : 0;
+  const projectionProgress = totalGoal > 0 ? (projection / totalGoal) * 100 : 0;
+  
+  const totalDays = daysElapsed + daysRemaining;
+  const idealProgress = totalDays > 0 ? (daysElapsed / totalDays) * 100 : 0;
+  const idealSales = totalGoal * (idealProgress / 100);
+  const salesGap = totalSales - idealSales;
+  const isAheadOfIdeal = salesGap >= 0;
 
   return (
     <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
