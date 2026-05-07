@@ -37,51 +37,86 @@ export const GoalTracker: FC<GoalTrackerProps> = ({ goal, onEdit, showDetails = 
   const progress = Math.min((goal.current / goal.target) * 100, 100);
   
   const statusConfig = {
-    on_track: { label: 'No caminho', color: 'bg-success', icon: TrendingUp },
-    at_risk: { label: 'Em risco', color: 'bg-warning', icon: AlertCircle },
-    behind: { label: 'Atrasado', color: 'bg-destructive', icon: TrendingDown },
-    completed: { label: 'Concluído', color: 'bg-info', icon: CheckCircle2 }
+    on_track: { label: 'No caminho', color: 'bg-status-success', icon: TrendingUp, textColor: 'text-status-success' },
+    at_risk: { label: 'Em risco', color: 'bg-status-warning', icon: AlertCircle, textColor: 'text-status-warning' },
+    behind: { label: 'Atrasado', color: 'bg-status-error', icon: TrendingDown, textColor: 'text-status-error' },
+    completed: { label: 'Concluído', color: 'bg-status-info', icon: CheckCircle2, textColor: 'text-status-info' }
   };
 
   const status = statusConfig[goal.status];
   const StatusIcon = status.icon;
 
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${status.color}/10`}>
-            <Target className={`h-5 w-5 ${status.color.replace('bg-', 'text-')}`} />
+    <Card className="p-5 glass border-border/40 hover:border-primary/40 transition-all duration-300 hover-lift relative overflow-hidden group">
+      {/* Background decoration */}
+      <div className={`absolute -right-8 -top-8 w-24 h-24 rounded-full blur-3xl opacity-10 transition-opacity group-hover:opacity-20 ${status.color}`} />
+      
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className="flex items-center gap-4">
+          <div className={`p-3 rounded-2xl ${status.color}/10 shadow-inner border border-border/10`}>
+            <Target className={`h-6 w-6 ${status.textColor}`} />
           </div>
           <div>
-            <h4 className="font-semibold">{goal.title}</h4>
-            <p className="text-sm text-muted-foreground">{goal.period}</p>
+            <h4 className="font-display font-black text-base tracking-tight uppercase group-hover:text-primary transition-colors italic">
+              {goal.title}
+            </h4>
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-0.5">
+              <Clock className="h-3 w-3" />
+              {goal.period}
+            </div>
           </div>
         </div>
-        <Badge className={`${status.color} text-primary-foreground`}>
-          <StatusIcon className="h-3 w-3 mr-1" />
+        <Badge className={`${status.color} text-primary-foreground font-black uppercase tracking-widest text-[9px] px-2.5 py-1 border-none shadow-lg`}>
+          <StatusIcon className="h-3 w-3 mr-1.5" />
           {status.label}
         </Badge>
       </div>
 
-      <div className="mb-4">
-        <div className="flex justify-between text-sm mb-2">
-          <span className="text-muted-foreground">Progresso</span>
-          <span className="font-medium">
-            {goal.current.toLocaleString()} / {goal.target.toLocaleString()} {goal.unit}
-          </span>
+      <div className="mb-6 relative z-10">
+        <div className="flex justify-between items-end mb-2.5 px-0.5">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Progresso</span>
+            <span className="text-lg font-black tracking-tighter gradient-text">
+              {goal.current.toLocaleString()} <span className="text-[10px] text-muted-foreground font-bold italic ml-1">{goal.unit}</span>
+            </span>
+          </div>
+          <div className="text-right">
+            <span className="text-2xl font-display font-black tracking-tighter italic opacity-80">
+              {progress.toFixed(0)}%
+            </span>
+          </div>
         </div>
-        <Progress value={progress} className="h-3" />
+        <div className="relative h-3 bg-muted/40 rounded-full overflow-hidden border border-border/5">
+          <div 
+            className={`absolute h-full transition-all duration-1000 ease-out ${
+              goal.status === 'completed' ? 'bg-gradient-to-r from-status-info to-primary' : status.color
+            }`} 
+            style={{ width: `${progress}%` }} 
+          />
+          {goal.status === 'completed' && (
+            <div className="absolute inset-0 animate-xp-shimmer opacity-30" />
+          )}
+        </div>
       </div>
 
       {showDetails && (
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>Prazo: {goal.dueDate}</span>
+        <div className="flex items-center justify-between text-sm pt-4 border-t border-border/10 relative z-10">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="p-1.5 rounded-lg bg-muted/50">
+              <Calendar className="h-3.5 w-3.5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] uppercase font-black tracking-widest opacity-60 leading-none">Vencimento</span>
+              <span className="text-xs font-bold text-foreground/80">{goal.dueDate}</span>
+            </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={onEdit}>
-            Editar
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onEdit}
+            className="h-8 text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20 rounded-xl"
+          >
+            Ajustar Plano
           </Button>
         </div>
       )}
