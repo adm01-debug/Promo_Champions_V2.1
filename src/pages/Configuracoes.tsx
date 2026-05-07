@@ -32,16 +32,29 @@ export default function Configuracoes() {
         <meta name="description" content="Preferências e configurações do sistema" />
       </Helmet>
     <PageTransition>
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
-          <Settings className="h-6 w-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-page-title gradient-text">Configurações</h1>
-          <p className="text-muted-foreground">Gerencie as configurações do sistema</p>
+    <div className="space-y-8 p-4 lg:p-8">
+      {/* Header with High-Tech Command Style */}
+      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
+              <Settings className="h-7 w-7 text-primary animate-pulse" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
+          </div>
+          <div>
+            <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">System Core</h1>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Settings Engine v5.0</span>
+              <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+              <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                CENTRAL COMMAND ACCESS GRANTED
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+
 
       <Tabs defaultValue="roles" className="w-full">
         <ScrollArea className="w-full whitespace-nowrap">
