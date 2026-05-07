@@ -83,21 +83,48 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
 
   return (
     <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
-      <CardHeader className="pb-2 border-b border-border/30">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/10 shadow-md shadow-rank-gold/10">
-              <Trophy className="h-4 w-4 text-rank-gold" />
+      <CardHeader className="pb-4 border-b border-border/30">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/10 shadow-md shadow-rank-gold/10">
+                <Trophy className="h-4 w-4 text-rank-gold" />
+              </div>
+              <span className="gradient-text">Ranking de Performance</span>
+            </CardTitle>
+            <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
+              {withGoals.length} ativos
+            </Badge>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Buscar vendedor..."
+                className="pl-8 h-9 text-xs glass border-border/20 focus-visible:ring-primary/30"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-            <span className="gradient-text">Ranking de Metas</span>
-          </CardTitle>
-          <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm animate-fade-in">
-            {withGoals.length} vendedores
-          </Badge>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full sm:w-[140px] h-9 text-xs glass border-border/20">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-3 w-3" />
+                  <SelectValue placeholder="Ordernar por" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="glass border-border/40">
+                <SelectItem value="progress">Progresso %</SelectItem>
+                <SelectItem value="sales">Volume de Vendas</SelectItem>
+                <SelectItem value="name">Nome (A-Z)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[500px]">
+        <ScrollArea className="h-[480px]">
           <div className="p-4 space-y-4">
             {withGoals.length > 0 && (
               <div className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-rank-gold/20 via-rank-gold/5 to-transparent border border-rank-gold/30 relative overflow-hidden group shadow-lg animate-fade-in">
