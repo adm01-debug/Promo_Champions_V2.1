@@ -4,6 +4,8 @@ import { Package } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 export const TopProducts = React.memo(() => {
   const { data: products, isLoading } = useQuery({
