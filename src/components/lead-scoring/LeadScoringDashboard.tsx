@@ -202,35 +202,44 @@ export function LeadScoringDashboard() {
                 return (
                   <div key={lead.id}
                     className={cn(
-                      "flex items-center gap-4 p-3 rounded-lg border transition-all hover:bg-accent/50",
-                      idx === 0 && "bg-primary/5 border-primary/20",
-                      idx > 0 && "border-border/40"
+                      "group relative flex items-center gap-6 p-4 rounded-xl transition-all duration-300",
+                      "border border-transparent hover:border-border/50 hover:bg-accent/30 hover:shadow-xl",
+                      idx === 0 && "bg-primary/5 border-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.05)]"
                     )}
                   >
-                    {/* Rank */}
-                    <span className={cn(
-                      "font-display font-bold text-sm w-6 text-center shrink-0",
-                      idx < 3 ? "text-primary" : "text-muted-foreground"
-                    )}>
-                      #{idx + 1}
-                    </span>
+                    {/* Futuristic Rank Indicator */}
+                    <div className="relative flex items-center justify-center w-10 h-10 shrink-0">
+                      <span className={cn(
+                        "font-display font-black text-lg tracking-tighter z-10 italic",
+                        idx < 3 ? "text-primary" : "text-muted-foreground/40"
+                      )}>
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      {idx < 3 && <div className="absolute inset-0 bg-primary/10 rounded-lg rotate-45 scale-75 blur-[2px]" />}
+                    </div>
 
-                    {/* Score Ring */}
-                    <ScoreRing score={lead.score} size={44} />
+                    {/* Enhanced Score Ring */}
+                    <div className="shrink-0 scale-110 group-hover:scale-125 transition-transform duration-500">
+                      <ScoreRing score={lead.score} size={48} />
+                    </div>
 
-                    {/* Lead Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-sm truncate">{lead.name}</h4>
-                        <Badge variant="outline" className={cn("text-[10px] shrink-0", cfg.bg)}>
-                          <Icon className={cn("h-3 w-3 mr-1", cfg.color)} />
+                    {/* Strategic Lead Info */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-3">
+                        <h4 className="font-display font-black text-base uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
+                          {lead.name}
+                        </h4>
+                        <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border-none", cfg.bg, cfg.color)}>
                           {cfg.label}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">
-                        {lead.company || lead.email || "Sem empresa"}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
+                          {lead.company || lead.email || "UNIDENTIFIED SECTOR"}
+                        </p>
+                      </div>
                     </div>
+
 
                     {/* Factors */}
                     {isServerScore ? (
