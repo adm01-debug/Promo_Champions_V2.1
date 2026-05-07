@@ -114,25 +114,33 @@ const Clientes = () => {
       <PageTransition>
       <div className="min-h-screen bg-background p-6 lg:p-8">
         <div className="max-w-[1400px] mx-auto space-y-6">
-          {/* Header */}
-          <div className="opacity-0 animate-fade-in-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl gradient-primary">
-                <Users className="h-6 w-6 text-primary-foreground" />
+          {/* Header with High-Tech Style */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
+                  <Users className="h-7 w-7 text-primary animate-pulse" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
               </div>
               <div>
-                <h1 className="text-page-title gradient-text">Clientes</h1>
-                <p className="text-sm text-muted-foreground">
-                  Gerencie sua base de clientes
-                  {isLoading && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}
-                </p>
+                <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Client Portfolio</h1>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Database v2.4</span>
+                  <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                  <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                    {totalItems} COMMAND UNITS REGISTERED
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <AIEmailComposerButton variant="outline" size="default" />
+            
+            <div className="flex flex-wrap gap-3">
+              <AIEmailComposerButton variant="outline" className="h-11 px-5 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all duration-300" />
               <CreateClientDialog />
             </div>
           </div>
+
 
           {/* Filters */}
           <div className="opacity-0 animate-fade-in-up glass rounded-xl p-4" style={{ animationDelay: "100ms" }}>
