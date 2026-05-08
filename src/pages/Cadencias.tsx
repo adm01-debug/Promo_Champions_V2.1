@@ -259,6 +259,51 @@ export default function Cadencias() {
               </div>
             </div>
           </TabsContent>
+          <TabsContent value="audit" className="space-y-6 animate-in fade-in-50 duration-500">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="glass border-border/40 lg:col-span-1">
+                <CardHeader>
+                  <CardTitle className="text-sm">Selecionar Lead</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ScrollArea className="h-[500px]">
+                    <div className="p-2 space-y-1">
+                      {allProspects?.map((p: any) => (
+                        <Button
+                          key={p.id}
+                          variant={selectedLeadId === p.sale_id ? "secondary" : "ghost"}
+                          className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
+                          onClick={() => setSelectedLeadId(p.sale_id)}
+                        >
+                          <span className="font-bold">{(p.sale as any)?.client_name || "Lead sem nome"}</span>
+                          <span className="text-[10px] text-muted-foreground">Status: {p.status} | Etapa: {p.funnel_stage}</span>
+                        </Button>
+                      ))}
+                      {(!allProspects || allProspects.length === 0) && (
+                        <div className="p-8 text-center text-muted-foreground text-xs">
+                          Nenhum lead em cadência encontrado.
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+
+              <div className="lg:col-span-2">
+                {selectedLeadId ? (
+                  <LeadDetailedAuditLogs 
+                    clientId={selectedLeadId} 
+                    clientName={allProspects?.find((p: any) => p.sale_id === selectedLeadId)?.sale?.client_name} 
+                  />
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">
+                    <Search className="h-12 w-12 opacity-20 mb-3" />
+                    <p className="text-sm">Selecione um lead para ver o histórico detalhado.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
 
           <TabsContent value="templates" className="animate-in fade-in-50 duration-500">
             <CadenceTemplateManager />
