@@ -296,7 +296,14 @@ const Index = () => {
             )}
 
             {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
-            <Tabs value={activeTab} className="w-full">
+            <Tabs 
+              value={activeTab} 
+              onValueChange={(value) => {
+                const section = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
+                navigate(`/dashboard/${section}`);
+              }}
+              className="w-full"
+            >
 
               {/* === VISÃO GERAL === */}
               <TabsContent value="overview" className="space-y-6 mt-6 focus-visible:outline-none">
