@@ -50,7 +50,7 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
                 tickLine={false}
               />
               <Tooltip
-                formatter={(v: number) => [
+                formatter={(v: any) => [
                   `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
                   "Receita",
                 ]}

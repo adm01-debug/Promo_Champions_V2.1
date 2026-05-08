@@ -46,7 +46,7 @@ export const WinRateBreakdownChart: FC<Props> = ({ data, dimension, onChangeDime
               <YAxis dataKey="segment" type="category" stroke="hsl(var(--muted-foreground))" fontSize={11} width={120} />
               <Tooltip
                 contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
-                formatter={(v: number, name: string) => name === "win_rate" ? `${v}%` : v}
+                formatter={(v: any, name: any) => name === "win_rate" ? `${v}%` : v}
               />
               <Bar dataKey="win_rate" fill="hsl(var(--primary))" radius={[0, 6, 6, 0]} />
             </BarChart>

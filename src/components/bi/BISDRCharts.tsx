@@ -97,7 +97,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
                   <Pie data={leadsBySource} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="count" nameKey="source">
                     {leadsBySource.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                   </Pie>
-                  <Tooltip contentStyle={tooltipStyle} formatter={(value: number, name: string) => [`${value} leads`, name]} />
+                  <Tooltip contentStyle={tooltipStyle} formatter={(value: any, name: any) => [`${value} leads`, name]} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (

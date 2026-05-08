@@ -53,9 +53,9 @@ export const MapeBySegmentChart: FC = () => {
               <XAxis dataKey="segment" className="text-xs" />
               <YAxis
                 className="text-xs"
-                tickFormatter={(v: number) => `${v}%`}
+                tickFormatter={(v: any) => `${v}%`}
               />
-              <Tooltip formatter={(v: number) => formatMape(v)} />
+              <Tooltip formatter={(v: any) => formatMape(v)} />
               <Bar dataKey="mape" name="MAPE" fill="hsl(var(--primary))" />
             </BarChart>
           </ResponsiveContainer>

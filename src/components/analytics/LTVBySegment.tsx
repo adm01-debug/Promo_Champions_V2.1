@@ -152,7 +152,7 @@ export const LTVBySegment: FC = () => {
                   tickLine={false}
                 />
                 <Tooltip
-                  formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR')}`, 'LTV Médio']}
+                  formatter={(value: any) => [`R$ ${value.toLocaleString('pt-BR')}`, 'LTV Médio']}
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',

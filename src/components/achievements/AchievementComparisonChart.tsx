@@ -90,7 +90,7 @@ export function AchievementComparisonChart() {
                   boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
                 }}
                 labelStyle={{ color: "hsl(var(--foreground))", fontWeight: "bold" }}
-                formatter={(value: number, name: string) => {
+                formatter={(value: any, name: any) => {
                   const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
                   return [value, label];
                 }}

@@ -109,7 +109,7 @@ const EvolutionChartComponent: FC = () => {
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
-              formatter={(value: number) =>
+              formatter={(value: any) =>
                 new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value)
               }
               labelFormatter={(label) => {

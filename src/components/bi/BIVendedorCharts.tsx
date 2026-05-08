@@ -11,7 +11,7 @@ import {
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 const STAGE_LABELS: Record<string, string> = { pending: "Lead", qualified: "Qualificado", proposal: "Proposta", negotiation: "Negociação" };
 
-function formatCurrency(value: number) {
+function formatCurrency(value: any) {
   return `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 }
 
@@ -52,7 +52,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                   <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <Tooltip contentStyle={{ ...tooltipStyle, boxShadow: "var(--shadow-lg)" }} formatter={(value: number) => [formatCurrency(value), "Vendas"]} />
+                  <Tooltip contentStyle={{ ...tooltipStyle, boxShadow: "var(--shadow-lg)" }} formatter={(value: any) => [formatCurrency(value), "Vendas"]} />
                   <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorValueBI)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -74,7 +74,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
                     <Pie data={salesByCategory} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value">
                       {salesByCategory.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
-                    <Tooltip formatter={(value: number) => [formatCurrency(value)]} contentStyle={tooltipStyle} />
+                    <Tooltip formatter={(value: any) => [formatCurrency(value)]} contentStyle={tooltipStyle} />
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="space-y-2 mt-2">

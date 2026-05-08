@@ -30,7 +30,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip
                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Vendas"]}
+                formatter={(value: any) => [`R$ ${value.toLocaleString("pt-BR")}`, "Vendas"]}
               />
               <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fillOpacity={1} fill="url(#colorValue)" />
             </AreaChart>
@@ -52,7 +52,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
               </Pie>
               <Tooltip
                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`]}
+                formatter={(value: any) => [`R$ ${value.toLocaleString("pt-BR")}`]}
               />
             </PieChart>
           </ResponsiveContainer>

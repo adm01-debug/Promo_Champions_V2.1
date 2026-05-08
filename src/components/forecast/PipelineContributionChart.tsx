@@ -82,7 +82,7 @@ export const PipelineContributionChart: FC<Props> = ({ perOwner, ownerNames = {}
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => formatCompactBRL(v)}
+                formatter={(v: any) => formatCompactBRL(v)}
               />
               <Bar dataKey="pessimista" fill={scenarioChartColor.pessimistic} radius={[0, 4, 4, 0]} />
               <Bar dataKey="realista" fill={scenarioChartColor.realistic} radius={[0, 4, 4, 0]} />
