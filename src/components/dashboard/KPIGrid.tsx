@@ -37,7 +37,7 @@ const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, in
       className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/40 hover:bg-white/[0.06] transition-all group overflow-hidden"
     >
       <span className="text-[9px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em] group-hover:text-primary transition-colors z-10">{label}</span>
-      <span className="text-2xl font-display font-black tabular-nums tracking-tighter z-10" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>{formatted}</span>
+      <span className="text-3xl font-display font-black tabular-nums tracking-tighter z-10" style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.4)' }}>{formatted}</span>
       
       {/* Visual activity indicator */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-30 transition-opacity">
