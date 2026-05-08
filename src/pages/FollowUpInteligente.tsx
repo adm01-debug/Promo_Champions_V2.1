@@ -24,6 +24,7 @@ const FollowUpInteligente = () => {
   const [minDaysInactive, setMinDaysInactive] = useState(3);
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
+  const [creatingLeadId, setCreatingLeadId] = useState<string | null>(null);
 
   const { data: coldLeads = [], isLoading } = useQuery({
     queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
@@ -39,7 +40,8 @@ const FollowUpInteligente = () => {
           status, 
           updated_at, 
           salesperson_id,
-          lead_scores (score)
+          lead_scores (score),
+          deal_probability_scores (calibrated_probability)
         `)
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation', 'open'])
         .order('updated_at', { ascending: true });
