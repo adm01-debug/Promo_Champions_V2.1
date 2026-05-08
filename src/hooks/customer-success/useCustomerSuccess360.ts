@@ -127,6 +127,7 @@ export interface CS360Response {
   expansion: CS360ExpansionRow[];
   surveys: CS360SurveyRow[];
   qbrs: CS360QBRRow[];
+  orders: CS360Order[];
 }
 
 export function useCustomerSuccess360() {
