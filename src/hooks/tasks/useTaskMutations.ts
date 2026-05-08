@@ -30,7 +30,7 @@ export const useCreateTask = () => {
           sale_id: input.sale_id || null,
           salesperson_id: input.salesperson_id || null,
           status: 'pending',
-        })
+        } as any)
         .select()
         .single();
 
