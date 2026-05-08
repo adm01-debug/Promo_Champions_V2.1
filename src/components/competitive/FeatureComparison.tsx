@@ -26,6 +26,15 @@ export const FeatureComparison = () => {
       image: "tool-results://screenshots/20260508-130347-551351.png"
     },
     {
+      feature: "Gatilhos de Intenção (Sales)",
+      status: "gap",
+      our_evidence: "Mapeado: Gatilhos baseados em abertura de propostas e cliques em links.",
+      competitor_evidence: "Alertas em tempo real quando o lead interage com o e-mail ou proposta.",
+      priority: "critical",
+      effort: "medium",
+      impact: "very-high"
+    },
+    {
       feature: "WhatsApp & Multi-channel",
       status: "full",
       our_evidence: "Follow-up inteligente com WhatsApp, registro de tentativas e automação de status.",
@@ -44,20 +53,11 @@ export const FeatureComparison = () => {
       impact: "very-high"
     },
     {
-      feature: "Bounce Management",
-      status: "partial",
-      our_evidence: "Registro manual de falhas e motivos de congelamento.",
-      competitor_evidence: "Automação total de bounce para limpeza de base em tempo real.",
+      feature: "IA de Objeções (Reply AI)",
+      status: "gap",
+      our_evidence: "Roadmap: Sugestão de resposta baseada no sentimento do lead.",
+      competitor_evidence: "Análise de sentimento básica e categorização de respostas automáticas.",
       priority: "medium",
-      effort: "low",
-      impact: "medium"
-    },
-    {
-      feature: "Cadence Automation",
-      status: "full",
-      our_evidence: "Sistema de cadências robusto com auditoria detalhada.",
-      competitor_evidence: "Fluxos automatizados focados em prospecção ativa em massa.",
-      priority: "done",
       effort: "high",
       impact: "high"
     },

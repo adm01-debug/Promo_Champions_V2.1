@@ -33,29 +33,29 @@ export const ImprovementPlan = () => {
     },
     {
       step: "04",
-      title: "Cadência Multicanal Integrada",
-      description: "Unificar fluxos de E-mail, WhatsApp e LinkedIn em uma única linha do tempo automatizada.",
-      focus: "Automation",
+      title: "Gatilhos de Intenção (Sales-Led)",
+      description: "Iniciar cadências ou criar tarefas de alta prioridade automaticamente quando um lead interage com propostas ou abre anexos repetidamente.",
+      focus: "Conversion",
       impact: "Critical",
       effort: "High",
-      icon: LinkIcon
+      icon: Zap
     },
     {
       step: "05",
-      title: "Gestão de Bounce & Limpeza de Base",
-      description: "Automatizar a remoção de e-mails inválidos para proteger a reputação do domínio de envio.",
-      focus: "Deliverability",
-      impact: "Medium",
-      effort: "Low",
-      icon: Mail
+      title: "Cadência Multicanal (WhatsApp/Call/LI)",
+      description: "Integrar tarefas manuais de ligação e mensagens de voz no WhatsApp dentro do fluxo, garantindo uma abordagem humana e persistente.",
+      focus: "Sales Results",
+      impact: "High",
+      effort: "Medium",
+      icon: LinkIcon
     },
     {
       step: "06",
-      title: "Templates Dinâmicos por Persona",
-      description: "Sugestão de textos baseada no cargo e setor do lead usando modelos de linguagem (LLM).",
-      focus: "Personalization",
+      title: "IA de Contorno de Objeções",
+      description: "Análise de sentimentos em respostas para sugerir automaticamente scripts de contorno de objeções baseados em cases de sucesso.",
+      focus: "Closing",
       impact: "High",
-      effort: "Medium",
+      effort: "High",
       icon: MessageSquare
     },
     {
