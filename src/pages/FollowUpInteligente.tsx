@@ -183,7 +183,7 @@ const FollowUpInteligente = () => {
         return;
       }
 
-      const { error } = await supabase.from('tasks').insert({
+      const { data: taskData, error: taskError } = await supabase.from('tasks').insert({
         title: `Follow-up: ${lead.client_name}`,
         description: lead.suggested_action,
         task_type: lead.suggested_channel === 'call' ? 'call' : lead.suggested_channel === 'email' ? 'email' : 'follow_up',
@@ -191,8 +191,21 @@ const FollowUpInteligente = () => {
         due_date: new Date().toISOString().split('T')[0],
         sale_id: lead.id,
         salesperson_id: salesperson?.id,
+      }).select().single();
+      
+      if (taskError) throw taskError;
+
+      // Log the task creation automatically
+      await logAction.mutateAsync({
+        saleId: lead.id,
+        actionType: 'task_created',
+        details: { 
+          task_id: taskData.id,
+          task_type: taskData.task_type,
+          due_date: taskData.due_date 
+        },
+        status: 'success'
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Tarefa de follow-up criada!');
@@ -215,8 +228,26 @@ const FollowUpInteligente = () => {
         sale_id: lead.id,
         salesperson_id: salesperson?.id,
       }));
-      const { error } = await supabase.from('tasks').insert(tasks);
+      const { data: insertedTasks, error } = await supabase.from('tasks').insert(tasks).select();
       if (error) throw error;
+
+      // Log each task creation
+      if (insertedTasks) {
+        for (const task of insertedTasks) {
+          if (task.sale_id) {
+            await logAction.mutateAsync({
+              saleId: task.sale_id,
+              actionType: 'task_created',
+              details: { 
+                task_id: task.id, 
+                batch: true,
+                task_type: task.task_type 
+              },
+              status: 'success'
+            });
+          }
+        }
+      }
     },
     onSuccess: () => {
       toast.success(`${selectedLeads.size} tarefas criadas!`);
@@ -311,9 +342,12 @@ const FollowUpInteligente = () => {
 
     logAction.mutate({
       saleId: lead.id,
-      actionType: 'whatsapp_sent',
-      details: { message_preview: message },
-      status: 'sent'
+      actionType: 'whatsapp_attempt',
+      details: { 
+        message_preview: message,
+        template_used: followUpSettings?.whatsapp_template ? 'custom' : 'default'
+      },
+      status: 'attempted'
     });
 
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
