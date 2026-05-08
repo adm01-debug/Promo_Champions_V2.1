@@ -56,23 +56,36 @@ const accentMap = {
   destructive: { stroke: "hsl(var(--destructive))", glow: "hsl(var(--destructive) / 0.5)", text: "text-destructive" },
 };
 
-const Speedometer = ({ value, max, label, unit, formatValue, accent, icon: Icon, delta, size = 280, ticksCount = 33 }: SpeedometerProps) => {
+const Speedometer = ({ 
+  value, 
+  min = 0, 
+  max, 
+  label, 
+  unit = "", 
+  formatValue, 
+  accent, 
+  icon: Icon, 
+  delta, 
+  size = 280, 
+  ticksCount = 33 
+}: SpeedometerProps) => {
   const { theme } = useDashboardTheme();
-  const [animatedValue, setAnimatedValue] = useState(0);
+  const [animatedValue, setAnimatedValue] = useState(min);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSize, setCurrentSize] = useState(size);
   
   const colors = accentMap[accent];
-  const animatedPct = Math.min(1, max > 0 ? animatedValue / max : 0);
+  const range = max - min;
+  const animatedPct = Math.min(1, Math.max(0, range > 0 ? (animatedValue - min) / range : 0));
 
-  // Auto-resize logic
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
         if (width > 0) {
-          setCurrentSize(Math.min(width, size));
+          // Allow it to be slightly smaller than the container to avoid overflow
+          setCurrentSize(Math.min(width - 24, size));
         }
       }
     });
@@ -88,16 +101,14 @@ const Speedometer = ({ value, max, label, unit, formatValue, accent, icon: Icon,
   const innerRadius = s / 2 - 50;
   const startAngle = -225;
   const endAngle = 45;
-  const arcLength = endAngle - startAngle; // 270
+  const arcLength = endAngle - startAngle;
   const circumference = 2 * Math.PI * arcRadius;
   const arcRatio = arcLength / 360;
   const dashArc = circumference * arcRatio;
   const dashOffset = dashArc * (1 - animatedPct);
 
-  // Needle angle (vertical up = -90°)
   const needleAngle = startAngle + arcLength * animatedPct;
 
-  // Tick marks
   const ticks = useMemo(() => {
     return Array.from({ length: ticksCount }).map((_, i) => {
       const tickPct = i / (ticksCount - 1);
@@ -105,7 +116,7 @@ const Speedometer = ({ value, max, label, unit, formatValue, accent, icon: Icon,
       const isMajor = i % (ticksCount > 20 ? 4 : 2) === 0;
       const inner = arcRadius - (isMajor ? 18 * (s / 280) : 10 * (s / 280));
       const outer = arcRadius - 4 * (s / 280);
-      const labelRadius = arcRadius - 30 * (s / 280);
+      const labelRadius = arcRadius - 32 * (s / 280);
       return {
         x1: cx + inner * Math.cos(angle),
         y1: cy + inner * Math.sin(angle),
@@ -115,32 +126,36 @@ const Speedometer = ({ value, max, label, unit, formatValue, accent, icon: Icon,
         labelY: cy + labelRadius * Math.sin(angle),
         active: tickPct <= animatedPct,
         major: isMajor,
-        labelValue: Math.round(max * tickPct),
+        labelValue: min + range * tickPct,
       };
     });
-  }, [arcRadius, cx, cy, startAngle, arcLength, animatedPct, max, ticksCount, s]);
+  }, [arcRadius, cx, cy, startAngle, arcLength, animatedPct, min, range, ticksCount, s]);
 
   useEffect(() => {
     const startValue = animatedValue;
     const endValue = value;
-    const start = performance.now();
-    const duration = 1200; // Slightly faster for responsiveness
-    let raf = 0;
+    const startTime = performance.now();
+    const duration = 1500; 
     
-    const tick = (t: number) => {
-      const elapsed = t - start;
+    let raf = 0;
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
       const p = Math.min(1, elapsed / duration);
-      // Smoother elastic-like easing
-      const eased = 1 - Math.pow(1 - p, 4);
+      // quintic out easing
+      const eased = 1 - Math.pow(1 - p, 5);
+      
       setAnimatedValue(startValue + (endValue - startValue) * eased);
-      if (p < 1) raf = requestAnimationFrame(tick);
+      
+      if (p < 1) {
+        raf = requestAnimationFrame(animate);
+      }
     };
     
-    raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
   }, [value]);
 
-  const display = formatValue ? formatValue(animatedValue) : Math.round(animatedValue).toLocaleString("pt-BR");
+  const displayValue = formatValue ? formatValue(animatedValue) : Math.round(animatedValue).toLocaleString("pt-BR");
   const percentStr = `${Math.round(animatedPct * 100)}%`;
 
 
