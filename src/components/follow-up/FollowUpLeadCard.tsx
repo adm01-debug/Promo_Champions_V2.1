@@ -63,6 +63,12 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="font-semibold truncate">{lead.client_name}</span>
+                {lead.score && lead.score >= 80 && (
+                  <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-none text-[10px] h-5 px-1.5 animate-pulse">
+                    <Zap className="h-3 w-3 mr-0.5 fill-current" />
+                    CLASSE A
+                  </Badge>
+                )}
                 <Badge variant="outline" className={`${config.bgClass} ${config.colorClass} border-none text-xs`}>
                   <config.icon className="h-3 w-3 mr-1" />
                   {config.label}
@@ -70,12 +76,25 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                 <Badge variant="secondary" className="text-xs">
                   {statusLabels[lead.status] || lead.status}
                 </Badge>
+                
+                {lead.days_inactive >= 3 && lead.days_inactive < 5 && (
+                  <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">D+3 Cadence</Badge>
+                )}
+                {lead.days_inactive >= 5 && (
+                  <Badge variant="outline" className="text-[10px] border-destructive/30 text-destructive font-bold">D+5 Priority</Badge>
+                )}
               </div>
 
-              <div className="text-sm text-muted-foreground mb-2">
+              <div className="text-sm text-muted-foreground mb-1">
                 {lead.product_name && <span>{lead.product_name} · </span>}
-                <span className="font-medium">R$ {(lead.amount || 0).toLocaleString('pt-BR')}</span>
+                <span className="font-medium text-foreground">R$ {(lead.amount || 0).toLocaleString('pt-BR')}</span>
               </div>
+
+              {lead.last_activity && (
+                <div className="text-xs text-muted-foreground mb-2 bg-muted/30 p-1.5 rounded border border-dashed border-muted-foreground/20 italic">
+                  Último contato: "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
+                </div>
+              )}
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
