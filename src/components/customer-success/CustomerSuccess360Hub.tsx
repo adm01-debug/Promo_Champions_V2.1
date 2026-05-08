@@ -131,7 +131,8 @@ export function CustomerSuccess360Hub() {
       cancelled: { status: "Cancelado", count: 0, value: 0, color: "text-destructive", key: "cancelled" },
     };
 
-    orders.forEach(o => {
+    const targetOrders = filteredData?.orders || [];
+    targetOrders.forEach(o => {
       const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
       if (statusMap[s]) {
         statusMap[s].count += 1;
@@ -140,7 +141,7 @@ export function CustomerSuccess360Hub() {
     });
 
     return Object.values(statusMap);
-  }, [orders]);
+  }, [filteredData?.orders]);
 
   const exportPDF = () => {
     const doc = new jsPDF();
