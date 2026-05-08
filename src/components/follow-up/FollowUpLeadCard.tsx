@@ -83,6 +83,11 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                 {lead.days_inactive >= 5 && (
                   <Badge variant="outline" className="text-[10px] border-destructive/30 text-destructive font-bold">D+5 Priority</Badge>
                 )}
+                {lead.follow_up_count && lead.follow_up_count > 0 && (
+                  <Badge variant="outline" className="text-[10px] border-muted-foreground/30">
+                    {lead.follow_up_count}ª tentativa
+                  </Badge>
+                )}
               </div>
 
               <div className="text-sm text-muted-foreground mb-1">
@@ -92,7 +97,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
 
               {lead.last_activity && (
                 <div className="text-xs text-muted-foreground mb-2 bg-muted/30 p-1.5 rounded border border-dashed border-muted-foreground/20 italic">
-                  Último contato: "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
+                  <span className="font-semibold not-italic capitalize">{lead.last_activity.type?.replace('_', ' ')}:</span> "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
                 </div>
               )}
 
@@ -118,7 +123,8 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                         variant="ghost"
                         className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
                         onClick={() => {
-                          const message = `Olá ${lead.client_name}! Notei que sua proposta do ${lead.product_name} está parada. Como posso te ajudar hoje?`;
+                          const statusText = statusLabels[lead.status] || lead.status;
+                          const message = `Olá ${lead.client_name}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o ${lead.product_name} está na etapa de ${statusText} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?`;
                           window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                         }}
                       >

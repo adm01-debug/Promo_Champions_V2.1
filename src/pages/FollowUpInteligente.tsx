@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { differenceInDays } from 'date-fns';
+import { differenceInHours } from 'date-fns';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { FollowUpHeader } from '@/components/follow-up/FollowUpHeader';
@@ -24,6 +24,7 @@ const FollowUpInteligente = () => {
   const [minDaysInactive, setMinDaysInactive] = useState(3);
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
+  const [creatingLeadId, setCreatingLeadId] = useState<string | null>(null);
 
   const { data: coldLeads = [], isLoading } = useQuery({
     queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
@@ -39,22 +40,27 @@ const FollowUpInteligente = () => {
           status, 
           updated_at, 
           salesperson_id,
-          lead_scores (score)
+          lead_scores (score),
+          deal_probability_scores (calibrated_probability)
         `)
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation', 'open'])
         .order('updated_at', { ascending: true });
 
       if (dealsError) throw dealsError;
 
-      // Fetch pending tasks to prevent duplicates
-      const { data: pendingTasks, error: tasksError } = await supabase
+      // Fetch tasks (both pending and completed) to track cadence
+      const { data: allTasks, error: tasksError } = await supabase
         .from('tasks')
-        .select('sale_id')
-        .eq('status', 'pending');
+        .select('sale_id, status, completed_at')
+        .order('completed_at', { ascending: false });
 
       if (tasksError) throw tasksError;
 
-      const pendingTaskIds = new Set((pendingTasks || []).map(t => t.sale_id));
+      const pendingTaskIds = new Set((allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id));
+      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t) => {
+        if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
+        return acc;
+      }, {});
 
       // Fetch last activity for each deal
       const { data: activities, error: activitiesError } = await supabase
@@ -72,11 +78,13 @@ const FollowUpInteligente = () => {
       const now = new Date();
       return (deals || [])
         .map(deal => {
-          const daysInactive = differenceInDays(now, new Date(deal.updated_at));
+          const hoursInactive = differenceInHours(now, new Date(deal.updated_at));
+          const daysInactive = Math.floor(hoursInactive / 24);
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
           const score = (deal.lead_scores as any)?.[0]?.score || 0;
+          const probability = (deal.deal_probability_scores as any)?.[0]?.calibrated_probability || undefined;
           
           return {
             ...deal,
@@ -90,7 +98,9 @@ const FollowUpInteligente = () => {
               type: lastActivity.activity_type
             } : undefined,
             score,
-            has_pending_task: pendingTaskIds.has(deal.id)
+            probability,
+            has_pending_task: pendingTaskIds.has(deal.id),
+            follow_up_count: completedTasksMap[deal.id] || 0
           } as ColdLead;
         })
         .filter(lead => lead.days_inactive >= minDaysInactive)
@@ -101,6 +111,8 @@ const FollowUpInteligente = () => {
 
   const createFollowUpTask = useMutation({
     mutationFn: async (lead: ColdLead) => {
+      setCreatingLeadId(lead.id);
+      
       // Prevenção de duplicidade
       if (lead.has_pending_task) {
         toast.info("Este lead já possui uma tarefa pendente.");
@@ -120,9 +132,11 @@ const FollowUpInteligente = () => {
     },
     onSuccess: () => {
       toast.success('Tarefa de follow-up criada!');
+      queryClient.invalidateQueries({ queryKey: ['cold-leads'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
     onError: () => toast.error('Erro ao criar tarefa'),
+    onSettled: () => setCreatingLeadId(null),
   });
 
   const createBulkTasks = useMutation({
@@ -231,11 +245,11 @@ const FollowUpInteligente = () => {
                       key={lead.id}
                       lead={lead}
                       index={i}
-                      isSelected={selectedLeads.has(lead.id)}
-                      onToggle={toggleLead}
-                      onCreateTask={l => createFollowUpTask.mutate(l)}
-                      isCreating={createFollowUpTask.isPending}
-                    />
+                       isSelected={selectedLeads.has(lead.id)}
+                       onToggle={toggleLead}
+                       onCreateTask={l => createFollowUpTask.mutate(l)}
+                       isCreating={creatingLeadId === lead.id}
+                     />
                   ))}
                 </AnimatePresence>
               )}

@@ -20,7 +20,8 @@ export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAt
 
   const totalValue = leads.reduce((sum, l) => sum + (l.amount || 0), 0);
   const weightedValue = leads.reduce((sum, l) => {
-    const prob = statusProbabilities[l.status] || 0.1;
+    // Usar a probabilidade calibrada se disponível, caso contrário usar a média por status
+    const prob = l.probability !== undefined ? l.probability : (statusProbabilities[l.status] || 0.1);
     return sum + ((l.amount || 0) * prob);
   }, 0);
   
