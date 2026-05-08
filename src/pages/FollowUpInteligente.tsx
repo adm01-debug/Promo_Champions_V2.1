@@ -79,6 +79,7 @@ const FollowUpInteligente = () => {
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
           const score = (deal.lead_scores as any)?.[0]?.score || 0;
+          const probability = (deal.deal_probability_scores as any)?.[0]?.calibrated_probability || undefined;
           
           return {
             ...deal,
@@ -92,6 +93,7 @@ const FollowUpInteligente = () => {
               type: lastActivity.activity_type
             } : undefined,
             score,
+            probability,
             has_pending_task: pendingTaskIds.has(deal.id)
           } as ColdLead;
         })
@@ -103,6 +105,8 @@ const FollowUpInteligente = () => {
 
   const createFollowUpTask = useMutation({
     mutationFn: async (lead: ColdLead) => {
+      setCreatingLeadId(lead.id);
+      
       // Prevenção de duplicidade
       if (lead.has_pending_task) {
         toast.info("Este lead já possui uma tarefa pendente.");
@@ -122,9 +126,11 @@ const FollowUpInteligente = () => {
     },
     onSuccess: () => {
       toast.success('Tarefa de follow-up criada!');
+      queryClient.invalidateQueries({ queryKey: ['cold-leads'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
     onError: () => toast.error('Erro ao criar tarefa'),
+    onSettled: () => setCreatingLeadId(null),
   });
 
   const createBulkTasks = useMutation({
