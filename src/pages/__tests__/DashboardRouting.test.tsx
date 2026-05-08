@@ -61,13 +61,23 @@ vi.mock("@/hooks/useCompetitiveRanking", () => ({
 
 // Mock do MyRankingNotification hook
 vi.mock("@/hooks/useRankingNotifications", () => ({
-  useMyRankingNotification: vi.fn(() => ({ data: null }))
+  useMyRankingNotification: vi.fn(() => ({ data: null })),
+  useMarkRankingNotificationRead: vi.fn(() => ({ mutate: vi.fn() }))
 }));
 
 // Mock do Onboarding hook
 vi.mock("@/hooks/useOnboardingChecklist", () => ({
   useOnboardingChecklist: vi.fn(() => ({ data: [], isLoading: false }))
 }));
+
+// Mock dos componentes que dão erro
+vi.mock("@/components/ranking/RankingPositionBanner", () => ({ RankingPositionBanner: () => null }));
+vi.mock("@/components/onboarding/OnboardingChecklist", () => ({ OnboardingChecklist: () => null }));
+vi.mock("@/components/dashboard/MyGoalAlertCard", () => ({ MyGoalAlertCard: () => null }));
+vi.mock("@/components/dashboard/DashboardHeader", () => ({ DashboardHeader: () => <div data-testid="dashboard-header" /> }));
+vi.mock("@/components/gamification/CompetitiveStatusBar", () => ({ CompetitiveStatusBar: () => null }));
+vi.mock("@/components/gamification/SeasonalEventBanner", () => ({ SeasonalEventBanner: () => null }));
+vi.mock("@/components/gamification/FlashSalesBanner", () => ({ FlashSalesBanner: () => null }));
 
 // Helper para ver a localização atual
 const LocationDisplay = () => {
