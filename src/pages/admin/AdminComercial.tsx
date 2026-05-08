@@ -325,8 +325,9 @@ export default function AdminComercial() {
                           <Badge className="bg-primary/20 text-primary border-primary/30 uppercase text-[10px] font-black italic tracking-tighter">
                             {req.type === 'goal' ? 'Meta' : req.type === 'commission' ? 'Comissão' : 'Regra de Pontos'}
                           </Badge>
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase">{format(new Date(req.competence_month), "MMMM yyyy", { locale: ptBR })}</span>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase">{req.competence_month ? format(new Date(req.competence_month), "MMMM yyyy", { locale: ptBR }) : '-'}</span>
                         </div>
+
                         <span className="text-[10px] text-muted-foreground font-mono">{format(new Date(req.created_at), "dd/MM HH:mm")}</span>
                       </div>
                       <CardContent className="p-4 space-y-4">
@@ -334,30 +335,31 @@ export default function AdminComercial() {
                           {req.type === 'goal' && (
                             <CommercialDiffViewer 
                               label="Valor da Meta" 
-                              oldValue={req.old_values.amount} 
-                              newValue={req.new_values.amount} 
+                              oldValue={(req.old_values as any)?.amount} 
+                              newValue={(req.new_values as any)?.amount} 
                               formatter={(val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)}
                             />
                           )}
                           {req.type === 'commission' && (
                             <CommercialDiffViewer 
                               label="Taxa de Comissão" 
-                              oldValue={req.old_values.rate} 
-                              newValue={req.new_values.rate} 
+                              oldValue={(req.old_values as any)?.rate} 
+                              newValue={(req.new_values as any)?.rate} 
                               formatter={(val) => `${val}%`}
                             />
                           )}
                           {req.type === 'scoring_rule' && (
                             <div className="space-y-1">
-                              {req.new_values.weight !== req.old_values.weight && (
-                                <CommercialDiffViewer label="Peso" oldValue={req.old_values.weight} newValue={req.new_values.weight} />
+                              {(req.new_values as any)?.weight !== (req.old_values as any)?.weight && (
+                                <CommercialDiffViewer label="Peso" oldValue={(req.old_values as any)?.weight} newValue={(req.new_values as any)?.weight} />
                               )}
-                              {req.new_values.points_per_unit !== req.old_values.points_per_unit && (
-                                <CommercialDiffViewer label="Pontos por Unidade" oldValue={req.old_values.points_per_unit} newValue={req.new_values.points_per_unit} />
+                              {(req.new_values as any)?.points_per_unit !== (req.old_values as any)?.points_per_unit && (
+                                <CommercialDiffViewer label="Pontos por Unidade" oldValue={(req.old_values as any)?.points_per_unit} newValue={(req.new_values as any)?.points_per_unit} />
                               )}
                             </div>
                           )}
                         </div>
+
                         
                         {req.justification && (
                           <div className="text-[10px] bg-primary/5 p-2 rounded border border-primary/10 italic text-muted-foreground">
@@ -397,7 +399,7 @@ export default function AdminComercial() {
                         {approvalRequests?.filter(r => r.status !== "pending").slice(0, 5).map((req) => (
                           <TableRow key={req.id} className="hover:bg-muted/10 transition-colors">
                             <TableCell className="text-[10px] font-bold uppercase italic">{req.type}</TableCell>
-                            <TableCell className="text-[10px]">{format(new Date(req.competence_month), "MM/yyyy")}</TableCell>
+                            <TableCell className="text-[10px]">{req.competence_month ? format(new Date(req.competence_month), "MM/yyyy") : '-'}</TableCell>
                             <TableCell>
                               <Badge variant={req.status === "approved" ? "default" : "destructive"} className="text-[9px] uppercase font-black px-1.5 py-0">
                                 {req.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
@@ -408,6 +410,7 @@ export default function AdminComercial() {
                             </TableCell>
                           </TableRow>
                         ))}
+
                       </TableBody>
                     </Table>
                   </Card>

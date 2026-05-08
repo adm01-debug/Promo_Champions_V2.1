@@ -37,12 +37,13 @@ export function CommercialDiffViewer({ label, oldValue, newValue, formatter = (v
           <Plus className="h-3 w-3 text-green-500" />
           <span className="text-xs font-mono text-green-400 font-bold">{formatter(newValue)}</span>
         </div>
-        {isNumeric && diff !== 0 && (
+        {isNumeric && diff !== null && diff !== 0 && (
           <Badge variant={diff > 0 ? "default" : "destructive"} className="ml-auto text-[10px] h-5">
             {diff > 0 ? "+" : ""}{formatter(diff)}
           </Badge>
         )}
       </div>
+
     </div>
   );
 }
