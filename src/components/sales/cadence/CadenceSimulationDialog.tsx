@@ -30,7 +30,7 @@ export function CadenceSimulationDialog() {
   const { data: rules } = useFunnelRules();
   const queryClient = useQueryClient();
 
-  const simulateEvent = async (type: "quote_open" | "price_click") => {
+  const simulateEvent = async (type: "quote_open" | "price_click" | "reply" | "manual") => {
     if (!selectedProspectId) {
       toast.error("Selecione um lead para a simulação");
       return;
@@ -39,7 +39,14 @@ export function CadenceSimulationDialog() {
     const prospect = prospects?.find(p => p.id === selectedProspectId);
     if (!prospect) return;
 
-    const eventName = type === "quote_open" ? "Abertura de Proposta" : "Clique em Preço";
+    const eventNames = {
+      quote_open: "Abertura de Proposta",
+      price_click: "Clique em Preço",
+      reply: "Resposta Recebida",
+      manual: "Ação Manual"
+    };
+    
+    const eventName = eventNames[type];
     const leadName = prospect.id.substring(0, 8); // Simplificado
 
     // Encontrar regra aplicável
