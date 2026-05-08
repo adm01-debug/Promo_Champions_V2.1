@@ -5156,6 +5156,39 @@ export type Database = {
           },
         ]
       }
+      duplicate_block_logs: {
+        Row: {
+          auditor: string
+          block_type: string
+          confidence_score: number
+          created_at: string
+          details: Json | null
+          entity_name: string
+          id: string
+          status: string
+        }
+        Insert: {
+          auditor?: string
+          block_type: string
+          confidence_score?: number
+          created_at?: string
+          details?: Json | null
+          entity_name: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          auditor?: string
+          block_type?: string
+          confidence_score?: number
+          created_at?: string
+          details?: Json | null
+          entity_name?: string
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       email_bulk_drafts: {
         Row: {
           approved: boolean
