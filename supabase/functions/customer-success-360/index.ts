@@ -39,7 +39,11 @@ Deno.serve(async (req) => {
     const expansion = expansionRes.data ?? [];
     const surveys = surveysRes.data ?? [];
     const qbrs = qbrRes.data ?? [];
-    const orders = ordersRes.data ?? [];
+    // Inject account_id into orders using user_id if needed, or just map it for UI consistency
+    const orders = (ordersRes.data ?? []).map(o => ({
+      ...o,
+      account_id: o.user_id // Assuming user_id maps to an account for now, or use as lookup key
+    }));
 
     const now = Date.now();
     const openTickets = tickets.filter((t) => t.status === "open" || t.status === "pending");
