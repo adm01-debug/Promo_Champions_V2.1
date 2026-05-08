@@ -102,14 +102,14 @@ export const StatCard = React.memo(({
               {title}
             </p>
             <p className={cn(
-              "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter",
-              hero && "text-2xl sm:text-4xl lg:text-5xl text-primary",
+              "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter",
+              hero && "text-2xl sm:text-5xl lg:text-6xl text-primary",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
             )} style={{ 
-              textShadow: hero ? `0 0 20px rgba(14,165,233,0.3)` : 
-                          variant !== 'default' ? '0 0 10px currentColor' : 'none' 
+              textShadow: hero ? `0 0 30px rgba(14,165,233,0.6)` : 
+                          variant !== 'default' ? '0 0 15px currentColor' : 'none' 
             }}>
               {displayValue}
             </p>
