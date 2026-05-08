@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { differenceInDays } from 'date-fns';
+import { differenceInHours } from 'date-fns';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { FollowUpHeader } from '@/components/follow-up/FollowUpHeader';
