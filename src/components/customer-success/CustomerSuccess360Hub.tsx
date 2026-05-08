@@ -231,8 +231,9 @@ export function CustomerSuccess360Hub() {
       const search = orderSearch.toLowerCase();
       const orderNum = o.order_number?.toString().toLowerCase() || "";
       const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
+      const reason = (o as any).cancellation_reason?.toLowerCase() || "";
       
-      return orderNum.includes(search) || accountName.includes(search);
+      return orderNum.includes(search) || accountName.includes(search) || reason.includes(search);
     });
   }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
 
