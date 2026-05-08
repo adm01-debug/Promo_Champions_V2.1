@@ -260,19 +260,29 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
                 strokeLinecap="round"
                 filter={`url(#glow-${accent}-${label})`}
               />
-              <circle cx={cx + radius - 6} cy={cy} r="4" fill={colors.stroke} filter={`url(#glow-${accent}-${label})`} />
+              <circle cx={cx + radius - 6} cy={cy} r="4" fill={colors.stroke} filter={`url(#glow-${accent}-${label})`}>
+                <animate attributeName="r" values="3.5;6;3.5" dur="1.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.7;1;0.7" dur="1.6s" repeatCount="indefinite" />
+              </circle>
             </g>
 
             {/* Center hub */}
             <circle cx={cx} cy={cy} r="12" fill="hsl(var(--background))" stroke={colors.stroke} strokeWidth="2" />
-            <circle cx={cx} cy={cy} r="4" fill={colors.stroke} />
+            <circle cx={cx} cy={cy} r="4" fill={colors.stroke}>
+              <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
+            </circle>
           </svg>
 
           {/* Digital readout */}
           <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center">
-            <div className={cn("font-mono font-bold text-2xl tabular-nums tracking-tight", colors.text)}>
+            <motion.div
+              className={cn("font-mono font-bold text-2xl tabular-nums tracking-tight", colors.text)}
+              style={{ textShadow: `0 0 8px ${colors.glow}, 0 0 16px ${colors.glow}` }}
+              animate={{ opacity: [0.92, 1, 0.92] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            >
               {display}
-            </div>
+            </motion.div>
             <div className="text-[10px] text-muted-foreground/70 font-mono uppercase tracking-wider mt-0.5">
               max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
             </div>
