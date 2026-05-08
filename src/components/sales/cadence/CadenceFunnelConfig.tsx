@@ -145,7 +145,7 @@ export function CadenceFunnelConfig() {
       <CardContent className="space-y-4">
         {isAdding && (
           <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-4 animate-in fade-in slide-in-from-top-2">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase text-muted-foreground">De</label>
                 <Select 
@@ -229,8 +229,18 @@ export function CadenceFunnelConfig() {
                     <Badge variant="secondary" className="text-[10px] font-medium uppercase px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
                       {STAGES.find(s => s.id === rule.to_stage)?.label}
                     </Badge>
-                  </div>
-                  
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">Janela (horas)</label>
+                <Input 
+                  type="number"
+                  min="1"
+                  value={newRule.time_window_hours}
+                  onChange={(e) => setNewRule({...newRule, time_window_hours: parseInt(e.target.value)})}
+                  className="h-8 text-xs"
+                />
+              </div>
+            </div>
+
                   <div className="h-4 w-[1px] bg-border/40 hidden md:block" />
                   
                   <div className="flex items-center gap-2">
