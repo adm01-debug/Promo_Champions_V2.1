@@ -24,6 +24,8 @@ import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
 import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
 import { CadenceFunnelConfig } from "@/components/sales/cadence/CadenceFunnelConfig";
 import { LeadDetailedAuditLogs } from "@/components/sales/cadence/LeadDetailedAuditLogs";
+import { CadenceAlertConfig } from "@/components/sales/cadence/CadenceAlertConfig";
+import { CadenceOutcomeConfig } from "@/components/sales/cadence/CadenceOutcomeConfig";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
@@ -242,6 +244,8 @@ export default function Cadencias() {
               <div className="space-y-6">
                 <ContactFrequencyRules />
                 <CadenceFunnelConfig />
+                <CadenceAlertConfig />
+                <CadenceOutcomeConfig />
               </div>
               <div className="space-y-6">
                 <Card className="glass border-border/40">
