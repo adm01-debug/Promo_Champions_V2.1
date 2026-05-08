@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { SpeedometerSkeleton, ComparativeStripSkeleton } from "./skeletons/SpeedometerSkeletons";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: "current_month", label: "Mês Atual" },
