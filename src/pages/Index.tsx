@@ -35,6 +35,7 @@ import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard"
 import { FuturisticSpeedometerDashboard } from "@/components/dashboard/FuturisticSpeedometerDashboard";
 import { FuturisticRanking } from "@/components/dashboard/FuturisticRanking";
 import { MyGoalAlertCard } from "@/components/dashboard/MyGoalAlertCard";
+import { TrendsChartsPanel } from "@/components/dashboard/TrendsChartsPanel";
 import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
@@ -246,6 +247,9 @@ const Index = () => {
 
             {/* ===== MY GOAL ALERT ===== */}
             <MyGoalAlertCard />
+
+            {/* ===== TRENDS CHARTS ===== */}
+            <TrendsChartsPanel />
 
             {/* ===== FUTURISTIC RANKING ===== */}
             <FuturisticRanking />
