@@ -42,7 +42,10 @@ export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAt
           <div className="flex-1">
             <div className="text-sm text-muted-foreground">Valor em Risco (leads esfriando)</div>
             <div className="text-2xl font-bold text-destructive">
-              R$ {totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              R$ {weightedValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <span className="text-sm font-normal text-muted-foreground ml-2">
+                (Total: R$ {totalValue.toLocaleString('pt-BR')})
+              </span>
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">
               {criticalCount} lead(s) em estado crítico (frio/congelado)
