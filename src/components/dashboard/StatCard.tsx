@@ -4,6 +4,7 @@ import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import { MiniSparkline } from "@/components/dashboard/MiniSparkline";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 
 interface StatCardProps {
   title: string;
