@@ -136,7 +136,7 @@ describe("CustomerSuccess360Hub", () => {
     expect(localStorage.getItem("cs360_state_period")).toBe("90");
   });
 
-  it("opens orders modal when clicking a status card", async () => {
+  it("opens orders modal when clicking a button", async () => {
     (useCustomerSuccess360 as any).mockReturnValue({
       data: mockData,
       isLoading: false,
@@ -146,12 +146,15 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // The "Pago/Entregue" text is inside a span/div, let's use a function matcher
-    const deliveredStatus = screen.getByText((content) => content.includes("Pago/Entregue"));
-    const deliveredCard = deliveredStatus.closest("div");
-    if (deliveredCard) fireEvent.click(deliveredCard);
+    // Switch to orders tab
+    const ordersTab = screen.getByText("Pedidos");
+    fireEvent.click(ordersTab);
+
+    // Find "Ver Detalhes" button in the orders table
+    const detailButtons = screen.getAllByText("Ver Detalhes");
+    fireEvent.click(detailButtons[0]);
     
-    // Check if modal title appears
+    // Check if modal appears
     await waitFor(() => {
       expect(screen.getByText((content) => content.includes("Detalhamento de Pedidos"))).toBeInTheDocument();
     });
