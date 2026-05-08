@@ -108,8 +108,11 @@ export function CadenceSimulationDialog() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Play className="h-5 w-5 text-primary" />
-            Simulador de Gatilhos de Intenção
+            Simulador de Gatilhos e Transições do Funil
           </DialogTitle>
+          <p className="text-xs text-muted-foreground mt-1">
+            Teste regras de transição e veja as próximas cadências planejadas para o lead.
+          </p>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -134,35 +137,39 @@ export function CadenceSimulationDialog() {
           <div className="grid grid-cols-2 gap-4">
             <Button 
               variant="outline" 
-              className="h-24 flex-col gap-2 hover:border-primary/50 hover:bg-primary/5"
+              className="h-24 flex-col gap-2 hover:border-primary/50 hover:bg-primary/5 transition-all"
               onClick={() => simulateEvent("quote_open")}
             >
               <FileText className="h-8 w-8 text-primary" />
               <div className="text-xs font-semibold">Abrir Proposta</div>
+              <div className="text-[9px] text-muted-foreground">Trigger: 1 clique</div>
             </Button>
             <Button 
               variant="outline" 
-              className="h-24 flex-col gap-2 hover:border-accent/50 hover:bg-accent/5"
+              className="h-24 flex-col gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all"
               onClick={() => simulateEvent("price_click")}
             >
               <MousePointerClick className="h-8 w-8 text-accent" />
               <div className="text-xs font-semibold">Clicar em Preço</div>
+              <div className="text-[9px] text-muted-foreground">Trigger: 3 cliques</div>
             </Button>
             <Button 
               variant="outline" 
-              className="h-24 flex-col gap-2 hover:border-success/50 hover:bg-success/5"
+              className="h-24 flex-col gap-2 hover:border-success/50 hover:bg-success/5 transition-all"
               onClick={() => simulateEvent("reply")}
             >
               <History className="h-8 w-8 text-success" />
               <div className="text-xs font-semibold">Resposta Recebida</div>
+              <div className="text-[9px] text-muted-foreground">Trigger: Manual/Bot</div>
             </Button>
             <Button 
               variant="outline" 
-              className="h-24 flex-col gap-2 hover:border-status-warning/50 hover:bg-status-warning/5"
+              className="h-24 flex-col gap-2 hover:border-status-warning/50 hover:bg-status-warning/5 transition-all"
               onClick={() => simulateEvent("manual")}
             >
               <CheckCircle2 className="h-8 w-8 text-status-warning" />
               <div className="text-xs font-semibold">Ação Manual</div>
+              <div className="text-[9px] text-muted-foreground">Qualquer momento</div>
             </Button>
           </div>
 
