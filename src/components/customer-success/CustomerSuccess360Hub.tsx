@@ -378,6 +378,19 @@ export function CustomerSuccess360Hub() {
                   value={endDate}
                   onChange={(e) => handleDateChange("end", e.target.value)}
                 />
+                {(startDate || endDate) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-9 px-2 text-muted-foreground" 
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             )}
           </div>
