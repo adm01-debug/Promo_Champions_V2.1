@@ -106,10 +106,10 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
 
   const periodLabel = period === "week" ? "esta semana" : period === "month" ? "este mês" : "este trimestre";
 
-  const formatCurrency = (value: number) => 
+  const formatCurrency = (value: any) => 
     `R$ ${(value / 1000).toFixed(0)}k`;
 
-  const formatCurrencyFull = (value: number) =>
+  const formatCurrencyFull = (value: any) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const maxRevenue = closers?.[0]?.revenue || 0;
@@ -194,7 +194,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
                 tick={{ fill: "hsl(var(--foreground))" }}
               />
               <Tooltip 
-                formatter={(value: number) => [formatCurrencyFull(value), "Receita"]}
+                formatter={(value: any) => [formatCurrencyFull(value), "Receita"]}
                 labelFormatter={(label) => `${label}`}
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",

@@ -168,7 +168,7 @@ export const RevenueForecast: FC = () => {
     );
   }
 
-  const fmt = (v: number) => `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+  const fmt = (v: any) => `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   return (
     <div className="space-y-4">
@@ -201,7 +201,7 @@ export const RevenueForecast: FC = () => {
               <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip
                 contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }}
-                formatter={(v: number) => [fmt(v), '']}
+                formatter={(v: any) => [fmt(v), '']}
               />
               <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} strokeWidth={2} />
               <Area type="monotone" dataKey="forecast" stroke="hsl(var(--accent))" fill="hsl(var(--accent))" fillOpacity={0.1} strokeWidth={2} strokeDasharray="5 5" />
