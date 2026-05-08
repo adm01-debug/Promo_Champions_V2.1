@@ -149,7 +149,7 @@ export function CadenceTemplateManager() {
                   <div className="flex items-center justify-between">
                     <Label>Conteúdo da Mensagem</Label>
                     <div className="flex gap-1 flex-wrap">
-                      {SING_VARIABLES.map(v => (
+                      {SINGU_VARIABLES.map((v: { name: string; label: string }) => (
                         <Button 
                           key={v.name} 
                           variant="outline" 
