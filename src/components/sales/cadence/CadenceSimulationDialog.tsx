@@ -24,7 +24,6 @@ export function CadenceSimulationDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProspectId, setSelectedProspectId] = useState("");
   const [logs, setLogs] = useState<SimulationLog[]>([]);
-  const { data: salespeople } = useSalespeople();
   const { data: prospects } = useProspectCadences();
   const { data: rules } = useFunnelRules();
   const queryClient = useQueryClient();
