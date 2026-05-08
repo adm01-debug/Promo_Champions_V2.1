@@ -25,7 +25,6 @@ export function CadenceSimulationDialog() {
   const [selectedProspectId, setSelectedProspectId] = useState("");
   const [logs, setLogs] = useState<SimulationLog[]>([]);
   const { data: prospects } = useProspectCadences();
-  const { data: rules } = useFunnelRules();
   const queryClient = useQueryClient();
 
   const simulateEvent = async (type: "quote_open" | "price_click" | "reply" | "manual") => {
@@ -45,6 +44,8 @@ export function CadenceSimulationDialog() {
     };
     
     const eventName = eventNames[type];
+    const leadName = prospect.id.substring(0, 8);
+
     // Chamar a função do banco de dados para processar o evento
     const { data, error } = await supabase.rpc('process_lead_intent_event', {
       p_prospect_cadence_id: prospect.id,
