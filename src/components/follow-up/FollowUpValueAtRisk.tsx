@@ -10,7 +10,20 @@ interface FollowUpValueAtRiskProps {
 }
 
 export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAtRiskProps) {
+  const statusProbabilities: Record<string, number> = {
+    lead: 0.1,
+    qualified: 0.3,
+    proposal: 0.5,
+    negotiation: 0.8,
+    open: 0.1,
+  };
+
   const totalValue = leads.reduce((sum, l) => sum + (l.amount || 0), 0);
+  const weightedValue = leads.reduce((sum, l) => {
+    const prob = statusProbabilities[l.status] || 0.1;
+    return sum + ((l.amount || 0) * prob);
+  }, 0);
+  
   const criticalCount = leads.filter(l => l.temperature === 'cold' || l.temperature === 'frozen').length;
 
   if (totalValue === 0) return null;
@@ -29,7 +42,10 @@ export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAt
           <div className="flex-1">
             <div className="text-sm text-muted-foreground">Valor em Risco (leads esfriando)</div>
             <div className="text-2xl font-bold text-destructive">
-              R$ {totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              R$ {weightedValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <span className="text-sm font-normal text-muted-foreground ml-2">
+                (Total: R$ {totalValue.toLocaleString('pt-BR')})
+              </span>
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">
               {criticalCount} lead(s) em estado crítico (frio/congelado)

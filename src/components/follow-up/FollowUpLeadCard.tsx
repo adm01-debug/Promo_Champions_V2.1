@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2 } from 'lucide-react';
+import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { temperatureConfig, type ColdLead } from './types';
@@ -63,6 +63,12 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="font-semibold truncate">{lead.client_name}</span>
+                {lead.score && lead.score >= 80 && (
+                  <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-none text-[10px] h-5 px-1.5 animate-pulse">
+                    <Zap className="h-3 w-3 mr-0.5 fill-current" />
+                    CLASSE A
+                  </Badge>
+                )}
                 <Badge variant="outline" className={`${config.bgClass} ${config.colorClass} border-none text-xs`}>
                   <config.icon className="h-3 w-3 mr-1" />
                   {config.label}
@@ -70,12 +76,25 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                 <Badge variant="secondary" className="text-xs">
                   {statusLabels[lead.status] || lead.status}
                 </Badge>
+                
+                {lead.days_inactive >= 3 && lead.days_inactive < 5 && (
+                  <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">D+3 Cadence</Badge>
+                )}
+                {lead.days_inactive >= 5 && (
+                  <Badge variant="outline" className="text-[10px] border-destructive/30 text-destructive font-bold">D+5 Priority</Badge>
+                )}
               </div>
 
-              <div className="text-sm text-muted-foreground mb-2">
+              <div className="text-sm text-muted-foreground mb-1">
                 {lead.product_name && <span>{lead.product_name} · </span>}
-                <span className="font-medium">R$ {(lead.amount || 0).toLocaleString('pt-BR')}</span>
+                <span className="font-medium text-foreground">R$ {(lead.amount || 0).toLocaleString('pt-BR')}</span>
               </div>
+
+              {lead.last_activity && (
+                <div className="text-xs text-muted-foreground mb-2 bg-muted/30 p-1.5 rounded border border-dashed border-muted-foreground/20 italic">
+                  Último contato: "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
+                </div>
+              )}
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
@@ -90,37 +109,69 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
 
             {/* Actions */}
             <div className="flex flex-col items-end gap-2 shrink-0">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center gap-1.5 text-xs bg-muted/50 px-2.5 py-1.5 rounded-full">
-                      <ChannelIcon className="h-3 w-3" />
-                      <span>{channel.label}</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Canal recomendado para abordagem</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                        onClick={() => {
+                          const message = `Olá ${lead.client_name}! Notei que sua proposta do ${lead.product_name} está parada. Como posso te ajudar hoje?`;
+                          window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                        }}
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Enviar WhatsApp sugerido</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <div className="flex items-center gap-1.5 text-[10px] bg-muted/50 px-2 py-1 rounded-full uppercase font-bold tracking-wider">
+                  <ChannelIcon className="h-3 w-3" />
+                  <span>{channel.label}</span>
+                </div>
+              </div>
 
               <Button
                 size="sm"
-                variant="outline"
+                variant={lead.has_pending_task ? "ghost" : "outline"}
                 onClick={() => onCreateTask(lead)}
-                disabled={isCreating}
-                className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                disabled={isCreating || lead.has_pending_task}
+                className={lead.has_pending_task ? "text-muted-foreground" : "hover:bg-primary hover:text-primary-foreground transition-colors"}
               >
-                <Send className="h-3 w-3 mr-1" />
-                Criar Tarefa
+                {lead.has_pending_task ? (
+                  <>
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Agendado
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-3 w-3 mr-1" />
+                    Criar Tarefa
+                  </>
+                )}
               </Button>
             </div>
           </div>
 
           {/* AI Suggestion */}
-          <div className="mt-3 p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
-            <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
-            <span className="text-muted-foreground">
-              <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
-            </span>
+          <div className="mt-3 flex flex-col gap-2">
+            {lead.temperature === 'frozen' && lead.score && lead.score >= 80 && (
+              <div className="p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-[11px] flex items-center gap-2 text-destructive font-bold animate-pulse">
+                <Snowflake className="h-3.5 w-3.5" />
+                ALERTA: Lead Classe A congelado! Reativação imediata necessária.
+              </div>
+            )}
+            
+            <div className="p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
+              <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
+              <span className="text-muted-foreground">
+                <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>

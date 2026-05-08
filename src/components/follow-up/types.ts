@@ -13,7 +13,13 @@ export interface ColdLead {
   temperature: LeadTemperature;
   suggested_action: string;
   suggested_channel: string;
-  last_activity?: string;
+  last_activity?: {
+    notes: string;
+    created_at: string;
+    type: string;
+  };
+  score?: number;
+  has_pending_task?: boolean;
 }
 
 export const temperatureConfig: Record<LeadTemperature, {
