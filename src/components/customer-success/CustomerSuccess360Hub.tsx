@@ -634,31 +634,49 @@ export function CustomerSuccess360Hub() {
             <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {modalStats.length > 0 && (
-                  <div className="bg-muted/30 p-4 rounded-xl border border-border/50 space-y-3">
+                  <div className="bg-muted/30 p-4 rounded-xl border border-border/50 space-y-4">
                     <h4 className="text-sm font-semibold flex items-center gap-2">
                       <PieIcon className={`h-4 w-4 ${orderModalStatus === 'cancelled' ? 'text-destructive' : 'text-primary'}`} />
-                      {orderModalStatus === 'cancelled' ? 'Motivos de Cancelamento' : 'Principais Clientes'}
+                      {orderModalStatus === 'cancelled' ? 'Top Motivos de Cancelamento' : 'Maiores Compradores (Volume)'}
                     </h4>
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="flex-1 space-y-1">
-                        {modalStats.slice(0, 4).map((stat, i) => (
-                          <div key={i} className="flex justify-between text-[11px] items-center">
-                            <span className="text-muted-foreground truncate max-w-[140px]">{stat.name}</span>
-                            <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-bold">
-                              {stat.value}
-                            </Badge>
-                          </div>
-                        ))}
+                    <div className="flex flex-col md:flex-row gap-6">
+                      <div className="flex-1 space-y-3">
+                        {modalStats.slice(0, 5).map((stat, i) => {
+                          const maxVal = modalStats[0].value;
+                          const percentage = Math.round((stat.value / maxVal) * 100);
+                          return (
+                            <div key={i} className="space-y-1">
+                              <div className="flex justify-between text-[11px] items-center">
+                                <span className="text-muted-foreground font-medium truncate max-w-[160px]">{stat.name}</span>
+                                <span className="font-bold">{stat.value}</span>
+                              </div>
+                              <Progress value={percentage} className={`h-1 ${orderModalStatus === 'cancelled' ? 'bg-destructive/10' : 'bg-primary/10'}`}>
+                                <div className={`h-full ${orderModalStatus === 'cancelled' ? 'bg-destructive' : 'bg-primary'}`} style={{ width: `${percentage}%` }} />
+                              </Progress>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <div className="h-[80px] w-[100px] shrink-0">
+                      <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
-                            <Pie data={modalStats} cx="50%" cy="50%" innerRadius={20} outerRadius={35} paddingAngle={2} dataKey="value">
+                            <Pie 
+                              data={modalStats} 
+                              cx="50%" 
+                              cy="50%" 
+                              innerRadius={25} 
+                              outerRadius={45} 
+                              paddingAngle={4} 
+                              dataKey="value"
+                              stroke="none"
+                            >
                               {modalStats.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                               ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip 
+                              contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                            />
                           </PieChart>
                         </ResponsiveContainer>
                       </div>
