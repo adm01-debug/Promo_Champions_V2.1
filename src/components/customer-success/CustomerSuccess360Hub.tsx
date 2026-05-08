@@ -685,11 +685,16 @@ export function CustomerSuccess360Hub() {
                     key={filteredModalOrders.length}
                     className="flex items-center gap-3 bg-background/50 p-3 rounded-lg border border-border/50 shadow-sm transition-all hover:shadow-md"
                   >
-                    <div className="text-right">
-                      <div className="text-3xl font-black text-primary tracking-tighter tabular-nums">
-                        {filteredModalOrders.length}
+                    <div className="text-right flex flex-col items-end">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-black text-primary tracking-tighter tabular-nums">
+                          {filteredModalOrders.length}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Pedidos</span>
                       </div>
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Encontrados</div>
+                      <div className="text-xs font-mono font-bold text-success/80">
+                        {formatBRL(filteredModalOrders.reduce((acc, o) => acc + Number(o.total || 0), 0))}
+                      </div>
                     </div>
                     <div className="h-8 w-px bg-border/60 mx-1" />
                     <Search className="h-5 w-5 text-primary/40" />
