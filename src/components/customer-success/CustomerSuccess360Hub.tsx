@@ -65,6 +65,7 @@ export function CustomerSuccess360Hub() {
   const surveys = data?.surveys ?? [];
   const qbrs = data?.qbrs ?? [];
   const orders = data?.orders ?? [];
+  const accountById = useMemo(() => new Map(accounts.map((a) => [a.id, a])), [accounts]);
 
   // Data Filtering by Period
   const filteredData = useMemo(() => {
