@@ -638,7 +638,7 @@ export function CustomerSuccess360Hub() {
           </div>
         </TabsContent>
 
-        <TabsContent value="orders" className="mt-4 space-y-4">
+        <TabsContent value="orders" className="mt-4 space-y-4" data-testid="orders-tab-content" forceMount>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Card className="lg:col-span-2">
               <CardHeader className="flex flex-row items-center justify-between">
@@ -677,6 +677,7 @@ export function CustomerSuccess360Hub() {
                               variant="outline" 
                               size="sm" 
                               className="h-8 px-3"
+                              data-testid={`ver-detalhes-${row.key}`}
                               onClick={() => setOrderModalStatus(row.key)}
                             >
                               Ver Detalhes
