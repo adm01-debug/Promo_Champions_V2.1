@@ -296,7 +296,9 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
       </div>
     </Card>
   );
-}
+});
+
+PurchasePredictionCard.displayName = "PurchasePredictionCard";
 
 function Stat({ label, value, icon, className }: { label: string; value: string; icon?: React.ReactNode; className?: string }) {
   return (
