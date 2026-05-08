@@ -95,7 +95,16 @@ const FollowUpAudit = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <SkeletonTransition isLoading={isLoading}>
+            <SkeletonTransition 
+              isLoading={isLoading} 
+              skeleton={
+                <div className="space-y-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="h-12 w-full bg-muted animate-pulse rounded" />
+                  ))}
+                </div>
+              }
+            >
               <div className="rounded-md border overflow-hidden">
                 <Table>
                   <TableHeader className="bg-muted/50">
@@ -148,13 +157,13 @@ const FollowUpAudit = () => {
                                 {log.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right text-xs">
                               {log.retry_count > 0 && (
                                 <Badge variant="outline" className="text-[10px] mr-2">
                                   {log.retry_count} retentativas
                                 </Badge>
                               )}
-                              <span className="text-xs text-muted-foreground italic truncate max-w-[200px] inline-block">
+                              <span className="text-muted-foreground italic truncate max-w-[200px] inline-block">
                                 {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
                               </span>
                             </TableCell>
