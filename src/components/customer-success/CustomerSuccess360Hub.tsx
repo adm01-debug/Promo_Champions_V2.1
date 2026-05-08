@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info, PieChart as PieIcon, ArrowUpDown, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info, PieChart as PieIcon, ArrowUpDown, ChevronLeft, ChevronRight, X, ChevronUp, ChevronDown } from "lucide-react";
 import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend, Cell, PieChart, Pie } from "recharts";
@@ -81,6 +81,13 @@ export function CustomerSuccess360Hub() {
     if (period === "custom") {
       start = startDate ? parseISO(startDate) : subDays(now, 30);
       end = endDate ? parseISO(endDate) : now;
+      
+      // Safety check for isWithinInterval
+      if (isAfter(start, end)) {
+        const temp = start;
+        start = end;
+        end = temp;
+      }
     } else if (period === "0") {
       start = new Date(0);
     } else {
@@ -371,6 +378,19 @@ export function CustomerSuccess360Hub() {
                   value={endDate}
                   onChange={(e) => handleDateChange("end", e.target.value)}
                 />
+                {(startDate || endDate) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-9 px-2 text-muted-foreground" 
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -452,23 +472,71 @@ export function CustomerSuccess360Hub() {
           </div>
         </TabsContent>
 
-        <TabsContent value="cohorts" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle>Análise de Coortes (Retenção por Mês de Renovação)</CardTitle></CardHeader>
-            <CardContent className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={cohortData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                  <XAxis type="number" />
-                  <YAxis dataKey="month" type="category" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" />
-                  <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        <TabsContent value="cohorts" className="mt-4 space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle>Análise de Coortes (Retenção por Mês de Renovação)</CardTitle>
+                <CardDescription>Visualização da retenção baseada na primeira compra</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={cohortData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                    <XAxis type="number" />
+                    <YAxis dataKey="month" type="category" />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" />
+                    <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Maiores Causas de Perda</CardTitle>
+                <CardDescription>Motivos de cancelamento no período</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[250px] mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie 
+                        data={lossStats} 
+                        cx="50%" 
+                        cy="50%" 
+                        innerRadius={60} 
+                        outerRadius={80} 
+                        paddingAngle={5} 
+                        dataKey="value"
+                      >
+                        {lossStats.map((_, index) => (
+                          <Cell key={`cell-loss-cohort-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-3">
+                  {lossStats.slice(0, 5).map((stat, i) => (
+                    <div key={i} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 max-w-[180px]">
+                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        <span className="truncate text-muted-foreground">{stat.name}</span>
+                      </div>
+                      <span className="font-semibold">{stat.value}</span>
+                    </div>
+                  ))}
+                  {lossStats.length === 0 && (
+                    <p className="text-center text-muted-foreground text-xs py-10 italic">Sem registros de perdas no período.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="orders" className="mt-4">
@@ -532,19 +600,28 @@ export function CustomerSuccess360Hub() {
             setOrderPage(1);
           }
         }}>
-          <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
-            <div className="p-6 pb-2">
+          <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col p-0 overflow-hidden bg-background">
+            <div className="p-6 border-b bg-muted/20">
               <DialogHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
-                    <DialogDescription>
-                      Lista completa de pedidos filtrados por período e status.
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+                      <div className={`h-3 w-3 rounded-full ${ordersByStatus.find(s => s.key === orderModalStatus)?.color.replace("text-", "bg-")}`} />
+                      Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}
+                    </DialogTitle>
+                    <DialogDescription className="text-sm">
+                      Lista consolidada de pedidos filtrados por status e período.
                     </DialogDescription>
                   </div>
-                  <Badge variant="outline" className="text-sm px-3 py-1">
-                    {filteredModalOrders.length} {filteredModalOrders.length === 1 ? "pedido" : "pedidos"}
-                  </Badge>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right hidden md:block">
+                      <div className="text-2xl font-bold">{filteredModalOrders.length}</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Total Localizado</div>
+                    </div>
+                    <Badge variant="secondary" className="md:hidden text-sm px-3 py-1">
+                      {filteredModalOrders.length} pedidos
+                    </Badge>
+                  </div>
                 </div>
               </DialogHeader>
             </div>
@@ -631,18 +708,20 @@ export function CustomerSuccess360Hub() {
                     }}
                   />
                 </div>
-                {orderSearch && (
+                {(orderSearch || orderSortField !== "created_at" || orderSortOrder !== "desc") && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={() => {
                       setOrderSearch("");
+                      setOrderSortField("created_at");
+                      setOrderSortOrder("desc");
                       setOrderPage(1);
                     }}
-                    className="h-9"
+                    className="h-9 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-4 w-4 mr-2" />
-                    Limpar
+                    Limpar filtros
                   </Button>
                 )}
               </div>
@@ -652,39 +731,36 @@ export function CustomerSuccess360Hub() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th 
-                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('order_number')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Pedido <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'order_number' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th 
-                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('account_name')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Cliente <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'account_name' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th 
-                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('created_at')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Data <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'created_at' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th 
-                          className="p-3 text-right cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('total')}
-                        >
-                          <div className="flex items-center gap-1 justify-end">
-                            Valor <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'total' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th className="p-3 text-left">Informações</th>
+                        <SortableHeader 
+                          label="Pedido" 
+                          field="order_number" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                        />
+                        <SortableHeader 
+                          label="Cliente" 
+                          field="account_name" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                        />
+                        <SortableHeader 
+                          label="Data" 
+                          field="created_at" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                        />
+                        <SortableHeader 
+                          label="Valor" 
+                          field="total" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                          align="right"
+                        />
+                        <th className="p-3 text-left font-medium text-muted-foreground">Informações</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -981,6 +1057,24 @@ export function CustomerSuccess360Hub() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function SortableHeader({ label, field, currentField, order, onSort, align = "left" }: { label: string; field: string; currentField: string; order: "asc" | "desc"; onSort: (f: string) => void; align?: "left" | "right" }) {
+  const isActive = currentField === field;
+  return (
+    <th 
+      className={`p-3 cursor-pointer hover:bg-muted/80 transition-colors group ${align === "right" ? "text-right" : "text-left"}`}
+      onClick={() => onSort(field)}
+    >
+      <div className={`flex items-center gap-1 ${align === "right" ? "justify-end" : "justify-start"}`}>
+        <span className={`font-medium ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}>{label}</span>
+        <div className="flex flex-col -space-y-1">
+          <ChevronUp className={`h-2.5 w-2.5 ${isActive && order === 'asc' ? 'text-primary' : 'text-muted-foreground/30 group-hover:text-muted-foreground/60'}`} />
+          <ChevronDown className={`h-2.5 w-2.5 ${isActive && order === 'desc' ? 'text-primary' : 'text-muted-foreground/30 group-hover:text-muted-foreground/60'}`} />
+        </div>
+      </div>
+    </th>
   );
 }
 
