@@ -433,21 +433,83 @@ export function CustomerSuccess360Hub() {
           </Card>
         </TabsContent>
 
-        <Dialog open={!!orderModalStatus} onOpenChange={(open) => !open && setOrderModalStatus(null)}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
-              <DialogDescription>
-                Lista completa de pedidos com este status no período selecionado.
-              </DialogDescription>
-            </DialogHeader>
+        <Dialog open={!!orderModalStatus} onOpenChange={(open) => {
+          if (!open) {
+            setOrderModalStatus(null);
+            setOrderSearch("");
+          }
+        }}>
+          <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
+            <div className="p-6 pb-2">
+              <DialogHeader>
+                <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
+                <DialogDescription>
+                  Lista completa de pedidos com este status no período selecionado.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
             
-            <div className="space-y-4 mt-4">
+            <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
+              {orderModalStatus === "cancelled" && cancellationStats.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start bg-muted/30 p-4 rounded-xl border border-border/50">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold flex items-center gap-2">
+                      <PieIcon className="h-4 w-4 text-destructive" />
+                      Motivos de Cancelamento
+                    </h4>
+                    <div className="space-y-1">
+                      {cancellationStats.slice(0, 5).map((stat, i) => (
+                        <div key={i} className="flex justify-between text-xs items-center">
+                          <span className="text-muted-foreground truncate max-w-[180px]">{stat.name}</span>
+                          <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-bold">
+                            {stat.value}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="h-[140px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={cancellationStats}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={30}
+                          outerRadius={50}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {cancellationStats.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "8px", border: "1px solid hsl(var(--border))" }}
+                          itemStyle={{ fontSize: "12px" }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por cliente ou número do pedido..."
+                  className="pl-10"
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                />
+              </div>
+
               <div className="rounded-md border">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
                       <th className="p-3 text-left">Pedido</th>
+                      <th className="p-3 text-left">Cliente</th>
                       <th className="p-3 text-left">Data</th>
                       <th className="p-3 text-right">Valor</th>
                       <th className="p-3 text-left">Informações Extras</th>
@@ -457,16 +519,25 @@ export function CustomerSuccess360Hub() {
                     {(filteredData?.orders || [])
                       .filter(o => {
                         const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
-                        return s === orderModalStatus;
+                        if (s !== orderModalStatus) return false;
+                        
+                        if (!orderSearch) return true;
+                        
+                        const search = orderSearch.toLowerCase();
+                        const orderNum = o.order_number?.toString().toLowerCase() || "";
+                        const accountName = accountById.get(o.account_id)?.name.toLowerCase() || "";
+                        
+                        return orderNum.includes(search) || accountName.includes(search);
                       })
                       .map((o) => (
-                        <tr key={o.id} className="border-b">
+                        <tr key={o.id} className="border-b transition-colors hover:bg-muted/10">
                           <td className="p-3 font-medium">#{o.order_number}</td>
-                          <td className="p-3">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
-                          <td className="p-3 text-right font-mono">{formatBRL(o.total)}</td>
+                          <td className="p-3">{accountById.get(o.account_id)?.name ?? "—"}</td>
+                          <td className="p-3 text-muted-foreground">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
+                          <td className="p-3 text-right font-mono font-medium">{formatBRL(o.total)}</td>
                           <td className="p-3">
                             {o.cancellation_reason && (
-                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20">
+                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20 bg-destructive/5">
                                 Motivo: {o.cancellation_reason}
                               </Badge>
                             )}
@@ -479,6 +550,21 @@ export function CustomerSuccess360Hub() {
                           </td>
                         </tr>
                       ))}
+                    {(filteredData?.orders || [])
+                      .filter(o => {
+                        const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+                        if (s !== orderModalStatus) return false;
+                        const search = orderSearch.toLowerCase();
+                        const orderNum = o.order_number?.toString().toLowerCase() || "";
+                        const accountName = accountById.get(o.account_id)?.name.toLowerCase() || "";
+                        return orderNum.includes(search) || accountName.includes(search);
+                      }).length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="p-8 text-center text-muted-foreground italic">
+                            Nenhum pedido encontrado.
+                          </td>
+                        </tr>
+                      )}
                   </tbody>
                 </table>
               </div>
