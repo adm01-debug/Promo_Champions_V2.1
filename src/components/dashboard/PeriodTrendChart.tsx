@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { Activity, DollarSign, ShoppingBag, TrendingUp } from "lucide-react";
 import { usePeriodTrend } from "@/hooks/usePeriodTrend";
+import { TrendChartSkeleton } from "./skeletons/SpeedometerSkeletons";
 import { PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
 import { cn } from "@/lib/utils";
 
@@ -71,7 +72,7 @@ export const PeriodTrendChart = () => {
     };
   }, [period]);
 
-  const { data, isLoading } = usePeriodTrend(period);
+  const { data, isLoading, isFetching } = usePeriodTrend(period);
 
   const totals = useMemo(() => {
     const arr = data ?? [];
@@ -183,10 +184,16 @@ export const PeriodTrendChart = () => {
 
         {/* Chart */}
         <div className="relative h-[300px] sm:h-[340px] rounded-xl bg-background/40 border border-border/40 p-3">
-          {isLoading ? (
-            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-              Carregando tendência...
+          {isFetching && !isLoading && (
+            <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[9px] font-mono uppercase tracking-wider text-primary font-bold">
+                Atualizando
+              </span>
             </div>
+          )}
+          {isLoading ? (
+            <TrendChartSkeleton height={undefined as unknown as number} />
           ) : chartData.length === 0 ? (
             <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
               Sem dados no período selecionado
