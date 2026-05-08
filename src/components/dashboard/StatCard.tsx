@@ -37,17 +37,17 @@ export const StatCard = React.memo(({
   });
 
   const variantStyles = useMemo(() => ({
-    default: "bg-card border-border/50 hover:border-border",
-    primary: "bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 hover:border-primary/40",
-    success: "bg-gradient-to-br from-success/10 via-success/5 to-transparent border-success/20 hover:border-success/40",
-    warning: "bg-gradient-to-br from-warning/10 via-warning/5 to-transparent border-warning/20 hover:border-warning/40",
+    default: "bg-black/40 border-white/5 backdrop-blur-md hover:border-white/20",
+    primary: "bg-gradient-to-br from-primary/20 via-primary/5 to-transparent border-primary/30 shadow-[0_0_20px_rgba(14,165,233,0.05)] hover:border-primary/50",
+    success: "bg-gradient-to-br from-success/20 via-success/5 to-transparent border-success/30 shadow-[0_0_20px_rgba(34,197,94,0.05)] hover:border-success/50",
+    warning: "bg-gradient-to-br from-warning/20 via-warning/5 to-transparent border-warning/30 shadow-[0_0_20px_rgba(234,179,8,0.05)] hover:border-warning/50",
   }), []);
 
   const iconColors = useMemo(() => ({
-    default: "bg-muted/50 text-muted-foreground",
-    primary: "bg-primary/15 text-primary shadow-sm shadow-primary/10",
-    success: "bg-success/15 text-success shadow-sm shadow-success/10",
-    warning: "bg-warning/15 text-warning shadow-sm shadow-warning/10",
+    default: "bg-white/5 text-muted-foreground border border-white/10",
+    primary: "bg-primary/20 text-primary border border-primary/40 shadow-[0_0_15px_rgba(14,165,233,0.2)]",
+    success: "bg-success/20 text-success border border-success/40 shadow-[0_0_15px_rgba(34,197,94,0.2)]",
+    warning: "bg-warning/20 text-warning border border-warning/40 shadow-[0_0_15px_rgba(234,179,8,0.2)]",
   }), []);
 
   const sparklineColors = useMemo(() => ({
