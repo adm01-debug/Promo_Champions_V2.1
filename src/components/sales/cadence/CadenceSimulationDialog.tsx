@@ -9,7 +9,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useProspectCadences, useFunnelRules } from "@/hooks/cadences/useCadenceQueries";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SimulationLog {
   id: string;
@@ -21,45 +22,71 @@ interface SimulationLog {
 
 export function CadenceSimulationDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLead, setSelectedLead] = useState("");
-  const [selectedSalesperson, setSelectedSalesperson] = useState("");
+  const [selectedProspectId, setSelectedProspectId] = useState("");
   const [logs, setLogs] = useState<SimulationLog[]>([]);
-  const { data: salespeople } = useSalespeople();
+  const { data: prospects } = useProspectCadences();
+  const { data: rules } = useFunnelRules();
+  const queryClient = useQueryClient();
 
-  const simulateEvent = async (type: "proposal_view" | "price_click") => {
-    if (!selectedSalesperson) {
-      toast.error("Selecione um vendedor para a simulação");
+  const simulateEvent = async (type: "quote_open" | "price_click" | "reply" | "manual") => {
+    if (!selectedProspectId) {
+      toast.error("Selecione um lead para a simulação");
       return;
     }
 
-    const eventName = type === "proposal_view" ? "Abertura de Proposta" : "Clique em Preço";
-    const leadName = selectedLead || "Lead Simulado";
+    const prospect = prospects?.find(p => p.id === selectedProspectId);
+    if (!prospect) return;
 
-    // Registrar log simulado
+    const eventNames = {
+      quote_open: "Abertura de Proposta",
+      price_click: "Clique em Preço",
+      reply: "Resposta Recebida",
+      manual: "Ação Manual"
+    };
+    
+    const eventName = eventNames[type];
+    const leadName = prospect.id.substring(0, 8); // Simplificado
+
+    // Encontrar regra aplicável
+    const applicableRule = rules?.find(r => 
+      r.is_active && 
+      r.from_stage === prospect.funnel_stage && 
+      r.condition_type === type
+    );
+
+    let resultMsg = "Evento registrado";
+    let newStage = prospect.funnel_stage;
+
+    if (applicableRule) {
+      newStage = applicableRule.to_stage as any;
+      resultMsg = `Transição: ${prospect.funnel_stage} -> ${newStage}`;
+      
+      // Atualizar no banco
+      const { error } = await supabase
+        .from('prospect_cadences')
+        .update({ funnel_stage: newStage })
+        .eq('id', prospect.id);
+        
+      if (error) {
+        toast.error("Erro ao atualizar estágio do funil");
+        return;
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+    }
+
     const newLog: SimulationLog = {
       id: Math.random().toString(36).substr(2, 9),
       timestamp: new Date().toLocaleTimeString(),
       event: eventName,
-      lead: leadName,
-      result: "Gatilho 'Ligar Agora' Disparado",
+      lead: `Lead ${leadName}`,
+      result: resultMsg,
     };
 
     setLogs([newLog, ...logs]);
 
-    // Em um cenário real, inseriríamos na tabela 'activities'
-    const { error } = await supabase.from('activities').insert({
-      salesperson_id: selectedSalesperson,
-      activity_type: type as any,
-      notes: `Simulação: ${eventName} para ${leadName}`,
-      outcome: 'connected' as any,
-    });
-
-    if (error) {
-      console.error("Erro ao registrar atividade:", error);
-    }
-
-    toast.success(`${eventName} simulado com sucesso!`, {
-      description: "Gatilho de intenção registrado nos logs de auditoria.",
+    toast.success(`${eventName} simulado!`, {
+      description: resultMsg,
     });
   };
 
@@ -82,29 +109,19 @@ export function CadenceSimulationDialog() {
         <div className="space-y-6 py-4">
           <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border/50">
             <div className="space-y-2">
-              <Label>Vendedor Responsável</Label>
-              <Select value={selectedSalesperson} onValueChange={setSelectedSalesperson}>
+              <Label>Lead em Cadência</Label>
+              <Select value={selectedProspectId} onValueChange={setSelectedProspectId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o vendedor" />
+                  <SelectValue placeholder="Selecione o lead" />
                 </SelectTrigger>
                 <SelectContent>
-                  {salespeople?.map((sp) => (
-                    <SelectItem key={sp.id} value={sp.id}>{sp.name}</SelectItem>
+                  {prospects?.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      Lead {p.id.substring(0, 8)} ({p.funnel_stage})
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Nome do Lead (Opcional)</Label>
-              <div className="flex gap-2">
-                <input
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Ex: João da Silva"
-                  value={selectedLead}
-                  onChange={(e) => setSelectedLead(e.target.value)}
-                />
-              </div>
             </div>
           </div>
 
@@ -112,7 +129,7 @@ export function CadenceSimulationDialog() {
             <Button 
               variant="outline" 
               className="h-24 flex-col gap-2 hover:border-primary/50 hover:bg-primary/5"
-              onClick={() => simulateEvent("proposal_view")}
+              onClick={() => simulateEvent("quote_open")}
             >
               <FileText className="h-8 w-8 text-primary" />
               <div className="text-xs font-semibold">Abrir Proposta</div>
@@ -124,6 +141,22 @@ export function CadenceSimulationDialog() {
             >
               <MousePointerClick className="h-8 w-8 text-accent" />
               <div className="text-xs font-semibold">Clicar em Preço</div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-24 flex-col gap-2 hover:border-success/50 hover:bg-success/5"
+              onClick={() => simulateEvent("reply")}
+            >
+              <History className="h-8 w-8 text-success" />
+              <div className="text-xs font-semibold">Resposta Recebida</div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-24 flex-col gap-2 hover:border-status-warning/50 hover:bg-status-warning/5"
+              onClick={() => simulateEvent("manual")}
+            >
+              <CheckCircle2 className="h-8 w-8 text-status-warning" />
+              <div className="text-xs font-semibold">Ação Manual</div>
             </Button>
           </div>
 
