@@ -151,8 +151,8 @@ describe("CustomerSuccess360Hub", () => {
     expect(await screen.findByText(/ORD-001/i)).toBeInTheDocument();
     expect(screen.queryByText(/ORD-002/i)).not.toBeInTheDocument();
     
-    // Close modal
-    fireEvent.click(screen.getByRole("button", { name: /Close/i }));
+    // Use "Fechar" which is what showed up in the log
+    fireEvent.click(screen.getByRole("button", { name: /Fechar/i }));
     
     // Check "Cancelados"
     fireEvent.click(screen.getByTestId("ver-detalhes-cancelled"));
@@ -176,14 +176,18 @@ describe("CustomerSuccess360Hub", () => {
     expect(screen.getByText("Nenhum pedido encontrado no período.")).toBeInTheDocument();
     
     // If we somehow trigger the modal for a status with no orders
-    // Note: In current UI, the count would be 0, but we can test if the modal shows empty state
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
     expect(await screen.findByText("Nenhum pedido encontrado com os filtros atuais.")).toBeInTheDocument();
   });
 
   it("confirms table sorting when toggling the 'Cliente' header", async () => {
+    // We need to ensure account names are what we expect
     const manyOrdersData = {
       ...mockData,
+      accounts: [
+        { id: "1", name: "Account A", tier: "Enterprise", health_v2: 90, annual_revenue: 50000, open_tickets: 1 },
+        { id: "2", name: "Account B", tier: "Pro", health_v2: 70, annual_revenue: 20000, open_tickets: 2 },
+      ],
       orders: [
         { id: "o1", account_id: "1", order_number: "A-001", status: "delivered", total: 100, created_at: "2024-01-01T10:00:00Z" },
         { id: "o2", account_id: "2", order_number: "B-001", status: "delivered", total: 200, created_at: "2024-01-02T10:00:00Z" },
@@ -205,6 +209,7 @@ describe("CustomerSuccess360Hub", () => {
     // First click: asc sorting (Account A then Account B)
     fireEvent.click(clientHeader);
     let rows = screen.getAllByRole("row");
+    // Row 0 is header, Row 1 should be Account A
     expect(rows[1]).toHaveTextContent("Account A");
     expect(rows[2]).toHaveTextContent("Account B");
     
