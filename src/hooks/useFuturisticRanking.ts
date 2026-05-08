@@ -68,6 +68,7 @@ export const useFuturisticRanking = () => {
       const prevPos = rank(prevMap);
 
       const rows: RankingRow[] = sps
+        .filter((sp): sp is { id: string; name: string; avatar_url: string | null } => !!sp.id && !!sp.name)
         .map((sp) => {
           const cur = curMap.get(sp.id) ?? { revenue: 0, deals: 0 };
           const prev = prevMap.get(sp.id);
