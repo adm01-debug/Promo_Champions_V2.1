@@ -6,8 +6,8 @@ export const ImprovementPlan = () => {
   const steps = [
     {
       step: "01",
-      title: "Base de Dados Nativa (Big Data)",
-      description: "Implementar repositório próprio de decisores B2B para eliminar dependência de buscas externas manuais.",
+      title: "Base de Dados Nativa (SINGU)",
+      description: "Integrar a base de dados do sistema SINGU para eliminar a dependência de buscas externas manuais e centralizar decisores B2B.",
       focus: "Lead Discovery",
       impact: "High",
       effort: "Critical",
