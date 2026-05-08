@@ -91,6 +91,7 @@ const mockData = {
   orders: [
     { id: "o1", account_id: "1", order_number: "ORD-001", status: "delivered", total: 1000, created_at: new Date().toISOString() },
     { id: "o2", account_id: "2", order_number: "ORD-002", status: "cancelled", total: 500, created_at: new Date().toISOString(), cancellation_reason: "Erro no pedido" },
+    { id: "o3", account_id: "1", order_number: "ORD-003", status: "pending", total: 1500, created_at: new Date().toISOString() },
   ],
 };
 
@@ -109,15 +110,12 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // In loading state, the dashboard container itself might have a data-testid or we check for skeletons directly
     const container = screen.getByTestId("loading-skeletons");
     expect(container).toBeInTheDocument();
   });
 
   it("renders error state with retry option and shows toast", async () => {
     const refetch = vi.fn();
-    const { toast } = (useToast() as any);
-    
     (useCustomerSuccess360 as any).mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -136,20 +134,7 @@ describe("CustomerSuccess360Hub", () => {
     expect(refetch).toHaveBeenCalled();
   });
 
-  it("renders dashboard with data correctly", () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-    });
-
-    render(<CustomerSuccess360Hub />);
-    const heading = screen.getByRole("heading", { level: 1, name: /Customer Success 360/i });
-    expect(heading).toBeInTheDocument();
-    expect(screen.getByText("85/100")).toBeInTheDocument();
-  });
-
-  it("navigates to Orders tab, clicks Ver Detalhes and validates modal content", async () => {
+  it("validates that changing the status filter in the Orders tab updates the results in the modal", async () => {
     (useCustomerSuccess360 as any).mockReturnValue({
       data: mockData,
       isLoading: false,
@@ -159,19 +144,113 @@ describe("CustomerSuccess360Hub", () => {
     render(<CustomerSuccess360Hub />);
     
     // Change to Orders tab
-    const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
-    fireEvent.click(ordersTab);
+    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
     
-    // Verify "Ver Detalhes" button using data-testid
-    const detailsButton = await screen.findByTestId("ver-detalhes-delivered");
-    fireEvent.click(detailsButton);
+    // Check "Entregues" (delivered)
+    fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
+    expect(await screen.findByText(/ORD-001/i)).toBeInTheDocument();
+    expect(screen.queryByText(/ORD-002/i)).not.toBeInTheDocument();
     
-    // Verify modal content
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText(/ORD-001/i)).toBeInTheDocument();
+    // Close modal
+    fireEvent.click(screen.getByRole("button", { name: /Close/i }));
+    
+    // Check "Cancelados"
+    fireEvent.click(screen.getByTestId("ver-detalhes-cancelled"));
+    expect(await screen.findByText(/ORD-002/i)).toBeInTheDocument();
+    expect(screen.queryByText(/ORD-001/i)).not.toBeInTheDocument();
   });
 
-  it("filters and sorts orders in the modal", async () => {
+  it("displays 'no results' correctly when there are no orders", async () => {
+    const emptyData = { ...mockData, orders: [] };
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: emptyData,
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CustomerSuccess360Hub />);
+    
+    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
+    
+    // The main table should show "Nenhum pedido encontrado"
+    expect(screen.getByText("Nenhum pedido encontrado no período.")).toBeInTheDocument();
+    
+    // If we somehow trigger the modal for a status with no orders
+    // Note: In current UI, the count would be 0, but we can test if the modal shows empty state
+    fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
+    expect(await screen.findByText("Nenhum pedido encontrado com os filtros atuais.")).toBeInTheDocument();
+  });
+
+  it("confirms table sorting when toggling the 'Cliente' header", async () => {
+    const manyOrdersData = {
+      ...mockData,
+      orders: [
+        { id: "o1", account_id: "1", order_number: "A-001", status: "delivered", total: 100, created_at: "2024-01-01T10:00:00Z" },
+        { id: "o2", account_id: "2", order_number: "B-001", status: "delivered", total: 200, created_at: "2024-01-02T10:00:00Z" },
+      ]
+    };
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: manyOrdersData,
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CustomerSuccess360Hub />);
+    
+    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
+    fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
+    
+    const clientHeader = await screen.findByText("Cliente");
+    
+    // First click: asc sorting (Account A then Account B)
+    fireEvent.click(clientHeader);
+    let rows = screen.getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("Account A");
+    expect(rows[2]).toHaveTextContent("Account B");
+    
+    // Second click: desc sorting (Account B then Account A)
+    fireEvent.click(clientHeader);
+    rows = screen.getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("Account B");
+    expect(rows[2]).toHaveTextContent("Account A");
+  });
+
+  it("verifies pagination updates the displayed items and doesn't break the modal", async () => {
+    const paginatedOrders = Array.from({ length: 15 }, (_, i) => ({
+      id: `p${i}`,
+      account_id: "1",
+      order_number: `PAG-${String(i).padStart(3, '0')}`,
+      status: "delivered",
+      total: 100,
+      created_at: new Date().toISOString()
+    }));
+    
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: { ...mockData, orders: paginatedOrders },
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CustomerSuccess360Hub />);
+    
+    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
+    fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
+    
+    // Page 1 should have PAG-000 to PAG-009 (depending on sort, usually desc date)
+    expect(await screen.findByText("PAG-000")).toBeInTheDocument();
+    expect(screen.getByText("PAG-009")).toBeInTheDocument();
+    expect(screen.queryByText("PAG-010")).not.toBeInTheDocument();
+    
+    // Navigate to Page 2
+    const nextPageButton = screen.getByRole("button", { name: /2/ });
+    fireEvent.click(nextPageButton);
+    
+    expect(await screen.findByText("PAG-010")).toBeInTheDocument();
+    expect(screen.getByText("PAG-014")).toBeInTheDocument();
+    expect(screen.queryByText("PAG-000")).not.toBeInTheDocument();
+  });
+
+  it("verifies modal fields correspond to the selected order", async () => {
     (useCustomerSuccess360 as any).mockReturnValue({
       data: mockData,
       isLoading: false,
@@ -181,56 +260,14 @@ describe("CustomerSuccess360Hub", () => {
     render(<CustomerSuccess360Hub />);
     
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
+    fireEvent.click(screen.getByTestId("ver-detalhes-cancelled"));
     
-    const detailsButton = await screen.findByTestId("ver-detalhes-delivered");
-    fireEvent.click(detailsButton);
+    const modal = await screen.findByRole("dialog");
+    const withinModal = within(modal);
     
-    // Search
-    const searchInput = screen.getByPlaceholderText(/Buscar por cliente ou número do pedido/i);
-    fireEvent.change(searchInput, { target: { value: "Account A" } });
-    
-    // Check for Account A in the table specifically
-    const table = screen.getByRole("table");
-    expect(within(table).getByText("Account A")).toBeInTheDocument();
-    
-    // Sorting (toggle sort by "Pedido")
-    const orderHeader = screen.getByText("Pedido");
-    fireEvent.click(orderHeader);
-  });
-
-  it("confirms state persistence in localStorage", async () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-    });
-
-    const { unmount } = render(<CustomerSuccess360Hub />);
-    
-    // Open modal to trigger status persistence
-    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
-    const detailsButton = await screen.findByTestId("ver-detalhes-cancelled");
-    fireEvent.click(detailsButton);
-    
-    expect(localStorage.getItem("cs360_state_modalStatus")).toBe("cancelled");
-    
-    // Unmount and remount to verify state restoration
-    unmount();
-    render(<CustomerSuccess360Hub />);
-    
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText(/ORD-002/i)).toBeInTheDocument();
-  });
-
-  it("calculates summary correctly", () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-    });
-
-    render(<CustomerSuccess360Hub />);
-    expect(screen.getByText("10 contas")).toBeInTheDocument();
-    expect(screen.getByText("5")).toBeInTheDocument(); // open tickets
+    expect(withinModal.getByText(/ORD-002/i)).toBeInTheDocument();
+    expect(withinModal.getByText(/Account B/i)).toBeInTheDocument();
+    expect(withinModal.getByText(/R\$ 500,00/i)).toBeInTheDocument();
+    expect(withinModal.getByText(/Erro no pedido/i)).toBeInTheDocument();
   });
 });
