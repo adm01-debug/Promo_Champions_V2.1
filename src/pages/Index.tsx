@@ -192,27 +192,39 @@ const Index = () => {
                   transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
-                    <OverviewModule goalsData={goalsData} kpis={kpis} />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <OverviewModule goalsData={goalsData} kpis={kpis} />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="performance" className="mt-0 focus-visible:outline-none">
-                    <PerformanceModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <PerformanceModule />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="analytics" className="mt-0 focus-visible:outline-none">
-                    <AnalyticsModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <AnalyticsModule />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="competition" className="mt-0 focus-visible:outline-none">
-                    <CompetitionModule salesperson={salesperson} />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <CompetitionModule salesperson={salesperson} />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="intelligence" className="mt-0 focus-visible:outline-none">
-                    <IntelligenceModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <IntelligenceModule />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="engagement" className="mt-0 focus-visible:outline-none">
-                    <EngagementModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <EngagementModule />
+                    </Suspense>
                   </TabsContent>
                 </motion.div>
               </AnimatePresence>
