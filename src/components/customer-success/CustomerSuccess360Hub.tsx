@@ -50,6 +50,10 @@ export function CustomerSuccess360Hub() {
   const [endDate, setEndDate] = useState<string>("");
   const [orderModalStatus, setOrderModalStatus] = useState<string | null>(null);
   const [orderSearch, setOrderSearch] = useState("");
+  const [orderPage, setOrderPage] = useState(1);
+  const [orderSortField, setOrderSortField] = useState<string>("created_at");
+  const [orderSortOrder, setOrderSortOrder] = useState<"asc" | "desc">("desc");
+  const orderItemsPerPage = 10;
 
   const s = data?.summary;
   const accounts = data?.accounts ?? [];
