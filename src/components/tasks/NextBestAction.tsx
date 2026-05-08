@@ -48,6 +48,7 @@ const actionTypeConfig = {
   email: { label: 'E-mail', icon: Mail, color: 'text-primary' },
   follow_up: { label: 'Follow-up', icon: Clock, color: 'text-status-warning' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-accent' },
+  discount: { label: 'Desconto', icon: Sparkles, color: 'text-status-success' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
 };
 
@@ -64,7 +65,7 @@ export function NextBestAction() {
   };
 
   const handleCreateTask = (suggestion: ActionSuggestion) => {
-    const taskType = ['call', 'email', 'meeting', 'follow_up', 'proposal', 'other'].includes(suggestion.actionType)
+    const taskType = ['call', 'email', 'meeting', 'follow_up', 'proposal', 'discount', 'other'].includes(suggestion.actionType)
       ? (suggestion.actionType as 'call' | 'email' | 'meeting' | 'follow_up' | 'proposal' | 'other')
       : 'other';
 

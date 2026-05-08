@@ -45,9 +45,11 @@ function CreateWorkflowDialog() {
     if (triggerType === "deal_stagnant" || triggerType === "no_activity") triggerConfig.days = parseInt(triggerDays) || 7;
     if (triggerType === "stage_change") triggerConfig.stage = triggerStage;
     if (triggerType === "task_overdue") triggerConfig.days_overdue = parseInt(triggerDays) || 1;
+    if (triggerType === "price_clicked_repeatedly") triggerConfig.clicks_threshold = 3;
 
     const actionConfig: Record<string, unknown> = {};
     if (actionType === "create_task") { actionConfig.task_title = actionTaskTitle; actionConfig.task_type = "follow_up"; actionConfig.priority = "high"; }
+    if (actionType === "call_now") { actionConfig.task_title = "LIGAR AGORA: Lead demonstrou alto interesse"; actionConfig.task_type = "call"; actionConfig.priority = "urgent"; }
     if (actionType === "send_notification") actionConfig.message = actionNote || `Automação: ${name}`;
     if (actionType === "change_stage") actionConfig.target_stage = triggerStage;
     if (actionType === "add_note") actionConfig.note = actionNote || "Nota automática adicionada";

@@ -11,13 +11,20 @@ interface PriorityColumnProps {
   activeId: string | null;
 }
 
-const priorityConfig: Record<TaskPriority, { 
+const priorityConfig: Record<string, { 
   label: string; 
   icon: LucideIcon; 
   color: string;
   bgColor: string;
   borderColor: string;
 }> = {
+  urgent: { 
+    label: 'Urgente', 
+    icon: Flame, 
+    color: 'text-destructive',
+    bgColor: 'bg-destructive/5',
+    borderColor: 'border-destructive/20'
+  },
   high: { 
     label: 'Prioridade Alta', 
     icon: Flame, 

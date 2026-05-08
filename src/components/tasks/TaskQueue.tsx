@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CheckCircle, Calendar, Columns3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const PRIORITIES: TaskPriority[] = ['high', 'medium', 'low'];
+const PRIORITIES: TaskPriority[] = ['urgent', 'high', 'medium', 'low'];
 
 export function TaskQueue() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>('all');
@@ -37,7 +37,7 @@ export function TaskQueue() {
   const groupedTasks = tasks?.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
 
   const findTaskById = (id: string) => tasks?.find(task => task.id === id);
-  const getPriorityLabel = (p: TaskPriority) => ({ high: 'alta', medium: 'média', low: 'baixa' }[p]);
+  const getPriorityLabel = (p: TaskPriority) => ({ urgent: 'urgente', high: 'alta', medium: 'média', low: 'baixa' }[p]);
 
   const handleDragStart = (event: DragStartEvent) => { const task = findTaskById(event.active.id as string); if (task) setActiveTask(task); };
   const handleDragOver = (_event: DragOverEvent) => {};
