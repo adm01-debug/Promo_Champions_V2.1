@@ -78,9 +78,18 @@ const SECTION_MAP: Record<string, string> = {
 
 const Index = () => {
   const { section } = useParams<{ section?: string }>();
-  if (section && !(section in SECTION_MAP) && section !== "visao-geral") {
-    return <Navigate to="/dashboard/visao-geral" replace />;
+  const navigate = useNavigate();
+  useDashboardRedirect();
+
+  // Validate section
+  const isValidSection = section && (section in SECTION_MAP || section === "visao-geral");
+  
+  // If we are on root "/", we don't redirect here, AppRoutes handles it or useDashboardRedirect might.
+  // But if we have a section and it's invalid, we show 404.
+  if (section && !isValidSection) {
+    return <Navigate to="/404" replace />;
   }
+
   const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
   const { theme } = useDashboardTheme();
