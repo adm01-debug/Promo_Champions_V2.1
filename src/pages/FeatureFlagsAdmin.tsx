@@ -31,7 +31,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       toast.success("Flag atualizada");
     },
   });
@@ -42,7 +42,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       toast.success("Rollout atualizado");
     },
   });
@@ -59,7 +59,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       setNewKey("");
       setNewDesc("");
       setShowAdd(false);
@@ -73,7 +73,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       toast.success("Feature flag removida");
     },
   });
