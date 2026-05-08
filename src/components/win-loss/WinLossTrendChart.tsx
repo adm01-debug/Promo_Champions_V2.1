@@ -73,7 +73,7 @@ export const WinLossTrendChart = memo(function WinLossTrendChart({
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart
               data={merged}
-              onClick={(e) => {
+              onClick={(e: any) => {
                 const period = (e?.activePayload?.[0]?.payload as TrendPoint | undefined)?.period;
                 if (period && onPointClick) onPointClick(period);
               }}
