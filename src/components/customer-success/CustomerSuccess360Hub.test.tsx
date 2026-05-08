@@ -5,6 +5,13 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { useToast } from "@/hooks/use-toast";
 import "@testing-library/jest-dom";
 
+// Standard jsPDF mock
+const mockJsPDF = {
+  text: vi.fn(),
+  save: vi.fn(),
+  autoTable: vi.fn(),
+};
+
 // Mock the hooks
 vi.mock("@/hooks/customer-success/useCustomerSuccess360", () => ({
   useCustomerSuccess360: vi.fn(),
@@ -26,14 +33,12 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Mock jsPDF and PapaParse
-vi.mock("jspdf", () => ({
-  jsPDF: vi.fn().mockImplementation(() => ({
-    text: vi.fn(),
-    save: vi.fn(),
-    autoTable: vi.fn(),
-  })),
-}));
+// Proper jsPDF mock for Vitest
+vi.mock("jspdf", () => {
+  return {
+    jsPDF: vi.fn().mockImplementation(() => mockJsPDF)
+  };
+});
 
 vi.mock("papaparse", () => ({
   default: {
@@ -74,12 +79,8 @@ const mockData = {
     { id: "1", name: "Account A", tier: "Enterprise", health_v2: 90, annual_revenue: 50000, open_tickets: 1 },
     { id: "2", name: "Account B", tier: "Pro", health_v2: 70, annual_revenue: 20000, open_tickets: 2 },
   ],
-  tickets: [
-    { id: "t1", status: "open", created_at: new Date().toISOString() }
-  ],
-  renewals: [
-    { id: "r1", renewal_date: new Date().toISOString(), contract_value: 1000 }
-  ],
+  tickets: [],
+  renewals: [],
   usage: [],
   onboarding: [],
   expansion: [],
@@ -106,7 +107,6 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // Check for skeletons - specifically searching for 'animate-pulse' divs
     const container = screen.getByTestId("loading-skeletons");
     expect(container).toBeInTheDocument();
   });
@@ -140,7 +140,9 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    expect(screen.getByText(/Customer Success 360/i)).toBeInTheDocument();
+    // Select the H1 specifically to avoid title collision
+    const heading = screen.getByRole("heading", { level: 1, name: /Customer Success 360/i });
+    expect(heading).toBeInTheDocument();
     expect(screen.getByText("85/100")).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument(); // Tickets
   });
@@ -171,7 +173,8 @@ describe("CustomerSuccess360Hub", () => {
     const exportButton = screen.getByText("PDF");
     fireEvent.click(exportButton);
     
-    expect(vi.mocked(require("jspdf").jsPDF)).toHaveBeenCalled();
+    const { jsPDF } = require("jspdf");
+    expect(jsPDF).toHaveBeenCalled();
   });
 
   it("opens order modal when clicking 'Ver Detalhes'", async () => {
@@ -183,11 +186,11 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // Switch to Pedidos tab
-    const ordersTab = screen.getByText(/Pedidos/i);
+    // Switch to Pedidos tab - using partial match if needed
+    const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
     fireEvent.click(ordersTab);
 
-    // Find first 'Ver Detalhes' button
+    // Find 'Ver Detalhes' button in the orders table
     const detailButtons = screen.getAllByText(/Ver Detalhes/i);
     fireEvent.click(detailButtons[0]);
 
@@ -215,10 +218,8 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // Pedidos tab
-    fireEvent.click(screen.getByText(/Pedidos/i));
+    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
     
-    // Ver Detalhes
     const detailButtons = screen.getAllByText(/Ver Detalhes/i);
     fireEvent.click(detailButtons[0]);
 
