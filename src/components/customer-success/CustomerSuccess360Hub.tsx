@@ -122,14 +122,25 @@ export function CustomerSuccess360Hub() {
     }).slice(-12);
   }, [renewals]);
 
-  // Cohort Analysis (True First Purchase based on account creation)
+  // Cohort Analysis (True First Purchase based on earliest order)
   const cohortData = useMemo(() => {
     const cohorts: Record<string, { month: string; retained: number; churned: number; revenue: number }> = {};
+    const firstOrderMap = new Map<string, string>();
+
+    // Find first order for each account
+    orders.forEach(o => {
+      const accId = (o as any).account_id || o.user_id;
+      const currentFirst = firstOrderMap.get(accId);
+      if (!currentFirst || isAfter(parseISO(currentFirst), parseISO(o.created_at))) {
+        firstOrderMap.set(accId, o.created_at);
+      }
+    });
     
     accounts.forEach(a => {
-      const createdAt = (a as any).created_at;
-      if (!createdAt) return;
-      const month = format(startOfMonth(parseISO(createdAt)), "MMM yy", { locale: ptBR });
+      const firstDate = firstOrderMap.get(a.id) || (a as any).created_at;
+      if (!firstDate) return;
+      
+      const month = format(startOfMonth(parseISO(firstDate)), "MMM yy", { locale: ptBR });
       if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0, revenue: 0 };
       
       // Retention simulation: Health > 50 is retained
@@ -143,8 +154,8 @@ export function CustomerSuccess360Hub() {
       const dateA = parseISO(`01 ${a.month.replace(" ", " 20")}`);
       const dateB = parseISO(`01 ${b.month.replace(" ", " 20")}`);
       return dateA.getTime() - dateB.getTime();
-    }).slice(-6);
-  }, [accounts]);
+    }).slice(-12);
+  }, [accounts, orders]);
 
   const ordersByStatus = useMemo(() => {
     const statusMap: Record<string, { count: number; value: number; color: string; status: string; key: string }> = {
