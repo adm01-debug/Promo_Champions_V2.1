@@ -15,7 +15,17 @@ import { Badge } from "@/components/ui/badge";
 export default function AdminComercial() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("metas");
-  const currentMonth = format(new Date(), "yyyy-MM") + "-01";
+  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"));
+  const currentMonthDate = selectedMonth + "-01";
+
+  // Fetch Current User for requester_id
+  const { data: user } = useQuery({
+    queryKey: ["current-user"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      return user;
+    },
+  });
 
   // Fetch Salespeople
   const { data: salespeople, isLoading: loadingSalespeople } = useQuery({
@@ -23,8 +33,21 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("salespeople")
-        .select("id, name, role, commission_rate, is_active")
+        .select("id, name, role, is_active")
         .eq("is_active", true);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch Commission Configs for selected month
+  const { data: commissionConfigs, isLoading: loadingCommissions } = useQuery({
+    queryKey: ["admin-commissions", selectedMonth],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("salesperson_commission_configs")
+        .select("*")
+        .eq("month", currentMonthDate);
       if (error) throw error;
       return data;
     },
@@ -32,12 +55,12 @@ export default function AdminComercial() {
 
   // Fetch Goals
   const { data: goals, isLoading: loadingGoals } = useQuery({
-    queryKey: ["admin-goals", currentMonth],
+    queryKey: ["admin-goals", selectedMonth],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales_goals")
         .select("*")
-        .eq("month", currentMonth);
+        .eq("month", currentMonthDate);
       if (error) throw error;
       return data;
     },
@@ -45,12 +68,51 @@ export default function AdminComercial() {
 
   // Fetch Scoring Rules
   const { data: rules, isLoading: loadingRules } = useQuery({
-    queryKey: ["admin-scoring-rules"],
+    queryKey: ["admin-scoring-rules", selectedMonth],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("race_scoring_rules")
         .select("*")
+        .eq("month", currentMonthDate)
         .order("created_at", { ascending: true });
+      if (error) throw error;
+      
+      // If no rules for this month, maybe fetch defaults or current
+      if (!data || data.length === 0) {
+        const { data: currentRules } = await supabase
+          .from("race_scoring_rules")
+          .select("*")
+          .is("month", null)
+          .order("created_at", { ascending: true });
+        return currentRules || [];
+      }
+      return data;
+    },
+  });
+
+  // Fetch Approval Requests
+  const { data: approvalRequests, isLoading: loadingApprovals } = useQuery({
+    queryKey: ["admin-approvals"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commercial_approval_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch Audit Logs
+  const { data: auditLogs, isLoading: loadingLogs } = useQuery({
+    queryKey: ["admin-audit-logs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("audit_logs")
+        .select("*")
+        .in("entity_type", ["goal", "scoring_rule", "commission"])
+        .order("created_at", { ascending: false })
+        .limit(50);
       if (error) throw error;
       return data;
     },
