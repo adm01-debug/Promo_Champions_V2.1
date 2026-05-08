@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Flame, CalendarDays, Users, TrendingUp, Target, ShieldCheck } from "lucide-react";
+import { Brain, Flame, CalendarDays, Users, TrendingUp, Target, ShieldCheck, History, AlertTriangle, ShieldAlert } from "lucide-react";
 import { ClientSelector } from "./ClientSelector";
 import { PurchaseHeatmapGrid } from "./PurchaseHeatmapGrid";
 import { PurchasePredictionCard } from "./PurchasePredictionCard";
 import { SeasonalityHeatmap } from "./SeasonalityHeatmap";
+import { IntelligenceAlerts } from "../dashboard/modules/IntelligenceAlerts";
 import { EmptyStateGuide } from "./EmptyStateGuide";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
