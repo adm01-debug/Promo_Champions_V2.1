@@ -175,10 +175,4 @@ describe("CustomerSuccess360Hub", () => {
     expect(screen.getByText("ORD-002")).toBeInTheDocument();
     expect(screen.queryByText("ORD-001")).not.toBeInTheDocument();
   });
-    fireEvent.change(searchInput, { target: { value: "ORD-002" } });
-    
-    expect(screen.getByText("ORD-002")).toBeInTheDocument();
-    // ORD-001 shouldn't be here since it's "delivered" not "cancelled"
-    expect(screen.queryByText("ORD-001")).not.toBeInTheDocument();
-  });
 });
