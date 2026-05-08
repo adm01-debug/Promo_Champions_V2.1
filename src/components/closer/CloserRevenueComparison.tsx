@@ -221,7 +221,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
                 <LabelList 
                   dataKey="revenue" 
                   position="right" 
-                  formatter={formatCurrencyFull}
+                  formatter={(value: any) => formatCurrencyFull(Number(value))}
                   style={{ 
                     fill: "hsl(var(--foreground))", 
                     fontSize: 11,
