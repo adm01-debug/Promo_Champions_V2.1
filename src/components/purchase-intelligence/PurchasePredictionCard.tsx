@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   Zap,
   ChevronRight,
-  MousePointerClick
+  MousePointerClick,
+  Info
 } from "lucide-react";
 import {
   Tooltip,
@@ -23,6 +24,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { usePurchaseIntelligence } from "@/hooks/purchase-intelligence/usePurchaseIntelligence";
 import {
   CONTACT_WINDOW_LABELS,
