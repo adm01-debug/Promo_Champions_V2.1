@@ -39,6 +39,7 @@ Deno.serve(async (req) => {
     const expansion = expansionRes.data ?? [];
     const surveys = surveysRes.data ?? [];
     const qbrs = qbrRes.data ?? [];
+    const orders = ordersRes.data ?? [];
 
     const now = Date.now();
     const openTickets = tickets.filter((t) => t.status === "open" || t.status === "pending");
