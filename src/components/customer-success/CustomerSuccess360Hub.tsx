@@ -550,49 +550,73 @@ export function CustomerSuccess360Hub() {
             </div>
             
             <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
-              {modalStats.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start bg-muted/30 p-4 rounded-xl border border-border/50">
-                  <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {modalStats.length > 0 && (
+                  <div className="bg-muted/30 p-4 rounded-xl border border-border/50 space-y-3">
                     <h4 className="text-sm font-semibold flex items-center gap-2">
                       <PieIcon className={`h-4 w-4 ${orderModalStatus === 'cancelled' ? 'text-destructive' : 'text-primary'}`} />
                       {orderModalStatus === 'cancelled' ? 'Motivos de Cancelamento' : 'Principais Clientes'}
                     </h4>
-                    <div className="space-y-1">
-                      {modalStats.slice(0, 5).map((stat, i) => (
-                        <div key={i} className="flex justify-between text-xs items-center">
-                          <span className="text-muted-foreground truncate max-w-[180px]">{stat.name}</span>
-                          <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-bold">
-                            {stat.value}
-                          </Badge>
-                        </div>
-                      ))}
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="flex-1 space-y-1">
+                        {modalStats.slice(0, 4).map((stat, i) => (
+                          <div key={i} className="flex justify-between text-[11px] items-center">
+                            <span className="text-muted-foreground truncate max-w-[140px]">{stat.name}</span>
+                            <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-bold">
+                              {stat.value}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="h-[80px] w-[100px] shrink-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={modalStats} cx="50%" cy="50%" innerRadius={20} outerRadius={35} paddingAngle={2} dataKey="value">
+                              {modalStats.map((_, index) => (
+                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
                   </div>
-                  <div className="h-[140px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={modalStats}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={30}
-                          outerRadius={50}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {modalStats.map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "8px", border: "1px solid hsl(var(--border))" }}
-                          itemStyle={{ fontSize: "12px" }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
+                )}
+
+                {orderModalStatus !== 'cancelled' && lossStats.length > 0 && (
+                  <div className="bg-destructive/5 p-4 rounded-xl border border-destructive/10 space-y-3">
+                    <h4 className="text-sm font-semibold text-destructive flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Análise de Perdas (Geral)
+                    </h4>
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="flex-1 space-y-1">
+                        {lossStats.slice(0, 4).map((stat, i) => (
+                          <div key={i} className="flex justify-between text-[11px] items-center">
+                            <span className="text-destructive/70 truncate max-w-[140px]">{stat.name}</span>
+                            <Badge variant="outline" className="h-4 px-1.5 text-[10px] font-bold border-destructive/20 text-destructive">
+                              {stat.value}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="h-[80px] w-[100px] shrink-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={lossStats} cx="50%" cy="50%" innerRadius={20} outerRadius={35} paddingAngle={2} dataKey="value">
+                              {lossStats.map((_, index) => (
+                                <Cell key={`cell-loss-${index}`} fill={CHART_COLORS[(index + 3) % CHART_COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
