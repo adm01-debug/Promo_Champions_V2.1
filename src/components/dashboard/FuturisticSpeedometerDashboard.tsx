@@ -107,13 +107,15 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
       whileHover={{ y: -3, transition: { type: "spring", stiffness: 300, damping: 20 } }}
       className="relative group"
     >
-      {/* Pulsing ambient glow */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl blur-2xl pointer-events-none"
-        style={{ background: `radial-gradient(circle at 50% 60%, ${colors.glow}, transparent 70%)` }}
-        animate={{ opacity: [0.35, 0.7, 0.35] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {/* Pulsing ambient glow - Cyber Only */}
+      {theme === "cyber" && (
+        <motion.div
+          className="absolute inset-0 rounded-2xl blur-2xl pointer-events-none"
+          style={{ background: `radial-gradient(circle at 50% 60%, ${colors.glow}, transparent 70%)` }}
+          animate={{ opacity: [0.35, 0.7, 0.35] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
 
       {/* Rotating conic neon ring */}
       <motion.div
