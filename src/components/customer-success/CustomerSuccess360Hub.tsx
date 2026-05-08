@@ -406,7 +406,7 @@ export function CustomerSuccess360Hub() {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders
+                    {(filteredData?.orders || [])
                       .filter(o => {
                         const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
                         return s === orderModalStatus;
