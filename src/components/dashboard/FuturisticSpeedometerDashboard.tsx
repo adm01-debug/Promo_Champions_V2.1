@@ -387,15 +387,6 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
     </motion.div>
   );
 };
-            <div className="text-[10px] text-muted-foreground/70 font-mono uppercase tracking-wider mt-0.5">
-              max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
 
 const PERIOD_STORAGE_KEY = "dashboard.speedometer.period";
 const SALESPERSON_STORAGE_KEY = "dashboard.speedometer.salesperson";
