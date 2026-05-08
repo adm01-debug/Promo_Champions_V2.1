@@ -148,7 +148,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
 
   // Novo: Gatilho de Intenção - Proposta Aberta / Cliques
   const highInterestLeads = allActivities.filter(a => 
-    (a.activity_type === 'proposal_view' || a.activity_type === 'price_click') && 
+    (a.activity_type as string === 'proposal_view' || a.activity_type as string === 'price_click') && 
     (now - new Date(a.created_at).getTime()) / 60000 < 30 // Últimos 30 min
   );
 
