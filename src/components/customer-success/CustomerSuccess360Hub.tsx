@@ -35,6 +35,9 @@ const SEMA_BG: Record<string, string> = {
 export function CustomerSuccess360Hub() {
   const { data, isLoading } = useCustomerSuccess360();
   const [period, setPeriod] = useState("30");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [orderModalStatus, setOrderModalStatus] = useState<string | null>(null);
 
   const s = data?.summary;
   const accounts = data?.accounts ?? [];
@@ -45,6 +48,7 @@ export function CustomerSuccess360Hub() {
   const expansion = data?.expansion ?? [];
   const surveys = data?.surveys ?? [];
   const qbrs = data?.qbrs ?? [];
+  const orders = data?.orders ?? [];
 
   // Data Filtering by Period
   const filteredData = useMemo(() => {
