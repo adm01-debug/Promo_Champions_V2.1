@@ -39,7 +39,10 @@ export function CadenceFunnelConfig() {
     condition_type: "email_open",
     condition_value: 1,
     time_window_hours: 24,
-    is_active: true
+    is_active: true,
+    notify_push: false,
+    notify_email: false,
+    alert_priority: 'normal'
   });
 
   const handleAddRule = async () => {
@@ -56,7 +59,10 @@ export function CadenceFunnelConfig() {
           condition_type: newRule.condition_type,
           condition_value: newRule.condition_value,
           time_window_hours: newRule.time_window_hours,
-          is_active: newRule.is_active
+          is_active: newRule.is_active,
+          notify_push: newRule.notify_push,
+          notify_email: newRule.notify_email,
+          alert_priority: newRule.alert_priority
         }]);
 
       if (error) throw error;

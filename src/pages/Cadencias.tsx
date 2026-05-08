@@ -23,6 +23,9 @@ import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimul
 import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
 import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
 import { CadenceFunnelConfig } from "@/components/sales/cadence/CadenceFunnelConfig";
+import { LeadDetailedAuditLogs } from "@/components/sales/cadence/LeadDetailedAuditLogs";
+import { Tabs as UIRuntimeTabs, TabsContent as UIRuntimeTabsContent, TabsList as UIRuntimeTabsList, TabsTrigger as UIRuntimeTabsTrigger } from "@/components/ui/tabs";
+import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
@@ -30,6 +33,8 @@ export default function Cadencias() {
   const deleteCadence = useDeleteCadence();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const { data: allProspects } = useProspectCadences();
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 
@@ -98,6 +103,10 @@ export default function Cadencias() {
               <TabsTrigger value="templates" className="data-[state=active]:bg-background">
                 <FileText className="h-4 w-4 mr-2" />
                 Templates SINGU
+              </TabsTrigger>
+              <TabsTrigger value="audit" className="data-[state=active]:bg-background">
+                <Search className="h-4 w-4 mr-2" />
+                Auditoria por Lead
               </TabsTrigger>
             </TabsList>
 
