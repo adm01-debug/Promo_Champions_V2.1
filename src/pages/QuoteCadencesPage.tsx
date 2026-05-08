@@ -24,6 +24,7 @@ import { quoteCadencesToCsvRows } from "@/lib/quoteCadenceExport";
 import { useQuoteCadenceShortcuts } from "@/hooks/cadences/useQuoteCadenceShortcuts";
 
 type Filter = "all" | "active" | "paused" | "completed";
+type ViewMode = "monitoring" | "strategy";
 
 export default function QuoteCadencesPage() {
   useQuoteCadenceRealtime();
@@ -31,6 +32,7 @@ export default function QuoteCadencesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const todayOnly = searchParams.get("filter") === "today";
   const [filter, setFilter] = useState<Filter>("active");
+  const [viewMode, setViewMode] = useState<ViewMode>("monitoring");
   const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
   const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(emptyQuoteCadenceFilters);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
