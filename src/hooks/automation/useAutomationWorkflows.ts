@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
 import { insertPayload } from "@/lib/supabase/typed-payloads";
 
-export type TriggerType = "deal_created" | "stage_changed" | "activity_logged" | "scheduled" | "manual" | "no_activity_days";
-export type ActionType = "create_task" | "send_notification" | "update_stage" | "log_activity" | "assign_owner";
+export type TriggerType = "deal_created" | "stage_changed" | "activity_logged" | "scheduled" | "manual" | "no_activity_days" | "proposal_opened" | "price_clicked";
+export type ActionType = "create_task" | "send_notification" | "update_stage" | "log_activity" | "assign_owner" | "create_call_now_task";
 
 export interface WorkflowAction {
   type: ActionType;
