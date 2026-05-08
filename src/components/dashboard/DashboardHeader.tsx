@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio, Monitor, Zap } from "lucide-react";
+import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio, Monitor, Zap, BarChart3 } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
