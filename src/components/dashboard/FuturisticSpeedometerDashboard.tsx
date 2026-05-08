@@ -338,11 +338,35 @@ export const FuturisticSpeedometerDashboard = () => {
           <div>
             <h2 className="font-display text-lg font-bold tracking-tight">Performance HUD</h2>
             <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
-              Telemetria · {PERIOD_LABELS[period].label}
+              Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Salesperson selector */}
+          <Select value={salespersonFilter} onValueChange={setSalespersonFilter}>
+            <SelectTrigger
+              className="h-8 w-[200px] bg-background/60 border-border/40 backdrop-blur text-[11px] font-mono"
+              aria-label="Filtrar por vendedor"
+            >
+              <Users className="h-3.5 w-3.5 mr-1.5 text-primary shrink-0" />
+              <SelectValue placeholder="Selecionar vendedor" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover/95 backdrop-blur-xl">
+              <SelectItem value={ME}>
+                <span className="font-mono text-xs">Eu{currentUser?.name ? ` (${currentUser.name})` : ""}</span>
+              </SelectItem>
+              <SelectItem value={ALL_SALESPEOPLE}>
+                <span className="font-mono text-xs">Toda Equipe</span>
+              </SelectItem>
+              {salespeople.map((sp) => (
+                <SelectItem key={sp.id} value={sp.id}>
+                  <span className="font-mono text-xs">{sp.name}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-background/60 border border-border/40 backdrop-blur">
             {PERIOD_OPTIONS.map((opt) => (
               <button
