@@ -65,7 +65,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard, Gauge } from "lucide-react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from "react-router-dom";
+import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
 
 const SECTION_MAP: Record<string, string> = {
   performance: "performance",
@@ -77,9 +78,18 @@ const SECTION_MAP: Record<string, string> = {
 
 const Index = () => {
   const { section } = useParams<{ section?: string }>();
-  if (section && !(section in SECTION_MAP) && section !== "visao-geral") {
-    return <Navigate to="/dashboard/visao-geral" replace />;
+  const navigate = useNavigate();
+  useDashboardRedirect();
+
+  // Validate section
+  const isValidSection = section && (section in SECTION_MAP || section === "visao-geral");
+  
+  // If we are on root "/", we don't redirect here, AppRoutes handles it or useDashboardRedirect might.
+  // But if we have a section and it's invalid, we show 404.
+  if (section && !isValidSection) {
+    return <Navigate to="/404" replace />;
   }
+
   const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
   const { theme } = useDashboardTheme();
@@ -286,7 +296,14 @@ const Index = () => {
             )}
 
             {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
-            <Tabs value={activeTab} className="w-full">
+            <Tabs 
+              value={activeTab} 
+              onValueChange={(value) => {
+                const section = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
+                navigate(`/dashboard/${section}`);
+              }}
+              className="w-full"
+            >
 
               {/* === VISÃO GERAL === */}
               <TabsContent value="overview" className="space-y-6 mt-6 focus-visible:outline-none">

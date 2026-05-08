@@ -94,8 +94,9 @@ export function AppRoutes() {
                   <Routes>
                     {/* ─── Dashboards ────────────────────────────── */}
                     <Route path="/" element={<Index />} />
-                    <Route path="/dashboard" element={<Navigate to="/dashboard/visao-geral" replace />} />
+                    <Route path="/dashboard" element={<Index />} />
                     <Route path="/dashboard/:section" element={<Index />} />
+                    <Route path="/dashboard/*" element={<NotFound />} />
 
                     <Route path="/sdr" element={<SDRDashboard />} />
                     <Route path="/closer" element={<CloserDashboard />} />
