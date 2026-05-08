@@ -711,39 +711,36 @@ export function CustomerSuccess360Hub() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th 
-                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('order_number')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Pedido <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'order_number' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th 
-                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('account_name')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Cliente <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'account_name' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th 
-                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('created_at')}
-                        >
-                          <div className="flex items-center gap-1">
-                            Data <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'created_at' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th 
-                          className="p-3 text-right cursor-pointer hover:bg-muted/80 transition-colors"
-                          onClick={() => toggleSort('total')}
-                        >
-                          <div className="flex items-center gap-1 justify-end">
-                            Valor <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'total' ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        </th>
-                        <th className="p-3 text-left">Informações</th>
+                        <SortableHeader 
+                          label="Pedido" 
+                          field="order_number" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                        />
+                        <SortableHeader 
+                          label="Cliente" 
+                          field="account_name" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                        />
+                        <SortableHeader 
+                          label="Data" 
+                          field="created_at" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                        />
+                        <SortableHeader 
+                          label="Valor" 
+                          field="total" 
+                          currentField={orderSortField} 
+                          order={orderSortOrder} 
+                          onSort={toggleSort} 
+                          align="right"
+                        />
+                        <th className="p-3 text-left font-medium text-muted-foreground">Informações</th>
                       </tr>
                     </thead>
                     <tbody>
