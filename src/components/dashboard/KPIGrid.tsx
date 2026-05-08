@@ -1,8 +1,9 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Activity } from "lucide-react";
+import { BarChart3, Activity, Receipt, Clock, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCountUp } from "@/lib/useCountUp";
+import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { cn } from "@/lib/utils";
 
 interface KPIItem {
