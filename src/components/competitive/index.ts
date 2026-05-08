@@ -23,3 +23,4 @@ export { PerformanceBets } from './PerformanceBets';
 export { TerritoryWars } from './TerritoryWars';
 export { EnhancedTVMode } from './EnhancedTVMode';
 export { FeatureComparison } from './FeatureComparison';
+export { ImprovementPlan } from './ImprovementPlan';
