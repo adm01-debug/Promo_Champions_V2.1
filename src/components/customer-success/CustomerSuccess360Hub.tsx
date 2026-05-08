@@ -160,17 +160,76 @@ export function CustomerSuccess360Hub() {
     return Object.values(statusMap);
   }, [filteredData?.orders]);
 
-  const cancellationStats = useMemo(() => {
-    const reasons: Record<string, number> = {};
-    orders.filter(o => o.status === "cancelled").forEach(o => {
-      const reason = o.cancellation_reason || "Não informado";
-      reasons[reason] = (reasons[reason] || 0) + 1;
+  const modalStats = useMemo(() => {
+    if (!orderModalStatus) return [];
+    const targetOrders = (filteredData?.orders || []).filter(o => {
+      const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+      return s === orderModalStatus;
     });
 
-    return Object.entries(reasons)
+    const counts: Record<string, number> = {};
+    targetOrders.forEach(o => {
+      let key = "Não informado";
+      if (orderModalStatus === "cancelled") {
+        key = o.cancellation_reason || "Não informado";
+      } else {
+        // For other statuses, show top customers as "sources" of orders
+        key = accountById.get((o as any).account_id)?.name || "Cliente Desconhecido";
+      }
+      counts[key] = (counts[key] || 0) + 1;
+    });
+
+    return Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
-  }, [orders]);
+  }, [filteredData?.orders, orderModalStatus, accountById]);
+
+  const filteredModalOrders = useMemo(() => {
+    if (!orderModalStatus) return [];
+    
+    return (filteredData?.orders || []).filter(o => {
+      const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+      if (s !== orderModalStatus) return false;
+      
+      if (!orderSearch) return true;
+      
+      const search = orderSearch.toLowerCase();
+      const orderNum = o.order_number?.toString().toLowerCase() || "";
+      const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
+      
+      return orderNum.includes(search) || accountName.includes(search);
+    });
+  }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
+
+  const sortedAndPaginatedOrders = useMemo(() => {
+    const sorted = [...filteredModalOrders].sort((a, b) => {
+      let valA: any = a[orderSortField as keyof typeof a];
+      let valB: any = b[orderSortField as keyof typeof b];
+
+      if (orderSortField === "account_name") {
+        valA = accountById.get((a as any).account_id)?.name || "";
+        valB = accountById.get((b as any).account_id)?.name || "";
+      }
+
+      if (valA < valB) return orderSortOrder === "asc" ? -1 : 1;
+      if (valA > valB) return orderSortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    const start = (orderPage - 1) * orderItemsPerPage;
+    return sorted.slice(start, start + orderItemsPerPage);
+  }, [filteredModalOrders, orderSortField, orderSortOrder, orderPage, accountById]);
+
+  const totalPages = Math.ceil(filteredModalOrders.length / orderItemsPerPage);
+
+  const toggleSort = (field: string) => {
+    if (orderSortField === field) {
+      setOrderSortOrder(orderSortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setOrderSortField(field);
+      setOrderSortOrder("asc");
+    }
+  };
 
   const handleDateChange = (type: "start" | "end", value: string) => {
     if (type === "start") {
