@@ -677,6 +677,7 @@ export function CustomerSuccess360Hub() {
                               variant="outline" 
                               size="sm" 
                               className="h-8 px-3"
+                              data-testid={`ver-detalhes-${row.key}`}
                               onClick={() => setOrderModalStatus(row.key)}
                             >
                               Ver Detalhes
