@@ -128,6 +128,7 @@ Deno.serve(async (req) => {
         expansion,
         surveys: surveys.slice(0, 100),
         qbrs,
+        orders,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
