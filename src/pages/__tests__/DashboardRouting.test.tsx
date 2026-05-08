@@ -54,18 +54,43 @@ vi.mock("@/hooks/useSalesRealtime", () => ({
   useSalesRealtime: vi.fn()
 }));
 
+// Mock do Competitive ranking hook
+vi.mock("@/hooks/useCompetitiveRanking", () => ({
+  useCompetitiveRanking: vi.fn(() => ({ data: [], isLoading: false }))
+}));
+
+// Mock do MyRankingNotification hook
+vi.mock("@/hooks/useRankingNotifications", () => ({
+  useMyRankingNotification: vi.fn(() => ({ data: null }))
+}));
+
+// Mock do Onboarding hook
+vi.mock("@/hooks/useOnboardingChecklist", () => ({
+  useOnboardingChecklist: vi.fn(() => ({ data: [], isLoading: false }))
+}));
+
 // Helper para ver a localização atual
 const LocationDisplay = () => {
   const location = useLocation();
   return <div data-testid="location-display">{location.pathname}</div>;
 };
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 const AllProviders = ({ children }: { children: React.ReactNode }) => (
-  <HelmetProvider>
-    <DashboardThemeProvider>
-      {children}
-    </DashboardThemeProvider>
-  </HelmetProvider>
+  <QueryClientProvider client={queryClient}>
+    <HelmetProvider>
+      <DashboardThemeProvider>
+        {children}
+      </DashboardThemeProvider>
+    </HelmetProvider>
+  </QueryClientProvider>
 );
 
 describe("Dashboard Routing", () => {
