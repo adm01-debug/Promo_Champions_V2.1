@@ -30,7 +30,7 @@ export function FollowUpSettings() {
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", user?.id)
+        .eq("user_id", user?.id || "")
         .maybeSingle();
       if (error) throw error;
       return data?.role;
@@ -255,11 +255,11 @@ export function FollowUpSettings() {
                   <div key={v.id} className="p-3 border rounded-lg hover:border-primary/30 transition-colors group">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <Badge variant="outline" className="text-[10px] mb-1">Versão {v.version_number}</Badge>
-                        <p className="text-[10px] text-muted-foreground">
-                          {format(new Date(v.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                        </p>
-                      </div>
+                    <Badge variant="outline" className="text-[10px] mb-1">Versão {v.version_number}</Badge>
+                    <p className="text-[10px] text-muted-foreground">
+                      {format(new Date(v.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                    </p>
+                  </div>
                       {isAdmin && (
                         <Button 
                           size="icon" 
@@ -284,7 +284,7 @@ export function FollowUpSettings() {
       {isAdmin && (
         <div className="flex justify-end">
           <Button 
-            onClick={() => updateSettings.mutate()} 
+            onClick={() => updateSettings.mutate(undefined)} 
             disabled={updateSettings.isPending || missingVariables.length > 0}
             className="gap-2"
           >
