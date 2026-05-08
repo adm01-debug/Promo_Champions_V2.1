@@ -580,19 +580,28 @@ export function CustomerSuccess360Hub() {
             setOrderPage(1);
           }
         }}>
-          <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
-            <div className="p-6 pb-2">
+          <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col p-0 overflow-hidden bg-background">
+            <div className="p-6 border-b bg-muted/20">
               <DialogHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
-                    <DialogDescription>
-                      Lista completa de pedidos filtrados por período e status.
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+                      <div className={`h-3 w-3 rounded-full ${ordersByStatus.find(s => s.key === orderModalStatus)?.color.replace("text-", "bg-")}`} />
+                      Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}
+                    </DialogTitle>
+                    <DialogDescription className="text-sm">
+                      Lista consolidada de pedidos filtrados por status e período.
                     </DialogDescription>
                   </div>
-                  <Badge variant="outline" className="text-sm px-3 py-1">
-                    {filteredModalOrders.length} {filteredModalOrders.length === 1 ? "pedido" : "pedidos"}
-                  </Badge>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right hidden md:block">
+                      <div className="text-2xl font-bold">{filteredModalOrders.length}</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Total Localizado</div>
+                    </div>
+                    <Badge variant="secondary" className="md:hidden text-sm px-3 py-1">
+                      {filteredModalOrders.length} pedidos
+                    </Badge>
+                  </div>
                 </div>
               </DialogHeader>
             </div>
