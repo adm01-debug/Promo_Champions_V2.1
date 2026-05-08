@@ -204,6 +204,7 @@ export interface FunnelRule {
   to_stage: string;
   condition_type: 'email_open' | 'quote_open' | 'price_click' | 'reply' | 'manual';
   condition_value: number;
+  time_window_hours: number;
   is_active: boolean;
 }
 
