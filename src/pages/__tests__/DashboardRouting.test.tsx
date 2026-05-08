@@ -150,11 +150,13 @@ describe("Dashboard Routing", () => {
 
   it("sincroniza abas com a URL (tabsContent renderiza corretamente)", async () => {
     render(
-      <MemoryRouter initialEntries={["/dashboard/performance"]}>
-        <Routes>
-          <Route path="/dashboard/:section" element={<Index />} />
-        </Routes>
-      </MemoryRouter>
+      <AllProviders>
+        <MemoryRouter initialEntries={["/dashboard/performance"]}>
+          <Routes>
+            <Route path="/dashboard/:section" element={<Index />} />
+          </Routes>
+        </MemoryRouter>
+      </AllProviders>
     );
 
     // Em performance devemos ver o speedometer
