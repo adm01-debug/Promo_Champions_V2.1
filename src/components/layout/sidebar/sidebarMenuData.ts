@@ -47,7 +47,6 @@ export const closerMainItems: MenuItem[] = [
 ];
 
 export const gestaoMainItems: MenuItem[] = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Vendedores", url: "/vendedores", icon: Users },
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
