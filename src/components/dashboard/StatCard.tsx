@@ -77,16 +77,18 @@ export const StatCard = React.memo(({
   return (
     <Card className={cn(
       "group relative overflow-hidden transition-all duration-300",
-      variantStyles[variant],
+      theme === "cyber" ? variantStyles[variant] : "bg-card border-border/40 hover:border-primary/20",
       heroStyles,
     )}>
       {/* Decorative cyber-elements */}
-      <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
-        <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-white/20 group-hover:border-white/40 transition-colors" />
-      </div>
+      {theme === "cyber" && (
+        <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
+          <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-white/20 group-hover:border-white/40 transition-colors" />
+        </div>
+      )}
       
       {/* Ambient Glow for Hero */}
-      {hero && (
+      {hero && theme === "cyber" && (
         <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/10 blur-[60px] rounded-full pointer-events-none" />
       )}
 
