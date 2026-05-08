@@ -1,4 +1,4 @@
-import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord } from "@/hooks/useCadences";
+import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord, ProspectCadence } from "@/hooks/useCadences";
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
@@ -24,7 +24,8 @@ import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
 import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
 import { CadenceFunnelConfig } from "@/components/sales/cadence/CadenceFunnelConfig";
 import { LeadDetailedAuditLogs } from "@/components/sales/cadence/LeadDetailedAuditLogs";
-import { Tabs as UIRuntimeTabs, TabsContent as UIRuntimeTabsContent, TabsList as UIRuntimeTabsList, TabsTrigger as UIRuntimeTabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
 
 export default function Cadencias() {
@@ -293,7 +294,7 @@ export default function Cadencias() {
                 {selectedLeadId ? (
                   <LeadDetailedAuditLogs 
                     clientId={selectedLeadId} 
-                    clientName={allProspects?.find((p: any) => p.sale_id === selectedLeadId)?.sale?.client_name} 
+                    clientName={allProspects?.find((p: any) => p.sale_id === selectedLeadId)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name} 
                   />
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">

@@ -156,8 +156,8 @@ export function useTodaysCadenceTasks() {
             cadence:cadences(*)
           )
         `)
-        .eq("scheduled_date", today)
-        .eq("status", "pending");
+        .eq("status", "pending")
+        .order("priority", { ascending: false });
 
       if (error) throw error;
       return data;
