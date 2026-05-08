@@ -244,6 +244,9 @@ const Index = () => {
             {/* ===== FUTURISTIC SPEEDOMETER HUD ===== */}
             <FuturisticSpeedometerDashboard />
 
+            {/* ===== MY GOAL ALERT ===== */}
+            <MyGoalAlertCard />
+
             {/* ===== FUTURISTIC RANKING ===== */}
             <FuturisticRanking />
 
