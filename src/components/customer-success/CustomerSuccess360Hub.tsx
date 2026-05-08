@@ -268,21 +268,24 @@ export function CustomerSuccess360Hub() {
   };
 
   const handleDateChange = (type: "start" | "end", value: string) => {
+    const today = new Date();
+    const selectedDate = parseISO(value);
+
     if (type === "start") {
-      if (endDate && value && isAfter(parseISO(value), parseISO(endDate))) {
+      if (endDate && value && isAfter(selectedDate, parseISO(endDate))) {
         toast({
-          title: "Data inválida",
-          description: "A data inicial não pode ser posterior à data final.",
+          title: "Período Inválido",
+          description: "A data inicial não pode ultrapassar a data final. Ajuste o intervalo para prosseguir.",
           variant: "destructive",
         });
         return;
       }
       setStartDate(value);
     } else {
-      if (startDate && value && isAfter(parseISO(startDate), parseISO(value))) {
+      if (startDate && value && isAfter(parseISO(startDate), selectedDate)) {
         toast({
-          title: "Data inválida",
-          description: "A data final não pode ser anterior à data inicial.",
+          title: "Período Inválido",
+          description: "A data final deve ser posterior à data inicial. Verifique o filtro selecionado.",
           variant: "destructive",
         });
         return;
