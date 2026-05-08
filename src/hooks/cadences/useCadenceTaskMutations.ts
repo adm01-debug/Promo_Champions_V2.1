@@ -24,12 +24,13 @@ export function useCompleteCadenceTask() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+      queryClient.invalidateQueries({ queryKey: ["lead-detailed-logs"] });
       toast.success("Tarefa concluída!");
     },
     onError: (error) => {
       toast.error("Erro ao concluir tarefa");
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error(error);
+        console.error(error);
       }
     },
   });
@@ -55,12 +56,13 @@ export function useSkipCadenceTask() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["lead-detailed-logs"] });
       toast.success("Tarefa pulada!");
     },
     onError: (error) => {
       toast.error("Erro ao pular tarefa");
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error(error);
+        console.error(error);
       }
     },
   });
