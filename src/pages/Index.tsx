@@ -9,7 +9,6 @@ import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState"
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBanner";
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
-import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";

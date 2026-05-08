@@ -136,7 +136,7 @@ const RankingRowCard = ({ row, maxRevenue, index }: { row: RankingRow; maxRevenu
                 {row.revenueChangePct >= 0 ? "+" : ""}
                 {row.revenueChangePct.toFixed(1)}%
               </span>
-              <span className={cn("font-display font-black text-sm tabular-nums", accent.color)}>
+              <span className={cn("font-display font-black text-base tabular-nums", accent.color)} style={{ textShadow: `0 0 12px ${accent.glow}` }}>
                 {fmtBRL(row.revenue)}
               </span>
             </div>
