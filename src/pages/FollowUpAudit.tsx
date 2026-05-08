@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, Filter, MessageCircle, Zap, UserPlus, Clock, History, AlertTriangle, RotateCw } from "lucide-react";
+import { Search, Filter, MessageCircle, Zap, UserPlus, Clock, History, AlertTriangle, RotateCw, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";

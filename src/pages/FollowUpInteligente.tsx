@@ -234,16 +234,18 @@ const FollowUpInteligente = () => {
       // Log each task creation
       if (insertedTasks) {
         for (const task of insertedTasks) {
-          await logAction.mutateAsync({
-            saleId: task.sale_id,
-            actionType: 'task_created',
-            details: { 
-              task_id: task.id, 
-              batch: true,
-              task_type: task.task_type 
-            },
-            status: 'success'
-          });
+          if (task.sale_id) {
+            await logAction.mutateAsync({
+              saleId: task.sale_id,
+              actionType: 'task_created',
+              details: { 
+                task_id: task.id, 
+                batch: true,
+                task_type: task.task_type 
+              },
+              status: 'success'
+            });
+          }
         }
       }
     },
