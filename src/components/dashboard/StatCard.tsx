@@ -108,7 +108,7 @@ export const StatCard = React.memo(({
             </p>
             <p className={cn(
               "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter",
-              hero && "text-6xl sm:text-8xl lg:text-9xl 2xl:text-[11rem] font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary-glow/80 selection:bg-primary/30 py-4 drop-shadow-[0_0_40px_rgba(139,92,246,0.5)]",
+              hero && "text-7xl sm:text-9xl lg:text-[10rem] 2xl:text-[12rem] font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary-glow/80 selection:bg-primary/30 py-6 drop-shadow-[0_0_60px_rgba(139,92,246,0.6)] animate-pulse-gentle",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
