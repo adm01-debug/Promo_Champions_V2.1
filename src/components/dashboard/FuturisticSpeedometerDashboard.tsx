@@ -42,46 +42,51 @@ const accentMap = {
   destructive: { stroke: "hsl(var(--destructive))", glow: "hsl(var(--destructive) / 0.5)", text: "text-destructive" },
 };
 
-const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta, size = 220 }: SpeedometerProps) => {
+const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta, size = 280 }: SpeedometerProps) => {
   const { theme } = useDashboardTheme();
   const [animatedValue, setAnimatedValue] = useState(0);
   const colors = accentMap[accent];
-  const pct = Math.min(1, max > 0 ? value / max : 0);
   const animatedPct = Math.min(1, max > 0 ? animatedValue / max : 0);
 
-  // Arc geometry: 240° arc from -210° to +30°
-  const radius = size / 2 - 24;
+  // Full circular gauge: 270° arc from -225° to +45° (gap at bottom)
   const cx = size / 2;
   const cy = size / 2;
-  const startAngle = -210;
-  const endAngle = 30;
-  const arcLength = endAngle - startAngle; // 240
-  const circumference = 2 * Math.PI * radius;
+  const outerRadius = size / 2 - 8;
+  const arcRadius = size / 2 - 28;
+  const innerRadius = size / 2 - 50;
+  const startAngle = -225;
+  const endAngle = 45;
+  const arcLength = endAngle - startAngle; // 270
+  const circumference = 2 * Math.PI * arcRadius;
   const arcRatio = arcLength / 360;
   const dashArc = circumference * arcRatio;
   const dashOffset = dashArc * (1 - animatedPct);
 
-  // Needle angle
+  // Needle angle (vertical up = -90°)
   const needleAngle = startAngle + arcLength * animatedPct;
 
   // Tick marks
   const ticks = useMemo(() => {
-    return Array.from({ length: 25 }).map((_, i) => {
-      const tickPct = i / 24;
+    return Array.from({ length: 33 }).map((_, i) => {
+      const tickPct = i / 32;
       const angle = (startAngle + arcLength * tickPct) * (Math.PI / 180);
-      const isMajor = i % 6 === 0;
-      const inner = radius - (isMajor ? 14 : 8);
-      const outer = radius - 2;
+      const isMajor = i % 4 === 0;
+      const inner = arcRadius - (isMajor ? 18 : 10);
+      const outer = arcRadius - 4;
+      const labelRadius = arcRadius - 30;
       return {
         x1: cx + inner * Math.cos(angle),
         y1: cy + inner * Math.sin(angle),
         x2: cx + outer * Math.cos(angle),
         y2: cy + outer * Math.sin(angle),
+        labelX: cx + labelRadius * Math.cos(angle),
+        labelY: cy + labelRadius * Math.sin(angle),
         active: tickPct <= animatedPct,
         major: isMajor,
+        labelValue: Math.round(max * tickPct),
       };
     });
-  }, [radius, cx, cy, startAngle, arcLength, animatedPct]);
+  }, [arcRadius, cx, cy, startAngle, arcLength, animatedPct, max]);
 
   useEffect(() => {
     const start = performance.now();
@@ -89,7 +94,6 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
     let raf = 0;
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / duration);
-      // ease out cubic
       const eased = 1 - Math.pow(1 - p, 3);
       setAnimatedValue(value * eased);
       if (p < 1) raf = requestAnimationFrame(tick);
@@ -102,205 +106,281 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -3, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-      className="relative group"
+      whileHover={{ scale: 1.03, transition: { type: "spring", stiffness: 300, damping: 20 } }}
+      className="relative group flex flex-col items-center"
+      style={{ width: size }}
     >
-      {/* Pulsing ambient glow - Cyber Only */}
-      {theme === "cyber" && (
-        <motion.div
-          className="absolute inset-0 rounded-2xl blur-2xl pointer-events-none"
-          style={{ background: `radial-gradient(circle at 50% 60%, ${colors.glow}, transparent 70%)` }}
-          animate={{ opacity: [0.35, 0.7, 0.35] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-        />
-      )}
-
-      {/* Rotating conic neon ring - Cyber Only */}
-      {theme === "cyber" && (
-        <motion.div
-          className="absolute -inset-px rounded-2xl opacity-60 pointer-events-none"
-          style={{
-            background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 60deg, transparent 140deg, transparent 220deg, ${colors.stroke} 300deg, transparent 360deg)`,
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-            padding: "1px",
-          }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-        />
-      )}
-
-      {/* Card */}
-      <div
-        className={cn(
-          "relative rounded-2xl border transition-all duration-300 p-5 overflow-hidden",
-          theme === "cyber" 
-            ? "border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl shadow-[inset_0_0_30px_rgba(var(--primary-rgb),0.05)]" 
-            : "bg-card border-border shadow-sm"
-        )}
-        style={theme === "cyber" ? { boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` } : {}}
-      >
-        {/* Grid overlay - Cyber Only */}
-        {theme === "cyber" && (
+      {/* Header above the gauge */}
+      <div className="relative flex items-center justify-between w-full mb-3 px-2">
+        <div className="flex items-center gap-2">
+          <div className={cn("p-1.5 rounded-lg bg-background/60 border border-border/40", colors.text)}>
+            <Icon className="h-3.5 w-3.5" />
+          </div>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            {label}
+          </span>
+        </div>
+        {delta !== undefined && (
           <div
-            className="absolute inset-0 opacity-[0.06] pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(${colors.stroke} 1px, transparent 1px), linear-gradient(90deg, ${colors.stroke} 1px, transparent 1px)`,
-              backgroundSize: "20px 20px",
-            }}
-          />
+            className={cn(
+              "flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border",
+              delta >= 0
+                ? "text-success border-success/30 bg-success/10"
+                : "text-destructive border-destructive/30 bg-destructive/10"
+            )}
+          >
+            {delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+            {delta >= 0 ? "+" : ""}
+            {delta.toFixed(1)}%
+          </div>
         )}
+      </div>
 
-        {/* Scanline sweep - Cyber Only */}
+      {/* Circular gauge container */}
+      <div className="relative" style={{ width: size, height: size }}>
+        {/* Pulsing ambient glow */}
         {theme === "cyber" && (
           <motion.div
-            className="absolute inset-x-0 h-[2px] pointer-events-none"
-            style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)`, opacity: 0.5 }}
-            animate={{ top: ["0%", "100%", "0%"] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 rounded-full blur-3xl pointer-events-none"
+            style={{ background: `radial-gradient(circle, ${colors.glow}, transparent 65%)` }}
+            animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.05, 0.95] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
           />
         )}
 
-        {/* Corner brackets - Cyber Only */}
-        {theme === "cyber" && (["top-2 left-2 border-t border-l", "top-2 right-2 border-t border-r", "bottom-2 left-2 border-b border-l", "bottom-2 right-2 border-b border-r"] as const).map((pos, i) => (
-          <div
-            key={i}
-            className={cn("absolute w-3 h-3 pointer-events-none", pos)}
-            style={{ borderColor: colors.stroke, opacity: 0.7 }}
+        {/* Rotating outer neon ring */}
+        {theme === "cyber" && (
+          <motion.div
+            className="absolute inset-0 rounded-full opacity-70 pointer-events-none"
+            style={{
+              background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 50deg, transparent 130deg, transparent 230deg, ${colors.stroke} 310deg, transparent 360deg)`,
+              WebkitMask: "radial-gradient(circle, transparent 47%, #000 49%, #000 50%, transparent 51%)",
+              mask: "radial-gradient(circle, transparent 47%, #000 49%, #000 50%, transparent 51%)",
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
-        ))}
+        )}
 
-        {/* Header */}
-        <div className="relative flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className={cn("p-1.5 rounded-lg bg-background/60 border border-border/40", colors.text)}>
-              <Icon className="h-3.5 w-3.5" />
-            </div>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              {label}
-            </span>
-          </div>
-          {delta !== undefined && (
-            <div
-              className={cn(
-                "flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border",
-                delta >= 0
-                  ? "text-success border-success/30 bg-success/10"
-                  : "text-destructive border-destructive/30 bg-destructive/10"
-              )}
-            >
-              {delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-              {delta >= 0 ? "+" : ""}
-              {delta.toFixed(1)}%
-            </div>
+        {/* Counter-rotating inner ring */}
+        {theme === "cyber" && (
+          <motion.div
+            className="absolute rounded-full opacity-40 pointer-events-none"
+            style={{
+              inset: "10%",
+              background: `conic-gradient(from 180deg, transparent 0deg, ${colors.stroke} 80deg, transparent 180deg, transparent 270deg, ${colors.stroke} 350deg, transparent 360deg)`,
+              WebkitMask: "radial-gradient(circle, transparent 78%, #000 80%, #000 81%, transparent 82%)",
+              mask: "radial-gradient(circle, transparent 78%, #000 80%, #000 81%, transparent 82%)",
+            }}
+            animate={{ rotate: -360 }}
+            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          />
+        )}
+
+        {/* Main circular card */}
+        <div
+          className={cn(
+            "absolute inset-0 rounded-full transition-all duration-300 overflow-hidden border",
+            theme === "cyber"
+              ? "bg-gradient-radial from-card/60 via-background/95 to-background/100 backdrop-blur-xl border-border/40"
+              : "bg-card border-border shadow-lg"
           )}
-        </div>
+          style={
+            theme === "cyber"
+              ? {
+                  background: `radial-gradient(circle at 50% 50%, ${colors.glow.replace(/[\d.]+\)$/, "0.08)")}, hsl(var(--background)) 70%)`,
+                  boxShadow: `inset 0 0 60px ${colors.glow}, 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}`,
+                }
+              : {}
+          }
+        />
 
-        {/* Gauge SVG */}
-        <div className="relative flex items-center justify-center" style={{ height: size * 0.75 }}>
-          <svg width={size} height={size * 0.85} viewBox={`0 0 ${size} ${size * 0.85}`} className="overflow-visible">
-            <defs>
-              <linearGradient id={`grad-${accent}-${label}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={colors.stroke} stopOpacity="0.3" />
-                <stop offset="100%" stopColor={colors.stroke} stopOpacity="1" />
-              </linearGradient>
-              <filter id={`glow-${accent}-${label}`}>
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
+        {/* Gauge SVG - perfectly square viewBox */}
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="absolute inset-0"
+        >
+          <defs>
+            <linearGradient id={`grad-${accent}-${label}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={colors.stroke} stopOpacity="0.4" />
+              <stop offset="50%" stopColor={colors.stroke} stopOpacity="1" />
+              <stop offset="100%" stopColor={colors.stroke} stopOpacity="0.7" />
+            </linearGradient>
+            <filter id={`glow-${accent}-${label}`}>
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <radialGradient id={`hub-${accent}-${label}`}>
+              <stop offset="0%" stopColor={colors.stroke} stopOpacity="1" />
+              <stop offset="60%" stopColor={colors.stroke} stopOpacity="0.4" />
+              <stop offset="100%" stopColor={colors.stroke} stopOpacity="0" />
+            </radialGradient>
+          </defs>
 
-            {/* Track */}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={radius}
-              fill="none"
-              stroke="hsl(var(--border))"
-              strokeOpacity="0.3"
-              strokeWidth="10"
-              strokeDasharray={`${dashArc} ${circumference}`}
-              strokeDashoffset="0"
-              transform={`rotate(${startAngle} ${cx} ${cy})`}
-              strokeLinecap="round"
-            />
+          {/* Outer decorative ring */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={outerRadius}
+            fill="none"
+            stroke={colors.stroke}
+            strokeOpacity="0.25"
+            strokeWidth="1"
+          />
 
-            {/* Active arc */}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={radius}
-              fill="none"
-              stroke={`url(#grad-${accent}-${label})`}
-              strokeWidth="10"
-              strokeDasharray={`${dashArc} ${circumference}`}
-              strokeDashoffset={dashOffset}
-              transform={`rotate(${startAngle} ${cx} ${cy})`}
-              strokeLinecap="round"
-              filter={`url(#glow-${accent}-${label})`}
-              style={{ transition: "stroke-dashoffset 0.1s linear" }}
-            />
+          {/* Track arc */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={arcRadius}
+            fill="none"
+            stroke="hsl(var(--border))"
+            strokeOpacity="0.25"
+            strokeWidth="6"
+            strokeDasharray={`${dashArc} ${circumference}`}
+            transform={`rotate(${startAngle} ${cx} ${cy})`}
+            strokeLinecap="round"
+          />
 
-            {/* Tick marks */}
-            {ticks.map((t, i) => (
+          {/* Active arc */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={arcRadius}
+            fill="none"
+            stroke={`url(#grad-${accent}-${label})`}
+            strokeWidth="6"
+            strokeDasharray={`${dashArc} ${circumference}`}
+            strokeDashoffset={dashOffset}
+            transform={`rotate(${startAngle} ${cx} ${cy})`}
+            strokeLinecap="round"
+            filter={`url(#glow-${accent}-${label})`}
+            style={{ transition: "stroke-dashoffset 0.1s linear" }}
+          />
+
+          {/* Tick marks with labels */}
+          {ticks.map((t, i) => (
+            <g key={i}>
               <line
-                key={i}
                 x1={t.x1}
                 y1={t.y1}
                 x2={t.x2}
                 y2={t.y2}
-                stroke={t.active ? colors.stroke : "hsl(var(--border))"}
-                strokeOpacity={t.active ? 0.9 : 0.4}
+                stroke={t.active ? colors.stroke : "hsl(var(--muted-foreground))"}
+                strokeOpacity={t.active ? 0.9 : 0.35}
                 strokeWidth={t.major ? 2 : 1}
                 strokeLinecap="round"
               />
-            ))}
-
-            {/* Needle */}
-            <g transform={`rotate(${needleAngle} ${cx} ${cy})`} style={{ transition: "transform 0.1s linear" }}>
-              <line
-                x1={cx}
-                y1={cy}
-                x2={cx + radius - 6}
-                y2={cy}
-                stroke={colors.stroke}
-                strokeWidth="3"
-                strokeLinecap="round"
-                filter={`url(#glow-${accent}-${label})`}
-              />
-              <circle cx={cx + radius - 6} cy={cy} r="4" fill={colors.stroke} filter={`url(#glow-${accent}-${label})`}>
-                <animate attributeName="r" values="3.5;6;3.5" dur="1.6s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.7;1;0.7" dur="1.6s" repeatCount="indefinite" />
-              </circle>
+              {t.major && (
+                <text
+                  x={t.labelX}
+                  y={t.labelY}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize="9"
+                  fontFamily="var(--font-mono)"
+                  fill={t.active ? colors.stroke : "hsl(var(--muted-foreground))"}
+                  fillOpacity={t.active ? 0.95 : 0.45}
+                  className="font-bold"
+                >
+                  {t.labelValue >= 1000 ? `${Math.round(t.labelValue / 1000)}k` : t.labelValue}
+                </text>
+              )}
             </g>
+          ))}
 
-            {/* Center hub */}
-            <circle cx={cx} cy={cy} r="12" fill="hsl(var(--background))" stroke={colors.stroke} strokeWidth="2" />
-            <circle cx={cx} cy={cy} r="4" fill={colors.stroke}>
-              <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
-            </circle>
-          </svg>
+          {/* Inner decorative ring */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={innerRadius}
+            fill="none"
+            stroke={colors.stroke}
+            strokeOpacity="0.3"
+            strokeWidth="1"
+            strokeDasharray="2 4"
+          />
 
-          {/* Digital readout */}
-          <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center">
-            <motion.div
-              className={cn("font-mono font-bold text-2xl tabular-nums tracking-tight", colors.text)}
-              style={{ textShadow: `0 0 8px ${colors.glow}, 0 0 16px ${colors.glow}` }}
-              animate={{ opacity: [0.92, 1, 0.92] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          {/* Inner solid ring (around digital readout) */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={innerRadius - 12}
+            fill="hsl(var(--background))"
+            fillOpacity="0.6"
+            stroke={colors.stroke}
+            strokeOpacity="0.4"
+            strokeWidth="1.5"
+          />
+
+          {/* Needle */}
+          <g
+            transform={`rotate(${needleAngle} ${cx} ${cy})`}
+            style={{ transition: "transform 0.1s linear" }}
+          >
+            <line
+              x1={cx}
+              y1={cy}
+              x2={cx + arcRadius - 4}
+              y2={cy}
+              stroke={colors.stroke}
+              strokeWidth="3"
+              strokeLinecap="round"
+              filter={`url(#glow-${accent}-${label})`}
+              opacity="0.95"
+            />
+            {/* Needle tip glow */}
+            <circle
+              cx={cx + arcRadius - 4}
+              cy={cy}
+              r="5"
+              fill={colors.stroke}
+              filter={`url(#glow-${accent}-${label})`}
             >
-              {display}
-            </motion.div>
-            <div className="text-[10px] text-muted-foreground/70 font-mono uppercase tracking-wider mt-0.5">
-              max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
-            </div>
+              <animate attributeName="r" values="4;7;4" dur="1.6s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;1;0.7" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+          </g>
+
+          {/* Center hub */}
+          <circle cx={cx} cy={cy} r="20" fill={`url(#hub-${accent}-${label})`} />
+          <circle
+            cx={cx}
+            cy={cy}
+            r="10"
+            fill="hsl(var(--background))"
+            stroke={colors.stroke}
+            strokeWidth="2"
+            filter={`url(#glow-${accent}-${label})`}
+          />
+          <circle cx={cx} cy={cy} r="3" fill={colors.stroke}>
+            <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+
+        {/* Digital readout - centered */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <motion.div
+            className={cn("font-mono font-black tabular-nums tracking-tight leading-none", colors.text)}
+            style={{
+              fontSize: size * 0.13,
+              textShadow: `0 0 12px ${colors.glow}, 0 0 24px ${colors.glow}`,
+            }}
+            animate={{ opacity: [0.92, 1, 0.92] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {display}
+          </motion.div>
+          <div className="text-[9px] text-muted-foreground/70 font-mono uppercase tracking-[0.2em] mt-1">
+            max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
           </div>
         </div>
       </div>
