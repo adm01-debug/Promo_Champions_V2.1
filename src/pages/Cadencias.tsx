@@ -22,6 +22,7 @@ import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequen
 import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimulationDialog";
 import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
 import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
+import { CadenceFunnelConfig } from "@/components/sales/cadence/CadenceFunnelConfig";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
