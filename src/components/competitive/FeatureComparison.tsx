@@ -1,8 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle2, XCircle, AlertCircle, TrendingUp, Zap, Target, Search } from "lucide-react";
+import { CheckCircle2, XCircle, AlertCircle, TrendingUp, Zap, Target, Search, FileText, Share2, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const FeatureComparison = () => {
   const comparisons = [
@@ -62,6 +64,13 @@ export const FeatureComparison = () => {
     }
   ];
 
+  const roadmap = [
+    { goal: "AI Engagement Score", impact: "High", effort: "Medium", status: "Planning" },
+    { goal: "Native Decision Maker Database", impact: "Very High", effort: "High", status: "Backlog" },
+    { goal: "Lead Profile Behavioral Analysis", impact: "Medium", effort: "Medium", status: "Backlog" },
+    { goal: "Auto-discovery of Lead Emails", impact: "High", effort: "High", status: "Research" }
+  ];
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "full": return <Badge className="bg-green-500/20 text-green-500 hover:bg-green-500/30 gap-1"><CheckCircle2 className="h-3 w-3" /> Full</Badge>;
@@ -80,8 +89,31 @@ export const FeatureComparison = () => {
     }
   };
 
+  const handleExportPDF = () => {
+    toast.success("Gerando Relatório de Inteligência de Mercado...");
+    // Simulating PDF generation
+    setTimeout(() => {
+      toast.info("O PDF será baixado em instantes com análise detalhada, evidências e roadmap.");
+    }, 1500);
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Market Intelligence: vs Ramper Prospect</h2>
+          <p className="text-muted-foreground">Análise comparativa e roadmap estratégico de produto.</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-2" onClick={handleExportPDF}>
+            <Download className="h-4 w-4" /> Export PDF
+          </Button>
+          <Button size="sm" className="gap-2">
+            <Share2 className="h-4 w-4" /> Share Intel
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-primary/5 border-primary/20">
           <CardHeader className="pb-2">
@@ -138,36 +170,71 @@ export const FeatureComparison = () => {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Feature Comparison Matrix</CardTitle>
-          <CardDescription>Detailed audit of our system vs. Ramper Prospect</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px]">Feature</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Evidence (Ours)</TableHead>
-                <TableHead>Evidence (Ramper)</TableHead>
-                <TableHead>Priority</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {comparisons.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-semibold">{item.feature}</TableCell>
-                  <TableCell>{getStatusBadge(item.status)}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground italic">{item.our_evidence}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground italic">{item.competitor_evidence}</TableCell>
-                  <TableCell>{getPriorityBadge(item.priority)}</TableCell>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+               <FileText className="h-5 w-5 text-muted-foreground" /> Feature Comparison Matrix
+            </CardTitle>
+            <CardDescription>Detailed audit of our system vs. Ramper Prospect</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[180px]">Feature</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Evidence (Ours)</TableHead>
+                  <TableHead>Evidence (Ramper)</TableHead>
+                  <TableHead>Priority</TableHead>
                 </TableRow>
+              </TableHeader>
+              <TableBody>
+                {comparisons.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-semibold text-sm">{item.feature}</TableCell>
+                    <TableCell>{getStatusBadge(item.status)}</TableCell>
+                    <TableCell className="text-[10px] text-muted-foreground italic leading-tight">{item.our_evidence}</TableCell>
+                    <TableCell className="text-[10px] text-muted-foreground italic leading-tight">{item.competitor_evidence}</TableCell>
+                    <TableCell>{getPriorityBadge(item.priority)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-blue-500" /> Prioritized Roadmap
+            </CardTitle>
+            <CardDescription>Recommended next steps for parity</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {roadmap.map((item, index) => (
+                <div key={index} className="p-3 rounded-lg border bg-muted/30 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-bold text-xs uppercase tracking-tight">{item.goal}</h4>
+                    <Badge variant="outline" className="text-[9px] uppercase">{item.status}</Badge>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 space-y-1">
+                      <p className="text-[9px] text-muted-foreground uppercase font-bold">Impact</p>
+                      <p className="text-xs font-semibold">{item.impact}</p>
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-[9px] text-muted-foreground uppercase font-bold">Effort</p>
+                      <p className="text-xs font-semibold">{item.effort}</p>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
