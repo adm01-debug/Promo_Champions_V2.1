@@ -21,6 +21,7 @@ export interface ColdLead {
   score?: number;
   probability?: number;
   has_pending_task?: boolean;
+  follow_up_count?: number;
 }
 
 export const temperatureConfig: Record<LeadTemperature, {
