@@ -54,12 +54,21 @@ export function CustomerSuccess360Hub() {
   const filteredData = useMemo(() => {
     if (!data) return null;
     const now = new Date();
-    const days = parseInt(period);
-    const startDate = subDays(now, days);
+    let start: Date;
+    let end = now;
+
+    if (period === "custom") {
+      start = startDate ? parseISO(startDate) : subDays(now, 30);
+      end = endDate ? parseISO(endDate) : now;
+    } else if (period === "0") {
+      start = new Date(0);
+    } else {
+      start = subDays(now, parseInt(period));
+    }
 
     const filterByDate = (item: any, dateField: string = "created_at") => {
       const date = parseISO(item[dateField]);
-      return days === 0 || isWithinInterval(date, { start: startDate, end: now });
+      return isWithinInterval(date, { start: startOfDay(start), end: endOfDay(end) });
     };
 
     return {
@@ -67,8 +76,9 @@ export function CustomerSuccess360Hub() {
       expansion: expansion.filter(e => filterByDate(e)),
       surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
       renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
+      orders: orders.filter(o => filterByDate(o)),
     };
-  }, [data, period, tickets, expansion, surveys, renewals]);
+  }, [data, period, startDate, endDate, tickets, expansion, surveys, renewals, orders]);
 
   // Evolution Data (LTV & Ticket Médio)
   const evolutionData = useMemo(() => {
@@ -84,21 +94,53 @@ export function CustomerSuccess360Hub() {
       name,
       ltv: val.ltv,
       ticket: val.ltv / (val.count || 1)
-    })).slice(-6);
+    })).sort((a, b) => {
+      const dateA = parseISO(`01 ${a.name.replace(" ", " 20")}`);
+      const dateB = parseISO(`01 ${b.name.replace(" ", " 20")}`);
+      return dateA.getTime() - dateB.getTime();
+    }).slice(-12);
   }, [renewals]);
 
-  // Cohort Analysis (Simulated based on renewals/onboarding)
+  // Cohort Analysis (True First Purchase based on account creation)
   const cohortData = useMemo(() => {
-    const cohorts: Record<string, { month: string; retained: number; churned: number }> = {};
+    const cohorts: Record<string, { month: string; retained: number; churned: number; revenue: number }> = {};
+    
     accounts.forEach(a => {
-      const date = a.next_renewal ? parseISO(a.next_renewal) : new Date();
-      const month = format(startOfMonth(date), "MMM yy", { locale: ptBR });
-      if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0 };
-      if (a.health_v2 > 40) cohorts[month].retained += 1;
+      if (!a.created_at) return;
+      const month = format(startOfMonth(parseISO(a.created_at)), "MMM yy", { locale: ptBR });
+      if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0, revenue: 0 };
+      
+      // Retention simulation: Health > 50 is retained
+      if (a.health_v2 >= 50) cohorts[month].retained += 1;
       else cohorts[month].churned += 1;
+      
+      cohorts[month].revenue += a.annual_revenue || 0;
     });
-    return Object.values(cohorts).slice(0, 6);
+
+    return Object.values(cohorts).sort((a, b) => {
+      const dateA = parseISO(`01 ${a.month.replace(" ", " 20")}`);
+      const dateB = parseISO(`01 ${b.month.replace(" ", " 20")}`);
+      return dateA.getTime() - dateB.getTime();
+    }).slice(-6);
   }, [accounts]);
+
+  const ordersByStatus = useMemo(() => {
+    const statusMap: Record<string, { count: number; value: number; color: string; status: string; key: string }> = {
+      delivered: { status: "Pago/Entregue", count: 0, value: 0, color: "text-success", key: "delivered" },
+      pending: { status: "Pendente", count: 0, value: 0, color: "text-warning", key: "pending" },
+      cancelled: { status: "Cancelado", count: 0, value: 0, color: "text-destructive", key: "cancelled" },
+    };
+
+    orders.forEach(o => {
+      const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+      if (statusMap[s]) {
+        statusMap[s].count += 1;
+        statusMap[s].value += Number(o.total || 0);
+      }
+    });
+
+    return Object.values(statusMap);
+  }, [orders]);
 
   const exportPDF = () => {
     const doc = new jsPDF();
