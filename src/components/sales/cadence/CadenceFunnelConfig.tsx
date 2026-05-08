@@ -33,7 +33,7 @@ export function CadenceFunnelConfig() {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
   
-  const [newRule, setNewRule] = useState<Partial<FunnelRule>>({
+  const [newRule, setNewRule] = useState<any>({
     from_stage: "new",
     to_stage: "high_interest",
     condition_type: "email_open",

@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
@@ -45,9 +46,6 @@ export function TodaysCadenceTasks() {
   const [notesTaskId, setNotesTaskId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState("");
   const [noteAction, setNoteAction] = useState<"complete" | "skip">("complete");
-  const [callResult, setCallResult] = useState<string>("answered");
-  const queryClient = useQueryClient();
-
   const [callResult, setCallResult] = useState<string>("answered");
   const { toast } = useToast();
   const queryClient = useQueryClient();
