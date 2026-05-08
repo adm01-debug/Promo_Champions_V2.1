@@ -16,7 +16,7 @@ const periodLabels: Record<Period, string> = {
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-white/10 bg-black/95 backdrop-blur-[100px] px-4 py-3 shadow-[0_0_60px_rgba(0,0,0,0.9)] border-l-4 border-l-primary ring-1 ring-white/10">
+    <div className="rounded-xl border border-white/20 bg-black/98 backdrop-blur-[150px] px-6 py-4 shadow-[0_0_80px_rgba(0,0,0,1)] border-l-[6px] border-l-primary ring-2 ring-white/15">
       <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1.5">{label}</p>
       <div className="flex items-center gap-2">
         <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
