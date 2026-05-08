@@ -33,7 +33,7 @@ export function CadenceMetricsPanel() {
               <Badge variant="secondary" className="text-[10px] shrink-0">{m.total_enrolled} inscritos</Badge>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                   <ListChecks className="h-3 w-3" /> Conclusão
@@ -47,6 +47,19 @@ export function CadenceMetricsPanel() {
                 </div>
                 <div className="text-sm font-semibold tabular-nums text-status-success">{m.reply_rate}%</div>
                 <Progress value={m.reply_rate} className="h-1" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <TrendingUp className="h-3 w-3" /> Cliques
+                </div>
+                <div className="text-sm font-semibold tabular-nums text-amber-500">{m.click_rate ?? 0}%</div>
+                <Progress value={m.click_rate ?? 0} className="h-1" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <Target className="h-3 w-3" /> Agendados
+                </div>
+                <div className="text-sm font-semibold tabular-nums text-blue-500">{m.bookings_count ?? 0}</div>
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-1 text-[10px] text-muted-foreground">

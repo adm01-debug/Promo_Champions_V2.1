@@ -146,6 +146,29 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     });
   }
 
+  // Novo: Gatilho de Intenção - Proposta Aberta / Cliques
+  const highInterestLeads = allActivities.filter(a => 
+    (a.activity_type as string === 'proposal_view' || a.activity_type as string === 'price_click') && 
+    (now - new Date(a.created_at).getTime()) / 60000 < 30 // Últimos 30 min
+  );
+
+  highInterestLeads.slice(0, 2).forEach(lead => {
+    suggestions.push({
+      title: 'Ligar Agora: Lead visualizando proposta',
+      description: `Lead acabou de interagir com a proposta. Chance de conversão 5x maior se ligar em 5 min.`,
+      rationale: `Gatilho de Intenção: Detectado evento de ${lead.activity_type as string === 'proposal_view' ? 'Abertura de Proposta' : 'Clique em Preço'}.`,
+      actionType: 'call_now',
+      priority: 'high',
+      confidence: 0.95,
+      category: 'urgent',
+      channel: 'phone',
+      expectedImpact: 'Fechar venda no momento de maior interesse.',
+    });
+    
+    // Log de disparo para auditoria (em um cenário real seria via backend/edge function)
+    console.log(`[Intent Log] Gatilho disparado para lead: ${lead.id} - Evento: ${lead.activity_type}`);
+  });
+
   const highInterestDeals = allSales.filter(s => s.status === 'proposal' && (now - new Date(s.updated_at).getTime()) / 86400000 < 2);
   if (highInterestDeals.length > 0) {
     suggestions.push({

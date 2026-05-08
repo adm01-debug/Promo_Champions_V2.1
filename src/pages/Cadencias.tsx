@@ -4,6 +4,7 @@ import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
 import { ABTestDialog } from "@/components/cadences/ABTestDialog";
 import { CadenceCard } from "@/components/cadences/CadenceCard";
+import { ContactRulesDialog } from "@/components/cadences/ContactRulesDialog";
 import { TodaysCadenceTasks } from "@/components/cadences/TodaysCadenceTasks";
 import { CadenceMetricsPanel } from "@/components/cadences/CadenceMetricsPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,6 +68,7 @@ export default function Cadencias() {
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
               <EnrollmentRulesDialog />
+              <ContactRulesDialog />
               <ABTestDialog />
               <CreateCadenceDialog />
             </div>

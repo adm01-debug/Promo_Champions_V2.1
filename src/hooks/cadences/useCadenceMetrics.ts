@@ -16,6 +16,8 @@ export interface CadenceMetrics {
   completion_rate: number;
   reply_rate: number;
   conversion_rate: number;
+  click_rate?: number;
+  bookings_count?: number;
 }
 
 export function useCadenceMetrics(cadenceId?: string, days: number = 30) {

@@ -30,6 +30,8 @@ const triggerLabel: Record<TriggerType, string> = {
   scheduled: "Agendado (cron)",
   manual: "Disparo manual",
   no_activity_days: "Sem atividade por X dias",
+  proposal_opened: "Proposta Aberta (Gatilho de Intenção)",
+  price_clicked: "Clique em Preço (Gatilho de Intenção)",
 };
 
 const actionLabel: Record<ActionType, string> = {
@@ -38,6 +40,7 @@ const actionLabel: Record<ActionType, string> = {
   update_stage: "Atualizar estágio",
   log_activity: "Registrar atividade",
   assign_owner: "Atribuir responsável",
+  create_call_now_task: "Tarefa 'Ligar Agora'",
 };
 
 const statusIcon = (s: string) => {

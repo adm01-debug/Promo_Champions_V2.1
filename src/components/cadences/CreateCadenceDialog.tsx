@@ -40,6 +40,7 @@ interface StepInput {
   action_type: ActionType;
   title: string;
   description: string;
+  needs_approval: boolean;
 }
 
 export function CreateCadenceDialog() {
@@ -47,7 +48,7 @@ export function CreateCadenceDialog() {
   const [step, setStep] = useState<"info" | "steps">("info");
   const [cadenceId, setCadenceId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepInput[]>([
-    { day_number: 1, action_type: "email", title: "Email de introdução", description: "" },
+    { day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false },
   ]);
 
   const createCadence = useCreateCadence();
@@ -66,7 +67,7 @@ export function CreateCadenceDialog() {
     setStep("info");
     setCadenceId(null);
     form.reset();
-    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "" }]);
+    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false }]);
   };
 
   const handleCreateCadence = async (data: CadenceFormData) => {
@@ -84,7 +85,8 @@ export function CreateCadenceDialog() {
       day_number: lastDay + 2, 
       action_type: "call", 
       title: "", 
-      description: "" 
+      description: "",
+      needs_approval: false
     }]);
   };
 
@@ -111,6 +113,7 @@ export function CreateCadenceDialog() {
         action_type: step.action_type,
         title: step.title,
         description: step.description || undefined,
+        needs_approval: step.needs_approval,
         step_order: i,
       });
     }
@@ -252,6 +255,19 @@ export function CreateCadenceDialog() {
                     </div>
                   </div>
 
+                  <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-xs font-medium">Aprovação Humana</FormLabel>
+                      <p className="text-[10px] text-muted-foreground">Exigir aprovação antes de enviar</p>
+                    </div>
+                    <input 
+                      type="checkbox" 
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      checked={s.needs_approval}
+                      onChange={(e) => updateStep(index, "needs_approval", e.target.checked)}
+                    />
+                  </div>
+
                   <div className="space-y-1.5">
                     <FormLabel className="text-xs font-medium text-muted-foreground">Título da Ação *</FormLabel>
                     <Input
@@ -263,7 +279,7 @@ export function CreateCadenceDialog() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">Descrição (opcional)</FormLabel>
+                    <FormLabel className="text-xs font-medium text-muted-foreground">Descrição (Suporta variáveis SINGU like {'{name}'})</FormLabel>
                     <Textarea
                       value={s.description}
                       onChange={(e) => updateStep(index, "description", e.target.value)}
