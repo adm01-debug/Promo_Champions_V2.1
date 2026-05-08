@@ -16,9 +16,9 @@ import {
 export const FeatureComparison = () => {
   const comparisons = [
     {
-      feature: "Big Data & Lead Discovery",
+      feature: "Lead Discovery (SINGU)",
       status: "partial",
-      our_evidence: "Integração via API com fontes externas e busca semântica básica.",
+      our_evidence: "Integração nativa com o sistema SINGU para busca de decisores.",
       competitor_evidence: "Base própria com +10M de decisores brasileiros. Captura via redes sociais corporativas.",
       priority: "high",
       effort: "high",
