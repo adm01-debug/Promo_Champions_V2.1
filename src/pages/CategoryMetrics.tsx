@@ -22,7 +22,7 @@ const COLORS = [
   "hsl(var(--destructive))",
 ];
 
-const CustomTooltip = ({ active, payload }: RechartsTooltipProps<ValueType, NameType>) => {
+const CustomTooltip = ({ active, payload }: any) => {
   if (!active || !payload?.length) return null;
   const data = payload[0].payload;
   return (
