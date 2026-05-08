@@ -8,12 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, Save, MessageCircle, Clock, Zap, History, RotateCcw, AlertCircle } from "lucide-react";
+import { Loader2, Save, MessageCircle, Clock, Zap, History, RotateCcw, AlertCircle, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 const REQUIRED_VARIABLES = ["{{client_name}}", "{{product_name}}", "{{status}}"];
 
@@ -23,6 +24,7 @@ export function FollowUpSettings() {
   const [whatsappTemplate, setWhatsappTemplate] = useState("");
   const [cadenceDays, setCadenceDays] = useState("");
   const [autoReactivate, setAutoReactivate] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const { data: userRole } = useQuery({
     queryKey: ["user-role", user?.id],
@@ -67,7 +69,7 @@ export function FollowUpSettings() {
         .from("whatsapp_template_versions")
         .select("*")
         .eq("template_id", settings.id)
-        .order("version_number", { ascending: false });
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -82,11 +84,24 @@ export function FollowUpSettings() {
     mutationFn: async (newTemplate?: string) => {
       if (!isAdmin) throw new Error("Apenas administradores podem alterar as configurações.");
       
+      const targetTemplate = newTemplate !== undefined ? newTemplate : whatsappTemplate;
       const days = cadenceDays.split(",").map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+      
+      // 1. Create a version record if template changed
+      if (settings?.whatsapp_template && settings.whatsapp_template !== targetTemplate) {
+        await supabase.from("whatsapp_template_versions").insert({
+          template_id: settings.id,
+          body: settings.whatsapp_template,
+          version_number: (versions[0]?.version_number || 0) + 1,
+          created_by: user?.id
+        });
+      }
+
+      // 2. Update settings
       const { error } = await supabase
         .from("follow_up_settings")
         .update({
-          whatsapp_template: newTemplate !== undefined ? newTemplate : whatsappTemplate,
+          whatsapp_template: targetTemplate,
           cadence_days: days,
           auto_reactivate_class_a: autoReactivate,
           updated_at: new Date().toISOString(),
@@ -99,6 +114,7 @@ export function FollowUpSettings() {
       toast.success("Configurações atualizadas com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["follow-up-settings"] });
       queryClient.invalidateQueries({ queryKey: ["template-versions"] });
+      setIsPreviewOpen(false);
     },
     onError: (error: any) => {
       toast.error("Erro ao atualizar configurações: " + error.message);
@@ -179,11 +195,16 @@ export function FollowUpSettings() {
                 </p>
               </div>
 
-              <div className="p-3 bg-muted rounded-lg border border-dashed">
-                <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-2 block">Preview Real</Label>
-                <div className="text-sm italic text-foreground whitespace-pre-wrap">
-                  "{previewMessage}"
-                </div>
+              <div className="flex justify-between items-center">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={() => setIsPreviewOpen(true)}
+                >
+                  <Eye className="h-4 w-4" />
+                  Revisar Preview
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -293,6 +314,44 @@ export function FollowUpSettings() {
           </Button>
         </div>
       )}
+
+      {/* Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-green-500" />
+              Preview do Template
+            </DialogTitle>
+            <DialogDescription>
+              Veja como a mensagem será exibida para o cliente antes de salvar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 px-4 bg-muted/30 rounded-lg border border-dashed border-primary/20 relative">
+            <div className="absolute top-2 right-2">
+              <Badge variant="outline" className="text-[10px] font-bold">WHATSAPP MOCKUP</Badge>
+            </div>
+            <div className="space-y-4">
+              <div className="flex justify-start">
+                <div className="bg-white dark:bg-zinc-800 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-border/50">
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    {previewMessage}
+                  </p>
+                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">10:45</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>Fechar</Button>
+            {isAdmin && (
+              <Button onClick={() => updateSettings.mutate(undefined)} disabled={updateSettings.isPending || missingVariables.length > 0}>
+                {updateSettings.isPending ? "Salvando..." : "Confirmar e Salvar"}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

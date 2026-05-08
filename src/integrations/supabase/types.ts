@@ -5679,6 +5679,7 @@ export type Database = {
           auto_reactivate_class_a: boolean | null
           cadence_days: number[] | null
           created_at: string | null
+          current_whatsapp_version_id: string | null
           id: string
           updated_at: string | null
           whatsapp_template: string | null
@@ -5687,6 +5688,7 @@ export type Database = {
           auto_reactivate_class_a?: boolean | null
           cadence_days?: number[] | null
           created_at?: string | null
+          current_whatsapp_version_id?: string | null
           id?: string
           updated_at?: string | null
           whatsapp_template?: string | null
@@ -5695,11 +5697,20 @@ export type Database = {
           auto_reactivate_class_a?: boolean | null
           cadence_days?: number[] | null
           created_at?: string | null
+          current_whatsapp_version_id?: string | null
           id?: string
           updated_at?: string | null
           whatsapp_template?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_settings_current_whatsapp_version_id_fkey"
+            columns: ["current_whatsapp_version_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_template_versions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       forecast_accuracy: {
         Row: {

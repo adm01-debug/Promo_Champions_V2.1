@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Send, MessageCircle, History, Zap } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -25,7 +25,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { History, Zap } from 'lucide-react';
 
 const FollowUpInteligente = () => {
   const { salesperson } = useAuth();
@@ -178,6 +177,12 @@ const FollowUpInteligente = () => {
         return;
       }
 
+      // Permissions check
+      if (lead.temperature === 'frozen' && lead.score !== undefined && lead.score >= 80 && !isAdmin) {
+        toast.error("Apenas administradores podem gerenciar leads Classe A congelados.");
+        return;
+      }
+
       const { error } = await supabase.from('tasks').insert({
         title: `Follow-up: ${lead.client_name}`,
         description: lead.suggested_action,
@@ -266,7 +271,15 @@ const FollowUpInteligente = () => {
     }
   });
 
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [currentLeadForWA, setCurrentLeadForWA] = useState<ColdLead | null>(null);
+
   const handleWhatsAppClick = useCallback((lead: ColdLead) => {
+    setCurrentLeadForWA(lead);
+    setIsPreviewOpen(true);
+  }, []);
+
+  const sendWhatsApp = useCallback((lead: ColdLead) => {
     const template = followUpSettings?.whatsapp_template || 
       "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
     
@@ -278,12 +291,13 @@ const FollowUpInteligente = () => {
     logAction.mutate({
       saleId: lead.id,
       actionType: 'whatsapp_sent',
-      details: { message_preview: message.substring(0, 100) + "..." },
+      details: { message_preview: message },
       status: 'sent'
     });
 
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-  }, [followUpSettings, logAction, salesperson?.id]);
+    setIsPreviewOpen(false);
+  }, [followUpSettings, logAction]);
 
   const handleReactivate = useMutation({
     mutationFn: async () => {
@@ -340,6 +354,7 @@ const FollowUpInteligente = () => {
               onSearchChange={setSearchQuery}
               minDaysInactive={minDaysInactive}
               onMinDaysChange={setMinDaysInactive}
+              isAdmin={isAdmin}
             />
 
             <FollowUpStatsGrid leads={coldLeads} onFilterChange={setFilterTemp} />
@@ -487,6 +502,49 @@ const FollowUpInteligente = () => {
               ))}
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+      {/* WhatsApp Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-green-500" />
+              Revisar Mensagem
+            </DialogTitle>
+            <DialogDescription>
+              Revise o conteúdo antes de gerar o link do WhatsApp para {currentLeadForWA?.client_name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 px-4 bg-muted/30 rounded-lg border border-dashed border-primary/20 relative">
+            <div className="absolute top-2 right-2">
+              <Badge variant="outline" className="text-[10px] font-bold">WHATSAPP MOCKUP</Badge>
+            </div>
+            <div className="space-y-4">
+              <div className="flex justify-start">
+                <div className="bg-white dark:bg-zinc-800 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-border/50">
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    {currentLeadForWA && (followUpSettings?.whatsapp_template || "...")
+                      .replace("{{client_name}}", currentLeadForWA.client_name)
+                      .replace("{{product_name}}", currentLeadForWA.product_name || "produto")
+                      .replace("{{status}}", currentLeadForWA.status)
+                    }
+                  </p>
+                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">Agora</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>Cancelar</Button>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 text-white gap-2"
+              onClick={() => currentLeadForWA && sendWhatsApp(currentLeadForWA)}
+            >
+              <Send className="h-4 w-4" />
+              Enviar para o WhatsApp
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
