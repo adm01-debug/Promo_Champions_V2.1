@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CACHE_TIMES } from "@/constants";
+import { useEffect } from "react";
 
 export interface TeamActivity {
   id: string;
