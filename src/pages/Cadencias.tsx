@@ -68,6 +68,7 @@ export default function Cadencias() {
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
               <EnrollmentRulesDialog />
+              <ContactRulesDialog />
               <ABTestDialog />
               <CreateCadenceDialog />
             </div>
