@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
 import { updatePayload, insertPayload } from "@/lib/supabase/typed-payloads";
 
-export type TriggerType = "deal_stagnant" | "stage_change" | "task_overdue" | "no_activity";
-export type ActionType = "create_task" | "send_notification" | "change_stage" | "add_note";
+export type TriggerType = "deal_stagnant" | "stage_change" | "task_overdue" | "no_activity" | "proposal_opened" | "price_clicked_repeatedly";
+export type ActionType = "create_task" | "send_notification" | "change_stage" | "add_note" | "call_now";
 
 export interface WorkflowRule {
   id: string;
@@ -29,10 +29,13 @@ export const TRIGGER_OPTIONS: { value: TriggerType; label: string; description: 
   { value: "stage_change", label: "Mudança de stage", description: "Quando um deal muda para um stage específico", icon: "🔄" },
   { value: "task_overdue", label: "Tarefa atrasada", description: "Quando uma tarefa passa do prazo", icon: "⚠️" },
   { value: "no_activity", label: "Sem atividade", description: "Quando não há atividades registradas por X dias", icon: "📭" },
+  { value: "proposal_opened", label: "Proposta aberta", description: "Quando o lead abre o link da proposta", icon: "📄" },
+  { value: "price_clicked_repeatedly", label: "Interesse em preço", description: "Quando clica em links de preço repetidamente", icon: "💰" },
 ];
 
 export const ACTION_OPTIONS: { value: ActionType; label: string; description: string; icon: string }[] = [
   { value: "create_task", label: "Criar tarefa", description: "Cria automaticamente uma tarefa de follow-up", icon: "📋" },
+  { value: "call_now", label: "Ligar Agora", description: "Cria uma tarefa de alta prioridade para ligar imediatamente", icon: "📞" },
   { value: "send_notification", label: "Enviar notificação", description: "Envia uma notificação push ao vendedor", icon: "🔔" },
   { value: "change_stage", label: "Mover stage", description: "Move o deal para outro stage automaticamente", icon: "➡️" },
   { value: "add_note", label: "Adicionar nota", description: "Adiciona uma nota automática ao deal", icon: "📝" },
