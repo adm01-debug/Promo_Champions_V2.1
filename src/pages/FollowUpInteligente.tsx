@@ -21,19 +21,53 @@ const FollowUpInteligente = () => {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
   const [filterTemp, setFilterTemp] = useState('all');
+  const [minDaysInactive, setMinDaysInactive] = useState(3);
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: coldLeads = [], isLoading } = useQuery({
-    queryKey: ['cold-leads', salesperson?.id],
+    queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
     queryFn: async () => {
-      const { data: deals, error } = await supabase
+      // Fetch deals
+      const { data: deals, error: dealsError } = await supabase
         .from('sales')
-        .select('id, client_name, product_name, amount, status, updated_at, salesperson_id')
+        .select(`
+          id, 
+          client_name, 
+          product_name, 
+          amount, 
+          status, 
+          updated_at, 
+          salesperson_id,
+          lead_scores (score)
+        `)
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation', 'open'])
         .order('updated_at', { ascending: true });
 
-      if (error) throw error;
+      if (dealsError) throw dealsError;
+
+      // Fetch pending tasks to prevent duplicates
+      const { data: pendingTasks, error: tasksError } = await supabase
+        .from('tasks')
+        .select('sale_id')
+        .eq('status', 'pending');
+
+      if (tasksError) throw tasksError;
+
+      const pendingTaskIds = new Set((pendingTasks || []).map(t => t.sale_id));
+
+      // Fetch last activity for each deal
+      const { data: activities, error: activitiesError } = await supabase
+        .from('activities')
+        .select('sale_id, notes, created_at, activity_type')
+        .order('created_at', { ascending: false });
+
+      if (activitiesError) throw activitiesError;
+
+      const activitiesMap = (activities || []).reduce((acc: any, act) => {
+        if (!acc[act.sale_id]) acc[act.sale_id] = act;
+        return acc;
+      }, {});
 
       const now = new Date();
       return (deals || [])
@@ -41,15 +75,25 @@ const FollowUpInteligente = () => {
           const daysInactive = differenceInDays(now, new Date(deal.updated_at));
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
+          const lastActivity = activitiesMap[deal.id];
+          const score = (deal.lead_scores as any)?.[0]?.score || 0;
+          
           return {
             ...deal,
             days_inactive: daysInactive,
             temperature: temp,
             suggested_action: suggestion.action,
             suggested_channel: suggestion.channel,
+            last_activity: lastActivity ? {
+              notes: lastActivity.notes,
+              created_at: lastActivity.created_at,
+              type: lastActivity.activity_type
+            } : undefined,
+            score,
+            has_pending_task: pendingTaskIds.has(deal.id)
           } as ColdLead;
         })
-        .filter(lead => lead.days_inactive >= 3)
+        .filter(lead => lead.days_inactive >= minDaysInactive)
         .sort((a, b) => b.days_inactive - a.days_inactive);
     },
     staleTime: 2 * 60 * 1000,
