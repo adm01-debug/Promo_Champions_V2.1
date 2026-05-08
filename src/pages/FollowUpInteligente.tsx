@@ -101,6 +101,12 @@ const FollowUpInteligente = () => {
 
   const createFollowUpTask = useMutation({
     mutationFn: async (lead: ColdLead) => {
+      // Prevenção de duplicidade
+      if (lead.has_pending_task) {
+        toast.info("Este lead já possui uma tarefa pendente.");
+        return;
+      }
+
       const { error } = await supabase.from('tasks').insert({
         title: `Follow-up: ${lead.client_name}`,
         description: lead.suggested_action,
