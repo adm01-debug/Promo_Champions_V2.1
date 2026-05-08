@@ -4,7 +4,8 @@ import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/u
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -353,7 +354,7 @@ const isValidPeriod = (v: string | null): v is KPIPeriod =>
 
 export const FuturisticSpeedometerDashboard = () => {
   const { theme } = useDashboardTheme();
-  const { salesperson: currentUser } = useAuth();
+  const { user, salesperson: currentUser } = useAuth();
   const { data: salespeople = [] } = useSalespeopleList();
 
   const [period, setPeriodState] = useState<KPIPeriod>(() => {
@@ -366,6 +367,54 @@ export const FuturisticSpeedometerDashboard = () => {
     if (typeof window === "undefined") return ME;
     return window.localStorage.getItem(SALESPERSON_STORAGE_KEY) || ME;
   });
+
+  // Settings state
+  const [ticksCount, setTicksCount] = useState(33);
+  const [gaugeMode, setGaugeMode] = useState<"standard" | "compact" | "kilo">("standard");
+  const [minVal, setMinVal] = useState(0);
+  const [customMax, setCustomMax] = useState<number | null>(null);
+  const [customUnit, setCustomUnit] = useState("");
+  const [autoScale, setAutoScale] = useState(true);
+
+  // Persistence logic
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    const loadSettings = async () => {
+      const { data, error } = await supabase
+        .from("user_app_settings")
+        .select("value")
+        .eq("user_id", user.id)
+        .eq("key", "speedometer_settings")
+        .maybeSingle();
+      
+      if (data?.value && typeof data.value === 'object') {
+        const s = data.value as any;
+        if (s.ticksCount) setTicksCount(s.ticksCount);
+        if (s.gaugeMode) setGaugeMode(s.gaugeMode);
+        if (typeof s.minVal === 'number') setMinVal(s.minVal);
+        if (typeof s.customMax !== 'undefined') setCustomMax(s.customMax);
+        if (typeof s.customUnit !== 'undefined') setCustomUnit(s.customUnit);
+        if (typeof s.autoScale !== 'undefined') setAutoScale(s.autoScale);
+      }
+    };
+    
+    loadSettings();
+  }, [user?.id]);
+
+  const saveSettings = async (updates: any) => {
+    if (!user?.id) return;
+    
+    const currentSettings = { ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale };
+    const newSettings = { ...currentSettings, ...updates };
+    
+    await supabase.from("user_app_settings").upsert({
+      user_id: user.id,
+      key: "speedometer_settings",
+      value: newSettings,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id, key' });
+  };
 
   const setPeriod = (p: KPIPeriod) => {
     setPeriodState(p);
@@ -396,13 +445,6 @@ export const FuturisticSpeedometerDashboard = () => {
   const { data: kpis, isLoading: kpisLoading, isFetching: kpisFetching } = useDashboardKPIsPeriod(period, resolvedSalespersonId);
   const { data: goals } = useGoalsDashboard();
 
-  // Settings state
-  const [ticksCount, setTicksCount] = useState(33);
-  const [gaugeMode, setGaugeMode] = useState<"standard" | "compact" | "kilo">("standard");
-  const [minVal, setMinVal] = useState(0);
-  const [customMax, setCustomMax] = useState<number | null>(null);
-  const [customUnit, setCustomUnit] = useState("");
-
   const revenue = kpis?.current.totalRevenue ?? 0;
   const sales = kpis?.current.totalSales ?? 0;
   const conversion = kpis?.current.conversionRate ?? 0;
@@ -411,10 +453,13 @@ export const FuturisticSpeedometerDashboard = () => {
   const prevRevenue = kpis?.previous.totalRevenue ?? 0;
   const prevSales = kpis?.previous.totalSales ?? 0;
   const prevTicket = kpis?.previous.avgTicket ?? 0;
+  const prevConversion = kpis?.previous.conversionRate ?? 0;
 
-  const goalAmount = customMax || goals?.totalGoal || Math.max(revenue * 1.3, 50000);
-  const salesMax = customMax || Math.max(sales * 1.5, prevSales * 1.5, 20);
-  const ticketMax = customMax || Math.max(ticket * 1.5, prevTicket * 1.5, 1000);
+  // Auto-scaling logic
+  const goalAmount = customMax || (autoScale ? Math.max(revenue * 1.25, prevRevenue * 1.25, goals?.totalGoal || 50000) : (goals?.totalGoal || Math.max(revenue * 1.3, 50000)));
+  const salesMax = customMax || (autoScale ? Math.max(sales * 1.5, prevSales * 1.5, 20) : Math.max(sales * 1.5, 20));
+  const ticketMax = customMax || (autoScale ? Math.max(ticket * 1.5, prevTicket * 1.5, 1000) : Math.max(ticket * 1.5, 1000));
+  const conversionMax = customMax || (autoScale ? Math.max(conversion * 1.2, prevConversion * 1.2, 100) : 100);
 
   const fmtBRL = (v: number) => {
     if (gaugeMode === "compact") return `R$ ${v.toLocaleString("pt-BR", { notation: "compact" })}`;
@@ -482,7 +527,11 @@ export const FuturisticSpeedometerDashboard = () => {
                     <Input 
                       type="number" 
                       value={minVal} 
-                      onChange={(e) => setMinVal(Number(e.target.value))}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setMinVal(val);
+                        saveSettings({ minVal: val });
+                      }}
                       className="h-7 text-[10px] bg-background/40 border-border/40 font-mono"
                     />
                   </div>
@@ -492,7 +541,11 @@ export const FuturisticSpeedometerDashboard = () => {
                       type="number" 
                       placeholder="Auto"
                       value={customMax || ""} 
-                      onChange={(e) => setCustomMax(e.target.value ? Number(e.target.value) : null)}
+                      onChange={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : null;
+                        setCustomMax(val);
+                        saveSettings({ customMax: val });
+                      }}
                       className="h-7 text-[10px] bg-background/40 border-border/40 font-mono"
                     />
                   </div>
@@ -503,15 +556,41 @@ export const FuturisticSpeedometerDashboard = () => {
                     <span>Densidade de Ticks</span>
                     <span className="text-primary">{ticksCount}</span>
                   </div>
-                  <Slider value={[ticksCount]} min={5} max={65} step={4} onValueChange={(val) => setTicksCount(val[0])} />
+                  <Slider value={[ticksCount]} min={5} max={65} step={4} onValueChange={(val) => {
+                    setTicksCount(val[0]);
+                    saveSettings({ ticksCount: val[0] });
+                  }} />
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 pt-2 border-t border-primary/10">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[9px] font-mono uppercase text-muted-foreground">Escala Automática</label>
+                    <button 
+                      onClick={() => {
+                        const val = !autoScale;
+                        setAutoScale(val);
+                        saveSettings({ autoScale: val });
+                      }}
+                      className={cn(
+                        "p-1 rounded transition-colors",
+                        autoScale ? "text-primary bg-primary/10" : "text-muted-foreground bg-muted/10"
+                      )}
+                    >
+                      <RefreshCw className={cn("h-3 w-3", autoScale && "animate-spin-slow")} />
+                    </button>
+                  </div>
+                  <p className="text-[8px] text-muted-foreground font-mono leading-tight">Ajusta min/max dinamicamente com base nos dados históricos.</p>
+                </div>
+
+                <div className="space-y-1.5 pt-2 border-t border-primary/10">
                   <label className="text-[9px] font-mono uppercase text-muted-foreground">Unidade Personalizada</label>
                   <Input 
                     placeholder="ex: km/h, pts"
                     value={customUnit} 
-                    onChange={(e) => setCustomUnit(e.target.value)}
+                    onChange={(e) => {
+                      setCustomUnit(e.target.value);
+                      saveSettings({ customUnit: e.target.value });
+                    }}
                     className="h-7 text-[10px] bg-background/40 border-border/40 font-mono"
                   />
                 </div>
@@ -522,7 +601,10 @@ export const FuturisticSpeedometerDashboard = () => {
                     {(["standard", "compact", "kilo"] as const).map((m) => (
                       <button
                         key={m}
-                        onClick={() => setGaugeMode(m)}
+                        onClick={() => {
+                          setGaugeMode(m);
+                          saveSettings({ gaugeMode: m });
+                        }}
                         className={cn("px-1 py-1 text-[8px] font-mono uppercase rounded border transition-all", gaugeMode === m ? "bg-primary/20 border-primary text-primary" : "bg-background/40 border-border/40 text-muted-foreground hover:border-primary/40")}
                       >
                         {m}
@@ -577,7 +659,7 @@ export const FuturisticSpeedometerDashboard = () => {
         <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity duration-300", kpisFetching && "opacity-60")}>
           <Speedometer label="Faturamento" value={revenue} min={minVal} max={goalAmount} formatValue={fmtBRL} accent="primary" icon={DollarSign} delta={kpis?.changes.revenue} ticksCount={ticksCount} unit={customUnit || "BRL"} />
           <Speedometer label="Vendas" value={sales} min={minVal} max={salesMax} accent="success" icon={Zap} delta={kpis?.changes.sales} ticksCount={ticksCount} unit={customUnit || "vendas"} />
-          <Speedometer label="Conversão" value={conversion} min={minVal} max={customMax || 100} formatValue={(v) => `${v.toFixed(1)}%`} accent="warning" icon={Target} delta={kpis?.changes.conversion} ticksCount={ticksCount} unit={customUnit || "%"} />
+          <Speedometer label="Conversão" value={conversion} min={minVal} max={conversionMax} formatValue={(v) => `${v.toFixed(1)}%`} accent="warning" icon={Target} delta={kpis?.changes.conversion} ticksCount={ticksCount} unit={customUnit || "%"} />
           <Speedometer label="Ticket Médio" value={ticket} min={minVal} max={ticketMax} formatValue={fmtBRL} accent="destructive" icon={Activity} delta={kpis?.changes.avgTicket} ticksCount={ticksCount} unit={customUnit || "BRL"} />
         </div>
       )}
