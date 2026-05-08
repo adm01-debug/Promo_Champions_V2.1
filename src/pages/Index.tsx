@@ -14,6 +14,7 @@ import { TeamActivityFeed } from "@/components/collaboration/TeamActivityFeed";
 import { ClientHealthPanel } from "@/components/analytics/ClientHealthPanel";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
+import { cn } from "@/lib/utils";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
