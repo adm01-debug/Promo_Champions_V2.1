@@ -276,7 +276,7 @@ export default function Cadencias() {
                           className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
                           onClick={() => setSelectedLeadId(p.sale_id)}
                         >
-                          <span className="font-bold">{(p.sale as any)?.client_name || "Lead sem nome"}</span>
+                          <span className="font-bold">{(p as any).sale?.client_name || (p as any).client_name || "Lead sem nome"}</span>
                           <span className="text-[10px] text-muted-foreground">Status: {p.status} | Etapa: {p.funnel_stage}</span>
                         </Button>
                       ))}
@@ -294,7 +294,7 @@ export default function Cadencias() {
                 {selectedLeadId ? (
                   <LeadDetailedAuditLogs 
                     clientId={selectedLeadId} 
-                    clientName={(allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name} 
+                    clientName={(allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name || "Lead"} 
                   />
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">
