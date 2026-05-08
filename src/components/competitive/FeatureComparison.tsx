@@ -16,9 +16,9 @@ import {
 export const FeatureComparison = () => {
   const comparisons = [
     {
-      feature: "Big Data & Lead Discovery",
+      feature: "Lead Discovery (SINGU)",
       status: "partial",
-      our_evidence: "Integração via API com fontes externas e busca semântica básica.",
+      our_evidence: "Integração nativa com o sistema SINGU para busca de decisores.",
       competitor_evidence: "Base própria com +10M de decisores brasileiros. Captura via redes sociais corporativas.",
       priority: "high",
       effort: "high",
@@ -74,7 +74,7 @@ export const FeatureComparison = () => {
 
   const roadmap = [
     { goal: "AI Engagement Score", impact: "Very High", effort: "Medium", status: "Planning", recommendation: "Implementar algoritmo de calor baseado em aberturas/cliques." },
-    { goal: "Native Decision Maker DB", impact: "Critical", effort: "High", status: "Backlog", recommendation: "Parceria com provedores de dados locais para busca direta." },
+    { goal: "SINGU Database Sync", impact: "Critical", effort: "High", status: "Backlog", recommendation: "Sincronização bidirecional total com a base de decisores SINGU." },
     { goal: "Automated Bounce Cleanup", impact: "High", effort: "Low", status: "Research", recommendation: "Trigger automático para marcar lead como bounce após erro 4xx/5xx no envio." },
     { goal: "AI behavioral approach", impact: "Medium", effort: "Medium", status: "Backlog", recommendation: "Sugestão de templates baseada no cargo/setor do decisor." }
   ];
@@ -146,7 +146,7 @@ export const FeatureComparison = () => {
           </CardHeader>
           <CardContent>
             <ul className="text-sm space-y-2 text-muted-foreground">
-              <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> Native Lead/Decision Maker Database</li>
+              <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> SINGU Lead/Decision Maker Database</li>
               <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> AI Behavioral Analysis</li>
               <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> Auto-discovery of Emails/Phones</li>
             </ul>
