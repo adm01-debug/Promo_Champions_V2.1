@@ -294,7 +294,7 @@ export default function Cadencias() {
                 {selectedLeadId ? (
                   <LeadDetailedAuditLogs 
                     clientId={selectedLeadId} 
-                    clientName={allProspects?.find((p: any) => p.sale_id === selectedLeadId)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name} 
+                    clientName={(allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name} 
                   />
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">
