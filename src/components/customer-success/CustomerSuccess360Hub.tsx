@@ -332,39 +332,110 @@ export function CustomerSuccess360Hub() {
 
         <TabsContent value="orders" className="mt-4">
           <Card>
-            <CardHeader><CardTitle>Distribuição de Pedidos por Status</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Distribuição de Pedidos por Status</CardTitle>
+              <CardDescription>Resumo financeiro de pedidos filtrados pelo período selecionado</CardDescription>
+            </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
+              <div className="rounded-md border overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="p-3 text-left font-medium">Status</th>
-                      <th className="p-3 text-center font-medium">Qtd. Pedidos</th>
-                      <th className="p-3 text-right font-medium">Volume Total</th>
-                      <th className="p-3 text-center font-medium">Ação</th>
+                      <th className="p-4 text-left font-medium">Status</th>
+                      <th className="p-4 text-center font-medium">Qtd. Pedidos</th>
+                      <th className="p-4 text-right font-medium">Volume Total</th>
+                      <th className="p-4 text-center font-medium">Ação</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { status: "Pago/Entregue", count: 145, value: 89000, color: "text-success" },
-                      { status: "Pendente", count: 24, value: 12500, color: "text-warning" },
-                      { status: "Cancelado", count: 12, value: 5400, color: "text-destructive" },
-                    ].map((row, i) => (
-                      <tr key={i} className="border-b">
-                        <td className={`p-3 font-semibold ${row.color}`}>{row.status}</td>
-                        <td className="p-3 text-center">{row.count}</td>
-                        <td className="p-3 text-right font-mono">{formatBRL(row.value)}</td>
-                        <td className="p-3 text-center">
-                          <Button variant="ghost" size="sm">Ver Detalhes</Button>
+                    {ordersByStatus.map((row, i) => (
+                      <tr key={i} className="border-b transition-colors hover:bg-muted/30">
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${row.color.replace("text-", "bg-")}`} />
+                            <span className={`font-semibold ${row.color}`}>{row.status}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-center">{row.count}</td>
+                        <td className="p-4 text-right font-mono font-medium">{formatBRL(row.value)}</td>
+                        <td className="p-4 text-center">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 px-3"
+                            onClick={() => setOrderModalStatus(row.key)}
+                          >
+                            Ver Detalhes
+                          </Button>
                         </td>
                       </tr>
                     ))}
+                    {ordersByStatus.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
+                          Nenhum pedido encontrado no período.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
+
+        <Dialog open={!!orderModalStatus} onOpenChange={(open) => !open && setOrderModalStatus(null)}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
+              <DialogDescription>
+                Lista completa de pedidos com este status no período selecionado.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 mt-4">
+              <div className="rounded-md border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="p-3 text-left">Pedido</th>
+                      <th className="p-3 text-left">Data</th>
+                      <th className="p-3 text-right">Valor</th>
+                      <th className="p-3 text-left">Informações Extras</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders
+                      .filter(o => {
+                        const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+                        return s === orderModalStatus;
+                      })
+                      .map((o) => (
+                        <tr key={o.id} className="border-b">
+                          <td className="p-3 font-medium">#{o.order_number}</td>
+                          <td className="p-3">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
+                          <td className="p-3 text-right font-mono">{formatBRL(o.total)}</td>
+                          <td className="p-3">
+                            {o.cancellation_reason && (
+                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20">
+                                Motivo: {o.cancellation_reason}
+                              </Badge>
+                            )}
+                            {!o.cancellation_reason && o.status === "pending" && (
+                              <span className="text-xs text-muted-foreground italic">Aguardando pagamento</span>
+                            )}
+                            {!o.cancellation_reason && o.status !== "pending" && (
+                              <span className="text-xs text-muted-foreground italic">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <TabsContent value="overview" className="space-y-4 mt-4">
           <Card>
