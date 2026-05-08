@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Flame, CalendarDays, Users, TrendingUp, Target, ShieldCheck } from "lucide-react";
+import { Brain, Flame, CalendarDays, Users, TrendingUp, Target, ShieldCheck, History, AlertTriangle, ShieldAlert } from "lucide-react";
 import { ClientSelector } from "./ClientSelector";
 import { PurchaseHeatmapGrid } from "./PurchaseHeatmapGrid";
 import { PurchasePredictionCard } from "./PurchasePredictionCard";
 import { SeasonalityHeatmap } from "./SeasonalityHeatmap";
+import { IntelligenceAlerts } from "../dashboard/modules/IntelligenceAlerts";
 import { EmptyStateGuide } from "./EmptyStateGuide";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DuplicateBlockAudit } from "./DuplicateBlockAudit";
 
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
@@ -82,6 +85,9 @@ export function PurchaseIntelligenceHub() {
             <TabsTrigger value="seasonality" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <CalendarDays className="h-4 w-4" /> Sazonalidade
             </TabsTrigger>
+            <TabsTrigger value="audit" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <ShieldAlert className="h-4 w-4" /> Auditoria de Bloqueios
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="client" className="space-y-6 focus-visible:outline-none">
@@ -95,15 +101,18 @@ export function PurchaseIntelligenceHub() {
             
             <div className="grid lg:grid-cols-12 gap-6">
               <motion.div 
-                className="lg:col-span-5 xl:col-span-4"
+                className="lg:col-span-4"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <PurchasePredictionCard clientId={clientId} />
+                <div className="space-y-6">
+                  <PurchasePredictionCard clientId={clientId} />
+                  <IntelligenceAlerts />
+                </div>
               </motion.div>
               <motion.div 
-                className="lg:col-span-7 xl:col-span-8"
+                className="lg:col-span-8"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
@@ -111,6 +120,15 @@ export function PurchaseIntelligenceHub() {
                 <PurchaseHeatmapGrid clientId={clientId} months={24} />
               </motion.div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="audit" className="focus-visible:outline-none">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <DuplicateBlockAudit />
+            </motion.div>
           </TabsContent>
 
           <TabsContent value="global" className="focus-visible:outline-none">

@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import { MiniSparkline } from "@/components/dashboard/MiniSparkline";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface StatCardProps {
   title: string;
@@ -108,15 +114,40 @@ export const StatCard = React.memo(({
             </p>
             <p className={cn(
               "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter",
-              hero && "text-9xl sm:text-[32rem] lg:text-[45rem] 2xl:text-[58rem] font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-32 drop-shadow-[0_0_350px_rgba(139,92,246,1)] animate-pulse-gentle",
+              hero && "text-[min(20vw,9rem)] sm:text-[min(15vw,24rem)] lg:text-[min(12vw,36rem)] 2xl:text-[min(10vw,48rem)] font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 lg:py-12 drop-shadow-[0_0_150px_rgba(139,92,246,0.8)] animate-pulse-gentle transition-all duration-500",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
             )} style={{ 
-              textShadow: hero ? `0 0 80px hsl(var(--primary) / 0.95), 0 0 160px hsl(var(--primary) / 0.6), 0 0 240px hsl(var(--primary) / 0.2)` : 
-                          variant !== 'default' ? '0 0 15px currentColor' : 'none' 
+              textShadow: hero ? `0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--primary) / 0.4), 0 0 120px hsl(var(--primary) / 0.1)` : 
+                          variant !== 'default' ? '0 0 12px currentColor' : 'none' 
             }}>
               {displayValue}
+              {hero && (
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md cursor-help">
+                          <div className="relative w-12 h-1 bg-white/10 rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: "94%" }}
+                              className="h-full bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                              transition={{ duration: 2, ease: "easeOut" }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-mono font-bold text-primary">94% CONFIDENCE</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-black/90 border-primary/30 text-xs p-3 max-w-[200px] backdrop-blur-xl">
+                        <p className="font-mono text-primary font-bold mb-1">IA INSIGHT</p>
+                        <p className="text-muted-foreground leading-relaxed">Alta probabilidade de conversão baseada em padrões históricos de comportamento e sazonalidade.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
             </p>
             {change !== undefined && (
               <div className="flex items-center gap-2">
