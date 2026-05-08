@@ -248,6 +248,9 @@ const Index = () => {
             {/* ===== MY GOAL ALERT ===== */}
             <MyGoalAlertCard />
 
+            {/* ===== TRENDS CHARTS ===== */}
+            <TrendsChartsPanel />
+
             {/* ===== FUTURISTIC RANKING ===== */}
             <FuturisticRanking />
 
