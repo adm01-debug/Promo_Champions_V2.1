@@ -132,13 +132,15 @@ describe("Dashboard Routing", () => {
 
     // Agora acessa /dashboard novamente e deve ir para performance
     render(
-      <MemoryRouter initialEntries={["/dashboard"]}>
-        <Routes>
-          <Route path="/dashboard" element={<Index />} />
-          <Route path="/dashboard/:section" element={<Index />} />
-        </Routes>
-        <LocationDisplay />
-      </MemoryRouter>
+      <AllProviders>
+        <MemoryRouter initialEntries={["/dashboard"]}>
+          <Routes>
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/dashboard/:section" element={<Index />} />
+          </Routes>
+          <LocationDisplay />
+        </MemoryRouter>
+      </AllProviders>
     );
 
     await waitFor(() => {
