@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { Users, Search, Mail, Phone, Loader2, Pencil, Trash2, History } from "lucide-react";
+import { Users, Search, Mail, Phone, Pencil, Trash2, History, BarChart3 } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,8 +19,9 @@ import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
 import { ClientTimeline } from "@/components/clients/ClientTimeline";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
+import { Client360View } from "@/components/clients/Client360View";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
@@ -37,6 +38,7 @@ const Clientes = () => {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   const [timelineClient, setTimelineClient] = useState<Client | null>(null);
+  const [view360Client, setView360Client] = useState<Client | null>(null);
   const { data: clients = [], isLoading } = useClients();
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
@@ -166,7 +168,7 @@ const Clientes = () => {
           {sortedClients.length > 0 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {paginatedItems.map((client, index) => (
+                {paginatedItems.map((client) => (
                 <div 
                   key={client.id}
                   className="group relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 hover:border-primary/30"
@@ -176,6 +178,15 @@ const Clientes = () => {
                   
                   {/* Action Buttons */}
                   <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 z-10">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary hover:border-primary/40"
+                      onClick={() => setView360Client(client)}
+                      title="Visão 360°"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="outline"
                       size="icon"
@@ -328,6 +339,28 @@ const Clientes = () => {
           </DialogHeader>
           {timelineClient && (
             <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* 360 View Dialog */}
+      <Dialog open={!!view360Client} onOpenChange={(open) => !open && setView360Client(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-xl border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl">
+          <DialogHeader className="pb-4 border-b border-border/10">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+                <BarChart3 className="h-6 w-6 text-primary animate-pulse" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black uppercase tracking-tighter italic">Visão 360° do Cliente</DialogTitle>
+                <DialogDescription className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{view360Client?.name} — {view360Client?.company || 'Operação Independente'}</DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          {view360Client && (
+            <div className="py-6">
+              <Client360View clientName={view360Client.name} />
+            </div>
           )}
         </DialogContent>
       </Dialog>
