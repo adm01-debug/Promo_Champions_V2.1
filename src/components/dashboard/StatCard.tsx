@@ -76,11 +76,15 @@ export const StatCard = React.memo(({
   }, [numericValue, value, animatedNum]);
 
   return (
-    <Card className={cn(
-      "group relative overflow-hidden transition-all duration-300",
-      theme === "cyber" ? variantStyles[variant] : "bg-card border-border/40 hover:border-primary/20",
-      heroStyles,
-    )}>
+    <motion.div
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="h-full"
+    >
+      <Card className={cn(
+        "group relative h-full overflow-hidden transition-all duration-300",
+        theme === "cyber" ? variantStyles[variant] : "bg-card border-border/40 hover:border-primary/20",
+        heroStyles,
+      )}>
       {/* Decorative cyber-elements */}
       {theme === "cyber" && (
         <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
