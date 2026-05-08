@@ -59,7 +59,7 @@ export function TodaysCadenceTasks() {
     setCallResult("nao_atendeu");
   };
 
-  const applyOutcomeRules = async (outcome: string, saleId: string) => {
+  const applyOutcomeRules = async (outcome: string, saleId: string, prospectCadenceId: string) => {
     try {
       const { data: rules } = await supabase
         .from("cadence_outcome_rules")
@@ -68,19 +68,36 @@ export function TodaysCadenceTasks() {
 
       if (rules && rules.length > 0) {
         const rule = rules[0];
-        // Atualizar etapa
+        
+        // 1. Atualizar etapa do funil
         if (rule.to_stage) {
           await updateStage.mutateAsync({ saleId, stage: rule.to_stage });
         }
         
-        // Ações adicionais (next_action)
+        // 2. Ações de Cadência (Próximos Passos)
         if (rule.next_action === 'pause') {
-          await supabase.from("prospect_cadences").update({ status: 'paused' }).eq("sale_id", saleId);
+          await supabase.from("prospect_cadences").update({ status: 'paused' }).eq("id", prospectCadenceId);
+        } else if (rule.next_action === 'retry') {
+          // Lógica de retry seria disparada por um cron ou worker baseado no retry_delay_hours
+          console.log(`Retry agendado em ${rule.retry_delay_hours}h`);
         }
         
+        // 3. Registrar Log de Auditoria
+        await supabase.from("intent_audit_logs").insert({
+          lead_id: prospectCadenceId,
+          event_type: `call_outcome_${outcome}`,
+          details: { 
+            transitioned: !!rule.to_stage, 
+            old_stage: 'current', // Simplified
+            new_stage: rule.to_stage,
+            reason: `Regra de desfecho: ${outcome}` 
+          },
+          rule_applied: rule
+        });
+
         toast({
-          title: "Regra aplicada",
-          description: `Lead movido para ${rule.to_stage} baseado no desfecho.`,
+          title: "Regra de Desfecho Aplicada",
+          description: `Desfecho "${outcome}" processado com sucesso.`,
         });
       }
     } catch (err) {
@@ -111,7 +128,7 @@ export function TodaysCadenceTasks() {
           // Registrar log detalhado
           const prospectCadence = task?.prospect_cadence as any;
           if (prospectCadence?.sale_id) {
-            await applyOutcomeRules(callResult, prospectCadence.sale_id);
+            await applyOutcomeRules(callResult, prospectCadence.sale_id, prospectCadence.id);
             
             await supabase.from("lead_detailed_logs").insert({
               client_id: prospectCadence.sale_id,

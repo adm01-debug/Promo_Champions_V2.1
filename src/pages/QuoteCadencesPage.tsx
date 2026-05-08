@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Download, LayoutDashboard, Settings2, ShieldCheck } from "lucide-react";
+import { Send, Download, LayoutDashboard, Settings2, ShieldCheck, Clock } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
@@ -12,6 +12,7 @@ import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useCallback, useMemo, useState } from "react";
 import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
 import { QuoteCadenceEmptyState } from "@/components/cadences/quote/QuoteCadenceEmptyState";
@@ -25,6 +26,9 @@ import { useQuoteCadenceShortcuts } from "@/hooks/cadences/useQuoteCadenceShortc
 import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
 import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequencyRules";
 import { ApprovalQueue } from "@/components/sales/cadence/ApprovalQueue";
+import { CadenceOutcomeConfig } from "@/components/sales/cadence/CadenceOutcomeConfig";
+import { CadenceAlertConfig } from "@/components/sales/cadence/CadenceAlertConfig";
+import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimulationDialog";
 
 type Filter = "all" | "active" | "paused" | "completed";
 type ViewMode = "monitoring" | "strategy";
@@ -237,11 +241,45 @@ export default function QuoteCadencesPage() {
               exit={{ opacity: 0, x: -10 }}
               className="grid grid-cols-1 lg:grid-cols-3 gap-6"
             >
-              <div className="lg:col-span-2">
-                <CadenceTemplateManager />
+              <div className="lg:col-span-2 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Configurações de Estratégia</h2>
+                  <CadenceSimulationDialog />
+                </div>
+                <Tabs defaultValue="outcomes" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="outcomes">Desfechos de Ligação</TabsTrigger>
+                    <TabsTrigger value="alerts">Templates de Alerta</TabsTrigger>
+                    <TabsTrigger value="templates">Mensagens (WhatsApp/Email)</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="outcomes" className="mt-4">
+                    <CadenceOutcomeConfig />
+                  </TabsContent>
+                  <TabsContent value="alerts" className="mt-4">
+                    <CadenceAlertConfig />
+                  </TabsContent>
+                  <TabsContent value="templates" className="mt-4">
+                    <CadenceTemplateManager />
+                  </TabsContent>
+                </Tabs>
               </div>
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 space-y-6">
                 <ContactFrequencyRules />
+                <Card className="glass border-border/40">
+                  <CardHeader>
+                    <CardTitle className="text-sm">Configurações Rápidas</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span>Fuso Horário Padrão</span>
+                      <Badge variant="outline">America/Sao_Paulo</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span>Janela de Alertas</span>
+                      <Badge variant="outline">09:00 - 18:00</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </motion.div>
           )}
