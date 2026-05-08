@@ -236,8 +236,27 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
   );
 };
 
+const PERIOD_STORAGE_KEY = "dashboard.speedometer.period";
+
+const isValidPeriod = (v: string | null): v is KPIPeriod =>
+  v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
+
 export const FuturisticSpeedometerDashboard = () => {
-  const [period, setPeriod] = useState<KPIPeriod>("current_month");
+  const [period, setPeriodState] = useState<KPIPeriod>(() => {
+    if (typeof window === "undefined") return "current_month";
+    const saved = window.localStorage.getItem(PERIOD_STORAGE_KEY);
+    return isValidPeriod(saved) ? saved : "current_month";
+  });
+
+  const setPeriod = (p: KPIPeriod) => {
+    setPeriodState(p);
+    try {
+      window.localStorage.setItem(PERIOD_STORAGE_KEY, p);
+    } catch {
+      /* ignore quota / privacy errors */
+    }
+  };
+
   const { data: kpis } = useDashboardKPIsPeriod(period);
   const { data: goals } = useGoalsDashboard();
 
