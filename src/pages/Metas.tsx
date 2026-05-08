@@ -23,8 +23,8 @@ import { PageTransition, containerVariants, itemVariants } from "@/components/tr
 
 export default function Metas() {
   const { data, isLoading, dataUpdatedAt } = useGoalsDashboard();
-  const { userRole } = useAuth();
-  const isManager = userRole === "admin" || userRole === "manager";
+  const { salesperson } = useAuth();
+  const isManager = salesperson?.role === "admin" || salesperson?.role === "manager";
   const queryClient = useQueryClient();
 
   const handleRefresh = () => {
