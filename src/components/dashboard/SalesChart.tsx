@@ -125,7 +125,7 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
                 cursor={{ stroke: 'rgba(14, 165, 233, 0.3)', strokeWidth: 1, strokeDasharray: '5 5' }} 
               />
               <Area
-                type="basis"
+                type="monotone"
                 dataKey="value"
                 stroke="hsl(var(--primary))"
                 strokeWidth={3}
