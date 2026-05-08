@@ -118,6 +118,7 @@ export function AppRoutes() {
                     <Route path="/fonte-leads" element={<Manager><FonteLeads /></Manager>} />
                     <Route path="/playbooks" element={<Manager><Playbooks /></Manager>} />
                     <Route path="/follow-up" element={<FollowUpInteligente />} />
+                    <Route path="/follow-up/audit" element={<Manager><FollowUpAudit /></Manager>} />
                     <Route path="/sequences" element={<Sequences />} />
                     <Route path="/engagement/bulk-composer" element={<BulkComposer />} />
                     <Route path="/engagement/send-time" element={<SendTimeOptimization />} />
