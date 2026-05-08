@@ -282,30 +282,8 @@ const Index = () => {
               </motion.div>
             )}
 
-            {/* ===== SUB-MODULES (TABS) ===== */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="sticky top-0 z-30 -mx-3 sm:-mx-4 lg:-mx-8 px-3 sm:px-4 lg:px-8 py-2 backdrop-blur-md bg-background/70 border-b border-border/40">
-                <TabsList className="w-full flex flex-wrap justify-start gap-1 h-auto bg-transparent p-1">
-                  <TabsTrigger value="overview" className="gap-2">
-                    <LayoutDashboard className="h-4 w-4" /> Visão Geral
-                  </TabsTrigger>
-                  <TabsTrigger value="performance" className="gap-2">
-                    <Gauge className="h-4 w-4" /> Performance
-                  </TabsTrigger>
-                  <TabsTrigger value="analytics" className="gap-2">
-                    <BarChart3 className="h-4 w-4" /> Análises
-                  </TabsTrigger>
-                  <TabsTrigger value="competition" className="gap-2">
-                    <Trophy className="h-4 w-4" /> Competição
-                  </TabsTrigger>
-                  <TabsTrigger value="intelligence" className="gap-2">
-                    <Zap className="h-4 w-4" /> Inteligência
-                  </TabsTrigger>
-                  <TabsTrigger value="engagement" className="gap-2">
-                    <Heart className="h-4 w-4" /> Engajamento
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+            {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
+            <Tabs value={activeTab} className="w-full">
 
               {/* === VISÃO GERAL === */}
               <TabsContent value="overview" className="space-y-6 mt-6 focus-visible:outline-none">
