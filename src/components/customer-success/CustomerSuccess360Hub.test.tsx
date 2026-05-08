@@ -146,13 +146,14 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // Find the "Pago/Entregue" card or similar
-    const deliveredCard = screen.getByText("Pago/Entregue").closest("div");
+    // The "Pago/Entregue" text is inside a span/div, let's use a function matcher
+    const deliveredStatus = screen.getByText((content) => content.includes("Pago/Entregue"));
+    const deliveredCard = deliveredStatus.closest("div");
     if (deliveredCard) fireEvent.click(deliveredCard);
     
     // Check if modal title appears
     await waitFor(() => {
-      expect(screen.getByText("Detalhamento de Pedidos")).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes("Detalhamento de Pedidos"))).toBeInTheDocument();
     });
   });
 
@@ -170,7 +171,7 @@ describe("CustomerSuccess360Hub", () => {
     render(<CustomerSuccess360Hub />);
     
     await waitFor(() => {
-      expect(screen.getByText("Detalhamento de Pedidos")).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes("Detalhamento de Pedidos"))).toBeInTheDocument();
     });
 
     const searchInput = screen.getByPlaceholderText(/Buscar por pedido, cliente ou motivo/i);
