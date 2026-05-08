@@ -16,6 +16,12 @@ import {
   ChevronRight,
   MousePointerClick
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { usePurchaseIntelligence } from "@/hooks/purchase-intelligence/usePurchaseIntelligence";
 import {
   CONTACT_WINDOW_LABELS,
@@ -60,16 +66,16 @@ export function PurchasePredictionCard({ clientId }: Props) {
   const isOverdue = daysSinceLast > cycleDays;
 
   return (
-    <Card className="border-primary/20 bg-card/50 backdrop-blur-sm shadow-xl h-full flex flex-col overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50" />
+    <Card className="border-white/5 bg-black/40 backdrop-blur-xl shadow-2xl h-full flex flex-col overflow-hidden relative group">
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
       
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-4 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2.5 text-lg font-bold">
-            <div className="p-1.5 rounded-lg bg-primary/10">
-              <Brain className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2.5 text-lg font-bold text-foreground/90">
+            <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+              <Brain className="h-5 w-5 text-primary animate-pulse" />
             </div>
-            Análise Preditiva 360°
+            Inteligência Preditiva
           </CardTitle>
           <AnimatePresence>
             {isFetching && (
@@ -160,19 +166,28 @@ export function PurchasePredictionCard({ clientId }: Props) {
               className="space-y-4"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-xl border-2 border-primary/30 bg-primary/10 p-4 relative overflow-hidden group">
-                  <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <TrendingUp className="h-16 w-16" />
+                <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 relative overflow-hidden group/card shadow-[0_0_20px_rgba(139,92,246,0.05)] hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all">
+                  <div className="absolute -right-4 -top-4 opacity-10 group-hover/card:opacity-20 transition-opacity">
+                    <TrendingUp className="h-16 w-16 text-primary" />
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-tight">
                     <Sparkles className="h-3.5 w-3.5" /> Próxima Compra
                   </div>
-                  <div className="text-xl font-black text-foreground tracking-tight">{formatDatePt(ai.predicted_next_purchase_date)}</div>
+                  <div className="text-xl font-black text-foreground tracking-tight group-hover/card:text-primary transition-colors">{formatDatePt(ai.predicted_next_purchase_date)}</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-sm font-bold text-muted-foreground">{formatBRL(ai.predicted_amount)}</span>
-                    <Badge variant="outline" className="text-[9px] border-primary/20 text-primary">
-                      {(ai.confidence * 100).toFixed(0)}% Confiança
-                    </Badge>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge variant="outline" className="text-[9px] border-primary/20 text-primary bg-primary/10 shadow-[0_0_10px_rgba(139,92,246,0.2)] cursor-help">
+                            {(ai.confidence * 100).toFixed(0)}% CONFIDENCE
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-black/90 border-primary/30 text-[10px] p-2 backdrop-blur-xl">
+                          Calculado com base em 128 parâmetros de comportamento.
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
 
