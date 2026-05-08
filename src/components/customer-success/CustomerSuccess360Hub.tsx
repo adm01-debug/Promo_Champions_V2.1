@@ -393,11 +393,13 @@ export function CustomerSuccess360Hub() {
                     size="sm" 
                     className="h-9 px-2 text-muted-foreground" 
                     onClick={() => {
+                      setPeriod("30");
                       setStartDate("");
                       setEndDate("");
                     }}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 mr-1" />
+                    Resetar
                   </Button>
                 )}
               </div>
