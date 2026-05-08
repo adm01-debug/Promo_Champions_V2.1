@@ -67,8 +67,8 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
               <div className="absolute inset-0 blur-[20px] opacity-20 bg-primary rounded-full" />
               <ProgressRing
                 value={percentage}
-                size={140}
-                strokeWidth={10}
+                size={160}
+                strokeWidth={12}
                 variant={variant}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
