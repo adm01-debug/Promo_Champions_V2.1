@@ -1466,6 +1466,7 @@ export type Database = {
           name: string
           start_time: string | null
           subject: string | null
+          timezone: string | null
           type: string
           updated_at: string | null
         }
@@ -1479,6 +1480,7 @@ export type Database = {
           name: string
           start_time?: string | null
           subject?: string | null
+          timezone?: string | null
           type: string
           updated_at?: string | null
         }
@@ -1492,6 +1494,7 @@ export type Database = {
           name?: string
           start_time?: string | null
           subject?: string | null
+          timezone?: string | null
           type?: string
           updated_at?: string | null
         }
@@ -1623,6 +1626,7 @@ export type Database = {
           outcome: string
           push_template_id: string | null
           retry_delay_hours: number | null
+          timezone: string | null
           to_stage: string
           updated_at: string | null
         }
@@ -1636,6 +1640,7 @@ export type Database = {
           outcome: string
           push_template_id?: string | null
           retry_delay_hours?: number | null
+          timezone?: string | null
           to_stage: string
           updated_at?: string | null
         }
@@ -1649,6 +1654,7 @@ export type Database = {
           outcome?: string
           push_template_id?: string | null
           retry_delay_hours?: number | null
+          timezone?: string | null
           to_stage?: string
           updated_at?: string | null
         }
