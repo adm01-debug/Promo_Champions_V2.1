@@ -118,8 +118,9 @@ export function CustomerSuccess360Hub() {
     const cohorts: Record<string, { month: string; retained: number; churned: number; revenue: number }> = {};
     
     accounts.forEach(a => {
-      if (!a.created_at) return;
-      const month = format(startOfMonth(parseISO(a.created_at)), "MMM yy", { locale: ptBR });
+      const createdAt = (a as any).created_at;
+      if (!createdAt) return;
+      const month = format(startOfMonth(parseISO(createdAt)), "MMM yy", { locale: ptBR });
       if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0, revenue: 0 };
       
       // Retention simulation: Health > 50 is retained
