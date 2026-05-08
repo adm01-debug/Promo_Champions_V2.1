@@ -1,16 +1,18 @@
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter } from "lucide-react";
-import { format, subDays, startOfMonth, parseISO, isWithinInterval } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info } from "lucide-react";
+import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend, Cell, PieChart, Pie } from "recharts";
 import { useState, useMemo } from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -33,6 +35,9 @@ const SEMA_BG: Record<string, string> = {
 export function CustomerSuccess360Hub() {
   const { data, isLoading } = useCustomerSuccess360();
   const [period, setPeriod] = useState("30");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [orderModalStatus, setOrderModalStatus] = useState<string | null>(null);
 
   const s = data?.summary;
   const accounts = data?.accounts ?? [];
@@ -43,17 +48,27 @@ export function CustomerSuccess360Hub() {
   const expansion = data?.expansion ?? [];
   const surveys = data?.surveys ?? [];
   const qbrs = data?.qbrs ?? [];
+  const orders = data?.orders ?? [];
 
   // Data Filtering by Period
   const filteredData = useMemo(() => {
     if (!data) return null;
     const now = new Date();
-    const days = parseInt(period);
-    const startDate = subDays(now, days);
+    let start: Date;
+    let end = now;
+
+    if (period === "custom") {
+      start = startDate ? parseISO(startDate) : subDays(now, 30);
+      end = endDate ? parseISO(endDate) : now;
+    } else if (period === "0") {
+      start = new Date(0);
+    } else {
+      start = subDays(now, parseInt(period));
+    }
 
     const filterByDate = (item: any, dateField: string = "created_at") => {
       const date = parseISO(item[dateField]);
-      return days === 0 || isWithinInterval(date, { start: startDate, end: now });
+      return isWithinInterval(date, { start: startOfDay(start), end: endOfDay(end) });
     };
 
     return {
@@ -61,8 +76,9 @@ export function CustomerSuccess360Hub() {
       expansion: expansion.filter(e => filterByDate(e)),
       surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
       renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
+      orders: orders.filter(o => filterByDate(o)),
     };
-  }, [data, period, tickets, expansion, surveys, renewals]);
+  }, [data, period, startDate, endDate, tickets, expansion, surveys, renewals, orders]);
 
   // Evolution Data (LTV & Ticket Médio)
   const evolutionData = useMemo(() => {
@@ -78,21 +94,54 @@ export function CustomerSuccess360Hub() {
       name,
       ltv: val.ltv,
       ticket: val.ltv / (val.count || 1)
-    })).slice(-6);
+    })).sort((a, b) => {
+      const dateA = parseISO(`01 ${a.name.replace(" ", " 20")}`);
+      const dateB = parseISO(`01 ${b.name.replace(" ", " 20")}`);
+      return dateA.getTime() - dateB.getTime();
+    }).slice(-12);
   }, [renewals]);
 
-  // Cohort Analysis (Simulated based on renewals/onboarding)
+  // Cohort Analysis (True First Purchase based on account creation)
   const cohortData = useMemo(() => {
-    const cohorts: Record<string, { month: string; retained: number; churned: number }> = {};
+    const cohorts: Record<string, { month: string; retained: number; churned: number; revenue: number }> = {};
+    
     accounts.forEach(a => {
-      const date = a.next_renewal ? parseISO(a.next_renewal) : new Date();
-      const month = format(startOfMonth(date), "MMM yy", { locale: ptBR });
-      if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0 };
-      if (a.health_v2 > 40) cohorts[month].retained += 1;
+      if (!a.created_at) return;
+      const month = format(startOfMonth(parseISO(a.created_at)), "MMM yy", { locale: ptBR });
+      if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0, revenue: 0 };
+      
+      // Retention simulation: Health > 50 is retained
+      if (a.health_v2 >= 50) cohorts[month].retained += 1;
       else cohorts[month].churned += 1;
+      
+      cohorts[month].revenue += a.annual_revenue || 0;
     });
-    return Object.values(cohorts).slice(0, 6);
+
+    return Object.values(cohorts).sort((a, b) => {
+      const dateA = parseISO(`01 ${a.month.replace(" ", " 20")}`);
+      const dateB = parseISO(`01 ${b.month.replace(" ", " 20")}`);
+      return dateA.getTime() - dateB.getTime();
+    }).slice(-6);
   }, [accounts]);
+
+  const ordersByStatus = useMemo(() => {
+    const statusMap: Record<string, { count: number; value: number; color: string; status: string; key: string }> = {
+      delivered: { status: "Pago/Entregue", count: 0, value: 0, color: "text-success", key: "delivered" },
+      pending: { status: "Pendente", count: 0, value: 0, color: "text-warning", key: "pending" },
+      cancelled: { status: "Cancelado", count: 0, value: 0, color: "text-destructive", key: "cancelled" },
+    };
+
+    const targetOrders = filteredData?.orders || [];
+    targetOrders.forEach(o => {
+      const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+      if (statusMap[s]) {
+        statusMap[s].count += 1;
+        statusMap[s].value += Number(o.total || 0);
+      }
+    });
+
+    return Object.values(statusMap);
+  }, [filteredData?.orders]);
 
   const exportPDF = () => {
     const doc = new jsPDF();
@@ -151,26 +200,51 @@ export function CustomerSuccess360Hub() {
           <p className="text-muted-foreground mt-1">Health, retenção, expansão e adoção em uma visão consolidada</p>
         </motion.div>
 
-        <div className="flex items-center gap-2">
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[180px]">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Período" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">Últimos 7 dias</SelectItem>
-              <SelectItem value="30">Últimos 30 dias</SelectItem>
-              <SelectItem value="90">Últimos 90 dias</SelectItem>
-              <SelectItem value="0">Tudo</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-[160px]">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Período" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Últimos 7 dias</SelectItem>
+                <SelectItem value="30">Últimos 30 dias</SelectItem>
+                <SelectItem value="90">Últimos 90 dias</SelectItem>
+                <SelectItem value="custom">Personalizado</SelectItem>
+                <SelectItem value="0">Tudo</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Button variant="outline" size="icon" onClick={exportPDF} title="Exportar PDF">
-            <Download className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon" onClick={exportCSV} title="Exportar CSV">
-            <Activity className="h-4 w-4" />
-          </Button>
+            {period === "custom" && (
+              <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-2 duration-300">
+                <Input
+                  type="date"
+                  className="w-[130px] h-9"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <span className="text-muted-foreground text-xs">até</span>
+                <Input
+                  type="date"
+                  className="w-[130px] h-9"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={exportPDF} className="h-9">
+              <Download className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportCSV} className="h-9">
+              <Activity className="h-4 w-4 mr-2" />
+              CSV
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -259,39 +333,110 @@ export function CustomerSuccess360Hub() {
 
         <TabsContent value="orders" className="mt-4">
           <Card>
-            <CardHeader><CardTitle>Distribuição de Pedidos por Status</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Distribuição de Pedidos por Status</CardTitle>
+              <CardDescription>Resumo financeiro de pedidos filtrados pelo período selecionado</CardDescription>
+            </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
+              <div className="rounded-md border overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="p-3 text-left font-medium">Status</th>
-                      <th className="p-3 text-center font-medium">Qtd. Pedidos</th>
-                      <th className="p-3 text-right font-medium">Volume Total</th>
-                      <th className="p-3 text-center font-medium">Ação</th>
+                      <th className="p-4 text-left font-medium">Status</th>
+                      <th className="p-4 text-center font-medium">Qtd. Pedidos</th>
+                      <th className="p-4 text-right font-medium">Volume Total</th>
+                      <th className="p-4 text-center font-medium">Ação</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { status: "Pago/Entregue", count: 145, value: 89000, color: "text-success" },
-                      { status: "Pendente", count: 24, value: 12500, color: "text-warning" },
-                      { status: "Cancelado", count: 12, value: 5400, color: "text-destructive" },
-                    ].map((row, i) => (
-                      <tr key={i} className="border-b">
-                        <td className={`p-3 font-semibold ${row.color}`}>{row.status}</td>
-                        <td className="p-3 text-center">{row.count}</td>
-                        <td className="p-3 text-right font-mono">{formatBRL(row.value)}</td>
-                        <td className="p-3 text-center">
-                          <Button variant="ghost" size="sm">Ver Detalhes</Button>
+                    {ordersByStatus.map((row, i) => (
+                      <tr key={i} className="border-b transition-colors hover:bg-muted/30">
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${row.color.replace("text-", "bg-")}`} />
+                            <span className={`font-semibold ${row.color}`}>{row.status}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-center">{row.count}</td>
+                        <td className="p-4 text-right font-mono font-medium">{formatBRL(row.value)}</td>
+                        <td className="p-4 text-center">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 px-3"
+                            onClick={() => setOrderModalStatus(row.key)}
+                          >
+                            Ver Detalhes
+                          </Button>
                         </td>
                       </tr>
                     ))}
+                    {ordersByStatus.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
+                          Nenhum pedido encontrado no período.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
+
+        <Dialog open={!!orderModalStatus} onOpenChange={(open) => !open && setOrderModalStatus(null)}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
+              <DialogDescription>
+                Lista completa de pedidos com este status no período selecionado.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 mt-4">
+              <div className="rounded-md border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="p-3 text-left">Pedido</th>
+                      <th className="p-3 text-left">Data</th>
+                      <th className="p-3 text-right">Valor</th>
+                      <th className="p-3 text-left">Informações Extras</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(filteredData?.orders || [])
+                      .filter(o => {
+                        const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+                        return s === orderModalStatus;
+                      })
+                      .map((o) => (
+                        <tr key={o.id} className="border-b">
+                          <td className="p-3 font-medium">#{o.order_number}</td>
+                          <td className="p-3">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
+                          <td className="p-3 text-right font-mono">{formatBRL(o.total)}</td>
+                          <td className="p-3">
+                            {o.cancellation_reason && (
+                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20">
+                                Motivo: {o.cancellation_reason}
+                              </Badge>
+                            )}
+                            {!o.cancellation_reason && o.status === "pending" && (
+                              <span className="text-xs text-muted-foreground italic">Aguardando pagamento</span>
+                            )}
+                            {!o.cancellation_reason && o.status !== "pending" && (
+                              <span className="text-xs text-muted-foreground italic">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <TabsContent value="overview" className="space-y-4 mt-4">
           <Card>
