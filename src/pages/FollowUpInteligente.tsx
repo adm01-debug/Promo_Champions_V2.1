@@ -346,6 +346,7 @@ const FollowUpInteligente = () => {
               onSearchChange={setSearchQuery}
               minDaysInactive={minDaysInactive}
               onMinDaysChange={setMinDaysInactive}
+              isAdmin={isAdmin}
             />
 
             <FollowUpStatsGrid leads={coldLeads} onFilterChange={setFilterTemp} />
