@@ -48,15 +48,19 @@ const FollowUpInteligente = () => {
 
       if (dealsError) throw dealsError;
 
-      // Fetch pending tasks to prevent duplicates
-      const { data: pendingTasks, error: tasksError } = await supabase
+      // Fetch tasks (both pending and completed) to track cadence
+      const { data: allTasks, error: tasksError } = await supabase
         .from('tasks')
-        .select('sale_id')
-        .eq('status', 'pending');
+        .select('sale_id, status, completed_at')
+        .order('completed_at', { ascending: false });
 
       if (tasksError) throw tasksError;
 
-      const pendingTaskIds = new Set((pendingTasks || []).map(t => t.sale_id));
+      const pendingTaskIds = new Set((allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id));
+      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t) => {
+        if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
+        return acc;
+      }, {});
 
       // Fetch last activity for each deal
       const { data: activities, error: activitiesError } = await supabase
