@@ -48,10 +48,10 @@ export const ComparativeStripSkeleton = ({ className }: { className?: string }) 
   </div>
 );
 
-export const TrendChartSkeleton = ({ height = 300 }: { height?: number }) => (
+export const TrendChartSkeleton = ({ height }: { height?: number }) => (
   <div
-    className="relative w-full rounded-xl bg-background/40 border border-border/40 p-3 animate-pulse overflow-hidden"
-    style={{ height }}
+    className="relative w-full h-full rounded-xl animate-pulse overflow-hidden"
+    style={height ? { height } : undefined}
   >
     {/* Y-axis ticks */}
     <div className="absolute left-3 top-3 bottom-3 flex flex-col justify-between">

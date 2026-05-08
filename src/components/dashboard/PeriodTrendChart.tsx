@@ -193,7 +193,7 @@ export const PeriodTrendChart = () => {
             </div>
           )}
           {isLoading ? (
-            <TrendChartSkeleton height={undefined as unknown as number} />
+            <TrendChartSkeleton />
           ) : chartData.length === 0 ? (
             <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
               Sem dados no período selecionado
