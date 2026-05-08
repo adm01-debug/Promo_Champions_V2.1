@@ -64,8 +64,8 @@ const FollowUpInteligente = () => {
 
       if (activitiesError) throw activitiesError;
 
-      const activitiesMap = (activities || []).reduce((acc: any, act) => {
-        if (!acc[act.sale_id]) acc[act.sale_id] = act;
+      const activitiesMap = (activities || []).reduce((acc: Record<string, any>, act) => {
+        if (act.sale_id && !acc[act.sale_id]) acc[act.sale_id] = act;
         return acc;
       }, {});
 
