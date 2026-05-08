@@ -85,7 +85,8 @@ export function CreateCadenceDialog() {
       day_number: lastDay + 2, 
       action_type: "call", 
       title: "", 
-      description: "" 
+      description: "",
+      needs_approval: false
     }]);
   };
 
