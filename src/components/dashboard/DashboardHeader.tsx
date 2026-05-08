@@ -115,11 +115,11 @@ export const DashboardHeader = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate("/relatorios/vendas")}
+            onClick={() => navigate("/bi-gestor")}
             className="h-9 bg-black/40 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
-            <FileDown className="h-3.5 w-3.5 mr-2" />
-            Data Analytics
+            <BarChart3 className="h-3.5 w-3.5 mr-2" />
+            Central BI
           </Button>
           <Button
             variant="default"
