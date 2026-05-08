@@ -200,6 +200,18 @@ export function CustomerSuccess360Hub() {
       .sort((a, b) => b.value - a.value);
   }, [filteredData?.orders, orderModalStatus, accountById]);
 
+  const lossStats = useMemo(() => {
+    const targetOrders = (filteredData?.orders || []).filter(o => o.status === "cancelled");
+    const counts: Record<string, number> = {};
+    targetOrders.forEach(o => {
+      const key = o.cancellation_reason || "Não informado";
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [filteredData?.orders]);
+
   const filteredModalOrders = useMemo(() => {
     if (!orderModalStatus) return [];
     
