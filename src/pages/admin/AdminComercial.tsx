@@ -7,11 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Target, Award, Percent, Plus, TrendingUp, Check, X, History as HistoryIcon, Clock } from "lucide-react";
+import { Loader2, Target, Award, Percent, Plus, TrendingUp, Check, X, History as HistoryIcon, Clock, Filter, Download, Info } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { CommercialDiffViewer } from "@/components/admin/commercial/CommercialDiffViewer";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 export default function AdminComercial() {
   const queryClient = useQueryClient();
@@ -301,78 +305,181 @@ export default function AdminComercial() {
           </TabsContent>
 
           <TabsContent value="aprovacoes">
-            <Card className="glass border-border/40">
-              <CardHeader><CardTitle className="text-lg font-display">Solicitações Pendentes</CardTitle></CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Mês</TableHead>
-                      <TableHead>Valores</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {approvalRequests?.map((req) => (
-                      <TableRow key={req.id}>
-                        <TableCell className="capitalize font-bold">{req.type}</TableCell>
-                        <TableCell>{format(new Date(req.competence_month), "MM/yyyy")}</TableCell>
-                        <TableCell className="text-[10px] font-mono">
-                          De: {JSON.stringify(req.old_values)} <br />
-                          Para: {JSON.stringify(req.new_values)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={req.status === "pending" ? "outline" : req.status === "approved" ? "default" : "destructive"}>
-                            {req.status}
+            <div className="grid grid-cols-1 gap-6">
+              {approvalRequests?.filter(r => r.status === "pending").length === 0 ? (
+                <Card className="glass border-border/40 py-12">
+                  <CardContent className="flex flex-col items-center justify-center text-center">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                      <Check className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg font-display uppercase italic">Tudo em dia!</CardTitle>
+                    <CardDescription>Não há solicitações de alteração pendentes para revisão.</CardDescription>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {approvalRequests?.filter(r => r.status === "pending").map((req) => (
+                    <Card key={req.id} className="glass border-border/40 overflow-hidden group hover:border-primary/40 transition-all duration-300">
+                      <div className="bg-muted/30 px-4 py-2 border-b border-border/40 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-primary/20 text-primary border-primary/30 uppercase text-[10px] font-black italic tracking-tighter">
+                            {req.type === 'goal' ? 'Meta' : req.type === 'commission' ? 'Comissão' : 'Regra de Pontos'}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {req.status === "pending" && (
-                            <div className="flex gap-2 justify-end">
-                              <Button size="sm" onClick={() => processApprovalMutation.mutate({ requestId: req.id, status: "approved" })} className="bg-green-500/20 text-green-500 hover:bg-green-500/30">
-                                <Check className="h-4 w-4" />
-                              </Button>
-                              <Button size="sm" onClick={() => processApprovalMutation.mutate({ requestId: req.id, status: "rejected" })} variant="destructive">
-                                <X className="h-4 w-4" />
-                              </Button>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase">{format(new Date(req.competence_month), "MMMM yyyy", { locale: ptBR })}</span>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground font-mono">{format(new Date(req.created_at), "dd/MM HH:mm")}</span>
+                      </div>
+                      <CardContent className="p-4 space-y-4">
+                        <div className="bg-background/40 rounded-lg p-3 border border-border/20">
+                          {req.type === 'goal' && (
+                            <CommercialDiffViewer 
+                              label="Valor da Meta" 
+                              oldValue={req.old_values.amount} 
+                              newValue={req.new_values.amount} 
+                              formatter={(val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)}
+                            />
+                          )}
+                          {req.type === 'commission' && (
+                            <CommercialDiffViewer 
+                              label="Taxa de Comissão" 
+                              oldValue={req.old_values.rate} 
+                              newValue={req.new_values.rate} 
+                              formatter={(val) => `${val}%`}
+                            />
+                          )}
+                          {req.type === 'scoring_rule' && (
+                            <div className="space-y-1">
+                              {req.new_values.weight !== req.old_values.weight && (
+                                <CommercialDiffViewer label="Peso" oldValue={req.old_values.weight} newValue={req.new_values.weight} />
+                              )}
+                              {req.new_values.points_per_unit !== req.old_values.points_per_unit && (
+                                <CommercialDiffViewer label="Pontos por Unidade" oldValue={req.old_values.points_per_unit} newValue={req.new_values.points_per_unit} />
+                              )}
                             </div>
                           )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                        </div>
+                        
+                        {req.justification && (
+                          <div className="text-[10px] bg-primary/5 p-2 rounded border border-primary/10 italic text-muted-foreground">
+                            "{req.justification}"
+                          </div>
+                        )}
+
+                        <div className="flex gap-3 pt-2">
+                          <Button 
+                            className="flex-1 bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500 hover:text-white transition-all font-bold uppercase text-[10px]"
+                            onClick={() => processApprovalMutation.mutate({ requestId: req.id, status: "approved" })}
+                          >
+                            <Check className="h-3 w-3 mr-2" /> Aprovar Alteração
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            className="flex-1 border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all font-bold uppercase text-[10px]"
+                            onClick={() => processApprovalMutation.mutate({ requestId: req.id, status: "rejected" })}
+                          >
+                            <X className="h-3 w-3 mr-2" /> Rejeitar
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {approvalRequests?.filter(r => r.status !== "pending").length > 0 && (
+                <div className="mt-8 space-y-4">
+                  <h3 className="text-sm font-display uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                    <HistoryIcon className="h-4 w-4" /> Decisões Recentes
+                  </h3>
+                  <Card className="glass border-border/40">
+                    <Table>
+                      <TableBody>
+                        {approvalRequests?.filter(r => r.status !== "pending").slice(0, 5).map((req) => (
+                          <TableRow key={req.id} className="hover:bg-muted/10 transition-colors">
+                            <TableCell className="text-[10px] font-bold uppercase italic">{req.type}</TableCell>
+                            <TableCell className="text-[10px]">{format(new Date(req.competence_month), "MM/yyyy")}</TableCell>
+                            <TableCell>
+                              <Badge variant={req.status === "approved" ? "default" : "destructive"} className="text-[9px] uppercase font-black px-1.5 py-0">
+                                {req.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-[10px] text-muted-foreground text-right">
+                              {format(new Date(req.created_at), "dd/MM/yy")}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Card>
+                </div>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="historico">
-            <Card className="glass border-border/40">
-              <CardHeader><CardTitle className="text-lg font-display">Log de Auditoria Comercial</CardTitle></CardHeader>
-              <CardContent>
+            <Card className="glass border-border/40 overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between border-b border-border/10">
+                <div>
+                  <CardTitle className="text-lg font-display uppercase italic">Histórico de Auditoria</CardTitle>
+                  <CardDescription className="text-[10px] uppercase">Rastreabilidade completa de todas as alterações comerciais</CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold uppercase border-border/40">
+                    <Filter className="h-3 w-3 mr-2" /> Filtrar
+                  </Button>
+                  <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold uppercase border-border/40">
+                    <Download className="h-3 w-3 mr-2" /> Exportar
+                  </Button>
+                </div>
+              </CardHeader>
+              <ScrollArea className="h-[600px]">
                 <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Ação</TableHead>
-                      <TableHead>Alterações</TableHead>
+                  <TableHeader className="bg-muted/20 sticky top-0 z-10">
+                    <TableRow className="hover:bg-transparent border-border/10">
+                      <TableHead className="w-[150px] text-[10px] font-black uppercase">Data/Hora</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase">Evento</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase">Entidade</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase">Alterações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {auditLogs?.map((log) => (
-                      <TableRow key={log.id}>
-                        <TableCell className="text-[10px]">{format(new Date(log.created_at), "dd/MM/yyyy HH:mm")}</TableCell>
-                        <TableCell className="font-bold">{log.action}</TableCell>
-                        <TableCell className="text-[10px] font-mono">
-                          {JSON.stringify(log.changes)}
+                      <TableRow key={log.id} className="hover:bg-primary/5 transition-colors border-border/10">
+                        <TableCell className="text-[10px] font-mono whitespace-nowrap">
+                          {format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-[9px] uppercase font-bold border-primary/20 text-primary bg-primary/5">
+                            {log.action.replace('approved_', 'APROVADO: ').replace('create_approval_', 'SOLICITADO: ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-[10px] font-black uppercase italic tracking-tighter">
+                          {log.entity_type}
+                        </TableCell>
+                        <TableCell>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-1.5 cursor-help max-w-[300px] truncate">
+                                  <Info className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                                  <span className="text-[10px] font-mono text-muted-foreground">
+                                    {JSON.stringify(log.changes).substring(0, 50)}...
+                                  </span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="w-80 p-3 bg-black/95 border-primary/30">
+                                <pre className="text-[9px] font-mono leading-relaxed overflow-x-auto text-primary-foreground/90 whitespace-pre-wrap">
+                                  {JSON.stringify(log.changes, null, 2)}
+                                </pre>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </CardContent>
+              </ScrollArea>
             </Card>
           </TabsContent>
         </Tabs>
