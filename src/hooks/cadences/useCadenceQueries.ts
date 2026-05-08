@@ -196,3 +196,33 @@ export function useCadenceStats() {
     staleTime: 30000,
   });
 }
+
+export interface FunnelRule {
+  id: string;
+  cadence_id: string | null;
+  from_stage: string;
+  to_stage: string;
+  condition_type: 'email_open' | 'quote_open' | 'price_click' | 'reply' | 'manual';
+  condition_value: number;
+  is_active: boolean;
+}
+
+export function useFunnelRules(cadenceId?: string) {
+  return useQuery({
+    queryKey: ["funnel-rules", cadenceId],
+    queryFn: async () => {
+      let query = supabase
+        .from("cadence_funnel_rules")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (cadenceId) {
+        query = query.eq("cadence_id", cadenceId);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as FunnelRule[];
+    },
+  });
+}
