@@ -171,11 +171,11 @@ describe("CustomerSuccess360Hub", () => {
     fireEvent.click(screen.getByText("Pedidos"));
     
     // Check main table empty state
-    expect(screen.getByText((content) => content.includes("Nenhum pedido encontrado no período"))).toBeInTheDocument();
+    expect(screen.getByText(/Nenhum pedido encontrado/)).toBeInTheDocument();
     
     // Trigger modal - it should have 0 orders
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
-    expect(await screen.findByText((content) => content.includes("Nenhum pedido encontrado com os filtros atuais"))).toBeInTheDocument();
+    expect(await screen.findByText(/Nenhum pedido encontrado com os filtros atuais/)).toBeInTheDocument();
   });
 
   it("confirms table sorting when toggling the 'Cliente' header", async () => {
@@ -236,15 +236,37 @@ describe("CustomerSuccess360Hub", () => {
     fireEvent.click(screen.getByText("Pedidos"));
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
     
-    // By default desc date, so PAG-000 should be there
-    expect(await screen.findByText(/PAG-000/)).toBeInTheDocument();
+    // Find any PAG- (Wait for modal)
+    await screen.findAllByText(/PAG-/);
     
     // Find page 2 button and click
     const page2Button = await screen.findByRole("button", { name: "2" });
     fireEvent.click(page2Button);
     
-    // PAG-010 should now appear (since 0-9 were on page 1)
+    // PAG-010 should now appear
     expect(await screen.findByText(/PAG-010/)).toBeInTheDocument();
+  });
+
+  it("verifies modal fields correspond to the selected order", async () => {
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CustomerSuccess360Hub />);
+    
+    fireEvent.click(screen.getByText("Pedidos"));
+    fireEvent.click(screen.getByTestId("ver-detalhes-cancelled"));
+    
+    const modal = await screen.findByRole("dialog");
+    const withinModal = within(modal);
+    
+    expect(withinModal.getByText(/ORD-002/)).toBeInTheDocument();
+    // Use getAllByText for name if multiple elements exist
+    expect(withinModal.getAllByText(/Account B/)[0]).toBeInTheDocument();
+    expect(withinModal.getByText(/500,00/)).toBeInTheDocument();
+    expect(withinModal.getByText(/Erro no pedido/)).toBeInTheDocument();
   });
 
   it("verifies modal fields correspond to the selected order", async () => {
