@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
+import { useEffect } from "react";
 
 interface KPIData {
   totalRevenue: number;
