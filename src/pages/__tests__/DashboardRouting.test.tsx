@@ -41,11 +41,31 @@ vi.mock("@/components/dashboard/SalesChart", () => ({ SalesChart: () => <div dat
 vi.mock("@/components/dashboard/GoalProgress", () => ({ GoalProgress: () => <div data-testid="goal-progress" /> }));
 vi.mock("@/components/dashboard/FuturisticSpeedometerDashboard", () => ({ FuturisticSpeedometerDashboard: () => <div data-testid="speedometer" /> }));
 
+// Mock do Auth context
+vi.mock("@/contexts/AuthContext", () => ({
+  useAuth: vi.fn(() => ({
+    salesperson: { id: "1", name: "Test User", role: "admin" }
+  }))
+}));
+
+// Mock do SalesRealtime hook
+vi.mock("@/hooks/useSalesRealtime", () => ({
+  useSalesRealtime: vi.fn()
+}));
+
 // Helper para ver a localização atual
 const LocationDisplay = () => {
   const location = useLocation();
   return <div data-testid="location-display">{location.pathname}</div>;
 };
+
+const AllProviders = ({ children }: { children: React.ReactNode }) => (
+  <HelmetProvider>
+    <DashboardThemeProvider>
+      {children}
+    </DashboardThemeProvider>
+  </HelmetProvider>
+);
 
 describe("Dashboard Routing", () => {
   beforeEach(() => {
