@@ -352,7 +352,7 @@ export const FuturisticSpeedometerDashboard = () => {
         <div className="flex items-center gap-2 mb-3">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
           <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
-            Comparativo vs Mês Anterior
+            Comparativo vs {PERIOD_LABELS[period].comparison}
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
         </div>
