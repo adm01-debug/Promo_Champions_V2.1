@@ -3156,9 +3156,11 @@ export type Database = {
       }
       commercial_approval_requests: {
         Row: {
+          approved_at: string | null
           approver_id: string | null
           competence_month: string
           created_at: string | null
+          effective_at: string | null
           entity_id: string | null
           id: string
           justification: string | null
@@ -3170,9 +3172,11 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          approved_at?: string | null
           approver_id?: string | null
           competence_month: string
           created_at?: string | null
+          effective_at?: string | null
           entity_id?: string | null
           id?: string
           justification?: string | null
@@ -3184,9 +3188,11 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          approved_at?: string | null
           approver_id?: string | null
           competence_month?: string
           created_at?: string | null
+          effective_at?: string | null
           entity_id?: string | null
           id?: string
           justification?: string | null
