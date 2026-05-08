@@ -144,6 +144,22 @@ export function CadenceSimulationDialog() {
               <MousePointerClick className="h-8 w-8 text-accent" />
               <div className="text-xs font-semibold">Clicar em Preço</div>
             </Button>
+            <Button 
+              variant="outline" 
+              className="h-24 flex-col gap-2 hover:border-success/50 hover:bg-success/5"
+              onClick={() => simulateEvent("reply")}
+            >
+              <History className="h-8 w-8 text-success" />
+              <div className="text-xs font-semibold">Resposta Recebida</div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-24 flex-col gap-2 hover:border-status-warning/50 hover:bg-status-warning/5"
+              onClick={() => simulateEvent("manual")}
+            >
+              <CheckCircle2 className="h-8 w-8 text-status-warning" />
+              <div className="text-xs font-semibold">Ação Manual</div>
+            </Button>
           </div>
 
           <div className="space-y-2">
