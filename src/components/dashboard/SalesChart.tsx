@@ -95,8 +95,8 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
           <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
