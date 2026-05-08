@@ -104,29 +104,19 @@ export function CadenceSimulationDialog() {
         <div className="space-y-6 py-4">
           <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border/50">
             <div className="space-y-2">
-              <Label>Vendedor Responsável</Label>
-              <Select value={selectedSalesperson} onValueChange={setSelectedSalesperson}>
+              <Label>Lead em Cadência</Label>
+              <Select value={selectedProspectId} onValueChange={setSelectedProspectId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o vendedor" />
+                  <SelectValue placeholder="Selecione o lead" />
                 </SelectTrigger>
                 <SelectContent>
-                  {salespeople?.map((sp) => (
-                    <SelectItem key={sp.id} value={sp.id}>{sp.name}</SelectItem>
+                  {prospects?.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      Lead {p.id.substring(0, 8)} ({p.funnel_stage})
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Nome do Lead (Opcional)</Label>
-              <div className="flex gap-2">
-                <input
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Ex: João da Silva"
-                  value={selectedLead}
-                  onChange={(e) => setSelectedLead(e.target.value)}
-                />
-              </div>
             </div>
           </div>
 
@@ -134,7 +124,7 @@ export function CadenceSimulationDialog() {
             <Button 
               variant="outline" 
               className="h-24 flex-col gap-2 hover:border-primary/50 hover:bg-primary/5"
-              onClick={() => simulateEvent("proposal_view")}
+              onClick={() => simulateEvent("quote_open")}
             >
               <FileText className="h-8 w-8 text-primary" />
               <div className="text-xs font-semibold">Abrir Proposta</div>
