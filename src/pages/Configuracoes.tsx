@@ -17,7 +17,7 @@ import { ApiIntegrationSettings } from "@/components/settings/ApiIntegrationSett
 import { CustomFieldsManager } from "@/components/settings/CustomFieldsManager";
 import { FeatureFlagsAdmin } from "@/components/settings/FeatureFlagsAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint, Flag } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint, Flag, RefreshCw } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
