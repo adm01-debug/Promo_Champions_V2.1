@@ -92,7 +92,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
 
               {lead.last_activity && (
                 <div className="text-xs text-muted-foreground mb-2 bg-muted/30 p-1.5 rounded border border-dashed border-muted-foreground/20 italic">
-                  Último contato: "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
+                  <span className="font-semibold not-italic capitalize">{lead.last_activity.type?.replace('_', ' ')}:</span> "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
                 </div>
               )}
 
