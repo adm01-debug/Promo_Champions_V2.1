@@ -328,7 +328,7 @@ export default function AdminComercial() {
                           <span className="text-[10px] font-bold text-muted-foreground uppercase">{req.competence_month ? format(new Date(req.competence_month), "MMMM yyyy", { locale: ptBR }) : '-'}</span>
                         </div>
 
-                        <span className="text-[10px] text-muted-foreground font-mono">{format(new Date(req.created_at), "dd/MM HH:mm")}</span>
+                        <span className="text-[10px] text-muted-foreground font-mono">{req.created_at ? format(new Date(req.created_at), "dd/MM HH:mm") : '-'}</span>
                       </div>
                       <CardContent className="p-4 space-y-4">
                         <div className="bg-background/40 rounded-lg p-3 border border-border/20">
@@ -388,7 +388,7 @@ export default function AdminComercial() {
                 </div>
               )}
 
-              {approvalRequests?.filter(r => r.status !== "pending").length > 0 && (
+              {(approvalRequests?.filter(r => r.status !== "pending").length ?? 0) > 0 && (
                 <div className="mt-8 space-y-4">
                   <h3 className="text-sm font-display uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                     <HistoryIcon className="h-4 w-4" /> Decisões Recentes
@@ -406,7 +406,7 @@ export default function AdminComercial() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-[10px] text-muted-foreground text-right">
-                              {format(new Date(req.created_at), "dd/MM/yy")}
+                              {req.created_at ? format(new Date(req.created_at), "dd/MM/yy") : '-'}
                             </TableCell>
                           </TableRow>
                         ))}
