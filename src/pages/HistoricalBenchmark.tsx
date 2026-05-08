@@ -18,7 +18,7 @@ import type { NameType, ValueType } from "recharts/types/component/DefaultToolti
 
 type Period = "mom" | "qoq" | "yoy";
 
-const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<ValueType, NameType>) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
