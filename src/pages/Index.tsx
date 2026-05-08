@@ -63,21 +63,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard, Gauge } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-const DASHBOARD_TAB_KEY = "dashboard.activeTab.v1";
+const SECTION_MAP: Record<string, string> = {
+  performance: "performance",
+  analises: "analytics",
+  competicao: "competition",
+  inteligencia: "intelligence",
+  engajamento: "engagement",
+};
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window === "undefined") return "overview";
-    return localStorage.getItem(DASHBOARD_TAB_KEY) || "overview";
-  });
-
-  useEffect(() => {
-    try { localStorage.setItem(DASHBOARD_TAB_KEY, activeTab); } catch {}
-  }, [activeTab]);
+  const { section } = useParams<{ section?: string }>();
+  const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
   const { theme } = useDashboardTheme();
   const { data: kpis, isLoading } = useDashboardKPIs();
