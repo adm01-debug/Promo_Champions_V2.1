@@ -125,13 +125,13 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
                 cursor={{ stroke: 'rgba(14, 165, 233, 0.3)', strokeWidth: 1, strokeDasharray: '5 5' }} 
               />
               <Area
-                type="monotone"
+                type="stepAfter"
                 dataKey="value"
                 stroke="hsl(var(--primary))"
                 strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorValue)"
-                animationDuration={1500}
+                animationDuration={2000}
                 dot={{ r: 0 }}
                 activeDot={{ 
                   r: 6, 
