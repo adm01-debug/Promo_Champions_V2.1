@@ -5,6 +5,13 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { useToast } from "@/hooks/use-toast";
 import "@testing-library/jest-dom";
 
+// Standard jsPDF mock instance
+const mockJsPDFInstance = {
+  text: vi.fn(),
+  save: vi.fn(),
+  autoTable: vi.fn(),
+};
+
 // Mock the hooks
 vi.mock("@/hooks/customer-success/useCustomerSuccess360", () => ({
   useCustomerSuccess360: vi.fn(),
@@ -26,15 +33,10 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Mock jsPDF
+// Mock jsPDF using a different approach for Vitest
 vi.mock("jspdf", () => {
-  return {
-    jsPDF: vi.fn().mockImplementation(() => ({
-      text: vi.fn(),
-      save: vi.fn(),
-      autoTable: vi.fn(),
-    }))
-  };
+  const jsPDF = vi.fn().mockImplementation(() => mockJsPDFInstance);
+  return { jsPDF };
 });
 
 vi.mock("papaparse", () => ({
@@ -189,14 +191,16 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
+    // Switch to Pedidos tab
+    const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
+    fireEvent.click(ordersTab);
 
-    await waitFor(() => {
-      const verDetalhes = screen.queryAllByRole("button").find(b => b.textContent?.includes("Ver Detalhes"));
-      if (!verDetalhes) throw new Error("Ver Detalhes button not found");
-      fireEvent.click(verDetalhes);
-    });
+    // Wait for the table to render and find the button by its text content directly
+    const verDetalhes = await screen.findAllByText("Ver Detalhes");
+    expect(verDetalhes.length).toBeGreaterThan(0);
+    fireEvent.click(verDetalhes[0]);
 
+    // Modal should be open
     await waitFor(() => {
       expect(screen.getByText(/Detalhes dos Pedidos/i)).toBeInTheDocument();
     });
