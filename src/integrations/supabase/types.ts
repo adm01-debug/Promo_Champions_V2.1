@@ -5674,6 +5674,61 @@ export type Database = {
           },
         ]
       }
+      follow_up_notifications: {
+        Row: {
+          audit_log_id: string | null
+          created_at: string | null
+          id: string
+          message: string | null
+          sale_id: string | null
+          status: string | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          audit_log_id?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          sale_id?: string | null
+          status?: string | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          audit_log_id?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          sale_id?: string | null
+          status?: string | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_notifications_audit_log_id_fkey"
+            columns: ["audit_log_id"]
+            isOneToOne: false
+            referencedRelation: "follow_up_audit_logs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follow_up_notifications_audit_log_id_fkey"
+            columns: ["audit_log_id"]
+            isOneToOne: false
+            referencedRelation: "follow_up_audit_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follow_up_notifications_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follow_up_settings: {
         Row: {
           auto_reactivate_class_a: boolean | null
@@ -5708,6 +5763,83 @@ export type Database = {
             columns: ["current_whatsapp_version_id"]
             isOneToOne: false
             referencedRelation: "whatsapp_template_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      follow_up_templates: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+          variables: Json | null
+          version: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+          variables?: Json | null
+          version?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+          variables?: Json | null
+          version?: number | null
+        }
+        Relationships: []
+      }
+      follow_up_territory_rules: {
+        Row: {
+          cadence_id: string | null
+          created_at: string | null
+          id: string
+          priority: number | null
+          salesperson_id: string | null
+          territory: string | null
+          updated_at: string | null
+          whatsapp_template_id: string | null
+        }
+        Insert: {
+          cadence_id?: string | null
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          salesperson_id?: string | null
+          territory?: string | null
+          updated_at?: string | null
+          whatsapp_template_id?: string | null
+        }
+        Update: {
+          cadence_id?: string | null
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          salesperson_id?: string | null
+          territory?: string | null
+          updated_at?: string | null
+          whatsapp_template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_territory_rules_whatsapp_template_id_fkey"
+            columns: ["whatsapp_template_id"]
+            isOneToOne: false
+            referencedRelation: "follow_up_templates"
             referencedColumns: ["id"]
           },
         ]
