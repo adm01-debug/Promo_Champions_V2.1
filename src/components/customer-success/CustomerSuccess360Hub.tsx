@@ -32,6 +32,98 @@ const SEMA_BG: Record<string, string> = {
 
 export function CustomerSuccess360Hub() {
   const { data, isLoading } = useCustomerSuccess360();
+  const [period, setPeriod] = useState("30");
+
+  const s = data?.summary;
+  const accounts = data?.accounts ?? [];
+  const tickets = data?.tickets ?? [];
+  const renewals = data?.renewals ?? [];
+  const usage = data?.usage ?? [];
+  const onboarding = data?.onboarding ?? [];
+  const expansion = data?.expansion ?? [];
+  const surveys = data?.surveys ?? [];
+  const qbrs = data?.qbrs ?? [];
+
+  // Data Filtering by Period
+  const filteredData = useMemo(() => {
+    if (!data) return null;
+    const now = new Date();
+    const days = parseInt(period);
+    const startDate = subDays(now, days);
+
+    const filterByDate = (item: any, dateField: string = "created_at") => {
+      const date = parseISO(item[dateField]);
+      return days === 0 || isWithinInterval(date, { start: startDate, end: now });
+    };
+
+    return {
+      tickets: tickets.filter(t => filterByDate(t)),
+      expansion: expansion.filter(e => filterByDate(e)),
+      surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
+      renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
+    };
+  }, [data, period, tickets, expansion, surveys, renewals]);
+
+  // Evolution Data (LTV & Ticket Médio)
+  const evolutionData = useMemo(() => {
+    const months: Record<string, { ltv: number; count: number }> = {};
+    renewals.forEach(r => {
+      const month = format(parseISO(r.renewal_date), "MMM yy", { locale: ptBR });
+      if (!months[month]) months[month] = { ltv: 0, count: 0 };
+      months[month].ltv += Number(r.contract_value);
+      months[month].count += 1;
+    });
+
+    return Object.entries(months).map(([name, val]) => ({
+      name,
+      ltv: val.ltv,
+      ticket: val.ltv / (val.count || 1)
+    })).slice(-6);
+  }, [renewals]);
+
+  // Cohort Analysis (Simulated based on renewals/onboarding)
+  const cohortData = useMemo(() => {
+    const cohorts: Record<string, { month: string; retained: number; churned: number }> = {};
+    accounts.forEach(a => {
+      const date = a.next_renewal ? parseISO(a.next_renewal) : new Date();
+      const month = format(startOfMonth(date), "MMM yy", { locale: ptBR });
+      if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0 };
+      if (a.health_v2 > 40) cohorts[month].retained += 1;
+      else cohorts[month].churned += 1;
+    });
+    return Object.values(cohorts).slice(0, 6);
+  }, [accounts]);
+
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Customer Success 360 - Relatório", 10, 10);
+    // Simplified export logic
+    (doc as any).autoTable({
+      head: [["KPI", "Valor"]],
+      body: [
+        ["Health Médio", `${s?.avg_health_v2}/100`],
+        ["Tickets Abertos", s?.open_tickets],
+        ["Receita em Risco", formatBRL(s?.renewals_at_risk_value || 0)],
+      ],
+      startY: 20
+    });
+    doc.save(`cs360-report-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+  };
+
+  const exportCSV = () => {
+    const csv = Papa.unparse(accounts.map(a => ({
+      Nome: a.name,
+      Tier: a.tier,
+      Health: a.health_v2,
+      Receita: a.annual_revenue,
+      Tickets: a.open_tickets
+    })));
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `cs360-accounts-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.click();
+  };
 
   if (isLoading) {
     return (
@@ -44,16 +136,6 @@ export function CustomerSuccess360Hub() {
     );
   }
 
-  const s = data?.summary;
-  const accounts = data?.accounts ?? [];
-  const tickets = data?.tickets ?? [];
-  const renewals = data?.renewals ?? [];
-  const usage = data?.usage ?? [];
-  const onboarding = data?.onboarding ?? [];
-  const expansion = data?.expansion ?? [];
-  const surveys = data?.surveys ?? [];
-  const qbrs = data?.qbrs ?? [];
-
   const accountById = new Map(accounts.map((a) => [a.id, a]));
 
   return (
@@ -63,10 +145,34 @@ export function CustomerSuccess360Hub() {
         <meta name="description" content="Health Score, renovações, tickets, adoção, onboarding, expansion e QBR em uma visão única." />
       </Helmet>
 
-      <motion.div {...fadeIn}>
-        <h1 className="text-3xl font-display font-bold gradient-text">Customer Success 360</h1>
-        <p className="text-muted-foreground mt-1">Health, retenção, expansão e adoção em uma visão consolidada</p>
-      </motion.div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <motion.div {...fadeIn}>
+          <h1 className="text-3xl font-display font-bold gradient-text">Customer Success 360</h1>
+          <p className="text-muted-foreground mt-1">Health, retenção, expansão e adoção em uma visão consolidada</p>
+        </motion.div>
+
+        <div className="flex items-center gap-2">
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger className="w-[180px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Período" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Últimos 7 dias</SelectItem>
+              <SelectItem value="30">Últimos 30 dias</SelectItem>
+              <SelectItem value="90">Últimos 90 dias</SelectItem>
+              <SelectItem value="0">Tudo</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" size="icon" onClick={exportPDF} title="Exportar PDF">
+            <Download className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={exportCSV} title="Exportar CSV">
+            <Activity className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
 
       {s && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
