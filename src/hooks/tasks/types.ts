@@ -1,5 +1,5 @@
-export type TaskPriority = 'low' | 'medium' | 'high';
-export type TaskType = 'call' | 'email' | 'meeting' | 'follow_up' | 'other' | 'proposal';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type TaskType = 'call' | 'email' | 'meeting' | 'follow_up' | 'other' | 'proposal' | 'discount';
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
 
 export interface TaskRecord {
