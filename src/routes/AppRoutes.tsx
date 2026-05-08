@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
@@ -94,6 +94,7 @@ export function AppRoutes() {
                   <Routes>
                     {/* ─── Dashboards ────────────────────────────── */}
                     <Route path="/" element={<Index />} />
+                    <Route path="/dashboard" element={<Navigate to="/dashboard/visao-geral" replace />} />
                     <Route path="/dashboard/:section" element={<Index />} />
 
                     <Route path="/sdr" element={<SDRDashboard />} />

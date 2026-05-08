@@ -65,7 +65,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard, Gauge } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 
 const SECTION_MAP: Record<string, string> = {
   performance: "performance",
@@ -77,6 +77,9 @@ const SECTION_MAP: Record<string, string> = {
 
 const Index = () => {
   const { section } = useParams<{ section?: string }>();
+  if (section && !(section in SECTION_MAP) && section !== "visao-geral") {
+    return <Navigate to="/dashboard/visao-geral" replace />;
+  }
   const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
   const { theme } = useDashboardTheme();
