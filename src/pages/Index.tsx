@@ -36,6 +36,7 @@ import { FuturisticSpeedometerDashboard } from "@/components/dashboard/Futuristi
 import { FuturisticRanking } from "@/components/dashboard/FuturisticRanking";
 import { MyGoalAlertCard } from "@/components/dashboard/MyGoalAlertCard";
 import { TrendsChartsPanel } from "@/components/dashboard/TrendsChartsPanel";
+import { PeriodTrendChart } from "@/components/dashboard/PeriodTrendChart";
 import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
@@ -244,6 +245,9 @@ const Index = () => {
 
             {/* ===== FUTURISTIC SPEEDOMETER HUD ===== */}
             <FuturisticSpeedometerDashboard />
+
+            {/* ===== PERIOD TREND LINE CHART ===== */}
+            <PeriodTrendChart />
 
             {/* ===== MY GOAL ALERT ===== */}
             <MyGoalAlertCard />
