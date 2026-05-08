@@ -231,6 +231,7 @@ export default function Cadencias() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-6">
                 <ContactFrequencyRules />
+                <CadenceFunnelConfig />
               </div>
               <div className="space-y-6">
                 <Card className="glass border-border/40">
