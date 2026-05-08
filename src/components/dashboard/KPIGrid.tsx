@@ -75,8 +75,8 @@ export const KPIGrid = React.memo(function KPIGrid() {
       </CardHeader>
       
       <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
-        {defaultKpis.map((kpi, index) => (
-          <KPIRow key={kpi.id} kpi={kpi} index={index} />
+        {metrics.map((kpi, index) => (
+          <KPIRow key={kpi.label} label={kpi.label} value={kpi.value} format={kpi.format} icon={kpi.icon} index={index} />
         ))}
       </CardContent>
 
