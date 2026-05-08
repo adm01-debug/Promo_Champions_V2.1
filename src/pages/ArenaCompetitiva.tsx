@@ -87,6 +87,7 @@ const ArenaCompetitiva = () => {
             <TabsTrigger value="tv" className="gap-1.5"><Tv className="h-4 w-4" /><span className="hidden sm:inline">TV</span></TabsTrigger>
             <TabsTrigger value="tvpro" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">TV Pro</span></TabsTrigger>
             <TabsTrigger value="scoreboard" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">Placar</span></TabsTrigger>
+            <TabsTrigger value="comparison" className="gap-1.5 bg-primary/10 text-primary animate-pulse"><Search className="h-4 w-4" /><span className="hidden sm:inline">Market Intel</span></TabsTrigger>
             <TabsTrigger value="alerts" className="gap-1.5 relative">
               <Bell className="h-4 w-4" /><span className="hidden sm:inline">Alertas</span>
               {unreadCount > 0 && (
