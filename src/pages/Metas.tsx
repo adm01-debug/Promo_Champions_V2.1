@@ -9,8 +9,10 @@ import { GoalComparisonChart } from "@/components/goals/GoalComparisonChart";
 import { GoalDistributionChart } from "@/components/goals/GoalDistributionChart";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { Target, TrendingUp, Users, Zap, RefreshCw } from "lucide-react";
+import { Target, TrendingUp, Users, Zap, RefreshCw, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -21,6 +23,8 @@ import { PageTransition, containerVariants, itemVariants } from "@/components/tr
 
 export default function Metas() {
   const { data, isLoading, dataUpdatedAt } = useGoalsDashboard();
+  const { salesperson } = useAuth();
+  const isManager = salesperson?.role === "admin" || salesperson?.role === "manager";
   const queryClient = useQueryClient();
 
   const handleRefresh = () => {
@@ -73,6 +77,19 @@ export default function Metas() {
               </div>
               
               <div className="flex items-center gap-3">
+                {isManager && (
+                  <Button 
+                    asChild
+                    variant="outline" 
+                    size="sm" 
+                    className="h-11 px-5 rounded-xl border-primary/30 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all duration-300 gap-2"
+                  >
+                    <Link to="/admin/comercial">
+                      <Settings className="h-3.5 w-3.5" />
+                      Configurar
+                    </Link>
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   size="sm" 

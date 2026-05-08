@@ -38,6 +38,7 @@ import {
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
   AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage,
+  AdminComercial,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
 } from "./lazyPages";
@@ -229,6 +230,7 @@ export function AppRoutes() {
                     <Route path="/admin" element={<Admin><AdminDashboard /></Admin>} />
                     <Route path="/admin/conexoes" element={<Admin><AdminConexoesPage /></Admin>} />
                     <Route path="/admin/telemetria" element={<Manager><AdminTelemetria /></Manager>} />
+                    <Route path="/admin/comercial" element={<Manager><AdminComercial /></Manager>} />
                     <Route path="/usage-analytics" element={<Admin><UsageAnalytics /></Admin>} />
                     <Route path="/feature-flags" element={<Admin><FeatureFlagsAdmin /></Admin>} />
                     <Route path="/seguranca" element={<Admin><SecurityDashboard /></Admin>} />

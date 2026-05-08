@@ -22,6 +22,7 @@ const QUICK_LINKS = [
   { to: "/admin/webhooks-timeline", icon: Activity, label: "Timeline Webhooks", color: "text-chart-5" },
   { to: "/admin/webhooks-alert-history", icon: History, label: "Histórico Alertas", color: "text-warning" },
   { to: "/admin/webhooks-alert-settings", icon: SlidersHorizontal, label: "Limites Alertas", color: "text-primary" },
+  { to: "/admin/comercial", icon: TrendingUp, label: "Gestão Comercial", color: "text-emerald-500" },
 ];
 
 export function AdminQuickLinks() {

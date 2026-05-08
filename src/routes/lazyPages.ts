@@ -150,3 +150,4 @@ export const PricingIntelligenceHubPage = lazy(() => import("@/pages/PricingInte
 export const TerritoryOptimizationHubPage = lazy(() => import("@/pages/TerritoryOptimizationHub"));
 export const CustomerSuccess360Page = lazy(() => import("@/pages/CustomerSuccess360"));
 export const AdminConexoesPage = lazy(() => import("@/pages/admin/AdminConexoesPage"));
+export const AdminComercial = lazy(() => import("@/pages/admin/AdminComercial"));
