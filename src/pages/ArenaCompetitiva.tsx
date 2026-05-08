@@ -118,6 +118,7 @@ const ArenaCompetitiva = () => {
           <TabsContent value="tv"><CompetitiveTVDashboard /></TabsContent>
           <TabsContent value="tvpro"><EnhancedTVMode /></TabsContent>
           <TabsContent value="scoreboard"><LiveScoreboard /></TabsContent>
+          <TabsContent value="comparison"><FeatureComparison /></TabsContent>
           <TabsContent value="alerts"><RankNotifications salespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="evolution"><EvolutionChart /></TabsContent>
         </Tabs>
