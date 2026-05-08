@@ -187,17 +187,8 @@ export function CadenceOutcomeConfig() {
                     ))}
                   </SelectContent>
                 </Select>
-                </div>
-                {(rule.push_template_id || rule.email_template_id) && (
-                  <>
-                    <div className="h-3 w-[1px] bg-border/40" />
-                    <div className="flex items-center gap-2">
-                      <Bell className="h-3 w-3 text-status-warning" />
-                      <span className="text-[10px] text-muted-foreground">Alertas Ativos</span>
-                    </div>
-                  </>
-                )}
-              </div>
+            </div>
+          </div>
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setIsAdding(false)}>
                 Cancelar
@@ -230,6 +221,15 @@ export function CadenceOutcomeConfig() {
                     {rule.next_action === 'retry' ? `Tentar em ${rule.retry_delay_hours}h (Max ${rule.max_retries})` : rule.next_action}
                   </span>
                 </div>
+                {(rule.push_template_id || rule.email_template_id) && (
+                  <>
+                    <div className="h-3 w-[1px] bg-border/40" />
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-3 w-3 text-status-warning" />
+                      <span className="text-[10px] text-muted-foreground">Alertas Ativos</span>
+                    </div>
+                  </>
+                )}
               </div>
               <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteRule(rule.id)}>
                 <Trash2 className="h-3 w-3" />
