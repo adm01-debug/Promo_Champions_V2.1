@@ -108,12 +108,26 @@ export default function AdminComercial() {
 
       if (status === "approved") {
         const newValues = request.new_values as any;
+        const entityId = request.entity_id as string;
+        
         if (request.type === "goal") {
-          await supabase.from("sales_goals").upsert({ salesperson_id: request.entity_id, month: request.competence_month, goal_amount: newValues.amount }, { onConflict: "salesperson_id,month" });
+          await supabase.from("sales_goals").upsert([{ 
+            salesperson_id: entityId, 
+            month: request.competence_month, 
+            goal_amount: newValues.amount 
+          }], { onConflict: "salesperson_id,month" });
         } else if (request.type === "scoring_rule") {
-          await supabase.from("race_scoring_rules").update({ weight: newValues.weight, points_per_unit: newValues.points_per_unit, label: newValues.label }).eq("id", request.entity_id);
+          await supabase.from("race_scoring_rules").update({ 
+            weight: newValues.weight, 
+            points_per_unit: newValues.points_per_unit, 
+            label: newValues.label 
+          }).eq("id", entityId);
         } else if (request.type === "commission") {
-          await supabase.from("salesperson_commission_configs").upsert({ salesperson_id: request.entity_id, month: request.competence_month, rate: newValues.rate }, { onConflict: "salesperson_id,month" });
+          await supabase.from("salesperson_commission_configs").upsert([{ 
+            salesperson_id: entityId, 
+            month: request.competence_month, 
+            rate: newValues.rate 
+          }], { onConflict: "salesperson_id,month" });
         }
 
         await supabase.from("audit_logs").insert({
