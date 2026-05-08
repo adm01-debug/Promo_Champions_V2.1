@@ -128,7 +128,8 @@ const Index = () => {
                     <DashboardEmptyState type="revenue" />
                   )}
                 </motion.div>
-                <motion.div variants={itemVariants}>
+                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:col-span-3">
+                  <motion.div variants={itemVariants}>
                   {hasSales ? (
                     <StatCard
                       title="Vendas Realizadas"
