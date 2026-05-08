@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
@@ -42,6 +45,8 @@ export function TodaysCadenceTasks() {
   const [notesTaskId, setNotesTaskId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState("");
   const [noteAction, setNoteAction] = useState<"complete" | "skip">("complete");
+  const [callResult, setCallResult] = useState<string>("answered");
+  const queryClient = useQueryClient();
 
   const [callResult, setCallResult] = useState<string>("answered");
   const { toast } = useToast();

@@ -206,6 +206,9 @@ export interface FunnelRule {
   condition_value: number;
   time_window_hours: number;
   is_active: boolean;
+  notify_push: boolean;
+  notify_email: boolean;
+  alert_priority: 'low' | 'normal' | 'high' | 'urgent';
 }
 
 export function useFunnelRules(cadenceId?: string) {
