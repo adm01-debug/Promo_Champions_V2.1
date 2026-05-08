@@ -399,6 +399,13 @@ const Index = () => {
                 </div>
               </TabsContent>
             </Tabs>
-
+          </div>
+        </div>
+      </PageTransition>
+    </SkeletonTransition>
+  </>
+  );
+};
 
 export default Index;
+
