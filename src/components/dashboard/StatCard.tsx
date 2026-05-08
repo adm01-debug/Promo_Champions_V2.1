@@ -172,7 +172,9 @@ export const StatCard = React.memo(({
       </CardContent>
 
       {/* Decorative Grid Scanline */}
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
+      {theme === "cyber" && (
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
+      )}
     </Card>
   );
 });
