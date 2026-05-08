@@ -21,6 +21,7 @@ import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { FollowUpSettings } from "@/components/settings/FollowUpSettings";
 
 export default function Configuracoes() {
   const { isAdmin } = useUserRoles();
