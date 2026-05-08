@@ -237,7 +237,8 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
 };
 
 export const FuturisticSpeedometerDashboard = () => {
-  const { data: kpis } = useDashboardKPIs();
+  const [period, setPeriod] = useState<KPIPeriod>("current_month");
+  const { data: kpis } = useDashboardKPIsPeriod(period);
   const { data: goals } = useGoalsDashboard();
 
   const revenue = kpis?.current.totalRevenue ?? 0;
