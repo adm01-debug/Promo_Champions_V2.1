@@ -1,9 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
+  { value: "current_month", label: "Mês Atual" },
+  { value: "last_month", label: "Último Mês" },
+  { value: "quarter", label: "Trimestre" },
+  { value: "year", label: "Ano" },
+];
 
 interface SpeedometerProps {
   value: number;
