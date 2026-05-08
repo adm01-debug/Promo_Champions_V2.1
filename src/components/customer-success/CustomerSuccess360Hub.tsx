@@ -685,31 +685,47 @@ export function CustomerSuccess360Hub() {
                 )}
 
                 {orderModalStatus !== 'cancelled' && lossStats.length > 0 && (
-                  <div className="bg-destructive/5 p-4 rounded-xl border border-destructive/10 space-y-3">
+                  <div className="bg-destructive/5 p-4 rounded-xl border border-destructive/10 space-y-4">
                     <h4 className="text-sm font-semibold text-destructive flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4" />
-                      Análise de Perdas (Geral)
+                      Maiores Causas de Perda (Filtro Global)
                     </h4>
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="flex-1 space-y-1">
-                        {lossStats.slice(0, 4).map((stat, i) => (
-                          <div key={i} className="flex justify-between text-[11px] items-center">
-                            <span className="text-destructive/70 truncate max-w-[140px]">{stat.name}</span>
-                            <Badge variant="outline" className="h-4 px-1.5 text-[10px] font-bold border-destructive/20 text-destructive">
-                              {stat.value}
-                            </Badge>
-                          </div>
-                        ))}
+                    <div className="flex flex-col md:flex-row gap-6">
+                      <div className="flex-1 space-y-3">
+                        {lossStats.slice(0, 5).map((stat, i) => {
+                          const maxLoss = lossStats[0].value;
+                          const percentage = Math.round((stat.value / maxLoss) * 100);
+                          return (
+                            <div key={i} className="space-y-1">
+                              <div className="flex justify-between text-[11px] items-center">
+                                <span className="text-destructive/70 font-medium truncate max-w-[160px]">{stat.name}</span>
+                                <span className="text-destructive font-bold">{stat.value}</span>
+                              </div>
+                              <Progress value={percentage} className="h-1 bg-destructive/10" />
+                            </div>
+                          );
+                        })}
                       </div>
-                      <div className="h-[80px] w-[100px] shrink-0">
+                      <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
-                            <Pie data={lossStats} cx="50%" cy="50%" innerRadius={20} outerRadius={35} paddingAngle={2} dataKey="value">
+                            <Pie 
+                              data={lossStats} 
+                              cx="50%" 
+                              cy="50%" 
+                              innerRadius={25} 
+                              outerRadius={45} 
+                              paddingAngle={4} 
+                              dataKey="value"
+                              stroke="none"
+                            >
                               {lossStats.map((_, index) => (
                                 <Cell key={`cell-loss-${index}`} fill={CHART_COLORS[(index + 3) % CHART_COLORS.length]} />
                               ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip 
+                              contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                            />
                           </PieChart>
                         </ResponsiveContainer>
                       </div>
