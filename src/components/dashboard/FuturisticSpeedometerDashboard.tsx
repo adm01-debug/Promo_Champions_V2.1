@@ -2,7 +2,16 @@ import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity } from "lucide-react";
+import { useSalespeopleList } from "@/hooks/useSalespeopleList";
+import { useAuth } from "@/contexts/AuthContext";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
@@ -237,15 +246,26 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
 };
 
 const PERIOD_STORAGE_KEY = "dashboard.speedometer.period";
+const SALESPERSON_STORAGE_KEY = "dashboard.speedometer.salesperson";
+const ALL_SALESPEOPLE = "__all__";
+const ME = "__me__";
 
 const isValidPeriod = (v: string | null): v is KPIPeriod =>
   v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
 
 export const FuturisticSpeedometerDashboard = () => {
+  const { salesperson: currentUser } = useAuth();
+  const { data: salespeople = [] } = useSalespeopleList();
+
   const [period, setPeriodState] = useState<KPIPeriod>(() => {
     if (typeof window === "undefined") return "current_month";
     const saved = window.localStorage.getItem(PERIOD_STORAGE_KEY);
     return isValidPeriod(saved) ? saved : "current_month";
+  });
+
+  const [salespersonFilter, setSalespersonFilterState] = useState<string>(() => {
+    if (typeof window === "undefined") return ME;
+    return window.localStorage.getItem(SALESPERSON_STORAGE_KEY) || ME;
   });
 
   const setPeriod = (p: KPIPeriod) => {
@@ -257,7 +277,29 @@ export const FuturisticSpeedometerDashboard = () => {
     }
   };
 
-  const { data: kpis } = useDashboardKPIsPeriod(period);
+  const setSalespersonFilter = (id: string) => {
+    setSalespersonFilterState(id);
+    try {
+      window.localStorage.setItem(SALESPERSON_STORAGE_KEY, id);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  // Resolve actual id sent to the query
+  const resolvedSalespersonId = useMemo(() => {
+    if (salespersonFilter === ALL_SALESPEOPLE) return null;
+    if (salespersonFilter === ME) return currentUser?.id ?? null;
+    return salespersonFilter;
+  }, [salespersonFilter, currentUser?.id]);
+
+  const selectedLabel = useMemo(() => {
+    if (salespersonFilter === ALL_SALESPEOPLE) return "Toda Equipe";
+    if (salespersonFilter === ME) return currentUser?.name ? `Eu (${currentUser.name})` : "Eu";
+    return salespeople.find((s) => s.id === salespersonFilter)?.name ?? "Vendedor";
+  }, [salespersonFilter, salespeople, currentUser?.name]);
+
+  const { data: kpis } = useDashboardKPIsPeriod(period, resolvedSalespersonId);
   const { data: goals } = useGoalsDashboard();
 
   const revenue = kpis?.current.totalRevenue ?? 0;
