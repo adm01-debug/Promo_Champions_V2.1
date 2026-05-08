@@ -132,6 +132,7 @@ const FollowUpAudit = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as ações</SelectItem>
+                  <SelectItem value="intent_trigger">Gatilhos de Intenção</SelectItem>
                   <SelectItem value="whatsapp_sent">WhatsApp Enviado</SelectItem>
                   <SelectItem value="task_created">Tarefa Criada</SelectItem>
                   <SelectItem value="lead_reactivated">Lead Reativado</SelectItem>
