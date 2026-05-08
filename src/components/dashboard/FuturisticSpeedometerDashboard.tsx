@@ -558,20 +558,23 @@ export const FuturisticSpeedometerDashboard = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className={cn(
-            "mt-6 relative overflow-hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl p-5 transition-opacity duration-300",
-            kpisFetching && "opacity-60"
+            "mt-6 relative overflow-hidden rounded-xl transition-all duration-500 p-5 transition-opacity duration-300",
+            kpisFetching && "opacity-60",
+            theme === "cyber" ? "border border-border/40 bg-card/40 backdrop-blur-xl" : "bg-card border border-border shadow-sm"
           )}
         >
-          {/* Subtle animated scanline for the strip */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none opacity-[0.03]"
-            style={{
-              backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.1) 50%)",
-              backgroundSize: "100% 4px",
-            }}
-            animate={{ backgroundPositionY: ["0px", "20px"] }}
-            transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
-          />
+          {/* Subtle animated scanline for the strip - Cyber Only */}
+          {theme === "cyber" && (
+            <motion.div
+              className="absolute inset-0 pointer-events-none opacity-[0.03]"
+              style={{
+                backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.1) 50%)",
+                backgroundSize: "100% 4px",
+              }}
+              animate={{ backgroundPositionY: ["0px", "20px"] }}
+              transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+            />
+          )}
 
           <div className="relative flex items-center gap-4 mb-4">
             <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-primary/50" />
