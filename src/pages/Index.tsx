@@ -122,6 +122,7 @@ const Index = () => {
                       previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
                       icon={DollarSign}
                       variant="primary"
+                      hero
                     />
                   ) : (
                     <DashboardEmptyState type="revenue" />
