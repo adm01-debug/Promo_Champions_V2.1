@@ -113,6 +113,7 @@ export function CreateCadenceDialog() {
         action_type: step.action_type,
         title: step.title,
         description: step.description || undefined,
+        needs_approval: step.needs_approval,
         step_order: i,
       });
     }
