@@ -1423,6 +1423,38 @@ export type Database = {
           },
         ]
       }
+      cadence_advanced_stats: {
+        Row: {
+          bookings_count: number | null
+          cadence_id: string | null
+          click_rate: number | null
+          id: string
+          recorded_at: string | null
+        }
+        Insert: {
+          bookings_count?: number | null
+          cadence_id?: string | null
+          click_rate?: number | null
+          id?: string
+          recorded_at?: string | null
+        }
+        Update: {
+          bookings_count?: number | null
+          cadence_id?: string | null
+          click_rate?: number | null
+          id?: string
+          recorded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_advanced_stats_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_enrollment_rules: {
         Row: {
           cadence_id: string
@@ -1490,6 +1522,8 @@ export type Database = {
           day_number: number
           description: string | null
           id: string
+          needs_approval: boolean | null
+          singu_variables: Json | null
           step_order: number
           template_content: string | null
           title: string
@@ -1501,6 +1535,8 @@ export type Database = {
           day_number?: number
           description?: string | null
           id?: string
+          needs_approval?: boolean | null
+          singu_variables?: Json | null
           step_order?: number
           template_content?: string | null
           title: string
@@ -1512,6 +1548,8 @@ export type Database = {
           day_number?: number
           description?: string | null
           id?: string
+          needs_approval?: boolean | null
+          singu_variables?: Json | null
           step_order?: number
           template_content?: string | null
           title?: string
@@ -6335,6 +6373,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      intent_audit_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          event_type: string
+          id: string
+          lead_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          lead_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          lead_id?: string | null
+        }
+        Relationships: []
       }
       inventory_levels: {
         Row: {
@@ -11237,6 +11299,7 @@ export type Database = {
         Row: {
           ai_assistant_avatar: string | null
           ai_assistant_name: string
+          contact_rules: Json | null
           created_at: string
           id: string
           response_mode: string
@@ -11248,6 +11311,7 @@ export type Database = {
         Insert: {
           ai_assistant_avatar?: string | null
           ai_assistant_name?: string
+          contact_rules?: Json | null
           created_at?: string
           id?: string
           response_mode?: string
@@ -11259,6 +11323,7 @@ export type Database = {
         Update: {
           ai_assistant_avatar?: string | null
           ai_assistant_name?: string
+          contact_rules?: Json | null
           created_at?: string
           id?: string
           response_mode?: string
