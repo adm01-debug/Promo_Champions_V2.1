@@ -187,8 +187,17 @@ export function CadenceOutcomeConfig() {
                     ))}
                   </SelectContent>
                 </Select>
+                </div>
+                {(rule.push_template_id || rule.email_template_id) && (
+                  <>
+                    <div className="h-3 w-[1px] bg-border/40" />
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-3 w-3 text-status-warning" />
+                      <span className="text-[10px] text-muted-foreground">Alertas Ativos</span>
+                    </div>
+                  </>
+                )}
               </div>
-            </div>
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setIsAdding(false)}>
                 Cancelar
