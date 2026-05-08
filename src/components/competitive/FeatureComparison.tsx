@@ -1,10 +1,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle2, XCircle, AlertCircle, TrendingUp, Zap, Target, Search, FileText, Share2, Download } from "lucide-react";
+import { CheckCircle2, XCircle, AlertCircle, TrendingUp, Zap, Target, Search, FileText, Share2, Download, Eye } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const FeatureComparison = () => {
   const comparisons = [
@@ -12,16 +19,17 @@ export const FeatureComparison = () => {
       feature: "Big Data & Lead Discovery",
       status: "partial",
       our_evidence: "Integração via API com fontes externas e busca semântica básica.",
-      competitor_evidence: "Base própria com +10M de decisores e descoberta de e-mail/WhatsApp nativa.",
+      competitor_evidence: "Base própria com +10M de decisores brasileiros. Captura via redes sociais corporativas.",
       priority: "high",
       effort: "high",
-      impact: "high"
+      impact: "high",
+      image: "tool-results://screenshots/20260508-130347-551351.png"
     },
     {
       feature: "WhatsApp & Multi-channel",
       status: "full",
       our_evidence: "Follow-up inteligente com WhatsApp, registro de tentativas e automação de status.",
-      competitor_evidence: "Geração de número e integração de cadência multicanal.",
+      competitor_evidence: "Geração de número de decisores e integração de cadência multicanal nativa.",
       priority: "done",
       effort: "medium",
       impact: "high"
@@ -29,17 +37,26 @@ export const FeatureComparison = () => {
     {
       feature: "AI Engagement Scoring",
       status: "gap",
-      our_evidence: "Ainda não implementado (Mapeado no roadmap).",
-      competitor_evidence: "Sugestão de momento certo para ligar baseado em sinais de interesse.",
+      our_evidence: "Mapeado no roadmap como indicador de calor.",
+      competitor_evidence: "IA para análise de perfil comportamental e sugestão do 'momento certo' para ligar.",
       priority: "critical",
       effort: "medium",
       impact: "very-high"
     },
     {
+      feature: "Bounce Management",
+      status: "partial",
+      our_evidence: "Registro manual de falhas e motivos de congelamento.",
+      competitor_evidence: "Automação total de bounce para limpeza de base em tempo real.",
+      priority: "medium",
+      effort: "low",
+      impact: "medium"
+    },
+    {
       feature: "Cadence Automation",
       status: "full",
       our_evidence: "Sistema de cadências robusto com auditoria detalhada.",
-      competitor_evidence: "Fluxos automatizados de prospecção ativa.",
+      competitor_evidence: "Fluxos automatizados focados em prospecção ativa em massa.",
       priority: "done",
       effort: "high",
       impact: "high"
@@ -48,27 +65,18 @@ export const FeatureComparison = () => {
       feature: "Gamification & Arena",
       status: "full",
       our_evidence: "Arena Competitiva com TV Dashboard, 1v1, Ligas e Apostas.",
-      competitor_evidence: "Foco em relatórios tradicionais, menos focado em gamificação de vendas.",
+      competitor_evidence: "Foco em CRM tradicional, sem camada social/gamificada avançada.",
       priority: "done",
       effort: "very-high",
       impact: "high"
-    },
-    {
-      feature: "Inbound Prospecting",
-      status: "partial",
-      our_evidence: "Fluxos de recepção de leads básicos.",
-      competitor_evidence: "Conversão de inbound para prospecção ativa automatizada.",
-      priority: "medium",
-      effort: "medium",
-      impact: "medium"
     }
   ];
 
   const roadmap = [
-    { goal: "AI Engagement Score", impact: "High", effort: "Medium", status: "Planning" },
-    { goal: "Native Decision Maker Database", impact: "Very High", effort: "High", status: "Backlog" },
-    { goal: "Lead Profile Behavioral Analysis", impact: "Medium", effort: "Medium", status: "Backlog" },
-    { goal: "Auto-discovery of Lead Emails", impact: "High", effort: "High", status: "Research" }
+    { goal: "AI Engagement Score", impact: "Very High", effort: "Medium", status: "Planning", recommendation: "Implementar algoritmo de calor baseado em aberturas/cliques." },
+    { goal: "Native Decision Maker DB", impact: "Critical", effort: "High", status: "Backlog", recommendation: "Parceria com provedores de dados locais para busca direta." },
+    { goal: "Automated Bounce Cleanup", impact: "High", effort: "Low", status: "Research", recommendation: "Trigger automático para marcar lead como bounce após erro 4xx/5xx no envio." },
+    { goal: "AI behavioral approach", impact: "Medium", effort: "Medium", status: "Backlog", recommendation: "Sugestão de templates baseada no cargo/setor do decisor." }
   ];
 
   const getStatusBadge = (status: string) => {
@@ -187,6 +195,7 @@ export const FeatureComparison = () => {
                   <TableHead>Evidence (Ours)</TableHead>
                   <TableHead>Evidence (Ramper)</TableHead>
                   <TableHead>Priority</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -197,6 +206,26 @@ export const FeatureComparison = () => {
                     <TableCell className="text-[10px] text-muted-foreground italic leading-tight">{item.our_evidence}</TableCell>
                     <TableCell className="text-[10px] text-muted-foreground italic leading-tight">{item.competitor_evidence}</TableCell>
                     <TableCell>{getPriorityBadge(item.priority)}</TableCell>
+                    <TableCell>
+                      {item.image && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl">
+                            <DialogHeader>
+                              <DialogTitle>Evidência: {item.feature}</DialogTitle>
+                            </DialogHeader>
+                            <div className="mt-4 rounded-lg overflow-hidden border">
+                              <img src={item.image} alt="Evidência do concorrente" className="w-full h-auto" />
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-2 italic">Captura realizada em ramper.com.br/prospect</p>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -219,6 +248,7 @@ export const FeatureComparison = () => {
                     <h4 className="font-bold text-xs uppercase tracking-tight">{item.goal}</h4>
                     <Badge variant="outline" className="text-[9px] uppercase">{item.status}</Badge>
                   </div>
+                  <p className="text-[10px] text-muted-foreground leading-tight">{item.recommendation}</p>
                   <div className="flex gap-2">
                     <div className="flex-1 space-y-1">
                       <p className="text-[9px] text-muted-foreground uppercase font-bold">Impact</p>
