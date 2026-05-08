@@ -156,7 +156,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     suggestions.push({
       title: 'Ligar Agora: Lead visualizando proposta',
       description: `Lead acabou de interagir com a proposta. Chance de conversão 5x maior se ligar em 5 min.`,
-      rationale: `Gatilho de Intenção: Detectado evento de ${lead.activity_type === 'proposal_view' ? 'Abertura de Proposta' : 'Clique em Preço'}.`,
+      rationale: `Gatilho de Intenção: Detectado evento de ${lead.activity_type as string === 'proposal_view' ? 'Abertura de Proposta' : 'Clique em Preço'}.`,
       actionType: 'call_now',
       priority: 'high',
       confidence: 0.95,
