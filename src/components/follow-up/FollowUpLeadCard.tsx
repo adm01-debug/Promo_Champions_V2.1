@@ -158,11 +158,20 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
           </div>
 
           {/* AI Suggestion */}
-          <div className="mt-3 p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
-            <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
-            <span className="text-muted-foreground">
-              <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
-            </span>
+          <div className="mt-3 flex flex-col gap-2">
+            {lead.temperature === 'frozen' && lead.score && lead.score >= 80 && (
+              <div className="p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-[11px] flex items-center gap-2 text-destructive font-bold animate-pulse">
+                <Snowflake className="h-3.5 w-3.5" />
+                ALERTA: Lead Classe A congelado! Reativação imediata necessária.
+              </div>
+            )}
+            
+            <div className="p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
+              <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
+              <span className="text-muted-foreground">
+                <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>
