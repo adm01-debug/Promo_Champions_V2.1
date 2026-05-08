@@ -165,6 +165,29 @@ const FeatureFlagsAdmin = () => {
                         />
                         <span className="text-xs font-mono w-8 text-right">{flag.rollout_percentage}%</span>
                       </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8"
+                              onClick={() => {
+                                const roles = prompt("Cargos permitidos (separados por vírgula):", flag.allowed_roles?.join(", ") || "");
+                                if (roles !== null) {
+                                  rolesMutation.mutate({ 
+                                    id: flag.id, 
+                                    allowed_roles: roles.split(",").map(r => r.trim()).filter(Boolean) 
+                                  });
+                                }
+                              }}
+                            >
+                              <Users className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Restringir por Cargo</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <Switch
                         checked={flag.is_enabled}
                         onCheckedChange={(checked) => toggleMutation.mutate({ id: flag.id, is_enabled: checked })}
