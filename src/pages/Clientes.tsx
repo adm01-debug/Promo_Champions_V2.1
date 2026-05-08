@@ -19,8 +19,10 @@ import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
 import { ClientTimeline } from "@/components/clients/ClientTimeline";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
+import { Client360View } from "@/components/clients/Client360View";
+import { BarChart3 } from "lucide-react";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
