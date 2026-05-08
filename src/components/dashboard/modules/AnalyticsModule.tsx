@@ -1,4 +1,4 @@
-import { DashboardNLQWidget } from "@/components/analytics/DashboardNLQWidget";
+import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
 import { FunnelChart } from "@/components/dashboard/FunnelChart";
