@@ -148,7 +148,7 @@ export const StatCard = React.memo(({
                 hero && "h-6 w-6 sm:h-8 sm:w-8"
               )} />
             </div>
-            {!hero && sparklineData && sparklineData.length > 1 && (
+            {sparklineData && sparklineData.length > 1 && (
               <div className="opacity-50 group-hover:opacity-100 transition-opacity">
                 <MiniSparkline
                   data={sparklineData}
