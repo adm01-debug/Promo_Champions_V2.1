@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Send, MessageCircle, History, Zap } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -25,7 +25,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { History, Zap } from 'lucide-react';
 
 const FollowUpInteligente = () => {
   const { salesperson } = useAuth();
