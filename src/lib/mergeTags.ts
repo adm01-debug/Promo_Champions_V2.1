@@ -29,7 +29,7 @@ export interface MergeTagDefinition {
   key: string;
   label: string;
   example: string;
-  group: "Cliente" | "Vendedor" | "Negócio" | "Outros";
+  group: "Cliente" | "Vendedor" | "Negócio" | "SINGU Intelligence" | "Outros";
 }
 
 export const AVAILABLE_MERGE_TAGS: MergeTagDefinition[] = [
@@ -45,6 +45,9 @@ export const AVAILABLE_MERGE_TAGS: MergeTagDefinition[] = [
   { key: "negocio.fonte", label: "Fonte do lead", example: "LinkedIn", group: "Negócio" },
   { key: "data.hoje", label: "Data de hoje", example: "16/04/2026", group: "Outros" },
   { key: "data.amanha", label: "Amanhã", example: "17/04/2026", group: "Outros" },
+  { key: "singu.primeira_frase", label: "Primeira frase (IA)", example: "Vi que vocês expandiram para o México recentemente...", group: "SINGU Intelligence" },
+  { key: "singu.noticia_empresa", label: "Notícia da empresa", example: "Parabéns pela rodada Series B de R$ 50M!", group: "SINGU Intelligence" },
+  { key: "singu.tecnologias", label: "Tecnologias usadas", example: "Salesforce e Hubspot", group: "SINGU Intelligence" },
 ];
 
 const formatBRL = (value: number) =>
@@ -83,6 +86,12 @@ function resolveTag(key: string, ctx: MergeTagContext): string {
       d.setDate(d.getDate() + 1);
       return formatDateBR(d);
     }
+    case "singu.primeira_frase":
+      return ctx.custom?.["singu.primeira_frase"] != null ? String(ctx.custom["singu.primeira_frase"]) : "[IA Personalizada: Vi que a {{cliente.empresa}}...]";
+    case "singu.noticia_empresa":
+      return ctx.custom?.["singu.noticia_empresa"] != null ? String(ctx.custom["singu.noticia_empresa"]) : "[Notícia recente da empresa]";
+    case "singu.tecnologias":
+      return ctx.custom?.["singu.tecnologias"] != null ? String(ctx.custom["singu.tecnologias"]) : "[Tecnologias do stack]";
     default: {
       const customVal = ctx.custom?.[lower];
       if (customVal != null) return String(customVal);
