@@ -1,54 +1,59 @@
 import React from "react";
 import { useTeamActivityFeed, TeamActivity } from "@/hooks/useTeamActivityFeed";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { DollarSign, Phone, ArrowRight, UserPlus } from "lucide-react";
+import { DollarSign, Phone, ArrowRight, UserPlus, Zap, Radio } from "lucide-react";
+import { motion } from "framer-motion";
 
-const TYPE_CONFIG: Record<TeamActivity["type"], { icon: React.ElementType; color: string; bg: string; label: string }> = {
-  sale: { icon: DollarSign, color: "text-emerald-500", bg: "bg-emerald-500/10", label: "VENDA" },
-  activity: { icon: Phone, color: "text-blue-500", bg: "bg-blue-500/10", label: "ATIVIDADE" },
-  deal_move: { icon: ArrowRight, color: "text-amber-500", bg: "bg-amber-500/10", label: "PIPELINE" },
-  client_new: { icon: UserPlus, color: "text-indigo-500", bg: "bg-indigo-500/10", label: "CLIENTE" },
+const TYPE_CONFIG: Record<TeamActivity["type"], { icon: React.ElementType; color: string; bg: string; label: string; glow: string }> = {
+  sale: { icon: DollarSign, color: "text-success", bg: "bg-success/10", label: "Confirmed Sale", glow: "rgba(34, 197, 94, 0.4)" },
+  activity: { icon: Phone, color: "text-primary", bg: "bg-primary/10", label: "Sector Comms", glow: "rgba(14, 165, 233, 0.4)" },
+  deal_move: { icon: ArrowRight, color: "text-warning", bg: "bg-warning/10", label: "Pipeline Shift", glow: "rgba(234, 179, 8, 0.4)" },
+  client_new: { icon: UserPlus, color: "text-indigo-400", bg: "bg-indigo-400/10", label: "New Asset", glow: "rgba(129, 140, 248, 0.4)" },
 };
 
-const ActivityItem = React.memo(({ item }: { item: TeamActivity }) => {
+const ActivityItem = React.memo(({ item, index }: { item: TeamActivity; index: number }) => {
   const config = TYPE_CONFIG[item.type];
   const Icon = config.icon;
 
   return (
-    <div className="group relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300 hover:bg-accent/40 border border-transparent hover:border-border/50 overflow-hidden">
-      <div className="relative">
-        <Avatar className="h-9 w-9 shrink-0 ring-2 ring-background ring-offset-2 ring-offset-muted/20 group-hover:ring-primary/20 transition-all">
+    <motion.div 
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="group relative flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/[0.04] border border-transparent hover:border-white/5 overflow-hidden"
+    >
+      <div className="relative shrink-0">
+        <Avatar className="h-10 w-10 ring-1 ring-white/10 group-hover:ring-primary/40 transition-all">
           <AvatarImage src={item.avatar_url || undefined} />
-          <AvatarFallback className="text-xs bg-gradient-to-br from-muted to-muted/50 font-bold">
-            {item.salesperson_name.charAt(0)}
+          <AvatarFallback className="text-[10px] font-mono font-black bg-black/60 border border-white/5">
+            {item.salesperson_name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className={cn("absolute -bottom-1 -right-1 p-1 rounded-lg border-2 border-background shadow-sm", config.bg)}>
-          <Icon className={cn("h-2.5 w-2.5", config.color)} />
+        <div className={cn("absolute -bottom-1 -right-1 p-1 rounded-lg border border-black shadow-lg", config.bg)}>
+          <Icon className={cn("h-3 w-3", config.color)} style={{ filter: `drop-shadow(0 0 5px ${config.glow})` }} />
         </div>
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2 mb-0.5">
-          <span className="text-[9px] font-black tracking-tighter uppercase text-muted-foreground/60 group-hover:text-primary/60 transition-colors">
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <span className={cn("text-[9px] font-mono font-black uppercase tracking-[0.2em]", config.color)}>
             {config.label}
           </span>
-          <span className="text-[9px] font-medium text-muted-foreground tabular-nums">
+          <span className="text-[8px] font-mono font-bold text-muted-foreground/40 uppercase tracking-tighter">
             {formatDistanceToNow(parseISO(item.created_at), { addSuffix: true, locale: ptBR })}
           </span>
         </div>
         
-        <p className="text-xs leading-relaxed">
-          <span className="font-bold text-foreground group-hover:text-primary transition-colors">
+        <p className="text-[11px] font-mono leading-relaxed">
+          <span className="font-black text-foreground group-hover:text-primary transition-colors">
             {item.salesperson_name}
           </span>{" "}
-          <span className="text-muted-foreground font-medium">{item.description}</span>
+          <span className="text-muted-foreground/80 lowercase">{item.description}</span>
           {item.amount != null && (
-            <span className="ml-1.5 font-black text-emerald-500 bg-emerald-500/5 px-1.5 py-0.5 rounded-md">
+            <span className="ml-2 font-black text-success tabular-nums bg-success/5 px-1.5 py-0.5 rounded border border-success/20">
               {new Intl.NumberFormat("pt-BR", { 
                 style: "currency", 
                 currency: "BRL", 
@@ -60,9 +65,9 @@ const ActivityItem = React.memo(({ item }: { item: TeamActivity }) => {
         </p>
       </div>
 
-      {/* Futuristic accent on hover */}
-      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-    </div>
+      {/* Decorative pulse line */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 group-hover:h-3/5 bg-primary transition-all duration-300" />
+    </motion.div>
   );
 });
 ActivityItem.displayName = "ActivityItem";
@@ -71,63 +76,72 @@ export const TeamActivityFeed = React.memo(() => {
   const { data: feed, isLoading } = useTeamActivityFeed(15);
 
   return (
-    <div className="relative overflow-hidden glass-morphism rounded-2xl border border-border/40 bg-gradient-to-br from-card/80 via-card/50 to-background/50 shadow-2xl transition-all duration-500 hover:shadow-primary/5">
-      {/* Header with status pulse */}
-      <div className="flex items-center justify-between p-4 border-b border-border/20">
+    <div className="relative overflow-hidden bg-black/40 border border-white/5 backdrop-blur-md rounded-2xl group">
+      {/* Decorative corners */}
+      <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
+        <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-primary/20 group-hover:border-primary/40 transition-colors" />
+      </div>
+
+      <div className="flex items-center justify-between p-5 relative z-10">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="p-2 rounded-xl bg-primary/10">
-              <Phone className="h-4 w-4 text-primary" />
-            </div>
-            <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-background animate-pulse" />
+             <motion.div 
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-0 bg-primary/20 blur-lg rounded-full" 
+             />
+             <div className="relative p-2 rounded-xl bg-primary/10 border border-primary/20">
+                <Zap className="h-4 w-4 text-primary" />
+             </div>
           </div>
           <div>
-            <h3 className="font-display font-black text-sm uppercase tracking-tighter italic">Elite Activity</h3>
-            <p className="text-[10px] text-muted-foreground/60 font-bold tracking-widest leading-none">REAL-TIME COMMAND FEED</p>
+            <h3 className="text-xs font-mono font-black uppercase tracking-[0.3em] text-primary">Sector Comms</h3>
+            <div className="flex items-center gap-2">
+               <Radio className="h-3 w-3 text-success animate-pulse" />
+               <p className="text-[9px] font-mono font-bold text-muted-foreground/60 uppercase tracking-widest leading-none">Command Stream Active</p>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-accent/30 border border-white/5">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">LIVE</span>
+        <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/60 border border-white/5">
+           <span className="text-[9px] font-mono font-black text-primary uppercase tracking-widest">Live Link</span>
         </div>
       </div>
 
-      <div className="p-1">
+      <div className="relative z-10">
         {isLoading ? (
-          <div className="space-y-4 p-4">
+          <div className="space-y-4 p-5">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex items-start gap-4">
-                <Skeleton className="h-9 w-9 rounded-xl shrink-0" />
+                <div className="h-10 w-10 rounded-xl bg-white/5 animate-pulse shrink-0" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-3 w-3/4 rounded-md" />
-                  <Skeleton className="h-2 w-1/4 rounded-md" />
+                  <div className="h-3 w-3/4 bg-white/5 animate-pulse rounded" />
+                  <div className="h-2 w-1/4 bg-white/5 animate-pulse rounded" />
                 </div>
               </div>
             ))}
           </div>
         ) : !feed?.length ? (
-          <div className="py-12 flex flex-col items-center justify-center text-center px-4">
-            <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mb-3">
-              <Phone className="h-6 w-6 text-muted-foreground/40" />
-            </div>
-            <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">Aguardando comandos da elite...</p>
+          <div className="py-20 flex flex-col items-center justify-center text-center px-6 opacity-30">
+            <Radio className="h-10 w-10 text-muted-foreground animate-pulse mb-4" />
+            <p className="font-mono text-[10px] uppercase tracking-[0.4em]">Listening for transmissions...</p>
           </div>
         ) : (
-          <div className="max-h-[380px] overflow-y-auto scrollbar-none hover:scrollbar-thin transition-all pr-1">
-            <div className="space-y-1 p-2">
-              {feed.map((item) => (
-                <ActivityItem key={item.id} item={item} />
+          <div className="max-h-[440px] overflow-y-auto scrollbar-none hover:scrollbar-thin transition-all pr-1">
+            <div className="space-y-1 px-2 pb-4">
+              {feed.map((item, idx) => (
+                <ActivityItem key={item.id} item={item} index={idx} />
               ))}
             </div>
           </div>
         )}
       </div>
       
-      {/* Decorative corner scan line */}
-      <div className="absolute bottom-0 right-0 w-24 h-24 pointer-events-none opacity-5">
-        <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-primary to-transparent" />
-        <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-primary to-transparent" />
-      </div>
+      {/* Decorative vertical scanline */}
+      <motion.div 
+        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        animate={{ opacity: [0.1, 0.4, 0.1] }}
+        transition={{ duration: 6, repeat: Infinity }}
+      />
     </div>
   );
 });
