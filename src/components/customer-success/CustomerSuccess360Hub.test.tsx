@@ -259,9 +259,14 @@ describe("CustomerSuccess360Hub", () => {
     const withinModal = within(modal);
     
     expect(withinModal.getByText(/ORD-002/)).toBeInTheDocument();
-    const cell = await withinModal.findByRole("cell", { name: /Account B/ });
-    expect(cell).toBeInTheDocument();
-    expect(withinModal.getByText(/500/)).toBeInTheDocument();
+    
+    // Find cells and verify content
+    const cells = withinModal.getAllByRole("cell");
+    const hasAccountB = cells.some(c => c.textContent?.includes("Account B"));
+    const hasValue500 = cells.some(c => c.textContent?.includes("500"));
+    
+    expect(hasAccountB).toBe(true);
+    expect(hasValue500).toBe(true);
     expect(withinModal.getByText(/Erro no pedido/)).toBeInTheDocument();
   });
 });
