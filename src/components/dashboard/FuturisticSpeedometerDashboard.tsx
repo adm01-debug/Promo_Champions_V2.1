@@ -43,6 +43,7 @@ const accentMap = {
 };
 
 const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta, size = 220 }: SpeedometerProps) => {
+  const { theme } = useDashboardTheme();
   const [animatedValue, setAnimatedValue] = useState(0);
   const colors = accentMap[accent];
   const pct = Math.min(1, max > 0 ? value / max : 0);
