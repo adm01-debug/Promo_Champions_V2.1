@@ -9,9 +9,19 @@ interface FollowUpHeaderProps {
   isBulkCreating: boolean;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  minDaysInactive: number;
+  onMinDaysChange: (days: number) => void;
 }
 
-export function FollowUpHeader({ selectedCount, onBulkCreate, isBulkCreating, searchQuery, onSearchChange }: FollowUpHeaderProps) {
+export function FollowUpHeader({ 
+  selectedCount, 
+  onBulkCreate, 
+  isBulkCreating, 
+  searchQuery, 
+  onSearchChange,
+  minDaysInactive,
+  onMinDaysChange
+}: FollowUpHeaderProps) {
   return (
     <motion.div
       className="space-y-4"
