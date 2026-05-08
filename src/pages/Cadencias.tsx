@@ -19,6 +19,9 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
 import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequencyRules";
+import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimulationDialog";
+import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
+import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
@@ -70,6 +73,7 @@ export default function Cadencias() {
                 <Zap className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
+              <CadenceSimulationDialog />
               <EnrollmentRulesDialog />
               <ContactRulesDialog />
               <ABTestDialog />
@@ -150,11 +154,13 @@ export default function Cadencias() {
               </Card>
             </div>
 
+            <CadenceFunnel />
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Today's Tasks + Metrics */}
               <div className="space-y-6">
                 <TodaysCadenceTasks />
-                <CadenceMetricsPanel />
+                <CadenceReportPanel />
               </div>
 
               {/* Cadences List */}
