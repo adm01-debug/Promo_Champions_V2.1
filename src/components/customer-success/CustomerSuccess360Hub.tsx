@@ -700,107 +700,104 @@ export function CustomerSuccess360Hub() {
             
             <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {modalStats.length > 0 && (
-                  <div className="bg-muted/30 p-4 rounded-xl border border-border/50 space-y-4">
-                    <h4 className="text-sm font-semibold flex items-center gap-2">
-                      <PieIcon className={`h-4 w-4 ${orderModalStatus === 'cancelled' ? 'text-destructive' : 'text-primary'}`} />
-                      {orderModalStatus === 'cancelled' ? 'Top Motivos de Cancelamento' : 'Maiores Compradores (Volume)'}
-                    </h4>
-                    <div className="flex flex-col md:flex-row gap-6">
-                      <div className="flex-1 space-y-3">
-                        {modalStats.slice(0, 5).map((stat, i) => {
-                          const maxVal = modalStats[0].value;
-                          const percentage = Math.round((stat.value / maxVal) * 100);
-                          return (
-                            <div key={i} className="space-y-1">
-                              <div className="flex justify-between text-[11px] items-center">
-                                <span className="text-muted-foreground font-medium truncate max-w-[160px]">{stat.name}</span>
-                                <span className="font-bold">{stat.value}</span>
-                              </div>
-                              <Progress value={percentage} className={`h-1 ${orderModalStatus === 'cancelled' ? 'bg-destructive/10' : 'bg-primary/10'}`}>
-                                <div className={`h-full ${orderModalStatus === 'cancelled' ? 'bg-destructive' : 'bg-primary'}`} style={{ width: `${percentage}%` }} />
-                              </Progress>
+                <div className="bg-muted/30 p-4 rounded-xl border border-border/50 space-y-4">
+                  <h4 className="text-sm font-semibold flex items-center gap-2 text-primary">
+                    <PieIcon className="h-4 w-4" />
+                    Top Clientes ({ordersByStatus.find(s => s.key === orderModalStatus)?.status})
+                  </h4>
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex-1 space-y-3">
+                      {modalStats.slice(0, 5).map((stat, i) => {
+                        const maxVal = modalStats[0]?.value || 1;
+                        const percentage = Math.round((stat.value / maxVal) * 100);
+                        return (
+                          <div key={i} className="space-y-1">
+                            <div className="flex justify-between text-[11px] items-center">
+                              <span className="text-muted-foreground font-medium truncate max-w-[160px]">{stat.name}</span>
+                              <span className="font-bold">{stat.value}</span>
                             </div>
-                          );
-                        })}
-                      </div>
-                      <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie 
-                              data={modalStats} 
-                              cx="50%" 
-                              cy="50%" 
-                              innerRadius={25} 
-                              outerRadius={45} 
-                              paddingAngle={4} 
-                              dataKey="value"
-                              stroke="none"
-                            >
-                              {modalStats.map((_, index) => (
-                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                              ))}
-                            </Pie>
-                            <Tooltip 
-                              contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
+                            <Progress value={percentage} className="h-1 bg-primary/10">
+                              <div className="h-full bg-primary" style={{ width: `${percentage}%` }} />
+                            </Progress>
+                          </div>
+                        );
+                      })}
+                      {modalStats.length === 0 && <p className="text-xs text-muted-foreground italic py-4">Nenhum dado disponível.</p>}
+                    </div>
+                    <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie 
+                            data={modalStats} 
+                            cx="50%" 
+                            cy="50%" 
+                            innerRadius={25} 
+                            outerRadius={45} 
+                            paddingAngle={4} 
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {modalStats.map((_, index) => (
+                              <Cell key={`cell-cust-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none' }} />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
                   </div>
-                )}
+                </div>
 
-                {lossStats.length > 0 && (
-                  <div className={`${orderModalStatus === 'cancelled' ? 'bg-muted/10' : 'bg-destructive/5'} p-4 rounded-xl border ${orderModalStatus === 'cancelled' ? 'border-border/50' : 'border-destructive/10'} space-y-4`}>
-                    <h4 className={`text-sm font-semibold flex items-center gap-2 ${orderModalStatus === 'cancelled' ? 'text-muted-foreground' : 'text-destructive'}`}>
-                      {orderModalStatus === 'cancelled' ? <Info className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
-                      {orderModalStatus === 'cancelled' ? 'Visão Geral do Período' : 'Maiores Causas de Perda (Contexto)'}
-                    </h4>
-                    <div className="flex flex-col md:flex-row gap-6">
-                      <div className="flex-1 space-y-3">
-                        {lossStats.slice(0, 5).map((stat, i) => {
-                          const maxLoss = lossStats[0].value;
-                          const percentage = Math.round((stat.value / maxLoss) * 100);
-                          return (
-                            <div key={i} className="space-y-1">
-                              <div className="flex justify-between text-[11px] items-center">
-                                <span className="font-medium truncate max-w-[160px] opacity-70">{stat.name}</span>
-                                <span className="font-bold">{stat.value}</span>
-                              </div>
-                              <Progress value={percentage} className="h-1 bg-muted/20">
-                                <div className={`h-full ${orderModalStatus === 'cancelled' ? 'bg-muted-foreground' : 'bg-destructive'}`} style={{ width: `${percentage}%` }} />
-                              </Progress>
+                <div className={`p-4 rounded-xl border space-y-4 ${orderModalStatus === 'cancelled' ? 'bg-destructive/5 border-destructive/20' : 'bg-muted/30 border-border/50'}`}>
+                  <h4 className={`text-sm font-semibold flex items-center gap-2 ${orderModalStatus === 'cancelled' ? 'text-destructive' : 'text-muted-foreground'}`}>
+                    {orderModalStatus === 'cancelled' ? <AlertTriangle className="h-4 w-4" /> : <Info className="h-4 w-4" />}
+                    {orderModalStatus === 'cancelled' ? 'Causas de Perda (Filtro Atual)' : 'Causas de Perda (Período Total)'}
+                  </h4>
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex-1 space-y-3">
+                      {(orderModalStatus === 'cancelled' ? statusReasons : lossStats).slice(0, 5).map((stat, i) => {
+                        const list = orderModalStatus === 'cancelled' ? statusReasons : lossStats;
+                        const maxLoss = list[0]?.value || 1;
+                        const percentage = Math.round((stat.value / maxLoss) * 100);
+                        return (
+                          <div key={i} className="space-y-1">
+                            <div className="flex justify-between text-[11px] items-center">
+                              <span className="font-medium truncate max-w-[160px] opacity-70">{stat.name}</span>
+                              <span className="font-bold">{stat.value}</span>
                             </div>
-                          );
-                        })}
-                      </div>
-                      <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie 
-                              data={lossStats} 
-                              cx="50%" 
-                              cy="50%" 
-                              innerRadius={25} 
-                              outerRadius={45} 
-                              paddingAngle={4} 
-                              dataKey="value"
-                              stroke="none"
-                            >
-                              {lossStats.map((_, index) => (
-                                <Cell key={`cell-loss-${index}`} fill={CHART_COLORS[(index + 3) % CHART_COLORS.length]} />
-                              ))}
-                            </Pie>
-                            <Tooltip 
-                              contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
+                            <Progress value={percentage} className="h-1 bg-muted/20">
+                              <div className={`h-full ${orderModalStatus === 'cancelled' ? 'bg-destructive' : 'bg-muted-foreground'}`} style={{ width: `${percentage}%` }} />
+                            </Progress>
+                          </div>
+                        );
+                      })}
+                      {(orderModalStatus === 'cancelled' ? statusReasons : lossStats).length === 0 && (
+                        <p className="text-xs text-muted-foreground italic py-4">Sem perdas registradas.</p>
+                      )}
+                    </div>
+                    <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie 
+                            data={orderModalStatus === 'cancelled' ? statusReasons : lossStats} 
+                            cx="50%" 
+                            cy="50%" 
+                            innerRadius={25} 
+                            outerRadius={45} 
+                            paddingAngle={4} 
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {(orderModalStatus === 'cancelled' ? statusReasons : lossStats).map((_, index) => (
+                              <Cell key={`cell-loss-${index}`} fill={orderModalStatus === 'cancelled' ? CHART_COLORS[index % CHART_COLORS.length] : CHART_COLORS[(index + 3) % CHART_COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none' }} />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
