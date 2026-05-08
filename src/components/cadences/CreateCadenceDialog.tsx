@@ -255,6 +255,19 @@ export function CreateCadenceDialog() {
                     </div>
                   </div>
 
+                  <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-xs font-medium">Aprovação Humana</FormLabel>
+                      <p className="text-[10px] text-muted-foreground">Exigir aprovação antes de enviar</p>
+                    </div>
+                    <input 
+                      type="checkbox" 
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      checked={s.needs_approval}
+                      onChange={(e) => updateStep(index, "needs_approval", e.target.checked)}
+                    />
+                  </div>
+
                   <div className="space-y-1.5">
                     <FormLabel className="text-xs font-medium text-muted-foreground">Título da Ação *</FormLabel>
                     <Input
@@ -266,7 +279,7 @@ export function CreateCadenceDialog() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">Descrição (opcional)</FormLabel>
+                    <FormLabel className="text-xs font-medium text-muted-foreground">Descrição (Suporta variáveis SINGU like {'{name}'})</FormLabel>
                     <Textarea
                       value={s.description}
                       onChange={(e) => updateStep(index, "description", e.target.value)}
