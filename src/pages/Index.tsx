@@ -63,21 +63,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard, Gauge } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-const DASHBOARD_TAB_KEY = "dashboard.activeTab.v1";
+const SECTION_MAP: Record<string, string> = {
+  performance: "performance",
+  analises: "analytics",
+  competicao: "competition",
+  inteligencia: "intelligence",
+  engajamento: "engagement",
+};
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window === "undefined") return "overview";
-    return localStorage.getItem(DASHBOARD_TAB_KEY) || "overview";
-  });
-
-  useEffect(() => {
-    try { localStorage.setItem(DASHBOARD_TAB_KEY, activeTab); } catch {}
-  }, [activeTab]);
+  const { section } = useParams<{ section?: string }>();
+  const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
   const { theme } = useDashboardTheme();
   const { data: kpis, isLoading } = useDashboardKPIs();
@@ -282,30 +282,8 @@ const Index = () => {
               </motion.div>
             )}
 
-            {/* ===== SUB-MODULES (TABS) ===== */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="sticky top-0 z-30 -mx-3 sm:-mx-4 lg:-mx-8 px-3 sm:px-4 lg:px-8 py-2 backdrop-blur-md bg-background/70 border-b border-border/40">
-                <TabsList className="w-full flex flex-wrap justify-start gap-1 h-auto bg-transparent p-1">
-                  <TabsTrigger value="overview" className="gap-2">
-                    <LayoutDashboard className="h-4 w-4" /> Visão Geral
-                  </TabsTrigger>
-                  <TabsTrigger value="performance" className="gap-2">
-                    <Gauge className="h-4 w-4" /> Performance
-                  </TabsTrigger>
-                  <TabsTrigger value="analytics" className="gap-2">
-                    <BarChart3 className="h-4 w-4" /> Análises
-                  </TabsTrigger>
-                  <TabsTrigger value="competition" className="gap-2">
-                    <Trophy className="h-4 w-4" /> Competição
-                  </TabsTrigger>
-                  <TabsTrigger value="intelligence" className="gap-2">
-                    <Zap className="h-4 w-4" /> Inteligência
-                  </TabsTrigger>
-                  <TabsTrigger value="engagement" className="gap-2">
-                    <Heart className="h-4 w-4" /> Engajamento
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+            {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
+            <Tabs value={activeTab} className="w-full">
 
               {/* === VISÃO GERAL === */}
               <TabsContent value="overview" className="space-y-6 mt-6 focus-visible:outline-none">

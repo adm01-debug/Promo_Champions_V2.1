@@ -47,7 +47,6 @@ export const closerMainItems: MenuItem[] = [
 ];
 
 export const gestaoMainItems: MenuItem[] = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Vendedores", url: "/vendedores", icon: Users },
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
@@ -137,6 +136,17 @@ export const closerGroupedItems: MenuGroup[] = [
 ];
 
 export const gestaoGroupedItems: MenuGroup[] = [
+  {
+    label: "Dashboard", icon: LayoutDashboard,
+    items: [
+      { title: "Visão Geral", url: "/", icon: LayoutDashboard },
+      { title: "Performance", url: "/dashboard/performance", icon: Gauge },
+      { title: "Análises", url: "/dashboard/analises", icon: BarChart3 },
+      { title: "Competição", url: "/dashboard/competicao", icon: Trophy },
+      { title: "Inteligência", url: "/dashboard/inteligencia", icon: Zap },
+      { title: "Engajamento", url: "/dashboard/engajamento", icon: HeartPulse },
+    ],
+  },
   {
     label: "Análises", icon: Gauge,
     items: [
