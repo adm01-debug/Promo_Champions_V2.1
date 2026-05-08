@@ -8,8 +8,8 @@ export const useDashboardRedirect = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check if we are at exactly /dashboard or /dashboard/
-    if (location.pathname === "/dashboard" || location.pathname === "/dashboard/") {
+    // Check if we are at exactly /dashboard or /dashboard/ or root /
+    if (location.pathname === "/dashboard" || location.pathname === "/dashboard/" || location.pathname === "/") {
       const lastSection = localStorage.getItem(LAST_DASHBOARD_SECTION_KEY);
       
       if (lastSection) {
