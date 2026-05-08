@@ -69,6 +69,9 @@ export function PurchaseIntelligenceHub() {
               <Badge variant="outline" className="w-fit text-[10px] bg-success/10 border-success/20 text-success">+4.2% mês</Badge>
             </div>
           </div>
+          <div className="flex items-center gap-2 mt-4 md:mt-0">
+            <IntelligenceSettings />
+          </div>
         </div>
       </motion.header>
 
