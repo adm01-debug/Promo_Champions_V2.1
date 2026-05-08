@@ -144,7 +144,14 @@ const FeatureFlagsAdmin = () => {
                           {flag.is_enabled ? "ON" : "OFF"}
                         </Badge>
                       </div>
-                      {flag.description && <p className="text-xs text-muted-foreground mt-0.5">{flag.description}</p>}
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {flag.description && <p className="text-xs text-muted-foreground mr-2">{flag.description}</p>}
+                        {flag.allowed_roles?.map((role: string) => (
+                          <Badge key={role} variant="outline" className="text-[9px] py-0 h-4 uppercase">
+                            {role}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2 min-w-[140px]">
