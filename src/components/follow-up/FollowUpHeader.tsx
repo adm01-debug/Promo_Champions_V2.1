@@ -53,6 +53,15 @@ export function FollowUpHeader({
             </Link>
           </Button>
           
+          {isAdmin && (
+            <Button variant="outline" size="sm" asChild className="gap-2">
+              <Link to="/configuracoes?tab=follow-up">
+                <RefreshCw className="h-4 w-4" />
+                Configurar Cadências
+              </Link>
+            </Button>
+          )}
+          
           {selectedCount > 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
