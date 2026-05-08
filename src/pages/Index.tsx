@@ -47,6 +47,7 @@ import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkel
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import {
   DollarSign,
   ShoppingBag,
