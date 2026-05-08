@@ -248,6 +248,80 @@ const FollowUpInteligente = () => {
     setSelectedLeads(criticalIds);
   }, [coldLeads]);
 
+  const logAction = useMutation({
+    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: any, status?: string }) => {
+      const { error } = await supabase
+        .from('follow_up_audit_logs')
+        .insert({
+          sale_id: saleId,
+          user_id: salesperson?.id,
+          action_type: actionType,
+          details,
+          status
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['follow-up-audit-logs'] });
+    }
+  });
+
+  const handleWhatsAppClick = useCallback((lead: ColdLead) => {
+    const template = followUpSettings?.whatsapp_template || 
+      "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
+    
+    const message = template
+      .replace("{{client_name}}", lead.client_name)
+      .replace("{{product_name}}", lead.product_name || "produto")
+      .replace("{{status}}", lead.status);
+
+    logAction.mutate({
+      saleId: lead.id,
+      actionType: 'whatsapp_sent',
+      details: { message_preview: message.substring(0, 100) + "..." },
+      status: 'sent'
+    });
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+  }, [followUpSettings, logAction, salesperson?.id]);
+
+  const handleReactivate = useMutation({
+    mutationFn: async () => {
+      if (!reactivateLead) return;
+      if (!isAdmin) throw new Error("Apenas administradores podem reativar leads Classe A.");
+
+      // 1. Log the action
+      await logAction.mutateAsync({
+        saleId: reactivateLead.id,
+        actionType: 'lead_reactivated',
+        details: { reason: reactivationReason, next_follow_up: reactivationDate }
+      });
+
+      // 2. Create a task
+      await supabase.from('tasks').insert({
+        title: `Follow-up Reativação: ${reactivateLead.client_name}`,
+        description: `Lead Classe A reativado. Motivo: ${reactivationReason}`,
+        task_type: 'follow_up',
+        priority: 'high',
+        due_date: new Date(reactivationDate).toISOString(),
+        sale_id: reactivateLead.id,
+        salesperson_id: reactivateLead.salesperson_id || salesperson?.id
+      });
+
+      // 3. Update deal updated_at to reset inactivity
+      await supabase.from('sales').update({ updated_at: new Date().toISOString() }).eq('id', reactivateLead.id);
+    },
+    onSuccess: () => {
+      toast.success("Lead reativado com sucesso!");
+      setIsReactivateModalOpen(false);
+      setReactivationReason('');
+      queryClient.invalidateQueries({ queryKey: ['cold-leads'] });
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao reativar: " + error.message);
+    }
+  });
+
   return (
     <>
       <Helmet>
