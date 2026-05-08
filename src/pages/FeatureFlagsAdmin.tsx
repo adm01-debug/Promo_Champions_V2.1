@@ -47,6 +47,17 @@ const FeatureFlagsAdmin = () => {
     },
   });
 
+  const rolesMutation = useMutation({
+    mutationFn: async ({ id, allowed_roles }: { id: string; allowed_roles: string[] }) => {
+      const { error } = await supabase.from("feature_flags").update({ allowed_roles, updated_at: new Date().toISOString() }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
+      toast.success("Regras de acesso atualizadas");
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: async () => {
       if (!newKey.trim()) throw new Error("Key obrigatória");
