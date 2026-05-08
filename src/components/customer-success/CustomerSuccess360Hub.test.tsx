@@ -151,4 +151,3 @@ describe("CustomerSuccess360Hub", () => {
     expect(screen.getByText(/Tickets Abertos/i)).toBeInTheDocument();
   });
 });
-});
