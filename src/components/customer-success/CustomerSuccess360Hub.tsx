@@ -766,7 +766,16 @@ export function CustomerSuccess360Hub() {
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-md border overflow-hidden">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                    Lista de Resultados
+                    <Badge variant="outline" className="font-mono text-[10px]">{filteredModalOrders.length}</Badge>
+                  </h3>
+                  <div className="text-[10px] text-muted-foreground italic">
+                    Exibindo página {orderPage} de {totalPages || 1}
+                  </div>
+                </div>
+                <div className="rounded-md border overflow-hidden shadow-sm">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b bg-muted/50">
