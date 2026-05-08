@@ -127,98 +127,125 @@ export default function QuoteCadencesPage() {
               <p className="text-sm text-muted-foreground">Follow-up automatizado de propostas enviadas</p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExport}
-            disabled={rows.length === 0}
-            aria-label="Exportar cadências filtradas para CSV"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Exportar CSV
-          </Button>
-        </header>
-
-        <QuoteCadenceMetrics />
-
-        <QuoteCadenceConversionChart />
-
-        <QuoteCadenceComparison />
-
-        {todayOnly && (
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              Tarefas para hoje
-            </Badge>
-            <Button variant="ghost" size="sm" onClick={clearTodayFilter} aria-label="Limpar filtro de hoje">
-              Limpar filtro
+          <div className="flex gap-2">
+            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)} className="bg-muted p-1 rounded-lg">
+              <TabsList className="bg-transparent h-8">
+                <TabsTrigger value="monitoring" className="text-xs data-[state=active]:bg-background">
+                  <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
+                  Monitoramento
+                </TabsTrigger>
+                <TabsTrigger value="strategy" className="text-xs data-[state=active]:bg-background">
+                  <Settings2 className="h-3.5 w-3.5 mr-1.5" />
+                  Estratégia e Regras
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={rows.length === 0}
+              aria-label="Exportar cadências filtradas para CSV"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Exportar CSV
             </Button>
           </div>
-        )}
+        </header>
 
-        <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
-
-        <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)} className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="active">Ativos</TabsTrigger>
-            <TabsTrigger value="paused">Pausados</TabsTrigger>
-            <TabsTrigger value="completed">Concluídos</TabsTrigger>
-            <TabsTrigger value="all">Todos</TabsTrigger>
-          </TabsList>
-
-          <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait">
+          {viewMode === "monitoring" ? (
             <motion.div
-              key={filter}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2 }}
+              key="monitoring"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              className="space-y-6"
             >
-              <TabsContent value={filter} className="mt-0" forceMount>
-                {isLoading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <SkeletonShimmer key={i} className="h-44 rounded-xl" />
-                    ))}
-                  </div>
-                ) : rows.length === 0 ? (
-                  <QuoteCadenceEmptyState />
-                ) : (
-                  <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto max-md:grid-flow-col max-md:auto-cols-[85%] max-md:-mx-4 max-md:px-4 max-md:pb-2"
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1, transition: { staggerChildren: 0.03 } },
-                    }}
-                  >
-                    {rows.map((r) => (
-                      <motion.button
-                        key={r.id}
-                        type="button"
-                        onClick={() => setSelected(r)}
-                        aria-label={`Abrir detalhes da cadência de ${r.quote?.client_name ?? "cliente"} — status ${r.status}`}
-                        className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl snap-start"
-                        variants={{
-                          hidden: { opacity: 0, y: 8 },
-                          visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
-                        }}
-                      >
-                        <QuoteCadenceCard
-                          row={r}
-                          selected={selectedIds.includes(r.id)}
-                          onToggleSelect={toggleSelect}
-                        />
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                )}
-              </TabsContent>
+              <QuoteCadenceMetrics />
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                  <QuoteCadenceConversionChart />
+                  <QuoteCadenceComparison />
+                  
+                  {todayOnly && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                        Tarefas para hoje
+                      </Badge>
+                      <Button variant="ghost" size="sm" onClick={clearTodayFilter} aria-label="Limpar filtro de hoje">
+                        Limpar filtro
+                      </Button>
+                    </div>
+                  )}
+
+                  <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
+
+                  <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)} className="space-y-4">
+                    <TabsList>
+                      <TabsTrigger value="active">Ativos</TabsTrigger>
+                      <TabsTrigger value="paused">Pausados</TabsTrigger>
+                      <TabsTrigger value="completed">Concluídos</TabsTrigger>
+                      <TabsTrigger value="all">Todos</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value={filter} className="mt-0" forceMount>
+                      {isLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {Array.from({ length: 4 }).map((_, i) => (
+                            <SkeletonShimmer key={i} className="h-44 rounded-xl" />
+                          ))}
+                        </div>
+                      ) : rows.length === 0 ? (
+                        <QuoteCadenceEmptyState />
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {rows.map((r) => (
+                            <motion.button
+                              key={r.id}
+                              type="button"
+                              onClick={() => setSelected(r)}
+                              className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl"
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                            >
+                              <QuoteCadenceCard
+                                row={r}
+                                selected={selectedIds.includes(r.id)}
+                                onToggleSelect={toggleSelect}
+                              />
+                            </motion.button>
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </div>
+                
+                <div className="lg:col-span-1">
+                  <ApprovalQueue />
+                </div>
+              </div>
             </motion.div>
-          </AnimatePresence>
-        </Tabs>
+          ) : (
+            <motion.div
+              key="strategy"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            >
+              <div className="lg:col-span-2">
+                <CadenceTemplateManager />
+              </div>
+              <div className="lg:col-span-1">
+                <ContactFrequencyRules />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <QuoteCadenceBulkBar selectedIds={selectedIds} onClear={() => setSelectedIds([])} />
