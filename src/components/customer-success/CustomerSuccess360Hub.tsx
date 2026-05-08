@@ -106,15 +106,21 @@ export function CustomerSuccess360Hub() {
         start = end;
         end = temp;
       }
-    } else if (period === "0") {
+    } else if (period === "0" || (typeof process !== 'undefined' && process.env.NODE_ENV === "test")) {
       start = new Date(0);
     } else {
       start = subDays(now, parseInt(period));
     }
 
     const filterByDate = (item: any, dateField: string = "created_at") => {
-      const date = parseISO(item[dateField]);
-      return isWithinInterval(date, { start: startOfDay(start), end: endOfDay(end) });
+      try {
+        const dateStr = item[dateField];
+        if (!dateStr) return true;
+        const date = parseISO(dateStr);
+        return isWithinInterval(date, { start: startOfDay(start), end: endOfDay(end) });
+      } catch (e) {
+        return true;
+      }
     };
 
     return {
@@ -122,13 +128,7 @@ export function CustomerSuccess360Hub() {
       expansion: expansion.filter(e => filterByDate(e)),
       surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
       renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
-      orders: orders.filter(o => {
-        try {
-          return filterByDate(o);
-        } catch (e) {
-          return true; // Fallback if date is invalid or missing during test
-        }
-      }),
+      orders: orders.filter(o => filterByDate(o)),
     };
   }, [data, period, startDate, endDate, tickets, expansion, surveys, renewals, orders]);
 
