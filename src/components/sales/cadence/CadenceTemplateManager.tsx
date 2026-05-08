@@ -120,8 +120,8 @@ export function CadenceTemplateManager() {
                       <Button 
                         key={v.name} 
                         variant="outline" 
-                        size="xs" 
-                        className="text-[10px] h-6"
+                        size="sm" 
+                        className="text-[10px] h-7 px-2"
                         onClick={() => insertVariable(v.name)}
                       >
                         +{v.label}
