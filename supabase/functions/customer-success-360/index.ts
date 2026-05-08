@@ -18,6 +18,7 @@ Deno.serve(async (req) => {
       expansionRes,
       surveysRes,
       qbrRes,
+      ordersRes,
     ] = await Promise.all([
       supabase.from("accounts").select("id, name, tier, health_status, account_score, annual_revenue, created_at").order("annual_revenue", { ascending: false, nullsFirst: false }).limit(100),
       supabase.from("support_tickets").select("id, account_id, subject, status, priority, sentiment, created_at, resolved_at").order("created_at", { ascending: false }).limit(500),
