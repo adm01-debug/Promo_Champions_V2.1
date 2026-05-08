@@ -11,6 +11,7 @@ import { EmptyStateGuide } from "./EmptyStateGuide";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DuplicateBlockAudit } from "./DuplicateBlockAudit";
 
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
