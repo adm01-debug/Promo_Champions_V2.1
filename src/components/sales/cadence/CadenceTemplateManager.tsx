@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Save, Trash2, MessageSquare, Mail, Phone, Info } from "lucide-react";
+import { Plus, Save, Trash2, MessageSquare, Mail, Phone, Eye, CheckCircle, XCircle } from "lucide-react";
 import type { CadenceTemplate, TemplateType } from "@/types/sales";
 import { toast } from "sonner";
 
@@ -20,7 +20,18 @@ const SINGU_VARIABLES = [
 ];
 
 export function CadenceTemplateManager() {
-  const [templates, setTemplates] = useState<CadenceTemplate[]>([]);
+  const [templates, setTemplates] = useState<CadenceTemplate[]>([
+    {
+      id: "1",
+      name: "Follow-up Interesse Alto",
+      type: "whatsapp",
+      content: "Oi {{singu_lead_name}}! Vi que você acessou nossa proposta. Como posso te ajudar a avançar?",
+      requires_approval: true,
+      variables: ["singu_lead_name"],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  ]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<CadenceTemplate>>({
     type: "whatsapp",
@@ -28,6 +39,7 @@ export function CadenceTemplateManager() {
     content: "",
     name: "",
   });
+  const [activeTab, setActiveTab] = useState<"manage" | "approval">("manage");
 
   const handleSave = () => {
     if (!formData.name || !formData.content) {
@@ -36,7 +48,7 @@ export function CadenceTemplateManager() {
     }
 
     const newTemplate: CadenceTemplate = {
-      id: editingId || crypto.randomUUID(),
+      id: editingId === "new" ? crypto.randomUUID() : editingId!,
       name: formData.name!,
       type: formData.type as TemplateType,
       content: formData.content!,
@@ -46,7 +58,7 @@ export function CadenceTemplateManager() {
       updated_at: new Date().toISOString(),
     };
 
-    if (editingId) {
+    if (editingId && editingId !== "new") {
       setTemplates(prev => prev.map(t => t.id === editingId ? newTemplate : t));
       toast.success("Template atualizado com sucesso.");
     } else {
@@ -67,144 +79,199 @@ export function CadenceTemplateManager() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Gerenciador de Templates</CardTitle>
-              <CardDescription>Crie mensagens personalizadas com dados da SINGU</CardDescription>
+      <div className="flex items-center gap-2 border-b pb-1">
+        <Button 
+          variant={activeTab === "manage" ? "default" : "ghost"} 
+          size="sm"
+          onClick={() => setActiveTab("manage")}
+          className="rounded-none border-b-2 border-transparent data-[variant=default]:border-primary"
+        >
+          Gerenciar Templates
+        </Button>
+        <Button 
+          variant={activeTab === "approval" ? "default" : "ghost"} 
+          size="sm"
+          onClick={() => setActiveTab("approval")}
+          className="rounded-none border-b-2 border-transparent data-[variant=default]:border-primary"
+        >
+          Fila de Aprovação
+          <Badge className="ml-2 bg-amber-500">2</Badge>
+        </Button>
+      </div>
+
+      {activeTab === "manage" ? (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Gerenciador de Templates</CardTitle>
+                <CardDescription>Crie mensagens personalizadas com dados da SINGU</CardDescription>
+              </div>
+              {!editingId && (
+                <Button onClick={() => setEditingId("new")} size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Template
+                </Button>
+              )}
             </div>
-            {!editingId && (
-              <Button onClick={() => setEditingId("new")} size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Template
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {editingId ? (
-            <div className="space-y-4 border p-4 rounded-lg bg-muted/30">
-              <div className="grid grid-cols-2 gap-4">
+          </CardHeader>
+          <CardContent>
+            {editingId ? (
+              <div className="space-y-4 border p-4 rounded-lg bg-muted/30">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nome do Template</Label>
+                    <Input 
+                      value={formData.name} 
+                      onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Ex: Boas vindas - VIP"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tipo</Label>
+                    <Select 
+                      value={formData.type} 
+                      onValueChange={v => setFormData(prev => ({ ...prev, type: v as TemplateType }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                        <SelectItem value="email">E-mail</SelectItem>
+                        <SelectItem value="call">Roteiro de Ligação</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label>Nome do Template</Label>
-                  <Input 
-                    value={formData.name} 
-                    onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Ex: Boas vindas - VIP"
+                  <div className="flex items-center justify-between">
+                    <Label>Conteúdo da Mensagem</Label>
+                    <div className="flex gap-1 flex-wrap">
+                      {SINGU_VARIABLES.map((v: { name: string; label: string }) => (
+                        <Button 
+                          key={v.name} 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-[10px] h-7 px-2"
+                          onClick={() => insertVariable(v.name)}
+                        >
+                          +{v.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <Textarea 
+                    value={formData.content} 
+                    onChange={e => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    rows={5}
+                    placeholder="Olá {{singu_lead_name}}, vi que sua última compra foi..."
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Tipo</Label>
-                  <Select 
-                    value={formData.type} 
-                    onValueChange={v => setFormData(prev => ({ ...prev, type: v as TemplateType }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      <SelectItem value="email">E-mail</SelectItem>
-                      <SelectItem value="call">Roteiro de Ligação</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Conteúdo da Mensagem</Label>
-                  <div className="flex gap-1 flex-wrap">
-                    {SINGU_VARIABLES.map(v => (
-                      <Button 
-                        key={v.name} 
-                        variant="outline" 
-                        size="sm" 
-                        className="text-[10px] h-7 px-2"
-                        onClick={() => insertVariable(v.name)}
-                      >
-                        +{v.label}
-                      </Button>
-                    ))}
+                <div className="flex items-center justify-between p-3 border rounded-lg bg-background">
+                  <div className="space-y-0.5">
+                    <Label>Exigir Aprovação Humana</Label>
+                    <p className="text-xs text-muted-foreground">O envio não será automático até que alguém aprove.</p>
                   </div>
+                  <Switch 
+                    checked={formData.requires_approval} 
+                    onCheckedChange={v => setFormData(prev => ({ ...prev, requires_approval: v }))}
+                  />
                 </div>
-                <Textarea 
-                  value={formData.content} 
-                  onChange={e => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                  rows={5}
-                  placeholder="Olá {{singu_lead_name}}, vi que sua última compra foi..."
-                />
-              </div>
 
-              <div className="flex items-center justify-between p-3 border rounded-lg bg-background">
-                <div className="space-y-0.5">
-                  <Label>Exigir Aprovação Humana</Label>
-                  <p className="text-xs text-muted-foreground">O envio não será automático até que alguém aprove.</p>
+                <div className="flex justify-end gap-2">
+                  <Button variant="ghost" onClick={() => setEditingId(null)}>Cancelar</Button>
+                  <Button onClick={handleSave}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar Template
+                  </Button>
                 </div>
-                <Switch 
-                  checked={formData.requires_approval} 
-                  onCheckedChange={v => setFormData(prev => ({ ...prev, requires_approval: v }))}
-                />
               </div>
-
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setEditingId(null)}>Cancelar</Button>
-                <Button onClick={handleSave}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Salvar Template
-                </Button>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {templates.map(t => (
+                  <Card key={t.id} className="relative overflow-hidden hover:border-primary/50 transition-colors">
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-destructive"
+                        onClick={() => setTemplates(prev => prev.filter(x => x.id !== t.id))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-2 mb-2">
+                        {t.type === 'whatsapp' && <MessageSquare className="h-4 w-4 text-green-500" />}
+                        {t.type === 'email' && <Mail className="h-4 w-4 text-blue-500" />}
+                        {t.type === 'call' && <Phone className="h-4 w-4 text-orange-500" />}
+                        <span className="font-semibold">{t.name}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-4 italic">
+                        "{t.content}"
+                      </p>
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t">
+                        <div className="flex gap-1">
+                          {t.requires_approval && (
+                            <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20">Aprovação Necessária</Badge>
+                          )}
+                          <Badge variant="outline" className="text-[10px] uppercase">{t.type}</Badge>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          setEditingId(t.id);
+                          setFormData(t);
+                        }}>Editar</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-            </div>
-          ) : templates.length === 0 ? (
-            <div className="text-center py-12 border-2 border-dashed rounded-lg">
-              <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground opacity-20" />
-              <h3 className="mt-4 text-lg font-medium">Nenhum template criado</h3>
-              <p className="text-sm text-muted-foreground">Comece criando um template para suas cadências.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {templates.map(t => (
-                <Card key={t.id} className="relative overflow-hidden">
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-destructive"
-                      onClick={() => setTemplates(prev => prev.filter(x => x.id !== t.id))}
-                    >
-                      <Trash2 className="h-4 w-4" />
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          <Card className="border-amber-500/30 bg-amber-500/5">
+            <CardHeader className="py-4">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-amber-700">
+                <Eye className="h-4 w-4" />
+                Ações Aguardando Validação Humana
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[
+                { id: "p1", lead: "Ana Silva", template: "Follow-up Interesse Alto", content: "Oi Ana! Vi que você acessou nossa proposta...", type: "whatsapp" },
+                { id: "p2", lead: "Bruno Costa", template: "Follow-up Interesse Alto", content: "Oi Bruno! Vi que você acessou nossa proposta...", type: "whatsapp" }
+              ].map(pending => (
+                <div key={pending.id} className="p-4 border rounded-lg bg-background flex flex-col md:flex-row justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm">{pending.lead}</span>
+                      <Badge variant="outline" className="text-[10px]">{pending.template}</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground italic">"{pending.content}"</p>
+                    <p className="text-[10px] text-muted-foreground">Trigger: Clique em Link de Preço (3x)</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button variant="outline" size="sm" className="h-8 text-destructive border-destructive/30" onClick={() => toast.error("Ação rejeitada")}>
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Rejeitar
+                    </Button>
+                    <Button size="sm" className="h-8 bg-green-600 hover:bg-green-700" onClick={() => toast.success("Ação aprovada e enviada!")}>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Aprovar & Enviar
                     </Button>
                   </div>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      {t.type === 'whatsapp' && <MessageSquare className="h-4 w-4 text-green-500" />}
-                      {t.type === 'email' && <Mail className="h-4 w-4 text-blue-500" />}
-                      {t.type === 'call' && <Phone className="h-4 w-4 text-orange-500" />}
-                      <span className="font-semibold">{t.name}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4 italic">
-                      "{t.content}"
-                    </p>
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t">
-                      <div className="flex gap-1">
-                        {t.requires_approval && (
-                          <Badge variant="secondary" className="text-[10px]">Aprovação Necessária</Badge>
-                        )}
-                        <Badge variant="outline" className="text-[10px] uppercase">{t.type}</Badge>
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => {
-                        setEditingId(t.id);
-                        setFormData(t);
-                      }}>Editar</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                </div>
               ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
+
