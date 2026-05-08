@@ -99,7 +99,8 @@ const FollowUpInteligente = () => {
             } : undefined,
             score,
             probability,
-            has_pending_task: pendingTaskIds.has(deal.id)
+            has_pending_task: pendingTaskIds.has(deal.id),
+            follow_up_count: completedTasksMap[deal.id] || 0
           } as ColdLead;
         })
         .filter(lead => lead.days_inactive >= minDaysInactive)
