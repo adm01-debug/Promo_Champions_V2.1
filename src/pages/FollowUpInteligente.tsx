@@ -239,11 +239,11 @@ const FollowUpInteligente = () => {
                       key={lead.id}
                       lead={lead}
                       index={i}
-                      isSelected={selectedLeads.has(lead.id)}
-                      onToggle={toggleLead}
-                      onCreateTask={l => createFollowUpTask.mutate(l)}
-                      isCreating={createFollowUpTask.isPending}
-                    />
+                       isSelected={selectedLeads.has(lead.id)}
+                       onToggle={toggleLead}
+                       onCreateTask={l => createFollowUpTask.mutate(l)}
+                       isCreating={creatingLeadId === lead.id}
+                     />
                   ))}
                 </AnimatePresence>
               )}
