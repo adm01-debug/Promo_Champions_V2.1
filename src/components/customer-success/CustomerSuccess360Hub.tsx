@@ -502,28 +502,36 @@ export function CustomerSuccess360Hub() {
           if (!open) {
             setOrderModalStatus(null);
             setOrderSearch("");
+            setOrderPage(1);
           }
         }}>
           <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
             <div className="p-6 pb-2">
               <DialogHeader>
-                <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
-                <DialogDescription>
-                  Lista completa de pedidos com este status no período selecionado.
-                </DialogDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
+                    <DialogDescription>
+                      Lista completa de pedidos filtrados por período e status.
+                    </DialogDescription>
+                  </div>
+                  <Badge variant="outline" className="text-sm px-3 py-1">
+                    {filteredModalOrders.length} {filteredModalOrders.length === 1 ? "pedido" : "pedidos"}
+                  </Badge>
+                </div>
               </DialogHeader>
             </div>
             
             <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
-              {orderModalStatus === "cancelled" && cancellationStats.length > 0 && (
+              {modalStats.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start bg-muted/30 p-4 rounded-xl border border-border/50">
                   <div className="space-y-2">
                     <h4 className="text-sm font-semibold flex items-center gap-2">
-                      <PieIcon className="h-4 w-4 text-destructive" />
-                      Motivos de Cancelamento
+                      <PieIcon className={`h-4 w-4 ${orderModalStatus === 'cancelled' ? 'text-destructive' : 'text-primary'}`} />
+                      {orderModalStatus === 'cancelled' ? 'Motivos de Cancelamento' : 'Principais Clientes'}
                     </h4>
                     <div className="space-y-1">
-                      {cancellationStats.slice(0, 5).map((stat, i) => (
+                      {modalStats.slice(0, 5).map((stat, i) => (
                         <div key={i} className="flex justify-between text-xs items-center">
                           <span className="text-muted-foreground truncate max-w-[180px]">{stat.name}</span>
                           <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-bold">
@@ -537,7 +545,7 @@ export function CustomerSuccess360Hub() {
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
-                          data={cancellationStats}
+                          data={modalStats}
                           cx="50%"
                           cy="50%"
                           innerRadius={30}
@@ -545,7 +553,7 @@ export function CustomerSuccess360Hub() {
                           paddingAngle={5}
                           dataKey="value"
                         >
-                          {cancellationStats.map((_, index) => (
+                          {modalStats.map((_, index) => (
                             <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                           ))}
                         </Pie>
@@ -559,42 +567,77 @@ export function CustomerSuccess360Hub() {
                 </div>
               )}
 
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por cliente ou número do pedido..."
-                  className="pl-10"
-                  value={orderSearch}
-                  onChange={(e) => setOrderSearch(e.target.value)}
-                />
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por cliente ou número do pedido..."
+                    className="pl-10"
+                    value={orderSearch}
+                    onChange={(e) => {
+                      setOrderSearch(e.target.value);
+                      setOrderPage(1);
+                    }}
+                  />
+                </div>
+                {orderSearch && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => {
+                      setOrderSearch("");
+                      setOrderPage(1);
+                    }}
+                    className="h-9"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Limpar
+                  </Button>
+                )}
               </div>
 
-              <div className="rounded-md border">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="p-3 text-left">Pedido</th>
-                      <th className="p-3 text-left">Cliente</th>
-                      <th className="p-3 text-left">Data</th>
-                      <th className="p-3 text-right">Valor</th>
-                      <th className="p-3 text-left">Informações Extras</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(filteredData?.orders || [])
-                      .filter(o => {
-                        const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
-                        if (s !== orderModalStatus) return false;
-                        
-                        if (!orderSearch) return true;
-                        
-                        const search = orderSearch.toLowerCase();
-                        const orderNum = o.order_number?.toString().toLowerCase() || "";
-                        const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
-                        
-                        return orderNum.includes(search) || accountName.includes(search);
-                      })
-                      .map((o) => (
+              <div className="space-y-4">
+                <div className="rounded-md border overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th 
+                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
+                          onClick={() => toggleSort('order_number')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Pedido <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'order_number' ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </div>
+                        </th>
+                        <th 
+                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
+                          onClick={() => toggleSort('account_name')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Cliente <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'account_name' ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </div>
+                        </th>
+                        <th 
+                          className="p-3 text-left cursor-pointer hover:bg-muted/80 transition-colors"
+                          onClick={() => toggleSort('created_at')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Data <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'created_at' ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </div>
+                        </th>
+                        <th 
+                          className="p-3 text-right cursor-pointer hover:bg-muted/80 transition-colors"
+                          onClick={() => toggleSort('total')}
+                        >
+                          <div className="flex items-center gap-1 justify-end">
+                            Valor <ArrowUpDown className={`h-3 w-3 ${orderSortField === 'total' ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </div>
+                        </th>
+                        <th className="p-3 text-left">Informações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedAndPaginatedOrders.map((o) => (
                         <tr key={o.id} className="border-b transition-colors hover:bg-muted/10">
                           <td className="p-3 font-medium">#{o.order_number}</td>
                           <td className="p-3">{accountById.get((o as any).account_id)?.name ?? "—"}</td>
@@ -615,23 +658,66 @@ export function CustomerSuccess360Hub() {
                           </td>
                         </tr>
                       ))}
-                    {(filteredData?.orders || [])
-                      .filter(o => {
-                        const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
-                        if (s !== orderModalStatus) return false;
-                        const search = orderSearch.toLowerCase();
-                        const orderNum = o.order_number?.toString().toLowerCase() || "";
-                        const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
-                        return orderNum.includes(search) || accountName.includes(search);
-                      }).length === 0 && (
+                      {sortedAndPaginatedOrders.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="p-8 text-center text-muted-foreground italic">
-                            Nenhum pedido encontrado.
+                          <td colSpan={5} className="p-12 text-center text-muted-foreground">
+                            <div className="flex flex-col items-center gap-2">
+                              <Search className="h-8 w-8 opacity-20" />
+                              <p>Nenhum pedido encontrado com os filtros atuais.</p>
+                            </div>
                           </td>
                         </tr>
                       )}
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between border-t pt-4 px-1">
+                    <p className="text-xs text-muted-foreground">
+                      Mostrando {((orderPage - 1) * orderItemsPerPage) + 1} a {Math.min(orderPage * orderItemsPerPage, filteredModalOrders.length)} de {filteredModalOrders.length} resultados
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrderPage(p => Math.max(1, p - 1))}
+                        disabled={orderPage === 1}
+                        className="h-8 w-8 p-0"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                          .filter(p => p === 1 || p === totalPages || Math.abs(p - orderPage) <= 1)
+                          .map((p, i, arr) => (
+                            <div key={p} className="flex items-center gap-1">
+                              {i > 0 && arr[i-1] !== p - 1 && <span className="text-muted-foreground text-xs">...</span>}
+                              <Button
+                                variant={orderPage === p ? "default" : "outline"}
+                                size="sm"
+                                className="h-8 w-8 p-0 text-xs"
+                                onClick={() => setOrderPage(p)}
+                              >
+                                {p}
+                              </Button>
+                            </div>
+                          ))}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrderPage(p => Math.min(totalPages, p + 1))}
+                        disabled={orderPage === totalPages}
+                        className="h-8 w-8 p-0"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </DialogContent>
