@@ -303,6 +303,7 @@ const isValidPeriod = (v: string | null): v is KPIPeriod =>
   v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
 
 export const FuturisticSpeedometerDashboard = () => {
+  const { theme } = useDashboardTheme();
   const { salesperson: currentUser } = useAuth();
   const { data: salespeople = [] } = useSalespeopleList();
 
