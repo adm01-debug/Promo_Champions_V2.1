@@ -162,10 +162,9 @@ describe("CustomerSuccess360Hub", () => {
     const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
     fireEvent.click(ordersTab);
     
-    // Use data-testid or a very specific text for the "Ver Detalhes" button
-    // Actually, we can just click the buttons based on index if we ensure they exist
-    const detailsButtons = screen.getAllByText(/Ver Detalhes/i);
-    fireEvent.click(detailsButtons[0]); // Open first modal (delivered)
+    // Click "Ver Detalhes" using data-testid
+    const detailsButton = screen.getByTestId("ver-detalhes-delivered");
+    fireEvent.click(detailsButton);
     
     // Verify modal content
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
@@ -183,8 +182,8 @@ describe("CustomerSuccess360Hub", () => {
     
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
     
-    const detailsButtons = screen.getAllByText(/Ver Detalhes/i);
-    fireEvent.click(detailsButtons[0]);
+    const detailsButton = screen.getByTestId("ver-detalhes-delivered");
+    fireEvent.click(detailsButton);
     
     // Search
     const searchInput = screen.getByPlaceholderText(/Buscar por cliente ou número do pedido/i);
@@ -208,8 +207,8 @@ describe("CustomerSuccess360Hub", () => {
     
     // Open modal to trigger status persistence
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
-    const detailsButtons = screen.getAllByText(/Ver Detalhes/i);
-    fireEvent.click(detailsButtons[2]); // index 2 is cancelled in our mock setup
+    const detailsButton = screen.getByTestId("ver-detalhes-cancelled");
+    fireEvent.click(detailsButton);
     
     expect(localStorage.getItem("cs360_state_modalStatus")).toBe("cancelled");
     
