@@ -43,9 +43,19 @@ export function CadenceFunnelConfig() {
 
   const handleAddRule = async () => {
     try {
+      if (!newRule.from_stage || !newRule.to_stage || !newRule.condition_type) {
+        throw new Error("Preencha todos os campos obrigatórios");
+      }
+
       const { error } = await supabase
         .from("cadence_funnel_rules")
-        .insert([newRule]);
+        .insert([{
+          from_stage: newRule.from_stage,
+          to_stage: newRule.to_stage,
+          condition_type: newRule.condition_type,
+          condition_value: newRule.condition_value,
+          is_active: newRule.is_active
+        }]);
 
       if (error) throw error;
 
