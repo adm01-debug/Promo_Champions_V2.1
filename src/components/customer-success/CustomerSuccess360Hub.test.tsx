@@ -162,8 +162,12 @@ describe("CustomerSuccess360Hub", () => {
     const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
     fireEvent.click(ordersTab);
     
-    // Click "Ver Detalhes" using data-testid
-    const detailsButton = screen.getByTestId("ver-detalhes-delivered");
+    // Check if we are in building mode or preview mode might affect Tabs content visibility
+    // Since it's Radix Tabs, content is hidden when inactive.
+    
+    // Click "Ver Detalhes" directly via the first button that has the text
+    // In our component: data-testid={`ver-detalhes-${row.key}`}
+    const detailsButton = await screen.findByTestId("ver-detalhes-delivered");
     fireEvent.click(detailsButton);
     
     // Verify modal content
@@ -182,7 +186,7 @@ describe("CustomerSuccess360Hub", () => {
     
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
     
-    const detailsButton = screen.getByTestId("ver-detalhes-delivered");
+    const detailsButton = await screen.findByTestId("ver-detalhes-delivered");
     fireEvent.click(detailsButton);
     
     // Search
@@ -207,7 +211,7 @@ describe("CustomerSuccess360Hub", () => {
     
     // Open modal to trigger status persistence
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
-    const detailsButton = screen.getByTestId("ver-detalhes-cancelled");
+    const detailsButton = await screen.findByTestId("ver-detalhes-cancelled");
     fireEvent.click(detailsButton);
     
     expect(localStorage.getItem("cs360_state_modalStatus")).toBe("cancelled");
