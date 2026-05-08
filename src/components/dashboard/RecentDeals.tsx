@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -25,78 +24,114 @@ export const RecentDeals = React.memo(() => {
 
   if (isLoading) {
     return (
-      <Card className="h-full">
+      <Card className="h-full bg-black/40 border-white/5 backdrop-blur-md">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" />
-            Recentes
+          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary/60">
+            <Clock className="h-4 w-4" />
+            Initializing Feed
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 rounded-lg" />
+            <div key={i} className="h-16 rounded-xl bg-white/5 animate-pulse border border-white/5" />
           ))}
         </CardContent>
       </Card>
     );
   }
 
-  const statusConfig: Record<string, { label: string; classes: string }> = {
-    completed: { label: "Ganho", classes: "bg-success/10 text-success border-success/30" },
-    pending: { label: "Pendente", classes: "bg-warning/10 text-warning border-warning/30" },
-    negotiation: { label: "Negociação", classes: "bg-primary/10 text-primary border-primary/30" },
-    qualified: { label: "Qualificado", classes: "bg-accent/10 text-accent-foreground border-accent/30" },
-    proposal: { label: "Proposta", classes: "bg-info/10 text-info border-info/30" },
-    lost: { label: "Perdido", classes: "bg-destructive/10 text-destructive border-destructive/30" },
+  const statusConfig: Record<string, { label: string; color: string; glow: string }> = {
+    completed: { label: "Confirmed", color: "text-success", glow: "rgba(34, 197, 94, 0.4)" },
+    pending: { label: "Syncing", color: "text-warning", glow: "rgba(234, 179, 8, 0.4)" },
+    negotiation: { label: "Transmitting", color: "text-primary", glow: "rgba(14, 165, 233, 0.4)" },
+    qualified: { label: "Verified", color: "text-accent-foreground", glow: "rgba(255, 255, 255, 0.2)" },
+    proposal: { label: "Uplinking", color: "text-info", glow: "rgba(0, 186, 255, 0.4)" },
+    lost: { label: "Dropped", color: "text-destructive", glow: "rgba(239, 68, 68, 0.4)" },
   };
 
   return (
-    <Card className="h-full border-none bg-gradient-to-br from-card/50 to-background shadow-lg shadow-black/5">
-      <CardHeader className="pb-3">
+    <Card className="h-full relative overflow-hidden bg-black/40 border-white/5 backdrop-blur-md group">
+      {/* Decorative corner */}
+      <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
+        <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-primary/20 group-hover:border-primary/40 transition-colors" />
+      </div>
+
+      <CardHeader className="pb-3 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2 tracking-tight uppercase">
-            <div className="p-1.5 rounded-lg bg-primary/10">
-              <Clock className="h-4 w-4 text-primary" />
+          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
+            <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
+              <Clock className="h-3.5 w-3.5" />
             </div>
-            Fluxo Recente
+            Tactical Feed
           </CardTitle>
-          <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest bg-primary/5">Live</Badge>
+          <div className="flex items-center gap-2 px-2 py-0.5 rounded-full bg-success/10 border border-success/30">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+            </span>
+            <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-success">Live</span>
+          </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {deals && deals.length > 0 ? deals.map((deal) => {
+
+      <CardContent className="space-y-2.5 relative z-10">
+        {deals && deals.length > 0 ? deals.map((deal, idx) => {
           const cfg = statusConfig[deal.status || "pending"] || statusConfig.pending;
           return (
             <motion.div
               key={deal.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="group flex items-center justify-between p-3 rounded-xl bg-card border border-border/40 hover:border-primary/20 hover:shadow-sm transition-all cursor-default"
+              transition={{ delay: idx * 0.1 }}
+              className="group/item relative flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/30 hover:bg-white/[0.05] transition-all cursor-default"
             >
-              <div className="min-w-0 space-y-0.5">
-                <p className="text-sm font-bold truncate group-hover:text-primary transition-colors">{deal.client_name}</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-xs font-black text-foreground">
+              <div className="min-w-0 flex-1 pr-4">
+                <p className="text-[11px] font-mono font-bold uppercase tracking-tight truncate group-hover/item:text-primary transition-colors">
+                  {deal.client_name}
+                </p>
+                <div className="flex items-center gap-3 mt-0.5">
+                  <p className="text-xs font-mono font-black text-foreground tabular-nums">
                     R$ {(deal.amount || 0).toLocaleString("pt-BR")}
                   </p>
-                  <span className="text-[10px] text-muted-foreground">•</span>
-                  <p className="text-[10px] text-muted-foreground font-medium">
-                    {new Date(deal.created_at).toLocaleDateString("pt-BR", { day: '2-digit', month: 'short' })}
+                  <div className="h-2 w-[1px] bg-white/10" />
+                  <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-tighter">
+                    {new Date(deal.created_at).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>
-              <Badge variant="outline" className={cn("text-[10px] font-bold uppercase py-0.5 px-2", cfg.classes)}>
-                {cfg.label}
-              </Badge>
+              
+              <div className="text-right flex flex-col items-end gap-1">
+                <span className={cn(
+                  "text-[8px] font-mono font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-sm border",
+                  cfg.color,
+                  "bg-black/40",
+                  `border-${cfg.color.split('-')[1]}/30`
+                )} style={{ textShadow: `0 0 8px ${cfg.glow}` }}>
+                  {cfg.label}
+                </span>
+              </div>
+
+              {/* Hover effect micro-line */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 group-hover/item:h-3/4 bg-primary transition-all duration-300" />
             </motion.div>
           );
         }) : (
-          <div className="flex flex-col items-center justify-center py-8 opacity-40">
-            <Clock className="h-8 w-8 mb-2" />
-            <p className="text-xs font-medium">Aguardando novos negócios...</p>
+          <div className="flex flex-col items-center justify-center py-10 opacity-30">
+            <div className="relative mb-3">
+              <Clock className="h-8 w-8 text-muted-foreground animate-pulse" />
+              <div className="absolute inset-0 blur-md bg-muted-foreground/20 rounded-full" />
+            </div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-center">Spectral frequency: Silence</p>
           </div>
         )}
       </CardContent>
+
+      {/* Decorative vertical scanline */}
+      <motion.div 
+        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        animate={{ opacity: [0.1, 0.4, 0.1] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
     </Card>
   );
 });
