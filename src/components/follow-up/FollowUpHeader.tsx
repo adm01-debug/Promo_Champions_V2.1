@@ -59,15 +59,35 @@ export function FollowUpHeader({
         )}
       </div>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por nome do cliente ou produto..."
-          value={searchQuery}
-          onChange={e => onSearchChange(e.target.value)}
-          className="pl-10"
-        />
+      <div className="flex flex-col md:flex-row items-center gap-4">
+        {/* Search */}
+        <div className="relative flex-1 w-full max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nome do cliente ou produto..."
+            value={searchQuery}
+            onChange={e => onSearchChange(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        {/* Configuration */}
+        <div className="flex items-center gap-2 whitespace-nowrap bg-muted/50 p-1 rounded-lg border">
+          <span className="text-xs font-medium px-2">Inatividade:</span>
+          {[2, 3, 5, 7, 15].map((d) => (
+            <button
+              key={d}
+              onClick={() => onMinDaysChange(d)}
+              className={`px-3 py-1 rounded-md text-xs transition-all ${
+                minDaysInactive === d 
+                  ? "bg-primary text-primary-foreground shadow-sm" 
+                  : "hover:bg-muted text-muted-foreground"
+              }`}
+            >
+              {d === 2 ? "48h" : `${d}d`}
+            </button>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
