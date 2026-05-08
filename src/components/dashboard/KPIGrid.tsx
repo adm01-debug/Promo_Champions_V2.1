@@ -1,8 +1,9 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Activity } from "lucide-react";
+import { BarChart3, Activity, Receipt, Clock, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCountUp } from "@/lib/useCountUp";
+import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { cn } from "@/lib/utils";
 
 interface KPIItem {
@@ -12,21 +13,17 @@ interface KPIItem {
   id: string;
 }
 
-const defaultKpis: KPIItem[] = [
-  { id: "ticket", label: "Average Ticket", value: 2450, format: "currency" },
-  { id: "cycle", label: "Sales Cycle", value: 18, format: "days" },
-  { id: "leads", label: "Active Leads", value: 127, format: "number" },
-];
-
-const KPIRow = React.memo(function KPIRow({ kpi, index }: { kpi: KPIItem; index: number }) {
-  const animated = useCountUp(kpi.value, 1000 + index * 200);
+const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, index }: { label: string; value: number; format: string; icon: any; index: number }) {
+  const animated = useCountUp(value, 1000 + index * 200);
   
   const formatted = (() => {
-    switch (kpi.format) {
+    switch (format) {
       case "currency":
         return `R$ ${animated.toLocaleString("pt-BR")}`;
       case "days":
         return `${animated}d`;
+      case "percent":
+        return `${animated.toFixed(1)}%`;
       default:
         return animated.toLocaleString("pt-BR");
     }
@@ -39,12 +36,12 @@ const KPIRow = React.memo(function KPIRow({ kpi, index }: { kpi: KPIItem; index:
       transition={{ delay: index * 0.1 }}
       className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/40 hover:bg-white/[0.06] transition-all group overflow-hidden"
     >
-      <span className="text-[9px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em] group-hover:text-primary transition-colors z-10">{kpi.label}</span>
+      <span className="text-[9px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em] group-hover:text-primary transition-colors z-10">{label}</span>
       <span className="text-2xl font-display font-black tabular-nums tracking-tighter z-10">{formatted}</span>
       
       {/* Visual activity indicator */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-30 transition-opacity">
-        <Activity className="h-8 w-8 text-primary" />
+        <Icon className="h-8 w-8 text-primary" />
       </div>
 
       {/* Micro decoration */}
@@ -54,6 +51,13 @@ const KPIRow = React.memo(function KPIRow({ kpi, index }: { kpi: KPIItem; index:
 });
 
 export const KPIGrid = React.memo(function KPIGrid() {
+  const { data: kpis } = useDashboardKPIs();
+
+  const metrics = [
+    { label: "Ticket Médio", value: kpis?.current.avgTicket ?? 0, format: "currency", icon: Receipt },
+    { label: "Ciclo Médio", value: 18, format: "days", icon: Clock },
+    { label: "Taxa Retorno", value: 12.5, format: "percent", icon: RotateCcw },
+  ];
   return (
     <Card className="h-full relative overflow-hidden bg-black/40 border-white/5 backdrop-blur-md group">
       {/* Decorative corners */}
@@ -71,8 +75,8 @@ export const KPIGrid = React.memo(function KPIGrid() {
       </CardHeader>
       
       <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
-        {defaultKpis.map((kpi, index) => (
-          <KPIRow key={kpi.id} kpi={kpi} index={index} />
+        {metrics.map((kpi, index) => (
+          <KPIRow key={kpi.label} label={kpi.label} value={kpi.value} format={kpi.format} icon={kpi.icon} index={index} />
         ))}
       </CardContent>
 

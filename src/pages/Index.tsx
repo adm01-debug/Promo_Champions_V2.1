@@ -11,14 +11,6 @@ import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBann
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
-
-// Lazy-loaded modules for better performance
-const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
-const PerformanceModule = lazy(() => import("@/components/dashboard/modules/PerformanceModule").then(m => ({ default: m.PerformanceModule })));
-const AnalyticsModule = lazy(() => import("@/components/dashboard/modules/AnalyticsModule").then(m => ({ default: m.AnalyticsModule })));
-const CompetitionModule = lazy(() => import("@/components/dashboard/modules/CompetitionModule").then(m => ({ default: m.CompetitionModule })));
-const IntelligenceModule = lazy(() => import("@/components/dashboard/modules/IntelligenceModule").then(m => ({ default: m.IntelligenceModule })));
-const EngagementModule = lazy(() => import("@/components/dashboard/modules/EngagementModule").then(m => ({ default: m.EngagementModule })));
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -39,6 +31,14 @@ import {
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
+
+// Lazy-loaded modules for better performance
+const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
+const PerformanceModule = lazy(() => import("@/components/dashboard/modules/PerformanceModule").then(m => ({ default: m.PerformanceModule })));
+const AnalyticsModule = lazy(() => import("@/components/dashboard/modules/AnalyticsModule").then(m => ({ default: m.AnalyticsModule })));
+const CompetitionModule = lazy(() => import("@/components/dashboard/modules/CompetitionModule").then(m => ({ default: m.CompetitionModule })));
+const IntelligenceModule = lazy(() => import("@/components/dashboard/modules/IntelligenceModule").then(m => ({ default: m.IntelligenceModule })));
+const EngagementModule = lazy(() => import("@/components/dashboard/modules/EngagementModule").then(m => ({ default: m.EngagementModule })));
 
 const SECTION_MAP: Record<string, string> = {
   performance: "performance",
@@ -110,9 +110,9 @@ const Index = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
+                className="grid grid-cols-1 md:grid-cols-3 gap-6"
               >
-                <motion.div variants={itemVariants}>
+                <motion.div variants={itemVariants} className="md:col-span-3">
                   {hasRevenue ? (
                     <StatCard
                       title="Receita Total"
@@ -122,54 +122,58 @@ const Index = () => {
                       previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
                       icon={DollarSign}
                       variant="primary"
+                      hero
                     />
                   ) : (
                     <DashboardEmptyState type="revenue" />
                   )}
                 </motion.div>
-                <motion.div variants={itemVariants}>
-                  {hasSales ? (
-                    <StatCard
-                      title="Vendas Realizadas"
-                      value={String(kpis?.current.totalSales ?? 0)}
-                      numericValue={kpis?.current.totalSales ?? 0}
-                      change={kpis?.changes.sales ?? 0}
-                      previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
-                      icon={ShoppingBag}
-                    />
-                  ) : (
-                    <DashboardEmptyState type="sales" />
-                  )}
-                </motion.div>
-                <motion.div variants={itemVariants}>
-                  {hasClients ? (
-                    <StatCard
-                      title="Novos Clientes"
-                      value={String(kpis?.current.newClients ?? 0)}
-                      numericValue={kpis?.current.newClients ?? 0}
-                      change={kpis?.changes.clients ?? 0}
-                      previousValue={kpis ? String(kpis.previous.newClients) : undefined}
-                      icon={Users}
-                      variant="success"
-                    />
-                  ) : (
-                    <DashboardEmptyState type="clients" />
-                  )}
-                </motion.div>
-                <motion.div variants={itemVariants}>
-                  {hasConversion ? (
-                    <StatCard
-                      title="Taxa de Conversão"
-                      value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
-                      numericValue={kpis?.current.conversionRate ?? 0}
-                      change={kpis?.changes.conversion ?? 0}
-                      previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
-                      icon={TrendingUp}
-                      variant="warning"
-                    />
-                  ) : (
-                    <DashboardEmptyState type="conversion" />
-                  )}
+                
+                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:col-span-3">
+                  <motion.div variants={itemVariants}>
+                    {hasSales ? (
+                      <StatCard
+                        title="Vendas Realizadas"
+                        value={String(kpis?.current.totalSales ?? 0)}
+                        numericValue={kpis?.current.totalSales ?? 0}
+                        change={kpis?.changes.sales ?? 0}
+                        previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
+                        icon={ShoppingBag}
+                      />
+                    ) : (
+                      <DashboardEmptyState type="sales" />
+                    )}
+                  </motion.div>
+                  <motion.div variants={itemVariants}>
+                    {hasClients ? (
+                      <StatCard
+                        title="Novos Clientes"
+                        value={String(kpis?.current.newClients ?? 0)}
+                        numericValue={kpis?.current.newClients ?? 0}
+                        change={kpis?.changes.clients ?? 0}
+                        previousValue={kpis ? String(kpis.previous.newClients) : undefined}
+                        icon={Users}
+                        variant="success"
+                      />
+                    ) : (
+                      <DashboardEmptyState type="clients" />
+                    )}
+                  </motion.div>
+                  <motion.div variants={itemVariants}>
+                    {hasConversion ? (
+                      <StatCard
+                        title="Taxa de Conversão"
+                        value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                        numericValue={kpis?.current.conversionRate ?? 0}
+                        change={kpis?.changes.conversion ?? 0}
+                        previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
+                        icon={TrendingUp}
+                        variant="warning"
+                      />
+                    ) : (
+                      <DashboardEmptyState type="conversion" />
+                    )}
+                  </motion.div>
                 </motion.div>
               </motion.div>
             )}
@@ -180,6 +184,7 @@ const Index = () => {
               onValueChange={(value) => {
                 const sectionKey = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
                 navigate(`/dashboard/${sectionKey}`);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="w-full"
             >

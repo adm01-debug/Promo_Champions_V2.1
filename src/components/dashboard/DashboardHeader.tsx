@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio, Monitor, Zap } from "lucide-react";
+import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio, Monitor, Zap, BarChart3 } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -115,11 +115,11 @@ export const DashboardHeader = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate("/relatorios/vendas")}
+            onClick={() => navigate("/bi-gestor")}
             className="h-9 bg-black/40 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
-            <FileDown className="h-3.5 w-3.5 mr-2" />
-            Data Analytics
+            <BarChart3 className="h-3.5 w-3.5 mr-2" />
+            Central BI
           </Button>
           <Button
             variant="default"

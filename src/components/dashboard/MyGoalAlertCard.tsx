@@ -196,7 +196,7 @@ export const MyGoalAlertCard = () => {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={cn("font-mono font-black text-2xl tabular-nums leading-none", alert.color)}>
+              <span className={cn("font-display font-black text-2xl tabular-nums leading-none", alert.color)}>
                 {Math.round(myGoal.progress)}%
               </span>
               <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-1">
@@ -290,7 +290,7 @@ const Metric = ({
       {Icon && <Icon className="h-2.5 w-2.5" />}
       {label}
     </div>
-    <div className={cn("font-mono font-bold text-sm tabular-nums truncate", accent)}>{value}</div>
+    <div className={cn("font-display font-black text-sm tabular-nums truncate", accent)}>{value}</div>
   </div>
 );
 

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -75,11 +76,15 @@ export const StatCard = React.memo(({
   }, [numericValue, value, animatedNum]);
 
   return (
-    <Card className={cn(
-      "group relative overflow-hidden transition-all duration-300",
-      theme === "cyber" ? variantStyles[variant] : "bg-card border-border/40 hover:border-primary/20",
-      heroStyles,
-    )}>
+    <motion.div
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="h-full"
+    >
+      <Card className={cn(
+        "group relative h-full overflow-hidden transition-all duration-300",
+        theme === "cyber" ? variantStyles[variant] : "bg-card border-border/40 hover:border-primary/20",
+        heroStyles,
+      )}>
       {/* Decorative cyber-elements */}
       {theme === "cyber" && (
         <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
@@ -102,14 +107,14 @@ export const StatCard = React.memo(({
               {title}
             </p>
             <p className={cn(
-              "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter",
-              hero && "text-2xl sm:text-4xl lg:text-5xl text-primary",
+              "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter",
+              hero && "text-3xl sm:text-6xl lg:text-7xl text-primary",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
             )} style={{ 
-              textShadow: hero ? `0 0 20px rgba(14,165,233,0.3)` : 
-                          variant !== 'default' ? '0 0 10px currentColor' : 'none' 
+              textShadow: hero ? `0 0 30px rgba(14,165,233,0.6)` : 
+                          variant !== 'default' ? '0 0 15px currentColor' : 'none' 
             }}>
               {displayValue}
             </p>
@@ -178,7 +183,8 @@ export const StatCard = React.memo(({
       {theme === "cyber" && (
         <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
       )}
-    </Card>
+      </Card>
+    </motion.div>
   );
 });
 
