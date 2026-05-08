@@ -37,7 +37,7 @@ const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, in
       className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/40 hover:bg-white/[0.06] transition-all group overflow-hidden"
     >
       <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.25em] group-hover:text-primary transition-all duration-300 z-10">{label}</span>
-      <span className="text-7xl sm:text-8xl lg:text-9xl font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 drop-shadow-[0_0_40px_rgba(139,92,246,0.4)]" style={{ textShadow: '0 0 60px hsl(var(--primary) / 0.95), 0 0 120px hsl(var(--primary) / 0.5)' }}>{formatted}</span>
+      <span className="text-8xl sm:text-9xl lg:text-[10rem] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-6 drop-shadow-[0_0_60px_rgba(139,92,246,0.6)]" style={{ textShadow: '0 0 80px hsl(var(--primary) / 0.95), 0 0 160px hsl(var(--primary) / 0.4)' }}>{formatted}</span>
 
       {/* Visual activity indicator */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-30 transition-opacity">
