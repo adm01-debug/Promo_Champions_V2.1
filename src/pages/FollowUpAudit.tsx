@@ -105,30 +105,50 @@ const FollowUpAudit = () => {
 
         <Card>
           <CardHeader className="pb-3">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Filtrar por nome do lead..."
+                  placeholder="Lead..."
                   value={searchLead}
                   onChange={(e) => setSearchLead(e.target.value)}
-                  className="pl-9"
+                  className="pl-9 h-9 text-xs"
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-muted-foreground" />
-                <Select value={filterAction} onValueChange={setFilterAction}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Tipo de Ação" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as ações</SelectItem>
-                    <SelectItem value="whatsapp_sent">WhatsApp Enviado</SelectItem>
-                    <SelectItem value="task_created">Tarefa Criada</SelectItem>
-                    <SelectItem value="lead_reactivated">Lead Reativado</SelectItem>
-                    <SelectItem value="status_change">Mudança de Status</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="relative">
+                <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Vendedor..."
+                  value={searchSalesperson}
+                  onChange={(e) => setSearchSalesperson(e.target.value)}
+                  className="pl-9 h-9 text-xs"
+                />
+              </div>
+              <Select value={filterAction} onValueChange={setFilterAction}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Ação" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as ações</SelectItem>
+                  <SelectItem value="whatsapp_sent">WhatsApp Enviado</SelectItem>
+                  <SelectItem value="task_created">Tarefa Criada</SelectItem>
+                  <SelectItem value="lead_reactivated">Lead Reativado</SelectItem>
+                  <SelectItem value="status_change">Mudança de Status</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={dateRange.from}
+                  onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
+                  className="h-9 text-[10px]"
+                />
+                <Input
+                  type="date"
+                  value={dateRange.to}
+                  onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
+                  className="h-9 text-[10px]"
+                />
               </div>
             </div>
           </CardHeader>
