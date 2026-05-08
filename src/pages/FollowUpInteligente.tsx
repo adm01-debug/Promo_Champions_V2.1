@@ -299,12 +299,6 @@ const FollowUpInteligente = () => {
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
     setIsPreviewOpen(false);
   }, [followUpSettings, logAction]);
-      details: { message_preview: message.substring(0, 100) + "..." },
-      status: 'sent'
-    });
-
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-  }, [followUpSettings, logAction, salesperson?.id]);
 
   const handleReactivate = useMutation({
     mutationFn: async () => {
