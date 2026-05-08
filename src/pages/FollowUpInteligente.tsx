@@ -178,6 +178,12 @@ const FollowUpInteligente = () => {
         return;
       }
 
+      // Permissions check
+      if (lead.temperature === 'frozen' && lead.score >= 80 && !isAdmin) {
+        toast.error("Apenas administradores podem gerenciar leads Classe A congelados.");
+        return;
+      }
+
       const { error } = await supabase.from('tasks').insert({
         title: `Follow-up: ${lead.client_name}`,
         description: lead.suggested_action,
