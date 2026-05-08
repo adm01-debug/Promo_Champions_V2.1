@@ -137,7 +137,7 @@ export const closerGroupedItems: MenuGroup[] = [
 
 export const gestaoGroupedItems: MenuGroup[] = [
   {
-    label: "Dashboard", icon: LayoutDashboard,
+    label: "Gestão HUD", icon: LayoutDashboard,
     items: [
       { title: "Visão Geral", url: "/dashboard/visao-geral", icon: LayoutDashboard },
       { title: "Performance", url: "/dashboard/performance", icon: Gauge },
