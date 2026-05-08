@@ -45,34 +45,27 @@ export function CadenceSimulationDialog() {
     };
     
     const eventName = eventNames[type];
-    const leadName = prospect.id.substring(0, 8); // Simplificado
+    // Chamar a função do banco de dados para processar o evento
+    const { data, error } = await supabase.rpc('process_lead_intent_event', {
+      p_prospect_cadence_id: prospect.id,
+      p_event_type: type,
+      p_details: { source: 'simulation' }
+    });
 
-    // Encontrar regra aplicável
-    const applicableRule = rules?.find(r => 
-      r.is_active && 
-      r.from_stage === prospect.funnel_stage && 
-      r.condition_type === type
-    );
+    if (error) {
+      toast.error("Erro ao processar evento no banco");
+      console.error(error);
+      return;
+    }
 
-    let resultMsg = "Evento registrado";
-    let newStage = prospect.funnel_stage;
-
-    if (applicableRule) {
-      newStage = applicableRule.to_stage as any;
-      resultMsg = `Transição: ${prospect.funnel_stage} -> ${newStage}`;
-      
-      // Atualizar no banco
-      const { error } = await supabase
-        .from('prospect_cadences')
-        .update({ funnel_stage: newStage })
-        .eq('id', prospect.id);
-        
-      if (error) {
-        toast.error("Erro ao atualizar estágio do funil");
-        return;
-      }
-      
+    const result = data as { transitioned: boolean; new_stage: string; event_count: number };
+    let resultMsg = `Evento registrado (${result.event_count} ocorrências)`;
+    
+    if (result.transitioned) {
+      resultMsg = `Transição: ${prospect.funnel_stage} -> ${result.new_stage}`;
       queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     }
 
     const newLog: SimulationLog = {
