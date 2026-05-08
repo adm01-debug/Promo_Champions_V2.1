@@ -792,28 +792,42 @@ export function CustomerSuccess360Hub() {
                           </div>
                         );
                       })}
-                      {modalStats.length === 0 && <p className="text-xs text-muted-foreground italic py-4">Nenhum dado disponível.</p>}
+                      {modalStats.length === 0 && !isLoading && <p className="text-xs text-muted-foreground italic py-4">Nenhum dado disponível.</p>}
+                      {isLoading && (
+                        <div className="space-y-3 py-2">
+                          {[...Array(3)].map((_, i) => (
+                            <div key={i} className="space-y-1">
+                              <Skeleton className="h-3 w-24" />
+                              <Skeleton className="h-1.5 w-full" />
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie 
-                            data={modalStats} 
-                            cx="50%" 
-                            cy="50%" 
-                            innerRadius={25} 
-                            outerRadius={45} 
-                            paddingAngle={4} 
-                            dataKey="value"
-                            stroke="none"
-                          >
-                            {modalStats.map((_, index) => (
-                              <Cell key={`cell-cust-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none' }} />
-                        </PieChart>
-                      </ResponsiveContainer>
+                    <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center relative">
+                      {isLoading ? (
+                        <Skeleton className="h-20 w-20 rounded-full" />
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie 
+                              data={modalStats} 
+                              cx="50%" 
+                              cy="50%" 
+                              innerRadius={25} 
+                              outerRadius={45} 
+                              paddingAngle={4} 
+                              dataKey="value"
+                              stroke="none"
+                            >
+                              {modalStats.map((_, index) => (
+                                <Cell key={`cell-cust-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none' }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -844,27 +858,41 @@ export function CustomerSuccess360Hub() {
                       {(orderModalStatus === 'cancelled' ? statusReasons : lossStats).length === 0 && (
                         <p className="text-xs text-muted-foreground italic py-4">Sem perdas registradas.</p>
                       )}
+                      {isLoading && (
+                        <div className="space-y-3 py-2">
+                          {[...Array(3)].map((_, i) => (
+                            <div key={i} className="space-y-1">
+                              <Skeleton className="h-3 w-24" />
+                              <Skeleton className="h-1.5 w-full" />
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie 
-                            data={orderModalStatus === 'cancelled' ? statusReasons : lossStats} 
-                            cx="50%" 
-                            cy="50%" 
-                            innerRadius={25} 
-                            outerRadius={45} 
-                            paddingAngle={4} 
-                            dataKey="value"
-                            stroke="none"
-                          >
-                            {(orderModalStatus === 'cancelled' ? statusReasons : lossStats).map((_, index) => (
-                              <Cell key={`cell-loss-${index}`} fill={orderModalStatus === 'cancelled' ? CHART_COLORS[index % CHART_COLORS.length] : CHART_COLORS[(index + 3) % CHART_COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none' }} />
-                        </PieChart>
-                      </ResponsiveContainer>
+                    <div className="h-[100px] w-[120px] shrink-0 flex items-center justify-center relative">
+                      {isLoading ? (
+                        <Skeleton className="h-20 w-20 rounded-full" />
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie 
+                              data={orderModalStatus === 'cancelled' ? statusReasons : lossStats} 
+                              cx="50%" 
+                              cy="50%" 
+                              innerRadius={25} 
+                              outerRadius={45} 
+                              paddingAngle={4} 
+                              dataKey="value"
+                              stroke="none"
+                            >
+                              {(orderModalStatus === 'cancelled' ? statusReasons : lossStats).map((_, index) => (
+                                <Cell key={`cell-loss-${index}`} fill={orderModalStatus === 'cancelled' ? CHART_COLORS[index % CHART_COLORS.length] : CHART_COLORS[(index + 3) % CHART_COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none' }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -982,7 +1010,18 @@ export function CustomerSuccess360Hub() {
                           </tr>
                         );
                       })}
-                      {sortedAndPaginatedOrders.length === 0 && (
+                      {isLoading && (
+                        {[...Array(5)].map((_, i) => (
+                          <tr key={`skel-${i}`} className="border-b">
+                            <td className="p-3"><Skeleton className="h-4 w-16" /></td>
+                            <td className="p-3"><Skeleton className="h-4 w-32" /></td>
+                            <td className="p-3"><Skeleton className="h-4 w-24" /></td>
+                            <td className="p-3 text-right"><Skeleton className="h-4 w-20 ml-auto" /></td>
+                            <td className="p-3"><Skeleton className="h-4 w-40" /></td>
+                          </tr>
+                        ))}
+                      )}
+                      {sortedAndPaginatedOrders.length === 0 && !isLoading && (
                         <tr>
                           <td colSpan={5} className="p-12 text-center text-muted-foreground">
                             <div className="flex flex-col items-center gap-2">
