@@ -384,7 +384,12 @@ export const FuturisticSpeedometerDashboard = () => {
             </div>
           </div>
           <div>
-            <h2 className="font-display text-lg font-bold tracking-tight">Performance HUD</h2>
+            <h2
+              className="font-display text-lg font-bold tracking-tight text-primary"
+              style={{ textShadow: "0 0 10px hsl(var(--primary) / 0.6), 0 0 22px hsl(var(--primary) / 0.35)" }}
+            >
+              Performance HUD
+            </h2>
             <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
               Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}
             </p>
