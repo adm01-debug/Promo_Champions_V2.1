@@ -84,6 +84,9 @@ export function PurchaseIntelligenceHub() {
             <TabsTrigger value="seasonality" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <CalendarDays className="h-4 w-4" /> Sazonalidade
             </TabsTrigger>
+            <TabsTrigger value="audit" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <ShieldAlert className="h-4 w-4" /> Auditoria de Bloqueios
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="client" className="space-y-6 focus-visible:outline-none">
