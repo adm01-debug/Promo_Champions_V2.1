@@ -548,58 +548,90 @@ export function CustomerSuccess360Hub() {
           </div>
         </TabsContent>
 
-        <TabsContent value="orders" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribuição de Pedidos por Status</CardTitle>
-              <CardDescription>Resumo financeiro de pedidos filtrados pelo período selecionado</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="p-4 text-left font-medium">Status</th>
-                      <th className="p-4 text-center font-medium">Qtd. Pedidos</th>
-                      <th className="p-4 text-right font-medium">Volume Total</th>
-                      <th className="p-4 text-center font-medium">Ação</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ordersByStatus.map((row, i) => (
-                      <tr key={i} className="border-b transition-colors hover:bg-muted/30">
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            <div className={`h-2 w-2 rounded-full ${row.color.replace("text-", "bg-")}`} />
-                            <span className={`font-semibold ${row.color}`}>{row.status}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-center">{row.count}</td>
-                        <td className="p-4 text-right font-mono font-medium">{formatBRL(row.value)}</td>
-                        <td className="p-4 text-center">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-8 px-3"
-                            onClick={() => setOrderModalStatus(row.key)}
-                          >
-                            Ver Detalhes
-                          </Button>
-                        </td>
+        <TabsContent value="orders" className="mt-4 space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card className="lg:col-span-2">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Distribuição de Pedidos</CardTitle>
+                  <CardDescription>Resumo financeiro por status no período</CardDescription>
+                </div>
+                <div className="bg-primary/10 px-3 py-1 rounded-full text-xs font-bold text-primary">
+                  Total: {filteredData?.orders.length || 0} pedidos
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-md border overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="p-4 text-left font-medium">Status</th>
+                        <th className="p-4 text-center font-medium">Qtd. Pedidos</th>
+                        <th className="p-4 text-right font-medium">Volume Total</th>
+                        <th className="p-4 text-center font-medium">Ação</th>
                       </tr>
-                    ))}
-                    {ordersByStatus.length === 0 && (
-                      <tr>
-                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                          Nenhum pedido encontrado no período.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
+                    </thead>
+                    <tbody>
+                      {ordersByStatus.map((row, i) => (
+                        <tr key={i} className="border-b transition-colors hover:bg-muted/30">
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <div className={`h-2 w-2 rounded-full ${row.color.replace("text-", "bg-")}`} />
+                              <span className={`font-semibold ${row.color}`}>{row.status}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 text-center">{row.count}</td>
+                          <td className="p-4 text-right font-mono font-medium">{formatBRL(row.value)}</td>
+                          <td className="p-4 text-center">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-8 px-3"
+                              onClick={() => setOrderModalStatus(row.key)}
+                            >
+                              Ver Detalhes
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                      {ordersByStatus.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="p-8 text-center text-muted-foreground">
+                            Nenhum pedido encontrado no período.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Composição do Volume</CardTitle>
+                <CardDescription>% Financeira por Status</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={ordersByStatus}
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {ordersByStatus.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color.includes('success') ? 'hsl(var(--success))' : entry.color.includes('warning') ? 'hsl(var(--warning))' : 'hsl(var(--destructive))'} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(val: any) => formatBRL(Number(val))} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <Dialog open={!!orderModalStatus} onOpenChange={(open) => {
@@ -622,16 +654,21 @@ export function CustomerSuccess360Hub() {
                       Visualizando {filteredModalOrders.length} de {ordersByStatus.find(s => s.key === orderModalStatus)?.count} pedidos totais para este status.
                     </DialogDescription>
                   </div>
-                  <div className="flex items-center gap-3 bg-background/50 p-3 rounded-lg border border-border/50 shadow-sm animate-in fade-in zoom-in duration-300">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    key={filteredModalOrders.length}
+                    className="flex items-center gap-3 bg-background/50 p-3 rounded-lg border border-border/50 shadow-sm transition-all hover:shadow-md"
+                  >
                     <div className="text-right">
                       <div className="text-3xl font-black text-primary tracking-tighter tabular-nums">
                         {filteredModalOrders.length}
                       </div>
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Localizados</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Encontrados</div>
                     </div>
                     <div className="h-8 w-px bg-border/60 mx-1" />
-                    <Activity className="h-5 w-5 text-primary/40" />
-                  </div>
+                    <Search className="h-5 w-5 text-primary/40" />
+                  </motion.div>
                 </div>
               </DialogHeader>
             </div>
@@ -689,11 +726,11 @@ export function CustomerSuccess360Hub() {
                   </div>
                 )}
 
-                {orderModalStatus !== 'cancelled' && lossStats.length > 0 && (
-                  <div className="bg-destructive/5 p-4 rounded-xl border border-destructive/10 space-y-4">
-                    <h4 className="text-sm font-semibold text-destructive flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4" />
-                      Maiores Causas de Perda (Filtro Global)
+                {lossStats.length > 0 && (
+                  <div className={`${orderModalStatus === 'cancelled' ? 'bg-muted/10' : 'bg-destructive/5'} p-4 rounded-xl border ${orderModalStatus === 'cancelled' ? 'border-border/50' : 'border-destructive/10'} space-y-4`}>
+                    <h4 className={`text-sm font-semibold flex items-center gap-2 ${orderModalStatus === 'cancelled' ? 'text-muted-foreground' : 'text-destructive'}`}>
+                      {orderModalStatus === 'cancelled' ? <Info className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                      {orderModalStatus === 'cancelled' ? 'Visão Geral do Período' : 'Maiores Causas de Perda (Contexto)'}
                     </h4>
                     <div className="flex flex-col md:flex-row gap-6">
                       <div className="flex-1 space-y-3">
@@ -703,10 +740,12 @@ export function CustomerSuccess360Hub() {
                           return (
                             <div key={i} className="space-y-1">
                               <div className="flex justify-between text-[11px] items-center">
-                                <span className="text-destructive/70 font-medium truncate max-w-[160px]">{stat.name}</span>
-                                <span className="text-destructive font-bold">{stat.value}</span>
+                                <span className="font-medium truncate max-w-[160px] opacity-70">{stat.name}</span>
+                                <span className="font-bold">{stat.value}</span>
                               </div>
-                              <Progress value={percentage} className="h-1 bg-destructive/10" />
+                              <Progress value={percentage} className="h-1 bg-muted/20">
+                                <div className={`h-full ${orderModalStatus === 'cancelled' ? 'bg-muted-foreground' : 'bg-destructive'}`} style={{ width: `${percentage}%` }} />
+                              </Progress>
                             </div>
                           );
                         })}
