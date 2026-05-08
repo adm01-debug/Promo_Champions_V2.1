@@ -144,25 +144,29 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
         )}
         style={theme === "cyber" ? { boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` } : {}}
       >
-        {/* Grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.06] pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(${colors.stroke} 1px, transparent 1px), linear-gradient(90deg, ${colors.stroke} 1px, transparent 1px)`,
-            backgroundSize: "20px 20px",
-          }}
-        />
+        {/* Grid overlay - Cyber Only */}
+        {theme === "cyber" && (
+          <div
+            className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            style={{
+              backgroundImage: `linear-gradient(${colors.stroke} 1px, transparent 1px), linear-gradient(90deg, ${colors.stroke} 1px, transparent 1px)`,
+              backgroundSize: "20px 20px",
+            }}
+          />
+        )}
 
-        {/* Scanline sweep */}
-        <motion.div
-          className="absolute inset-x-0 h-[2px] pointer-events-none"
-          style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)`, opacity: 0.5 }}
-          animate={{ top: ["0%", "100%", "0%"] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-        />
+        {/* Scanline sweep - Cyber Only */}
+        {theme === "cyber" && (
+          <motion.div
+            className="absolute inset-x-0 h-[2px] pointer-events-none"
+            style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)`, opacity: 0.5 }}
+            animate={{ top: ["0%", "100%", "0%"] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+          />
+        )}
 
-        {/* Corner brackets */}
-        {(["top-2 left-2 border-t border-l", "top-2 right-2 border-t border-r", "bottom-2 left-2 border-b border-l", "bottom-2 right-2 border-b border-r"] as const).map((pos, i) => (
+        {/* Corner brackets - Cyber Only */}
+        {theme === "cyber" && (["top-2 left-2 border-t border-l", "top-2 right-2 border-t border-r", "bottom-2 left-2 border-b border-l", "bottom-2 right-2 border-b border-r"] as const).map((pos, i) => (
           <div
             key={i}
             className={cn("absolute w-3 h-3 pointer-events-none", pos)}
