@@ -272,7 +272,15 @@ const FollowUpInteligente = () => {
     }
   });
 
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [currentLeadForWA, setCurrentLeadForWA] = useState<ColdLead | null>(null);
+
   const handleWhatsAppClick = useCallback((lead: ColdLead) => {
+    setCurrentLeadForWA(lead);
+    setIsPreviewOpen(true);
+  }, []);
+
+  const sendWhatsApp = useCallback((lead: ColdLead) => {
     const template = followUpSettings?.whatsapp_template || 
       "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
     
@@ -284,6 +292,13 @@ const FollowUpInteligente = () => {
     logAction.mutate({
       saleId: lead.id,
       actionType: 'whatsapp_sent',
+      details: { message_preview: message },
+      status: 'sent'
+    });
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    setIsPreviewOpen(false);
+  }, [followUpSettings, logAction]);
       details: { message_preview: message.substring(0, 100) + "..." },
       status: 'sent'
     });
