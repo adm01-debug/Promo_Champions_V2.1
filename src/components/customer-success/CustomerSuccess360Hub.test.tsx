@@ -170,12 +170,12 @@ describe("CustomerSuccess360Hub", () => {
     // Switch to Orders tab
     fireEvent.click(screen.getByText("Pedidos"));
     
-    // Check main table empty state
-    expect(screen.getByText(/Nenhum pedido encontrado/)).toBeInTheDocument();
+    // Use string content directly
+    expect(await screen.findByText("Nenhum pedido encontrado no período.")).toBeInTheDocument();
     
     // Trigger modal
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
-    expect(await screen.findByText(/filtros atuais/)).toBeInTheDocument();
+    expect(await screen.findByText("Nenhum pedido encontrado com os filtros atuais.")).toBeInTheDocument();
   });
 
   it("confirms table sorting when toggling the 'Cliente' header", async () => {
