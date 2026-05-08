@@ -15,16 +15,9 @@ const STAGES = [
 export function CadenceFunnel() {
   const { data: prospects } = useProspectCadences();
 
-  // Mock distribution if no real data mapping exists yet
   const getStageCount = (stageId: string) => {
     if (!prospects) return 0;
-    // In a real scenario, we'd have a 'funnel_stage' column or similar logic
-    // For now, let's distribute them for visualization
-    if (stageId === "new") return prospects.filter(p => p.status === "active" && p.current_step <= 1).length || 5;
-    if (stageId === "high_interest") return 3; // Mock
-    if (stageId === "waiting_approval") return 2; // Mock
-    if (stageId === "scheduled") return prospects.filter(p => p.status === "completed").length || 1;
-    return 0;
+    return prospects.filter(p => p.funnel_stage === stageId).length;
   };
 
   const total = STAGES.reduce((acc, stage) => acc + getStageCount(stage.id), 0);
