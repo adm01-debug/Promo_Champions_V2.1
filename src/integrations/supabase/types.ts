@@ -5639,7 +5639,9 @@ export type Database = {
           created_at: string | null
           details: Json | null
           id: string
+          retry_count: number | null
           sale_id: string | null
+          status: string | null
           user_id: string | null
         }
         Insert: {
@@ -5647,7 +5649,9 @@ export type Database = {
           created_at?: string | null
           details?: Json | null
           id?: string
+          retry_count?: number | null
           sale_id?: string | null
+          status?: string | null
           user_id?: string | null
         }
         Update: {
@@ -5655,7 +5659,9 @@ export type Database = {
           created_at?: string | null
           details?: Json | null
           id?: string
+          retry_count?: number | null
           sale_id?: string | null
+          status?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -13876,6 +13882,33 @@ export type Database = {
           },
         ]
       }
+      whatsapp_template_versions: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string | null
+          id: string
+          template_id: string
+          version_number: number
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          template_id: string
+          version_number: number
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          template_id?: string
+          version_number?: number
+        }
+        Relationships: []
+      }
       win_calibration_buckets: {
         Row: {
           actual_win_rate: number
@@ -14924,6 +14957,29 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      follow_up_audit_view: {
+        Row: {
+          action_type: string | null
+          created_at: string | null
+          details: Json | null
+          id: string | null
+          lead_name: string | null
+          retry_count: number | null
+          sale_id: string | null
+          status: string | null
+          user_id: string | null
+          user_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_audit_logs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       latest_briefing_view: {
         Row: {
