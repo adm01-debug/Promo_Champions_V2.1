@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RefreshCw, Zap, Search, Loader2 } from 'lucide-react';
+import { RefreshCw, Zap, Search, Loader2, History } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 interface FollowUpHeaderProps {
@@ -42,7 +43,15 @@ export function FollowUpHeader({
           </div>
         </div>
 
-        {selectedCount > 0 && (
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild className="gap-2 hidden sm:flex">
+            <Link to="/follow-up/audit">
+              <History className="h-4 w-4" />
+              Ver Auditoria
+            </Link>
+          </Button>
+          
+          {selectedCount > 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
