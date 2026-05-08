@@ -2,19 +2,11 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
-import {
   LayoutDashboard, ShoppingCart, Users, Package, Target,
   BarChart3, Settings, Trophy, Calendar,
   Bell, FileText, Zap, Search, Plus, Moon, Sun, Keyboard,
   Clock, Brain, Flame, Radar, Shield, Globe, Sparkles, Loader2,
+  Gauge, HeartPulse,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSemanticSearch } from "@/hooks/semantic/useSemanticSearch";
