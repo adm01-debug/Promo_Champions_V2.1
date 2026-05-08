@@ -59,7 +59,12 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("race_scoring_rules").select("*").eq("month", currentMonthDate).order("created_at", { ascending: true });
       if (error) throw error;
-      return data || [];
+      
+      if (!data || data.length === 0) {
+        const { data: defaultRules } = await supabase.from("race_scoring_rules").select("*").is("month", null).order("created_at", { ascending: true });
+        return defaultRules || [];
+      }
+      return data;
     },
   });
 
