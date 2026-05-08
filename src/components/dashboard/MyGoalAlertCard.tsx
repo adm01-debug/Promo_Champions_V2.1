@@ -290,7 +290,7 @@ const Metric = ({
       {Icon && <Icon className="h-2.5 w-2.5" />}
       {label}
     </div>
-    <div className={cn("font-mono font-bold text-sm tabular-nums truncate", accent)}>{value}</div>
+    <div className={cn("font-display font-black text-sm tabular-nums truncate", accent)}>{value}</div>
   </div>
 );
 
