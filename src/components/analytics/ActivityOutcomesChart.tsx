@@ -81,7 +81,7 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) => [value, "Quantidade"]}
+                  formatter={(value: any) => [value, "Quantidade"]}
                   contentStyle={{
                     backgroundColor: "hsl(var(--card))",
                     border: "1px solid hsl(var(--border))",
