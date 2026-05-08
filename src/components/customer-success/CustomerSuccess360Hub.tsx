@@ -298,7 +298,7 @@ export function CustomerSuccess360Hub() {
     );
   }
 
-  const accountById = new Map(accounts.map((a) => [a.id, a]));
+  
 
   return (
     <div className="p-6 space-y-6">
