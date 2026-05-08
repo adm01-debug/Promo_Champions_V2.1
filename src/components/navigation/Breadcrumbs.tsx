@@ -10,7 +10,14 @@ interface BreadcrumbItem {
 }
 
 const routeLabels: Record<string, string> = {
-  '': 'Dashboard',
+  '': 'Início',
+  'dashboard': 'Dashboard',
+  'performance': 'Performance',
+  'analises': 'Análises',
+  'competicao': 'Competição',
+  'inteligencia': 'Inteligência',
+  'engajamento': 'Engajamento',
+  'visao-geral': 'Visão Geral',
   'pipeline': 'Pipeline',
   'vendas': 'Vendas',
   'clientes': 'Clientes',
