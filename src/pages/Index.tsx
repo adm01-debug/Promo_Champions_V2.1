@@ -34,6 +34,7 @@ import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
 import { FuturisticSpeedometerDashboard } from "@/components/dashboard/FuturisticSpeedometerDashboard";
 import { FuturisticRanking } from "@/components/dashboard/FuturisticRanking";
+import { MyGoalAlertCard } from "@/components/dashboard/MyGoalAlertCard";
 import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
