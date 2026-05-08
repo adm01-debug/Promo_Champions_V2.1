@@ -118,6 +118,7 @@ const Index = () => {
                       change={kpis?.changes.revenue ?? 0}
                       previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
                       icon={DollarSign}
+                      variant="primary"
                     />
                   ) : (
                     <DashboardEmptyState type="revenue" />
@@ -146,6 +147,7 @@ const Index = () => {
                       change={kpis?.changes.clients ?? 0}
                       previousValue={kpis ? String(kpis.previous.newClients) : undefined}
                       icon={Users}
+                      variant="success"
                     />
                   ) : (
                     <DashboardEmptyState type="clients" />
@@ -160,6 +162,7 @@ const Index = () => {
                       change={kpis?.changes.conversion ?? 0}
                       previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
                       icon={TrendingUp}
+                      variant="warning"
                     />
                   ) : (
                     <DashboardEmptyState type="conversion" />
