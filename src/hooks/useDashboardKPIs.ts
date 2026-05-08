@@ -70,6 +70,32 @@ const calculateChange = (current: number, previous: number): number => {
 };
 
 export const useDashboardKPIs = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard-kpis-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'daily_metrics' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["dashboard-kpis"],
     queryFn: async (): Promise<KPIWithComparison> => {
