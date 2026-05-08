@@ -155,6 +155,42 @@ export function CustomerSuccess360Hub() {
     return Object.values(statusMap);
   }, [filteredData?.orders]);
 
+  const cancellationStats = useMemo(() => {
+    const reasons: Record<string, number> = {};
+    orders.filter(o => o.status === "cancelled").forEach(o => {
+      const reason = o.cancellation_reason || "Não informado";
+      reasons[reason] = (reasons[reason] || 0) + 1;
+    });
+
+    return Object.entries(reasons)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [orders]);
+
+  const handleDateChange = (type: "start" | "end", value: string) => {
+    if (type === "start") {
+      if (endDate && value && isAfter(parseISO(value), parseISO(endDate))) {
+        toast({
+          title: "Data inválida",
+          description: "A data inicial não pode ser posterior à data final.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setStartDate(value);
+    } else {
+      if (startDate && value && isAfter(parseISO(startDate), parseISO(value))) {
+        toast({
+          title: "Data inválida",
+          description: "A data final não pode ser anterior à data inicial.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setEndDate(value);
+    }
+  };
+
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.text("Customer Success 360 - Relatório", 10, 10);
